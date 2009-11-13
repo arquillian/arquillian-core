@@ -27,11 +27,6 @@
 
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-api</artifactId>
-         <version>${version.org.jboss.arquillian_arquillian}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
          <version>${version.org.jboss.arquillian_arquillian}</version>
       </dependency>
