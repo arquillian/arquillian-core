@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!--
+  vi:ts=2:sw=2:expandtab:
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>4</version>
+  </parent>
+
+  <!-- Model Information -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Artifact Information  -->
+  <groupId>org.jboss.arquillian</groupId>
+  <artifactId>arquillian-parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Arguillian Aggregator</name>
+  <url>http://www.jboss.org</url>
+  <description>Arguillian Aggregator</description>
+
+  <!-- Aggregate Modules -->
+  <modules>
+    <module>api</module>
+    <module>build</module>
+    <module>impl-base</module>
+    <module>junit</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.tmpdpl</groupId>
+        <artifactId>tmpdpl-api</artifactId>
+        <version>0.1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.tmpdpl</groupId>
+        <artifactId>tmpdpl-api-shrinkwrap</artifactId>
+        <version>0.1.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+           <groupId>org.jboss.shrinkwrap</groupId>
+           <artifactId>shrinkwrap-api</artifactId>
+           <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+           <groupId>org.jboss.shrinkwrap</groupId>
+           <artifactId>shrinkwrap-impl-base</artifactId>
+           <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
