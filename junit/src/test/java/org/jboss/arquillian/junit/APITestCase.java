@@ -20,6 +20,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,16 +41,19 @@ public class APITestCase
    }
    
    @Test
+   @Ignore
    public void myTestCase() throws Exception {
       System.out.println("test run");
    }
    
    @Test
+   @Ignore
    public void myFailingTestCase() throws Exception {
       Assert.assertTrue(false);      
    }
 
    @Test(expected = IllegalArgumentException.class)
+   @Ignore
    public void myExpectedFailingTestCase() throws Exception {
       throw new IllegalArgumentException("This is ok");
    }
