@@ -6,11 +6,9 @@ import java.lang.reflect.Method;
 
 import javax.naming.InitialContext;
 
-import org.jboss.arquillian.api.Artifact;
-import org.jboss.arquillian.api.ArtifactGenerator;
+import org.jboss.arquillian.api.ArchiveGenerator;
 import org.jboss.arquillian.api.Controlable;
 import org.jboss.arquillian.api.Deployer;
-import org.jboss.arquillian.api.Packaging;
 import org.jboss.arquillian.api.TestMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -48,41 +46,20 @@ public class DeployableTest
    }
 
    
-   // TODO: throws MissingArtifactSupportException
-   // TODO: SPI lookup based on artifactType
-   // TODO: loadArtifactGenerator() ?
-   public ArtifactGenerator getArtifactGenerator(Artifact artifact) 
+   public ArchiveGenerator getArchiveGenerator() 
    {
       if(DeployableTest.isInContainer()) 
       {
          return new NullArtifactGenerator();
       }
-      return new UserCreatedArtifactGenerator();
+      return new UserCreatedArchiveGenerator();
    }
 
-   public ArtifactGenerator getArtifactGenerator(Packaging packaging) 
+   public Archive<?> generateArchive(Class<?> testCase) 
    {
-      if(DeployableTest.isInContainer()) 
-      {
-         return new NullArtifactGenerator();
-      }
-      return new UserCreatedArtifactGenerator();
+      return getArchiveGenerator().generateArchive(testCase);
    }
-   
-   public Archive<?> generateArtifact(Class<?> testCase) 
-   {
-//      ArtifactGenerator artifactGenerator = getArtifactGenerator(
-//            this.getClass().getAnnotation(Artifact.class));
-//      
-//      ArtifactGenerator packagingGenerator = getArtifactGenerator(
-//            this.getClass().getAnnotation(Packaging.class));
-//      
-//      TCKArtifact artifact = packagingGenerator.generateArtifact(this.getClass());
-//      artifactGenerator.generateArtifact(this.getClass(), artifact);
-//      
-//      return artifact;
-      return getArtifactGenerator((Artifact)null).generateArtifact(testCase);
-   }
+
 
    public void run(TestMethodExecutor executor) throws Throwable 
    {

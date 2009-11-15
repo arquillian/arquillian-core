@@ -2,15 +2,15 @@ package org.jboss.arquillian.impl;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.api.ArtifactGenerator;
+import org.jboss.arquillian.api.ArchiveGenerator;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 
-public class UserCreatedArtifactGenerator implements ArtifactGenerator
+public class UserCreatedArchiveGenerator implements ArchiveGenerator
 {
 
    @Override
-   public Archive<?> generateArtifact(Class<?> testCase)
+   public Archive<?> generateArchive(Class<?> testCase)
    {
       Method deploymentMethod = findDeploymentMethod(testCase);
       if(deploymentMethod == null) 
@@ -25,13 +25,6 @@ public class UserCreatedArtifactGenerator implements ArtifactGenerator
       {
          throw new RuntimeException("Could not get Deploymnet", e);
       }
-   }
-   
-   @Override
-   public void generateArtifact(Class<?> testCase, Archive<?> baseArtifact)
-   {
-      // TODO Auto-generated method stub
-      
    }
    
    private Method findDeploymentMethod(Class<?> testCase) {

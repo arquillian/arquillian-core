@@ -49,7 +49,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            archive = deployableTest.generateArtifact(
+            archive = deployableTest.generateArchive(
                   Arquillian.this.getTestClass().getJavaClass());
             
             if(archive instanceof WebArchive) {

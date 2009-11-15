@@ -1,20 +1,14 @@
 package org.jboss.arquillian.impl;
 
-import org.jboss.arquillian.api.ArtifactGenerator;
+import org.jboss.arquillian.api.ArchiveGenerator;
 import org.jboss.shrinkwrap.api.Archive;
 
-public class NullArtifactGenerator implements ArtifactGenerator
+public class NullArtifactGenerator implements ArchiveGenerator
 {
 
    @Override
-   public Archive<?> generateArtifact(Class<?> testCase)
+   public Archive<?> generateArchive(Class<?> testCase)
    {
       return null;
-   }
-   
-   @Override
-   public void generateArtifact(Class<?> testCase, Archive<?> baseArtifact)
-   {
-      
    }
 }
