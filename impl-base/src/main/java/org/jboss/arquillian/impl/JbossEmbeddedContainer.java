@@ -19,7 +19,6 @@ public class JbossEmbeddedContainer implements Controlable, Deployer
    @Override
    public void start() throws Exception
    {
-      server.initialize();
       server.start();
    }
    
