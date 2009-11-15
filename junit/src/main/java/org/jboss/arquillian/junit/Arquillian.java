@@ -18,6 +18,7 @@ package org.jboss.arquillian.junit;
 
 import java.lang.reflect.Method;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.api.TestMethodExecutor;
@@ -51,7 +52,33 @@ public class Arquillian extends BlockJUnit4ClassRunner
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
-      deployableTest = DeployableTestBuilder.build(null);
+      if(deployableTest == null) 
+      {
+         deployableTest = DeployableTestBuilder.build(null);
+         try 
+         {
+            deployableTest.getContainerController().start();
+         } 
+         catch (Exception e) 
+         {
+            throw new InitializationError(Arrays.asList((Throwable)e));
+         }
+      }
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+         @Override
+         public void run()
+         {
+            try  
+            {
+               deployableTest.getContainerController().stop();
+            } 
+            catch (Exception e) 
+            {
+               // TODO: stops container, but complains about wrong state ? 
+               //throw new RuntimeException("Could not stop contianer", e);
+            }
+         }
+      });
    }
 
 
@@ -108,8 +135,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
              
                archive = ear;
             }
-            
-            deployableTest.getContainerController().start();
+
             deployableTest.getDeployer().deploy(archive);
             originalStatement.evaluate();
          }
@@ -127,7 +153,6 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             originalStatement.evaluate();
             deployableTest.getDeployer().undeploy(archive);
-            deployableTest.getContainerController().stop();
          }
       };
    }
