@@ -28,6 +28,9 @@
 
     <!-- Versioning -->
     <version.junit_junit>4.6</version.junit_junit>
+    <version.tmpdpl_tmpdpl>0.1.1-SNAPSHOT</version.tmpdpl_tmpdpl>
+    <version.shrinkwrap_shrinkwrap>1.0.0-SNAPSHOT</version.shrinkwrap_shrinkwrap>
+	  <version.jboss_embedded>0.1.0-SNAPSHOT</version.jboss_embedded>
 
   </properties>
 
@@ -109,8 +112,7 @@
 
       <!-- Enforce Maven Environment -->
       <plugin>
-        <artifactId>maven-enforcer-plugin
-                      </artifactId>
+        <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
             <id>enforce-maven-environment</id>
@@ -142,12 +144,42 @@
   <!-- Dependency Management -->
   <dependencyManagement>
     <dependencies>
-
+      <dependency>
+        <groupId>org.jboss.tmpdpl</groupId>
+        <artifactId>tmpdpl-api</artifactId>
+        <version>${version.tmpdpl_tmpdpl}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.tmpdpl</groupId>
+        <artifactId>tmpdpl-api-shrinkwrap</artifactId>
+        <version>${version.tmpdpl_tmpdpl}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.tmpdpl</groupId>
+         <artifactId>tmpdpl-api-shrinkwrap</artifactId>
+        <version>${version.tmpdpl_tmpdpl}</version>
+      </dependency>
+      <dependency>
+           <groupId>org.jboss.shrinkwrap</groupId>
+           <artifactId>shrinkwrap-api</artifactId>
+           <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+           <groupId>org.jboss.shrinkwrap</groupId>
+           <artifactId>shrinkwrap-impl-base</artifactId>
+           <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.embedded</groupId>
+         <artifactId>jboss-embedded-assembly</artifactId>
+         <classifier>launcher</classifier>
+         <type>jar</type>
+         <version>${version.jboss_embedded}</version>
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit_junit}</version>
-        <scope>test</scope>
       </dependency>
 
     </dependencies>

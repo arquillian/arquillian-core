@@ -18,16 +18,13 @@
 
    <!-- Artifact Configuration -->
    <artifactId>arquillian-impl-base</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
    <name>Arquillian Implementation Base</name>
-   <description>Common Base for Implementations of the  Project</description>
+   <description>Common Base for Implementations of the Project</description>
 
 
    <!-- Properties -->
    <properties>
 
-      <!-- Versioning -->
-      <version.org.jboss.arquillian_arquillian.api>0.0.1-SNAPSHOT</version.org.jboss.arquillian_arquillian.api>
 
    </properties>
 
@@ -40,12 +37,11 @@
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-api</artifactId>
-         <version>${version.org.jboss.arquillian_arquillian.api}</version>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.embedded</groupId>
          <artifactId>jboss-embedded-assembly</artifactId>
-         <version>0.1.0-SNAPSHOT</version>
          <classifier>launcher</classifier>
       </dependency>
 
@@ -55,7 +51,7 @@
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <scope>compile</scope>
+         <scope>test</scope>
       </dependency>
 
    </dependencies>

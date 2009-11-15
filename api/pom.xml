@@ -5,7 +5,7 @@
    <!-- Parent -->
    <parent>
       <groupId>org.jboss.arquillian</groupId>
-      <artifactId>arquillian-parent</artifactId>
+      <artifactId>arquillian-build</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <relativePath>../build/pom.xml</relativePath>
    </parent>
@@ -15,7 +15,6 @@
 
    <!-- Artifact Configuration -->
    <artifactId>arquillian-api</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
    <name>Arquillian API</name>
    <description>Client View of the Arquillian Project</description>
 
@@ -36,7 +35,6 @@
       <dependency>
          <groupId>org.jboss.tmpdpl</groupId>
          <artifactId>tmpdpl-api-shrinkwrap</artifactId>
-         <version>0.1.1-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.shrinkwrap</groupId>

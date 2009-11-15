@@ -17,16 +17,12 @@
 
   <!-- Artifact Configuration -->
   <artifactId>arquillian-junit</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>Arquillian JUnit Implementation</name>
   <description>JUnit Implementations for the the Project</description>
 
 
   <!-- Properties -->
   <properties>
-
-    <!-- Versioning -->
-    <version.org.jboss.arquillian_arquillian.impl-base>0.0.1-SNAPSHOT</version.org.jboss.arquillian_arquillian.impl-base>
 
   </properties>
 
@@ -39,7 +35,7 @@
     <dependency>
       <groupId>org.jboss.arquillian</groupId>
       <artifactId>arquillian-impl-base</artifactId>
-      <version>${version.org.jboss.arquillian_arquillian.impl-base}</version>
+      <version>${project.version}</version>
     </dependency>
     <!-- 
     External Projects
@@ -47,7 +43,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
