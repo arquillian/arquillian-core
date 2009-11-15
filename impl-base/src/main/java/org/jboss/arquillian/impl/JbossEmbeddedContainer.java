@@ -36,6 +36,7 @@ public class JbossEmbeddedContainer implements Controlable, Deployer
    public JbossEmbeddedContainer()
    {
       server = new JBossASEmbeddedServerImpl();
+      server.getConfiguration().bindAddress("localhost");
    }
 
    @Override
