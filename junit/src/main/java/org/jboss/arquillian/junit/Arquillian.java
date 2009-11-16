@@ -96,9 +96,9 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             archive = deployableTest.generateArchive(
                   Arquillian.this.getTestClass().getJavaClass());
-            
-            if(archive instanceof WebArchive) {
-               WebArchive webArchive = (WebArchive)archive;
+
+            if(WebArchive.class.isInstance(archive)) {
+               WebArchive webArchive = WebArchive.class.cast(archive);
                webArchive.addPackages(
                      true,
                      Package.getPackage("org.junit"),
@@ -108,7 +108,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                      Package.getPackage("org.jboss.arquillian.junit"));
                webArchive.setWebXML("org/jboss/arquillian/junit/test-web.xml");
             }
-            if(archive instanceof JavaArchive) {
+            if(JavaArchive.class.isInstance(archive)) {
                EnterpriseArchive ear = Archives.create("test.ear", EnterpriseArchive.class);
 
                WebArchive war = Archives.create("test.war", WebArchive.class)
