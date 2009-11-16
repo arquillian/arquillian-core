@@ -34,7 +34,7 @@
   <!-- Artifact Information  -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arguillian Aggregator</name>
   <url>http://www.jboss.org</url>
