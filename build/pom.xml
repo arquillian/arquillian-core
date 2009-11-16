@@ -29,7 +29,7 @@
     <!-- Versioning -->
     <version.junit_junit>4.6</version.junit_junit>
     <version.shrinkwrap_shrinkwrap>1.0.0-alpha-2</version.shrinkwrap_shrinkwrap>
-	<version.jboss_embedded>0.1.0-SNAPSHOT</version.jboss_embedded>
+	<version.jboss_embedded>1.0.0-SNAPSHOT</version.jboss_embedded>
 	<version.servlet_api>2.5</version.servlet_api>
 
   </properties>
