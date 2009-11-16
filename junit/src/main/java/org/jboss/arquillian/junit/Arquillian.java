@@ -103,7 +103,6 @@ public class Arquillian extends BlockJUnit4ClassRunner
                      true,
                      Package.getPackage("org.junit"),
                      Package.getPackage("org.jboss.arquillian.api"), 
-                     Package.getPackage("org.jboss.arquillian.spi"),
                      Package.getPackage("org.jboss.arquillian.impl"),
                      Package.getPackage("org.jboss.arquillian.junit"));
                webArchive.setWebXML("org/jboss/arquillian/junit/test-web.xml");
@@ -115,7 +114,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                      .addPackages(
                         true,
                         Package.getPackage("org.junit"),
-                        Package.getPackage("org.jboss.arquillian.api"), 
+                        Package.getPackage("org.jboss.arquillian.api"),
                         Package.getPackage("org.jboss.arquillian.impl"),
                         Package.getPackage("org.jboss.arquillian.junit"))
                      .addClass(Arquillian.this.getTestClass().getJavaClass());
