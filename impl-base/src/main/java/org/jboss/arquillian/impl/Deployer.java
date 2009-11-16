@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api;
+package org.jboss.arquillian.impl;
 
-// TODO: throws ControllerException
+import org.jboss.arquillian.spi.DeploymentException;
+import org.jboss.shrinkwrap.api.Archive;
+
 /**
- * Controlable
+ * Deployer
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Controlable
+public interface Deployer
 {
-   void start() throws Exception;
-   
-   void stop() throws Exception;
-   
+
+   void deploy(Archive<?> archive) throws DeploymentException;
+   void undeploy(Archive<?> archive) throws DeploymentException;
+
 }

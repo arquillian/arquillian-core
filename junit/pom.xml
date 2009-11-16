@@ -30,13 +30,22 @@
   <dependencies>
 
     <!-- 
-    org.jboss.shrinkwrap    
+    org.jboss.arquillian
      -->
     <dependency>
       <groupId>org.jboss.arquillian</groupId>
       <artifactId>arquillian-impl-base</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <!-- 
+    org.jboss.shrinkwrap    
+     -->
+    <dependency>
+	   <groupId>org.jboss.shrinkwrap</groupId>
+	   <artifactId>shrinkwrap-impl-base</artifactId>
+    </dependency>
+
     <!-- 
     External Projects
      -->

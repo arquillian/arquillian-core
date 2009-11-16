@@ -14,33 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api.container;
+package org.jboss.arquillian.spi;
 
-import org.jboss.arquillian.api.Controlable;
-import org.jboss.tmpdpl.api.shrinkwrap.container.ArchiveContainer;
+import java.io.Serializable;
 
 /**
- * ContainerController
+ * A test result which may be serialized for communicate between client and
+ * server
+ * 
+ * @author Pete Muir
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
-public class ContainerController implements Controlable
+public interface TestResult extends Serializable
 {
-   private ArchiveContainer container;
-
-   public ContainerController(ArchiveContainer containers)
+   
+   /**
+    * The test status
+    * @author Pete Muir
+    *
+    */
+   public enum Status
    {
-      this.container = containers;
+      /**
+       * The test passed
+       */
+      PASSED,
+      /**
+       * The test failed
+       */
+      FAILED,
+      /**
+       * The test was skipped due to some deployment problem
+       */
+      SKIPPED;
    }
    
-   public void start() throws Exception
-   {
-      //container.setup();
-   }
+   /**
+    * Get the status of this test
+    */
+   public Status getStatus();
    
-   public void stop() throws Exception
-   {
-      //container.cleanup();
-   }
+   /**
+    * If the test failed, the exception that was thrown. It does not need to be
+    * the root cause.
+    */
+   public Throwable getThrowable();
+   
 }

@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.arquillian.api.TestResult;
-import org.jboss.arquillian.api.TestResult.Status;
 import org.jboss.arquillian.impl.TestResultImpl;
+import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.TestResult.Status;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;

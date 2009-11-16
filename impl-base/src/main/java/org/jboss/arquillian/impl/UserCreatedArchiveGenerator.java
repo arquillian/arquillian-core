@@ -18,7 +18,6 @@ package org.jboss.arquillian.impl;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.api.ArchiveGenerator;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 

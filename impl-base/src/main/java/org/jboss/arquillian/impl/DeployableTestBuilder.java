@@ -18,10 +18,14 @@ package org.jboss.arquillian.impl;
 
 import javax.security.auth.login.Configuration;
 
-import org.jboss.arquillian.api.Controlable;
-import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.impl.container.ContainerController;
+import org.jboss.arquillian.impl.container.ContainerDeployer;
+import org.jboss.arquillian.impl.container.Controlable;
+import org.jboss.arquillian.impl.container.DeployableContainers;
+import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.DeploymentException;
+import org.jboss.arquillian.spi.LifecycleException;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.tmpdpl.api.container.DeploymentException;
 
 /**
  * DeployableTestBuilder
@@ -41,14 +45,14 @@ public class DeployableTestBuilder
       
       if(DeployableTest.isInContainer()) 
       {
-         controller = new MockContainer();
-         deployer = new MockContainer();
+         controller = new InContainerContainer();
+         deployer = new InContainerContainer();
       }
       else 
       {
-         JbossEmbeddedContainer container = new JbossEmbeddedContainer();
-         controller = container;
-         deployer = container;
+         DeployableContainer container = DeployableContainers.load();
+         controller = new ContainerController(container);
+         deployer = new ContainerDeployer(container);
       }
 
       return new DeployableTest(
@@ -57,15 +61,15 @@ public class DeployableTestBuilder
             );
    }
    
-   private static class MockContainer implements Controlable, Deployer 
+   private static class InContainerContainer implements Controlable, Deployer 
    {
       @Override
-      public void start() throws Exception
+      public void start() throws LifecycleException
       {
       }
 
       @Override
-      public void stop() throws Exception
+      public void stop() throws LifecycleException
       {
       }
 

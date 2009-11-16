@@ -23,8 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.jboss.arquillian.api.TestMethodExecutor;
-import org.jboss.arquillian.api.TestResult;
+import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.TestResult;
 
 /**
  * ServletMethodExecutor

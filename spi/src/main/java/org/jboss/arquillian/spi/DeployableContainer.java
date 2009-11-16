@@ -27,9 +27,9 @@ import org.jboss.shrinkwrap.api.Archive;
 public interface DeployableContainer
 {
 
-   void start();
+   void start() throws LifecycleException;
    
-   void stop();
+   void stop() throws LifecycleException;
    
    void deploy(Archive<?> archive) throws DeploymentException;
    

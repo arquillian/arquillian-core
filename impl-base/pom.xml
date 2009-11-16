@@ -32,7 +32,7 @@
    <dependencies>
 
       <!-- 
-    org.jboss.shrinkwrap    
+    org.jboss.arquillian
      -->
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
@@ -40,9 +40,14 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.jboss.embedded</groupId>
-         <artifactId>jboss-embedded-assembly</artifactId>
-         <classifier>launcher</classifier>
+         <groupId>org.jboss.arquillian</groupId>
+         <artifactId>arquillian-spi</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>servlet-api</artifactId>
       </dependency>
 
       <!-- 

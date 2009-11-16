@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.impl;
 
-import org.jboss.arquillian.api.TestResult;
+import org.jboss.arquillian.spi.TestResult;
 
 /**
  * TestResultImpl

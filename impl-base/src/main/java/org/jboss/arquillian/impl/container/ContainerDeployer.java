@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api.container;
+package org.jboss.arquillian.impl.container;
 
-import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.impl.Deployer;
+import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.DeploymentException;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.tmpdpl.api.container.DeploymentException;
-import org.jboss.tmpdpl.api.shrinkwrap.container.ArchiveContainer;
 
 /**
  * ContainerDeployer
@@ -29,9 +29,9 @@ import org.jboss.tmpdpl.api.shrinkwrap.container.ArchiveContainer;
  */
 public class ContainerDeployer implements Deployer
 {
-   private ArchiveContainer container;
+   private DeployableContainer container;
    
-   public ContainerDeployer(ArchiveContainer container)
+   public ContainerDeployer(DeployableContainer container)
    {
       this.container = container;
    }
@@ -42,14 +42,7 @@ public class ContainerDeployer implements Deployer
       {
          throw new IllegalArgumentException("Can not deploy null artifact");
       }
-      try 
-      {
-         container.deploy(archive);
-      } 
-      catch (Exception e) 
-      {
-         throw new DeploymentException("Could not deploy artifact " + archive.getName(), e);
-      }
+      container.deploy(archive);
    }
 
    public void undeploy(Archive<?> archive) throws DeploymentException
@@ -58,13 +51,6 @@ public class ContainerDeployer implements Deployer
       {
          throw new IllegalArgumentException("Can not undeploy null artifact");
       }
-      try 
-      {
-         container.undeploy(archive);
-      } 
-      catch (Exception e) 
-      {
-         throw new DeploymentException("Could not undeploy artifact " + archive.getName(), e);
-      }
+      container.undeploy(archive);
    }
 }

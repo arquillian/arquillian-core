@@ -14,20 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api;
+package org.jboss.arquillian.impl.container;
 
-import java.lang.reflect.Method;
+import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.LifecycleException;
+
 
 /**
- * TestMethodExecutor
+ * ContainerController
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestMethodExecutor
+public class ContainerController implements Controlable
 {
-   Method getMethod();
-   Object getInstance();
-   void invoke() throws Throwable;
+   private DeployableContainer container;
+
+   public ContainerController(DeployableContainer container)
+   {
+      this.container = container;
+   }
    
+   public void start() throws LifecycleException
+   {
+      container.start();
+   }
+   
+   public void stop() throws LifecycleException
+   {
+      container.stop();
+   }
 }

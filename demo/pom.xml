@@ -26,15 +26,19 @@
    <dependencies>
 
       <dependency>
+        <groupId>javax.ejb</groupId>
+        <artifactId>ejb-api</artifactId>
+        <version>3.0</version>      
+      </dependency>
+      <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
          <version>${version.org.jboss.arquillian_arquillian}</version>
       </dependency>
       <dependency>
-         <groupId>org.jboss.embedded</groupId>
-         <artifactId>jboss-embedded-assembly</artifactId>
-         <version>${version.org.jboss.embedded_embedded}</version>
-         <classifier>launcher</classifier>
+         <groupId>org.jboss.arquillian</groupId>
+         <artifactId>arquillian-jboss-embedded</artifactId>
+         <version>${version.org.jboss.arquillian_arquillian}</version>
       </dependency>
 
       <dependency>

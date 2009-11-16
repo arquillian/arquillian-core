@@ -14,22 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
-
-import org.jboss.shrinkwrap.api.Archive;
+package org.jboss.arquillian.spi;
 
 /**
- * NullArtifactGenerator
+ * TestEnricher
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class NullArtifactGenerator implements ArchiveGenerator
+public interface TestEnricher
 {
-
-   @Override
-   public Archive<?> generateArchive(Class<?> testCase)
-   {
-      return null;
-   }
+   void enrich(Object testCase);
 }

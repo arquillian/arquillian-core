@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api;
+package org.jboss.arquillian.spi;
 
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.tmpdpl.api.container.DeploymentException;
+import java.lang.reflect.Method;
 
 /**
- * Deployer
+ * TestMethodExecutor
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Deployer
+public interface TestMethodExecutor
 {
-
-   void deploy(Archive<?> archive) throws DeploymentException;
-   void undeploy(Archive<?> archive) throws DeploymentException;
-
+   Method getMethod();
+   Object getInstance();
+   void invoke() throws Throwable;
+   
 }

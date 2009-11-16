@@ -14,50 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api;
+package org.jboss.arquillian.impl.container;
 
-import java.io.Serializable;
+import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.LifecycleException;
 
 /**
- * A test result which may be serialized for communicate between client and
- * server
- * 
- * @author Pete Muir
+ * NoContainerController
  *
+ * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @version $Revision: $
  */
-public interface TestResult extends Serializable
+public class NoContainerController implements Controlable
 {
-   
-   /**
-    * The test status
-    * @author Pete Muir
-    *
-    */
-   public enum Status
+   public NoContainerController(DeployableContainer container)
    {
-      /**
-       * The test passed
-       */
-      PASSED,
-      /**
-       * The test failed
-       */
-      FAILED,
-      /**
-       * The test was skipped due to some deployment problem
-       */
-      SKIPPED;
    }
    
-   /**
-    * Get the status of this test
-    */
-   public Status getStatus();
+   public void start() throws LifecycleException
+   {
+   }
    
-   /**
-    * If the test failed, the exception that was thrown. It does not need to be
-    * the root cause.
-    */
-   public Throwable getThrowable();
-   
+   public void stop() throws LifecycleException
+   {
+   }
 }

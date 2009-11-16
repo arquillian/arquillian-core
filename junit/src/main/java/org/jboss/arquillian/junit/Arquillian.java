@@ -17,17 +17,14 @@
 package org.jboss.arquillian.junit;
 
 import java.lang.reflect.Method;
-
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.arquillian.api.TestMethodExecutor;
 import org.jboss.arquillian.impl.DeployableTest;
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.impl.runner.servlet.InContainerListener;
+import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.descriptor.WebArchiveDescriptor;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -63,22 +60,21 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
-      }
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-         @Override
-         public void run()
-         {
-            try  
+         Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run()
             {
-               deployableTest.getContainerController().stop();
-            } 
-            catch (Exception e) 
-            {
-               // TODO: stops container, but complains about wrong state ? 
-               //throw new RuntimeException("Could not stop contianer", e);
+               try  
+               {
+                  deployableTest.getContainerController().stop();
+               } 
+               catch (Exception e) 
+               {
+                  throw new RuntimeException("Could not stop container", e);
+               }
             }
-         }
-      });
+         });
+      }
    }
 
 
@@ -107,12 +103,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
                      true,
                      Package.getPackage("org.junit"),
                      Package.getPackage("org.jboss.arquillian.api"), 
+                     Package.getPackage("org.jboss.arquillian.spi"),
                      Package.getPackage("org.jboss.arquillian.impl"),
                      Package.getPackage("org.jboss.arquillian.junit"));
-               
-               webArchive.as(WebArchiveDescriptor.class)
-                  .addListener(InContainerListener.class)
-                  .addServlet(ServletTestRunner.class, "/*");
+               webArchive.setWebXML("org/jboss/arquillian/junit/test-web.xml");
             }
             if(archive instanceof JavaArchive) {
                EnterpriseArchive ear = Archives.create("test.ear", EnterpriseArchive.class);
@@ -126,10 +120,8 @@ public class Arquillian extends BlockJUnit4ClassRunner
                         Package.getPackage("org.jboss.arquillian.junit"))
                      .addClass(Arquillian.this.getTestClass().getJavaClass());
                
-               war.as(WebArchiveDescriptor.class)
-                  .addListener(InContainerListener.class)
-                  .addServlet(ServletTestRunner.class, "/*");
-                  
+               war.setWebXML("org/jboss/arquillian/junit/test-web.xml");
+               
                ear.addModule(war)
                   .addModule(archive);
              

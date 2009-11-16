@@ -43,9 +43,11 @@
   <!-- Aggregate Modules -->
   <modules>
     <module>api</module>
+    <module>spi</module>
     <module>build</module>
     <module>impl-base</module>
     <module>junit</module>
+    <module>container-jboss-embedded</module>
   </modules>
 
 </project>

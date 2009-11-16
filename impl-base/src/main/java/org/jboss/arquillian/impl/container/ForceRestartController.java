@@ -14,28 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api.container;
+package org.jboss.arquillian.impl.container;
 
-import org.jboss.arquillian.api.Controlable;
-import org.jboss.tmpdpl.api.shrinkwrap.container.ArchiveContainer;
+import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.LifecycleException;
 
 /**
- * NoContainerController
+ * ForceRestartController
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class NoContainerController implements Controlable
+public class ForceRestartController implements Controlable
 {
-   public NoContainerController(ArchiveContainer container)
-   {
-   }
+   private DeployableContainer container;
    
-   public void start() throws Exception
+   public ForceRestartController(DeployableContainer container)
    {
+      this.container = container;
    }
-   
-   public void stop() throws Exception
+
+   public void start() throws LifecycleException
    {
+      try {
+         container.stop();
+      } catch (LifecycleException e) {
+         // no-op
+      }
+      container.start();
+   }
+
+   public void stop() throws LifecycleException
+   {
+      container.stop();      
    }
 }

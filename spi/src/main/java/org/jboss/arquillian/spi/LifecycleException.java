@@ -14,38 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.api.container;
-
-import org.jboss.arquillian.api.Controlable;
-import org.jboss.tmpdpl.api.shrinkwrap.container.ArchiveContainer;
+package org.jboss.arquillian.spi;
 
 /**
- * ForceRestartController
+ * LifecycleException
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ForceRestartController implements Controlable
+public class LifecycleException extends Exception
 {
-   private ArchiveContainer container;
+   private static final long serialVersionUID = 1L;
+
+   public LifecycleException(String message)
+   {
+      super(message);
+   }
    
-   public ForceRestartController(ArchiveContainer containers)
+   public LifecycleException(String message, Exception cause)
    {
-      this.container = containers;
+      super(message, cause);
    }
 
-   public void start() throws Exception
-   {
-      try {
-         //container.cleanup();
-      } catch (Exception e) {
-         // no-op
-      }
-      //container.setup();
-   }
-
-   public void stop() throws Exception
-   {
-      //container.cleanup();      
-   }
 }

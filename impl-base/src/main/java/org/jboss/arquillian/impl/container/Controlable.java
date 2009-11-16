@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
+package org.jboss.arquillian.impl.container;
 
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.spi.LifecycleException;
 
 /**
- * NullArtifactGenerator
+ * Controlable
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class NullArtifactGenerator implements ArchiveGenerator
+public interface Controlable
 {
-
-   @Override
-   public Archive<?> generateArchive(Class<?> testCase)
-   {
-      return null;
-   }
+   void start() throws LifecycleException;
+   
+   void stop() throws LifecycleException;
+   
 }

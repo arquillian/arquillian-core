@@ -29,20 +29,8 @@
    <!-- Dependencies -->
    <dependencies>
       <dependency>
-         <groupId>org.jboss.tmpdpl</groupId>
-         <artifactId>tmpdpl-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.tmpdpl</groupId>
-         <artifactId>tmpdpl-api-shrinkwrap</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.shrinkwrap</groupId>
          <artifactId>shrinkwrap-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.shrinkwrap</groupId>
-         <artifactId>shrinkwrap-impl-base</artifactId>
       </dependency>
    </dependencies>
 </project>
