@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+   <!-- Parent -->
+   <parent>
+      <groupId>org.jboss.arquillian</groupId>
+      <artifactId>arquillian-build</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <relativePath>../build/pom.xml</relativePath>
+   </parent>
+
+   <!-- Model Version -->
+   <modelVersion>4.0.0</modelVersion>
+
+   <!-- Artifact Configuration -->
+   <artifactId>arquillian-spi</artifactId>
+   <name>Arquillian SPI</name>
+   <description>Extension View of the Arquillian Project</description>
+
+
+   <!-- Properties -->
+   <properties>
+
+      <!-- Versioning -->
+
+   </properties>
+
+   <!-- Dependencies -->
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.arquillian</groupId>
+         <artifactId>arquillian-api</artifactId>
+	 <version>${project.version}</version>
+      </dependency>
+   </dependencies>
+</project>
+
