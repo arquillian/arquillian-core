@@ -18,7 +18,6 @@
 
       <!-- Versioning -->
       <version.org.jboss.arquillian_arquillian>1.0.0-SNAPSHOT</version.org.jboss.arquillian_arquillian>
-      <version.org.jboss.embedded_embedded>0.1.0-SNAPSHOT</version.org.jboss.embedded_embedded>
 
    </properties>
 
