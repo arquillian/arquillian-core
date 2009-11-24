@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.util;
+package org.jboss.arquillian.spi.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
