@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -281,6 +282,14 @@ public class DefaultServiceLoader<S> implements Iterable<S>
          reload();
       }
       return providers.iterator();
+   }
+
+   public Set<S> getProviders() {
+      if (providers == null)
+      {
+         reload();
+      }
+      return Collections.unmodifiableSet(providers);
    }
 
    /**
