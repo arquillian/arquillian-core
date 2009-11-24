@@ -24,5 +24,9 @@ package org.jboss.arquillian.spi;
  */
 public interface TestEnricher
 {
+   /**
+    * 
+    * @param testCase
+    */
    void enrich(Object testCase);
 }

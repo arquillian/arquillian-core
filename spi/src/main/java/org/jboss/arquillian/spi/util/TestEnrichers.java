@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.container;
-
-import java.util.ServiceLoader;
+package org.jboss.arquillian.spi.util;
 
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
  * TestEnrichers
- *
+ * 
+ * Helper for enriching TestCase instances based on multiple TestEnrichers.
+ * 
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -30,9 +30,14 @@ public class TestEnrichers
 {
    private TestEnrichers() {}
 
+   /**  
+    * Enrich a object based on all found TestEnricher providers.
+    * 
+    * @param testCase The object that should be enriched.
+    */
    public static void enrich(Object testCase) 
    {
-      ServiceLoader<TestEnricher> serviceLoader = ServiceLoader.load(TestEnricher.class);
+      DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader.load(TestEnricher.class);
       for(TestEnricher enricher : serviceLoader) 
       {
          enricher.enrich(testCase);

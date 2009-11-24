@@ -19,8 +19,8 @@ package org.jboss.arquillian.impl;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.container.Controlable;
-import org.jboss.arquillian.impl.container.TestEnrichers;
 import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -46,7 +46,7 @@ public class DeployableTest
    private Controlable containerController;
    private Deployer containerDeployer;
    
-   public DeployableTest(Controlable containerController, Deployer containerDeployer)
+   DeployableTest(Controlable containerController, Deployer containerDeployer)
    {
       this.containerController = containerController;
       this.containerDeployer = containerDeployer;
@@ -80,7 +80,7 @@ public class DeployableTest
 
    public void run(TestMethodExecutor executor) throws Throwable 
    {
-      if(inContainer) 
+      if(DeployableTest.isInContainer()) 
       {
          injectClass(executor.getInstance());
          executor.invoke();
@@ -91,12 +91,12 @@ public class DeployableTest
       }
    }
    
-   void injectClass(Object testCase) 
+   private void injectClass(Object testCase) 
    {
       TestEnrichers.enrich(testCase);
    }
    
-   void invokeMethod(Method testMethod, Class<?> testCase) 
+   private void invokeMethod(Method testMethod, Class<?> testCase) 
    {
    }
 
