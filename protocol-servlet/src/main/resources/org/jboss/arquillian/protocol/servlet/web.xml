@@ -3,7 +3,7 @@
     <display-name>Arquillian</display-name>
     <servlet>
         <servlet-name>ServletTestRunner</servlet-name>
-        <servlet-class>org.jboss.arquillian.junit.ServletTestRunner</servlet-class>
+        <servlet-class>org.jboss.arquillian.protocol.servlet.ServletTestRunner</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ServletTestRunner</servlet-name>
