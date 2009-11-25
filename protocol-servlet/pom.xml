@@ -32,32 +32,38 @@
       <!-- 
     org.jboss.arquillian
      -->
-	<dependency>
-		<groupId>org.jboss.arquillian</groupId>
-		<artifactId>arquillian-spi</artifactId>
-		<version>${project.version}</version>
-	</dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian</groupId>
+         <artifactId>arquillian-spi</artifactId>
+         <version>${project.version}</version>
+      </dependency>
 
       <!-- 
     servlet api
      -->
-	<dependency>
-		<groupId>javax.servlet</groupId>
-		<artifactId>servlet-api</artifactId>
-	</dependency>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>servlet-api</artifactId>
+      </dependency>
 
-   <dependency>
-      <groupId>junit</groupId>   
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-   </dependency>
-   
-   <dependency>
-     <groupId>org.mortbay.jetty</groupId> 
-     <artifactId>jetty-embedded</artifactId>
-     <scope>test</scope>    
-   </dependency>
-   
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.mortbay.jetty</groupId>
+         <artifactId>jetty-embedded</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.shrinkwrap</groupId>
+         <artifactId>shrinkwrap-impl-base</artifactId>
+         <scope>test</scope>
+      </dependency>
+
    </dependencies>
 </project>
 
