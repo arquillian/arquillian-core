@@ -47,7 +47,8 @@
     <module>build</module>
     <module>impl-base</module>
     <module>junit</module>
+    <module>protocol-servlet</module>
     <module>container-jboss-embedded</module>
-  </modules>
+</modules>
 
 </project>
