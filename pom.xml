@@ -49,6 +49,7 @@
     <module>junit</module>
     <module>protocol-servlet</module>
     <module>container-jboss-embedded</module>
+    <module>container-jboss-remote-51</module>
 </modules>
 
 </project>
