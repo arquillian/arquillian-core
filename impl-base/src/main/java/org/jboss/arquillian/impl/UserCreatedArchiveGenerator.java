@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.container.ClassContainer;
 
 /**
  * UserCreatedArchiveGenerator
@@ -33,6 +34,8 @@ public class UserCreatedArchiveGenerator implements ArchiveGenerator
    @Override
    public Archive<?> generateArchive(Class<?> testCase)
    {
+      Validate.notNull(testCase, "TestCase must be specified");
+      
       Method deploymentMethod = findDeploymentMethod(testCase);
       if(deploymentMethod == null) 
       {
@@ -40,20 +43,29 @@ public class UserCreatedArchiveGenerator implements ArchiveGenerator
       }
       try 
       {
-         return (Archive<?>)deploymentMethod.invoke(null);
+         Archive<?> archive = (Archive<?>)deploymentMethod.invoke(null);
+         // TODO: handle deployment attributes like autoAddPakcage etc..
+         if(ClassContainer.class.isInstance(archive)) 
+         {
+            ClassContainer<?> classContainer = ClassContainer.class.cast(archive);
+            classContainer.addClass(testCase);
+         }
+         
+         return archive;
       } 
       catch (Exception e) 
       {
-         throw new RuntimeException("Could not get Deploymnet", e);
+         throw new RuntimeException("Could not get Deployment", e);
       }
    }
    
-   private Method findDeploymentMethod(Class<?> testCase) {
-      
+   private Method findDeploymentMethod(Class<?> testCase) 
+   {
       Method[] methods = testCase.getMethods();
       for(Method method: methods)
       {
-         if(method.isAnnotationPresent(Deployment.class)) {
+         if(method.isAnnotationPresent(Deployment.class)) 
+         {
             return method;
          }
       }
