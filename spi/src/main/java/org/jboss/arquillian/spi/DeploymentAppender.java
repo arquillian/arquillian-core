@@ -29,6 +29,12 @@ import org.jboss.shrinkwrap.api.Archive;
 public interface DeploymentAppender
 {
 
+   /**
+    * Create a archive containing the needed resources for this extension 
+    * to run in-container.
+    * 
+    * @return A Archive of any type
+    */
    Archive<?> createArchive();
    
 }

@@ -30,15 +30,16 @@ import org.jboss.shrinkwrap.api.Archive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentAppenders
+public final class DeploymentAppenders
 {
-
+   private DeploymentAppenders() { }
+   
    /**
     * Load/Create all Archives provided by the different modules. 
     * 
     * @return A List of all archives
     */
-   public List<Archive<?>> getArchives() 
+   public static List<Archive<?>> getArchives() 
    {
       List<Archive<?>> archives = new ArrayList<Archive<?>>();
       DefaultServiceLoader<DeploymentAppender> serviceLoader = DefaultServiceLoader.load(
