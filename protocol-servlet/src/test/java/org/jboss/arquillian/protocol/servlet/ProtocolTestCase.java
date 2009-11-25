@@ -47,8 +47,8 @@ public class ProtocolTestCase
    public void setup() throws Exception 
    {
       server = new Server(8181);
-      Context root = new Context(server, "/", Context.SESSIONS);
-      root.addServlet(ServletTestRunner.class, "/test");
+      Context root = new Context(server, "/protocol", Context.SESSIONS);
+      root.addServlet(ServletTestRunner.class, "/*");
       server.start();
    }
    
@@ -146,7 +146,7 @@ public class ProtocolTestCase
    private URL createBaseURL() {
       try 
       {
-         return new URL("http", "localhost", server.getConnectors()[0].getPort(), "/test");
+         return new URL("http", "localhost", server.getConnectors()[0].getPort(), "/");
       } 
       catch (Exception e) 
       {
@@ -156,7 +156,7 @@ public class ProtocolTestCase
    
    private URL createURL(String outputMode, String testClass, String methodName) 
    {
-      StringBuilder url = new StringBuilder(createBaseURL().toExternalForm());
+      StringBuilder url = new StringBuilder(createBaseURL().toExternalForm()).append("protocol/");
       boolean first = true;
       if(outputMode != null) 
       {
