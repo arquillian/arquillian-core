@@ -31,7 +31,7 @@ public interface DeployableContainer
    
    void stop() throws LifecycleException;
    
-   void deploy(Archive<?> archive) throws DeploymentException;
+   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
    
    void undeploy(Archive<?> archive) throws DeploymentException;
 

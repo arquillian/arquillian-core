@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.impl;
 
+import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeploymentException;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -28,7 +29,7 @@ import org.jboss.shrinkwrap.api.Archive;
 public interface Deployer
 {
 
-   void deploy(Archive<?> archive) throws DeploymentException;
+   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
    void undeploy(Archive<?> archive) throws DeploymentException;
 
 }

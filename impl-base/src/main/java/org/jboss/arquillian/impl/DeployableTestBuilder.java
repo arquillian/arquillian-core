@@ -16,15 +16,18 @@
  */
 package org.jboss.arquillian.impl;
 
-import javax.security.auth.login.Configuration;
-
 import org.jboss.arquillian.impl.container.ContainerController;
 import org.jboss.arquillian.impl.container.ContainerDeployer;
 import org.jboss.arquillian.impl.container.Controlable;
 import org.jboss.arquillian.impl.container.DeployableContainers;
+import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentException;
 import org.jboss.arquillian.spi.LifecycleException;
+import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -38,7 +41,7 @@ public class DeployableTestBuilder
    private DeployableTestBuilder() {}
    
    // TODO: lookup/load container, setup DeployableTest
-   public static DeployableTest build(Configuration config) 
+   public static DeployableTest build(Object config) 
    {
       Controlable controller = null;
       Deployer deployer = null;
@@ -74,8 +77,27 @@ public class DeployableTestBuilder
       }
 
       @Override
-      public void deploy(Archive<?> archive) throws DeploymentException
+      public ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException
       {
+         return new ContainerMethodExecutor()
+         {
+            @Override
+            public TestResult invoke(TestMethodExecutor testMethodExecutor)
+            {
+               try 
+               {
+                  TestEnrichers.enrich(testMethodExecutor.getInstance());
+                  testMethodExecutor.getMethod().invoke(
+                        testMethodExecutor.getInstance());
+                  
+                  return new TestResultImpl(Status.PASSED);
+               } 
+               catch (Exception e) 
+               {
+                  return new TestResultImpl(Status.FAILED, e);
+               }
+            }
+         };
       }
 
       @Override

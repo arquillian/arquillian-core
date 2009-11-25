@@ -31,6 +31,10 @@ public class TestResultImpl implements TestResult
    private Status status;
    private Throwable throwable;
 
+   public TestResultImpl(Status status) {
+      this(status, null);
+   }
+   
    public TestResultImpl(Status status, Throwable throwable)
    {
       this.status = status;

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl.container;
 
 import org.jboss.arquillian.impl.Deployer;
+import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentException;
 import org.jboss.shrinkwrap.api.Archive;
@@ -36,13 +37,13 @@ public class ContainerDeployer implements Deployer
       this.container = container;
    }
 
-   public void deploy(Archive<?> archive) throws DeploymentException
+   public ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException
    {
       if(archive == null) 
       {
          throw new IllegalArgumentException("Can not deploy null artifact");
       }
-      container.deploy(archive);
+      return container.deploy(archive);
    }
 
    public void undeploy(Archive<?> archive) throws DeploymentException

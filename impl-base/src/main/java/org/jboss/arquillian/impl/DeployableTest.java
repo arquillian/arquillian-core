@@ -16,11 +16,7 @@
  */
 package org.jboss.arquillian.impl;
 
-import java.lang.reflect.Method;
-
 import org.jboss.arquillian.impl.container.Controlable;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -69,35 +65,11 @@ public class DeployableTest
       {
          return new NullArtifactGenerator();
       }
-      return new UserCreatedArchiveGenerator();
+      return new DeploymentAppenderArchiveGenerator(new UserCreatedArchiveGenerator());
    }
 
    public Archive<?> generateArchive(Class<?> testCase) 
    {
       return getArchiveGenerator().generateArchive(testCase);
    }
-
-
-   public void run(TestMethodExecutor executor) throws Throwable 
-   {
-      if(DeployableTest.isInContainer()) 
-      {
-         injectClass(executor.getInstance());
-         executor.invoke();
-      } 
-      else 
-      {
-         new ServletMethodExecutor(executor).invoke();
-      }
-   }
-   
-   private void injectClass(Object testCase) 
-   {
-      TestEnrichers.enrich(testCase);
-   }
-   
-   private void invokeMethod(Method testMethod, Class<?> testCase) 
-   {
-   }
-
 }
