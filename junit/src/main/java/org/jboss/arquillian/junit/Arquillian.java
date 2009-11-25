@@ -22,12 +22,10 @@ import java.util.List;
 
 import org.jboss.arquillian.impl.DeployableTest;
 import org.jboss.arquillian.impl.DeployableTestBuilder;
+import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.TestResult;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -45,6 +43,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
    private static DeployableTest deployableTest;
    
    private Archive<?> archive = null;
+   private ContainerMethodExecutor methodExecutor;
    
    public Arquillian(Class<?> klass) throws InitializationError
    {
@@ -77,7 +76,6 @@ public class Arquillian extends BlockJUnit4ClassRunner
       }
    }
 
-
    @Override
    // TODO: exclude @Integration test classes
    protected List<FrameworkMethod> computeTestMethods()
@@ -97,37 +95,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
             archive = deployableTest.generateArchive(
                   Arquillian.this.getTestClass().getJavaClass());
 
-            if(WebArchive.class.isInstance(archive)) {
-               WebArchive webArchive = WebArchive.class.cast(archive);
-               webArchive.addPackages(
-                     true,
-                     Package.getPackage("org.junit"),
-                     Package.getPackage("org.jboss.arquillian.api"), 
-                     Package.getPackage("org.jboss.arquillian.impl"),
-                     Package.getPackage("org.jboss.arquillian.junit"));
-               webArchive.setWebXML("org/jboss/arquillian/junit/test-web.xml");
-            }
-            if(JavaArchive.class.isInstance(archive)) {
-               EnterpriseArchive ear = Archives.create("test.ear", EnterpriseArchive.class);
-
-               WebArchive war = Archives.create("test.war", WebArchive.class)
-                     .addPackages(
-                        true,
-                        Package.getPackage("org.junit"),
-                        Package.getPackage("org.jboss.arquillian.api"),
-                        Package.getPackage("org.jboss.arquillian.impl"),
-                        Package.getPackage("org.jboss.arquillian.junit"))
-                     .addClass(Arquillian.this.getTestClass().getJavaClass());
-               
-               war.setWebXML("org/jboss/arquillian/junit/test-web.xml");
-               
-               ear.addModule(war)
-                  .addModule(archive);
-             
-               archive = ear;
-            }
-
-            deployableTest.getDeployer().deploy(archive);
+            methodExecutor = deployableTest.getDeployer().deploy(archive);
             originalStatement.evaluate();
          }
       };
@@ -156,7 +124,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            deployableTest.run(new TestMethodExecutor()
+            TestResult result = methodExecutor.invoke(new TestMethodExecutor()
             {
                public void invoke() throws Throwable
                {
@@ -173,6 +141,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   return test;
                }
             });
+            if(result.getThrowable() != null)
+            {
+               throw result.getThrowable();
+            }
          }
       };
    }
