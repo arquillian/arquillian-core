@@ -1,0 +1,3 @@
+org.jboss.arquillian.testenricher.jboss.EJBInjectionEnricher
+org.jboss.arquillian.testenricher.jboss.ResourceInjectionEnricher
+org.jboss.arquillian.testenricher.jboss.CDIInjectionEnricher
