@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class ResourcesTest
+public class InjectionTestCase
 {
    @Deployment
    public static JavaArchive createDeployment() {

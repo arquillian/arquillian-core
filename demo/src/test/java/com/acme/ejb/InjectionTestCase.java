@@ -14,47 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.acme.weld;
+package com.acme.ejb;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
+
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.acme.ejb.GreetingManager;
-import com.acme.ejb.GreetingManagerBean;
-
 /**
- * WeldGreetingsTest
+ * GreetingManagerTest
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class WeldGreetingsTest
+public class InjectionTestCase
 {
    @Deployment
    public static JavaArchive createDeployment() {
       return Archives.create("test.jar", JavaArchive.class)
                .addClasses(
                      GreetingManager.class,
-                     GreetingManagerBean.class)
-               .addManifestResource(
-                     new ByteArrayAsset("<beans/>".getBytes()), 
-                     Paths.create("beans.xml"));
+                     GreetingManagerBean.class);
    }
    
-   @Inject GreetingManager greetingManager;
+   @EJB
+   private GreetingManager greetingManager;
    
    @Test
-   public void shouldBeAbleToGreet() throws Exception {
+   public void shouldGreetUser() throws Exception {
       
       String userName = "Devoxx";
       
