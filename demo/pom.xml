@@ -12,7 +12,6 @@
    <name>Arquillian Demo</name>
    <description>Demo of Arquillian Usage</description>
 
-
    <!-- Properties -->
    <properties>
 
@@ -21,53 +20,95 @@
 
    </properties>
 
+   <profiles>
+      <profile>
+         <id>jboss-embedded</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-jboss-embedded</artifactId>
+               <version>${version.org.jboss.arquillian_arquillian}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>jboss-remote-51</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-jboss-remote-51</artifactId>
+               <version>${version.org.jboss.arquillian_arquillian}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>jboss-remote-60</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-jboss-remote-60</artifactId>
+               <version>${version.org.jboss.arquillian_arquillian}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
+
    <!-- Dependencies -->
    <dependencies>
 
       <dependency>
-        <groupId>javax.ejb</groupId>
-        <artifactId>ejb-api</artifactId>
-        <version>3.0</version>      
+         <groupId>javax.ejb</groupId>
+         <artifactId>ejb-api</artifactId>
+         <version>3.0</version>
+         <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>javax.enterprise</groupId> 
+         <artifactId>cdi-api</artifactId>
+         <version>1.0</version>
+         <scope>provided</scope>       
+      </dependency>
+      <dependency>
+         <groupId>javax.mail</groupId> 
+         <artifactId>mail</artifactId>
+         <version>1.4.1</version>
+         <scope>provided</scope>       
+      </dependency>
+
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
-         <version>${version.org.jboss.arquillian_arquillian}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-jboss-embedded</artifactId>
          <version>${version.org.jboss.arquillian_arquillian}</version>
       </dependency>
 
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-	 <version>4.7</version>
+         <version>4.7</version>
          <scope>test</scope>
       </dependency>
 
    </dependencies>
-   
-   <build>
-   	<plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <showDeprecation>false</showDeprecation>
-          <showWarnings>true</showWarnings>
-          <optimize>true</optimize>
-          <compilerVersion>1.6</compilerVersion>
-          <fork>true</fork>
-          <argLine>-Xmx512M</argLine>
-          <executable>${JAVA_HOME}/bin/javac</executable>
-        </configuration>
-      </plugin>
 
-   	</plugins>
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+               <showDeprecation>false</showDeprecation>
+               <showWarnings>true</showWarnings>
+               <optimize>true</optimize>
+               <compilerVersion>1.6</compilerVersion>
+               <fork>true</fork>
+               <argLine>-Xmx512M</argLine>
+               <executable>${JAVA_HOME}/bin/javac</executable>
+            </configuration>
+         </plugin>
+
+      </plugins>
    </build>
 </project>
 

@@ -14,24 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.acme.ejb;
+package com.acme.resource;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
+import javax.annotation.Resource;
+import javax.mail.Session;
+
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
- * SystemManagerBean
+ * ResourcesTest
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Local(SystemManager.class)
-@Stateless
-public class SystemManagerBean implements SystemManager
+@RunWith(Arquillian.class)
+public class ResourcesTest
 {
-   @Override
-   public String greet(String userName)
-   {
-      return "System " + userName;
+   @Deployment
+   public static JavaArchive createDeployment() {
+      return Archives.create("test.jar", JavaArchive.class);
+   }
+   
+   @Resource(mappedName = "java:/Mail") Session mailSession;
+   
+   @Test
+   public void shouldBeAbleToGreet() throws Exception {
+      
+      Assert.assertNotNull(mailSession);
    }
 }
