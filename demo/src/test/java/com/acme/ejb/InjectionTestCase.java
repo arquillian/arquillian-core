@@ -48,7 +48,7 @@ public class InjectionTestCase
    private GreetingManager greetingManager;
    
    @Test
-   public void shouldGreetUser() throws Exception {
+   public void shouldBeAbleToInjectEJB() throws Exception {
       
       String userName = "Devoxx";
       

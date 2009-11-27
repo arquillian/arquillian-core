@@ -44,7 +44,7 @@ public class InjectionTestCase
    @Resource(mappedName = "java:/Mail") Session mailSession;
    
    @Test
-   public void shouldBeAbleToGreet() throws Exception {
+   public void shouldBeAbleToInjectResource() throws Exception {
       
       Assert.assertNotNull(mailSession);
    }

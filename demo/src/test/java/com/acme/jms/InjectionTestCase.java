@@ -60,7 +60,7 @@ public class InjectionTestCase
    private ConnectionFactory factory;
    
    @Test
-   public void shouldBeAbleToGreet() throws Exception {
+   public void shouldBeAbleToSendMessage() throws Exception {
       
       String messageBody = "ping";
       

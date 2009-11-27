@@ -16,6 +16,7 @@
  */
 package com.acme.weld;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
@@ -53,13 +54,20 @@ public class InjectionTestCase
    
    @Inject GreetingManager greetingManager;
    
+   @Inject BeanManager beanManager;
+   
    @Test
-   public void shouldBeAbleToGreet() throws Exception {
+   public void shouldBeAbleToInjectWeld() throws Exception {
       
       String userName = "Devoxx";
       
+      Assert.assertNotNull(
+            "Should have injected manager",
+            beanManager);
+
       Assert.assertEquals(
             "Hello " + userName,
             greetingManager.greet(userName));
+      
    }
 }
