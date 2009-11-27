@@ -16,6 +16,11 @@
  */
 package org.jboss.arquillian.testenricher.jboss;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionTarget;
+import javax.naming.InitialContext;
+
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -26,9 +31,51 @@ import org.jboss.arquillian.spi.TestEnricher;
  */
 public class CDIInjectionEnricher implements TestEnricher 
 {
-
+   private static final String JNDI_BEAN_MANAGER = "java:/app/BeanManager";
+   private static final String ANNOTATION_NAME = "javax.inject.Inject";
+   
    @Override
    public void enrich(Object testCase)
    {
+      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
+      {
+         injectClass(testCase);
+      }
+   }
+   
+   protected void injectClass(Object testCase) 
+   {
+      try 
+      {
+         BeanManager beanManager = lookupBeanManager();
+         if(beanManager != null) {
+            injectNonContextualInstance(beanManager, testCase);            
+         }
+      }
+      catch (Exception e) 
+      {
+         throw new RuntimeException("Could not inject members", e);
+      }
+   }
+   
+   @SuppressWarnings("unchecked")
+   protected void injectNonContextualInstance(BeanManager manager, Object instance)
+   {
+      CreationalContext<Object> creationalContext =  manager.createCreationalContext(null);
+      InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(
+            manager.createAnnotatedType(instance.getClass()));
+      injectionTarget.inject(instance, creationalContext);
+   }
+
+   protected BeanManager lookupBeanManager() 
+   {
+      try 
+      {
+         return (BeanManager)new InitialContext().lookup(JNDI_BEAN_MANAGER);   
+      }
+      catch (Exception e) 
+      {
+         return null;
+      }
    }
 }

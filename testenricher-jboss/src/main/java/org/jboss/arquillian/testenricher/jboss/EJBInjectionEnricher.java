@@ -46,7 +46,7 @@ public class EJBInjectionEnricher implements TestEnricher
       }
    }
 
-   void injectClass(Object testCase) 
+   protected void injectClass(Object testCase) 
    {
       try 
       {
@@ -69,7 +69,7 @@ public class EJBInjectionEnricher implements TestEnricher
       }
    }
 
-   private Object lookupEJB(Field field) throws Exception 
+   protected Object lookupEJB(Field field) throws Exception 
    {
       // TODO: figure out test context ? 
       InitialContext context = new InitialContext();
