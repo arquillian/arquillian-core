@@ -48,7 +48,9 @@
     <module>impl-base</module>
     <module>junit</module>
     <module>protocol-servlet</module>
+<!--
     <module>container-jboss-embedded</module>
+-->
     <module>container-jboss-remote-51</module>
     <module>container-jboss-remote-60</module>
     <module>testenricher-jboss</module>
