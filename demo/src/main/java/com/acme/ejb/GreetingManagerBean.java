@@ -16,7 +16,7 @@
  */
 package com.acme.ejb;
 
-import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 /**
@@ -25,7 +25,7 @@ import javax.ejb.Stateless;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Local(GreetingManager.class)
+@Remote(GreetingManager.class)
 @Stateless
 public class GreetingManagerBean implements GreetingManager
 {
