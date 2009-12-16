@@ -19,7 +19,6 @@ package org.jboss.arquillian.impl;
 import org.jboss.arquillian.impl.container.ContainerController;
 import org.jboss.arquillian.impl.container.ContainerDeployer;
 import org.jboss.arquillian.impl.container.Controlable;
-import org.jboss.arquillian.impl.container.DeployableContainers;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentException;
@@ -27,6 +26,7 @@ import org.jboss.arquillian.spi.LifecycleException;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.spi.util.DeployableContainers;
 import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.jboss.shrinkwrap.api.Archive;
 
