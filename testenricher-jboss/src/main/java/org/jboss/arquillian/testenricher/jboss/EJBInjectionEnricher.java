@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.arquillian.spi.TestEnricher;
 
@@ -73,6 +74,13 @@ public class EJBInjectionEnricher implements TestEnricher
    {
       // TODO: figure out test context ? 
       InitialContext context = new InitialContext();
-      return context.lookup("test/" + field.getType().getSimpleName() + "Bean/local");
+      try 
+      {
+    	  return context.lookup("test/" + field.getType().getSimpleName() + "Bean/local");
+      } 
+      catch (NamingException e) 
+      {
+    	  return context.lookup("test/" + field.getType().getSimpleName() + "Bean/remote");
+      }
    }
 }
