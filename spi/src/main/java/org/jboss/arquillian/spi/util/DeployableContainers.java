@@ -16,11 +16,6 @@
  */
 package org.jboss.arquillian.spi.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
-
 import org.jboss.arquillian.spi.DeployableContainer;
 
 /**
@@ -36,26 +31,15 @@ public class DeployableContainers
    
    public static DeployableContainer load() 
    {
-      ServiceLoader<DeployableContainer> containerLoader = ServiceLoader.load(DeployableContainer.class);
-      List<DeployableContainer> containers = toList(containerLoader.iterator());
-      if(containers.size() == 0)
+      DefaultServiceLoader<DeployableContainer> containerLoader = DefaultServiceLoader.load(DeployableContainer.class);
+      if(containerLoader.getProviders().size() == 0)
       {
          throw new RuntimeException("No containers found");
       }
-      if(containers.size() > 1)
+      if(containerLoader.getProviders().size() > 1)
       {
          throw new RuntimeException("More the one container found, check classpath");
       }
-      return containers.get(0);
-   }
-   
-   private static <T> List<T> toList(Iterator<T> iterator) 
-   {
-      List<T> list = new ArrayList<T>();
-      while(iterator.hasNext())
-      {
-         list.add(iterator.next());
-      }
-      return list;
+      return containerLoader.iterator().next();
    }
 }
