@@ -2,13 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+   <!-- Parent -->
+   <parent>
+      <groupId>org.jboss.arquillian</groupId>
+      <artifactId>arquillian-build</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <relativePath>../build/pom.xml</relativePath>
+   </parent>
+
    <!-- Model Version -->
    <modelVersion>4.0.0</modelVersion>
 
    <!-- Artifact Configuration -->
-   <groupId>iorg.jboss.arquillian</groupId>
    <artifactId>arquillian-demo</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
    <name>Arquillian Demo</name>
    <description>Demo of Arquillian Usage</description>
 
@@ -16,7 +22,6 @@
    <properties>
 
       <!-- Versioning -->
-      <version.org.jboss.arquillian_arquillian>1.0.0-SNAPSHOT</version.org.jboss.arquillian_arquillian>
 
    </properties>
 
@@ -27,7 +32,7 @@
             <dependency>
                <groupId>org.jboss.arquillian</groupId>
                <artifactId>arquillian-jboss-embedded</artifactId>
-               <version>${version.org.jboss.arquillian_arquillian}</version>
+               <version>${project.version}</version>
             </dependency>
          </dependencies>
       </profile>
@@ -37,7 +42,7 @@
             <dependency>
                <groupId>org.jboss.arquillian</groupId>
                <artifactId>arquillian-jboss-remote-51</artifactId>
-               <version>${version.org.jboss.arquillian_arquillian}</version>
+               <version>${project.version}</version>
             </dependency>
          </dependencies>
       </profile>
@@ -47,7 +52,7 @@
             <dependency>
                <groupId>org.jboss.arquillian</groupId>
                <artifactId>arquillian-jboss-remote-60</artifactId>
-               <version>${version.org.jboss.arquillian_arquillian}</version>
+               <version>${project.version}</version>
             </dependency>
          </dependencies>
       </profile>
@@ -84,7 +89,7 @@
       <dependency>
          <groupId>org.jboss.arquillian</groupId>
          <artifactId>arquillian-junit</artifactId>
-         <version>${version.org.jboss.arquillian_arquillian}</version>
+         <version>${project.version}</version>
       </dependency>
 
       <dependency>
