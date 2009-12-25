@@ -17,8 +17,8 @@
 
   <!-- Artifact Configuration -->
   <artifactId>arquillian-junit</artifactId>
-  <name>Arquillian JUnit Implementation</name>
-  <description>JUnit Implementations for the the Project</description>
+  <name>Arquillian TestRunner JUnit</name>
+  <description>JUnit Implementations for the Arquillian Project</description>
 
 
   <!-- Properties -->

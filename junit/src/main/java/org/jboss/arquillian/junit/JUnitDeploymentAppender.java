@@ -47,11 +47,14 @@ public class JUnitDeploymentAppender implements DeploymentAppender
                         .addManifestResource(
                               "META-INF/services/org.jboss.arquillian.spi.TestRunner",
                               "services/org.jboss.arquillian.spi.TestRunner");
-      try {
+      try 
+      {
          archive.addPackages(
                true, 
                Package.getPackage("junit.framework"));
-      } catch (Exception e) {
+      } 
+      catch (Exception e) 
+      {
          // TODO: ignore, junit.framework is obsolete ?
       }
       

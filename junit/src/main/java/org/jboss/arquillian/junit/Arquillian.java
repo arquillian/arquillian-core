@@ -31,7 +31,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-// TODO: where to put start/stop container..
 /**
  * Arquillian
  *

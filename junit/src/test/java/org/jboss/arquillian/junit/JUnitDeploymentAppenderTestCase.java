@@ -32,8 +32,8 @@ public class JUnitDeploymentAppenderTestCase
 {
 
    @Test
-   public void shouldGenerateDependencies() throws Exception {
-      
+   public void shouldGenerateDependencies() throws Exception 
+   {
       Archive<?> archive = new JUnitDeploymentAppender().createArchive();
       
       Assert.assertTrue(
