@@ -14,31 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.acme.weld;
+package com.acme.cdi;
 
 import javax.enterprise.inject.spi.BeanManager;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import com.acme.ejb.GreetingManager;
 import com.acme.ejb.GreetingManagerBean;
 
 /**
- * WeldGreetingsTest
+ * InjectionTestCase
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectionTestCase extends Arquillian
+@RunWith(Arquillian.class)
+public class InjectionTestCase
 {
    @Deployment
    public static JavaArchive createDeployment() {
@@ -56,16 +57,17 @@ public class InjectionTestCase extends Arquillian
    @Inject BeanManager beanManager;
    
    @Test
-   public void shouldBeAbleToInjectWeld() throws Exception {
+   public void shouldBeAbleToInjectCDI() throws Exception {
       
       String userName = "Devoxx";
       
       Assert.assertNotNull(
-            beanManager,
-            "Should have injected manager");
+            "Should have injected manager",
+            beanManager);
 
       Assert.assertEquals(
-            greetingManager.greet(userName),
-            "Hello " + userName);
+            "Hello " + userName,
+            greetingManager.greet(userName));
+      
    }
 }
