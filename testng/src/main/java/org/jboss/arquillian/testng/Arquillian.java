@@ -58,7 +58,7 @@ public abstract class Arquillian implements IHookable
    }
 
    @AfterSuite
-   public void destoryAndStopContainer() throws LifecycleException
+   public void destroyAndStopContainer() throws LifecycleException
    {
       if (deployableTest == null)
       {
@@ -75,7 +75,7 @@ public abstract class Arquillian implements IHookable
    }
 
    @AfterClass
-   public void destoryAndUndeployArtifact() throws DeploymentException
+   public void destroyAndUndeployArtifact() throws DeploymentException
    {
       deployableTest.getDeployer().undeploy(archive);
    }
