@@ -17,13 +17,14 @@
 package org.jboss.arquillian.testng;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.impl.DeployableTest;
+import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
-import org.jboss.shrinkwrap.impl.base.Validate;
 import org.testng.TestNG;
 import org.testng.internal.AnnotationTypeEnum;
 import org.testng.xml.XmlClass;

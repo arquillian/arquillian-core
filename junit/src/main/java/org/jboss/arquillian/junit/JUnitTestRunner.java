@@ -18,10 +18,10 @@ package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.impl.DeployableTest;
 import org.jboss.arquillian.impl.TestResultImpl;
+import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.shrinkwrap.impl.base.Validate;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
