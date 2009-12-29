@@ -17,6 +17,7 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -44,9 +45,9 @@ public class JUnitDeploymentAppender implements DeploymentAppender
                               Package.getPackage("org.junit"),
                               Package.getPackage("org.hamcrest"),
                               Package.getPackage("org.jboss.arquillian.junit"))
-                        .addManifestResource(
-                              "META-INF/services/org.jboss.arquillian.spi.TestRunner",
-                              "services/org.jboss.arquillian.spi.TestRunner");
+                        .addServiceProvider(
+                              TestRunner.class, 
+                              JUnitTestRunner.class);
       try 
       {
          archive.addPackages(

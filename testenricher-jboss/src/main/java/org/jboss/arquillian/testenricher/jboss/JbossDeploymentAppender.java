@@ -17,6 +17,7 @@
 package org.jboss.arquillian.testenricher.jboss;
 
 import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -43,9 +44,11 @@ public class JbossDeploymentAppender implements DeploymentAppender
                         .addPackages(
                               true, 
                               Package.getPackage("org.jboss.arquillian.testenricher.jboss"))
-                        .addManifestResource(
-                              "META-INF/services/org.jboss.arquillian.spi.TestEnricher",
-                              "services/org.jboss.arquillian.spi.TestEnricher");
+                        .addServiceProvider(
+                              TestEnricher.class, 
+                              EJBInjectionEnricher.class,
+                              ResourceInjectionEnricher.class,
+                              CDIInjectionEnricher.class);
       return archive;
    }
 
