@@ -17,14 +17,18 @@
 package org.jboss.arquillian.testng;
 
 import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.TestNG;
 import org.testng.annotations.Test;
+import org.testng.collections.Maps;
 import org.testng.internal.AnnotationTypeEnum;
 import org.testng.log.TextFormatter;
 import org.testng.log4testng.Logger;
+import org.testng.remote.RemoteTestNG;
+import org.testng.reporters.XMLUtils;
 import org.testng.util.RetryAnalyzerCount;
 import org.testng.v6.TestPlan;
 import org.testng.xml.XmlSuite;
@@ -56,10 +60,14 @@ public class TestNGDeploymentAppender implements DeploymentAppender
                      TestPlan.class.getPackage(),
                      XmlSuite.class.getPackage(),
                      Searcher.class.getPackage(),
+                     Maps.class.getPackage(),
+                     //IJUnitTestRunner.class.getPackage(),
+                     RemoteTestNG.class.getPackage(),
+                     XMLUtils.class.getPackage(),
                      Package.getPackage("org.jboss.arquillian.testng"))
                .addPackage(TestNG.class.getPackage())
-               .addManifestResource(
-                     "META-INF/services/org.jboss.arquillian.spi.TestRunner",
-                     "services/org.jboss.arquillian.spi.TestRunner");
+               .addServiceProvider(
+                     TestRunner.class, 
+                     TestNGTestRunner.class);
    }
 }

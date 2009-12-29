@@ -40,19 +40,12 @@
       </dependency>
 
       <!-- 
-    org.jboss.shrinkwrap    
-     -->
-      <dependency>
-         <groupId>org.jboss.shrinkwrap</groupId>
-         <artifactId>shrinkwrap-impl-base</artifactId>
-      </dependency>
-
-      <!-- 
     External Projects
      -->
       <dependency>
          <groupId>org.testng</groupId>
          <artifactId>testng</artifactId>
+         <classifier>jdk15</classifier>
          <scope>provided</scope>
       </dependency>
 
