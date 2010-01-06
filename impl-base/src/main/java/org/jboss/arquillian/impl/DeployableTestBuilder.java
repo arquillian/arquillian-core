@@ -87,12 +87,10 @@ public class DeployableTestBuilder
                try 
                {
                   TestEnrichers.enrich(testMethodExecutor.getInstance());
-                  testMethodExecutor.getMethod().invoke(
-                        testMethodExecutor.getInstance());
-                  
+                  testMethodExecutor.invoke();
                   return new TestResultImpl(Status.PASSED);
                } 
-               catch (Exception e) 
+               catch (Throwable e) 
                {
                   return new TestResultImpl(Status.FAILED, e);
                }
