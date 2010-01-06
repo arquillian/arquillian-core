@@ -27,6 +27,16 @@
 
    <profiles>
       <profile>
+         <id>weld-se</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-weld-embedded</artifactId>
+               <version>${project.version}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
          <id>jboss-embedded</id>
          <dependencies>
             <dependency>

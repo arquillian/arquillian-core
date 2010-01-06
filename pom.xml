@@ -42,19 +42,31 @@
 
   <!-- Aggregate Modules -->
   <modules>
+    <!-- Core -->
     <module>api</module>
     <module>spi</module>
     <module>build</module>
     <module>impl-base</module>
+
+    <!-- Test Framework -->
     <module>junit</module>
     <module>testng</module>
+
+    <!-- Protocols -->
     <module>protocol-servlet</module>
+    <module>protocol-local</module>
+
+    <!-- Containers -->
 <!--
     <module>container-jboss-embedded</module>
 -->
     <module>container-jboss-remote-51</module>
     <module>container-jboss-remote-60</module>
     <module>testenricher-jboss</module>
+
+    <module>container-weld-embedded</module>
+
+    <!-- Demo / Test Suite -->
     <module>demo</module>
     <module>demo-testng</module>
 </modules>
