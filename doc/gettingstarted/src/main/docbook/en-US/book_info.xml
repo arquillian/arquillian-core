@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding="iso-8859-1"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"  [ ]>
+
+<bookinfo>
+	<title>Arquillian</title>
+	<subtitle>Getting Started Guide</subtitle>
+
+   <preface>
+      <title>Test the Container!</title>
+      <para>
+         Arquillian provides a easy mechanism to test your application code inside a container (remote, embedded or standalone CDI bootstrap).
+      </para>
+   </preface>
+
+   <xi:include href="author_info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+   	
+</bookinfo>

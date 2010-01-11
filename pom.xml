@@ -69,6 +69,8 @@
     <!-- Demo / Test Suite -->
     <module>demo</module>
     <module>demo-testng</module>
+
+    <module>doc/gettingstarted</module>
 </modules>
 
 </project>
