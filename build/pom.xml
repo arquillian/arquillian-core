@@ -60,8 +60,41 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+        	<id>java.dev.net</id>
+        	<url>http://download.java.net/maven/2/</url>
+        	<releases>
+				<enabled>true</enabled>
+			</releases>
+        	<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+        	<id>java.dev.net.glassfish</id>
+        	<url>http://download.java.net/maven/glassfish</url>
+        	<releases>
+				<enabled>true</enabled>
+			</releases>
+        	<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
-		
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jboss.org</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+  </pluginRepositories>
+  		
 	<!-- SCM -->
 	<scm>
 		<connection>scm:svn:http://anonsvn.jboss.org/repos/common/arquillian/trunk</connection>
