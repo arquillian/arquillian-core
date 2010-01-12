@@ -18,21 +18,16 @@ package com.acme.cdi.translate;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import com.acme.cdi.translate.TranslateController;
-
-@RunWith(Arquillian.class)
-public class TranslateTestCase {
+public class TranslateTestCase extends Arquillian {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
@@ -52,15 +47,15 @@ public class TranslateTestCase {
 		controller.setInputText("hi");
 	}
 	
-	@Test
+	@Test(dependsOnMethods = "shouldSetInputText")
 	public void shouldTranslate() throws Exception 
 	{
 		controller.translate();
 	}
 	
-	@Test
+	@Test(dependsOnMethods = "shouldTranslate")
 	public void shouldVerify() throws Exception 
 	{
-		Assert.assertEquals("hei", controller.getTranslation());
+		Assert.assertEquals(controller.getTranslation(), "hei");
 	}
 }
