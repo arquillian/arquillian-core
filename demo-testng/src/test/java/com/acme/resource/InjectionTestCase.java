@@ -17,7 +17,6 @@
 package com.acme.resource;
 
 import javax.annotation.Resource;
-
 import javax.mail.Session;
 
 import org.jboss.arquillian.api.Deployment;
@@ -33,6 +32,7 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Test(groups = "integration")
 public class InjectionTestCase extends Arquillian
 {
    @Deployment

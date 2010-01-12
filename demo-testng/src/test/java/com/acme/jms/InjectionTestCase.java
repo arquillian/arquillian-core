@@ -17,7 +17,6 @@
 package com.acme.jms;
 
 import javax.annotation.Resource;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Message;
@@ -42,20 +41,21 @@ import com.acme.util.jms.QueueRequestor;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Test(groups = "integration")
 public class InjectionTestCase extends Arquillian
 {
    @Deployment
    public static JavaArchive createDeployment() {
       return Archives.create("test.jar", JavaArchive.class)
             .addClasses(
-                  MessageEcho.class, 
+                  MessageEcho.class,
                   QueueRequestor.class);
    }
    
-   @Resource(mappedName = "/queue/DLQ") 
+   @Resource(mappedName = "/queue/DLQ")
    private Queue dlq;
    
-   @Resource(mappedName = "/ConnectionFactory") 
+   @Resource(mappedName = "/ConnectionFactory")
    private ConnectionFactory factory;
    
    @Test
