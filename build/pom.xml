@@ -157,7 +157,7 @@
 						<include>**/*TestSuite.java</include>
 					</includes>
 					<forkMode>always</forkMode>
-					<reportFormat>xml</reportFormat>
+          <useFile>true</useFile>
 				</configuration>
 			</plugin>
 
