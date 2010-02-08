@@ -20,13 +20,13 @@
       <title>Mission statement</title>
       <para>
          The mission of the Arquillian project is to provide a simple mechanism to test application code inside a
-         container. But the last thing Java developers want is yet another testing framework to make their life more
-         complicated. That's why Arquillian integrates transparently with familiar testing frameworks (JUnit 4 and
-         TestNG 5), performs runtime packaging and deployment of tests within Java EE archives and executes the tests
-         inside the container. Tests can be launched using existing IDE, Ant and Maven test plugins, thus minimizing the
-         burden on the developer to <!-- validate the behavior of managed and enterprise beans or POJOs that use
-         enterprise services --> perform integration testing. And the environment in which the tests are run is
-         pluggable, so the developer is not locked in to a proprietary testing container.
+         container. Since the last thing Java developers want is yet another testing framework to make their life more
+         complicated, Arquillian integrates transparently with familiar testing frameworks (JUnit 4 and TestNG 5) by
+         performing runtime packaging and deployment of tests within Java EE archives and executing the tests inside the
+         container. Tests can be launched using existing IDE, Ant and Maven test plugins, thus minimizing the burden on
+         the developer to <!-- validate the behavior of managed and enterprise beans or POJOs that use enterprise
+         services --> perform integration testing. And the environment in which the tests are run is pluggable, so the
+         developer is not locked in to a proprietary testing container.
       </para>
    </section>
 
