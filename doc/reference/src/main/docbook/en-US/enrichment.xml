@@ -21,7 +21,7 @@
       A key part of in-container integration testing is getting access the container-managed components that you plan to
       test. Using the Java new operator to instantiate the business class is not suitable in this testing scenario
       because it leaves out the declaratives services that get applied to the component at runtime. We want the real
-      deal. Arquillian uses test enrichment to give us access to the real deal. The visable result of test enrichment is
+      deal. Arquillian uses test enrichment to give us access to the real deal. The visible result of test enrichment is
       injection of container resources and beans directly into the test class.
    </para>
 
