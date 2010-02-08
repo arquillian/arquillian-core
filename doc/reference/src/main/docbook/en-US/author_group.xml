@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<authorgroup>
+   <author>
+      <firstname>Aslak</firstname>
+	   <surname>Knutsen</surname>
+	   <email>aslak@conduct.no</email>
+   </author>
+   <author>
+      <firstname>Pete</firstname>
+	   <surname>Muir</surname>
+   </author>
+   <author>
+      <firstname>Andrew</firstname>
+	   <surname>Rubinger</surname>
+   </author>
+   <author>
+      <firstname>Dan</firstname>
+	   <surname>Allen</surname>
+	   <email>dan.j.allen@gmail.com</email>
+   </author>
+</authorgroup>

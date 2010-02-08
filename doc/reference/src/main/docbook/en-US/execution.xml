@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<chapter id="execution">
+   <title>Test execution</title>
+
+   <para>
+      This chapter walks through the details of test execution, covering both the remote and local container cases.
+   </para>
+
+   <section>
+      <title>Anatomy of a test</title>
+
+      <para>
+         In both JUnit 4 and TestNG 5, a test case is a class which contains at least one test method. The test method
+         is designated using the <literal>@Test</literal> annotation from the respective framework. An Arquillian test
+         case looks just like a regular JUnit or TestNG test case with two declarative enhancements:
+      </para>
+
+      <itemizedlist>
+         <listitem>
+            <para>The class contains a static method annotated with <literal>@Deployment</literal> that returns a <literal>JavaArchive</literal></para>
+         </listitem>
+         <listitem>
+            <para>
+               The class is annotated with <literal>@RunWith(Arquillian.class)</literal> (JUnit) or extends
+               <literal>Arquillian</literal> (TestNG)
+            </para>
+         </listitem>
+      </itemizedlist>
+
+      <para>
+         With those two modifications in place, the test is recognized by the Arquillian test runner and will be
+         executed in the target container. It can also use the extra functionality that Arquillian provides&#8212;namely
+         container resource injections and the injection of beans.
+      </para>
+
+   </section>
+
+   <section>
+      <title>ShrinkWrap packaging</title>
+   
+      <para>
+         When the Arquillian test runner processes a test class, the first thing it does is retrieve the definition of
+         the Java archive from the <literal>@Deployment</literal> method, appends the test class to the archive and
+         packages the archive using ShrinkWrap.
+      </para>
+
+      <para>
+         The name of the archive is irrelevant, so the base name "test" is typically choosen (e.g., test.jar, test.war).
+         Once you have created the shell of the archive, the sky is really the limit of how you can assemble it. You are
+         customizing the layout and contents of the archive to suit the needs of the test. Essentially, you creating a
+         micro application in which to execute the code under test.
+      </para>
+
+      <para>
+         You can add the following artifacts to the test archive:
+      </para>
+
+      <itemizedlist>
+         <listitem>
+            <para>Java classes</para>
+         </listitem>
+         <listitem>
+            <para>A Java package (which adds all the Java classes in the package)</para>
+         </listitem>
+         <listitem>
+            <para>Classpath resources</para>
+         </listitem>
+         <listitem>
+            <para>File system resources</para>
+         </listitem>
+         <listitem>
+            <para>A programmatically-defined file</para>
+         </listitem>
+         <listitem>
+            <para>Java libraries (JAR files)</para>
+         </listitem>
+         <listitem>
+            <para>Other Java archives defined by ShrinkWrap</para>
+         </listitem>
+      </itemizedlist>
+
+      <para>
+         Consult the ShrinkWrap API to discover all the options you have available for constructing the test archive.
+      </para>
+
+   </section>
+
+   <section>
+      <title>Test archive deployment</title>
+
+      <para>
+         After the Arquillian test runner packages the test archive, it deploys it to the container. For a remote
+         container, this means copying the archive the hot deployment directory or deploying the archive using the
+         container's remote deployment service. In the case of a local container, such as Weld SE, deploying the archive
+         simply means registering the contents of the archive with the runtime environment.
+      </para>
+
+      <para>
+         <emphasis>How does Arquillian support multiple containers? And how are both remote and local cases
+         supported?</emphasis> The answer to this question gets into the extensibility of Arquillian.
+      </para>
+
+      <para>
+         Arquillian delegates to an SPI (service provider interface) to handle starting and stopping the server and
+         deploying and undeploying archives. In this case, the SPI is the interface
+         <literal>org.jboss.arquillian.spi.DeployableContainer</literal>. If you recall from the getting started
+         section, we included an Arquillian library according to the target container we wanted to us. That library
+         contains an implementation of this interface, thus controlling how Arquillian handles deployment. If you wanted to
+         introduce support for another container in Arquillian, you would simply provide an implementation of this
+         interface.
+      </para>
+
+      <para>
+         With the archive deployed, all is left is negotiating execution of the test and capturing the results. As you
+         would expect, once all the methods in the test class have be run, the archive is undeployed.
+      </para>
+
+   </section>
+
+   <section>
+      <title>Enriching the test class</title>
+
+      <para>
+         The last operation that Arquillian performs before executing the individual test methods is "enriching" the
+         test class instance. This means hooking the test class to the container environment by satisfying its injection
+         points. The enrichment is provided by any implementation of the
+         <literal>org.jboss.arquillian.spi.TestEnricher</literal> SPI on the classpath. <xref linkend="enrichment"/>
+         details the injection points that Arquillian supports.
+      </para>
+
+   </section>
+
+   <section>
+      <title>Negotiating test execution</title>
+
+      <para>
+         The question at this point is, how does Arquillian negotiate with the container to execute the test
+         when the test framework is being invoked locally? Technially the mechanism is pluggable using another SPI,
+         <literal>org.jboss.arquillian.spi.ContainerMethodExecutor</literal>. Arquillian provides a default
+         implementation for remote servers which uses HTTP communication and an implementation for local tests, which
+         works through direct execution of the test in the same JVM. Let's have a look at how the remote execution
+         works.
+      </para>
+
+      <para>
+         The archive generator bundles and registers (in the web.xml descriptor) an HttpServlet,
+         org.jboss.arquillian.protocol.servlet.ServletTestRunner, that responds to test execution GET requests. The test
+         runner on the client side delegates to the <literal>org.jboss.arquillian.spi.ContainerMethodExecutor</literal>
+         SPI implementation, which originates these test execution requests to transfer control to the container JVM.
+         The name of the test class and the method to be executed are specified in the request query parameters named
+         className and methodName, respectively.
+      </para>
+
+      <para>
+         When the test execution request is received, the servlet delegates to an implementation of the
+         <literal>org.jboss.arquillian.spi.TestRunner</literal> SPI, passing it the name of the test class and the test
+         method.  <literal>TestRunner</literal> generates a test suite dynamically from the test class and method name
+         and runs the suite (now within the context of the container).
+      </para>
+
+      <para>
+         The <literal>ServletTestRunner</literal> translates the native test result object of JUnit or TestNG into a
+         <literal>org.jboss.arquillian.spi.TestResult</literal> and passes it back to the test executor on the client
+         side by serializing the translated object into the response. The object gets encoded as either html or a
+         serialized object, depending on the value of the outputMode request parameter that was passed to the servlet.
+         Once the result has been transfered to the client-side test runner, the testing framework (JUnit or TestNG)
+         wraps up the run of the test as though it had been executed in the same JVM.
+     </para>
+
+     <para>
+        Now you should have an understanding for how tests can be executed inside the container, but still be executed
+        using existing IDE, Ant and Maven test plugins without any modification. Perhaps you have even started thinking
+        about ways in which you can enhance or extend Arquillian. But there's still one challenge that remains for
+        developing tests with Arquillian. How do you debug test? We'll look at how to hook a debugger into the test
+        execution process in the next chapter.
+     </para>
+
+<!--
+There's one piece missing. How does TestNG on the client side know to submit a request to the
+ServletTestRunner servlet to get TestNG to execute the test in the container JVM? That's the
+role of the test launcher.
+
+The test launcher is the API that allows test suite to launch the test in a pluggable fashion.
+AbstractTest, the super class of AbtractJSR299Test, implements IHookable, a TestNG
+interface which allows the execution of the test method to be intercepted. Using that mechanism,
+AbstractTest delegates execution of the test method (a method annotated with @Test in
+an @Artifact class) to an implementation of org.jboss.testharness.api.TestLauncher
+if the tests are being executed in-container. As you might anticipate, the implementation is
+specified using a property with the same name as the interface in a META-INF/jboss-test-
+launcher.properties resource. The JBoss Test Harness provides a default implementation,
+org.jboss.testharness.impl.runner.servlet.ServletTestLauncher, that hooks into the
+HTTP communication infrastructure described above. It invokes the ServletTestRunner servlet
+for each method annotated with @Test in the @Artifact that is not otherwise disabled.
+-->
+
+   </section>
+
+<!--
+vim:et:ts=3:sw=3:tw=120
+-->
+</chapter>

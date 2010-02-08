@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<chapter id="containers">
+   <title>Target containers</title>
+
+   <para>
+      Arquillian's power is not only in its ease of use, but also in its flexibility. Good integration testing is not
+      just about testing in <emphasis>any</emphasis> container, but rather testing in the container you are targeting.
+      It's all too easy to kid ourselves by tweaking our components to run in a specialized testing container, only to
+      realize that certain assumptions don't apply in the real environment and ultimately the components fail when it
+      comes time to deploy for real.
+   </para>
+
+   <para>
+      Arquillian supports a variety of target containers out of the box, which will be covered in this chapter. If the
+      container you are using isn't supported, Arquillian makes it very easy to plug in your own implementation.
+   </para>
+
+   <section>
+      <title>Container varieties</title>
+
+      <para>
+         There are three types of target containers that you can use to run your Arquillian tests:
+      </para> 
+
+      <orderedlist>
+         <listitem>
+            <para>A standalone (remote) container</para>
+         </listitem>
+         <listitem>
+            <para>An embedded container</para>
+         </listitem>
+         <listitem>
+            <para>A Java SE bean container</para>
+         </listitem>
+      </orderedlist>
+
+      <para>
+         Arquillian provides SPIs that handle each of the tasks involved in controlling the runtime environment,
+         executing the tests and aggregating the results. So in theory, you can support just about any environment that
+         can be controlled with the set of hooks you are given.
+      </para>
+
+   </section>
+
+   <section>
+      <title>Supported containers</title>
+
+      <para>
+         The implementations provided so far are shown in the table below. Also listed is the artifactId of the JAR that
+         provides the implementation.
+      </para>
+
+      <table frame="all">
+         <title>Target containers supported by Arquillian</title>
+         <tgroup cols="3">
+            <colspec colnum="1" colname="name" colwidth="1*"/>
+            <colspec colnum="2" colname="type" colwidth="1*"/>
+            <colspec colnum="3" colname="artifactId" colwidth="1*"/>
+            <thead>
+               <row>
+                  <entry>Container name</entry>
+                  <entry>Container type</entry>
+                  <entry>artifactId</entry>
+               </row>
+            </thead>
+            <tbody>
+               <row>
+                 <entry>JBoss AS 5.1</entry>
+                 <entry>standalone</entry>
+                 <entry>arquillian-jboss-remote-51</entry>
+               </row>
+               <row>
+                 <entry>JBoss AS 6.0</entry>
+                 <entry>standalone container</entry>
+                 <entry>arquillian-jboss-remote-60</entry>
+               </row>
+               <row>
+                 <entry>JBoss Embedded AS</entry>
+                 <entry>embedded container</entry>
+                 <entry>arquillian-jboss-embedded</entry>
+               </row>
+               <row>
+                 <entry>Weld SE</entry>
+                 <entry>Java SE bean container</entry>
+                 <entry>arquillian-weld-embedded</entry>
+               </row>
+            </tbody>
+         </tgroup>
+      </table>
+
+      <para>
+         Support for other containers is planned, including GlassFish V3, Embedded GlassFish V3, Tomcat and Jetty. We
+         don't plan to provide implementations for Spring or Guice, but we welcome a contribution from the community,
+         because it's certainly possible.
+      </para>
+
+   </section>
+
+   <!-- FIXME: this chapter may not be complete -->
+
+<!--
+vim:et:ts=3:sw=3:tw=120
+-->
+</chapter>

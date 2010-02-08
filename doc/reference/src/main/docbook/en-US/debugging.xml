@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<chapter id="debugging">
+
+   <title>Debugging remote tests</title>
+
+   <para>
+      While Arquillian tests can be easily executing using existing IDE, Ant and Maven test plugins, debugging tests are
+      not as straightforward (but by no means difficult). The extra steps documented in this chapter are only relevant
+      for tests which are not executed in the same JVM as the test runner. These steps to not apply to tests that are
+      run in a local bean container (e.g., Weld SE), which can be debugged just like any other unit test.
+   </para>
+
+   <para>
+      We'll assume in this chapter that you are already using Eclipse and you already have the test plugin installed for
+      the testing framework you are using (JUnit or TestNG).
+   </para>
+
+   <section>
+      <title>Debugging in Eclipse</title>
+
+      <para>
+         If you set a break point and execute the test in debug mode using a remote container, your break point won't be
+         hit. That's because when you debug an in-container test, you're actually debugging the container. The test
+         runner and the test are executing in different JVMs. Therefore, to setup debugging, you must first attach the
+         IDE debugger to the container, then execute the test in debug mode (i.e., debug as test). That puts the
+         debugger on both sides of the fence, so to speak, and allows the break point to be discovered.
+      </para>
+
+      <para>
+         Let's begin by looking at how to attach the IDE debugger to the container. This isn't specific to Arquillian.
+         It's the same setup you would use to debug a deployed application.
+      </para>
+
+      <section>
+         <title>Attaching the IDE debugger to the container</title>
+
+         <para>
+            There are two ways to attach the IDE debugger to the container. You can either start the container in debug
+            mode from within the IDE, or you can attach the debugger over a socket connection to a standalone container
+            running with JPDA enabled.
+         </para>
+
+         <para>
+            The Eclipse Server Tools, a subproject of the Eclipse Web Tools Project (WTP), has support for launching most
+            major application servers, including JBoss AS 5. However, if you are using JBoss AS, you should consider using
+            JBoss Tools instead, which offers tighter integration with JBoss technologies. See either the <ulink
+            src="http://www.eclipse.org/webtools/server/server.php">Server Tools documentation</ulink> or the <ulink
+            src="http://docs.jboss.org/tools/3.0.1.GA/en/as/html/index.html">JBoss Tools documentation</ulink> for
+            instructions on how to setup a container and start it in debug mode.
+         </para>
+
+         <para>
+            <!-- TODO migration the documentation from this blog entry into this guide -->
+            See <ulink
+            src="http://maverikpro.wordpress.com/2007/11/26/remote-debug-a-web-application-using-eclipse">this blog
+            entry</ulink> to learn how to start JBoss AS with JPDA enabled and how to get the Eclipse debugger to
+            connect to the remote process.
+         </para>
+
+         <section>
+            <title>Starting JBoss AS in debug mode</title>
+            
+            <para>
+               If you are using JBoss AS, the quickest way to setup debug mode is to add the following line to the end
+               of $JBOSS_AS_HOME/bin/run.conf (Unix/Linux):
+            </para>
+
+            <programlisting><![CDATA[JAVA_OPTS="$JAVA_OPTS
+            -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"]]></programlisting>
+
+            <para>
+               or before the line :JAVA_OPTS_SET in $JBOSS_AS_HOME/bin/run.conf.bat (Windows)
+            </para>
+
+            <programlisting><![CDATA[set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"]]></programlisting>
+ 
+            <para>
+               Keep in mind your container will always run with debug mode enabled after making this change. You might
+               want to consider putting some logic in the run.conf* file.
+            </para>
+
+         </section>
+      </section>
+
+      <section>
+         <title>Launching the test in debug mode</title>
+         
+         <para>
+            Once Eclipse is debugging the container, you can set a breakpoint in the test and debug it just like a unit
+            test. Let's give it a try.
+         </para>
+
+         <para>
+            Open an Arquillian test in the Java editor, right click in the editor view, and select Debug As > TestNG (or
+            JUnit) Test. When the IDE hits the breakpoint, it halts the JVM thread of the container rather than the
+            thread that launched the test. You are now debugging remotely.
+         </para>
+      </section>
+
+      <section>
+         <title>Stepping into external libraries</title>
+
+         <para>
+            If you plan to step into a class in an external library (code outside of your application), you must ensure
+            that the source is properly associated with the library. Below are the steps to follow to associate the
+            source of a library with the debug configuration:
+         </para>
+
+         <orderedlist>
+            <listitem>
+               <para>Select the Run > Debug Configurations... menu from the main menubar</para>
+            </listitem>
+            <listitem>
+               <para>Select the name of the test class in the TestNG (or JUnit) category</para>
+            </listitem>
+            <listitem>
+               <para>Select the Source tab</para>
+            </listitem>
+            <listitem>
+               <para>Click the Add... button on the right</para>
+            </listitem>
+            <listitem>
+               <para>Select Java Project</para>
+            </listitem>
+            <listitem>
+               <para>Check the project the contains the class you want to debug</para>
+            </listitem>
+            <listitem>
+               <para>Click OK on the Project Selection window</para>
+            </listitem>
+            <listitem>
+               <para>Click Close on the Debug Configurations window</para>
+            </listitem>
+         </orderedlist>
+
+         <para>
+            You'll have to complete those steps for any test class you are debugging, though you only have to do it once
+            (the debug configuration hangs around indefinitely).
+         </para>
+
+         <tip>
+            <para>
+               These steps may not be necessary if you have a Maven project and the sources for the library are
+               availalbe in the Maven repository.
+            </para>
+         </tip>
+
+      </section>
+
+   </section>
+
+   <section>
+      <title>Assertions in remote tests</title>
+
+      <para>
+         The first time you try Arquillian, you may find that assertions that use the Java assert keyword are not
+         working. Keep in mind that the test is not executing the same JVM as the test runner.
+      </para>
+
+      <para>
+         In order for the Java keyword "assert" to work you have to enable assertions (using the -ea flag) in the JVM
+         that is running the container. You may want to consider specifying the package names of your test classes to
+         avoid assertions to be enabled throughout the container's source code.
+      </para> 
+
+      <section>
+         <title>Enabling assertions in JBoss AS</title>
+
+         <para>
+            If you are using JBoss AS, the quickest way to setup debug mode is to add the following line to the end of $JBOSS_AS_HOME/bin/run.conf (Unix/Linux):
+         </para>
+
+         <programlisting>JAVA_OPTS="$JAVA_OPTS -ea"</programlisting>
+
+         <para>
+            or before the line :JAVA_OPTS_SET in $JBOSS_AS_HOME/bin/run.conf.bat (Windows)
+         </para>
+
+         <programlisting>set "JAVA_OPTS=%JAVA_OPTS% -ea"</programlisting>
+
+         <para>
+            Keep in mind your container will always run with assertions enabled after making this change. You might want to consider putting some logic in the run.conf* file.
+         </para>
+      </section>
+
+      <para>
+         As an alternative, we recommend using the 'Assert' object that comes with your test framework instead to avoid
+         the whole issue. Also keep in mind that if you use System.out.println statements, the output is going to show
+         up in the log file of the container rather than in the test output.
+      </para>
+
+   </section>
+
+<!--
+vim:et:ts=3:sw=3:tw=120
+-->
+</chapter>

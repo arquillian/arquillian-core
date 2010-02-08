@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<chapter id="examples">
+   <title>Introductory examples</title>
+
+   <para>
+      The following examples demonstrate the use of Arquillian. The full source code for these examples can be found in
+      the demo and demo-testng modules in the Arquillian source repository or source distribution.
+   </para>
+
+   <section id="examples.ejb">
+      <title>Testing an EJB</title>
+      <para>
+         Here's a JUnit Arquillian test that validates the behavior of the EJB session bean
+         <literal>GreetingManager</literal>. Arquillian looks up an instance of the EJB session bean in the test archive
+         and injects it into the matching field type annotated with <literal>@EJB</literal>.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[import javax.ejb.EJB;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(Arquillian.class)
+public class InjectionTestCase {
+   @Deployment
+   public static JavaArchive createDeployment() {
+      return Archives.create("test.jar", JavaArchive.class)
+         .addClasses(GreetingManager.class, GreetingManagerBean.class);
+   }
+
+   @EJB
+   private GreetingManager greetingManager;
+
+   @Test
+   public void shouldBeAbleToInjectEJB() throws Exception {
+      String userName = "Earthlings";
+      Assert.assertEquals(Hello " + userName, greetingManager.greet(userName));
+   }
+}]]></programlisting>
+
+      <para>
+         The TestNG version of this test looks identical, except that it extends the
+         <literal>org.jboss.arquillian.testng.Arquillian</literal> class rather than being annotated with
+         <literal>@RunWith</literal>.
+      </para>
+
+   </section>
+
+   <section id="examples.cdi">
+      <title>Testing CDI beans</title>
+      <para>
+         Here's an example of an JUnit Arquillian test that validates the <literal>GreetingManager</literal> EJB session
+         bean again, but this time it's injected into the test class using the <literal>@Inject</literal> annotation.
+         You could also make <literal>GreenManager</literal> a basic managed bean and inject it with the same
+         annotation. The test also verifies that the CDI <literal>BeanManager</literal> instance is available and gets
+         injected. Notice that to inject beans with CDI, you have to add a beans.xml file to the test archive.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.Paths;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import com.acme.ejb.GreetingManager;
+import com.acme.ejb.GreetingManagerBean;
+
+@RunWith(Arquillian.class)
+public class InjectionTestCase
+{
+   @Deployment
+   public static JavaArchive createDeployment() {
+      return Archives.create("test.jar", JavaArchive.class)
+         .addClasses(GreetingManager.class, GreetingManagerBean.class)
+         .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), Paths.create("beans.xml"));
+   }
+
+   @Inject GreetingManager greetingManager;
+
+   @Inject BeanManager beanManager;
+
+   @Test
+   public void shouldBeAbleToInjectCDI() throws Exception {
+      String userName = "Earthlings";
+      Assert.assertNotNull("Should have the injected the CDI bean manager", beanManager);
+      Assert.assertEquals("Hello " + userName, greetingManager.greet(userName));
+   }
+}]]></programlisting>
+   </section>
+
+   <section id="examples.jpa">
+      <title>Testing JPA</title>
+      <para>
+         In order to test JPA, you need both a database and a persistence unit. For the sake of example, let's assume we
+         are going to use the default datasource provided by the container and that the tables will be created
+         automatically when the persistence unit starts up. Here's a persistence unit configuration that satisfies that
+         scenario.
+      </para>
+
+      <programlisting role="XML"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+   xmlns="http://java.sun.com/xml/ns/persistence"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+      http://java.sun.com/xml/ns/persistence
+      http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+   <persistence-unit name="users" transaction-type="JTA">
+      <provider>org.hibernate.ejb.HibernatePersistence</provider>
+      <jta-data-source>java:/DefaultDS</jta-data-source>
+      <class>com.acme.jpa.User</class>
+      <exclude-unlisted-classes>true</exclude-unlisted-classes>
+      <properties>
+         <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+         <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
+      </properties>
+   </persistence-unit>
+</persistence>]]></programlisting>
+
+      <para>
+         Now let's assume that we have an EJB session bean that injects a persistence context and is responsible for
+         storing and retrieving instances of our domain class, <literal>User</literal>. We've catered it a bit to the
+         test for purpose of demonstration.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[public @Stateless class UserRepositoryBean implements UserRepository {
+   @PersistenceContext EntityManager em;
+
+   public void storeAndFlush(User u) {
+      em.persist(u);
+      em.flush();
+   }
+
+   public List<User> findByLastName(String lastName) {
+      return em.createQuery("select u from User u where u.lastName = :lastName")
+         .setParameter("lastName", lastName)
+         .getResultList();
+   }
+}]]></programlisting>
+
+      <para>
+         Now let's create an Arquillian test to ensure we can persist and subsequently retrieve a user. Notice that
+         we'll need to add the persistence unit descriptor to the test archive so that the persistence unit is
+         booted in the test archive.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[public class UserRepositoryTest extends Arquillian {
+   @Deployment
+   public static JavaArchive createDeployment() {
+      return Archives.create("test.jar", JavaArchive.class)
+         .addClasses(User.class, UserRepository.class, UserRepositoryBean.class)
+         .addManifestResource("test-persistence.xml", Paths.create("persistence.xml"));
+   }
+
+   private static final String FIRST_NAME = "Agent";
+   private static final String LAST_NAME = "Kay";
+
+   @EJB
+   private UserRepository userRepository;
+
+   @Test
+   public void testCanPersistUserObject() {
+      User u = new User(FIRST_NAME, LAST_NAME);
+      userRepository.storeAndFlush(u);
+      
+      List<User> users = userRepository.findByLastName(LAST_NAME);
+
+      Assert.assertNotNull(users);
+      Assert.assertTrue(users.size() == 1);
+
+      Assert.assertEquals(users.get(0).getLastName(), LAST_NAME);
+      Assert.assertEquals(users.get(0).getFirstName(), FIRST_NAME); 
+   }
+}
+      ]]></programlisting>
+   </section>
+
+   <section id="examples.jms">
+      <title>Testing JMS</title>
+      <!-- Is this the recommended approach for testing JMS/MDB? -->
+      <para>
+         Here's another JUnit Arquillian test that exercises with JMS, something that may have previously seemed very
+         tricky to test. The test uses a utility class <literal>QueueRequestor</literal> to encapsulate the low-level
+         code for sending and receiving a message using a queue.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[import javax.annotation.Resource;
+import javax.jms.*;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import com.acme.ejb.MessageEcho;
+import com.acme.util.jms.QueueRequestor;
+
+@RunWith(Arquillian.class)
+public class InjectionTestCase {
+   @Deployment
+   public static JavaArchive createDeployment() {
+      return Archives.create("test.jar", JavaArchive.class)
+         .addClasses(MessageEcho.class, QueueRequestor.class);
+   }
+
+   @Resource(mappedName = "/queue/DLQ")
+   private Queue dlq;
+
+   @Resource(mappedName = "/ConnectionFactory")
+   private ConnectionFactory factory;
+
+   @Test
+   public void shouldBeAbleToSendMessage() throws Exception {
+
+      String messageBody = "ping";
+
+      Connection connection = factory.createConnection();
+      Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+      QueueRequestor requestor = new QueueRequestor((QueueSession) session, dlq);
+
+      connection.start();
+
+      Message request = session.createTextMessage(messageBody);
+      Message response = requestor.request(request, 5000);
+
+      Assert.assertEquals("Should have responded with same message", messageBody, ((TextMessage) response).getText());
+   }
+}]]></programlisting>
+   </section>
+
+   <para>
+      That should give you a taste of what Arquillian tests look like. To learn how to setup Arquillian in your
+      application and start developing tests with it, refer to the <xref linkend="gettingstarted"/> chapter.
+   </para>
+
+<!--
+vim:et:ts=3:sw=3:tw=120
+-->
+</chapter>

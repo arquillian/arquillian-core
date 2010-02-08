@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<chapter id="gettingstarted">
+
+   <title>Getting started</title>
+
+   <para>
+      We've promised you that integration testing with Arquillian is no more complicated than writing a unit test. Now
+      it's time to prove it to you.  In this chapter, we'll look at what is required to setup Arquillian in your
+      project, how to write an Arquillian test case, how to execute the test case and produce the test results, and
+      finally how to debug an test.  That sounds like a lot, but you'll be writing your own Arquillian tests in no time.
+   </para>
+
+   <section>
+      <title>Setting up Arquillian in your Maven 2 project</title>
+      
+      <para>
+         The quickest way to get started with Arquillian is to add it to an existing Maven 2 project. Regardless of
+         whether you plan to use Maven 2 as your project build, we recommend that you take your first steps with
+         Arquillian this way so as to get to your first green bar with the least amount of distraction.
+      </para>
+
+      <para>
+         You'll first need to decide whether you are going to write tests in JUnit 4.x or TestNG 5.x. Once you make that
+         decision (use TestNG if you're not sure), you'll need to add either the JUnit or TestNG library to your test
+         build path and the corresponding Arquillian library.
+      </para>
+      
+      <para>
+         If you plan to use <emphasis>JUnit 4</emphasis>, begin by adding the following two test-scoped dependencies to
+         the <literal>&lt;dependencies&gt;</literal> section of your pom.xml.
+      </para>
+
+      <programlisting role="XML"><![CDATA[<dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>4.6</version>
+   <scope>test</scope>
+</dependency>
+
+<dependency>
+   <groupId>org.jboss.arquillian</groupId>
+   <artifactId>arquillian-junit</artifactId>
+   <version>1.0.0-SNAPSHOT</version>
+   <scope>test</scope>
+</dependency>]]></programlisting>
+
+      <para>
+         If you plan to use <emphasis>TestNG</emphasis>, add these two test-scoped dependencies instead:
+      </para>
+
+      <programlisting role="XML"><![CDATA[<dependency>
+   <groupId>org.testng</groupId>
+   <artifactId>testng</artifactId>
+   <version>5.10</version>
+   <classifier>jdk15</classifier>
+   <scope>test</scope>
+</dependency>
+
+<dependency>
+   <groupId>org.jboss.arquillian</groupId>
+   <artifactId>arquillian-testng</artifactId>
+   <version>1.0.0-SNAPSHOT</version>
+   <scope>test</scope>
+</dependency>]]></programlisting>
+
+     <para>
+        That covers the libraries you need to write your first Arquillian test case. We'll revisit the pom.xml file in a
+        moment to add the library you need to execute the test.
+     </para>
+
+   </section>
+
+   <section>
+      <title>Writing your first Arquillian test</title>
+
+      <para>
+         You're now going to write your first Arquillian test. But in order to write a test, we need to have something
+         to test. So let's first create an stateless EJB session bean that we can invoke. Let's help out those Americans
+         still trying to convert to the metric system by providing a Fahrenheit to Celsius converter. Although
+         not required in Java EE 6, we'll include a local interface for the bean to ensure maximum portability.
+      </para>
+
+      <para>
+         Here's our <literal>TemperatureConverter</literal> interface:
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[public @Local interface TemperatureConverter {
+   double convertToCelsius(double f);
+   double convertToFarenheight(double c);
+}]]></programlisting>
+
+      <para>
+         And here's the <literal>TemperatureConverterBean</literal> implementation:
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[public @Stateless class TemperatureConverterBean
+      implements TemperatureConverter {
+   public double convertToCelsius(double f) {
+      return ((f - 32) * 5 / 9);
+   }
+
+   public double convertToFarenheight(double c) {
+      return ((c * 9 / 5) + 32);
+   }
+}]]></programlisting>
+
+      <para>
+         Now we need to validate that this code runs. We'll create a test in the <literal>src/test/java</literal>
+         classpath of the project.
+      </para>
+      
+      <para>
+         In this trivial case, we could simply instantiate the implementation class in a unit test to test the
+         calculations. However, let's assume that this bean is more complex, needing to access enterprise services. We
+         want to test it as a full-blown EJB, not just as a simple bean instance. Therefore, we'll inject the EJB into
+         the test class using the <literal>@EJB</literal> annotation.
+      </para>
+
+      <para>
+         You're probably very familiar with writing tests using either JUnit or TestNG. A regular JUnit or TestNG test
+         class requires two enhancements to make it an Arquillian integration test:
+      </para>
+
+      <itemizedlist>
+         <listitem>
+            <para>Define the deployment archive for the test using ShrinkWrap</para>
+         </listitem>
+         <listitem>
+            <para>Declare for the test to use the Arquillian test runner</para>
+         </listitem>
+      </itemizedlist>
+
+      <para>
+         The deployment archive for the test is defined using a static method annotated with Arquillian's
+         <literal>@Deployment</literal> annotation that has the following signature: 
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[public static JavaArchive createTestArchive();]]></programlisting>
+
+      <para>
+         We'll add both the EJB session bean's interface and implementation class to the archive so that we have
+         something to test.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[@Deployment
+public static JavaArchive createTestArchive() {
+   return Archives.create("test.jar", JavaArchive.class)
+      .addClasses(TemperatureConverter.class, TemperatureConverter.class); 
+}]]></programlisting>
+
+      <para>
+         The JUnit and TestNG versions of our test class will be nearly identical. They will only differ in how they
+         hook into the Arquillian test runner.
+      </para>
+
+      <para>
+         When creating the JUnit version of the Arquillian test case, you will define at least one test method annotated
+         with the JUnit <literal>@Test</literal> annotation and also annotate the class with the
+         <literal>@RunWith</literal> annotation to indicate that Arquillian should be used as the test runner for this
+         class.
+      </para>
+
+      <para>
+         Here's the JUnit version of our test class:
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[@RunWith(Arquillian.class)
+public class TemperatureConverterTest {
+   @EJB
+   private TemperatureConverter converter;
+
+   @Deployment
+   public static JavaArchive createTestArchive() {
+      return Archives.create("test.jar", JavaArchive.class)
+         .addClasses(TemperatureConverter.class, TemperatureConverter.class); 
+   }
+
+   @Test
+   public void testConvertToCelcius() {
+      Assert.assertEquals(converter.convertToCelcius(32d), 0d);
+      Assert.assertEquals(converter.convertToCelcius(212d), 100d);
+   }
+
+   @Test
+   public void testConvertToFarenheight() {
+      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   }
+}]]></programlisting>
+
+      <para>
+         TestNG doesn't provide anything like JUnit's <literal>@RunWith</literal> annotation, so instead the TestNG
+         version of the Arquillian test case must extend the Arquillian class and define at least one method annotated
+         with TestNG's <literal>@Test</literal> annotation.
+      </para>
+
+      <programlisting role="JAVA"><![CDATA[public class TemperatureConverterTest extends Arquillian {
+   @EJB
+   private TemperatureConverter converter;
+
+   @Deployment
+   public static JavaArchive createTestArchive() {
+      return Archives.create("test.jar", JavaArchive.class)
+         .addClasses(TemperatureConverter.class, TemperatureConverter.class); 
+   }
+
+   @Test
+   public void testConvertToCelcius() {
+      Assert.assertEquals(converter.convertToCelcius(32d), 0d);
+      Assert.assertEquals(converter.convertToCelcius(212d), 100d);
+   }
+
+   @Test
+   public void testConvertToFarenheight() {
+      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   }
+}]]></programlisting>
+
+      <para>
+         As you can see, we are not instantiating the bean implementation class directly, but rather using the EJB
+         reference provided by the container, just as it would be used in the application. Now let's see if this baby
+         passes!
+      </para>
+
+   </section>
+
+   <section>
+      <title>Selecting a target container and running the test</title>
+
+      <para>
+         As we've been emphasizing, this test is going to run inside of a container. That means you have to have a
+         container running somewhere. While you can execute tests in an embedded container or a Java SE CDI environment,
+         we're going to start off by testing using the real deal.
+      </para>
+
+      <para>
+         If you haven't already, download the latest version of JBoss AS 6.0 from the <ulink
+         src="http://www.jboss.org/jbossas/downloads/">JBoss AS download page</ulink>, extract the distribution and
+         start the container.
+      </para>
+
+      <para>
+         Since Arquillian needs to perform JNDI lookups to get references to the components under test, we need to
+         include a <literal>jndi.properties</literal> file on the test classpath. Create the file
+         <literal>src/test/resources/jndi.properties</literal> and populate it with the following contents:
+      </para>
+
+      <programlisting><![CDATA[java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces 
+java.naming.provider.url=jnp://localhost:1099]]></programlisting>
+
+      <para>
+         Next, we're going to return to pom.xml to add another dependency. Arquillian picks which container it's going
+         to use to deploy the test archive and negotiate test execution using the service provider mechanism, meaning
+         which implementation of the <literal>ContainerDeployers</literal> SPI is on the classpath. We'll control
+         that through the use of Maven profiles. Add the following profiles to pom.xml:
+      </para>
+
+      <programlisting role="XML"><![CDATA[<profiles>
+   <profile>
+      <id>jboss-remote-60</id>
+      <dependencies>
+         <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-jboss-remote-60</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+         </dependency>
+      </dependencies>
+   </profile>
+</profiles>]]></programlisting>
+
+      <para>
+         You would setup a similar profile for each Arquillian-supported container in which you want your tests
+         executed.
+      </para>
+
+      <para>
+         All that's left is to execute the tests. In Maven, that's easy. Simply run the Maven test goal with the
+         <literal>jboss-remote-60</literal> profile activated:
+      </para>
+
+      <programlisting><![CDATA[mvn test -Pjboss-remote-60]]></programlisting>
+
+      <para>
+        You should see that the two tests pass.
+      </para>
+
+   </section>
+
+<!--
+vim:et:ts=3:sw=3:tw=120
+-->
+</chapter>

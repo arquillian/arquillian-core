@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+<preface>
+   <title>Preface: Test in the container!</title>
+   <para>
+      Ever since the inception of Java EE, testing enterprise applications has been a big pain point. Testing business
+      components, in particular, can be very challenging. Often, a vanilla unit test isn't sufficient for validating
+      such a component's behavior. <emphasis>Why is that?</emphasis> The reason is that components in an enterprise
+      application rarely perform operations which are strictly self-contained. Instead, they provide services which
+      intimately tie into the greater system.  They also have declarative functionality which gets applied to the
+      component at runtime. You could say "no business component is an island."
+   </para>
+   
+   <para>
+      The way the component interacts with the system is just as important as the work it performs. Even with the
+      application separated into more layers than your favorite Mexican dip, to validate the correctness of a component,
+      you have to observe it carrying out its work&#8212;<emphasis>in situ</emphasis>. Unit tests and mock testing can only
+      take you so far. Business logic aside, how do you test your component's "enterprise" semantics?
+   </para>
+
+   <para>
+      Especially true of business components, you eventually have to ensure that the declarative services, such as
+      dependency injection and transaction control, actually get applied and work as expected. It means interacting with
+      databases or remote systems and ensuring that the component plays well with its collaborators. What happens when
+      your Message Driven Bean can't parse the XML message? Will the right component be injected? You may just need to
+      write a test to explore how the declarative services behave, or that your application is configured correctly to
+      use them. This style of testing needed here is referred to as integration testing, and it's an essential part of
+      the enterprise development process.
+   </para>
+
+   <para>
+      Arquillian, a new testing framework developed at Jboss.org, empowers the developer to write integration tests for
+      business objects that are executed inside an embedded or remote container&#8212;whether it be a servlet container, a
+      Java EE application server or a Java SE CDI environment. Arquillian strives to make integration testing no more
+      complicated than basic unit testing. It turns out, if these tests execute quickly, they're really the only tests
+      you need.
+   </para>
+
+   <para>
+      The importance of Arquillian in the Java EE space cannot be emphasized enough. If writing good tests for Java EE
+      projects is some dark art in which knowledge is shared only by the Java gurus, people are either going to be
+      turned off of Java EE or a lot of fragile applications are going to be written. Arquillian is set to become the
+      first comprehensive solution for testing Java EE applications, namely because it leverages the container rather
+      than a contrived runtime environment.
+   </para>
+
+   <para>
+      This guide documents Arquillian's architecture, how to get started using it and how to extend it. If you have
+      questions, please use the top-level discussions forum in the Arquillian space on JBoss.org. We also provide a JIRA
+      issue tracking system for bug reports and feature requests. If you are interested in the development of
+      Arquillian, or want to translate this documentation into your language, we welcome you to join us in the Arquillian
+      Development subspace on JBoss.org.
+   </para>
+
+<!--
+vim:et:ts=3:sw=3:tw=120
+-->
+</preface>
