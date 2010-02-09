@@ -22,6 +22,7 @@ import org.jboss.arquillian.spi.util.DeploymentAppenders;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * DeploymentAppenderArchiveGenerator
@@ -51,15 +52,19 @@ public class DeploymentAppenderArchiveGenerator implements ArchiveGenerator
       Archive<?> userArchive = generator.generateArchive(testCase);
       
       EnterpriseArchive fullDeployment = Archives.create("test.ear", EnterpriseArchive.class)
-                  .addModule(userArchive);
+                  .addModule(userArchive);  
       
       for(Archive<?> moduleArchive : moduleArchives )
       {
-         fullDeployment.addModule(moduleArchive);
+         if(WebArchive.class.isInstance(moduleArchive))
+         {
+            fullDeployment.addModule(moduleArchive);
+         } 
+         else 
+         {
+            fullDeployment.addLibrary(moduleArchive);
+         }
       }
-    
-      //fullDeployment.as(ExplodedExporter.class).exportExploded(new File("target"));
-      
       return fullDeployment;
    }
 }
