@@ -47,7 +47,7 @@ public class ProtocolTestCase
    public void setup() throws Exception 
    {
       server = new Server(8181);
-      Context root = new Context(server, "/protocol", Context.SESSIONS);
+      Context root = new Context(server, "/arquillian-protocol", Context.SESSIONS);
       root.addServlet(ServletTestRunner.class, "/*");
       server.start();
    }
@@ -156,7 +156,7 @@ public class ProtocolTestCase
    
    private URL createURL(String outputMode, String testClass, String methodName) 
    {
-      StringBuilder url = new StringBuilder(createBaseURL().toExternalForm()).append("protocol/");
+      StringBuilder url = new StringBuilder(createBaseURL().toExternalForm()).append("arquillian-protocol/");
       boolean first = true;
       if(outputMode != null) 
       {
