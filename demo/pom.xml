@@ -24,21 +24,38 @@
       <!-- Versioning -->
 
    </properties>
-   
+
    <build>
-     <plugins>
-       <!-- Surefire -->
-       <plugin>
-         <artifactId>maven-surefire-plugin</artifactId>
-         <configuration>
-           <!-- ARQ-60 -->
-           <skip>true</skip>
-         </configuration>
-       </plugin>
-     </plugins>
+      <plugins>
+         <!-- Surefire -->
+         <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <!-- ARQ-60 -->
+               <skip>false</skip>
+            </configuration>
+         </plugin>
+      </plugins>
    </build>
 
    <profiles>
+      <profile>
+         <!-- 
+            Added a default profile used during compiling. 
+            The JavaEE API jar can not be on classpath during test execution.
+          -->
+         <id>default</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>javax</groupId>
+               <artifactId>javaee-api</artifactId>
+               <scope>provided</scope>
+            </dependency>
+         </dependencies>
+      </profile>
       <profile>
          <id>weld-se</id>
          <dependencies>
@@ -79,43 +96,20 @@
             </dependency>
          </dependencies>
       </profile>
+      <profile>
+         <id>glassfish-embedded</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-glassfish-embedded</artifactId>
+               <version>${project.version}</version>
+            </dependency>
+         </dependencies>
+      </profile>
    </profiles>
 
    <!-- Dependencies -->
    <dependencies>
-
-<!--  
-      <dependency>
-         <groupId>javax.ejb</groupId>
-         <artifactId>ejb-api</artifactId>
-         <version>3.0</version>
-         <scope>provided</scope>
-      </dependency>
--->
-      <dependency>
-         <groupId>org.jboss.ejb3</groupId>
-         <artifactId>jboss-ejb3-api</artifactId>
-         <version>3.1.0</version>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax.enterprise</groupId> 
-         <artifactId>cdi-api</artifactId>
-         <version>1.0</version>
-         <scope>provided</scope>       
-      </dependency>
-      <dependency>
-         <groupId>javax.mail</groupId> 
-         <artifactId>mail</artifactId>
-         <version>1.4.1</version>
-         <scope>provided</scope>       
-      </dependency>
-      <dependency>
-         <groupId>javax.jms</groupId> 
-         <artifactId>jms</artifactId>
-         <version>1.1</version>
-         <scope>provided</scope>       
-      </dependency>
 
       <dependency>
          <groupId>org.jboss.arquillian</groupId>

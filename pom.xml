@@ -64,6 +64,7 @@
     <module>container-jboss-remote-60</module>
     <module>testenricher-jboss</module>
 
+    <module>container-glassfish-embedded</module>
     <module>container-weld-embedded</module>
 
     <!-- Demo / Test Suite -->

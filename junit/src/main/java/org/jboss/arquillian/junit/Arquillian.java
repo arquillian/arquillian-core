@@ -39,7 +39,7 @@ import org.junit.runners.model.Statement;
  */
 public class Arquillian extends BlockJUnit4ClassRunner
 {
-   private static DeployableTest deployableTest;
+   private static ThreadLocal<DeployableTest> deployableTest = new ThreadLocal<DeployableTest>();
    
    private Archive<?> archive = null;
    private ContainerMethodExecutor methodExecutor;
@@ -47,12 +47,12 @@ public class Arquillian extends BlockJUnit4ClassRunner
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
-      if(deployableTest == null) 
+      if(deployableTest.get() == null) 
       {
-         deployableTest = DeployableTestBuilder.build(null);
+         deployableTest.set(DeployableTestBuilder.build(null));
          try 
          {
-            deployableTest.getContainerController().start();
+            deployableTest.get().getContainerController().start();
          } 
          catch (Exception e) 
          {
@@ -64,7 +64,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                try  
                {
-                  deployableTest.getContainerController().stop();
+                  if(deployableTest.get() != null) 
+                  {
+                     deployableTest.get().getContainerController().stop();
+                  }
                } 
                catch (Exception e) 
                {
@@ -91,10 +94,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            archive = deployableTest.generateArchive(
+            archive = deployableTest.get().generateArchive(
                   Arquillian.this.getTestClass().getJavaClass());
 
-            methodExecutor = deployableTest.getDeployer().deploy(archive);
+            methodExecutor = deployableTest.get().getDeployer().deploy(archive);
             originalStatement.evaluate();
          }
       };
@@ -110,7 +113,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          public void evaluate() throws Throwable
          {
             originalStatement.evaluate();
-            deployableTest.getDeployer().undeploy(archive);
+            deployableTest.get().getDeployer().undeploy(archive);
          }
       };
    }

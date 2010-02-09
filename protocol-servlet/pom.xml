@@ -26,6 +26,26 @@
 
    </properties>
 
+   <profiles>
+      <profile>
+         <!-- 
+            Added a default profile used during compiling. 
+            The JavaEE API jar can not be on classpath during test execution.
+          -->
+         <id>default</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>javax</groupId>
+               <artifactId>javaee-api</artifactId>
+               <scope>provided</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
+   
    <!-- Dependencies -->
    <dependencies>
 
@@ -41,10 +61,6 @@
       <!-- 
     servlet api
      -->
-      <dependency>
-         <groupId>javax.servlet</groupId>
-         <artifactId>servlet-api</artifactId>
-      </dependency>
 
       <dependency>
          <groupId>junit</groupId>

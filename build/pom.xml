@@ -31,7 +31,7 @@
 		<version.testng_testng>5.10</version.testng_testng>
 		<version.shrinkwrap_shrinkwrap>1.0.0-alpha-5</version.shrinkwrap_shrinkwrap>
 		<version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
-		<version.servlet_api>2.5</version.servlet_api>
+		<version.javaee_api>6.0</version.javaee_api>
 		<version.jetty_jetty>6.1.9</version.jetty_jetty>
 
 	</properties>
@@ -219,6 +219,11 @@
 				<version>${version.shrinkwrap_shrinkwrap}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.jboss.shrinkwrap</groupId>
+				<artifactId>shrinkwrap-extension-glassfish</artifactId>
+				<version>${version.shrinkwrap_shrinkwrap}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.jboss.embedded</groupId>
 				<artifactId>jboss-embedded-assembly</artifactId>
 				<classifier>launcher</classifier>
@@ -226,9 +231,9 @@
 				<version>${version.jboss_embedded}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>${version.servlet_api}</version>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${version.javaee_api}</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>

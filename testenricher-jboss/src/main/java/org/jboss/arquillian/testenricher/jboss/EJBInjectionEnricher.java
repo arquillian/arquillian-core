@@ -76,11 +76,18 @@ public class EJBInjectionEnricher implements TestEnricher
       InitialContext context = new InitialContext();
       try 
       {
-    	  return context.lookup("test/" + field.getType().getSimpleName() + "Bean/local");
+         return context.lookup("java:global/test.ear/test/" + field.getType().getSimpleName() + "Bean");
       } 
       catch (NamingException e) 
       {
-    	  return context.lookup("test/" + field.getType().getSimpleName() + "Bean/remote");
+    	  try 
+    	  {
+    	     return context.lookup("test/" + field.getType().getSimpleName() + "Bean/local");
+    	  } 
+    	  catch (NamingException e2) 
+    	  {
+    	     return context.lookup("test/" + field.getType().getSimpleName() + "Bean/remote");    	    
+    	  }
       }
    }
 }
