@@ -33,13 +33,6 @@
       </para>
 
       <programlisting role="XML"><![CDATA[<dependency>
-   <groupId>junit</groupId>
-   <artifactId>junit</artifactId>
-   <version>4.6</version>
-   <scope>test</scope>
-</dependency>
-
-<dependency>
    <groupId>org.jboss.arquillian</groupId>
    <artifactId>arquillian-junit</artifactId>
    <version>1.0.0-SNAPSHOT</version>
@@ -51,14 +44,6 @@
       </para>
 
       <programlisting role="XML"><![CDATA[<dependency>
-   <groupId>org.testng</groupId>
-   <artifactId>testng</artifactId>
-   <version>5.10</version>
-   <classifier>jdk15</classifier>
-   <scope>test</scope>
-</dependency>
-
-<dependency>
    <groupId>org.jboss.arquillian</groupId>
    <artifactId>arquillian-testng</artifactId>
    <version>1.0.0-SNAPSHOT</version>
@@ -137,7 +122,7 @@
          <literal>@Deployment</literal> annotation that has the following signature: 
       </para>
 
-      <programlisting role="JAVA"><![CDATA[public static JavaArchive createTestArchive();]]></programlisting>
+      <programlisting role="JAVA"><![CDATA[public static Archive<?> methodName();]]></programlisting>
 
       <para>
          We'll add both the EJB session bean's interface and implementation class to the archive so that we have
@@ -255,7 +240,7 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
       <para>
          Next, we're going to return to pom.xml to add another dependency. Arquillian picks which container it's going
          to use to deploy the test archive and negotiate test execution using the service provider mechanism, meaning
-         which implementation of the <literal>ContainerDeployers</literal> SPI is on the classpath. We'll control
+         which implementation of the <literal>DeployableContainer</literal> SPI is on the classpath. We'll control
          that through the use of Maven profiles. Add the following profiles to pom.xml:
       </para>
 

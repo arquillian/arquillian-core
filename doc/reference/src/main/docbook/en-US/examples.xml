@@ -67,7 +67,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.junit.Assert;
@@ -83,7 +83,9 @@ public class InjectionTestCase
    public static JavaArchive createDeployment() {
       return Archives.create("test.jar", JavaArchive.class)
          .addClasses(GreetingManager.class, GreetingManagerBean.class)
-         .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), Paths.create("beans.xml"));
+         .addManifestResource(
+			new ByteArrayAsset("<beans/>".getBytes()), 
+			ArchivePaths.create("beans.xml"));
    }
 
    @Inject GreetingManager greetingManager;
@@ -118,8 +120,6 @@ public class InjectionTestCase
    <persistence-unit name="users" transaction-type="JTA">
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <jta-data-source>java:/DefaultDS</jta-data-source>
-      <class>com.acme.jpa.User</class>
-      <exclude-unlisted-classes>true</exclude-unlisted-classes>
       <properties>
          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
          <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
@@ -159,7 +159,9 @@ public class InjectionTestCase
    public static JavaArchive createDeployment() {
       return Archives.create("test.jar", JavaArchive.class)
          .addClasses(User.class, UserRepository.class, UserRepositoryBean.class)
-         .addManifestResource("test-persistence.xml", Paths.create("persistence.xml"));
+         .addManifestResource(
+			"test-persistence.xml", 
+			ArchivePaths.create("persistence.xml"));
    }
 
    private static final String FIRST_NAME = "Agent";

@@ -73,7 +73,7 @@
          If a local bean is not found, then the enricher attempts a lookup for a remote bean.
       </para>
 
-      <programlisting>"test/" + unqualified interface name + "Bean/local"</programlisting>
+      <programlisting>"test/" + unqualified interface name + "Bean/remote"</programlisting>
 
       <note>
          <para>
