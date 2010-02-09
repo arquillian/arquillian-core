@@ -21,8 +21,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.junit.Assert;
@@ -49,7 +49,7 @@ public class InjectionTestCase
                      GreetingManagerBean.class)
                .addManifestResource(
                      new ByteArrayAsset("<beans/>".getBytes()), 
-                     Paths.create("beans.xml"));
+                     ArchivePaths.create("beans.xml"));
    }
    
    @Inject GreetingManager greetingManager;

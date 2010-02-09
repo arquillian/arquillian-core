@@ -20,15 +20,15 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * InjectionTestCase
+ * 
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -44,7 +44,7 @@ public class SynchronousPaymentProcessorTestCase {
 				)
 				.addManifestResource(
 						"com/acme/cdi/payment/beans.xml",
-						Paths.create("beans.xml"));
+						ArchivePaths.create("beans.xml"));
 	}
 	
 	@Inject @Synchronous PaymentProcessor processor;

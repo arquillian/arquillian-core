@@ -19,7 +19,7 @@ package org.jboss.arquillian.protocol.servlet;
 import junit.framework.Assert;
 
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Paths;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.junit.Test;
 
 /**
@@ -38,7 +38,7 @@ public class ProtocolDeploymentAppenderTestCase
       
       Assert.assertTrue(
             "Should have added web.xml",
-            archive.contains(Paths.create("WEB-INF/web.xml"))
+            archive.contains(ArchivePaths.create("WEB-INF/web.xml"))
       );
       
       System.out.println(archive.toString(true));

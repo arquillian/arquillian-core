@@ -39,11 +39,12 @@ public class ProtocolDeploymentAppender implements DeploymentAppender
    @Override
    public Archive<?> createArchive()
    {
-      WebArchive archive = Archives.create("protocol.war", WebArchive.class)
+      WebArchive archive = Archives.create("arquillian-protocol.war", WebArchive.class)
                      .setWebXML("org/jboss/arquillian/protocol/servlet/web.xml")
-                     .addPackages(
-                           true, 
-                           Package.getPackage("org.jboss.arquillian.protocol.servlet"));
+                     .addClasses(
+                           SecurityActions.class,
+                           ServletTestRunner.class
+                     );
       return archive;
    }
 

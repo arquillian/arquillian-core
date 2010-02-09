@@ -22,14 +22,11 @@ import javax.ejb.EJB;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.acme.jpa.User;
-import com.acme.jpa.UserRepository;
 
 /**
  * UserRepositoryTest
@@ -47,7 +44,7 @@ public class UserRepositoryTestCase extends Arquillian
                      User.class.getPackage())
                .addManifestResource(
                      "com/acme/jpa/user-test-persistence.xml", 
-                     Paths.create("persistence.xml"));
+                     ArchivePaths.create("persistence.xml"));
    }
    
    private static final String FIRST_NAME = "first-name";

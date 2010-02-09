@@ -20,8 +20,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.testng.Assert;
@@ -36,7 +36,7 @@ public class TranslateTestCase extends Arquillian {
 						TranslateController.class.getPackage())
 				.addManifestResource(
 						new ByteArrayAsset("<beans/>".getBytes()),
-						Paths.create("beans.xml"));
+						ArchivePaths.create("beans.xml"));
 	}
 	
 	@Inject TranslateController controller;
@@ -44,7 +44,7 @@ public class TranslateTestCase extends Arquillian {
 	@Test
 	public void shouldSetInputText() throws Exception 
 	{
-		controller.setInputText("hi");
+	   controller.setInputText("hi");
 	}
 	
 	@Test(dependsOnMethods = "shouldSetInputText")

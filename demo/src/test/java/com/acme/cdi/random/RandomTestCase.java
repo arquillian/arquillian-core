@@ -22,17 +22,15 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.Paths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.acme.cdi.random.Random;
-
 /**
- * InjectionTestCase
+ * 
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -48,7 +46,7 @@ public class RandomTestCase {
 				)
 				.addManifestResource(
 						new ByteArrayAsset("<beans/>".getBytes()),
-						Paths.create("beans.xml"));
+						ArchivePaths.create("beans.xml"));
 	}
 
 	@Inject @Random 
