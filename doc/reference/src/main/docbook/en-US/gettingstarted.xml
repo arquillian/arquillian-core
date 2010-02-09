@@ -32,7 +32,14 @@
          the <literal>&lt;dependencies&gt;</literal> section of your pom.xml.
       </para>
 
-      <programlisting role="XML"><![CDATA[<dependency>
+      <programlisting role="XML"><![CDATA[<dependency> 
+   <groupId>junit</groupId> 
+   <artifactId>junit</artifactId> 
+   <version>4.6</version> 
+   <scope>test</scope> 
+</dependency> 
+
+<dependency>
    <groupId>org.jboss.arquillian</groupId>
    <artifactId>arquillian-junit</artifactId>
    <version>1.0.0-SNAPSHOT</version>
@@ -43,7 +50,15 @@
          If you plan to use <emphasis>TestNG</emphasis>, add these two test-scoped dependencies instead:
       </para>
 
-      <programlisting role="XML"><![CDATA[<dependency>
+      <programlisting role="XML"><![CDATA[<dependency> 
+   <groupId>org.testng</groupId> 
+   <artifactId>testng</artifactId> 
+   <version>5.10</version> 
+   <classifier>jdk15</classifier> 
+   <scope>test</scope> 
+</dependency> 
+
+<dependency>
    <groupId>org.jboss.arquillian</groupId>
    <artifactId>arquillian-testng</artifactId>
    <version>1.0.0-SNAPSHOT</version>
