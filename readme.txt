@@ -45,6 +45,6 @@
  Source Code:               http://anonsvn.jboss.org/repos/common/arquillian/trunk
  Issue Tracker:             https://jira.jboss.org/jira/browse/ARQ
 
- TODO Add link to project page and reference guide when ready
+ TODO Add link to project page, API docs and reference guide when ready
 
 vim:et:ts=3:sw=3:tw=78
