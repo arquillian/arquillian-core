@@ -30,7 +30,7 @@
    </para>
 
    <para>
-      Arquillian, a new testing framework developed at Jboss.org, empowers the developer to write integration tests for
+      Arquillian, a new testing framework developed at JBoss.org, empowers the developer to write integration tests for
       business objects that are executed inside an embedded or remote container&#8212;whether it be a servlet container, a
       Java EE application server or a Java SE CDI environment. Arquillian strives to make integration testing no more
       complicated than basic unit testing. It turns out, if these tests execute quickly, they're really the only tests
