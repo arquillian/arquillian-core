@@ -71,7 +71,7 @@
     <module>demo</module>
     <module>demo-testng</module>
 
-    <module>doc/gettingstarted</module>
+    <module>doc/reference</module>
 </modules>
 
 </project>
