@@ -54,14 +54,16 @@
 
       <table frame="all">
          <title>Target containers supported by Arquillian</title>
-         <tgroup cols="3">
+         <tgroup cols="4">
             <colspec colnum="1" colname="name" colwidth="1*"/>
             <colspec colnum="2" colname="type" colwidth="1*"/>
-            <colspec colnum="3" colname="artifactId" colwidth="1*"/>
+            <colspec colnum="3" colname="compliance" colwidth="1*"/>
+            <colspec colnum="4" colname="artifactId" colwidth="1*"/>
             <thead>
                <row>
                   <entry>Container name</entry>
                   <entry>Container type</entry>
+                  <entry>Spec compliance</entry>
                   <entry>artifactId</entry>
                </row>
             </thead>
@@ -69,21 +71,31 @@
                <row>
                  <entry>JBoss AS 5.1</entry>
                  <entry>standalone</entry>
+                 <entry>Java EE 5</entry>
                  <entry>arquillian-jboss-remote-51</entry>
                </row>
                <row>
-                 <entry>JBoss AS 6.0</entry>
+                 <entry>JBoss AS 6.0 M1</entry>
                  <entry>standalone container</entry>
+                 <entry>Java EE 6</entry>
                  <entry>arquillian-jboss-remote-60</entry>
                </row>
                <row>
                  <entry>JBoss Embedded AS</entry>
                  <entry>embedded container</entry>
+                 <entry>Java EE 6</entry>
                  <entry>arquillian-jboss-embedded</entry>
+               </row>
+               <row>
+                 <entry>Embedded GlassFish V3</entry>
+                 <entry>embedded container</entry>
+                 <entry>Java EE 6</entry>
+                 <entry>arquillian-glassfish-embedded</entry>
                </row>
                <row>
                  <entry>Weld SE</entry>
                  <entry>Java SE bean container</entry>
+                 <entry>CDI</entry>
                  <entry>arquillian-weld-embedded</entry>
                </row>
             </tbody>
@@ -91,9 +103,9 @@
       </table>
 
       <para>
-         Support for other containers is planned, including GlassFish V3, Embedded GlassFish V3, Tomcat and Jetty. We
-         don't plan to provide implementations for Spring or Guice, but we welcome a contribution from the community,
-         because it's certainly possible.
+         Support for other containers is planned, including GlassFish V3, Tomcat and Jetty. We don't plan to provide
+         implementations for Spring or Guice, but we welcome a contribution from the community, because it's certainly
+         possible.
       </para>
 
    </section>
