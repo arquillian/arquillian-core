@@ -5,6 +5,8 @@
 <bookinfo>
    <title>Arquillian: An integration testing framework for Java EE</title>
    <subtitle>Reference Guide</subtitle>
+   <!-- is there any way to pass a variable w/ the maven-jdocbook-plugin? -->
+   <releaseinfo>1.0.0-SNAPSHOT</releaseinfo>
 
    <xi:include href="author_group.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
