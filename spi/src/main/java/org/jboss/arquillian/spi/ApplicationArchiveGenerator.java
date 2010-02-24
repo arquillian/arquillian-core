@@ -14,22 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
+package org.jboss.arquillian.spi;
 
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * NullArtifactGenerator
+ * Class responsible for creating the ApplicationArchive.
+ * 
+ * Example:
+ *  - handle @Deployment
+ *  - @Artifact
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class NullArtifactGenerator implements ArchiveGenerator
+public interface ApplicationArchiveGenerator
 {
-
-   @Override
-   public Archive<?> generateArchive(Class<?> testCase)
-   {
-      return null;
-   }
+   /**
+    * Generate a new Archive based on the given test case.
+    * 
+    * @param testCase Current test case class
+    * @return The Generated Archive
+    */
+   Archive<?> generateApplicationArchive(Class<?> testCaseClass);
 }

@@ -34,7 +34,7 @@ public class TestNGDeploymentAppenderTestCase
    @Test
    public void shouldGenerateDependencies() throws Exception 
    {
-      Archive<?> archive = new TestNGDeploymentAppender().createArchive();
+      Archive<?> archive = new TestNGDeploymentAppender().createAuxiliaryArchive();
 
       Assert.assertTrue(
             "Should have added TestRunner SPI",

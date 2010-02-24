@@ -14,36 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit;
-
-import junit.framework.Assert;
+package org.jboss.arquillian.spi;
 
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.junit.Test;
 
 /**
- * JUnitDeploymentAppenderTestCase
+ * Extension point to alter system defined deployments.
+ * 
+ * Example:
+ * - Add beans.xml to EE modules
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppenderTestCase
+public interface AuxiliaryArchiveProcessor
 {
-
-   @Test
-   public void shouldGenerateDependencies() throws Exception 
-   {
-      Archive<?> archive = new JUnitDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added TestRunner SPI",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.spi.TestRunner")));
-      
-      Assert.assertTrue(
-            "Should have added TestRunner Impl",
-            archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/JUnitTestRunner.class")));
-
-      System.out.println(archive.toString(true));      
-   }
+   /**
+    * Called once for each found ArchiveAppender
+    * 
+    * @param auxiliaryArchive The system defined deployment archive
+    */
+   void process(Archive<?> auxiliaryArchive);
 }

@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.container.ClassContainer;
 
@@ -28,11 +29,10 @@ import org.jboss.shrinkwrap.api.container.ClassContainer;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class UserCreatedArchiveGenerator implements ArchiveGenerator
+public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveGenerator 
 {
 
-   @Override
-   public Archive<?> generateArchive(Class<?> testCase)
+   public Archive<?> generateApplicationArchive(Class<?> testCase)
    {
       Validate.notNull(testCase, "TestCase must be specified");
       
@@ -59,7 +59,7 @@ public class UserCreatedArchiveGenerator implements ArchiveGenerator
       }
    }
    
-   private Method findDeploymentMethod(Class<?> testCase) 
+   private static Method findDeploymentMethod(Class<?> testCase) 
    {
       Method[] methods = testCase.getMethods();
       for(Method method: methods)

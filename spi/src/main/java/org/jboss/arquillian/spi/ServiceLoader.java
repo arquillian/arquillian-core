@@ -14,36 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit;
+package org.jboss.arquillian.spi;
 
-import junit.framework.Assert;
-
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.junit.Test;
+import java.util.Collection;
 
 /**
- * JUnitDeploymentAppenderTestCase
+ * ServiceLoader
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppenderTestCase
+public interface ServiceLoader
 {
-
-   @Test
-   public void shouldGenerateDependencies() throws Exception 
-   {
-      Archive<?> archive = new JUnitDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added TestRunner SPI",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.spi.TestRunner")));
-      
-      Assert.assertTrue(
-            "Should have added TestRunner Impl",
-            archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/JUnitTestRunner.class")));
-
-      System.out.println(archive.toString(true));      
-   }
+   <T> Collection<T>  all(Class<T> serviceClass);
+   
+   <T> T  onlyOne(Class<T> serviceClass);
 }

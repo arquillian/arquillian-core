@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl;
 
 import org.jboss.arquillian.impl.container.Controlable;
+import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -27,6 +28,7 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class DeployableTest
 {
+   // TODO: move to DeploybleTestBuilder
    private static boolean inContainer = false;
    
    public static boolean isInContainer()
@@ -41,11 +43,18 @@ public class DeployableTest
 
    private Controlable containerController;
    private Deployer containerDeployer;
+   private ServiceLoader serviceLoader;
    
-   DeployableTest(Controlable containerController, Deployer containerDeployer)
+   
+   DeployableTest(Controlable containerController, Deployer containerDeployer, ServiceLoader serviceLoader)
    {
+      Validate.notNull(containerController, "ContainerController must bespecified");
+      Validate.notNull(containerDeployer, "ContainerDeployer must bespecified");
+      Validate.notNull(serviceLoader, "ServiceLoader must bespecified");
+      
       this.containerController = containerController;
       this.containerDeployer = containerDeployer;
+      this.serviceLoader = serviceLoader;
    }
    
    public Controlable getContainerController() 
@@ -58,18 +67,18 @@ public class DeployableTest
       return containerDeployer;
    }
 
-   
-   public ArchiveGenerator getArchiveGenerator() 
+   public Archive<?> generateArchive(Class<?> testCase) 
+   {
+      return getArchiveGenerator().generate(testCase);
+   }
+
+   // TODO: move DeploymentGenerator injection to DeployableTestBuilder
+   private DeploymentGenerator getArchiveGenerator() 
    {
       if(DeployableTest.isInContainer()) 
       {
-         return new NullArtifactGenerator();
+         return new NullDeploymentGenerator();
       }
-      return new DeploymentAppenderArchiveGenerator(new UserCreatedArchiveGenerator());
-   }
-
-   public Archive<?> generateArchive(Class<?> testCase) 
-   {
-      return getArchiveGenerator().generateArchive(testCase);
+      return new ClientDeploymentGenerator(serviceLoader);
    }
 }

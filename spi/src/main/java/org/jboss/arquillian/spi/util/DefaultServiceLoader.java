@@ -222,12 +222,14 @@ public class DefaultServiceLoader<S> implements Iterable<S>
                   }
                   catch (Exception e)
                   {
+                     e.printStackTrace();
                      // TODO Don't use exceptions for flow control!
                      // try the next line
                   }
 
                   line = reader.readLine();
                }
+               reader.close();
             }
             catch (Exception e)
             {

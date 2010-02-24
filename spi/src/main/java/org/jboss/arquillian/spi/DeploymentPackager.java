@@ -14,32 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.util;
+package org.jboss.arquillian.spi;
 
-import org.jboss.arquillian.spi.DeployableContainer;
+import java.util.Collection;
+
+import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * DeployableContainers
+ * Extension point for the DeployableContainer to prepare the Archives for deployment.
+ * 
+ * Example:
+ * - Create a EAR, WAR
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeployableContainers
+public interface DeploymentPackager
 {
-
-   private DeployableContainers() {}
-   
-   public static DeployableContainer load() 
-   {
-      DefaultServiceLoader<DeployableContainer> containerLoader = DefaultServiceLoader.load(DeployableContainer.class);
-      if(containerLoader.getProviders().size() == 0)
-      {
-         throw new RuntimeException("No containers found");
-      }
-      if(containerLoader.getProviders().size() > 1)
-      {
-         throw new RuntimeException("More the one container found, check classpath");
-      }
-      return containerLoader.iterator().next();
-   }
+   /**
+    * @param applicationArchive The user defined deployment archive
+    * @param auxiliaryArchives All found system defined deployment archives
+    * @return A archive to deploy
+    */
+   Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives);
 }

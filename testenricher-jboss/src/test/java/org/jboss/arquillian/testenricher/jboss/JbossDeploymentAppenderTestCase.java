@@ -34,7 +34,7 @@ public class JbossDeploymentAppenderTestCase
    @Test
    public void shouldGenerateDependencies() throws Exception {
 
-      Archive<?> archive = new JbossDeploymentAppender().createArchive();
+      Archive<?> archive = new JbossDeploymentAppender().createAuxiliaryArchive();
       System.out.println(archive.toString(true));
       
       Assert.assertTrue(

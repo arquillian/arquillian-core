@@ -31,7 +31,7 @@ public class ArquillianDeploymentAppenderTestCase
    @Test
    public void shouldGenerateDependencies() throws Exception {
       
-      Archive<?> archive = new ArquillianDeploymentAppender().createArchive();
+      Archive<?> archive = new ArquillianDeploymentAppender().createAuxiliaryArchive();
       
       System.out.println(archive.toString(true));
    }

@@ -23,10 +23,10 @@ import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentException;
 import org.jboss.arquillian.spi.LifecycleException;
+import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.arquillian.spi.util.DeployableContainers;
 import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -40,11 +40,13 @@ public class DeployableTestBuilder
 {
    private DeployableTestBuilder() {}
    
-   // TODO: lookup/load container, setup DeployableTest
    public static DeployableTest build(Object config) 
    {
       Controlable controller = null;
       Deployer deployer = null;
+      
+      // TODO: lookup service loader impl from configuration
+      ServiceLoader serviceLoader = new DynamicServiceLoader();
       
       if(DeployableTest.isInContainer()) 
       {
@@ -53,15 +55,16 @@ public class DeployableTestBuilder
       }
       else 
       {
-         DeployableContainer container = DeployableContainers.load();
+         DeployableContainer container = serviceLoader.onlyOne(DeployableContainer.class);
+         // TODO: lookup controller / deployer from configuration
          controller = new ContainerController(container);
          deployer = new ContainerDeployer(container);
       }
 
       return new DeployableTest(
             controller,
-            deployer
-            );
+            deployer,
+            serviceLoader);
    }
    
    private static class InContainerContainer implements Controlable, Deployer 

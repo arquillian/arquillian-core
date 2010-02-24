@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
+package org.jboss.arquillian.spi;
 
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * ArchiveGenerator
+ * SPI used for modules who need to add classes/resources to the deployed archive.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ArchiveGenerator 
+public interface AuxiliaryArchiveAppender
 {
-   // Packaging SPI
-   Archive<?> generateArchive(Class<?> testCase);
-
+   /**
+    * Create a archive containing the needed resources for this extension 
+    * to run in-container.
+    * 
+    * @return A Archive of any type
+    */
+   Archive<?> createAuxiliaryArchive();
 }

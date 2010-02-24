@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.testng;
 
-import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
@@ -41,13 +41,13 @@ import com.thoughtworks.qdox.Searcher;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGDeploymentAppender implements DeploymentAppender
+public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
 {
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
     */
    @Override
-   public Archive<?> createArchive()
+   public Archive<?> createAuxiliaryArchive()
    {
       return Archives.create("arquillian-testng.jar", JavaArchive.class)
                .addPackages(

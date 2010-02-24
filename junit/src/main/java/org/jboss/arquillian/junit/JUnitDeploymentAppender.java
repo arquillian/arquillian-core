@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.junit;
 
-import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
@@ -30,14 +30,14 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppender implements DeploymentAppender
+public class JUnitDeploymentAppender implements AuxiliaryArchiveAppender
 {
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
     */
    @Override
-   public Archive<?> createArchive()
+   public Archive<?> createAuxiliaryArchive()
    {
       JavaArchive archive = Archives.create("arquillian-junit.jar", JavaArchive.class)
                         .addPackages(

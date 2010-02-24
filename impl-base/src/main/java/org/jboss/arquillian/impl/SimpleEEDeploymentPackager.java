@@ -16,55 +16,41 @@
  */
 package org.jboss.arquillian.impl;
 
-import java.util.List;
+import java.util.Collection;
 
-import org.jboss.arquillian.spi.util.DeploymentAppenders;
+import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * DeploymentAppenderArchiveGenerator
- *
+ * DummyDeploymentPakcager
+ * 
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentAppenderArchiveGenerator implements ArchiveGenerator
+public class SimpleEEDeploymentPackager implements DeploymentPackager
 {
-   private ArchiveGenerator generator;
-   
-   public DeploymentAppenderArchiveGenerator(ArchiveGenerator generator)
-   {
-      Validate.notNull(generator, "Generator must be specified");
-      this.generator = generator;
-   }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.ArchiveGenerator#generateArchive(java.lang.Class)
-    */
    @Override
-   public Archive<?> generateArchive(Class<?> testCase)
+   public Archive<?> generateDeployment(Archive<?> userArchive, Collection<Archive<?>> systemArchives)
    {
-      Validate.notNull(testCase, "TestCase must be specified");
-      List<Archive<?>> moduleArchives = DeploymentAppenders.getArchives();
-      
-      Archive<?> userArchive = generator.generateArchive(testCase);
-      
       EnterpriseArchive fullDeployment = Archives.create("test.ear", EnterpriseArchive.class)
-                  .addModule(userArchive);  
-      
-      for(Archive<?> moduleArchive : moduleArchives )
+            .addModule(userArchive);
+
+      for (Archive<?> moduleArchive : systemArchives)
       {
-         if(WebArchive.class.isInstance(moduleArchive))
+         if (WebArchive.class.isInstance(moduleArchive))
          {
             fullDeployment.addModule(moduleArchive);
          } 
-         else 
+         else
          {
             fullDeployment.addLibrary(moduleArchive);
          }
       }
       return fullDeployment;
    }
+
 }

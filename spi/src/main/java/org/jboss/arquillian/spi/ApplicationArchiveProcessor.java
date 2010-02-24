@@ -14,42 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.util;
+package org.jboss.arquillian.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jboss.arquillian.spi.DeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * DeploymentAppenders
+ * Extension point for client side deployment enhancements.
  * 
- * Helper class for getting all Archives that should be added to the deployment. 
+ * Example:
+ * - Annotations to help define meta data for the deployment 
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public final class DeploymentAppenders
+public interface ApplicationArchiveProcessor
 {
-   private DeploymentAppenders() { }
-   
    /**
-    * Load/Create all Archives provided by the different modules. 
     * 
-    * @return A List of all archives
+    * 
+    * @param applicationArchive The user defined deployment archive
+    * @param testClass The users test class
     */
-   public static List<Archive<?>> getArchives() 
-   {
-      List<Archive<?>> archives = new ArrayList<Archive<?>>();
-      DefaultServiceLoader<DeploymentAppender> serviceLoader = DefaultServiceLoader.load(
-            DeploymentAppender.class);
-   
-      for(DeploymentAppender deploymentAppender : serviceLoader)
-      {
-         archives.add(deploymentAppender.createArchive());
-      }
-      return archives;
-   }
-   
+   void process(Archive<?> applicationArchive, Class<?> testCaseClass);
 }

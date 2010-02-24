@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -28,14 +28,14 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArquillianDeploymentAppender implements DeploymentAppender
+public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
 {
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
     */
    @Override
-   public Archive<?> createArchive()
+   public Archive<?> createAuxiliaryArchive()
    {
       
       JavaArchive archive = Archives.create("arquillian-core.jar", JavaArchive.class)

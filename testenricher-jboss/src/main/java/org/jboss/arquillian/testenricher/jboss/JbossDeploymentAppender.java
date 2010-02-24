@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.testenricher.jboss;
 
-import org.jboss.arquillian.spi.DeploymentAppender;
+import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Archives;
@@ -31,14 +31,14 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JbossDeploymentAppender implements DeploymentAppender
+public class JbossDeploymentAppender implements AuxiliaryArchiveAppender
 {
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
     */
    @Override
-   public Archive<?> createArchive()
+   public Archive<?> createAuxiliaryArchive()
    {
       JavaArchive archive = Archives.create("jboss-testenrichers.jar", JavaArchive.class)
                         .addPackages(

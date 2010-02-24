@@ -34,7 +34,7 @@ public class ProtocolDeploymentAppenderTestCase
    @Test
    public void shouldGenerateDependencies() throws Exception {
       
-      Archive<?> archive = new ProtocolDeploymentAppender().createArchive();
+      Archive<?> archive = new ProtocolDeploymentAppender().createAuxiliaryArchive();
       
       Assert.assertTrue(
             "Should have added web.xml",

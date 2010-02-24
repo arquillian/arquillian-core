@@ -14,36 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit;
-
-import junit.framework.Assert;
+package org.jboss.arquillian.impl;
 
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.junit.Test;
 
 /**
- * JUnitDeploymentAppenderTestCase
+ * NullDeploymentGenerator
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppenderTestCase
+public class NullDeploymentGenerator implements DeploymentGenerator
 {
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.DeploymentGenerator#generate(java.lang.Class)
+    */
+   @Override
+   public Archive<?> generate(Class<?> testCase)
    {
-      Archive<?> archive = new JUnitDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added TestRunner SPI",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.spi.TestRunner")));
-      
-      Assert.assertTrue(
-            "Should have added TestRunner Impl",
-            archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/JUnitTestRunner.class")));
-
-      System.out.println(archive.toString(true));      
+      return null;
    }
 }
