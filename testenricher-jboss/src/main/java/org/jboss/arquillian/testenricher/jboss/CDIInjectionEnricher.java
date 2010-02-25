@@ -31,7 +31,8 @@ import org.jboss.arquillian.spi.TestEnricher;
  */
 public class CDIInjectionEnricher implements TestEnricher 
 {
-   private static final String JNDI_BEAN_MANAGER = "java:/app/BeanManager";
+   private static final String JNDI_BEAN_MANAGER = "java:comp/BeanManager";
+   private static final String JNDI_BEAN_MANAGER_JBOSS = "java:app/BeanManager";
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
    
    @Override
@@ -75,7 +76,15 @@ public class CDIInjectionEnricher implements TestEnricher
       }
       catch (Exception e) 
       {
-         return null;
+         // TODO: hack until JBoss fix BeanManager binding 
+         try 
+         {
+            return (BeanManager)new InitialContext().lookup(JNDI_BEAN_MANAGER_JBOSS);
+         } 
+         catch (Exception e2) 
+         {
+            return null;
+         }
       }
    }
 }
