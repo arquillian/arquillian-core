@@ -66,6 +66,7 @@
 
     <module>container-glassfish-embedded</module>
     <module>container-weld-embedded</module>
+    <module>container-openejb</module>
 
     <!-- Demo / Test Suite -->
     <module>demo</module>
