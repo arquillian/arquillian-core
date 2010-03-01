@@ -32,7 +32,7 @@
          <artifactId>maven-surefire-plugin</artifactId>
          <configuration>
            <!-- ARQ-60 -->
-           <skip>true</skip>
+	   <skip>true</skip>
          </configuration>
        </plugin>
      </plugins>
@@ -113,6 +113,16 @@
             <dependency>
                <groupId>org.jboss.arquillian</groupId>
                <artifactId>arquillian-glassfish-embedded</artifactId>
+               <version>${project.version}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>openejb</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-container-openejb</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>

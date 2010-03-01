@@ -40,10 +40,10 @@
 
    <profiles>
       <profile>
-         <!-- 
-            Added a default profile used during compiling. 
-            The JavaEE API jar can not be on classpath during test execution.
-          -->
+         <!--
+            Added a default profile used during compiling. The JavaEE
+            API jar can not be on classpath during test execution.
+         -->
          <id>default</id>
          <activation>
             <activeByDefault>true</activeByDefault>
@@ -102,6 +102,16 @@
             <dependency>
                <groupId>org.jboss.arquillian</groupId>
                <artifactId>arquillian-glassfish-embedded</artifactId>
+               <version>${project.version}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>openejb</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian</groupId>
+               <artifactId>arquillian-container-openejb</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
