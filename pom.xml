@@ -57,6 +57,7 @@
     <module>protocol-local</module>
 
     <module>testenricher</module>
+    <module>packager</module>
 
     <!-- Containers -->
     <!--    <module>container-jboss-embedded</module> -->
