@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class InjectionTestCase {
    @Deployment
-   public static JavaArchive createDeployment() {
+   public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
          .addClasses(GreetingManager.class, GreetingManagerBean.class);
    }
@@ -80,12 +80,11 @@ import com.acme.ejb.GreetingManagerBean;
 public class InjectionTestCase
 {
    @Deployment
-   public static JavaArchive createDeployment() {
+   public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
          .addClasses(GreetingManager.class, GreetingManagerBean.class)
-         .addManifestResource(
-			new ByteArrayAsset("<beans/>".getBytes()), 
-			ArchivePaths.create("beans.xml"));
+         .addManifestResource(new ByteArrayAsset(new byte[0])), 
+			   ArchivePaths.create("beans.xml"));
    }
 
    @Inject GreetingManager greetingManager;
@@ -156,7 +155,7 @@ public class InjectionTestCase
 
       <programlisting role="JAVA"><![CDATA[public class UserRepositoryTest extends Arquillian {
    @Deployment
-   public static JavaArchive createDeployment() {
+   public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
          .addClasses(User.class, UserRepository.class, UserRepositoryBean.class)
          .addManifestResource(
@@ -211,7 +210,7 @@ import com.acme.util.jms.QueueRequestor;
 @RunWith(Arquillian.class)
 public class InjectionTestCase {
    @Deployment
-   public static JavaArchive createDeployment() {
+   public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
          .addClasses(MessageEcho.class, QueueRequestor.class);
    }
