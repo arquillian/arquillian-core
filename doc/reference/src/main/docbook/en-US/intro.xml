@@ -115,7 +115,7 @@
             <para>deployment &#8212; the process of dispatching an artifact to a container to make it operational</para>
          </listitem>
          <listitem>
-            <para>archive &#8212; a packaged assembly of resources which become operational inside the container</para>
+            <para>archive &#8212; a packaged assembly of code, configuration and resources</para>
          </listitem>
       </orderedlist>
 
