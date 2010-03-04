@@ -4,12 +4,12 @@
 <preface>
    <title>Preface: Test in the container!</title>
    <para>
-      Ever since the inception of Java EE, testing enterprise applications has been a big pain point. Testing business
+      Ever since the inception of Java EE, testing enterprise applications has been a major pain point. Testing business
       components, in particular, can be very challenging. Often, a vanilla unit test isn't sufficient for validating
       such a component's behavior. <emphasis>Why is that?</emphasis> The reason is that components in an enterprise
-      application rarely perform operations which are strictly self-contained. Instead, they provide services which
-      intimately tie into the greater system.  They also have declarative functionality which gets applied to the
-      component at runtime. You could say "no business component is an island."
+      application rarely perform operations which are strictly self-contained. Instead, they interact with or provide
+      services for the greater system. They also have declarative functionality which gets applied at runtime. You could
+      say "no business component is an island."
    </para>
    
    <para>
@@ -31,10 +31,10 @@
 
    <para>
       Arquillian, a new testing framework developed at JBoss.org, empowers the developer to write integration tests for
-      business objects that are executed inside an embedded or remote container&#8212;whether it be a servlet container, a
-      Java EE application server or a Java SE CDI environment. Arquillian strives to make integration testing no more
-      complicated than basic unit testing. It turns out, if these tests execute quickly, they're really the only tests
-      you need.
+      business objects that are executed inside of or through coordination with an embedded or remote
+      container&#8212;whether it be a Servlet container, a Java EE application server or a Java SE CDI environment.
+      Arquillian strives to make integration testing no more complicated than basic unit testing. It turns out, if these
+      tests execute quickly, they're really the only tests you need.
    </para>
 
    <para>

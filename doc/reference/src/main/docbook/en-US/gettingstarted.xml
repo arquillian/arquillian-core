@@ -8,23 +8,34 @@
    <para>
       We've promised you that integration testing with Arquillian is no more complicated than writing a unit test. Now
       it's time to prove it to you.  In this chapter, we'll look at what is required to setup Arquillian in your
-      project, how to write an Arquillian test case, how to execute the test case and produce the test results, and
-      finally how to debug an test.  That sounds like a lot, but you'll be writing your own Arquillian tests in no time.
+      project, how to write an Arquillian test case, how to execute the test case and how the test results are
+      displayed. That sounds like a lot, but you'll be writing your own Arquillian tests in no time. (You'll also learn
+      about <xref linkend="debugging"/> in Chapter 7).
    </para>
 
    <section>
-      <title>Setting up Arquillian in your Maven 2 project</title>
+      <title>Setting up Arquillian in a Maven project</title>
       
       <para>
          The quickest way to get started with Arquillian is to add it to an existing Maven 2 project. Regardless of
-         whether you plan to use Maven 2 as your project build, we recommend that you take your first steps with
+         whether you plan to use Maven as your project build, we recommend that you take your first steps with
          Arquillian this way so as to get to your first green bar with the least amount of distraction.
       </para>
 
       <para>
-         You'll first need to decide whether you are going to write tests in JUnit 4.x or TestNG 5.x. Once you make that
+         The first thing you should do is define a Maven property for the version of Arquillian you are going to use.
+         This way, you only have to maintain the version in one place and can reference it using the Maven variable
+         syntax everywhere else in your build file.
+      </para>
+
+      <programlisting role="XML"><![CDATA[<properties>
+   <arquillian.version>1.0.0-Alpha1</arquillian.version>
+</properties>]]></programlisting>
+
+      <para>
+         Next, you'll need to decide whether you are going to write tests in JUnit 4.x or TestNG 5.x. Once you make that
          decision (use TestNG if you're not sure), you'll need to add either the JUnit or TestNG library to your test
-         build path and the corresponding Arquillian library.
+         build path as well as the corresponding Arquillian library.
       </para>
       
       <para>
@@ -42,12 +53,12 @@
 <dependency>
    <groupId>org.jboss.arquillian</groupId>
    <artifactId>arquillian-junit</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
+   <version>${arquillian.version}</version>
    <scope>test</scope>
 </dependency>]]></programlisting>
 
       <para>
-         If you plan to use <emphasis>TestNG</emphasis>, add these two test-scoped dependencies instead:
+         If you plan to use <emphasis>TestNG</emphasis>, then add these two test-scoped dependencies instead:
       </para>
 
       <programlisting role="XML"><![CDATA[<dependency> 
@@ -61,7 +72,7 @@
 <dependency>
    <groupId>org.jboss.arquillian</groupId>
    <artifactId>arquillian-testng</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
+   <version>${arquillian.version}</version>
    <scope>test</scope>
 </dependency>]]></programlisting>
 
@@ -77,9 +88,13 @@
 
       <para>
          You're now going to write your first Arquillian test. But in order to write a test, we need to have something
-         to test. So let's first create an stateless EJB session bean that we can invoke. Let's help out those Americans
-         still trying to convert to the metric system by providing a Fahrenheit to Celsius converter. Although
-         not required in Java EE 6, we'll include a local interface for the bean to ensure maximum portability.
+         to test. So let's first create a stateless EJB session bean that we can invoke.
+      </para>
+      
+      <para>
+         We'll help out those Americans still trying to convert to the metric system by providing them a Fahrenheit to
+         Celcius converter. Although not required in Java EE 6, we'll include a local interface for the bean to ensure
+         maximum portability.
       </para>
 
       <para>
@@ -87,8 +102,9 @@
       </para>
 
       <programlisting role="JAVA"><![CDATA[public @Local interface TemperatureConverter {
-   double convertToCelsius(double f);
+   double convertToCelcius(double f);
    double convertToFarenheight(double c);
+   boolean isTransactional();
 }]]></programlisting>
 
       <para>
@@ -97,25 +113,41 @@
 
       <programlisting role="JAVA"><![CDATA[public @Stateless class TemperatureConverterBean
       implements TemperatureConverter {
-   public double convertToCelsius(double f) {
+   
+   private @Resource EJBContext ctx;
+
+   @Override
+   public double convertToCelcius(double f) {
       return ((f - 32) * 5 / 9);
    }
 
+   @Override
    public double convertToFarenheight(double c) {
       return ((c * 9 / 5) + 32);
+   }
+
+   @Override
+   public boolean isTransactional() {
+      ctx.setRollbackOnly();
+      return ctx.getRollbackOnly();
    }
 }]]></programlisting>
 
       <para>
-         Now we need to validate that this code runs. We'll create a test in the <literal>src/test/java</literal>
+         We've added an extra method to verify that we are in fact using a real EJB. The method uses the injected
+         <literal>EJBContext</literal> to ensure a container-managed transaction is present and functional.
+      </para>
+
+      <para>
+         Now we need to validate that this code runs. We'll be creating a test in the <literal>src/test/java</literal>
          classpath of the project.
       </para>
       
       <para>
-         In this trivial case, we could simply instantiate the implementation class in a unit test to test the
+         Granted, in this trivial case, we could simply instantiate the implementation class in a unit test to test the
          calculations. However, let's assume that this bean is more complex, needing to access enterprise services. We
-         want to test it as a full-blown EJB, not just as a simple bean instance. Therefore, we'll inject the EJB into
-         the test class using the <literal>@EJB</literal> annotation.
+         want to test it as a full-blown EJB, a container-managed bean, not just as a simple class instance. Therefore,
+         we'll inject the EJB into the test class using the <literal>@EJB</literal> annotation.
       </para>
 
       <para>
@@ -147,7 +179,7 @@
       <programlisting role="JAVA"><![CDATA[@Deployment
 public static JavaArchive createTestArchive() {
    return Archives.create("test.jar", JavaArchive.class)
-      .addClasses(TemperatureConverter.class, TemperatureConverter.class); 
+      .addClasses(TemperatureConverter.class, TemperatureConverterBean.class); 
 }]]></programlisting>
 
       <para>
@@ -174,7 +206,7 @@ public class TemperatureConverterTest {
    @Deployment
    public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
-         .addClasses(TemperatureConverter.class, TemperatureConverter.class); 
+         .addClasses(TemperatureConverter.class, TemperatureConverterBean.class); 
    }
 
    @Test
@@ -187,6 +219,11 @@ public class TemperatureConverterTest {
    public void testConvertToFarenheight() {
       Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
       Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   }
+
+   @Test
+   public void testIsTransactional() {
+      Assert.assertTrue(converter.isTransactional());
    }
 }]]></programlisting>
 
@@ -203,7 +240,7 @@ public class TemperatureConverterTest {
    @Deployment
    public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
-         .addClasses(TemperatureConverter.class, TemperatureConverter.class); 
+         .addClasses(TemperatureConverter.class, TemperatureConverterBean.class); 
    }
 
    @Test
@@ -217,18 +254,25 @@ public class TemperatureConverterTest {
       Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
       Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
    }
+
+   @Test
+   public void testIsTransactional() {
+      Assert.assertTrue(converter.isTransactional());
+   }
 }]]></programlisting>
 
       <para>
          As you can see, we are not instantiating the bean implementation class directly, but rather using the EJB
-         reference provided by the container, just as it would be used in the application. Now let's see if this baby
-         passes!
+         reference provided by the container at the injection point, just as it would be used in the application. (If
+         the target container has CDI, you could replace the <literal>@EJB</literal> annotation with
+         <literal>@Inject</literal>, though you would also need to add beans.xml to the deployment manifest). Now let's
+         see if this baby passes!
       </para>
 
    </section>
 
    <section>
-      <title>Selecting a target container and running the test</title>
+      <title>Setting up and running the test in Maven</title>
 
       <para>
          As we've been emphasizing, this test is going to run inside of a container. That means you have to have a
@@ -266,7 +310,7 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
          <dependency>
             <groupId>org.jboss.arquillian</groupId>
             <artifactId>arquillian-jboss-remote-60</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${arquillian.version}</version>
          </dependency>
       </dependencies>
    </profile>
@@ -274,7 +318,7 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
 
       <para>
          You would setup a similar profile for each Arquillian-supported container in which you want your tests
-         executed.
+         executed. <!-- reference to containers chapter for details -->
       </para>
 
       <para>
@@ -288,7 +332,121 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
         You should see that the two tests pass.
       </para>
 
+      <programlisting><![CDATA[-------------------------------------------------------
+T E S T S
+-------------------------------------------------------
+Running TestSuite
+log4j:WARN No appenders could be found for logger (org.jnp.interfaces.TimedSocketFactory).
+log4j:WARN Please initialize the log4j system properly.
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.000 sec
+
+Results :
+
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------]]></programlisting>
+
+      <para>
+         The tests are passing, but we don't see a green bar. To get that visual, we need to run the tests in the IDE.
+         Arquillian tests can be executed using existing IDE plugins for JUnit and TestNG, respectively, or so you've
+         been told. It's once again time to prove it.
+      </para>
+
    </section>
+
+   <section>
+      <title>Setting up and running the test in Eclipse</title>
+
+      <para>
+         Before running an Arquillian test in Eclipse, you must have the plugin for the unit testing framework you are
+         using installed. Eclipse ships with the JUnit plugin, so you are already setup if you selected JUnit.  If you
+         are writing your tests with TestNG, you need the Eclipse <ulink url="http://testng.org">TestNG plugin</ulink>.
+      </para>
+      
+      <para>
+         Since the example in this guide is based on a Maven 2 project, you will also need either the m2eclipse plugin
+         or an Eclipse project generated use the Maven 2 Eclipse plugin (<literal>maven-eclipse-plugin</literal>). The
+         m2eclipse plugin is your best bet because it provides native support for Maven 2 projects.  Instructions for
+         using the m2eclipse update site to add the m2eclipse plugin to Eclipse are provided on the m2eclipse home page.
+         For more, read the m2eclipse <ulink url="http://www.sonatype.com/books/m2eclipse-book/reference">reference
+         guide</ulink>.
+      </para>
+
+      <para>
+         Once the plugins are installed, import your Maven project into the Eclipse workspace. Before executing the
+         test, you need to enable the profile for the target container, as you did in the previous section. We'll
+         go ahead and activate the profile globally for the project. Right click on the project and select Properties.
+         Select the Maven property sheet and in the first form field, enter <literal>jboss-remote-60</literal> as shown
+         here:
+      </para>
+
+      <mediaobject>
+         <imageobject>
+            <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center"/>
+         </imageobject>
+         <caption>
+            <para>Maven settings for project</para>
+         </caption>
+      </mediaobject>
+
+      <para>
+         Click OK and accept the project changes. Now you are ready to execute tests.
+      </para>
+
+      <para>
+         Right click on the TemperatureConverterTest.java file in the Package Explorer and select Run As... > JUnit Test
+         or Run As... > TestNG Test depending on which unit testing framework the test is using.
+      </para>
+
+      <para>TODO: screenshot</para>
+
+   </section>
+
+   <section>
+      <title>Setting up and running the test in NetBeans</title>
+
+      <para>
+         Things get even simpler when using NetBeans 6.8 or better. NetBeans ships with native Maven 2 support and,
+         rather than including a test plugin for each unit testing framework, it has a generic test plugin which
+         delegates to the Maven surefire plugin to execute the tests.
+      </para>
+
+      <para>
+         Import your Maven project into NetBeans. Then, look for a select menu in the main toolbar, which you can
+         use to set the active Maven profile. Select the <literal>jboss-remote-60</literal> profile as shown here:
+      </para>
+
+      <mediaobject>
+         <imageobject>
+            <imagedata fileref="images/netbeans-project-configuration.png" format="PNG" align="center"/>
+         </imageobject>
+         <caption>
+            <para>NetBeans project configuration</para>
+         </caption>
+      </mediaobject>
+
+      <para>
+         Now you are ready to test. Simply right click on the TemperatureConverter.java file in the Projects pane and
+         select Test File. NetBeans will delegate to the Maven surefire plugin to execute the tests and then
+         display the results in a result windown, showing us a pretty green bar!
+      </para>
+
+      <mediaobject>
+         <imageobject>
+            <imagedata fileref="images/netbeans-green-bar.png" format="PNG" align="center"/>
+         </imageobject>
+         <caption>
+            <para>Successful test report in NetBeans</para>
+         </caption>
+      </mediaobject>
+
+   </section>
+
+   <para>
+      As you can see, there was no special configuration necessary to execute the tests in either Eclipse or NetBeans.
+   </para>
 
 <!--
 vim:et:ts=3:sw=3:tw=120

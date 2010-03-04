@@ -4,7 +4,27 @@
 <chapter id="extend">
    <title>Extending Arquillian</title>
 
-   <!-- TODO -->
+   <para>
+      Arquillian is designed to be very extensible. This is accomplished through the use of Service Provider Interfaces
+      (SPIs). The following diagram shows how the various SPIs in Arquillian tie into the test execution.
+   </para>
+
+   <mediaobject>
+      <imageobject>
+         <imagedata fileref="images/spi-overview-small.png" format="PNG" align="center"/>
+      </imageobject>
+      <caption>
+         <para>Arquillian test execution and SPI overview</para>
+      </caption>
+   </mediaobject>
+
+   <para>
+     This chapter will identify each of the SPIs and the purpose it serves.
+   </para>
+
+   <para>
+     TODO: Finish me
+   </para>
 
    <section id="extend.deployment">
       <title>@Deployment</title>

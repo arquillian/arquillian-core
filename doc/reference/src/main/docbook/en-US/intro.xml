@@ -5,29 +5,70 @@
    <title>Introduction</title>
 
    <para>
-      We believe that integration testing should be no more complex than writing a simple unit test. We created
+      We believe that integration testing should be no more complex than writing a basic unit test. We created
       Arquillian to realize that goal. One of the major complaints we heard about Seam 2 testing (i.e., SeamTest) was,
-      not that it wasn't possible, but that it wasn't flexible and it was difficult to setup.
+      not that it isn't possible, but that it isn't flexible and it's difficult to setup. We wanted to correct those
+      shortcomings with Arquillian.
    </para>
    
    <para>
-      People test in a myriad of ways, which is why it's so vital that, with Arquillian (and ShrinkWrap), we have
-      decomposed the problem into its essential elements. The result is a completely flexible and portable integration
-      testing framework.
+      Testing needs vary greatly, which is why it's so vital that, with Arquillian (and ShrinkWrap), we have decomposed
+      the problem into its essential elements. The result is a completely flexible and portable integration testing
+      framework.
    </para>
    
    <section id="mission">
       <title>Mission statement</title>
       <para>
-         The mission of the Arquillian project is to provide a simple mechanism to test application code inside a
-         container. Since the last thing Java developers want is yet another testing framework to make their life more
-         complicated, Arquillian integrates transparently with familiar testing frameworks (JUnit 4 and TestNG 5) by
-         performing runtime packaging and deployment of tests within Java EE archives and executing the tests inside the
-         container. Tests can be launched using existing IDE, Ant and Maven test plugins, thus minimizing the burden on
-         the developer to <!-- validate the behavior of managed and enterprise beans or POJOs that use enterprise
-         services --> perform integration testing. And the environment in which the tests are run is pluggable, so the
-         developer is not locked in to a proprietary testing container.
+         The mission of the Arquillian project is to provide a simple test harness that developers can use to produce a
+         broad range of integration tests for their Java applications (most likely enterprise applications). A test case
+         may be executed within the container, deployed alongside the code under test, or by coordinating with the
+         container, acting as a client to the deployed code.
       </para>
+
+      <para>
+         Arquillian defines two styles of container, remote and embedded. A remote container resides in a separate JVM
+         from the test runner. Its lifecycle may be managed by Arquillian, or Arquillian may bind to a container that is
+         already started. An embedded container resides in the same JVM and is mostly likely managed by Arquillian.
+         Containers can be further classified by their capabilities. Examples include a fully compliant Java EE
+         application server (e.g., GlassFish, JBoss AS, Embedded GlassFish), a Servlet container (e.g., Tomcat, Jetty)
+         and a bean container (e.g., Weld SE). Arquillian ensures that the container used for testing is pluggable, so
+         the developer is not locked into a proprietary testing environment.
+      </para>
+ 
+      <para>
+         Arquillian seeks to minimize the burden on the developer to carry out integration testing by handling all
+         aspects of test execution, including:
+      </para>
+ 
+      <itemizedlist>
+         <listitem>
+            <para>managing the lifecycle of the container (start/stop),</para>
+         </listitem>
+         <listitem>
+            <para>bundling the test class with dependent classes and resources into a deployable archive,</para>
+         </listitem>
+         <listitem>
+            <para>enhancing the test class (e.g., resolving @Inject, @EJB and @Resource injections),</para>
+         </listitem>
+         <listitem>
+            <para>deploying the archive to test (deploy/undeploy) and</para>
+         </listitem>
+         <listitem>
+            <para>capturing results and failures.</para>
+         </listitem>
+      </itemizedlist>
+ 
+      <para>
+         To avoid introducing unnecessary complexity into the developer's build environment, Arquillian integrates
+         transparently with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using
+         existing IDE, Ant and Maven test plugins without any add-ons.
+      </para>
+ 
+      <para>
+         Arquillian makes integration testing a breeze.
+      </para>
+
    </section>
 
    <section id="overview">
@@ -35,7 +76,7 @@
       <para>
          Arquillian combines a unit testing framework (JUnit or TestNG), ShrinkWrap, and one or more supported target
          containers (Java EE container, servlet container, Java SE CDI environment, etc) to provide a simple, flexible
-         and pluggable integration testing environment for normal test cases.
+         and pluggable integration testing environment.
       </para>
 
       <mediaobject>
@@ -48,9 +89,11 @@
       </mediaobject>
 
       <para>
-         At the core, Arquillian provides a <emphasis>custom test runner for JUnit and TestNG</emphasis> that allows
-         test methods in a test case to be executed inside of a container environment. An Arquillian test case looks
-         just like a regular JUnit or TestNG test case with two declarative enhancements, which will be covered later.
+         At the core, Arquillian provides a <emphasis>custom test runner for JUnit and TestNG</emphasis> that turns
+         control of the test execution lifecycle from the unit testing framework to Arquillian. From there, Arquillian
+         can delegate to service providers to setup the environment to execute the tests inside or against the
+         container. An Arquillian test case looks just like a regular JUnit or TestNG test case with two declarative
+         enhancements, which will be covered later.
       </para>
 
       <para>
@@ -60,7 +103,24 @@
       </para>
 
       <para>
-         The test case is transferred into the container's environment through coordination with
+         At this point, it's appropriate to pause and define the three aspects of an Arquillian test case. This
+         terminology will help you better understand the explainations of how Arquillian works.
+      </para>
+
+      <orderedlist>
+         <listitem>
+            <para>container &#8212; a runtime environment for a deployment</para>
+         </listitem>
+         <listitem>
+            <para>deployment &#8212; the process of dispatching an artifact to a container to make it operational</para>
+         </listitem>
+         <listitem>
+            <para>archive &#8212; a packaged assembly of resources which become operational inside the container</para>
+         </listitem>
+      </orderedlist>
+
+      <para>
+         The test case is dispatched to the container's environment through coordination with
          <emphasis>ShrinkWrap</emphasis>, which is used to declaratively define a custom Java EE archive that
          encapsulates the test class and its dependent resources. Arquillian packages the ShrinkWrap-defined archive at
          runtime and deploys it to the <emphasis>target container</emphasis>. It then negotiates the execution of the

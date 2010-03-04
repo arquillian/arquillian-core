@@ -16,9 +16,9 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="enrichment.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="execution.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="debugging.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="extend.xml" />
    <!--
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="scenarios.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="extend.xml" />
    -->
 
 <!--
