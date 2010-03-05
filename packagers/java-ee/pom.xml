@@ -17,6 +17,7 @@
    <modelVersion>4.0.0</modelVersion>
 
    <!-- Artifact Configuration -->
+   <groupId>org.jboss.arquillian.packager</groupId>
    <artifactId>arquillian-packager-javaee</artifactId>
    <name>Arquillian Packager Java EE</name>
    <description>Java EE Packager for the Arquillian project</description>

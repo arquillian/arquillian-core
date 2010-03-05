@@ -16,6 +16,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Artifact Information  -->
+  <groupId>org.jboss.arquillian.packager</groupId>
   <artifactId>arquillian-packager-parent</artifactId>
   <packaging>pom</packaging>
   <name>Arguillian Packager Aggregator</name>

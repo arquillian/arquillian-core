@@ -17,6 +17,7 @@
    <modelVersion>4.0.0</modelVersion>
 
    <!-- Artifact Configuration -->
+   <groupId>org.jboss.arquillian.packager</groupId>
    <artifactId>arquillian-packager-applicationarchive</artifactId>
    <name>Arquillian Packager ApplicationArchive</name>
    <description>Packager that only return the ApplicationArchive for the Arquillian project</description>
