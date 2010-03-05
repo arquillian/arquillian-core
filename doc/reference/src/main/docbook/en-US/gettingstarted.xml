@@ -33,6 +33,16 @@
 </properties>]]></programlisting>
 
       <para>
+         Make sure you have the correct APIs available for your test. In this test we are going to use CDI:
+      </para>
+      
+      <programlisting role="XML"><![CDATA[<dependency> 
+   <groupId>javax.enterprise</groupId> 
+   <artifactId>cdi-api</artifactId> 
+   <version>1.0-SP1</version>  
+</dependency>]]></programlisting>
+
+      <para>
          Next, you'll need to decide whether you are going to write tests in JUnit 4.x or TestNG 5.x. Once you make that
          decision (use TestNG if you're not sure), you'll need to add either the JUnit or TestNG library to your test
          build path as well as the corresponding Arquillian library.
@@ -88,55 +98,29 @@
 
       <para>
          You're now going to write your first Arquillian test. But in order to write a test, we need to have something
-         to test. So let's first create a stateless EJB session bean that we can invoke.
+         to test. So let's first create a managed bean that we can invoke.
       </para>
       
       <para>
          We'll help out those Americans still trying to convert to the metric system by providing them a Fahrenheit to
-         Celsius converter. Although not required in Java EE 6, we'll include a local interface for the bean to ensure
-         maximum portability.
+         Celsius converter.
       </para>
 
       <para>
-         Here's our <literal>TemperatureConverter</literal> interface:
+         Here's our <literal>TemperatureConverter</literal>:
       </para>
 
-      <programlisting role="JAVA"><![CDATA[public @Local interface TemperatureConverter {
-   double convertToCelsius(double f);
-   double convertToFarenheight(double c);
-   boolean isTransactional();
-}]]></programlisting>
+      <programlisting role="JAVA"><![CDATA[public class TemperatureConverter {
 
-      <para>
-         And here's the <literal>TemperatureConverterBean</literal> implementation:
-      </para>
-
-      <programlisting role="JAVA"><![CDATA[public @Stateless class TemperatureConverterBean
-      implements TemperatureConverter {
-   
-   private @Resource EJBContext ctx;
-
-   @Override
    public double convertToCelsius(double f) {
       return ((f - 32) * 5 / 9);
    }
 
-   @Override
    public double convertToFarenheight(double c) {
       return ((c * 9 / 5) + 32);
    }
 
-   @Override
-   public boolean isTransactional() {
-      ctx.setRollbackOnly();
-      return ctx.getRollbackOnly();
-   }
 }]]></programlisting>
-
-      <para>
-         We've added an extra method to verify that we are in fact using a real EJB. The method uses the injected
-         <literal>EJBContext</literal> to ensure a container-managed transaction is present and functional.
-      </para>
 
       <para>
          Now we need to validate that this code runs. We'll be creating a test in the <literal>src/test/java</literal>
@@ -146,8 +130,8 @@
       <para>
          Granted, in this trivial case, we could simply instantiate the implementation class in a unit test to test the
          calculations. However, let's assume that this bean is more complex, needing to access enterprise services. We
-         want to test it as a full-blown EJB, a container-managed bean, not just as a simple class instance. Therefore,
-         we'll inject the EJB into the test class using the <literal>@EJB</literal> annotation.
+         want to test it as a full-blown container-managed bean, not just as a simple class instance. Therefore,
+         we'll inject the bean into the test class using the <literal>@Inject</literal> annotation.
       </para>
 
       <para>
@@ -172,14 +156,17 @@
       <programlisting role="JAVA"><![CDATA[public static Archive<?> methodName();]]></programlisting>
 
       <para>
-         We'll add both the EJB session bean's interface and implementation class to the archive so that we have
-         something to test.
+         We'll add the managed bean to the archive so that we have something to test. We'll also add an 
+         empty <literal>beans.xml</literal> file, so that the deployment is CDI-enabled:
       </para>
 
       <programlisting role="JAVA"><![CDATA[@Deployment
 public static JavaArchive createTestArchive() {
    return Archives.create("test.jar", JavaArchive.class)
-      .addClasses(TemperatureConverter.class, TemperatureConverterBean.class); 
+      .addClasses(TemperatureConverter.class)
+      .addManifestResource(
+            new ByteArrayAsset("<beans/>".getBytes()), 
+            ArchivePaths.create("beans.xml"));
 }]]></programlisting>
 
       <para>
@@ -200,13 +187,16 @@ public static JavaArchive createTestArchive() {
 
       <programlisting role="JAVA"><![CDATA[@RunWith(Arquillian.class)
 public class TemperatureConverterTest {
-   @EJB
+   @Inject
    private TemperatureConverter converter;
 
    @Deployment
    public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
-         .addClasses(TemperatureConverter.class, TemperatureConverterBean.class); 
+         .addClasses(TemperatureConverter.class)
+         .addManifestResource(
+            new ByteArrayAsset("<beans/>".getBytes()), 
+            ArchivePaths.create("beans.xml")); 
    }
 
    @Test
@@ -234,13 +224,16 @@ public class TemperatureConverterTest {
       </para>
 
       <programlisting role="JAVA"><![CDATA[public class TemperatureConverterTest extends Arquillian {
-   @EJB
+   @Inject
    private TemperatureConverter converter;
 
    @Deployment
    public static JavaArchive createTestArchive() {
       return Archives.create("test.jar", JavaArchive.class)
-         .addClasses(TemperatureConverter.class, TemperatureConverterBean.class); 
+         .addClasses(TemperatureConverter.class)
+         .addManifestResource(
+            new ByteArrayAsset("<beans/>".getBytes()), 
+            ArchivePaths.create("beans.xml")); 
    }
 
    @Test
@@ -262,10 +255,10 @@ public class TemperatureConverterTest {
 }]]></programlisting>
 
       <para>
-         As you can see, we are not instantiating the bean implementation class directly, but rather using the EJB
+         As you can see, we are not instantiating the bean implementation class directly, but rather using the CDI
          reference provided by the container at the injection point, just as it would be used in the application. (If
-         the target container has CDI, you could replace the <literal>@EJB</literal> annotation with
-         <literal>@Inject</literal>, though you would also need to add beans.xml to the deployment manifest). Now let's
+         the target container supports EJB, you could replace the <literal>@Inject</literal> annotation with
+         <literal>@EJB</literal>). Now let's
          see if this baby passes!
       </para>
 
@@ -333,20 +326,19 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
       </para>
 
       <programlisting><![CDATA[-------------------------------------------------------
-T E S T S
+ T E S T S
 -------------------------------------------------------
-Running TestSuite
-log4j:WARN No appenders could be found for logger (org.jnp.interfaces.TimedSocketFactory).
-log4j:WARN Please initialize the log4j system properly.
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.000 sec
+Running TemperatureConverterTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.964 sec
 
 Results :
 
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESSFUL
-[INFO] ------------------------------------------------------------------------]]></programlisting>
+[INFO] ------------------------------------------------------------------------
+]]></programlisting>
 
       <para>
          The tests are passing, but we don't see a green bar. To get that visual, we need to run the tests in the IDE.
@@ -366,9 +358,7 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
       </para>
       
       <para>
-         Since the example in this guide is based on a Maven 2 project, you will also need either the m2eclipse plugin
-         or an Eclipse project generated use the Maven 2 Eclipse plugin (<literal>maven-eclipse-plugin</literal>). The
-         m2eclipse plugin is your best bet because it provides native support for Maven 2 projects.  Instructions for
+         Since the example in this guide is based on a Maven 2 project, you will also need the m2eclipse plugin. Instructions for
          using the m2eclipse update site to add the m2eclipse plugin to Eclipse are provided on the m2eclipse home page.
          For more, read the m2eclipse <ulink url="http://www.sonatype.com/books/m2eclipse-book/reference">reference
          guide</ulink>.
@@ -378,8 +368,8 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
          Once the plugins are installed, import your Maven project into the Eclipse workspace. Before executing the
          test, you need to enable the profile for the target container, as you did in the previous section. We'll
          go ahead and activate the profile globally for the project. Right click on the project and select Properties.
-         Select the Maven property sheet and in the first form field, enter <literal>jboss-remote-60</literal> as shown
-         here:
+         Select the Maven property sheet and in the first form field, enter <literal>jboss-remote-60</literal>; you also need
+         to tell Maven to not resolve depedencies from the workspace (this interferes with resource loading):
       </para>
 
       <mediaobject>
@@ -392,7 +382,9 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
       </mediaobject>
 
       <para>
-         Click OK and accept the project changes. Now you are ready to execute tests.
+         Click OK and accept the project changes. Before we execute tests, make sure that Eclipse has properly processed all
+         the resource files by running a full build on the project by selecting Clean from Project menu. Now you are ready
+         to execute tests.
       </para>
 
       <para>
@@ -400,7 +392,14 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
          or Run As... > TestNG Test depending on which unit testing framework the test is using.
       </para>
 
-      <para>TODO: screenshot</para>
+      <mediaobject>
+         <imageobject>
+            <imagedata fileref="images/junit-run-test.png" format="PNG" align="center"/>
+         </imageobject>
+         <caption>
+            <para>Running the the JUnit test in Eclipse</para>
+         </caption>
+      </mediaobject>
 
    </section>
 
