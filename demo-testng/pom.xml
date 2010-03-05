@@ -82,7 +82,7 @@
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jboss-embedded</artifactId>
+               <artifactId>arquillian-jbossas-embedded</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
@@ -92,7 +92,7 @@
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jboss-remote-51</artifactId>
+               <artifactId>arquillian-jbossas-remote-51</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
@@ -102,7 +102,7 @@
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jboss-remote-60</artifactId>
+               <artifactId>arquillian-jbossas-remote-60</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
