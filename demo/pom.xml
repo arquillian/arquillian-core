@@ -101,7 +101,7 @@
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-glassfish-embedded</artifactId>
+               <artifactId>arquillian-glassfish-embedded-30</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
