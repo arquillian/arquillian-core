@@ -60,7 +60,7 @@
          <id>weld-se</id>
          <dependencies>
             <dependency>
-               <groupId>org.jboss.arquillian</groupId>
+               <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-weld-embedded</artifactId>
                <version>${project.version}</version>
             </dependency>
@@ -70,7 +70,7 @@
          <id>jboss-embedded</id>
          <dependencies>
             <dependency>
-               <groupId>org.jboss.arquillian</groupId>
+               <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jboss-embedded</artifactId>
                <version>${project.version}</version>
             </dependency>
@@ -80,7 +80,7 @@
          <id>jboss-remote-51</id>
          <dependencies>
             <dependency>
-               <groupId>org.jboss.arquillian</groupId>
+               <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jboss-remote-51</artifactId>
                <version>${project.version}</version>
             </dependency>
@@ -90,7 +90,7 @@
          <id>jboss-remote-60</id>
          <dependencies>
             <dependency>
-               <groupId>org.jboss.arquillian</groupId>
+               <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jboss-remote-60</artifactId>
                <version>${project.version}</version>
             </dependency>
@@ -100,7 +100,7 @@
          <id>glassfish-embedded</id>
          <dependencies>
             <dependency>
-               <groupId>org.jboss.arquillian</groupId>
+               <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-glassfish-embedded</artifactId>
                <version>${project.version}</version>
             </dependency>
@@ -110,8 +110,8 @@
          <id>openejb</id>
          <dependencies>
             <dependency>
-               <groupId>org.jboss.arquillian</groupId>
-               <artifactId>arquillian-container-openejb</artifactId>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-openejb</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
@@ -136,4 +136,3 @@
    </dependencies>
 
 </project>
-

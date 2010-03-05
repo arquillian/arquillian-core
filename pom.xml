@@ -58,15 +58,7 @@
 
     <module>testenricher</module>
     <module>packager</module>
-
-    <!-- Containers -->
-    <!--    <module>container-jboss-embedded</module> -->
-    <module>container-jboss-remote-51</module>
-    <module>container-jboss-remote-60</module>
-
-    <module>container-glassfish-embedded</module>
-    <module>container-weld-embedded</module>
-    <module>container-openejb</module>
+  	<module>container</module>
 
     <!-- Demo / Test Suite -->
     <module>demo</module>
