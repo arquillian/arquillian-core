@@ -16,7 +16,11 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.TestResultCallback;
 import org.jboss.arquillian.spi.TestRunner;
 
 /**
@@ -29,17 +33,29 @@ import org.jboss.arquillian.spi.TestRunner;
  */
 public class MockTestRunner implements TestRunner
 {
-   public static TestResult wantedResult;
+   public static List<TestResult> wantedResults = new ArrayList<TestResult>();
+   
+   public static void add(TestResult wantedTestResult) 
+   {
+      wantedResults.add(wantedTestResult);
+   }
    
    @Override
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      return wantedResult;
+      return wantedResults.get(0);
+   }
+   
+   public void execute(TestResultCallback callback, Class<?>... classes) 
+   {
+      for(TestResult result : wantedResults)
+      {
+         callback.handle(result);
+      }
    }
 
    @Override
    public void setExecutionMode(ExecutionMode executionMode)
    {
    }
-
 }

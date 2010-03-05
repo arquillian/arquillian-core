@@ -52,10 +52,7 @@
     <module>junit</module>
     <module>testng</module>
 
-    <!-- Protocols -->
-    <module>protocol-servlet</module>
-    <module>protocol-local</module>
-
+    <module>protocol</module>
     <module>testenricher</module>
     <module>packager</module>
   	<module>container</module>

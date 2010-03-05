@@ -14,9 +14,10 @@
    <modelVersion>4.0.0</modelVersion>
 
    <!-- Artifact Configuration -->
-   <artifactId>arquillian-protocol-local</artifactId>
-   <name>Arquillian Protocol Local</name>
-   <description>Protocol handler for communicating whithin the same Java VM</description>
+   <groupId>org.jboss.arquillian.protocol</groupId>
+   <artifactId>arquillian-protocol-servlet</artifactId>
+   <name>Arquillian Protocol Servlet</name>
+   <description>Protocol handler for communicating using a servlet / http</description>
 
 
    <!-- Properties -->
@@ -26,6 +27,26 @@
 
    </properties>
 
+   <profiles>
+      <profile>
+         <!-- 
+            Added a default profile used during compiling. 
+            The JavaEE API jar can not be on classpath during test execution.
+          -->
+         <id>default</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>javax</groupId>
+               <artifactId>javaee-api</artifactId>
+               <scope>provided</scope>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
+   
    <!-- Dependencies -->
    <dependencies>
 
@@ -41,9 +62,16 @@
       <!-- 
     servlet api
      -->
+
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.mortbay.jetty</groupId>
+         <artifactId>jetty-embedded</artifactId>
          <scope>test</scope>
       </dependency>
 
