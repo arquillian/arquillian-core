@@ -53,7 +53,7 @@
     <module>testng</module>
 
     <module>protocols</module>
-    <module>testenricher</module>
+    <module>testenrichers</module>
     <module>packager</module>
   	<module>containers</module>
 

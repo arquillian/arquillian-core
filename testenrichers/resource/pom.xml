@@ -14,6 +14,7 @@
    <modelVersion>4.0.0</modelVersion>
 
    <!-- Artifact Configuration -->
+   <groupId>org.jboss.arquilliani.testenricher</groupId>
    <artifactId>arquillian-testenricher-resource</artifactId>
    <name>Arquillian TestEnricher Resource</name>
    <description>Resource TestEnricher for the Arquillian Project</description>
