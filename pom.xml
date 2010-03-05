@@ -52,7 +52,7 @@
     <module>junit</module>
     <module>testng</module>
 
-    <module>protocol</module>
+    <module>protocols</module>
     <module>testenricher</module>
     <module>packager</module>
   	<module>containers</module>
