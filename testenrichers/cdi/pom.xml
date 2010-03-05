@@ -14,7 +14,7 @@
    <modelVersion>4.0.0</modelVersion>
 
    <!-- Artifact Configuration -->
-   <groupId>org.jboss.arquilliani.testenricher</groupId>
+   <groupId>org.jboss.arquillian.testenricher</groupId>
    <artifactId>arquillian-testenricher-cdi</artifactId>
    <name>Arquillian TestEnricher CDI</name>
    <description>CDI TestEnricher for the Arquillian Project</description>
