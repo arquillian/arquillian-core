@@ -52,6 +52,7 @@
     <module>junit</module>
     <module>testng</module>
 
+    <!-- Extensions -->
     <module>protocols</module>
     <module>testenrichers</module>
     <module>packagers</module>
