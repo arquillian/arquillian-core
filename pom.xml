@@ -56,7 +56,7 @@
     <module>protocols</module>
     <module>testenrichers</module>
     <module>packagers</module>
-  	<module>containers</module>
+    <module>containers</module>
 
     <!-- Demo / Test Suite -->
     <module>demo</module>
