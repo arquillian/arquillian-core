@@ -210,11 +210,6 @@ public class TemperatureConverterTest {
       Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
       Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
    }
-
-   @Test
-   public void testIsTransactional() {
-      Assert.assertTrue(converter.isTransactional());
-   }
 }]]></programlisting>
 
       <para>
@@ -246,11 +241,6 @@ public class TemperatureConverterTest {
    public void testConvertToFarenheight() {
       Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
       Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
-   }
-
-   @Test
-   public void testIsTransactional() {
-      Assert.assertTrue(converter.isTransactional());
    }
 }]]></programlisting>
 
@@ -400,6 +390,14 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
             <para>Running the the JUnit test in Eclipse</para>
          </caption>
       </mediaobject>
+      
+      <warning>
+         <para>
+            The latest version of the TestnG plugin for Eclipse is incompatible with all versions of TestNG that have
+            been released. Therefore, make sure you use the 5.11 version of the plugin. See 
+            <ulink url="https://jira.jboss.org/jira/browse/ARQ-86">ARQ-86</ulink> for more.
+         </para>
+      </warning>
 
    </section>
 
