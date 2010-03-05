@@ -93,7 +93,7 @@
       
       <para>
          We'll help out those Americans still trying to convert to the metric system by providing them a Fahrenheit to
-         Celcius converter. Although not required in Java EE 6, we'll include a local interface for the bean to ensure
+         Celsius converter. Although not required in Java EE 6, we'll include a local interface for the bean to ensure
          maximum portability.
       </para>
 
@@ -102,7 +102,7 @@
       </para>
 
       <programlisting role="JAVA"><![CDATA[public @Local interface TemperatureConverter {
-   double convertToCelcius(double f);
+   double convertToCelsius(double f);
    double convertToFarenheight(double c);
    boolean isTransactional();
 }]]></programlisting>
@@ -117,7 +117,7 @@
    private @Resource EJBContext ctx;
 
    @Override
-   public double convertToCelcius(double f) {
+   public double convertToCelsius(double f) {
       return ((f - 32) * 5 / 9);
    }
 
@@ -210,9 +210,9 @@ public class TemperatureConverterTest {
    }
 
    @Test
-   public void testConvertToCelcius() {
-      Assert.assertEquals(converter.convertToCelcius(32d), 0d);
-      Assert.assertEquals(converter.convertToCelcius(212d), 100d);
+   public void testConvertToCelsius() {
+      Assert.assertEquals(converter.convertToCelsius(32d), 0d);
+      Assert.assertEquals(converter.convertToCelsius(212d), 100d);
    }
 
    @Test
@@ -244,9 +244,9 @@ public class TemperatureConverterTest {
    }
 
    @Test
-   public void testConvertToCelcius() {
-      Assert.assertEquals(converter.convertToCelcius(32d), 0d);
-      Assert.assertEquals(converter.convertToCelcius(212d), 100d);
+   public void testConvertToCelsius() {
+      Assert.assertEquals(converter.convertToCelsius(32d), 0d);
+      Assert.assertEquals(converter.convertToCelsius(212d), 100d);
    }
 
    @Test
