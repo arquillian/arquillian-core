@@ -82,7 +82,7 @@
          <dependencies>
             <dependency>
                <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jbossas-embedded</artifactId>
+               <artifactId>arquillian-jbossas-embedded-60</artifactId>
                <version>${project.version}</version>
             </dependency>
          </dependencies>
