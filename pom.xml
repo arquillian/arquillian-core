@@ -58,9 +58,7 @@
     <module>packagers</module>
     <module>containers</module>
 
-    <!-- Demo / Test Suite -->
-    <module>demo</module>
-    <module>demo-testng</module>
+    <module>examples</module>
 
     <module>doc/reference</module>
 </modules>
