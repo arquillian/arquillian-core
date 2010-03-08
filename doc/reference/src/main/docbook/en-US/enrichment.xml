@@ -52,14 +52,9 @@
       </para>
 
       <para>
-         The <literal>@Resource</literal> annotation gives you access to any object which is available via JNDI. If the
-         <literal>mappedName</literal> attribute is specified, that value is used to perform a lookup in the
-         <literal>InitialContext</literal>. If, instead, the <literal>name</literal> attribute is specified, the name is
-         added to the <literal>java:comp/env/</literal> namespace prefix and passed to the
-         <literal>InitialContext</literal>. If neither the <literal>mappedName</literal> or <literal>name</literal>
-         attributes are specified, the JNDI name is constructed using the <literal>java:comp/env/</literal> prefix
-         followed by the fully qualified bean class name followed by a slash and then the name of the field. The result
-         is passed to the <literal>InitialContext</literal>.
+         The <literal>@Resource</literal> annotation gives you access to any object which is available via JNDI. It follows
+         the standard rules for <literal>@Resource</literal> (as defined in the Section 2.3 of the Common Annotations for 
+         the Java Platform specification).
       </para>
 
       <para>
@@ -78,7 +73,7 @@
       <note>
          <para>
             At the moment, the lookup for an EJB session reference relies on standard JNDI naming conventions
-            established in Java EE 6.
+            introduced in Java EE 6 - therefore you need to use a Java EE 6 container.
          </para>
       </note>
 

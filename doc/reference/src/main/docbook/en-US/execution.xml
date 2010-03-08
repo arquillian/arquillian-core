@@ -7,6 +7,14 @@
    <para>
       This chapter walks through the details of test execution, covering both the remote and local container cases.
    </para>
+   
+   <note>
+      <para>
+         Whilst it's not necessary to understand the details of how Arquillian works, it is often useful to have some
+         insight. This chapter gives you an overview of how Arquillian executes your test for you in your chosen
+         container.  
+      </para>
+   </note>
 
    <section>
       <title>Anatomy of a test</title>
@@ -82,7 +90,7 @@
       </itemizedlist>
 
       <para>
-         Consult the ShrinkWrap API to discover all the options you have available for constructing the test archive.
+         Consult the <ulink url="http://docs.jboss.org/shrinkwrap/1.0.0-alpha-6/api/">ShrinkWrap API</ulink> to discover all the options you have available for constructing the test archive.
       </para>
 
    </section>
