@@ -1,14 +1,18 @@
 package com.acme.ejb;
 
 import javax.ejb.EJB;
+
+import junit.framework.Assert;
+
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class TemperatureConverterTest extends Arquillian {
+@RunWith(org.jboss.arquillian.junit.Arquillian.class)
+public class TemperatureConverterTestCase 
+{
 
    @EJB
    private TemperatureConverter converter;
