@@ -41,19 +41,19 @@ public class TranslateTestCase extends Arquillian {
 	
 	@Inject TranslateController controller;
 
-	@Test
+	@Test(enabled = false) // https://jira.jboss.org/jira/browse/ARQ-55
 	public void shouldSetInputText() throws Exception 
 	{
 	   controller.setInputText("hi");
 	}
 	
-	@Test(dependsOnMethods = "shouldSetInputText")
+	@Test(dependsOnMethods = "shouldSetInputText", enabled = false) // https://jira.jboss.org/jira/browse/ARQ-55
 	public void shouldTranslate() throws Exception 
 	{
 		controller.translate();
 	}
 	
-	@Test(dependsOnMethods = "shouldTranslate")
+	@Test(dependsOnMethods = "shouldTranslate", enabled = false) // https://jira.jboss.org/jira/browse/ARQ-55
 	public void shouldVerify() throws Exception 
 	{
 		Assert.assertEquals(controller.getTranslation(), "hei");

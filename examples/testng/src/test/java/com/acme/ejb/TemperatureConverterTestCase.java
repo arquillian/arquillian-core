@@ -8,6 +8,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@Test(groups = "integration")
 public class TemperatureConverterTestCase extends Arquillian {
 
    @EJB

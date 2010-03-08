@@ -26,42 +26,14 @@
 
    </properties>
 
-   <build>
-      <plugins>
-         <!-- Surefire -->
-         <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-               <!-- ARQ-60 -->
-               <skip>true</skip>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
-
-   <profiles>
-      <profile>
-         <!--
-            Added a default profile used during compiling. The JavaEE
-            API jar can not be on classpath during test execution.
-         -->
-         <id>default</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <dependencies>
-            <dependency>
-               <groupId>javax</groupId>
-               <artifactId>javaee-api</artifactId>
-               <scope>provided</scope>
-            </dependency>
-         </dependencies>
-      </profile>
-   </profiles>
-
    <!-- Dependencies -->
    <dependencies>
 
+      <dependency>
+         <groupId>javax</groupId>
+         <artifactId>javaee-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
 
    </dependencies>
 

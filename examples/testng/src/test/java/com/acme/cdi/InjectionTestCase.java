@@ -37,6 +37,7 @@ import com.acme.ejb.GreetingManagerBean;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Test(groups = "integration")
 public class InjectionTestCase extends Arquillian
 {
    @Deployment
