@@ -156,7 +156,6 @@
                   <include>**/*TestCase.java</include>
                   <include>**/*TestSuite.java</include>
                </includes>
-               <forkMode>always</forkMode>
                <useFile>true</useFile>
             </configuration>
          </plugin>
