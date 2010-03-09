@@ -9,6 +9,18 @@
       (SPIs). The following diagram shows how the various SPIs in Arquillian tie into the test execution.
    </para>
 
+<!-- 
+   <para>
+   For Arquillian to support multiple containers with a wide range of usage patterns, 
+   it needs an extensive set of Service Provider Interfaces to do the heavy lifting.
+   </para>
+   <para>
+   We can split the SPIs up in two categories; Client and Container side.
+   Client side SPIs are mostly about interaction and preparation for running inside the Container while the Container side
+   is about how to run the test case. 
+   </para>
+-->
+
    <mediaobject>
       <imageobject>
          <imagedata fileref="images/spi-overview-small.png" format="PNG" align="center"/>
@@ -31,26 +43,82 @@
       <para></para>
    </section>
 
+   <section id="extend.client">
+      <title>Client Side</title>
+   
+      <section id="extend.client.deployment.auxiliaryarchivetappender">
+         <title>AuxiliaryArchiveAppender</title>
+         <para>
+            Appending auxiliary archives to the final deployment.
+         </para>
+      </section>
+
+      <section id="extend.client.deployment.auxiliaryarchiveprocessor">
+         <title>AuxiliarArchiveProcessor</title>
+         <para>
+         
+         </para>
+      </section>
+
+      <section id="extend.client.deployment.applicationachivegenerator">
+         <title>ApplicatonArchiveGenerator</title>
+         <para></para>
+
+<!-- 
+         <section id="extend.client.deployment">
+            <title>@Deployment</title>
+            <para>
+            
+            </para>
+         </section>
+-->
+      </section>
+
+      <section id="extend.client.deployment.applicationarchiveprocessor">
+         <title>ApplicationArchiveProcessor</title>
+         <para>
+            A post processor for the Application generated archive. Used for application packaging enhancements. 
+         </para>
+      </section>
+
+      <section id="extend.client.deployment.deploymentpackager">
+         <title>DeploymentPackager</title>
+         <para>Responsible for creating the deployable archive.</para>
+      </section>
+
+      <section id="extend.client.container">
+         <title>DeployableContainers</title>
+         <para>Container integration, life cycle control.</para>
+      </section>
+      
+      <section id="extend.client.methodexecutor">
+         <title>ContainerMethodExecutor</title>
+         <para>Communication with the TestRunner inside the Container</para>
+      </section>
+
+   </section>
+   
    <section id="extend.container">
-      <title>DeployableContainers</title>
-      <para></para>
-   </section>
-
-   <section id="extend.testenrichers">
-      <title>TestEnrichers</title>
-      <para></para>
-   </section>
-
-   <section id="extend.testrunners">
-      <title>TestRunners</title>
-      <section id="extend.testrunners.testng">
-         <title>TestNG</title>
-         <para>..</para>
+      <title>Container Side</title>
+      
+      <section id="extend.container.testenrichers">
+         <title>TestEnrichers</title>
+         <para>Instance injection, @EJB/@Resource/@Inject.</para>
       </section>
-      <section id="extend.testrunners.junit">
-         <title>JUnit</title>
-         <para>..</para>
+   
+      <section id="extend.container.testrunners">
+         <title>TestRunners</title>
+         <para>Execute the test case inside the container</para>
+         <section id="extend.container.testrunners.testng">
+            <title>TestNG</title>
+            <para>..</para>
+         </section>
+         <section id="extend.container.testrunners.junit">
+            <title>JUnit</title>
+            <para>..</para>
+         </section>
       </section>
+   
    </section>
 <!--
 vim:et:ts=3:sw=3:tw=120

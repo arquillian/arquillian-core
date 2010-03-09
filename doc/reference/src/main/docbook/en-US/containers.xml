@@ -74,8 +74,8 @@
    <id>%artifactId%</id>
    <dependencies>
       <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-%artifactId%</artifactId>
+         <groupId>org.jboss.arquillian.container</groupId>
+         <artifactId>%artifactId%</artifactId>
          <version>${arquillian.version}</version>
       </dependency>
    </dependencies>
@@ -101,25 +101,27 @@
                  <entry>JBoss AS 5.1</entry>
                  <entry>remote</entry>
                  <entry>Java EE 5</entry>
-                 <entry>arquillian-jboss-remote-51</entry>
+                 <entry>arquillian-jbossas-remote-51</entry>
                </row>
                <row>
                  <entry>JBoss AS 6.0 M1</entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-jboss-remote-60</entry>
+                 <entry>arquillian-jbossas-remote-60</entry>
                </row>
+<!-- 
                <row>
                  <entry>JBoss Embedded AS</entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-jboss-embedded</entry>
+                 <entry>arquillian-jbossas-embedded-60</entry>
                </row>
+-->               
                <row>
                  <entry>Embedded GlassFish V3</entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-glassfish-embedded</entry>
+                 <entry>arquillian-glassfish-embedded-30</entry>
                </row>
                <row>
                  <entry>Weld SE</entry>
@@ -127,12 +129,18 @@
                  <entry>CDI</entry>
                  <entry>arquillian-weld-embedded</entry>
                </row>
+               <row>
+                 <entry>Apache OpenEJB</entry>
+                 <entry>embedded</entry>
+                 <entry>EJB 3.0</entry>
+                 <entry>arquillian-openejb</entry>
+               </row>
             </tbody>
          </tgroup>
       </table>
 
       <para>
-         Support for other containers is planned, including GlassFish V3, Tomcat and Jetty. We don't have plans to
+         Support for other containers is planned, including GlassFish V3(remote), Tomcat and Jetty. We don't have plans to
          provide implementations for Spring or Guice at this time, but we welcome a contribution from the community,
          because it's certainly possible.
       </para>

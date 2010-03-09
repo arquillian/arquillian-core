@@ -59,23 +59,23 @@
 
       <para>
          The <literal>@EJB</literal> annotation performs a JNDI lookup for the EJB session bean reference using the
-         following equation:
+         following equation in the specified order:
       </para>
-
+      
+      <programlisting>"java:global/test.ear/test/" + unqualified interface name + "Bean"</programlisting>
       <programlisting>"test/" + unqualified interface name + "Bean/local"</programlisting>
-
+      <programlisting>"test/" + unqualified interface name + "Bean/remote"</programlisting>
+      
       <para>
-         If a local bean is not found, then the enricher attempts a lookup for a remote bean.
+         If no matching beans were found in those locations the injection will fail.
       </para>
 
-      <programlisting>"test/" + unqualified interface name + "Bean/remote"</programlisting>
-
-      <note>
+      <warning>
          <para>
-            At the moment, the lookup for an EJB session reference relies on standard JNDI naming conventions
-            introduced in Java EE 6 - therefore you need to use a Java EE 6 container.
+            At the moment, the lookup for an EJB session reference relies on a common naming convention of EJB beans.
+            In the future the lookup will rely on the standard JNDI naming conventions established in Java EE 6.
          </para>
-      </note>
+      </warning>
 
       <para>
          In order for CDI injections to work, the test archive defined with ShrinkWrap must be a bean archive. That
@@ -106,7 +106,7 @@ public static JavaArchive createTestArchive() {
 
       <itemizedlist>
          <listitem>
-            <para>Application scope - Active during the execution of all tests</para>
+            <para>Application scope - Active for all methods in a test class</para>
          </listitem>
          <listitem>
             <para>Session scope - Active for all methods in a test class</para>
