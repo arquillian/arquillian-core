@@ -109,10 +109,14 @@
                         <include>com/acme/jms/*</include>
                         <include>com/acme/resources/*</include>
                      </includes>
-                     <argLine>-Djava.naming.factory.initial=org.jnp.interfaces.NamingContextFactory -Djava.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces -Djava.naming.provider.url=jnp://localhost:1099</argLine>
                   </configuration>
                </plugin>
             </plugins>
+            <testResources>
+               <testResource>
+                  <directory>src/test/jboss-resources</directory>
+               </testResource>
+            </testResources>
          </build>
       </profile>
       <profile>
@@ -125,15 +129,11 @@
             </dependency>
          </dependencies>
          <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <argLine>-Djava.naming.factory.initial=org.jnp.interfaces.NamingContextFactory -Djava.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces -Djava.naming.provider.url=jnp://localhost:1099</argLine>
-                  </configuration>
-               </plugin>
-            </plugins>
+            <testResources>
+               <testResource>
+                  <directory>src/test/jboss-resources</directory>
+               </testResource>
+            </testResources>
          </build>
       </profile>
       <profile>
