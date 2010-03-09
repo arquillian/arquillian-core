@@ -27,19 +27,16 @@
 
    <profiles>
       <profile>
-         <!--
-            Added a default profile used during compiling. The JavaEE
-            API jar can not be on classpath during test execution.
-         -->
          <id>default</id>
          <activation>
             <activeByDefault>true</activeByDefault>
          </activation>
          <dependencies>
-            <dependency>
-               <groupId>javax</groupId>
-               <artifactId>javaee-api</artifactId>
-               <scope>provided</scope>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
          <build>
@@ -62,6 +59,12 @@
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-weld-embedded</artifactId>
                <version>${project.version}</version>
+            </dependency>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
          <build>
@@ -87,6 +90,12 @@
                <artifactId>arquillian-jbossas-embedded-60</artifactId>
                <version>${project.version}</version>
             </dependency>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
+            </dependency>
          </dependencies>
       </profile>
       <profile>
@@ -96,6 +105,12 @@
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-remote-51</artifactId>
                <version>${project.version}</version>
+            </dependency>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
          <build>
@@ -126,6 +141,12 @@
                <groupId>org.jboss.arquillian.container</groupId>
                <artifactId>arquillian-jbossas-remote-60</artifactId>
                <version>${project.version}</version>
+            </dependency>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
             </dependency>
          </dependencies>
          <build>
@@ -167,6 +188,12 @@
                <artifactId>arquillian-openejb</artifactId>
                <version>${project.version}</version>
             </dependency>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
+            </dependency>
          </dependencies>
          <build>
             <plugins>
@@ -203,11 +230,42 @@
       </dependency>
 
       <dependency>
+         <groupId>javax.jms</groupId> 
+         <artifactId>jms</artifactId> 
+         <version>1.1</version> 
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.annotation</groupId> 
+         <artifactId>jsr250-api</artifactId> 
+         <version>1.0</version> 
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.persistence</groupId> 
+         <artifactId>persistence-api</artifactId> 
+         <version>1.0</version> 
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.enterprise</groupId> 
+         <artifactId>cdi-api</artifactId> 
+         <version>1.0-SP1</version> 
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.mail</groupId> 
+         <artifactId>mail</artifactId> 
+         <version>1.4.1</version> 
+         <scope>test</scope>
+      </dependency>
+  
+      <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <scope>test</scope>
       </dependency>
-
+	
    </dependencies>
 
 </project>
