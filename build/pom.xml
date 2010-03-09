@@ -183,15 +183,11 @@
             <configuration>
                <rules>
                   <requireMavenVersion>
-                     <version>[2.0.9,2.4)</version> <!-- Must be Maven 2.0.9 >= x > 2.1  -->
+                     <version>[2.0.9,)</version> <!-- Must be Maven 2.0.9 >= x > 2.1  -->
                   </requireMavenVersion>
                   <requireJavaVersion>
                      <version>1.6.0</version> <!-- Must be JDK6 -->
                   </requireJavaVersion>
-                  <requireProperty>
-                     <property>env.JAVA_HOME</property>
-                     <message>"JAVA_HOME needs to be set to compile"</message>
-                  </requireProperty>
                </rules>
             </configuration>
          </plugin>
