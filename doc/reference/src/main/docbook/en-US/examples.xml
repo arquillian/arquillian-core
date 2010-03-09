@@ -5,9 +5,48 @@
    <title>Introductory examples</title>
 
    <para>
-      The following examples demonstrate the use of Arquillian. The full source code for these examples can be found in
-      the demo and demo-testng modules in the Arquillian source repository or source distribution.
+      The following examples demonstrate the use of Arquillian. Currently Arquillian is distributed as a Maven only
+      project, so you'll need to grab the examples from SVN. Choose between the 
+      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/junit">JUnit example</ulink> and the 
+      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/testng">TestNG example</ulink>.
    </para>
+   
+   <programlisting><![CDATA[svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/testng/ arquillian-example-testng
+svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/junit/ arquillian-example-junit]]></programlisting>
+         
+   <para>
+      Running these tests from the command line is easy. The examples run against all the servers supported
+      by Arquillian (of course, you must choose a container that is capable of deploying EJBs for these tests).
+      To run the test, we'll use Maven. For this tutorial, we'll use JBoss AS 6 (currently at Milestone 2), for
+      which we use the <literal>jbossas-remote-60</literal> profile.
+   </para>
+   
+   <para>
+      First, make sure you have a copy of JBoss AS; you can download it from <ulink url="http://www.jboss.org/jbossas/downloads">jboss.org</ulink>.
+      We strongly recommend you use a clean copy of JBoss AS. Unzip JBoss AS to a directory of your choice and start it; we'll
+      use <literal>$JBOSS_HOME</literal> to refer to this location throughout the tutorial.
+   </para>
+   
+   <programlisting><![CDATA[$ unzip jboss-6.0.0.M2.zip $JBOSS_HOME
+$ $JBOSS_HOME/bin/run.sh]]></programlisting>
+
+   <para>
+      Now, we tell Maven to run the tests, for both JUnit and TestNG:
+   </para>
+      
+   <programlisting><![CDATA[$ cd arquillian-example-testng/ 
+$ mvn clean package && mvn test -Pjbossas-remote-60
+
+$ cd ../arquillian-example-junit/
+$ mvn clean package && mvn test -Pjbossas-remote-60]]></programlisting>
+
+   <note>
+      <para>
+         You may be wondering why we have to run the tests as a separate run of Maven. This is due to the
+         use of the bundle jar of Java EE 6 APIs being used. Future versions of Arquillian will fix this issue.
+         You can read more in <ulink url="https://jira.jboss.org/jira/browse/ARQ-87">ARQ-87</ulink>.
+      </para>
+   </note>
 
    <section id="examples.ejb">
       <title>Testing an EJB</title>
