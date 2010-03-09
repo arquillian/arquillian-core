@@ -6,9 +6,10 @@
 
    <para>
       The following examples demonstrate the use of Arquillian. Currently Arquillian is distributed as a Maven only
-      project, so you'll need to grab the examples from SVN. Choose between the 
-      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/junit">JUnit example</ulink> and the 
-      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/testng">TestNG example</ulink>.
+      project, so you'll need to grab the examples from SVN. You can choose between a 
+      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/junit">JUnit example</ulink> and a 
+      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/testng">TestNG example</ulink>. In this 
+      tutorial we show you how to use both.
    </para>
    
    <programlisting><![CDATA[svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/testng/ arquillian-example-testng
@@ -47,6 +48,47 @@ $ mvn clean package && mvn test -Pjbossas-remote-60]]></programlisting>
          You can read more in <ulink url="https://jira.jboss.org/jira/browse/ARQ-87">ARQ-87</ulink>.
       </para>
    </note>
+   
+   <para>
+      You can also run the tests in an IDE. We'll show you how to run the tests in Eclipse, with m2eclipse installed, next.
+   </para>
+   
+   <para>
+      Before running an Arquillian test in Eclipse, you must have the plugin for the unit testing framework you are
+      using installed. Eclipse ships with the JUnit plugin, so you are already setup if you selected JUnit.  If you
+      are writing your tests with TestNG, you need the Eclipse <ulink url="http://testng.org">TestNG plugin</ulink>.
+   </para>
+   
+   <para>
+      Since the examples in this guide are based on a Maven 2 project, you will also need the m2eclipse plugin. Instructions for
+      using the m2eclipse update site to add the m2eclipse plugin to Eclipse are provided on the m2eclipse home page.
+      For more, read the m2eclipse <ulink url="http://www.sonatype.com/books/m2eclipse-book/reference">reference
+      guide</ulink>.
+   </para>
+
+   <para>
+      Once the plugins are installed, import your Maven project into the Eclipse workspace. Before executing the
+      test, you need to enable the profile for the target container, as we did on the command line. We'll
+      go ahead and activate the profile globally for the project (we also need the <literal>default</literal> profile, read the note above for more). Right click on the project and select Properties.
+      Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-60, default</literal>; you also need
+      to tell Maven to not resolve dependencies from the workspace (this interferes with resource loading):
+   </para>
+
+   <para>
+      Click OK and accept the project changes. Before we execute tests, make sure that Eclipse has properly processed all
+      the resource files by running a full build on the project by selecting Clean from Project menu. Now you are ready
+      to execute tests.
+   </para>
+
+   <para>
+      Asssuming you have JBoss AS started from running the tests on the command line, you can now execute the tests.
+      Right click on the InjectionTestCase.java file in the Package Explorer and select Run As... > JUnit Test
+      or Run As... > TestNG Test depending on which unit testing framework the test is using.
+   </para>
+   
+   <para>
+      You can now execute all the tests from Eclipse!
+   </para>
 
    <section id="examples.ejb">
       <title>Testing an EJB</title>
