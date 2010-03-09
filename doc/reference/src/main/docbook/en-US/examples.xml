@@ -36,18 +36,10 @@ $ $JBOSS_HOME/bin/run.sh]]></programlisting>
    </para>
       
    <programlisting><![CDATA[$ cd arquillian-example-testng/ 
-$ mvn clean package && mvn test -Pjbossas-remote-60
+$ mvn test -Pjbossas-remote-60
 
 $ cd ../arquillian-example-junit/
-$ mvn clean package && mvn test -Pjbossas-remote-60]]></programlisting>
-
-   <note>
-      <para>
-         You may be wondering why we have to run the tests as a separate run of Maven. This is due to the
-         use of the bundle jar of Java EE 6 APIs being used. Future versions of Arquillian will fix this issue.
-         You can read more in <ulink url="https://jira.jboss.org/jira/browse/ARQ-87">ARQ-87</ulink>.
-      </para>
-   </note>
+$ mvn test -Pjbossas-remote-60]]></programlisting>
    
    <para>
       You can also run the tests in an IDE. We'll show you how to run the tests in Eclipse, with m2eclipse installed, next.
@@ -78,9 +70,18 @@ $ mvn clean package && mvn test -Pjbossas-remote-60]]></programlisting>
       Once the plugins are installed, import your Maven project into the Eclipse workspace. Before executing the
       test, you need to enable the profile for the target container, as we did on the command line. We'll
       go ahead and activate the profile globally for the project (we also need the <literal>default</literal> profile, read the note above for more). Right click on the project and select Properties.
-      Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-60, default</literal>; you also need
+      Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-60</literal>; you also need
       to tell Maven to not resolve dependencies from the workspace (this interferes with resource loading):
    </para>
+   
+   <mediaobject>
+      <imageobject>
+         <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center"/>
+      </imageobject>
+      <caption>
+         <para>Maven settings for project</para>
+      </caption>
+   </mediaobject>
 
    <para>
       Click OK and accept the project changes. Before we execute tests, make sure that Eclipse has properly processed all
@@ -93,6 +94,15 @@ $ mvn clean package && mvn test -Pjbossas-remote-60]]></programlisting>
       Right click on the InjectionTestCase.java file in the Package Explorer and select Run As... > JUnit Test
       or Run As... > TestNG Test depending on which unit testing framework the test is using.
    </para>
+   
+   <mediaobject>
+      <imageobject>
+         <imagedata fileref="images/testng-run-test.png" format="PNG" align="center"/>
+      </imageobject>
+      <caption>
+         <para>Running the test from Eclipse using TestNG</para>
+      </caption>
+   </mediaobject>
    
    <para>
       You can now execute all the tests from Eclipse!
