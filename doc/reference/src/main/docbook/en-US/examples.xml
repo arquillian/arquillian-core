@@ -74,7 +74,10 @@ $ mvn test -Pjbossas-remote-60]]></programlisting>
    </para>
    
    <mediaobject>
-      <imageobject>
+      <imageobject role="fo">
+         <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center" scalefit="1"/>
+      </imageobject>
+      <imageobject role="html">
          <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center"/>
       </imageobject>
       <caption>
@@ -95,7 +98,10 @@ $ mvn test -Pjbossas-remote-60]]></programlisting>
    </para>
    
    <mediaobject>
-      <imageobject>
+      <imageobject role="fo">
+         <imagedata fileref="images/testng-run-test.png" format="PNG" align="center" scalefit="1"/>
+      </imageobject>
+      <imageobject role="html">
          <imagedata fileref="images/testng-run-test.png" format="PNG" align="center"/>
       </imageobject>
       <caption>

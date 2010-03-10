@@ -371,7 +371,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center" scalefit="1"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
@@ -391,7 +394,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/junit-run-test.png" format="PNG" align="center" scalefit="1"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/junit-run-test.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
@@ -416,7 +422,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/netbeans-project-configuration.png" format="PNG" align="center" scalefit="1"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/netbeans-project-configuration.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
@@ -431,7 +440,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/netbeans-green-bar.png" format="PNG" align="center" scale="75"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/netbeans-green-bar.png" format="PNG" align="center"/>
          </imageobject>
          <caption>

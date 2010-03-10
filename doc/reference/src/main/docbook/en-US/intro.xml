@@ -80,7 +80,10 @@
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/architecture-overview.png" format="PNG" align="center" scale="75"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/architecture-overview.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
