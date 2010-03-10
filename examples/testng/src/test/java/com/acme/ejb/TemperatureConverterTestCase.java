@@ -1,6 +1,7 @@
 package com.acme.ejb;
 
 import javax.ejb.EJB;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.Archives;
@@ -21,15 +22,15 @@ public class TemperatureConverterTestCase extends Arquillian {
    }
 
    @Test
-   public void testConvertToCelcius() {
-      Assert.assertEquals(converter.convertToCelcius(32d), 0d);
-      Assert.assertEquals(converter.convertToCelcius(212d), 100d);
+   public void testConvertToCelsius() {
+      Assert.assertEquals(converter.convertToCelsius(32d), 0d);
+      Assert.assertEquals(converter.convertToCelsius(212d), 100d);
    }
 
    @Test
-   public void testConvertToFarenheight() {
-      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
-      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   public void testConvertToFarenheit() {
+      Assert.assertEquals(converter.convertToFarenheit(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheit(100d), 212d);
    }
 
    @Test

@@ -116,7 +116,7 @@
       return ((f - 32) * 5 / 9);
    }
 
-   public double convertToFarenheight(double c) {
+   public double convertToFarenheit(double c) {
       return ((c * 9 / 5) + 32);
    }
 
@@ -206,9 +206,9 @@ public class TemperatureConverterTest {
    }
 
    @Test
-   public void testConvertToFarenheight() {
-      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
-      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   public void testConvertToFarenheit() {
+      Assert.assertEquals(converter.convertToFarenheit(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheit(100d), 212d);
    }
 }]]></programlisting>
 
@@ -238,9 +238,9 @@ public class TemperatureConverterTest {
    }
 
    @Test
-   public void testConvertToFarenheight() {
-      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
-      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   public void testConvertToFarenheit() {
+      Assert.assertEquals(converter.convertToFarenheit(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheit(100d), 212d);
    }
 }]]></programlisting>
 
@@ -265,7 +265,7 @@ public class TemperatureConverterTest {
 
       <para>
          If you haven't already, download the latest version of JBoss AS 6.0 from the <ulink
-         src="http://www.jboss.org/jbossas/downloads/">JBoss AS download page</ulink>, extract the distribution and
+         url="http://www.jboss.org/jbossas/downloads/">JBoss AS download page</ulink>, extract the distribution and
          start the container.
       </para>
 
@@ -371,7 +371,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center" scalefit="1"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/maven-properties-screen.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
@@ -391,7 +394,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/junit-run-test.png" format="PNG" align="center" scalefit="1"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/junit-run-test.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
@@ -416,7 +422,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/netbeans-project-configuration.png" format="PNG" align="center" scalefit="1"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/netbeans-project-configuration.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
@@ -431,7 +440,10 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
 
       <mediaobject>
-         <imageobject>
+         <imageobject role="fo">
+            <imagedata fileref="images/netbeans-green-bar.png" format="PNG" align="center" scale="75"/>
+         </imageobject>
+         <imageobject role="html">
             <imagedata fileref="images/netbeans-green-bar.png" format="PNG" align="center"/>
          </imageobject>
          <caption>
