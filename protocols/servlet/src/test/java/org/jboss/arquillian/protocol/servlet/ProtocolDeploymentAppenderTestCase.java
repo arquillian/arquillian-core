@@ -16,10 +16,9 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
-import junit.framework.Assert;
-
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

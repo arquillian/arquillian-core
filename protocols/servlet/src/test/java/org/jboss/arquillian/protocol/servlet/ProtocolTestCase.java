@@ -20,12 +20,11 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

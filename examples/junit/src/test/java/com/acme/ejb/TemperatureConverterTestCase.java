@@ -2,11 +2,10 @@ package com.acme.ejb;
 
 import javax.ejb.EJB;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,15 +23,15 @@ public class TemperatureConverterTestCase
    }
 
    @Test
-   public void testConvertToCelcius() {
-      Assert.assertEquals(converter.convertToCelcius(32d), 0d);
-      Assert.assertEquals(converter.convertToCelcius(212d), 100d);
+   public void testConvertToCelsius() {
+      Assert.assertEquals(converter.convertToCelsius(32d), 0d, 0d);
+      Assert.assertEquals(converter.convertToCelsius(212d), 100d, 0d);
    }
 
    @Test
-   public void testConvertToFarenheight() {
-      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
-      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   public void testConvertToFarenheit() {
+      Assert.assertEquals(converter.convertToFarenheit(0d), 32d, 0d);
+      Assert.assertEquals(converter.convertToFarenheit(100d), 212d, 0d);
    }
 
    @Test

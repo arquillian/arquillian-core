@@ -116,7 +116,7 @@
       return ((f - 32) * 5 / 9);
    }
 
-   public double convertToFarenheight(double c) {
+   public double convertToFarenheit(double c) {
       return ((c * 9 / 5) + 32);
    }
 
@@ -206,9 +206,9 @@ public class TemperatureConverterTest {
    }
 
    @Test
-   public void testConvertToFarenheight() {
-      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
-      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   public void testConvertToFarenheit() {
+      Assert.assertEquals(converter.convertToFarenheit(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheit(100d), 212d);
    }
 }]]></programlisting>
 
@@ -238,9 +238,9 @@ public class TemperatureConverterTest {
    }
 
    @Test
-   public void testConvertToFarenheight() {
-      Assert.assertEquals(converter.convertToFarenheight(0d), 32d);
-      Assert.assertEquals(converter.convertToFarenheight(100d), 212d);
+   public void testConvertToFarenheit() {
+      Assert.assertEquals(converter.convertToFarenheit(0d), 32d);
+      Assert.assertEquals(converter.convertToFarenheit(100d), 212d);
    }
 }]]></programlisting>
 
