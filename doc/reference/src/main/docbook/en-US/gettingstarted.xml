@@ -29,7 +29,7 @@
       </para>
 
       <programlisting role="XML"><![CDATA[<properties>
-   <arquillian.version>1.0.0-Alpha1</arquillian.version>
+   <arquillian.version>1.0.0.Alpha1</arquillian.version>
 </properties>]]></programlisting>
 
       <para>
