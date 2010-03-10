@@ -5,7 +5,7 @@
    <title>Test enrichment</title>
 
    <para>
-      When you use a unit testing framework like JUnit or TestNG, your test case lives in a world all its own. That
+      When you use a unit testing framework like JUnit or TestNG, your test case lives in a world on its own. That
       makes integration testing pretty difficult because it means the environment in which the business logic
       executes must be self-contained within the scope of the test case (whether at the suite, class or method
       level). The onus of setting up this environment in the test falls on the developer's shoulders.
