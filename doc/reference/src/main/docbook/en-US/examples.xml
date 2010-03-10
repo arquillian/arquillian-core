@@ -28,8 +28,7 @@ svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/junit/ ar
       use <literal>$JBOSS_HOME</literal> to refer to this location throughout the tutorial.
    </para>
    
-   <programlisting><![CDATA[$ unzip jboss-6.0.0.M2.zip $JBOSS_HOME
-$ $JBOSS_HOME/bin/run.sh]]></programlisting>
+   <programlisting><![CDATA[$ unzip jboss-6.0.0.M2.zip && mv jboss-6.0.0.20100216-M2 $JBOSS_HOME && $JBOSS_HOME/bin/run.sh]]></programlisting>
 
    <para>
       Now, we tell Maven to run the tests, for both JUnit and TestNG:
