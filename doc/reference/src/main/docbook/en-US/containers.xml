@@ -104,7 +104,7 @@
                  <entry>arquillian-jbossas-remote-51</entry>
                </row>
                <row>
-                 <entry>JBoss AS 6.0 M1</entry>
+                 <entry>JBoss AS 6.0 M2</entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-remote-60</entry>
