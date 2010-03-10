@@ -265,7 +265,7 @@ public class TemperatureConverterTest {
 
       <para>
          If you haven't already, download the latest version of JBoss AS 6.0 from the <ulink
-         src="http://www.jboss.org/jbossas/downloads/">JBoss AS download page</ulink>, extract the distribution and
+         url="http://www.jboss.org/jbossas/downloads/">JBoss AS download page</ulink>, extract the distribution and
          start the container.
       </para>
 

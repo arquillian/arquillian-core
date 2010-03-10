@@ -46,15 +46,15 @@
             The Eclipse Server Tools, a subproject of the Eclipse Web Tools Project (WTP), has support for launching most
             major application servers, including JBoss AS 5. However, if you are using JBoss AS, you should consider using
             JBoss Tools instead, which offers tighter integration with JBoss technologies. See either the <ulink
-            src="http://www.eclipse.org/webtools/server/server.php">Server Tools documentation</ulink> or the <ulink
-            src="http://docs.jboss.org/tools/3.0.1.GA/en/as/html/index.html">JBoss Tools documentation</ulink> for
+            url="http://www.eclipse.org/webtools/server/server.php">Server Tools documentation</ulink> or the <ulink
+            url="http://docs.jboss.org/tools/3.0.1.GA/en/as/html/index.html">JBoss Tools documentation</ulink> for
             instructions on how to setup a container and start it in debug mode.
          </para>
 
          <para>
             <!-- TODO migration the documentation from this blog entry into this guide -->
             See <ulink
-            src="http://maverikpro.wordpress.com/2007/11/26/remote-debug-a-web-application-using-eclipse">this blog
+            url="http://maverikpro.wordpress.com/2007/11/26/remote-debug-a-web-application-using-eclipse">this blog
             entry</ulink> to learn how to start JBoss AS with JPDA enabled and how to get the Eclipse debugger to
             connect to the remote process.
          </para>
