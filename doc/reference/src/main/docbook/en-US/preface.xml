@@ -47,10 +47,12 @@
 
    <para>
       This guide documents Arquillian's architecture, how to get started using it and how to extend it. If you have
-      questions, please use the top-level discussions forum in the Arquillian space on JBoss.org. We also provide a JIRA
-      issue tracking system for bug reports and feature requests. If you are interested in the development of
-      Arquillian, or want to translate this documentation into your language, we welcome you to join us in the Arquillian
-      Development subspace on JBoss.org.
+      questions, please use the discussion forum in the top-level <ulink
+      src="http://community.jboss.org/en/arquillian">Arquillian space</ulink> on JBoss.org. We also provide a <ulink
+      src="https://jira.jboss.org/jira/browse/ARQ">JIRA issue tracking system</ulink> for bug reports and feature
+      requests. If you are interested in the development of Arquillian, or want to translate this documentation into
+      your language, we welcome you to join us in the <ulink
+      src="http://community.jboss.org/community/arquillian/dev">Arquillian Development subspace</ulink> on JBoss.org.
    </para>
 
 <!--
