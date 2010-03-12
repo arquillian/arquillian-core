@@ -6,9 +6,9 @@
 
    <para>
       We believe that integration testing should be no more complex than writing a basic unit test. We created
-      Arquillian to realize that goal. One of the major complaints we heard about Seam 2 testing (i.e., SeamTest) was,
-      not that it isn't possible, but that it isn't flexible and it's difficult to setup. We wanted to correct those
-      shortcomings with Arquillian.
+      Arquillian to realize that goal. One of the major complaints we've heard about Seam 2 testing (i.e., SeamTest)
+      was, not that it isn't possible, but that it isn't flexible and it's difficult to setup. We wanted to correct
+      those shortcomings with Arquillian.
    </para>
    
    <para>
