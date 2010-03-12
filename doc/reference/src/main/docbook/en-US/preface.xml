@@ -34,7 +34,7 @@
       business objects that are executed inside a container or that interact with the container as a client. The
       container may be an embedded or remote Servlet container, Java EE application server, Java SE CDI environment or
       any other container implementation provided. Arquillian strives to make integration testing no more complicated
-      than basic unit testing. It turns out, if these tests execute quickly, they're really the only tests you need.
+      than basic unit testing.
    </para>
 
    <para>
