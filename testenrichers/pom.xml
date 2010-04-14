@@ -19,9 +19,9 @@
   <groupId>org.jboss.arquillian.testenricher</groupId>
   <artifactId>arquillian-testenricher-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Arguillian TestEnricher Aggregator</name>
+  <name>Arquillian TestEnricher Aggregator</name>
   <url>http://www.jboss.org</url>
-  <description>Arguillian TestEnricher Aggregator</description>
+  <description>Arquillian TestEnricher Aggregator</description>
 
   <!-- Aggregate Modules -->
   <modules>

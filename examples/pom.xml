@@ -19,9 +19,9 @@
   <groupId>org.jboss.arquillian.example</groupId>
   <artifactId>arquillian-example-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Arguillian Example Aggregator</name>
+  <name>Arquillian Example Aggregator</name>
   <url>http://www.jboss.org</url>
-  <description>Arguillian Example Aggregator</description>
+  <description>Arquillian Example Aggregator</description>
 
   <!-- Aggregate Modules -->
   <modules>

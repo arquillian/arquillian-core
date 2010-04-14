@@ -36,9 +36,9 @@
   <artifactId>arquillian-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Arguillian Aggregator</name>
+  <name>Arquillian Aggregator</name>
   <url>http://www.jboss.org</url>
-  <description>Arguillian Aggregator</description>
+  <description>Arquillian Aggregator</description>
 
   <!-- Aggregate Modules -->
   <modules>
