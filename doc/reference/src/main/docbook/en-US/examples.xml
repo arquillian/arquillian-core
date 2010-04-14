@@ -92,7 +92,7 @@ $ mvn test -Pjbossas-remote-60]]></programlisting>
    </para>
 
    <para>
-      Asssuming you have JBoss AS started from running the tests on the command line, you can now execute the tests.
+      Assuming you have JBoss AS started from running the tests on the command line, you can now execute the tests.
       Right click on the InjectionTestCase.java file in the Package Explorer and select Run As... > JUnit Test
       or Run As... > TestNG Test depending on which unit testing framework the test is using.
    </para>

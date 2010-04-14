@@ -114,7 +114,7 @@
          Arquillian delegates to an SPI (service provider interface) to handle starting and stopping the server and
          deploying and undeploying archives. In this case, the SPI is the interface
          <literal>org.jboss.arquillian.spi.DeployableContainer</literal>. If you recall from the getting started
-         section, we included an Arquillian library according to the target container we wanted to us. That library
+         section, we included an Arquillian library according to the target container we wanted to use. That library
          contains an implementation of this interface, thus controlling how Arquillian handles deployment. If you wanted to
          introduce support for another container in Arquillian, you would simply provide an implementation of this
          interface.
