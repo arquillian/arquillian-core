@@ -18,20 +18,20 @@ package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.impl.DeployableTest;
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.DeploymentException;
-import org.jboss.arquillian.spi.LifecycleException;
+import org.jboss.arquillian.impl.XmlConfigurationBuilder;
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.spi.TestRunnerAdaptor;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 /**
@@ -42,69 +42,86 @@ import org.testng.annotations.BeforeSuite;
  */
 public abstract class Arquillian implements IHookable
 {
-   private static DeployableTest deployableTest = null;
+   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
-   private Archive<?> archive = null;
-   private ContainerMethodExecutor methodExecutor;
-   
-   @BeforeSuite
-   public void createAndStartContainer() throws LifecycleException
+   @BeforeSuite(alwaysRun = true)
+   public void arquillianBeforeSuite() throws Exception
    {
-      if (deployableTest == null)
+      if(deployableTest.get() == null)
       {
-         deployableTest = DeployableTestBuilder.build(null);
+         Configuration configuration = new XmlConfigurationBuilder().build();
+         deployableTest.set(DeployableTestBuilder.build(configuration));
       }
-      deployableTest.getContainerController().start();
+      deployableTest.get().beforeSuite();
    }
 
-   @AfterSuite
-   public void destroyAndStopContainer() throws LifecycleException
+   @AfterSuite(alwaysRun = true)
+   public void arquillianAfterSuite() throws Exception
    {
-      if (deployableTest == null)
+      if (deployableTest.get() == null)
       {
          return;
       }
-      deployableTest.getContainerController().stop();
+      deployableTest.get().afterSuite();
    }
 
-   @BeforeClass
-   public void createAndDeployArtifact() throws DeploymentException
+   @BeforeClass(alwaysRun = true)
+   public void arquillianBeforeClass() throws Exception
    {
-      archive = deployableTest.generateArchive(this.getClass());
-      methodExecutor = deployableTest.getDeployer().deploy(archive);
+      deployableTest.get().beforeClass(getClass());
    }
 
-   @AfterClass
-   public void destroyAndUndeployArtifact() throws DeploymentException
+   @AfterClass(alwaysRun = true)
+   public void arquillianAfterClass() throws Exception
    {
-      deployableTest.getDeployer().undeploy(archive);
+      deployableTest.get().afterClass(getClass());
+   }
+   
+   @BeforeMethod(alwaysRun = true)
+   public void arquillianBeforeTest(Method testMethod) throws Exception 
+   {
+      deployableTest.get().before(this, testMethod);
+   }
+
+   @AfterMethod(alwaysRun = true)
+   public void arquillianAfterTest(Method testMethod) throws Exception 
+   {
+      deployableTest.get().after(this, testMethod);
    }
 
    public void run(final IHookCallBack callback, final ITestResult testResult)
    {
-      TestResult result = methodExecutor.invoke(new TestMethodExecutor()
+      TestResult result;
+      try
       {
-         @Override
-         public void invoke() throws Throwable
+         result = deployableTest.get().test(new TestMethodExecutor()
          {
-            callback.runTestMethod(testResult);
-         }
-         
-         @Override
-         public Method getMethod()
+            @Override
+            public void invoke() throws Throwable
+            {
+               callback.runTestMethod(testResult);
+            }
+            
+            @Override
+            public Method getMethod()
+            {
+               return testResult.getMethod().getMethod();
+            }
+            
+            @Override
+            public Object getInstance()
+            {
+               return Arquillian.this;
+            }
+         });
+         if(result.getThrowable() != null)
          {
-            return testResult.getMethod().getMethod();
+            testResult.setThrowable(result.getThrowable());
          }
-         
-         @Override
-         public Object getInstance()
-         {
-            return Arquillian.this;
-         }
-      });
-      if(result.getThrowable() != null)
+      } 
+      catch (Exception e)
       {
-         testResult.setThrowable(result.getThrowable());
+         testResult.setThrowable(e);
       }
    }
 }

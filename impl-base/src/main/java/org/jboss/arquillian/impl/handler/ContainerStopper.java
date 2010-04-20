@@ -14,44 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.container;
+package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.impl.Deployer;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
+import org.jboss.arquillian.impl.Validate;
+import org.jboss.arquillian.impl.context.SuiteContext;
+import org.jboss.arquillian.impl.event.EventHandler;
+import org.jboss.arquillian.impl.event.type.SuiteEvent;
 import org.jboss.arquillian.spi.DeployableContainer;
-import org.jboss.arquillian.spi.DeploymentException;
-import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * ContainerDeployer
+ * A Handler for stopping the {@link DeployableContainer}.<br/>
+ * <br/>
  *
+ *  <b>Imports:</b><br/>
+ *   {@link DeployableContainer}<br/>
+ *   
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
+ * @see DeployableContainer
  */
-public class ContainerDeployer implements Deployer
+public class ContainerStopper implements EventHandler<SuiteContext, SuiteEvent>
 {
-   private DeployableContainer container;
-   
-   public ContainerDeployer(DeployableContainer container)
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
+    */
+   @Override
+   public void callback(SuiteContext context, SuiteEvent event) throws Exception
    {
-      this.container = container;
-   }
-
-   public ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException
-   {
-      if(archive == null) 
-      {
-         throw new IllegalArgumentException("Can not deploy null artifact");
-      }
-      return container.deploy(archive);
-   }
-
-   public void undeploy(Archive<?> archive) throws DeploymentException
-   {
-      if(archive == null) 
-      {
-         throw new IllegalArgumentException("Can not undeploy null artifact");
-      }
-      container.undeploy(archive);
+      DeployableContainer container = context.get(DeployableContainer.class);
+      Validate.stateNotNull(container, "No " + DeployableContainer.class.getName() + " found in context");
+      
+      container.stop();
    }
 }

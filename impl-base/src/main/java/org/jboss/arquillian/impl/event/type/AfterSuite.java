@@ -14,28 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.container;
-
-import org.jboss.arquillian.spi.DeployableContainer;
-import org.jboss.arquillian.spi.LifecycleException;
+package org.jboss.arquillian.impl.event.type;
 
 /**
- * NoContainerController
+ * Event fired After the Suite execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class NoContainerController implements Controlable
+public class AfterSuite extends SuiteEvent
 {
-   public NoContainerController(DeployableContainer container)
-   {
-   }
-   
-   public void start() throws LifecycleException
-   {
-   }
-   
-   public void stop() throws LifecycleException
+   public AfterSuite()
    {
    }
 }

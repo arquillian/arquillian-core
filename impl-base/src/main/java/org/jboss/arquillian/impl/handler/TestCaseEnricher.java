@@ -14,20 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.container;
+package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.spi.LifecycleException;
+import java.util.Collection;
+
+import org.jboss.arquillian.impl.context.TestContext;
+import org.jboss.arquillian.impl.event.EventHandler;
+import org.jboss.arquillian.impl.event.type.TestEvent;
+import org.jboss.arquillian.spi.TestEnricher;
 
 /**
- * Controlable
+ * A Handler for enriching the Test instance.<br/>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Controlable
+public class TestCaseEnricher implements EventHandler<TestContext, TestEvent>
 {
-   void start() throws LifecycleException;
-   
-   void stop() throws LifecycleException;
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
+    */
+   @Override
+   public void callback(TestContext context, TestEvent event) throws Exception
+   {
+      Collection<TestEnricher> testEnrichers = context.getServiceLoader().all(TestEnricher.class);
+      for(TestEnricher enricher : testEnrichers) 
+      {
+         enricher.enrich(event.getTestInstance());
+      }
+   }
 }

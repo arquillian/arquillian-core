@@ -14,38 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.container;
-
-import org.jboss.arquillian.spi.DeployableContainer;
-import org.jboss.arquillian.spi.LifecycleException;
+package org.jboss.arquillian.impl.event;
 
 /**
- * ForceRestartController
+ * EventManagerIF
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
+ * @param <X>
+ * @param <T>
  */
-public class ForceRestartController implements Controlable
+public interface EventManager<X, T extends Event>
 {
-   private DeployableContainer container;
+   /**
+    * @param context
+    * @param event
+    */
+   void fire(X context, T event);
    
-   public ForceRestartController(DeployableContainer container)
-   {
-      this.container = container;
-   }
-
-   public void start() throws LifecycleException
-   {
-      try {
-         container.stop();
-      } catch (LifecycleException e) {
-         // no-op
-      }
-      container.start();
-   }
-
-   public void stop() throws LifecycleException
-   {
-      container.stop();      
-   }
+   /**
+    * @param <K>
+    * @param eventType
+    * @param handler
+    */
+   <K extends T> void register(Class<? extends K> eventType, EventHandler<X, ? super K> handler);
 }

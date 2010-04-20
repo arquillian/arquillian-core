@@ -14,22 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
-
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.DeploymentException;
-import org.jboss.shrinkwrap.api.Archive;
+package org.jboss.arquillian.impl.context;
 
 /**
- * Deployer
+ * 
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Deployer
+public interface ProfileBuilder
 {
+   /**
+    * @param context
+    */
+   void buildSuiteContext(SuiteContext context);
 
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   void undeploy(Archive<?> archive) throws DeploymentException;
+   /**
+    * @param context
+    */
+   void buildClassContext(ClassContext context);
 
+   /**
+    * @param context
+    */
+   void buildTestContext(TestContext context);
 }

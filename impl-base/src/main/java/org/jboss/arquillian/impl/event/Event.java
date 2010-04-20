@@ -14,34 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.container;
-
-import org.jboss.arquillian.spi.DeployableContainer;
-import org.jboss.arquillian.spi.LifecycleException;
-
+package org.jboss.arquillian.impl.event;
 
 /**
- * ContainerController
+ * Event
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerController implements Controlable
+public interface Event
 {
-   private DeployableContainer container;
-
-   public ContainerController(DeployableContainer container)
-   {
-      this.container = container;
-   }
-   
-   public void start() throws LifecycleException
-   {
-      container.start();
-   }
-   
-   public void stop() throws LifecycleException
-   {
-      container.stop();
-   }
 }

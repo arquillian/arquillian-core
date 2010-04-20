@@ -60,4 +60,19 @@ public final class Validate
          throw new IllegalArgumentException(message);
       }
    }
+   
+   /**
+    * Checks that obj is not null, throws exception if it is.
+    * 
+    * @param obj The object to check
+    * @param message The exception message
+    * @throws IllegalStateException Thrown if obj is null
+    */
+   public static void stateNotNull(final Object obj, final String message) throws IllegalStateException
+   {
+      if(obj == null)
+      {
+         throw new IllegalStateException(message);
+      }
+   }
 }

@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.impl.event.type;
 
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.impl.event.Event;
 
 /**
- * DeployableContainer
+ * Base for events fired in the Suite execution cycle.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer
+public class SuiteEvent implements Event
 {
-   void setup(Configuration configuration);
-   
-   void start() throws LifecycleException;
-   
-   void stop() throws LifecycleException;
-   
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
-
+   public SuiteEvent()
+   {
+   }
 }

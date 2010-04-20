@@ -17,12 +17,11 @@
 package org.jboss.arquillian.testng;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.arquillian.impl.DeployableTest;
-import org.jboss.arquillian.impl.Validate;
+import org.jboss.arquillian.impl.DeployableTestBuilder;
+import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
 import org.testng.TestNG;
@@ -39,29 +38,16 @@ import org.testng.xml.XmlTest;
  */
 public class TestNGTestRunner implements TestRunner
 {
-   private ExecutionMode executionMode = ExecutionMode.STANDALONE; 
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunner#setExecutionMode(org.jboss.arquillian.spi.TestRunner.ExecutionMode)
-    */
-   @Override
-   public void setExecutionMode(ExecutionMode executionMode)
-   {
-      Validate.notNull(executionMode, "ExecutionMode must be specified");
-      this.executionMode = executionMode;
-   }
-
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestRunner#execute(java.lang.Class, java.lang.String)
     */
    @Override
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      setExecutionMode();
-
+      DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);
       TestListener resultListener = new TestListener();
       
-      TestNG runner = new TestNG(false);
+      TestNG runner = new TestNG(true);
       runner.setVerbose(0);
       runner.addListener(resultListener);
       runner.setXmlSuites(
@@ -69,11 +55,7 @@ public class TestNGTestRunner implements TestRunner
       
       runner.run();
 
-      TestResult testResult = resultListener.getTestResult(); 
-      
-      resetExecutionMode();
-      
-      return testResult;
+      return resultListener.getTestResult(); 
    }
    
    private XmlSuite createSuite(Class<?> className, String methodName)
@@ -90,25 +72,5 @@ public class TestNGTestRunner implements TestRunner
       testClasses.add(testClass);
       test.setXmlClasses(testClasses);
       return suite;
-   }
-
-   private void setExecutionMode() 
-   {
-      switch (executionMode)
-      {
-         case CONTAINER:
-            DeployableTest.setInContainer(true);
-            break;
-      }
-   }
-   
-   private void resetExecutionMode() 
-   {
-      switch (executionMode)
-      {
-         case CONTAINER:
-            DeployableTest.setInContainer(false);
-            break;
-      }
    }
 }

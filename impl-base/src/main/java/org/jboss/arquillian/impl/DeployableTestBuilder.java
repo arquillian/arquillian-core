@@ -16,19 +16,16 @@
  */
 package org.jboss.arquillian.impl;
 
-import org.jboss.arquillian.impl.container.ContainerController;
-import org.jboss.arquillian.impl.container.ContainerDeployer;
-import org.jboss.arquillian.impl.container.Controlable;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.DeployableContainer;
-import org.jboss.arquillian.spi.DeploymentException;
-import org.jboss.arquillian.spi.LifecycleException;
+import org.jboss.arquillian.impl.context.ClientProfileBuilder;
+import org.jboss.arquillian.impl.context.ContainerProfileBuilder;
+import org.jboss.arquillian.impl.context.ContextLifecycleManager;
+import org.jboss.arquillian.impl.context.ProfileBuilder;
+import org.jboss.arquillian.impl.context.StandaloneProfileBuilder;
+import org.jboss.arquillian.spi.Configuration;
+import org.jboss.arquillian.spi.ContainerConfiguration;
+import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.ServiceLoader;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.arquillian.spi.util.TestEnrichers;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.spi.TestRunnerAdaptor;
 
 /**
  * DeployableTestBuilder
@@ -39,71 +36,80 @@ import org.jboss.shrinkwrap.api.Archive;
 public class DeployableTestBuilder
 {
    private DeployableTestBuilder() {}
-   
-   public static DeployableTest build(Object config) 
-   {
-      Controlable controller = null;
-      Deployer deployer = null;
-      
-      // TODO: lookup service loader impl from configuration
-      ServiceLoader serviceLoader = new DynamicServiceLoader();
-      
-      if(DeployableTest.isInContainer()) 
-      {
-         controller = new InContainerContainer();
-         deployer = new InContainerContainer();
-      }
-      else 
-      {
-         DeployableContainer container = serviceLoader.onlyOne(DeployableContainer.class);
-         // TODO: lookup controller / deployer from configuration
-         controller = new ContainerController(container);
-         deployer = new ContainerDeployer(container);
-      }
 
-      return new DeployableTest(
-            controller,
-            deployer,
-            serviceLoader);
+   private static ContainerProfile profile = null;
+
+   public static void setProfile(ContainerProfile profile)
+   {
+      Validate.notNull(profile, "Profile must be specified");
+      
+      DeployableTestBuilder.profile = profile;
    }
    
-   private static class InContainerContainer implements Controlable, Deployer 
+   public static ContainerProfile getProfile()
    {
-      @Override
-      public void start() throws LifecycleException
-      {
-      }
+      return DeployableTestBuilder.profile;
+   }
 
-      @Override
-      public void stop() throws LifecycleException
+   /**
+    * @return
+    */
+   public static TestRunnerAdaptor build() 
+   {
+      return build(DeployableTestBuilder.profile);
+   }
+   
+   // TODO: fix the ContainerProfile loading/selecting
+   public static TestRunnerAdaptor build(Configuration configuration)
+   {
+      ContainerProfile profile = DeployableTestBuilder.profile;
+      ContainerConfiguration activeConfiguration = configuration.getActiveContainerConfiguration();
+      if(activeConfiguration != null && profile == null) 
       {
+         profile = activeConfiguration.getContainerProfile();
       }
+      return build(profile, configuration);
+   }
+   
+   public static TestRunnerAdaptor build(ContainerProfile profile) 
+   {
+      return build(profile, new XmlConfigurationBuilder().build());
+   }
+   
+   public static TestRunnerAdaptor build(ContainerProfile profile, Configuration configuration) 
+   {
+      ProfileBuilder profileBuilder = null;
+      switch(profile) 
+      {
+         case STANDALONE:
+            profileBuilder = new StandaloneProfileBuilder();
+            break;
+         case CONTAINER:
+            profileBuilder = new ContainerProfileBuilder();
+            break;
+         case CLIENT:
+            profileBuilder = new ClientProfileBuilder();
+            break;
+         default: // TODO: create profile builders dynamic
+            throw new IllegalArgumentException("Unknon profile " + profile);
+      }
+      return build(profileBuilder, configuration);
+   }
+   
+   /**
+    * @param profileBuilder
+    * @return
+    */
+   public static TestRunnerAdaptor build(ProfileBuilder profileBuilder, Configuration configuration)
+   {
+      ServiceLoader serviceLoader = new DynamicServiceLoader();
 
-      @Override
-      public ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException
-      {
-         return new ContainerMethodExecutor()
-         {
-            @Override
-            public TestResult invoke(TestMethodExecutor testMethodExecutor)
-            {
-               try 
-               {
-                  TestEnrichers.enrich(testMethodExecutor.getInstance());
-                  testMethodExecutor.invoke();
-                  return new TestResultImpl(Status.PASSED);
-               } 
-               catch (Throwable e) 
-               {
-                  return new TestResultImpl(Status.FAILED, e);
-               }
-            }
-         };
-      }
+      ContextLifecycleManager eventManager = new ContextLifecycleManager(
+            configuration, 
+            profileBuilder,
+            serviceLoader
+      );
 
-      @Override
-      public void undeploy(Archive<?> archive) throws DeploymentException
-      {
-      }
+      return new EventTestRunnerAdaptor(eventManager);
    }
 }

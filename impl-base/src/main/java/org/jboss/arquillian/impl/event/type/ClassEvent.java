@@ -14,26 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.impl.event.type;
 
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.impl.Validate;
 
 /**
- * DeployableContainer
+ * Base for events fired in the Test Class execution face.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer
+public class ClassEvent extends SuiteEvent
 {
-   void setup(Configuration configuration);
+   private Class<?> testClass;
    
-   void start() throws LifecycleException;
+   /**
+    * @param testClass The Test case {@link Class}
+    * @throws IllegalArgumentException if testCase is null 
+    */
+   public ClassEvent(Class<?> testClass)
+   {
+      Validate.notNull(testClass, "TestClass must be specified");
+      
+      this.testClass = testClass;
+   }
    
-   void stop() throws LifecycleException;
-   
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
-
+   public Class<?> getTestClass()
+   {
+      return testClass;
+   }
 }

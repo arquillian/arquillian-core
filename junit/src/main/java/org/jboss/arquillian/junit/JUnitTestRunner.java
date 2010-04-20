@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.junit;
 
-import org.jboss.arquillian.impl.DeployableTest;
+import org.jboss.arquillian.impl.DeployableTestBuilder;
 import org.jboss.arquillian.impl.TestResultImpl;
-import org.jboss.arquillian.impl.Validate;
+import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.TestResult.Status;
@@ -36,57 +36,20 @@ import org.junit.runner.Result;
  */
 public class JUnitTestRunner implements TestRunner
 {
-   private ExecutionMode executionMode = ExecutionMode.STANDALONE; 
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunner#setExecutionMode(org.jboss.arquillian.spi.TestRunner.ExecutionMode)
-    */
-   @Override
-   public void setExecutionMode(ExecutionMode executionMode)
-   {
-      Validate.notNull(executionMode, "ExecutionMode must be specified");
-      this.executionMode = executionMode;
-   }
-   
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestRunner#execute(java.lang.Class, java.lang.String)
     */
    @Override
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      setExecutionMode();
-      
+      DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);
       JUnitCore runner = new JUnitCore();
       Result result = runner.run(
             Request.method(
                   testClass, 
                   methodName));
       
-      TestResult testResult = convertToTestResult(result);
-      
-      resetExecutionMode();
-      
-      return testResult;
-   }
-
-   private void setExecutionMode() 
-   {
-      switch (executionMode)
-      {
-         case CONTAINER:
-            DeployableTest.setInContainer(true);
-            break;
-      }
-   }
-   
-   private void resetExecutionMode() 
-   {
-      switch (executionMode)
-      {
-         case CONTAINER:
-            DeployableTest.setInContainer(false);
-            break;
-      }
+      return convertToTestResult(result);
    }
 
    /**

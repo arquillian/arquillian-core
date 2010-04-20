@@ -14,26 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.impl.event;
 
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.impl.context.Context;
 
 /**
- * DeployableContainer
+ * FiredEventException
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer
+public class FiredEventException extends RuntimeException
 {
-   void setup(Configuration configuration);
-   
-   void start() throws LifecycleException;
-   
-   void stop() throws LifecycleException;
-   
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
+   private static final long serialVersionUID = 1L;
 
+   private transient Event source;
+   private transient Context<?, ?> context;
+   
+   public FiredEventException(Context<?, ?> context, Event source, Exception cause)
+   {
+      super(cause);
+      this.source = source;
+      this.context = context;
+   }
+   
+   public Event getSource()
+   {
+      return source;
+   }
+   
+   public Context<?, ?> getContext()
+   {
+      return context;
+   }
 }

@@ -251,7 +251,12 @@
             <artifactId>jetty-embedded</artifactId>
             <version>${version.jetty_jetty}</version>
          </dependency>
-
+         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.3</version>
+          </dependency>
+	
       </dependencies>
    </dependencyManagement>
 

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<arquillian xmlns="http://jboss.com/arquillian"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:mock="urn:arq:org.jboss.arquillian.impl">
+	
+	<mock:container>
+		<mock:property string="hola" long="2" />
+		<mock:propertyInt>1</mock:propertyInt>
+		<mock:propertyDouble>3</mock:propertyDouble>
+		<mock:propertyBoolean>true</mock:propertyBoolean>
+	</mock:container>	
+
+</arquillian>

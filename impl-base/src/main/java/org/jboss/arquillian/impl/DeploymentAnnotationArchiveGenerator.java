@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
@@ -39,7 +40,15 @@ public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveG
       Method deploymentMethod = findDeploymentMethod(testCase);
       if(deploymentMethod == null) 
       {
-         throw new RuntimeException("No static method annotated with " + Deployment.class.getName() + " found");
+         throw new IllegalArgumentException("No method annotated with " + Deployment.class.getName() + " found");
+      }
+      if(!Modifier.isStatic(deploymentMethod.getModifiers()))
+      {
+         throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " is not static");
+      }
+      if(!Archive.class.isAssignableFrom(deploymentMethod.getReturnType())) 
+      {
+         throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " must have return type " + Archive.class.getName());
       }
       try 
       {

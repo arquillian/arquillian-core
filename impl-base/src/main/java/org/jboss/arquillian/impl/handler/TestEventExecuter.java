@@ -14,24 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.impl.handler;
+
+import org.jboss.arquillian.impl.TestResultImpl;
+import org.jboss.arquillian.impl.context.TestContext;
+import org.jboss.arquillian.impl.event.EventHandler;
+import org.jboss.arquillian.impl.event.type.Test;
+import org.jboss.arquillian.spi.TestResult.Status;
 
 /**
- * TestRunner
- * 
- * A Generic way to start the test framework.
+ * A Handler for executing the Test Method.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestRunner
+public class TestEventExecuter implements EventHandler<TestContext, Test>
 {
-   /**
-    * Run a single test method in a test class.
-    * 
-    * @param testClass The test case class to execute
-    * @param methodName The method to execute
-    * @return The result of the test
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
     */
-   TestResult execute(Class<?> testClass, String methodName);
+   @Override
+   public void callback(TestContext context, Test event) throws Exception 
+   {
+      try 
+      {
+         event.getTestMethodExecutor().invoke();
+         event.setTestResult(new TestResultImpl(Status.PASSED));
+      } 
+      catch (Throwable e) 
+      {
+         event.setTestResult(new TestResultImpl(Status.FAILED, e));
+      }
+   }
 }

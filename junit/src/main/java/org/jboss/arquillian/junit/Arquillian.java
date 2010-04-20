@@ -20,12 +20,12 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.arquillian.impl.DeployableTest;
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
+import org.jboss.arquillian.impl.XmlConfigurationBuilder;
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.spi.TestRunnerAdaptor;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -39,26 +39,25 @@ import org.junit.runners.model.Statement;
  */
 public class Arquillian extends BlockJUnit4ClassRunner
 {
-   private static ThreadLocal<DeployableTest> deployableTest = new ThreadLocal<DeployableTest>();
-   
-   private Archive<?> archive = null;
-   private ContainerMethodExecutor methodExecutor;
+   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
    
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
       if(deployableTest.get() == null) 
       {
-         deployableTest.set(DeployableTestBuilder.build(null));
+         Configuration configuration = new XmlConfigurationBuilder().build();
+         deployableTest.set(DeployableTestBuilder.build(configuration));
          try 
          {
-            deployableTest.get().getContainerController().start();
+            deployableTest.get().beforeSuite();
          } 
          catch (Exception e) 
          {
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
-         Runtime.getRuntime().addShutdownHook(new Thread() {
+         Runtime.getRuntime().addShutdownHook(new Thread() 
+         {
             @Override
             public void run()
             {
@@ -66,7 +65,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                {
                   if(deployableTest.get() != null) 
                   {
-                     deployableTest.get().getContainerController().stop();
+                     deployableTest.get().beforeSuite();
                   }
                } 
                catch (Exception e) 
@@ -85,35 +84,63 @@ public class Arquillian extends BlockJUnit4ClassRunner
       return super.computeTestMethods();
    }
 
+      
    @Override
-   protected Statement withBeforeClasses(Statement statement)
+   protected Statement withBeforeClasses(final Statement originalStatement)
    {
-      final Statement originalStatement = super.withBeforeClasses(statement);
+      final Statement statementWithBefores = super.withBeforeClasses(originalStatement);
       return new Statement() 
       {
          @Override
          public void evaluate() throws Throwable
          {
-            archive = deployableTest.get().generateArchive(
-                  Arquillian.this.getTestClass().getJavaClass());
-
-            methodExecutor = deployableTest.get().getDeployer().deploy(archive);
-            originalStatement.evaluate();
+            deployableTest.get().beforeClass(Arquillian.this.getTestClass().getJavaClass());
+            statementWithBefores.evaluate();
          }
       };
    }
    
    @Override
-   protected Statement withAfterClasses(Statement statement)
+   protected Statement withAfterClasses(final Statement originalStatement)
    {
-      final Statement originalStatement = super.withAfterClasses(statement);
+      final Statement statementWithAfters = super.withAfterClasses(originalStatement);
       return new Statement() 
       {
          @Override
          public void evaluate() throws Throwable
          {
-            originalStatement.evaluate();
-            deployableTest.get().getDeployer().undeploy(archive);
+            statementWithAfters.evaluate();
+            deployableTest.get().afterClass(Arquillian.this.getTestClass().getJavaClass());
+         }
+      };
+   }
+   
+   @Override
+   protected Statement withBefores(final FrameworkMethod method, final Object target, final Statement originalStatement)
+   {
+      final Statement statementWithBefores = super.withBefores(method, target, originalStatement);
+      return new Statement()
+      {
+         @Override
+         public void evaluate() throws Throwable
+         {
+            deployableTest.get().before(target, method.getMethod());
+            statementWithBefores.evaluate();
+         }
+      };
+   }
+   
+   @Override
+   protected Statement withAfters(final FrameworkMethod method, final Object target, final Statement originalStatement)
+   {
+      final Statement statementWithAfters = super.withBefores(method, target, originalStatement);
+      return new Statement()
+      {
+         @Override
+         public void evaluate() throws Throwable
+         {
+            statementWithAfters.evaluate();
+            deployableTest.get().after(target, method.getMethod());
          }
       };
    }
@@ -126,7 +153,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            TestResult result = methodExecutor.invoke(new TestMethodExecutor()
+            TestResult result = deployableTest.get().test(new TestMethodExecutor()
             {
                public void invoke() throws Throwable
                {

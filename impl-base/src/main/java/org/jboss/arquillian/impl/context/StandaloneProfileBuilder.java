@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.impl.context;
 
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.impl.event.type.Before;
+import org.jboss.arquillian.impl.event.type.Test;
+import org.jboss.arquillian.impl.handler.TestEventExecuter;
+import org.jboss.arquillian.impl.handler.TestCaseEnricher;
 
 /**
- * DeployableContainer
+ * StandaloneProfileBuilder
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer
+public class StandaloneProfileBuilder extends ClientProfileBuilder
 {
-   void setup(Configuration configuration);
-   
-   void start() throws LifecycleException;
-   
-   void stop() throws LifecycleException;
-   
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
-
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext)
+    */
+   @Override
+   public void buildTestContext(TestContext context)
+   {
+      context.register(Before.class, new TestCaseEnricher());
+      context.register(Test.class, new TestEventExecuter());
+   }
 }

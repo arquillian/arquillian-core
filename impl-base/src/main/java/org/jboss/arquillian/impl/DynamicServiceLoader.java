@@ -48,11 +48,11 @@ public class DynamicServiceLoader implements ServiceLoader
       Collection<T> providers = DefaultServiceLoader.load(serviceClass).getProviders();
       if(providers == null || providers.size() == 0)
       {
-         throw new RuntimeException("No implementation found for: " + serviceClass.getName() + ", check classpath");
+         throw new IllegalStateException("No implementation found for: " + serviceClass.getName() + ", check classpath");
       }
       if(providers.size() > 1)
       {
-         throw new RuntimeException("Mutiple implementations found for: " + serviceClass.getName() + ", check classpath");
+         throw new IllegalStateException("Mutiple implementations found for: " + serviceClass.getName() + ", check classpath");
       }
       return providers.iterator().next();
    }

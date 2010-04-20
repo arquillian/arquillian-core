@@ -14,26 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.impl.event.type;
 
-import org.jboss.shrinkwrap.api.Archive;
+import java.lang.reflect.Method;
 
 /**
- * DeployableContainer
+ * Event fired Before the Test method execution
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer
+public class Before extends TestEvent
 {
-   void setup(Configuration configuration);
-   
-   void start() throws LifecycleException;
-   
-   void stop() throws LifecycleException;
-   
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
-
+   /**
+    * @param testInstance The test case instance being tested
+    * @param testMethod The test method that is about to be executed
+    */
+   public Before(Object testInstance, Method testMethod)
+   {
+      super(testInstance, testMethod);
+   }
 }

@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
-
-import org.jboss.shrinkwrap.api.Archive;
+package org.jboss.arquillian.impl.event;
 
 /**
- * NullDeploymentGenerator
+ * EventHandler
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
+ * @param <X> The Context
+ * @param <T> The Event 
  */
-public class NullDeploymentGenerator implements DeploymentGenerator
+public interface EventHandler<X, T>
 {
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.DeploymentGenerator#generate(java.lang.Class)
+   
+   /**
+    * @param context
+    * @param event
+    * @throws Exception
     */
-   @Override
-   public Archive<?> generate(Class<?> testCase)
-   {
-      return null;
-   }
+   void callback(X context, T event) throws Exception;
+   
 }

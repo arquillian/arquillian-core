@@ -16,17 +16,19 @@
  */
 package org.jboss.arquillian.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
+import org.jboss.arquillian.spi.ApplicationArchiveProcessor;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.spi.AuxiliaryArchiveProcessor;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.ServiceLoader;
-import org.jboss.arquillian.spi.AuxiliaryArchiveProcessor;
-import org.jboss.arquillian.spi.ApplicationArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 /**
  * Responsible for 
@@ -61,7 +63,11 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
       List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
       applyAuxiliaryProcessors(auxiliaryArchives);
 
-      return packager.generateDeployment(applicationArchive, auxiliaryArchives);
+      Archive<?> deployment = packager.generateDeployment(applicationArchive, auxiliaryArchives);
+      
+      deployment.as(ZipExporter.class).exportZip(new File("test.ear"), true);
+      
+      return deployment; 
    }
    
    private List<Archive<?>> loadAuxiliaryArchives() 

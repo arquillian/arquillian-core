@@ -26,7 +26,24 @@ import java.util.Collection;
  */
 public interface ServiceLoader
 {
+   /**
+    * Load multiple service implementations.
+    * 
+    * @param <T>
+    * @param serviceClass The service interface to load a implementations for
+    * @return A {@link Collection} of all instances of serviceClass 
+    */
    <T> Collection<T>  all(Class<T> serviceClass);
    
-   <T> T  onlyOne(Class<T> serviceClass);
+   /**
+    * Load a single service implementation. 
+    * 
+    * Method should throw {@link IllegalStateException} if multiple instances of serviceClass found.
+    * 
+    * @param <T>
+    * @param serviceClass The service interface to load a implementation for
+    * @return A instance of serviceClass
+    * @throws IllegalStateException if more then one implementation of serviceClass found
+    */
+   <T> T onlyOne(Class<T> serviceClass);
 }
