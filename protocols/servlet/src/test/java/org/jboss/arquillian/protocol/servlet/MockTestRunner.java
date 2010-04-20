@@ -53,9 +53,4 @@ public class MockTestRunner implements TestRunner
 //         callback.handle(result);
 //      }
 //   }
-
-   @Override
-   public void setExecutionMode(ExecutionMode executionMode)
-   {
-   }
 }
