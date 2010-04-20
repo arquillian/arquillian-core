@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event;
+package org.jboss.arquillian.impl.context;
 
 import junit.framework.Assert;
 
@@ -23,6 +23,7 @@ import org.jboss.arquillian.impl.context.ContextLifecycleManager;
 import org.jboss.arquillian.impl.context.ProfileBuilder;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.context.TestContext;
+import org.jboss.arquillian.impl.event.EventHandler;
 import org.jboss.arquillian.impl.event.type.Before;
 import org.jboss.arquillian.impl.event.type.ClassEvent;
 import org.jboss.arquillian.impl.event.type.SuiteEvent;
