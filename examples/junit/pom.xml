@@ -83,6 +83,36 @@
          </build>
       </profile>
       <profile>
+         <id>openwebbeans-embedded</id>
+         <dependencies>
+            <dependency>
+               <groupId>org.jboss.arquillian.container</groupId>
+               <artifactId>arquillian-openwebbeans-embedded</artifactId>
+               <version>${project.version}</version>
+            </dependency>
+            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
+               <groupId>org.jboss.ejb3</groupId> 
+               <artifactId>jboss-ejb3-api</artifactId> 
+               <version>3.1.0</version>
+               <scope>test</scope>
+            </dependency>
+         </dependencies>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                     <includes>
+                        <include>com/acme/cdi/payment/*</include>
+                        <include>com/acme/cdi/random/*</include>
+                     </includes>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+      <profile>
          <id>jbossas-embedded-60</id>
          <dependencies>
             <dependency>
@@ -251,7 +281,7 @@
          <groupId>javax.enterprise</groupId> 
          <artifactId>cdi-api</artifactId> 
          <version>1.0-SP1</version> 
-         <scope>test</scope>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>javax.mail</groupId> 
@@ -259,7 +289,7 @@
          <version>1.4.1</version> 
          <scope>test</scope>
       </dependency>
-  
+      
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
