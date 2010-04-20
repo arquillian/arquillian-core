@@ -49,14 +49,17 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       }
       
       Class<?> testClass = testMethodExecutor.getInstance().getClass();
+//      String url = baseURL.toExternalForm() + "test/ArquillianServletRunner" +  
+//                        "?outputMode=serializedObject&className=" + testClass.getName() + 
+//                        "&methodName=" + testMethodExecutor.getMethod().getName();
+      
       String url = baseURL.toExternalForm() + "arquillian-protocol/" +  
-                        "?outputMode=serializedObject&className=" + testClass.getName() + 
-                        "&methodName=" + testMethodExecutor.getMethod().getName();
+                         "?outputMode=serializedObject&className=" + testClass.getName() + 
+                          "&methodName=" + testMethodExecutor.getMethod().getName();
       
       try 
       {
-         TestResult result = execute(url);
-         return result;
+         return execute(url);
       } 
       catch (Exception e) 
       {
@@ -89,17 +92,16 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
                {
                   o = ois.readObject();
                }
-               catch (ClassNotFoundException e)
+               finally 
                {
-                  throw e;
+                  ois.close();   
                }
-               ois.close();
+               
                if (!(o instanceof TestResult))
                {
                   throw new IllegalStateException("Error reading test results - expected a TestResult but got " + o);
                }
-               TestResult result = (TestResult) o;
-               return result;
+               return (TestResult) o;
             }
             else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND)
             {

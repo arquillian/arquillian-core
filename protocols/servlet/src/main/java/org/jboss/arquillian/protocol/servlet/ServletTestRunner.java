@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
-import org.jboss.arquillian.spi.TestRunner.ExecutionMode;
 import org.jboss.arquillian.spi.util.TestRunners;
 
 /**
@@ -66,11 +65,13 @@ public class ServletTestRunner extends HttpServlet
          {
             outputMode = request.getParameter(PARA_OUTPUT_MODE);
          }
-         if ( ( className = request.getParameter(PARA_CLASS_NAME))  == null)
+         className = request.getParameter(PARA_CLASS_NAME);
+         if (className == null)
          {
             throw new IllegalArgumentException(PARA_CLASS_NAME + " must be specified");
          }
-         if ( (methodName = request.getParameter(PARA_METHOD_NAME) ) == null)
+         methodName = request.getParameter(PARA_METHOD_NAME);
+         if ( methodName == null)
          {
             throw new IllegalArgumentException(PARA_METHOD_NAME + " must be specified");
          }
@@ -78,7 +79,6 @@ public class ServletTestRunner extends HttpServlet
          Class<?> testClass = SecurityActions.getThreadContextClassLoader().loadClass(className);
          
          TestRunner runner = TestRunners.getTestRunner();
-         runner.setExecutionMode(ExecutionMode.CONTAINER);
          
          TestResult testResult = runner.execute(testClass, methodName);
 
