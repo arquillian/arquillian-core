@@ -63,11 +63,7 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
       List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
       applyAuxiliaryProcessors(auxiliaryArchives);
 
-      Archive<?> deployment = packager.generateDeployment(applicationArchive, auxiliaryArchives);
-      
-      deployment.as(ZipExporter.class).exportZip(new File("test.ear"), true);
-      
-      return deployment; 
+      return packager.generateDeployment(applicationArchive, auxiliaryArchives);
    }
    
    private List<Archive<?>> loadAuxiliaryArchives() 
