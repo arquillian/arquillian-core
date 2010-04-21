@@ -38,10 +38,7 @@ import org.testng.xml.XmlTest;
  */
 public class TestNGTestRunner implements TestRunner
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunner#execute(java.lang.Class, java.lang.String)
-    */
-   @Override
+
    public TestResult execute(Class<?> testClass, String methodName)
    {
       DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);

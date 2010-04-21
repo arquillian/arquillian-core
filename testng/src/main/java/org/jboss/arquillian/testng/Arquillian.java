@@ -96,19 +96,16 @@ public abstract class Arquillian implements IHookable
       {
          result = deployableTest.get().test(new TestMethodExecutor()
          {
-            @Override
             public void invoke() throws Throwable
             {
                callback.runTestMethod(testResult);
             }
             
-            @Override
             public Method getMethod()
             {
                return testResult.getMethod().getMethod();
             }
             
-            @Override
             public Object getInstance()
             {
                return Arquillian.this;

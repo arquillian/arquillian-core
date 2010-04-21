@@ -43,10 +43,7 @@ import com.thoughtworks.qdox.Searcher;
  */
 public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
-    */
-   @Override
+
    public Archive<?> createAuxiliaryArchive()
    {
       return Archives.create("arquillian-testng.jar", JavaArchive.class)

@@ -34,59 +34,31 @@ public class TestListener implements ITestListener
 
    private ITestContext context;
    
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onFinish(org.testng.ITestContext)
-    */
-   @Override
    public void onFinish(ITestContext paramITestContext)
    {
       context = paramITestContext;
    }
 
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onStart(org.testng.ITestContext)
-    */
-   @Override
    public void onStart(ITestContext paramITestContext)
    {
    }
 
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onTestFailedButWithinSuccessPercentage(org.testng.ITestResult)
-    */
-   @Override
    public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult)
    {
    }
 
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onTestFailure(org.testng.ITestResult)
-    */
-   @Override
    public void onTestFailure(ITestResult paramITestResult)
    {
    }
 
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onTestSkipped(org.testng.ITestResult)
-    */
-   @Override
    public void onTestSkipped(ITestResult paramITestResult)
    {
    }
 
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onTestStart(org.testng.ITestResult)
-    */
-   @Override
    public void onTestStart(ITestResult paramITestResult)
    {
    }
 
-   /* (non-Javadoc)
-    * @see org.testng.ITestListener#onTestSuccess(org.testng.ITestResult)
-    */
-   @Override
    public void onTestSuccess(ITestResult paramITestResult)
    {
    }

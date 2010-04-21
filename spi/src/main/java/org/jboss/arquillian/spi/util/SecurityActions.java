@@ -72,7 +72,6 @@ final class SecurityActions
       {
          return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<?>>()
          {
-            @Override
             public Constructor<?> run() throws NoSuchMethodException
             {
                return clazz.getConstructor(argumentTypes);
@@ -169,7 +168,6 @@ final class SecurityActions
    private enum GetTcclAction implements PrivilegedAction<ClassLoader> {
       INSTANCE;
 
-      @Override
       public ClassLoader run()
       {
          return Thread.currentThread().getContextClassLoader();

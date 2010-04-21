@@ -36,7 +36,6 @@ public class ResourceInjectionEnricher implements TestEnricher
    private static final String RESOURCE_LOOKUP_PREFIX = "java:/comp/env";
    private static final String ANNOTATION_NAME = "javax.annotation.Resource";
    
-   @Override
    public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 

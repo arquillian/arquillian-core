@@ -35,7 +35,6 @@ public class CDIInjectionEnricher implements TestEnricher
    private static final String JNDI_BEAN_MANAGER_JBOSS = "java:app/BeanManager";
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
    
-   @Override
    public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 

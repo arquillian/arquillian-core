@@ -38,7 +38,6 @@ public class EJBInjectionEnricher implements TestEnricher
    private static final String ANNOTATION_FIELD_BEAN_INTERFACE = "beanInterface";
    private static final String ANNOTATION_FIELD_MAPPED_NAME = "mappedName";
    
-   @Override
    public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
