@@ -33,10 +33,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
 {
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
-    */
-   @Override
    public Archive<?> createAuxiliaryArchive()
    {
       WebArchive archive = Archives.create("arquillian-protocol.war", WebArchive.class)

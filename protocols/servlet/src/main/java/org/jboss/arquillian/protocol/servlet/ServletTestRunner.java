@@ -165,13 +165,11 @@ public class ServletTestRunner extends HttpServlet
          this.throwable = throwable;
       }
       
-      @Override
       public Status getStatus()
       {
          return Status.FAILED;
       }
       
-      @Override
       public Throwable getThrowable()
       {
          return throwable;

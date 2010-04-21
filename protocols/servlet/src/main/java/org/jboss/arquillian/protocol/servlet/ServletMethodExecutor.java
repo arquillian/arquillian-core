@@ -40,7 +40,6 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       this.baseURL = baseURL;
    }
    
-   @Override
    public TestResult invoke(TestMethodExecutor testMethodExecutor) 
    {
       if(testMethodExecutor == null) 

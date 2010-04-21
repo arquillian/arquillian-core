@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.arquillian.spi.TestResult;
-//import org.jboss.arquillian.spi.TestResultCallback;
 import org.jboss.arquillian.spi.TestRunner;
 
 /**
@@ -40,7 +39,6 @@ public class MockTestRunner implements TestRunner
       wantedResults.add(wantedTestResult);
    }
    
-   @Override
    public TestResult execute(Class<?> testClass, String methodName)
    {
       return wantedResults.get(0);

@@ -198,13 +198,11 @@ public class ProtocolTestCase
          this.throwable = throwable;
       }
 
-      @Override
       public Status getStatus()
       {
          return status;
       }
 
-      @Override
       public Throwable getThrowable()
       {
          return throwable;
@@ -215,12 +213,10 @@ public class ProtocolTestCase
       
       private static final long serialVersionUID = 1L;
 
-      @Override
       public void invoke() throws Throwable
       {
       }
       
-      @Override
       public Method getMethod()
       {
          try 
@@ -233,7 +229,6 @@ public class ProtocolTestCase
          }
       }
       
-      @Override
       public Object getInstance()
       {
          return this;
