@@ -51,22 +51,14 @@ public class SuiteContext extends AbstractEventContext<SuiteContext, SuiteEvent>
       add(ServiceLoader.class, serviceLoader);
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.Context#fire(org.jboss.arquillian.impl.event.Event)
-    */
-   @Override
    public void fire(SuiteEvent event)
    {
       getEventManager().fire(this, event);
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.Context#getParentContext()
-    */
    /**
     * @return Always null, SuiteContext is the root context.
     */
-   @Override
    public Context<?, ?> getParentContext()
    {
       return null;

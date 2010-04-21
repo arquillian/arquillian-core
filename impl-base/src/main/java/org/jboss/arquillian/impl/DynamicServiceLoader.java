@@ -29,20 +29,12 @@ import org.jboss.arquillian.spi.util.DefaultServiceLoader;
  */
 public class DynamicServiceLoader implements ServiceLoader
 {
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.ServiceLoader#load(java.lang.Class)
-    */
-   @Override
+   
    public <T> Collection<T> all(Class<T> serviceClass)
    {
       return DefaultServiceLoader.load(serviceClass).getProviders();
    }
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.ServiceLoader#loadSingle(java.lang.Class)
-    */
-   @Override
+   
    public <T> T onlyOne(Class<T> serviceClass)
    {
       Collection<T> providers = DefaultServiceLoader.load(serviceClass).getProviders();

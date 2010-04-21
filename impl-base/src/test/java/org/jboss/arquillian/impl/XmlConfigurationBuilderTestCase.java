@@ -113,14 +113,14 @@ public class XmlConfigurationBuilderTestCase
    class MockServiceLoader implements ServiceLoader 
    {
       @SuppressWarnings("unchecked")
-      @Override
+      
       public <T> Collection<T> all(Class<T> serviceClass)
       {
          return (Collection<T>) Collections.singleton(new MockContainerConfiguration());
       }
 
       @SuppressWarnings("unchecked")
-      @Override
+      
       public <T> T onlyOne(Class<T> serviceClass)
       {
          return (T) new MockContainerConfiguration();
@@ -144,7 +144,7 @@ public class XmlConfigurationBuilderTestCase
       
       private boolean propertyBoolean;
 
-      @Override
+      
       public ContainerProfile getContainerProfile()
       {
          return ContainerProfile.STANDALONE;

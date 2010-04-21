@@ -39,10 +39,7 @@ public class ContainerRestarter implements EventHandler<ClassContext, SuiteEvent
    
    private int deploymentCount = 0;
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   @Override
+   
    public void callback(ClassContext context, SuiteEvent event) throws Exception
    {
       DeployableContainer container = context.get(DeployableContainer.class);

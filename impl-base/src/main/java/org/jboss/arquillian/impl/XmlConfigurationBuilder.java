@@ -17,7 +17,6 @@
 package org.jboss.arquillian.impl;
 
 import java.io.InputStream;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
@@ -90,10 +89,6 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
       this.serviceLoader = serviceLoader;
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.ConfigurationBuilder#build()
-    */
-   @Override
    public Configuration build() throws ConfigurationException
    {      
       // the configuration object we are going to return
@@ -312,7 +307,7 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
     */
    private class TagNameAttributeMapper implements PropertiesMapper
    {
-      @Override
+
       public void map(Node element, Map<String, String> properties)
       {
          // retrieve the attributes of the element 
@@ -339,7 +334,7 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
     */
    private class TagNameMapper implements PropertiesMapper
    {
-      @Override
+      
       public void map(Node element, Map<String, String> properties)
       {
          String value = "";

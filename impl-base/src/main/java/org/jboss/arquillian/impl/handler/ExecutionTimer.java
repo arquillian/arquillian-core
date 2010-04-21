@@ -33,10 +33,6 @@ public class ExecutionTimer implements EventHandler<SuiteContext, SuiteEvent>
    private long start = System.currentTimeMillis();
    private long previous = System.currentTimeMillis();
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   @Override
    public void callback(SuiteContext context, SuiteEvent event) throws Exception 
    {
       System.out.println(DeployableTestBuilder.getProfile() + "-" + event.getClass().getName() + " " + (previous - start) + " ms");

@@ -31,10 +31,7 @@ import org.jboss.arquillian.spi.TestEnricher;
  */
 public class TestCaseEnricher implements EventHandler<TestContext, TestEvent>
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   @Override
+   
    public void callback(TestContext context, TestEvent event) throws Exception
    {
       Collection<TestEnricher> testEnrichers = context.getServiceLoader().all(TestEnricher.class);

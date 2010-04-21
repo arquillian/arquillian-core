@@ -44,10 +44,7 @@ import org.jboss.arquillian.impl.handler.ExecutionTimer;
  */
 public class ClientProfileBuilder implements ProfileBuilder
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.ContextBuilder#buildSuiteContext(org.jboss.arquillian.impl.context.SuiteContext)
-    */
-   @Override
+   
    public void buildSuiteContext(SuiteContext context) 
    {
       context.register(BeforeSuite.class, new ContainerCreator());
@@ -64,10 +61,6 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(After.class, timer);
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.ContextBuilder#buildClassContext(org.jboss.arquillian.impl.context.ClassContext)
-    */
-   @Override
    public void buildClassContext(ClassContext context)
    {
       // TODO: move out to SerivceLoader
@@ -88,10 +81,7 @@ public class ClientProfileBuilder implements ProfileBuilder
 //      }
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.ContextBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext)
-    */
-   @Override
+   
    public void buildTestContext(TestContext context)
    {
       context.register(Test.class, new ContainerTestExecuter());

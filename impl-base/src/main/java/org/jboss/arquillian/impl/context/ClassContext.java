@@ -57,20 +57,12 @@ public class ClassContext extends AbstractEventContext<ClassContext, ClassEvent>
    {
       return suiteContext;
    }
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.Context#getParentContext()
-    */
-   @Override
+   
    public Context<?, ?> getParentContext()
    {
       return getSuiteContext();
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.Context#fire(org.jboss.arquillian.impl.event.Event)
-    */
-   @Override
    public void fire(ClassEvent event)
    {
       getEventManager().fire(this, event);

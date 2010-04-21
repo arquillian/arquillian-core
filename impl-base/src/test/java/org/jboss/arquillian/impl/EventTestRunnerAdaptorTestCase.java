@@ -69,7 +69,7 @@ public class EventTestRunnerAdaptorTestCase
       // Add mock EventHandlers to the contexts so we can verify that the events are fired
       Mockito.doAnswer(new Answer<Void>()
       {
-         @Override
+         
          public Void answer(InvocationOnMock invocation) throws Throwable
          {
             SuiteContext context = (SuiteContext)invocation.getArguments()[0];
@@ -80,7 +80,7 @@ public class EventTestRunnerAdaptorTestCase
       }).when(profileBuilder).buildSuiteContext(Mockito.any(SuiteContext.class));
       Mockito.doAnswer(new Answer<Void>()
             {
-               @Override
+               
                public Void answer(InvocationOnMock invocation) throws Throwable
                {
                   ClassContext context = (ClassContext)invocation.getArguments()[0];
@@ -91,7 +91,7 @@ public class EventTestRunnerAdaptorTestCase
             }).when(profileBuilder).buildClassContext(Mockito.any(ClassContext.class));
       Mockito.doAnswer(new Answer<Void>()
             {
-               @Override
+               
                public Void answer(InvocationOnMock invocation) throws Throwable
                {
                   TestContext context = (TestContext)invocation.getArguments()[0];

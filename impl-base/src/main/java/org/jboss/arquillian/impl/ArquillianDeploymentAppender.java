@@ -30,11 +30,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  */
 public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
 {
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentAppender#createArchive()
-    */
-   @Override
+   
    public Archive<?> createAuxiliaryArchive()
    {
       

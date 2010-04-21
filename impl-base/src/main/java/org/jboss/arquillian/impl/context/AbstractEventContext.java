@@ -22,8 +22,8 @@ import java.util.Map;
 import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.impl.event.Event;
 import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.MapEventManager;
 import org.jboss.arquillian.impl.event.EventManager;
+import org.jboss.arquillian.impl.event.MapEventManager;
 import org.jboss.arquillian.spi.ServiceLoader;
 
 
@@ -46,7 +46,6 @@ public abstract class AbstractEventContext<X extends Context<X, T>, T extends Ev
       this.objectStore = new HashMap<Class<?>, Object>();
    }
 
-   @Override
    public <K extends T> void register(Class<? extends K> eventType, EventHandler<X, ? super K> handler)
    {
       eventManager.register(eventType, handler);
@@ -66,7 +65,6 @@ public abstract class AbstractEventContext<X extends Context<X, T>, T extends Ev
    }
    
    @SuppressWarnings("unchecked")
-   @Override
    public <B> B get(Class<B> type)
    {
       Validate.notNull(type, "Type must be specified");
@@ -83,7 +81,6 @@ public abstract class AbstractEventContext<X extends Context<X, T>, T extends Ev
       return (B) instance;
    }
    
-   @Override
    public ServiceLoader getServiceLoader()
    {
       return get(ServiceLoader.class);

@@ -30,10 +30,7 @@ import org.jboss.arquillian.spi.TestResult.Status;
  */
 public class TestEventExecuter implements EventHandler<TestContext, Test>
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   @Override
+   
    public void callback(TestContext context, Test event) throws Exception 
    {
       try 

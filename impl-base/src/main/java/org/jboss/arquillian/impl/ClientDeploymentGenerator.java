@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.jboss.arquillian.spi.AuxiliaryArchiveProcessor;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 /**
  * Responsible for 
@@ -47,10 +45,6 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
       this.serviceLoader = serviceLoader;
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.DeploymentGenerator#generate(java.lang.Class)
-    */
-   @Override
    public Archive<?> generate(Class<?> testCase)
    {
       Validate.notNull(testCase, "TestCase must be specified");

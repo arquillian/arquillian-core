@@ -18,8 +18,8 @@ package org.jboss.arquillian.impl.context;
 
 import org.jboss.arquillian.impl.event.type.Before;
 import org.jboss.arquillian.impl.event.type.Test;
-import org.jboss.arquillian.impl.handler.TestEventExecuter;
 import org.jboss.arquillian.impl.handler.TestCaseEnricher;
+import org.jboss.arquillian.impl.handler.TestEventExecuter;
 
 /**
  * ClientContextCreator
@@ -29,26 +29,14 @@ import org.jboss.arquillian.impl.handler.TestCaseEnricher;
  */
 public class ContainerProfileBuilder implements ProfileBuilder
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.ContextBuilder#buildSuiteContext(org.jboss.arquillian.impl.context.SuiteContext)
-    */
-   @Override
    public void buildSuiteContext(SuiteContext context) 
    {
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.ContextBuilder#buildClassContext(org.jboss.arquillian.impl.context.ClassContext)
-    */
-   @Override
    public void buildClassContext(ClassContext context)
    {
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.ContextBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext)
-    */
-   @Override
    public void buildTestContext(TestContext context)
    {
       context.register(Before.class, new TestCaseEnricher());

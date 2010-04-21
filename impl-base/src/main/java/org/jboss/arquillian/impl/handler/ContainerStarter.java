@@ -35,10 +35,7 @@ import org.jboss.arquillian.spi.DeployableContainer;
  */
 public class ContainerStarter implements EventHandler<SuiteContext, SuiteEvent>
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   @Override
+   
    public void callback(SuiteContext context, SuiteEvent event) throws Exception
    {
       DeployableContainer container = context.get(DeployableContainer.class);

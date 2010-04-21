@@ -37,10 +37,7 @@ import org.jboss.arquillian.spi.TestResult;
  */
 public class ContainerTestExecuter implements EventHandler<TestContext, Test>
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   @Override
+   
    public void callback(TestContext context, Test event) throws Exception
    {
       ContainerMethodExecutor executor = context.get(ContainerMethodExecutor.class);

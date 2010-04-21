@@ -56,19 +56,11 @@ public class TestContext extends AbstractEventContext<TestContext, TestEvent>
       return classContext;
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.Context#getParentContext()
-    */
-   @Override
    public Context<?, ?> getParentContext()
    {
       return getClassContext();
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.context.Context#fire(org.jboss.arquillian.impl.event.Event)
-    */
-   @Override
    public void fire(TestEvent event)
    {
       getEventManager().fire(this, event);

@@ -47,29 +47,17 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       this.contextLifecycle = contextLifecycle;
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#beforeSuite()
-    */
-   @Override
    public void beforeSuite() throws Exception
    {
       contextLifecycle.createRestoreSuiteContext().fire(new BeforeSuite());
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#afterSuite()
-    */
-   @Override
    public void afterSuite() throws Exception
    {
       contextLifecycle.createRestoreSuiteContext().fire(new AfterSuite());
       contextLifecycle.destroySuiteContext();
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#beforeClass(java.lang.Class)
-    */
-   @Override
    public void beforeClass(Class<?> testClass) throws Exception
    {
       Validate.notNull(testClass, "TestClass must be specified");
@@ -77,10 +65,6 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       contextLifecycle.createRestoreClassContext(testClass).fire(new BeforeClass(testClass));
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#afterClasss(java.lang.Class)
-    */
-   @Override
    public void afterClass(Class<?> testClass) throws Exception
    {
       Validate.notNull(testClass, "TestClass must be specified");
@@ -88,10 +72,6 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       contextLifecycle.createRestoreClassContext(testClass).fire(new AfterClass(testClass));
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#before(java.lang.Object, java.lang.reflect.Method)
-    */
-   @Override
    public void before(Object testInstance, Method testMethod) throws Exception
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
@@ -100,10 +80,6 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       contextLifecycle.createRestoreTestContext(testInstance).fire(new Before(testInstance, testMethod));
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#after(java.lang.Object, java.lang.reflect.Method)
-    */
-   @Override
    public void after(Object testInstance, Method testMethod) throws Exception
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
@@ -112,11 +88,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       contextLifecycle.createRestoreTestContext(testInstance).fire(new After(testInstance, testMethod));
       contextLifecycle.destroyTestContext(testInstance);
    }
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestRunnerAdaptor#test(org.jboss.arquillian.spi.TestMethodExecutor)
-    */
-   @Override
+   
    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
    {
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");

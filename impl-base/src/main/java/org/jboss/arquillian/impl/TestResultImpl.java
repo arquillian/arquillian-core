@@ -41,13 +41,11 @@ public class TestResultImpl implements TestResult
       this.throwable = throwable;
    }
 
-   @Override
    public Status getStatus()
    {
       return status;
    }
    
-   @Override
    public Throwable getThrowable()
    {
       return throwable;
