@@ -14,28 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.context;
+package org.jboss.arquillian.api;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * 
+ * Specifies the RunMode a Test should run in.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ProfileBuilder
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RunMode
 {
-   /**
-    * @param context
-    */
-   void buildSuiteContext(SuiteContext context);
-
-   /**
-    * @param context
-    */
-   void buildClassContext(ClassContext context, Class<?> testClass);
-
-   /**
-    * @param context
-    */
-   void buildTestContext(TestContext context, Object testInstance);
+   RunModeType value();
 }

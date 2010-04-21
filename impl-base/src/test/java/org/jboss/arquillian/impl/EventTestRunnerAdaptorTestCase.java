@@ -88,7 +88,7 @@ public class EventTestRunnerAdaptorTestCase
                   context.register(org.jboss.arquillian.impl.event.type.AfterClass.class, classEventHandler);
                   return null;
                }
-            }).when(profileBuilder).buildClassContext(Mockito.any(ClassContext.class));
+            }).when(profileBuilder).buildClassContext(Mockito.any(ClassContext.class), Mockito.any(Class.class));
       Mockito.doAnswer(new Answer<Void>()
             {
                
@@ -100,7 +100,7 @@ public class EventTestRunnerAdaptorTestCase
                   context.register(org.jboss.arquillian.impl.event.type.After.class, testEventHandler);
                   return null;
                }
-            }).when(profileBuilder).buildTestContext(Mockito.any(TestContext.class));
+            }).when(profileBuilder).buildTestContext(Mockito.any(TestContext.class), Mockito.any(Class.class));
    }
    
    @Test

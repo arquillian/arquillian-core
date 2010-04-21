@@ -33,11 +33,11 @@ public class ContainerProfileBuilder implements ProfileBuilder
    {
    }
    
-   public void buildClassContext(ClassContext context)
+   public void buildClassContext(ClassContext context, Class<?> testClass)
    {
    }
 
-   public void buildTestContext(TestContext context)
+   public void buildTestContext(TestContext context, Object testInstance)
    {
       context.register(Before.class, new TestCaseEnricher());
       context.register(Test.class, new TestEventExecuter());

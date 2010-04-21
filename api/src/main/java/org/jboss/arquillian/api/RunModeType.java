@@ -14,28 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.context;
+package org.jboss.arquillian.api;
 
 /**
- * 
+ * Describes the different RunModes a Single test can run in. 
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ProfileBuilder
+public enum RunModeType
 {
    /**
-    * @param context
+    * In LOCAL mode the @Deployment is processed and deployed to the Container, 
+    * but the test will not be executed inside the container.  
     */
-   void buildSuiteContext(SuiteContext context);
-
+   LOCAL,
+   
    /**
-    * @param context
+    * In Remote mode the @Deployment is processed and deployed to the container along side the test
+    * case, the test case is executed inside the container. <br/>
+    * This is the default mode when none specified. 
     */
-   void buildClassContext(ClassContext context, Class<?> testClass);
-
-   /**
-    * @param context
-    */
-   void buildTestContext(TestContext context, Object testInstance);
+   REMOTE
 }

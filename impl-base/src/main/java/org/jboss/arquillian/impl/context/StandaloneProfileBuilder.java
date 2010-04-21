@@ -33,7 +33,7 @@ public class StandaloneProfileBuilder extends ClientProfileBuilder
     * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext)
     */
    @Override
-   public void buildTestContext(TestContext context)
+   public void buildTestContext(TestContext context, Object testInstance)
    {
       context.register(Before.class, new TestCaseEnricher());
       context.register(Test.class, new TestEventExecuter());

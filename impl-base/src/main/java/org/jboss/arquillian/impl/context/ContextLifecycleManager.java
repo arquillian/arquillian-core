@@ -130,7 +130,7 @@ public class ContextLifecycleManager
       if(!classContextStore.contains(testClass)) 
       {
          ClassContext classContext = new ClassContext(createRestoreSuiteContext()); 
-         profileBuilder.buildClassContext(classContext);
+         profileBuilder.buildClassContext(classContext, testClass);
          
          classContextStore.putIfAbsent(
                testClass, 
@@ -169,7 +169,7 @@ public class ContextLifecycleManager
       if(!testContextStore.contains(testInstance)) 
       {
          TestContext testContext = new TestContext(createRestoreClassContext(testInstance.getClass()));
-         profileBuilder.buildTestContext(testContext);
+         profileBuilder.buildTestContext(testContext, testInstance);
          testContextStore.putIfAbsent(
                testInstance, 
                testContext);

@@ -35,6 +35,7 @@ import org.jboss.arquillian.impl.handler.ContainerStopper;
 import org.jboss.arquillian.impl.handler.ContainerTestExecuter;
 import org.jboss.arquillian.impl.handler.ContainerUndeployer;
 import org.jboss.arquillian.impl.handler.ExecutionTimer;
+import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
 
 /**
  * ClientContextCreator
@@ -61,7 +62,7 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(After.class, timer);
    }
    
-   public void buildClassContext(ClassContext context)
+   public void buildClassContext(ClassContext context, Class<?> testClass)
    {
       // TODO: move out to SerivceLoader
       context.add(DeploymentGenerator.class, new ClientDeploymentGenerator(context.getServiceLoader()));
@@ -69,20 +70,13 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(BeforeClass.class, new ArchiveGenerator());
       context.register(BeforeClass.class, new ContainerDeployer());
       context.register(AfterClass.class, new ContainerUndeployer());
+
+      context.register(BeforeClass.class, new ActivateRunModeTypeLocal());
       
-//      if(runLocally) 
-//      {
-//         context.register(Before.class, new TestCaseEnricher());
-//         context.register(Test.class, new TestEventExecuter());
-//      }
-//      else 
-//      {
-//         context.register(Test.class, new ContainerTestExecuter());
-//      }
    }
 
    
-   public void buildTestContext(TestContext context)
+   public void buildTestContext(TestContext context, Object testInstance)
    {
       context.register(Test.class, new ContainerTestExecuter());
    }
