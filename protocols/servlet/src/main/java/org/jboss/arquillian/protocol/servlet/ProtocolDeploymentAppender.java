@@ -18,7 +18,7 @@ package org.jboss.arquillian.protocol.servlet;
 
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
@@ -35,7 +35,7 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
 
    public Archive<?> createAuxiliaryArchive()
    {
-      WebArchive archive = Archives.create("arquillian-protocol.war", WebArchive.class)
+      WebArchive archive = ShrinkWrap.create("arquillian-protocol.war", WebArchive.class)
                      .setWebXML("org/jboss/arquillian/protocol/servlet/web.xml")
                      .addClasses(
                            SecurityActions.class,

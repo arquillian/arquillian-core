@@ -19,11 +19,10 @@ package org.jboss.arquillian.impl.handler;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.event.type.ClassEvent;
-import org.jboss.arquillian.impl.handler.ContainerUndeployer;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +68,7 @@ public class ContainerUndeployerTestCase
    @Test
    public void shouldUndeployArchive() throws Exception
    {
-      Archive<?> deployment = Archives.create("test.jar", JavaArchive.class);
+      Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
       
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       context.add(DeployableContainer.class, container);

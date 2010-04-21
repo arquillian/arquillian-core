@@ -19,7 +19,7 @@ package org.jboss.arquillian.impl;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
@@ -34,7 +34,7 @@ public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
    public Archive<?> createAuxiliaryArchive()
    {
       
-      JavaArchive archive = Archives.create("arquillian-core.jar", JavaArchive.class)
+      JavaArchive archive = ShrinkWrap.create("arquillian-core.jar", JavaArchive.class)
                         .addPackages(
                               true,
                               //Package.getPackage("org.jboss.arquillian.api"), // TODO: figure out why this does not work.. 

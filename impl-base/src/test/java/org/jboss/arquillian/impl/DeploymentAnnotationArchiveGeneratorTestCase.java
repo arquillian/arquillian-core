@@ -18,7 +18,7 @@ package org.jboss.arquillian.impl;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
@@ -63,7 +63,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @SuppressWarnings("unused")
       @Deployment
       public Archive<?> test() {
-         return Archives.create("test.jar", JavaArchive.class);
+         return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
    }
    
@@ -72,7 +72,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @SuppressWarnings("unused")
       @Deployment
       public Object test() {
-         return Archives.create("test.jar", JavaArchive.class);
+         return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
    }
    
@@ -81,7 +81,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @SuppressWarnings("unused")
       @Deployment
       public static JavaArchive test() {
-         return Archives.create("test.jar", JavaArchive.class);
+         return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
    }   
 }

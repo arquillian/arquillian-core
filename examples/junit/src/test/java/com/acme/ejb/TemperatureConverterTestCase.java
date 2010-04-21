@@ -3,7 +3,7 @@ package com.acme.ejb;
 import javax.ejb.EJB;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class TemperatureConverterTestCase
 
    @Deployment
    public static JavaArchive createTestArchive() {
-      return Archives.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create("test.jar", JavaArchive.class)
          .addClasses(TemperatureConverter.class, TemperatureConverterBean.class);
    }
 

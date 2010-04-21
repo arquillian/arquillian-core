@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class SynchronousPaymentProcessorTestCase {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return Archives.create("test.jar", JavaArchive.class)
+		return ShrinkWrap.create("test.jar", JavaArchive.class)
 				.addPackage(
 						Synchronous.class.getPackage()
 				)

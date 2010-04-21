@@ -19,7 +19,7 @@ package org.jboss.arquillian.testng;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.TestNG;
 import org.testng.annotations.Test;
@@ -46,7 +46,7 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
 
    public Archive<?> createAuxiliaryArchive()
    {
-      return Archives.create("arquillian-testng.jar", JavaArchive.class)
+      return ShrinkWrap.create("arquillian-testng.jar", JavaArchive.class)
                .addPackages(
                      true, 
                      Test.class.getPackage(),

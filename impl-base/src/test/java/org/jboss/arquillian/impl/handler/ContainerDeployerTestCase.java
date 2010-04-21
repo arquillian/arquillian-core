@@ -21,12 +21,11 @@ import junit.framework.Assert;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.event.type.ClassEvent;
-import org.jboss.arquillian.impl.handler.ContainerDeployer;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +73,7 @@ public class ContainerDeployerTestCase
    @Test
    public void shouldExportContainerMethodExecutor() throws Exception 
    {
-      Archive<?> deployment = Archives.create("test.jar", JavaArchive.class);
+      Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
       
       Mockito.when(container.deploy(deployment)).thenReturn(executor);
       

@@ -22,10 +22,9 @@ import org.jboss.arquillian.impl.DeploymentGenerator;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.event.type.ClassEvent;
-import org.jboss.arquillian.impl.handler.ArchiveGenerator;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +60,7 @@ public class ArchiveGeneratorTestCase
    @Test
    public void shouldGenerateArchive() throws Exception
    {
-      final Archive<?> deployment = Archives.create("test.jar", JavaArchive.class);
+      final Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
       
       Mockito.when(generator.generate(getClass())).thenAnswer(new Answer<Archive<?>>()
       {

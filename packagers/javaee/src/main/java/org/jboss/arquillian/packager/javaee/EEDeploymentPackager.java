@@ -20,7 +20,7 @@ import java.util.Collection;
 
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -35,7 +35,7 @@ public class EEDeploymentPackager implements DeploymentPackager
 
    public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
    {
-      EnterpriseArchive fullDeployment = Archives.create("test.ear", EnterpriseArchive.class)
+      EnterpriseArchive fullDeployment = ShrinkWrap.create("test.ear", EnterpriseArchive.class)
                   .addModule(applicationArchive);
 
       for (Archive<?> moduleArchive : auxiliaryArchives)
