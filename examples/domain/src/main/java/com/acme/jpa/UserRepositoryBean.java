@@ -37,11 +37,7 @@ public class UserRepositoryBean implements UserRepository
    @PersistenceContext(unitName = "Domain")
    private EntityManager entityManager;
    
-   /* (non-Javadoc)
-    * @see com.acme.cdi.jpa.UserRepository#getByFirstName(java.lang.String)
-    */
    @SuppressWarnings("unchecked")
-   @Override
    public List<User> getByFirstName(String firstName)
    {
       return entityManager.createQuery("from User user where user.firstName = :firstName")
@@ -49,10 +45,6 @@ public class UserRepositoryBean implements UserRepository
                            .getResultList();
    }
 
-   /* (non-Javadoc)
-    * @see com.acme.cdi.jpa.UserRepository#store(com.acme.cdi.jpa.User)
-    */
-   @Override
    public void store(User user)
    {
       entityManager.persist(user);

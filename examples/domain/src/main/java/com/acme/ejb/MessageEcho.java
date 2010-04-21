@@ -42,7 +42,6 @@ public class MessageEcho implements MessageListener
    @Resource(mappedName = "java:/ConnectionFactory")
    private ConnectionFactory factory;
    
-   @Override
    public void onMessage(Message msg)
    {
       try 

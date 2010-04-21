@@ -29,7 +29,7 @@ import javax.ejb.Stateless;
 @Stateless
 public class GreetingManagerBean implements GreetingManager
 {
-   @Override
+   
    public String greet(String userName)
    {
       return "Hello " + userName;

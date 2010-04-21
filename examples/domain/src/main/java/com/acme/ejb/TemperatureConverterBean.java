@@ -9,17 +9,14 @@ public @Stateless class TemperatureConverterBean
 
    @Resource EJBContext ctx;
 
-   @Override
    public double convertToCelsius(double f) {
       return ((f - 32) * 5 / 9);
    }
 
-   @Override
    public double convertToFarenheit(double c) {
       return ((c * 9 / 5) + 32);
    }
 
-   @Override
    public boolean isTransactional() {
       ctx.setRollbackOnly();
       return ctx.getRollbackOnly();

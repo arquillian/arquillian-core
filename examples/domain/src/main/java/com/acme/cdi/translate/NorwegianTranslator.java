@@ -21,7 +21,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class NorwegianTranslator implements Translator {
 
-	@Override
 	public String translate(String sentence) {
 		return "hei";
 	}

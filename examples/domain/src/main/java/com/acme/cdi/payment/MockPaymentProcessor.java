@@ -23,7 +23,6 @@ public class MockPaymentProcessor implements PaymentProcessor {
 
 	public static Boolean HAS_BEEN_CALLED = false;
 	
-	@Override
 	public void process(String payment) {
 		HAS_BEEN_CALLED = true;
 	}
