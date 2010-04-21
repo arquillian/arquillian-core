@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>4</version>
+    <version>5</version>
   </parent>
 
   <!-- Model Information -->

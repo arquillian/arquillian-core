@@ -9,7 +9,7 @@
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
-      <version>4</version>
+      <version>5</version>
    </parent>
 
    <!-- Model Version -->
@@ -41,20 +41,9 @@
       <repository>
          <id>jboss.org</id>
          <name>JBoss Repository</name>
-         <url>http://repository.jboss.org/maven2/</url>
+         <url>https://repository.jboss.org/nexus/content/groups/public</url>
          <releases>
             <enabled>true</enabled>
-         </releases>
-         <snapshots>
-            <enabled>false</enabled>
-         </snapshots>
-      </repository>
-      <repository>
-         <id>snapshots.jboss.org</id>
-         <name>JBoss Snapshot Repository</name>
-         <url>http://snapshots.jboss.org/maven2</url>
-         <releases>
-            <enabled>false</enabled>
          </releases>
          <snapshots>
             <enabled>true</enabled>
@@ -85,7 +74,7 @@
       <pluginRepository>
          <id>jboss.org</id>
          <name>JBoss Repository</name>
-         <url>http://repository.jboss.org/maven2/</url>
+         <url>https://repository.jboss.org/nexus/content/groups/public</url>
          <releases>
             <enabled>true</enabled>
          </releases>
