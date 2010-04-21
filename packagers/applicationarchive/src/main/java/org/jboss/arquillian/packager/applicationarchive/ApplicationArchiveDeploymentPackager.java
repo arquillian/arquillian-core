@@ -31,10 +31,6 @@ import org.jboss.shrinkwrap.api.Archive;
 public class ApplicationArchiveDeploymentPackager implements DeploymentPackager
 {
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.shrinkwrap.api.Archive, java.util.Collection)
-    */
-   @Override
    public Archive<?> generateDeployment(Archive<?> applicationArchive,
          Collection<Archive<?>> auxiliaryArchives)
    {

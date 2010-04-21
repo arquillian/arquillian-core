@@ -33,10 +33,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 public class EEDeploymentPackager implements DeploymentPackager
 {
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.shrinkwrap.api.Archive, java.util.Collection)
-    */
-   @Override
    public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
    {
       EnterpriseArchive fullDeployment = Archives.create("test.ear", EnterpriseArchive.class)

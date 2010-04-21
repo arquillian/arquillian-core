@@ -29,7 +29,7 @@ import org.jboss.arquillian.spi.util.TestEnrichers;
  */
 public class LocalMethodExecutor implements ContainerMethodExecutor
 {
-   @Override
+
    public TestResult invoke(TestMethodExecutor testMethodExecutor)
    {
       try 
@@ -42,10 +42,8 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
          {
             private static final long serialVersionUID = 1L;
 
-            @Override
             public Throwable getThrowable() { return null; }
             
-            @Override
             public Status getStatus() { return Status.PASSED; }
          };
       }
@@ -55,10 +53,8 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
          {
             private static final long serialVersionUID = 1L;
 
-            @Override
             public Status getStatus() {return Status.FAILED; }
             
-            @Override
             public Throwable getThrowable() {return e;}
          };
       }
