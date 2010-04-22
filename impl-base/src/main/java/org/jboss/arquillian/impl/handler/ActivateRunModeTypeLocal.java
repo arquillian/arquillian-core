@@ -38,8 +38,9 @@ import org.jboss.arquillian.spi.TestResult;
  */
 public class ActivateRunModeTypeLocal implements EventHandler<ClassContext, BeforeClass>
 {
-
-   @Override
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
+    */
    public void callback(ClassContext context, BeforeClass event)
          throws Exception
    {
@@ -56,7 +57,9 @@ public class ActivateRunModeTypeLocal implements EventHandler<ClassContext, Befo
    // TODO: this is a copy of the protocol-local Executor. Move to SPI and remove protocol local? 
    private static class LocalMethodExecutor implements ContainerMethodExecutor 
    {
-      @Override
+      /* (non-Javadoc)
+       * @see org.jboss.arquillian.spi.ContainerMethodExecutor#invoke(org.jboss.arquillian.spi.TestMethodExecutor)
+       */
       public TestResult invoke(TestMethodExecutor testMethodExecutor)
       {
          try 
@@ -67,10 +70,8 @@ public class ActivateRunModeTypeLocal implements EventHandler<ClassContext, Befo
             {
                private static final long serialVersionUID = 1L;
 
-               @Override
                public Throwable getThrowable() { return null; }
                
-               @Override
                public Status getStatus() { return Status.PASSED; }
             };
          }
@@ -80,10 +81,8 @@ public class ActivateRunModeTypeLocal implements EventHandler<ClassContext, Befo
             {
                private static final long serialVersionUID = 1L;
 
-               @Override
                public Status getStatus() {return Status.FAILED; }
                
-               @Override
                public Throwable getThrowable() {return e;}
             };
          }
