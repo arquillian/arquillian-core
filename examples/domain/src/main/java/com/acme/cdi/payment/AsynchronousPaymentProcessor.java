@@ -16,7 +16,10 @@
  */
 package com.acme.cdi.payment;
 
+import javax.enterprise.context.RequestScoped;
+
 @Asynchronous
+@RequestScoped
 public class AsynchronousPaymentProcessor implements PaymentProcessor {
 
    public void process(String payment) 

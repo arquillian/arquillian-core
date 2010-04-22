@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.spi.util;
 
+import java.lang.reflect.Method;
+
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -28,19 +30,64 @@ import org.jboss.arquillian.spi.TestEnricher;
  */
 public class TestEnrichers
 {
-   private TestEnrichers() {}
+   private TestEnrichers()
+   {
+   }
 
-   /**  
+   /**
     * Enrich a object based on all found TestEnricher providers.
     * 
-    * @param testCase The object that should be enriched.
+    * @param testCase
+    *           The object that should be enriched.
     */
-   public static void enrich(Object testCase) 
+   public static void enrich(Object testCase)
    {
-      DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader.load(TestEnricher.class);
-      for(TestEnricher enricher : serviceLoader) 
+      DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader
+            .load(TestEnricher.class);
+      for (TestEnricher enricher : serviceLoader)
       {
          enricher.enrich(testCase);
       }
    }
+
+   /**
+    * Enrich the method arguments of a method call.<br/>
+    * The Object[] index will match the method parameterType[] index.
+    * 
+    * @param method
+    * @return the argument values
+    */
+   public static Object[] enrich(Method method)
+   {
+      Object[] values = new Object[method.getParameterTypes().length];
+      DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader
+            .load(TestEnricher.class);
+      for (TestEnricher enricher : serviceLoader)
+      {
+         mergeValues(values, enricher.resolve(method));
+      }
+      return values;
+   }
+
+   private static void mergeValues(Object[] values, Object[] resolvedValues)
+   {
+      if(resolvedValues == null || resolvedValues.length == 0)
+      {
+         return;
+      }
+      if(values.length != resolvedValues.length)
+      {
+         throw new IllegalStateException("TestEnricher resolved wrong argument count, expected " + 
+               values.length + " returned " + resolvedValues.length);
+      }
+      for (int i = 0; i < resolvedValues.length; i++)
+      {
+         Object resvoledValue = resolvedValues[i];
+         if (resvoledValue != null && values[i] == null)
+         {
+            values[i] = resvoledValue;
+         }
+      }
+   }
+
 }

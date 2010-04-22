@@ -14,39 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.spi.util.TestEnrichers;
+import org.testng.annotations.DataProvider;
+
 /**
- * SPI used to enrich the runtime test object.
- *
+ * TestEnricherDataProvider
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestEnricher
-{
-   /**
-    * Extension point to add features to the a Test class instance.<br/>
-    * <br/>
-    * IE. Instance field injection
-    *  
-    * @param testCase The test case instance
-    */
-   void enrich(Object testCase);
-   
-   /**
-    * Extension point to add features to the test method arguments.<br/>
-    * <br/>
-    * IE. Argument injection<br/>
-    * <br/>
-    * 
-    * The return value Object[] must match the Field[] indexes. 
-    * Leave Object[] index as null if it can't be handled by this {@link TestEnricher}.
-    * 
-    * @param method
-    * @return A Object[] of Arguments 
-    */
-   Object[] resolve(Method method);
+public class TestEnricherDataProvider {
+
+	public static final String PROVIDER_NAME = "enrich";
+	
+	@DataProvider(name = PROVIDER_NAME)
+	public static Object[][] enrich(Method method) 
+	{
+		Object[] parameterValues = TestEnrichers.enrich(method);
+		Object[][] values = new Object[1][method.getParameterTypes().length];
+		values[0] = parameterValues; 
+		
+		return values;
+	}
 }

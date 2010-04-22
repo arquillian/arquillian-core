@@ -16,7 +16,11 @@
  */
 package org.jboss.arquillian.testenricher.cdi;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.naming.InitialContext;
@@ -24,7 +28,7 @@ import javax.naming.InitialContext;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
- * CDIInjectionEnricher
+ * Enricher that provide JSR-299 CDI class and method argument injection.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -35,12 +39,48 @@ public class CDIInjectionEnricher implements TestEnricher
    private static final String JNDI_BEAN_MANAGER_JBOSS = "java:app/BeanManager";
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
+    */
    public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
          injectClass(testCase);
       }
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(java.lang.reflect.Method)
+    */
+   public Object[] resolve(Method method) 
+   {
+     Object[] values = new Object[method.getParameterTypes().length];
+     if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
+     {
+        BeanManager beanManager = lookupBeanManager();
+        if(beanManager == null) 
+        {
+             return values;
+        }
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        for(int i = 0; i < parameterTypes.length; i++)
+        {
+           Class<?> parameterType = parameterTypes[i];
+           Annotation[] parameterAnnotation = parameterAnnotations[i];
+           values[i] = getInstanceByType(beanManager, parameterType, parameterAnnotation);
+        }
+     }
+     return values;
+   }
+   
+   @SuppressWarnings("unchecked")
+   private <T> T getInstanceByType(BeanManager manager, Class<T> type, Annotation... bindings)
+   {
+      final Bean<?> bean = manager.resolve(manager.getBeans(type, bindings));
+      CreationalContext<?> cc = manager.createCreationalContext(null);
+      return (T) manager.getReference(bean, type, cc);
    }
    
    protected void injectClass(Object testCase) 

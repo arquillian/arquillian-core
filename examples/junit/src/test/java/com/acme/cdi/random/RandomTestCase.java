@@ -16,8 +16,6 @@
  */
 package com.acme.cdi.random;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -48,12 +46,9 @@ public class RandomTestCase {
 						ArchivePaths.create("beans.xml"));
 	}
 
-	@Inject @Random 
-	private int randomNumber;
-
 	@Test
-	public void shouldRun() throws Exception 
+	public void shouldRun(@Random int randomNumber) throws Exception 
 	{
-		Assert.assertTrue(randomNumber < 101);
+	   Assert.assertTrue(randomNumber < 101);
 	}
 }

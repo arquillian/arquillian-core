@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.junit;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -84,6 +86,21 @@ public class Arquillian extends BlockJUnit4ClassRunner
       return super.computeTestMethods();
    }
 
+
+   /**
+    * Override to allow test methods with arguments
+    */
+   @Override
+   protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) 
+   {
+     List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(annotation);
+
+     for (FrameworkMethod eachTestMethod : methods) 
+     {
+        eachTestMethod.validatePublicVoid(isStatic, errors);
+     }
+  }
+   
       
    @Override
    protected Statement withBeforeClasses(final Statement originalStatement)
@@ -133,7 +150,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
    @Override
    protected Statement withAfters(final FrameworkMethod method, final Object target, final Statement originalStatement)
    {
-      final Statement statementWithAfters = super.withBefores(method, target, originalStatement);
+      final Statement statementWithAfters = super.withAfters(method, target, originalStatement);
       return new Statement()
       {
          @Override
@@ -157,7 +174,8 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                public void invoke() throws Throwable
                {
-                  method.invokeExplosively(test);
+                  Object parameterValues = TestEnrichers.enrich(getMethod());
+                  method.invokeExplosively(test, (Object[])parameterValues);
                }
                
                public Method getMethod()

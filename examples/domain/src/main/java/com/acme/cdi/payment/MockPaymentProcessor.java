@@ -16,9 +16,11 @@
  */
 package com.acme.cdi.payment;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Alternative;
 
 @Alternative @Asynchronous @Synchronous
+@RequestScoped
 public class MockPaymentProcessor implements PaymentProcessor {
 
 	public static Boolean HAS_BEEN_CALLED = false;

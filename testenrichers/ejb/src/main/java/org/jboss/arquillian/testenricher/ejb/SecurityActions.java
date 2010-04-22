@@ -19,6 +19,7 @@ package org.jboss.arquillian.testenricher.ejb;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -198,6 +199,30 @@ final class SecurityActions
          }
       });
       return declaredAccessableFields;
+   }
+
+   public static List<Method> getMethodsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) 
+   {
+      List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>()
+      {
+         public List<Method> run()
+         {
+            List<Method> foundMethods = new ArrayList<Method>();
+            for(Method method : source.getDeclaredMethods())
+            {
+               if(method.isAnnotationPresent(annotationClass))
+               {
+                  if(!method.isAccessible()) 
+                  {
+                     method.setAccessible(true);
+                  }
+                  foundMethods.add(method);
+               }
+            }
+            return foundMethods;
+         }
+      });
+      return declaredAccessableMethods;
    }
    
    //-------------------------------------------------------------------------------||

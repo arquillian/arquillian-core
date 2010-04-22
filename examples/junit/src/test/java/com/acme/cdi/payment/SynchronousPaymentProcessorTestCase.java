@@ -16,8 +16,6 @@
  */
 package com.acme.cdi.payment;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -47,10 +45,8 @@ public class SynchronousPaymentProcessorTestCase {
 						ArchivePaths.create("beans.xml"));
 	}
 	
-	@Inject @Synchronous PaymentProcessor processor;
-	
 	@Test
-	public void shouldBeReplacedByAMock() throws Exception
+	public void shouldBeReplacedByAMock(@Synchronous PaymentProcessor processor) throws Exception
 	{
 		processor.process("");
 		Assert.assertTrue(MockPaymentProcessor.HAS_BEEN_CALLED);

@@ -18,6 +18,7 @@ package org.jboss.arquillian.testenricher.resource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,9 +27,9 @@ import javax.naming.InitialContext;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
- * ResourceInjectionEnricher
+ * Enricher that provide @Resource class and method argument injection.
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class ResourceInjectionEnricher implements TestEnricher
@@ -36,12 +37,23 @@ public class ResourceInjectionEnricher implements TestEnricher
    private static final String RESOURCE_LOOKUP_PREFIX = "java:/comp/env";
    private static final String ANNOTATION_NAME = "javax.annotation.Resource";
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
+    */
    public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
          injectClass(testCase);
       }
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(java.lang.reflect.Method)
+    */
+   public Object[] resolve(Method method) 
+   {
+     return new Object[method.getParameterTypes().length];
    }
 
    protected void injectClass(Object testCase) 
@@ -60,6 +72,25 @@ public class ResourceInjectionEnricher implements TestEnricher
             Object ejb = lookup(getResourceName(field));
             field.set(testCase, ejb);
          }
+         
+         List<Method> methods = SecurityActions.getMethodsWithAnnotation(
+               testCase.getClass(), 
+               resourceAnnotation);
+         
+         for(Method method : methods) 
+         {
+            if(method.getParameterTypes().length != 1) 
+            {
+               throw new RuntimeException("@Resource only allowed on single argument methods");
+            }
+            if(!method.getName().startsWith("set")) 
+            {
+               throw new RuntimeException("@Resource only allowed on 'set' methods");
+            }
+            Object resource = lookup(getResourceName(method.getAnnotation(Resource.class)));
+            method.invoke(testCase, resource);
+         }
+         
       } 
       catch (Exception e) 
       {
@@ -77,6 +108,18 @@ public class ResourceInjectionEnricher implements TestEnricher
    protected String getResourceName(Field field)
    {
       Resource resource = field.getAnnotation(Resource.class);
+      String resourceName = getResourceName(resource);
+      if(resourceName != null) 
+      {
+       return resourceName;
+      }
+      String propertyName = field.getName();
+      String className = field.getDeclaringClass().getName();
+      return RESOURCE_LOOKUP_PREFIX + "/" + className + "/" + propertyName;
+   }
+   
+   protected String getResourceName(Resource resource)
+   {
       String mappedName = resource.mappedName();
       if (!mappedName.equals(""))
       {
@@ -87,8 +130,6 @@ public class ResourceInjectionEnricher implements TestEnricher
       {
          return RESOURCE_LOOKUP_PREFIX + "/" + name;
       }
-      String propertyName = field.getName();
-      String className = field.getDeclaringClass().getName();
-      return RESOURCE_LOOKUP_PREFIX + "/" + className + "/" + propertyName;
+      return null;
    }
 }
