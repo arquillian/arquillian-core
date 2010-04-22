@@ -29,7 +29,7 @@
       <!-- Versioning -->
       <version.junit_junit>4.6</version.junit_junit>
       <version.testng_testng>5.10</version.testng_testng>
-      <version.shrinkwrap_shrinkwrap>1.0.0-alpha-9</version.shrinkwrap_shrinkwrap>
+      <version.shrinkwrap_shrinkwrap>1.0.0-alpha-8</version.shrinkwrap_shrinkwrap>
       <version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
       <version.javaee_api>6.0</version.javaee_api>
       <version.jetty_jetty>6.1.9</version.jetty_jetty>
