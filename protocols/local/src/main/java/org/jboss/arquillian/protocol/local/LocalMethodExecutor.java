@@ -19,7 +19,6 @@ package org.jboss.arquillian.protocol.local;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.util.TestEnrichers;
 
 /**
  * LocalMethodExecutor
@@ -34,8 +33,6 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
    {
       try 
       {
-         TestEnrichers.enrich(testMethodExecutor.getInstance());
-
          testMethodExecutor.invoke();
          
          return new TestResult()
