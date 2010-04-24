@@ -1,0 +1,2 @@
+org.jboss.arquillian.impl.DynamicServiceLoaderTestCase$ServiceImpl1
+org.jboss.arquillian.impl.DynamicServiceLoaderTestCase$ServiceImpl2
