@@ -14,24 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
+package org.jboss.arquillian.spi.event.container;
 
-import java.lang.reflect.Method;
 
 /**
- * Event fired After the Test method execution.
+ * BeforeContainerStart
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class After extends TestEvent
+public class BeforeStart extends ContainerEvent
 {
-   /**
-    * @param testInstance The test case instance being tested
-    * @param testMethod The test method that was executed
-    */
-   public After(Object testInstance, Method testMethod)
-   {
-      super(testInstance, testMethod);
-   }
 }

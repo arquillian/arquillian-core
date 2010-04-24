@@ -18,15 +18,7 @@ package org.jboss.arquillian.impl.context;
 
 import org.jboss.arquillian.impl.ClientDeploymentGenerator;
 import org.jboss.arquillian.impl.DeploymentGenerator;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.After;
-import org.jboss.arquillian.impl.event.type.AfterClass;
-import org.jboss.arquillian.impl.event.type.AfterSuite;
-import org.jboss.arquillian.impl.event.type.Before;
-import org.jboss.arquillian.impl.event.type.BeforeClass;
-import org.jboss.arquillian.impl.event.type.BeforeSuite;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
-import org.jboss.arquillian.impl.event.type.Test;
+import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
 import org.jboss.arquillian.impl.handler.ArchiveGenerator;
 import org.jboss.arquillian.impl.handler.ContainerCreator;
 import org.jboss.arquillian.impl.handler.ContainerDeployer;
@@ -35,7 +27,15 @@ import org.jboss.arquillian.impl.handler.ContainerStopper;
 import org.jboss.arquillian.impl.handler.ContainerTestExecuter;
 import org.jboss.arquillian.impl.handler.ContainerUndeployer;
 import org.jboss.arquillian.impl.handler.ExecutionTimer;
-import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
+import org.jboss.arquillian.spi.event.suite.After;
+import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.arquillian.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
+import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
  * ClientContextCreator
@@ -52,7 +52,7 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(BeforeSuite.class, new ContainerStarter());
       context.register(AfterSuite.class, new ContainerStopper());
       
-      EventHandler<SuiteContext, SuiteEvent> timer = new ExecutionTimer();
+      EventHandler<SuiteEvent> timer = new ExecutionTimer();
       context.register(BeforeSuite.class, timer);
       context.register(AfterSuite.class, timer);
       context.register(BeforeClass.class, timer);

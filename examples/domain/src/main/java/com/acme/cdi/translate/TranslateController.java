@@ -29,12 +29,14 @@ public class TranslateController implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	TextTranslator textTranslator;
+	private TextTranslator textTranslator;
 
 	private String inputText;
 
 	private String translation;
 
+	public TranslateController() {}
+	
 	// JSF action method, perhaps
 	public void translate() {
 		translation = textTranslator.translate(inputText);

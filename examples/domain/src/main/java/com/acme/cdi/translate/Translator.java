@@ -16,9 +16,9 @@
  */
 package com.acme.cdi.translate;
 
-import javax.ejb.Local;
+import javax.enterprise.context.RequestScoped;
 
-@Local
+@RequestScoped
 public interface Translator {
 
    public String translate(String sentence);

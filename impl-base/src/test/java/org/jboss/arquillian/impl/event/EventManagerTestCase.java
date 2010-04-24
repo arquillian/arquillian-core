@@ -17,8 +17,9 @@
 package org.jboss.arquillian.impl.event;
 
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,7 +40,7 @@ public class EventManagerTestCase
    private ServiceLoader serviceLoader;
    
    @Mock 
-   private EventHandler<SuiteContext, SuiteEvent> handler;
+   private EventHandler<SuiteEvent> handler;
 
    @Test(expected = FiredEventException.class)
    public void shouldWrapException() throws Exception 
@@ -51,7 +52,7 @@ public class EventManagerTestCase
       SuiteContext context = new SuiteContext(serviceLoader);
       SuiteEvent event =  new SuiteEvent();
       
-      EventManager<SuiteContext, SuiteEvent> manager = new MapEventManager<SuiteContext, SuiteEvent>();
+      EventManager manager = new MapEventManager();
       manager.register(SuiteEvent.class, handler);
       
       manager.fire(context, event);
@@ -65,7 +66,7 @@ public class EventManagerTestCase
       SuiteContext context = new SuiteContext(serviceLoader);
       SuiteEvent event =  new SuiteEvent();
       
-      EventManager<SuiteContext, SuiteEvent> manager = new MapEventManager<SuiteContext, SuiteEvent>();
+      EventManager manager = new MapEventManager();
       for(int i = 0; i < handlerCount; i++)
       {
          manager.register(SuiteEvent.class, handler);

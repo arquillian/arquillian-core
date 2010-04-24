@@ -17,6 +17,7 @@
 package org.jboss.arquillian.testenricher.cdi;
 
 import java.lang.annotation.Annotation;
+
 import java.lang.reflect.Method;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -25,6 +26,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.naming.InitialContext;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -40,25 +42,25 @@ public class CDIInjectionEnricher implements TestEnricher
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
    
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
-   public void enrich(Object testCase)
+   public void enrich(Context context, Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
-         injectClass(testCase);
+         injectClass(context, testCase);
       }
    }
    
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#resolve(java.lang.reflect.Method)
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Method method) 
+   public Object[] resolve(Context context, Method method) 
    {
      Object[] values = new Object[method.getParameterTypes().length];
      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
      {
-        BeanManager beanManager = lookupBeanManager();
+        BeanManager beanManager = lookupBeanManager(context);
         if(beanManager == null) 
         {
              return values;
@@ -83,11 +85,11 @@ public class CDIInjectionEnricher implements TestEnricher
       return (T) manager.getReference(bean, type, cc);
    }
    
-   protected void injectClass(Object testCase) 
+   protected void injectClass(Context context, Object testCase) 
    {
       try 
       {
-         BeanManager beanManager = lookupBeanManager();
+         BeanManager beanManager = lookupBeanManager(context);
          if(beanManager != null) {
             injectNonContextualInstance(beanManager, testCase);            
          }
@@ -107,7 +109,7 @@ public class CDIInjectionEnricher implements TestEnricher
       injectionTarget.inject(instance, creationalContext);
    }
 
-   protected BeanManager lookupBeanManager() 
+   protected BeanManager lookupBeanManager(Context context) 
    {
       try 
       {

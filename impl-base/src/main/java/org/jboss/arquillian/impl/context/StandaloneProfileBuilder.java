@@ -16,11 +16,10 @@
  */
 package org.jboss.arquillian.impl.context;
 
-import org.jboss.arquillian.impl.event.type.Before;
-import org.jboss.arquillian.impl.event.type.Test;
 import org.jboss.arquillian.impl.handler.ContainerTestExecuter;
-import org.jboss.arquillian.impl.handler.TestEventExecuter;
 import org.jboss.arquillian.impl.handler.TestCaseEnricher;
+import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
  * StandaloneProfileBuilder

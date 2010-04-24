@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl.context;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.event.type.TestEvent;
+import org.jboss.arquillian.spi.Context;
 
 /**
  * A TestContext is alive in the following life cycles: <br/>
@@ -31,7 +31,7 @@ import org.jboss.arquillian.impl.event.type.TestEvent;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestContext extends AbstractEventContext<TestContext, TestEvent> 
+public class TestContext extends AbstractEventContext
 {
    private ClassContext classContext;
    
@@ -56,14 +56,9 @@ public class TestContext extends AbstractEventContext<TestContext, TestEvent>
       return classContext;
    }
    
-   public Context<?, ?> getParentContext()
+   public Context getParentContext()
    {
       return getClassContext();
    }
 
-   public void fire(TestEvent event)
-   {
-      getEventManager().fire(this, event);
-      getClassContext().fire(event);
-   }
 }

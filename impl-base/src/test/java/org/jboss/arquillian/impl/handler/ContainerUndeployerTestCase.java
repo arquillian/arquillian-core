@@ -18,9 +18,13 @@ package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.container.AfterUnDeploy;
+import org.jboss.arquillian.spi.event.container.BeforeUnDeploy;
+import org.jboss.arquillian.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -45,6 +49,9 @@ public class ContainerUndeployerTestCase
    
    @Mock
    private DeployableContainer container;
+
+   @Mock
+   private EventHandler<ContainerEvent> eventHandler;
    
    @Test(expected = IllegalStateException.class)
    public void shouldThrowIllegalStateOnMissingDeployableContainer() throws Exception
@@ -73,10 +80,17 @@ public class ContainerUndeployerTestCase
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       context.add(DeployableContainer.class, container);
       context.add(Archive.class, deployment);
+      context.register(BeforeUnDeploy.class, eventHandler);
+      context.register(AfterUnDeploy.class, eventHandler);
 
       ContainerUndeployer handler = new ContainerUndeployer();
       handler.callback(context, new ClassEvent(getClass()));
       
-      Mockito.verify(container).undeploy(deployment);
+      // verify that the deployment was undeployed from the container
+      Mockito.verify(container).undeploy(context, deployment);
+
+      // verify that all the events where fired
+      Mockito.verify(eventHandler, Mockito.times(2)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
    }
 }

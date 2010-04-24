@@ -17,18 +17,21 @@
 package org.jboss.arquillian.impl;
 
 import java.lang.reflect.Method;
+import java.util.Stack;
 
 import org.jboss.arquillian.impl.context.ContextLifecycleManager;
-import org.jboss.arquillian.impl.event.type.After;
-import org.jboss.arquillian.impl.event.type.AfterClass;
-import org.jboss.arquillian.impl.event.type.AfterSuite;
-import org.jboss.arquillian.impl.event.type.Before;
-import org.jboss.arquillian.impl.event.type.BeforeClass;
-import org.jboss.arquillian.impl.event.type.BeforeSuite;
-import org.jboss.arquillian.impl.event.type.Test;
+import org.jboss.arquillian.impl.context.TestContext;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.spi.event.suite.After;
+import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.arquillian.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
  * EventTestRunnerAdaptor
@@ -39,6 +42,7 @@ import org.jboss.arquillian.spi.TestRunnerAdaptor;
 public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 {
    private ContextLifecycleManager contextLifecycle;
+   private Stack<Context> activeContext = new Stack<Context>();
    
    public EventTestRunnerAdaptor(ContextLifecycleManager contextLifecycle)
    {
@@ -47,14 +51,22 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       this.contextLifecycle = contextLifecycle;
    }
 
+   public Context getActiveContext()
+   {
+      return activeContext.peek();
+   }
+   
    public void beforeSuite() throws Exception
    {
-      contextLifecycle.createRestoreSuiteContext().fire(new BeforeSuite());
+      Context suiteContext = contextLifecycle.createRestoreSuiteContext();
+      suiteContext.fire(new BeforeSuite());
+      activeContext.push(suiteContext);
    }
 
    public void afterSuite() throws Exception
    {
       contextLifecycle.createRestoreSuiteContext().fire(new AfterSuite());
+      activeContext.pop();
       contextLifecycle.destroySuiteContext();
    }
 
@@ -62,7 +74,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       Validate.notNull(testClass, "TestClass must be specified");
       
-      contextLifecycle.createRestoreClassContext(testClass).fire(new BeforeClass(testClass));
+      Context classContext = contextLifecycle.createRestoreClassContext(testClass);
+      classContext.fire(new BeforeClass(testClass));
+      activeContext.push(classContext);
    }
 
    public void afterClass(Class<?> testClass) throws Exception
@@ -70,6 +84,8 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testClass, "TestClass must be specified");
       
       contextLifecycle.createRestoreClassContext(testClass).fire(new AfterClass(testClass));
+      activeContext.pop();
+      contextLifecycle.destroyClassContext(testClass);
    }
 
    public void before(Object testInstance, Method testMethod) throws Exception
@@ -77,7 +93,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
       
-      contextLifecycle.createRestoreTestContext(testInstance).fire(new Before(testInstance, testMethod));
+      TestContext testContext = contextLifecycle.createRestoreTestContext(testInstance);
+      testContext.fire(new Before(testInstance, testMethod));
+      activeContext.push(testContext);
    }
 
    public void after(Object testInstance, Method testMethod) throws Exception
@@ -86,6 +104,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testMethod, "TestMethod must be specified");
 
       contextLifecycle.createRestoreTestContext(testInstance).fire(new After(testInstance, testMethod));
+      activeContext.pop();
       contextLifecycle.destroyTestContext(testInstance);
    }
    

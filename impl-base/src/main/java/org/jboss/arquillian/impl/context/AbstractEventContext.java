@@ -20,11 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.event.Event;
-import org.jboss.arquillian.impl.event.EventHandler;
 import org.jboss.arquillian.impl.event.EventManager;
 import org.jboss.arquillian.impl.event.MapEventManager;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.Event;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 
 
 /**
@@ -33,25 +34,25 @@ import org.jboss.arquillian.spi.ServiceLoader;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class AbstractEventContext<X extends Context<X, T>, T extends Event> implements Context<X, T>
+public abstract class AbstractEventContext implements Context
 {
-   private EventManager<X, T> eventManager;
+   private EventManager eventManager;
    
    // TODO: create ObjectStore
    private Map<Class<?>, Object> objectStore;
    
    public AbstractEventContext()
    {
-      this.eventManager = new MapEventManager<X, T>();
+      this.eventManager = new MapEventManager();
       this.objectStore = new HashMap<Class<?>, Object>();
    }
 
-   public <K extends T> void register(Class<? extends K> eventType, EventHandler<X, ? super K> handler)
+   public <K extends Event> void register(Class<? extends K> eventType, EventHandler<? super K> handler)
    {
       eventManager.register(eventType, handler);
    }
    
-   protected EventManager<X, T> getEventManager() 
+   protected EventManager getEventManager() 
    {
       return eventManager;
    }
@@ -72,7 +73,7 @@ public abstract class AbstractEventContext<X extends Context<X, T>, T extends Ev
       Object instance = objectStore.get(type);
       if(instance == null) 
       {
-         Context<?, ?> parentContext = getParentContext();
+         Context parentContext = getParentContext();
          if(parentContext != null) 
          {
             instance = parentContext.get(type);
@@ -84,5 +85,15 @@ public abstract class AbstractEventContext<X extends Context<X, T>, T extends Ev
    public ServiceLoader getServiceLoader()
    {
       return get(ServiceLoader.class);
+   }
+   
+   public void fire(Event event)
+   {
+      Context parent = getParentContext();
+      if(parent != null)
+      {
+         parent.fire(event);
+      }
+      getEventManager().fire(this, event);
    }
 }

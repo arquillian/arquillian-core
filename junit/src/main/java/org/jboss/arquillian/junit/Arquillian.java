@@ -58,6 +58,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
+         // TODO: The JVM is never shutdown, hook never called. Figure out how to kill it
          Runtime.getRuntime().addShutdownHook(new Thread() 
          {
             @Override
@@ -91,16 +92,14 @@ public class Arquillian extends BlockJUnit4ClassRunner
     * Override to allow test methods with arguments
     */
    @Override
-   protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) 
+   protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors)
    {
-     List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(annotation);
-
-     for (FrameworkMethod eachTestMethod : methods) 
-     {
-        eachTestMethod.validatePublicVoid(isStatic, errors);
-     }
-  }
-   
+      List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
+      for (FrameworkMethod eachTestMethod : methods)
+      {
+         eachTestMethod.validatePublicVoid(isStatic, errors);
+      }
+   }
       
    @Override
    protected Statement withBeforeClasses(final Statement originalStatement)
@@ -174,7 +173,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                public void invoke() throws Throwable
                {
-                  Object parameterValues = TestEnrichers.enrich(getMethod());
+                  Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
                   method.invokeExplosively(test, (Object[])parameterValues);
                }
                

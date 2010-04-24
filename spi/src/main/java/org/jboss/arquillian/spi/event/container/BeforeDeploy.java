@@ -14,39 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.event.container;
 
-import java.lang.reflect.Method;
 
 /**
- * SPI used to enrich the runtime test object.
- *
+ * BeforeContainerStart
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestEnricher
+public class BeforeDeploy extends ContainerEvent
 {
-   /**
-    * Extension point to add features to the a Test class instance.<br/>
-    * <br/>
-    * IE. Instance field injection
-    *  
-    * @param testCase The test case instance
-    */
-   void enrich(Context context, Object testCase);
-   
-   /**
-    * Extension point to add features to the test method arguments.<br/>
-    * <br/>
-    * IE. Argument injection<br/>
-    * <br/>
-    * 
-    * The return value Object[] must match the Field[] indexes. 
-    * Leave Object[] index as null if it can't be handled by this {@link TestEnricher}.
-    * 
-    * @param method
-    * @return A Object[] of Arguments 
-    */
-   Object[] resolve(Context context, Method method);
 }

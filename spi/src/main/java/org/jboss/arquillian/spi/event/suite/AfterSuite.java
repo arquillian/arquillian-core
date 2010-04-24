@@ -14,14 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event;
+package org.jboss.arquillian.spi.event.suite;
 
 /**
- * Event
+ * Event fired After the Suite execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Event
+public class AfterSuite extends SuiteEvent
 {
+   public AfterSuite()
+   {
+   }
 }

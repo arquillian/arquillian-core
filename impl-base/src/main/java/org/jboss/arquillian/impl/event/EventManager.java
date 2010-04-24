@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.impl.event;
 
+import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.event.Event;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+
 /**
  * EventManagerIF
  *
@@ -24,18 +28,18 @@ package org.jboss.arquillian.impl.event;
  * @param <X>
  * @param <T>
  */
-public interface EventManager<X, T extends Event>
+public interface EventManager
 {
    /**
     * @param context
     * @param event
     */
-   void fire(X context, T event);
+   void fire(Context context, Event event);
    
    /**
     * @param <K>
     * @param eventType
     * @param handler
     */
-   <K extends T> void register(Class<? extends K> eventType, EventHandler<X, ? super K> handler);
+   <K extends Event> void register(Class<? extends K> eventType, EventHandler<? super K> handler);
 }

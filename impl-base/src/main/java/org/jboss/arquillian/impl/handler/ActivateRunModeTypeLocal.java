@@ -18,12 +18,12 @@ package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.api.RunMode;
 import org.jboss.arquillian.api.RunModeType;
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.BeforeClass;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 
 /**
  * Handler that will setup the context as defined by the {@link RunModeType#LOCAL}. <br/>
@@ -36,12 +36,12 @@ import org.jboss.arquillian.spi.TestResult;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ActivateRunModeTypeLocal implements EventHandler<ClassContext, BeforeClass>
+public class ActivateRunModeTypeLocal implements EventHandler<BeforeClass>
 {
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
     */
-   public void callback(ClassContext context, BeforeClass event)
+   public void callback(Context context, BeforeClass event)
          throws Exception
    {
       if(event.getTestClass().isAnnotationPresent(RunMode.class))

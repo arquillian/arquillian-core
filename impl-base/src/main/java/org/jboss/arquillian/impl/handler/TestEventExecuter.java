@@ -17,10 +17,10 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.TestResultImpl;
-import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.Test;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
  * A Handler for executing the Test Method.
@@ -28,10 +28,15 @@ import org.jboss.arquillian.spi.TestResult.Status;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestEventExecuter implements EventHandler<TestContext, Test>
+public class TestEventExecuter implements EventHandler<Test>
 {
    
-   public void callback(TestContext context, Test event) throws Exception 
+   /**
+    * @param context
+    * @param event
+    * @throws Exception
+    */
+   public void callback(Context context, Test event) throws Exception 
    {
       try 
       {

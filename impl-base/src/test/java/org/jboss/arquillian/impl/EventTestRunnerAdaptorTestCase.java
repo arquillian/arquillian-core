@@ -23,12 +23,12 @@ import org.jboss.arquillian.impl.context.ContextLifecycleManager;
 import org.jboss.arquillian.impl.context.ProfileBuilder;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
-import org.jboss.arquillian.impl.event.type.TestEvent;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
+import org.jboss.arquillian.spi.event.suite.TestEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,13 +55,13 @@ public class EventTestRunnerAdaptorTestCase
    public ProfileBuilder profileBuilder;
    
    @Mock
-   private EventHandler<SuiteContext, SuiteEvent> suiteEventHandler;
+   private EventHandler<SuiteEvent> suiteEventHandler;
 
    @Mock
-   private EventHandler<ClassContext, ClassEvent> classEventHandler;
+   private EventHandler<ClassEvent> classEventHandler;
 
    @Mock
-   private EventHandler<TestContext, TestEvent> testEventHandler;
+   private EventHandler<TestEvent> testEventHandler;
 
    @Before
    public void createContexts() throws Exception 
@@ -73,8 +73,8 @@ public class EventTestRunnerAdaptorTestCase
          public Void answer(InvocationOnMock invocation) throws Throwable
          {
             SuiteContext context = (SuiteContext)invocation.getArguments()[0];
-            context.register(org.jboss.arquillian.impl.event.type.BeforeSuite.class, suiteEventHandler);
-            context.register(org.jboss.arquillian.impl.event.type.AfterSuite.class, suiteEventHandler);
+            context.register(org.jboss.arquillian.spi.event.suite.BeforeSuite.class, suiteEventHandler);
+            context.register(org.jboss.arquillian.spi.event.suite.AfterSuite.class, suiteEventHandler);
             return null;
          }
       }).when(profileBuilder).buildSuiteContext(Mockito.any(SuiteContext.class));
@@ -84,8 +84,8 @@ public class EventTestRunnerAdaptorTestCase
                public Void answer(InvocationOnMock invocation) throws Throwable
                {
                   ClassContext context = (ClassContext)invocation.getArguments()[0];
-                  context.register(org.jboss.arquillian.impl.event.type.BeforeClass.class, classEventHandler);
-                  context.register(org.jboss.arquillian.impl.event.type.AfterClass.class, classEventHandler);
+                  context.register(org.jboss.arquillian.spi.event.suite.BeforeClass.class, classEventHandler);
+                  context.register(org.jboss.arquillian.spi.event.suite.AfterClass.class, classEventHandler);
                   return null;
                }
             }).when(profileBuilder).buildClassContext(Mockito.any(ClassContext.class), Mockito.any(Class.class));
@@ -95,9 +95,9 @@ public class EventTestRunnerAdaptorTestCase
                public Void answer(InvocationOnMock invocation) throws Throwable
                {
                   TestContext context = (TestContext)invocation.getArguments()[0];
-                  context.register(org.jboss.arquillian.impl.event.type.Before.class, testEventHandler);
-                  context.register(org.jboss.arquillian.impl.event.type.Test.class, testEventHandler);
-                  context.register(org.jboss.arquillian.impl.event.type.After.class, testEventHandler);
+                  context.register(org.jboss.arquillian.spi.event.suite.Before.class, testEventHandler);
+                  context.register(org.jboss.arquillian.spi.event.suite.Test.class, testEventHandler);
+                  context.register(org.jboss.arquillian.spi.event.suite.After.class, testEventHandler);
                   return null;
                }
             }).when(profileBuilder).buildTestContext(Mockito.any(TestContext.class), Mockito.any(Class.class));

@@ -17,10 +17,13 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
-import org.jboss.arquillian.impl.handler.ContainerStarter;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.container.AfterStart;
+import org.jboss.arquillian.spi.event.container.BeforeStart;
+import org.jboss.arquillian.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -42,6 +45,9 @@ public class ContainerStarterTestCase
    @Mock
    private DeployableContainer container;
 
+   @Mock
+   private EventHandler<ContainerEvent> eventHandler;
+
    @Test(expected = IllegalStateException.class)
    public void shouldThrowIllegalStateOnMissingDeployableContainer() throws Exception
    {
@@ -56,10 +62,17 @@ public class ContainerStarterTestCase
    {
       SuiteContext context = new SuiteContext(serviceLoader);
       context.add(DeployableContainer.class, container);
+      context.register(BeforeStart.class, eventHandler);
+      context.register(AfterStart.class, eventHandler);
       
       ContainerStarter handler = new ContainerStarter();
       handler.callback(context, new SuiteEvent());
       
-      Mockito.verify(container).start();
+      // verify that the contianer was started
+      Mockito.verify(container).start(context);
+   
+      // verify that all the events where fired
+      Mockito.verify(eventHandler, Mockito.times(2)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
    }
 }

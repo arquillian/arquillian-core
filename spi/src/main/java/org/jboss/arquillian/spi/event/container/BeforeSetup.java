@@ -14,24 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event;
+package org.jboss.arquillian.spi.event.container;
+
 
 /**
- * EventHandler
+ * BeforeContainerStart
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
- * @param <X> The Context
- * @param <T> The Event 
  */
-public interface EventHandler<X, T>
+public class BeforeSetup extends ContainerEvent
 {
-   
-   /**
-    * @param context
-    * @param event
-    * @throws Exception
-    */
-   void callback(X context, T event) throws Exception;
-   
 }

@@ -14,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
+package org.jboss.arquillian.spi.event.container;
+
 
 /**
- * Event fired After the Suite execution.
+ * BeforeContainerStart
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterSuite extends SuiteEvent
+public class AfterStart extends ContainerEvent
 {
-   public AfterSuite()
-   {
-   }
 }

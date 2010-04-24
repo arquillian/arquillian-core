@@ -20,10 +20,14 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.container.AfterDeploy;
+import org.jboss.arquillian.spi.event.container.BeforeDeploy;
+import org.jboss.arquillian.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -51,6 +55,9 @@ public class ContainerDeployerTestCase
    @Mock
    private ContainerMethodExecutor executor;
    
+   @Mock
+   private EventHandler<ContainerEvent> eventHandler;
+   
    @Test(expected = IllegalStateException.class)
    public void shouldThrowIllegalStateOnMissingDeployableContainer() throws Exception 
    {
@@ -71,21 +78,31 @@ public class ContainerDeployerTestCase
    }
 
    @Test
-   public void shouldExportContainerMethodExecutor() throws Exception 
+   public void shouldExportContainerMethodExecutorAndFireEvents() throws Exception 
    {
       Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
-      
-      Mockito.when(container.deploy(deployment)).thenReturn(executor);
       
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       context.add(DeployableContainer.class, container);
       context.add(Archive.class, deployment);
+      context.register(BeforeDeploy.class, eventHandler);
+      context.register(AfterDeploy.class, eventHandler);
+      
+      Mockito.when(container.deploy(context, deployment)).thenReturn(executor);
       
       ContainerDeployer handler = new ContainerDeployer();
       handler.callback(context, new ClassEvent(getClass()));
       
+      // verify that the deployment was deployed to the container
+      Mockito.verify(container).deploy(context, deployment);
+      
+      // verify that the ContainerMethodExecutor was exported
       Assert.assertNotNull(
             "Should have exported " + ContainerMethodExecutor.class.getSimpleName(), 
             context.get(ContainerMethodExecutor.class));
+      
+      // verify that all the events where fired
+      Mockito.verify(eventHandler, Mockito.times(2)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
    }
 }

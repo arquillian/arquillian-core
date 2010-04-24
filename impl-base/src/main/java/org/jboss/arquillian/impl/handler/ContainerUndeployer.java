@@ -17,10 +17,12 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.event.container.AfterUnDeploy;
+import org.jboss.arquillian.spi.event.container.BeforeUnDeploy;
+import org.jboss.arquillian.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -37,10 +39,10 @@ import org.jboss.shrinkwrap.api.Archive;
  * @see DeployableContainer
  * @see Archive 
  */
-public class ContainerUndeployer implements EventHandler<ClassContext, ClassEvent>
+public class ContainerUndeployer implements EventHandler<ClassEvent>
 {
    
-   public void callback(ClassContext context, ClassEvent event) throws Exception
+   public void callback(Context context, ClassEvent event) throws Exception
    {
       DeployableContainer container = context.get(DeployableContainer.class);
       Validate.stateNotNull(container, "No " + DeployableContainer.class.getName() + " found in context");
@@ -48,6 +50,8 @@ public class ContainerUndeployer implements EventHandler<ClassContext, ClassEven
       Archive<?> deployment = context.get(Archive.class);
       Validate.stateNotNull(deployment, "No " + Archive.class.getName() + " found in context");
       
-      container.undeploy(deployment);
+      context.fire(new BeforeUnDeploy());
+      container.undeploy(context, deployment);
+      context.fire(new AfterUnDeploy());
    }
 }

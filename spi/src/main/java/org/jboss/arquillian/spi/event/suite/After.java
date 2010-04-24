@@ -14,33 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.handler;
+package org.jboss.arquillian.spi.event.suite;
 
-import java.util.Collection;
-
-import org.jboss.arquillian.spi.Context;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+import java.lang.reflect.Method;
 
 /**
- * A Handler for enriching the Test instance.<br/>
+ * Event fired After the Test method execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCaseEnricher implements EventHandler<TestEvent>
+public class After extends TestEvent
 {
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(org.jboss.arquillian.impl.context.Context, java.lang.Object)
+   /**
+    * @param testInstance The test case instance being tested
+    * @param testMethod The test method that was executed
     */
-   public void callback(Context context, TestEvent event) throws Exception
+   public After(Object testInstance, Method testMethod)
    {
-      Collection<TestEnricher> testEnrichers = context.getServiceLoader().all(TestEnricher.class);
-      for(TestEnricher enricher : testEnrichers) 
-      {
-         enricher.enrich(context, event.getTestInstance());
-      }
+      super(testInstance, testMethod);
    }
 }

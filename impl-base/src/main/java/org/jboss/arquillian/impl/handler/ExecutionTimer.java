@@ -17,9 +17,9 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
+import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 
 /**
  * A Handler for simple execution time tracking. Prints to System.out the 
@@ -28,12 +28,12 @@ import org.jboss.arquillian.impl.event.type.SuiteEvent;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExecutionTimer implements EventHandler<SuiteContext, SuiteEvent>
+public class ExecutionTimer implements EventHandler<SuiteEvent>
 {
    private long start = System.currentTimeMillis();
    private long previous = System.currentTimeMillis();
    
-   public void callback(SuiteContext context, SuiteEvent event) throws Exception 
+   public void callback(Context context, SuiteEvent event) throws Exception 
    {
       System.out.println(DeployableTestBuilder.getProfile() + "-" + event.getClass().getName() + " " + (previous - start) + " ms");
       start = previous;

@@ -21,10 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -41,25 +41,25 @@ public class EJBInjectionEnricher implements TestEnricher
    private static final String ANNOTATION_FIELD_MAPPED_NAME = "mappedName";
    
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
-   public void enrich(Object testCase)
+   public void enrich(Context context, Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
-         injectClass(testCase);
+         injectClass(context, testCase);
       }
    }
 
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#resolve(java.lang.reflect.Method)
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Method method) 
+   public Object[] resolve(Context context, Method method) 
    {
      return new Object[method.getParameterTypes().length];
    }
    
-   protected void injectClass(Object testCase) 
+   protected void injectClass(Context context, Object testCase) 
    {
       try 
       {
@@ -72,7 +72,7 @@ public class EJBInjectionEnricher implements TestEnricher
          
          for(Field field : annotatedFields) 
          {
-            Object ejb = lookupEJB(field.getType());
+            Object ejb = lookupEJB(context, field.getType());
             field.set(testCase, ejb);
          }
          
@@ -90,7 +90,7 @@ public class EJBInjectionEnricher implements TestEnricher
             {
                throw new RuntimeException("@EJB only allowed on 'set' methods");
             }
-            Object ejb = lookupEJB(method.getParameterTypes()[0]);
+            Object ejb = lookupEJB(context, method.getParameterTypes()[0]);
             method.invoke(testCase, ejb);
          }
          
@@ -101,28 +101,28 @@ public class EJBInjectionEnricher implements TestEnricher
       }
    }
    
-   protected Object lookupEJB(Class<?> fieldType) throws Exception 
+   protected Object lookupEJB(Context context, Class<?> fieldType) throws Exception 
    {
       // TODO: figure out test context ? 
-      InitialContext context = createContext();
+      InitialContext initcontext = createContext(context);
       try 
       {
-         return context.lookup("java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean");
+         return initcontext.lookup("java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean");
       } 
       catch (NamingException e) 
       {
     	  try 
     	  {
-    	     return context.lookup("test/" + fieldType.getSimpleName() + "Bean/local");
+    	     return initcontext.lookup("test/" + fieldType.getSimpleName() + "Bean/local");
     	  } 
     	  catch (NamingException e2) 
     	  {
-    	     return context.lookup("test/" + fieldType.getSimpleName() + "Bean/remote");    	    
+    	     return initcontext.lookup("test/" + fieldType.getSimpleName() + "Bean/remote");    	    
     	  }
       }
    }
    
-   protected InitialContext createContext() throws Exception
+   protected InitialContext createContext(Context context) throws Exception
    {
       return new InitialContext();
    }

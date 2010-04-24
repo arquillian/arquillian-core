@@ -23,12 +23,12 @@ import org.jboss.arquillian.impl.context.ContextLifecycleManager;
 import org.jboss.arquillian.impl.context.ProfileBuilder;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.Before;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
-import org.jboss.arquillian.impl.event.type.TestEvent;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
+import org.jboss.arquillian.spi.event.suite.TestEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -52,13 +52,13 @@ public class ContextLifecycleManagerTestCase
    private ProfileBuilder profileBuilder;
    
    @Mock
-   private EventHandler<SuiteContext, SuiteEvent> suiteEventHandler;
+   private EventHandler<SuiteEvent> suiteEventHandler;
 
    @Mock
-   private EventHandler<ClassContext, ClassEvent> classEventHandler;
+   private EventHandler<ClassEvent> classEventHandler;
 
    @Mock
-   private EventHandler<TestContext, TestEvent> testEventHandler;
+   private EventHandler<TestEvent> testEventHandler;
 
    @Test
    public void shouldBeAbleToCreateRestoreSuiteContext() throws Exception 

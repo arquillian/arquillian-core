@@ -20,12 +20,20 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public class SentenceParser implements Serializable {
+import javax.enterprise.context.RequestScoped;
 
-	private static final long serialVersionUID = 1L;
+@RequestScoped
+public class SentenceParser implements Serializable
+{
 
-	public List<String> parse(String text) 
-	{
-		return Arrays.asList(text.split(" "));
-	}
+   private static final long serialVersionUID = 1L;
+
+   public SentenceParser()
+   {
+   }
+
+   public List<String> parse(String text)
+   {
+      return Arrays.asList(text.split(" "));
+   }
 }

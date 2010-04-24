@@ -18,9 +18,15 @@ package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.container.AfterStart;
+import org.jboss.arquillian.spi.event.container.AfterStop;
+import org.jboss.arquillian.spi.event.container.BeforeStart;
+import org.jboss.arquillian.spi.event.container.BeforeStop;
+import org.jboss.arquillian.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -43,12 +49,19 @@ public class ContainerRestarterTestCase
    
    @Mock
    private DeployableContainer container;
-   
+
+   @Mock
+   private EventHandler<ContainerEvent> eventHandler;
+
    @Test
    public void shouldRestartContainerForEveryX() throws Exception 
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       context.add(DeployableContainer.class, container);
+      context.register(BeforeStart.class, eventHandler);
+      context.register(AfterStart.class, eventHandler);
+      context.register(BeforeStop.class, eventHandler);
+      context.register(AfterStop.class, eventHandler);
       
       ContainerRestarter handler = new ContainerRestarter();
       
@@ -57,7 +70,12 @@ public class ContainerRestarterTestCase
          handler.callback(context, new SuiteEvent());
       }
       
-      Mockito.verify(container, Mockito.times(2)).stop();
-      Mockito.verify(container, Mockito.times(2)).start();
+      // verify that the container was restarted twice
+      Mockito.verify(container, Mockito.times(2)).stop(context);
+      Mockito.verify(container, Mockito.times(2)).start(context);
+      
+      // verify that all the events where fired (2 times restart * 4(2 start + 2 stop))
+      Mockito.verify(eventHandler, Mockito.times(8)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
    }
 }

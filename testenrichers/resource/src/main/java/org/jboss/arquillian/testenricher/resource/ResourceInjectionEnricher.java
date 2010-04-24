@@ -24,6 +24,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.naming.InitialContext;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -38,9 +39,9 @@ public class ResourceInjectionEnricher implements TestEnricher
    private static final String ANNOTATION_NAME = "javax.annotation.Resource";
    
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
-   public void enrich(Object testCase)
+   public void enrich(Context context, Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
@@ -49,9 +50,9 @@ public class ResourceInjectionEnricher implements TestEnricher
    }
 
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#resolve(java.lang.reflect.Method)
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Method method) 
+   public Object[] resolve(Context context, Method method) 
    {
      return new Object[method.getParameterTypes().length];
    }

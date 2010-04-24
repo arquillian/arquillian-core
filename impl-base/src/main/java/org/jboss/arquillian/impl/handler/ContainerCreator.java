@@ -16,11 +16,13 @@
  */
 package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
 import org.jboss.arquillian.spi.Configuration;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.event.container.AfterSetup;
+import org.jboss.arquillian.spi.event.container.BeforeSetup;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 
 /**
  * A Handler for creating and setting up a {@link DeployableContainer} for use. <br/>
@@ -38,14 +40,16 @@ import org.jboss.arquillian.spi.DeployableContainer;
  * @see Configuration
  * @see DeployableContainer
  */
-public class ContainerCreator implements EventHandler<SuiteContext, SuiteEvent>
+public class ContainerCreator implements EventHandler<SuiteEvent>
 {
    
-   public void callback(SuiteContext context, SuiteEvent event) throws Exception 
+   public void callback(Context context, SuiteEvent event) throws Exception 
    {
       DeployableContainer container = context.getServiceLoader().onlyOne(DeployableContainer.class);
-      container.setup(context.get(Configuration.class));
       
+      context.fire(new BeforeSetup());
+      container.setup(context, context.get(Configuration.class));
       context.add(DeployableContainer.class, container);
+      context.fire(new AfterSetup());
    }
 }

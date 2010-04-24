@@ -18,9 +18,9 @@ package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.DeploymentGenerator;
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
+import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -39,10 +39,10 @@ import org.jboss.shrinkwrap.api.Archive;
  * @see DeploymentGenerator
  * @see Archive 
  */
-public class ArchiveGenerator implements EventHandler<ClassContext, ClassEvent>
+public class ArchiveGenerator implements EventHandler<ClassEvent>
 {
    
-   public void callback(ClassContext context, ClassEvent event) throws Exception
+   public void callback(Context context, ClassEvent event) throws Exception
    {
       DeploymentGenerator generator = context.get(DeploymentGenerator.class);
       Validate.stateNotNull(generator, "No " + DeploymentGenerator.class.getName() + " found in context");

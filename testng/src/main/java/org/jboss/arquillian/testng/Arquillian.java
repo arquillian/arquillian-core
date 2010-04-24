@@ -24,6 +24,7 @@ import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
@@ -33,6 +34,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.DataProvider;
 
 /**
  * Arquillian
@@ -42,6 +44,8 @@ import org.testng.annotations.BeforeSuite;
  */
 public abstract class Arquillian implements IHookable
 {
+   public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
+   
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
    @BeforeSuite(alwaysRun = true)
@@ -99,6 +103,26 @@ public abstract class Arquillian implements IHookable
             public void invoke() throws Throwable
             {
                callback.runTestMethod(testResult);
+               
+               clearParameters(testResult);
+            }
+
+            private void clearParameters(final ITestResult testResult)
+            {
+               // clear parameters. they can be contextual and might fail TestNG during the report writing.
+               Object[] parameters = testResult.getParameters();
+               for(int i = 0; parameters != null && i < parameters.length; i++)
+               {
+                  Object parameter = parameters[i];
+                  if(parameter != null)
+                  {
+                     parameters[i] = parameter.getClass().getName();
+                  }
+                  else
+                  {
+                     parameters[i] = "null";
+                  }
+               }
             }
             
             public Method getMethod()
@@ -120,5 +144,15 @@ public abstract class Arquillian implements IHookable
       {
          testResult.setThrowable(e);
       }
+   }
+   
+   @DataProvider(name = Arquillian.ARQUILLIAN_DATA_PROVIDER)
+   public Object[][] arquillianArgumentProvider(Method method) 
+   {
+      Object[] parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), method);
+      Object[][] values = new Object[1][method.getParameterTypes().length];
+      values[0] = parameterValues; 
+      
+      return values;
    }
 }

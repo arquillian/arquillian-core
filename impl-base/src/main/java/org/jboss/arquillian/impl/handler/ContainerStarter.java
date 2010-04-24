@@ -17,10 +17,12 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.event.container.AfterStart;
+import org.jboss.arquillian.spi.event.container.BeforeStart;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 
 /**
  * A Handler for starting the {@link DeployableContainer}.<br/>
@@ -33,14 +35,16 @@ import org.jboss.arquillian.spi.DeployableContainer;
  * @version $Revision: $
  * @see DeployableContainer
  */
-public class ContainerStarter implements EventHandler<SuiteContext, SuiteEvent>
+public class ContainerStarter implements EventHandler<SuiteEvent>
 {
    
-   public void callback(SuiteContext context, SuiteEvent event) throws Exception
+   public void callback(Context context, SuiteEvent event) throws Exception
    {
       DeployableContainer container = context.get(DeployableContainer.class);
       Validate.stateNotNull(container, "No " + DeployableContainer.class.getName() + " found in context");
       
-      container.start();
+      context.fire(new BeforeStart());
+      container.start(context);
+      context.fire(new AfterStart());
    }
 }

@@ -14,24 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
-
-import java.lang.reflect.Method;
+package org.jboss.arquillian.spi.event.suite;
 
 /**
- * Event fired Before the Test method execution
+ * Event fired Before the Suite execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Before extends TestEvent
+public class BeforeSuite extends SuiteEvent
 {
-   /**
-    * @param testInstance The test case instance being tested
-    * @param testMethod The test method that is about to be executed
-    */
-   public Before(Object testInstance, Method testMethod)
+   public BeforeSuite()
    {
-      super(testInstance, testMethod);
    }
 }

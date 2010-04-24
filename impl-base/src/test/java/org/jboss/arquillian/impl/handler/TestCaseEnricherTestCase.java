@@ -21,9 +21,9 @@ import java.util.Arrays;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.event.type.TestEvent;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.spi.event.suite.TestEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -56,6 +56,6 @@ public class TestCaseEnricherTestCase
       TestCaseEnricher handler = new TestCaseEnricher();
       handler.callback(context, event);
       
-      Mockito.verify(enricher, Mockito.times(2)).enrich(this);
+      Mockito.verify(enricher, Mockito.times(2)).enrich(context, this);
    }
 }

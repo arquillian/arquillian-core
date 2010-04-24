@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
+package org.jboss.arquillian.spi.event.suite;
+
 
 /**
- * Event fired After the Class execution.
+ * Base for events fired in the Test Class execution face.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterClass extends ClassEvent
+public class ClassEvent extends SuiteEvent
 {
+   private Class<?> testClass;
+   
    /**
     * @param testClass The Test case {@link Class}
+    * @throws IllegalArgumentException if testCase is null 
     */
-   public AfterClass(Class<?> testClass)
+   public ClassEvent(Class<?> testClass)
    {
-      super(testClass);
+      Validate.notNull(testClass, "TestClass must be specified");
+      
+      this.testClass = testClass;
+   }
+   
+   public Class<?> getTestClass()
+   {
+      return testClass;
    }
 }

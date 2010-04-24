@@ -65,7 +65,7 @@ public class ContainerTestExecuterTestCase
       
       ContainerTestExecuter handler = new ContainerTestExecuter();
       handler.callback(context, 
-            new org.jboss.arquillian.impl.event.type.Test(testExecutor));
+            new org.jboss.arquillian.spi.event.suite.Test(testExecutor));
    }
    
    @Test
@@ -82,7 +82,7 @@ public class ContainerTestExecuterTestCase
       
       ContainerTestExecuter handler = new ContainerTestExecuter();
       handler.callback(context, 
-            new org.jboss.arquillian.impl.event.type.Test(testExecutor));
+            new org.jboss.arquillian.spi.event.suite.Test(testExecutor));
    }
    
    @Test
@@ -97,7 +97,7 @@ public class ContainerTestExecuterTestCase
       TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
       context.add(ContainerMethodExecutor.class, executor);
       
-      org.jboss.arquillian.impl.event.type.Test event = new org.jboss.arquillian.impl.event.type.Test(testExecutor);
+      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
       ContainerTestExecuter handler = new ContainerTestExecuter();
       handler.callback(context, event);
       

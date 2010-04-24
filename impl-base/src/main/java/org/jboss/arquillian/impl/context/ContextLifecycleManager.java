@@ -127,7 +127,7 @@ public class ContextLifecycleManager
                ClassContext.class.getSimpleName());
       }
       
-      if(!classContextStore.contains(testClass)) 
+      if(!classContextStore.containsKey(testClass)) 
       {
          ClassContext classContext = new ClassContext(createRestoreSuiteContext()); 
          profileBuilder.buildClassContext(classContext, testClass);
@@ -166,7 +166,7 @@ public class ContextLifecycleManager
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
       
-      if(!testContextStore.contains(testInstance)) 
+      if(!testContextStore.containsKey(testInstance)) 
       {
          TestContext testContext = new TestContext(createRestoreClassContext(testInstance.getClass()));
          profileBuilder.buildTestContext(testContext, testInstance);

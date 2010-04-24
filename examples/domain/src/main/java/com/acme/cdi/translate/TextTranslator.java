@@ -18,8 +18,10 @@ package com.acme.cdi.translate;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+@RequestScoped
 public class TextTranslator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -27,8 +29,10 @@ public class TextTranslator implements Serializable {
 	private SentenceParser sentenceParser;
 	private Translator sentenceTranslator;
 
+	public TextTranslator() {}
+	
 	@Inject
-	TextTranslator(SentenceParser sentenceParser, Translator sentenceTranslator) {
+	public TextTranslator(SentenceParser sentenceParser, Translator sentenceTranslator) {
 		this.sentenceParser = sentenceParser;
 		this.sentenceTranslator = sentenceTranslator;
 	}

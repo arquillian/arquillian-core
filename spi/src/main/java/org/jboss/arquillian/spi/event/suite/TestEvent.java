@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
+package org.jboss.arquillian.spi.event.suite;
 
 import java.lang.reflect.Method;
-
-import org.jboss.arquillian.impl.Validate;
 
 /**
  * Base for events fired in the Test execution cycle.

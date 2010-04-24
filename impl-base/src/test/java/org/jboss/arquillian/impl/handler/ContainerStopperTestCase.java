@@ -17,10 +17,13 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
-import org.jboss.arquillian.impl.handler.ContainerStopper;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.container.AfterStop;
+import org.jboss.arquillian.spi.event.container.BeforeStop;
+import org.jboss.arquillian.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -43,6 +46,9 @@ public class ContainerStopperTestCase
    @Mock
    private DeployableContainer container;
 
+   @Mock
+   private EventHandler<ContainerEvent> eventHandler;
+
    @Test(expected = IllegalStateException.class)
    public void shouldThrowIllegalStateOnMissingDeployableContainer() throws Exception
    {
@@ -57,12 +63,17 @@ public class ContainerStopperTestCase
    {
       SuiteContext context = new SuiteContext(serviceLoader);
       context.add(DeployableContainer.class, container);
-      
+      context.register(BeforeStop.class, eventHandler);
+      context.register(AfterStop.class, eventHandler);
+
       ContainerStopper handler = new ContainerStopper();
       handler.callback(context, new SuiteEvent());
       
-      Mockito.verify(container).stop();
-   }
+      // verify that the container was stopped
+      Mockito.verify(container).stop(context);
 
-   
+      // verify that all the events where fired
+      Mockito.verify(eventHandler, Mockito.times(2)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
+   }
 }

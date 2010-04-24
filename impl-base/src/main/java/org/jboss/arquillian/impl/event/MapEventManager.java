@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.context.Context;
+import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.event.Event;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
 
 /**
  * EventManager
@@ -31,16 +33,16 @@ import org.jboss.arquillian.impl.context.Context;
  * @version $Revision: $
  */
 @SuppressWarnings("unchecked")
-public class MapEventManager<X extends Context<X, T>, T extends Event> implements EventManager<X, T>
+public class MapEventManager implements EventManager
 {
-   private Map<Class<? extends T>, List<EventHandler>> handlerRegistry;
+   private Map<Class<? extends Event>, List<EventHandler>> handlerRegistry;
    
    public MapEventManager()
    {
-      this.handlerRegistry = new ConcurrentHashMap<Class<? extends T>, List<EventHandler>>();
+      this.handlerRegistry = new ConcurrentHashMap<Class<? extends Event>, List<EventHandler>>();
    }
    
-   public void fire(X context, T event) 
+   public void fire(Context context, Event event) 
    {
       Validate.notNull(context, "Context must be specified");
       Validate.notNull(event, "Event must be specified");
@@ -50,8 +52,14 @@ public class MapEventManager<X extends Context<X, T>, T extends Event> implement
       {
          try
          {
-            for(EventHandler<X, T> handler : handlers)
+            /*
+               We need to use old style of for loop to avoid ConcurrentModificationException
+               A handler could add a listener to the same event in it's callback.
+               ie: a DeployableContainer adding a SessionLifecyle handler to be added to the @BeforeClass 
+            */ 
+            for(int i = 0; i < handlers.size(); i++)
             {
+               EventHandler handler = handlers.get(i);
                handler.callback(context, event);
             }
          } 
@@ -63,7 +71,7 @@ public class MapEventManager<X extends Context<X, T>, T extends Event> implement
    }
    
    // TODO: look at concurrency of add / list
-   public <K extends T> void register(Class<? extends K> eventType, EventHandler<X, ? super K> handler) 
+   public <K extends Event> void register(Class<? extends K> eventType, EventHandler<? super K> handler) 
    {
       Validate.notNull(eventType, "EventType must be specified");
       Validate.notNull(handler, "EventHandler must be specified");

@@ -14,33 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.handler;
-
-import java.util.Collection;
+package org.jboss.arquillian.spi.event.suite;
 
 import org.jboss.arquillian.spi.Context;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+
 
 /**
- * A Handler for enriching the Test instance.<br/>
+ * EventHandler
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
+ * @param <X> The Context
+ * @param <T> The Event 
  */
-public class TestCaseEnricher implements EventHandler<TestEvent>
+public interface EventHandler<T>
 {
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(org.jboss.arquillian.impl.context.Context, java.lang.Object)
+   /**
+    * @param context
+    * @param event
+    * @throws Exception
     */
-   public void callback(Context context, TestEvent event) throws Exception
-   {
-      Collection<TestEnricher> testEnrichers = context.getServiceLoader().all(TestEnricher.class);
-      for(TestEnricher enricher : testEnrichers) 
-      {
-         enricher.enrich(context, event.getTestInstance());
-      }
-   }
+   void callback(Context context, T event) throws Exception;
+   
 }

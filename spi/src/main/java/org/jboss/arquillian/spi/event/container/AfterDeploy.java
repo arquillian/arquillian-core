@@ -14,33 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
+package org.jboss.arquillian.spi.event.container;
 
-import org.jboss.arquillian.impl.Validate;
 
 /**
- * Base for events fired in the Test Class execution face.
+ * BeforeContainerStart
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClassEvent extends SuiteEvent
+public class AfterDeploy extends ContainerEvent
 {
-   private Class<?> testClass;
-   
-   /**
-    * @param testClass The Test case {@link Class}
-    * @throws IllegalArgumentException if testCase is null 
-    */
-   public ClassEvent(Class<?> testClass)
-   {
-      Validate.notNull(testClass, "TestClass must be specified");
-      
-      this.testClass = testClass;
-   }
-   
-   public Class<?> getTestClass()
-   {
-      return testClass;
-   }
 }

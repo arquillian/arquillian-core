@@ -26,14 +26,13 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public interface DeployableContainer
 {
-   void setup(Configuration configuration);
+   void setup(Context context, Configuration configuration);
    
-   void start() throws LifecycleException;
+   void start(Context context) throws LifecycleException;
    
-   void stop() throws LifecycleException;
+   ContainerMethodExecutor deploy(Context context, Archive<?> archive) throws DeploymentException;
    
-   ContainerMethodExecutor deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
+   void undeploy(Context context, Archive<?> archive) throws DeploymentException;
 
+   void stop(Context context) throws LifecycleException;
 }

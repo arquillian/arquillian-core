@@ -17,12 +17,12 @@
 package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.Test;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
  * A Handler for executing the remote Test Method.<br/>
@@ -35,10 +35,10 @@ import org.jboss.arquillian.spi.TestResult;
  * @version $Revision: $
  * @see DeployableContainer
  */
-public class ContainerTestExecuter implements EventHandler<TestContext, Test>
+public class ContainerTestExecuter implements EventHandler<Test>
 {
    
-   public void callback(TestContext context, Test event) throws Exception
+   public void callback(Context context, Test event) throws Exception
    {
       ContainerMethodExecutor executor = context.get(ContainerMethodExecutor.class);
       Validate.stateNotNull(executor, "No " + ContainerMethodExecutor.class.getName() + " found in context");

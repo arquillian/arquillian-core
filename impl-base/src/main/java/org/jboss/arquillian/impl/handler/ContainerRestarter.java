@@ -16,11 +16,10 @@
  */
 package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 
 /**
  * A Handler for restarting the {@link DeployableContainer} for every X deployments.<br/>
@@ -33,29 +32,26 @@ import org.jboss.arquillian.spi.DeployableContainer;
  * @version $Revision: $
  * @see DeployableContainer
  */
-public class ContainerRestarter implements EventHandler<ClassContext, SuiteEvent>
+public class ContainerRestarter implements EventHandler<SuiteEvent>
 {
    private static final int MAX_DEPLOYMENTS_BEFORE_RESTART = 5;
    
    private int deploymentCount = 0;
    
    
-   public void callback(ClassContext context, SuiteEvent event) throws Exception
+   public void callback(Context context, SuiteEvent event) throws Exception
    {
-      DeployableContainer container = context.get(DeployableContainer.class);
-      Validate.stateNotNull(container, "No " + DeployableContainer.class.getName() + " found in context");
-
       if(deploymentCount == getMaxDeployments(context) -1)
       {
-         container.stop();
-         container.start();
+         new ContainerStopper().callback(context, event);
+         new ContainerStarter().callback(context, event);
          
          deploymentCount = 0;
       }
       deploymentCount++;
    }
    
-   private int getMaxDeployments(ClassContext context)
+   private int getMaxDeployments(Context context)
    {
       //context.get(Configuration.class).getMaxDeploymentsBeforeRestart();
       return MAX_DEPLOYMENTS_BEFORE_RESTART;

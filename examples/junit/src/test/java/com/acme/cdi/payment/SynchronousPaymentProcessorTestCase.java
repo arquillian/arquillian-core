@@ -48,7 +48,7 @@ public class SynchronousPaymentProcessorTestCase {
 	@Test
 	public void shouldBeReplacedByAMock(@Synchronous PaymentProcessor processor) throws Exception
 	{
-		processor.process("");
-		Assert.assertTrue(MockPaymentProcessor.HAS_BEEN_CALLED);
+       processor.process("");
+	   Assert.assertTrue(MockPaymentProcessor.HAS_BEEN_CALLED);
 	}
 }

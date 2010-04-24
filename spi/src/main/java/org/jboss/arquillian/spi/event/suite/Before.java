@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.event.type;
+package org.jboss.arquillian.spi.event.suite;
+
+import java.lang.reflect.Method;
 
 /**
- * Event fired Before the Class execution.
+ * Event fired Before the Test method execution
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeforeClass extends ClassEvent
+public class Before extends TestEvent
 {
    /**
-    * @param testClass The Test case {@link Class}
+    * @param testInstance The test case instance being tested
+    * @param testMethod The test method that is about to be executed
     */
-   public BeforeClass(Class<?> testClass)
+   public Before(Object testInstance, Method testMethod)
    {
-      super(testClass);
+      super(testInstance, testMethod);
    }
 }

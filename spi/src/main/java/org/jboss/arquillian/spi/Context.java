@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.context;
+package org.jboss.arquillian.spi;
 
-import org.jboss.arquillian.impl.event.Event;
-import org.jboss.arquillian.impl.event.EventHandler;
-import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.Event;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+
 
 /**
  * 
@@ -28,14 +28,14 @@ import org.jboss.arquillian.spi.ServiceLoader;
  * @param <X>
  * @param <T>
  */
-public interface Context<X, T extends Event> 
+public interface Context 
 {
    /**
     * Fire a new {@link Event}.
     * 
     * @param event The {@link Event} instance to fire
     */
-   void  fire(T event); 
+   void  fire(Event event); 
    
    /**
     * Register a {@link EventHandler} for a specific {@link Event}.
@@ -44,7 +44,7 @@ public interface Context<X, T extends Event>
     * @param eventType The Type of {@link Event} to listen to
     * @param handler The receiver of the {@link Event}
     */
-   <K extends T> void register(Class<? extends K> eventType, EventHandler<X, ? super K> handler);
+   <K extends Event> void register(Class<? extends K> eventType, EventHandler<? super K> handler);
 
    /**
     * Get the defined {@link ServiceLoader}
@@ -59,7 +59,7 @@ public interface Context<X, T extends Event>
     * 
     * @return The parent context if any, null if this is the top context.
     */
-   Context<?, ?> getParentContext();
+   Context getParentContext();
 
    /**
     * Add a instance of B to the context.

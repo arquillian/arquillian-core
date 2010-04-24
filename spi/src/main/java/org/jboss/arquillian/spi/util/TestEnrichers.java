@@ -18,6 +18,7 @@ package org.jboss.arquillian.spi.util;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -35,36 +36,20 @@ public class TestEnrichers
    }
 
    /**
-    * Enrich a object based on all found TestEnricher providers.
-    * 
-    * @param testCase
-    *           The object that should be enriched.
-    */
-   public static void enrich(Object testCase)
-   {
-      DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader
-            .load(TestEnricher.class);
-      for (TestEnricher enricher : serviceLoader)
-      {
-         enricher.enrich(testCase);
-      }
-   }
-
-   /**
     * Enrich the method arguments of a method call.<br/>
     * The Object[] index will match the method parameterType[] index.
     * 
     * @param method
     * @return the argument values
     */
-   public static Object[] enrich(Method method)
+   public static Object[] enrich(Context context, Method method)
    {
       Object[] values = new Object[method.getParameterTypes().length];
       DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader
             .load(TestEnricher.class);
       for (TestEnricher enricher : serviceLoader)
       {
-         mergeValues(values, enricher.resolve(method));
+         mergeValues(values, enricher.resolve(context, method));
       }
       return values;
    }

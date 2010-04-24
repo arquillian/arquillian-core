@@ -58,7 +58,7 @@ public class TestEventExecuterTestCase
       
       TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
 
-      org.jboss.arquillian.impl.event.type.Test event = new org.jboss.arquillian.impl.event.type.Test(testExecutor);
+      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
       TestEventExecuter handler = new TestEventExecuter();
       handler.callback(context, event);
 
@@ -88,7 +88,7 @@ public class TestEventExecuterTestCase
       
       TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
 
-      org.jboss.arquillian.impl.event.type.Test event = new org.jboss.arquillian.impl.event.type.Test(testExecutor);
+      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
       TestEventExecuter handler = new TestEventExecuter();
       handler.callback(context, event);
 

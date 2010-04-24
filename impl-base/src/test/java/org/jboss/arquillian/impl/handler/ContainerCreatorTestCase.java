@@ -19,10 +19,14 @@ package org.jboss.arquillian.impl.handler;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.event.container.AfterSetup;
+import org.jboss.arquillian.spi.event.container.BeforeSetup;
+import org.jboss.arquillian.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,6 +49,9 @@ public class ContainerCreatorTestCase
    @Mock
    private DeployableContainer container;
    
+   @Mock 
+   private EventHandler<ContainerEvent> eventHandler;
+   
    @Test
    public void shouldLoadAndSetupTheContainer() throws Exception
    {
@@ -54,12 +61,20 @@ public class ContainerCreatorTestCase
       
       SuiteContext context = new SuiteContext(serviceLoader);
       context.add(Configuration.class, configuration);
+      context.register(BeforeSetup.class, eventHandler);
+      context.register(AfterSetup.class, eventHandler);
       
       ContainerCreator handler = new ContainerCreator();
       handler.callback(context, new SuiteEvent());
       
-      Mockito.verify(container).setup(configuration);
+      // verify that the container was setup
+      Mockito.verify(container).setup(context, configuration);
+
+      // verify that all the events where fired
+      Mockito.verify(eventHandler, Mockito.times(2)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
       
+      // verify that the container was exported
       Assert.assertNotNull(
             "Should have exported " + DeployableContainer.class,
             context.get(DeployableContainer.class));

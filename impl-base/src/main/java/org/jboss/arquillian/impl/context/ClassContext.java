@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl.context;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.event.type.ClassEvent;
+import org.jboss.arquillian.spi.Context;
 
 /**
  * A ClassContext is alive in the following life cycles: <br/>
@@ -33,7 +33,7 @@ import org.jboss.arquillian.impl.event.type.ClassEvent;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClassContext extends AbstractEventContext<ClassContext, ClassEvent>
+public class ClassContext extends AbstractEventContext
 {
    private SuiteContext suiteContext;
    
@@ -58,14 +58,8 @@ public class ClassContext extends AbstractEventContext<ClassContext, ClassEvent>
       return suiteContext;
    }
    
-   public Context<?, ?> getParentContext()
+   public Context getParentContext()
    {
       return getSuiteContext();
-   }
-   
-   public void fire(ClassEvent event)
-   {
-      getEventManager().fire(this, event);
-      getSuiteContext().fire(event);
    }
 }

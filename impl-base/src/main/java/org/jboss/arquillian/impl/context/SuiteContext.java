@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl.context;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.event.type.SuiteEvent;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.ServiceLoader;
 
 /**
@@ -36,7 +36,7 @@ import org.jboss.arquillian.spi.ServiceLoader;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SuiteContext extends AbstractEventContext<SuiteContext, SuiteEvent>
+public class SuiteContext extends AbstractEventContext
 {
    /**
     * Create a new SuiteContext.
@@ -51,15 +51,10 @@ public class SuiteContext extends AbstractEventContext<SuiteContext, SuiteEvent>
       add(ServiceLoader.class, serviceLoader);
    }
    
-   public void fire(SuiteEvent event)
-   {
-      getEventManager().fire(this, event);
-   }
-   
    /**
     * @return Always null, SuiteContext is the root context.
     */
-   public Context<?, ?> getParentContext()
+   public Context getParentContext()
    {
       return null;
    }

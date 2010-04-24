@@ -16,9 +16,9 @@
  */
 package com.acme.cdi.translate;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 
-@Stateless
+@RequestScoped
 public class NorwegianTranslator implements Translator {
 
 	public String translate(String sentence) {
