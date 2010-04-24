@@ -16,10 +16,15 @@
  */
 package org.jboss.arquillian.impl;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.junit.Test;
 
 
@@ -53,7 +58,23 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
    @Test
    public void shouldThrowExceptionOnDeploymentOk() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(DeploymentOK.class);
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator()
+                                 .generateApplicationArchive(DeploymentOK.class);
+      
+      ArchivePath testPath = ArchivePaths.create(DeploymentOK.class.getName().replaceAll("\\.", "/") + ".class");
+      
+      // verify that the test class was added to the archive
+      Assert.assertNotNull(archive.contains(testPath));
+   }
+   
+   @Test
+   public void shouldNotIncludeTheTestClassIfClassesNotSupportedByTheArchive() throws Exception
+   {
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator()
+                              .generateApplicationArchive(DeploymentClassesNotSupported.class);
+      
+      // verify that nothing was added to the archive
+      Assert.assertTrue(archive.getContent().isEmpty());
    }
 
    private static class DeploymentNotPresent {}
@@ -83,5 +104,14 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       public static JavaArchive test() {
          return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
-   }   
+   }
+   
+   private static class DeploymentClassesNotSupported 
+   {
+      @SuppressWarnings("unused")
+      @Deployment
+      public static ResourceAdapterArchive test() {
+         return ShrinkWrap.create("test.jar", ResourceAdapterArchive.class);
+      }
+   }
 }

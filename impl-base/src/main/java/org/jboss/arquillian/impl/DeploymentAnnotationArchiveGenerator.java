@@ -54,12 +54,23 @@ public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveG
       {
          Archive<?> archive = (Archive<?>)deploymentMethod.invoke(null);
          // TODO: handle deployment attributes like autoAddPakcage etc..
-         if(ClassContainer.class.isInstance(archive)) 
+         try
          {
-            ClassContainer<?> classContainer = ClassContainer.class.cast(archive);
-            classContainer.addClass(testCase);
+            if(ClassContainer.class.isInstance(archive)) 
+            {
+               ClassContainer<?> classContainer = ClassContainer.class.cast(archive);
+               classContainer.addClass(testCase);
+            }
+         } 
+         catch (UnsupportedOperationException e) 
+         { 
+            /*
+             * Quick Fix: https://jira.jboss.org/jira/browse/ARQ-118
+             * Keep in mind when rewriting for https://jira.jboss.org/jira/browse/ARQ-94
+             * that a ShrinkWrap archive might not support a Container if even tho the 
+             * ContianerBase implements it. Check the Archive Interface..  
+             */
          }
-         
          return archive;
       } 
       catch (Exception e) 
