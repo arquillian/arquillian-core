@@ -31,7 +31,7 @@ public class DeploymentException extends Exception
       super(message);
    }
    
-   public DeploymentException(String message, Exception cause)
+   public DeploymentException(String message, Throwable cause)
    {
       super(message, cause);
    }

@@ -31,7 +31,7 @@ public class LifecycleException extends Exception
       super(message);
    }
    
-   public LifecycleException(String message, Exception cause)
+   public LifecycleException(String message, Throwable cause)
    {
       super(message, cause);
    }

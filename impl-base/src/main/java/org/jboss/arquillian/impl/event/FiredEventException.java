@@ -16,7 +16,8 @@
  */
 package org.jboss.arquillian.impl.event;
 
-import org.jboss.arquillian.impl.context.Context;
+import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.event.Event;
 
 /**
  * FiredEventException
@@ -29,9 +30,9 @@ public class FiredEventException extends RuntimeException
    private static final long serialVersionUID = 1L;
 
    private transient Event source;
-   private transient Context<?, ?> context;
+   private transient Context context;
    
-   public FiredEventException(Context<?, ?> context, Event source, Exception cause)
+   public FiredEventException(Context context, Event source, Throwable cause)
    {
       super(cause);
       this.source = source;
@@ -43,7 +44,7 @@ public class FiredEventException extends RuntimeException
       return source;
    }
    
-   public Context<?, ?> getContext()
+   public Context getContext()
    {
       return context;
    }
