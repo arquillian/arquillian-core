@@ -26,13 +26,13 @@ public enum RunModeType
 {
    /**
     * In LOCAL mode the @Deployment is processed and deployed to the Container, 
-    * but the test will not be executed inside the container.  
+    * but the test is not executed inside the container.  
     */
    LOCAL,
    
    /**
     * In Remote mode the @Deployment is processed and deployed to the container along side the test
-    * case, the test case is executed inside the container. <br/>
+    * case and the test case is executed inside the container. <br/>
     * This is the default mode when none specified. 
     */
    REMOTE

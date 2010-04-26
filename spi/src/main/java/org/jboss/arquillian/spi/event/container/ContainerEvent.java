@@ -19,7 +19,7 @@ package org.jboss.arquillian.spi.event.container;
 import org.jboss.arquillian.spi.event.Event;
 
 /**
- * BeforeContainerStart
+ * Base for events fired in the Container life cycle
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

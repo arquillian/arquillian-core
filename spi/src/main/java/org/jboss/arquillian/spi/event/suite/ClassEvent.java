@@ -18,7 +18,7 @@ package org.jboss.arquillian.spi.event.suite;
 
 
 /**
- * Base for events fired in the Test Class execution face.
+ * Base for events fired in the Test Class execution cycle.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $

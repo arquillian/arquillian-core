@@ -18,7 +18,7 @@ package org.jboss.arquillian.spi.event.container;
 
 
 /**
- * BeforeContainerStart
+ * Event fired After DeployableContainer undeployment.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
