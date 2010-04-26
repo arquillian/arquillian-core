@@ -85,7 +85,7 @@
 
       <programlisting role="JAVA"><![CDATA[@Deployment
 public static JavaArchive createTestArchive() {
-   return Archives.create("test.jar", JavaArchive.class)
+   return ShrinkWrap.create("test.jar", JavaArchive.class)
       .addClass(NameOfClassUnderTest.class)
       .addManifestResource(new ByteArrayAsset(new byte[0]), Paths.create("beans.xml"))]]></programlisting>
 

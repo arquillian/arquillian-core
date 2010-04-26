@@ -162,7 +162,7 @@
 
       <programlisting role="JAVA"><![CDATA[@Deployment
 public static JavaArchive createTestArchive() {
-   return Archives.create("test.jar", JavaArchive.class)
+   return ShrinkWrap.create("test.jar", JavaArchive.class)
       .addClasses(TemperatureConverter.class)
       .addManifestResource(
             new ByteArrayAsset("<beans/>".getBytes()), 
@@ -192,7 +192,7 @@ public class TemperatureConverterTest {
 
    @Deployment
    public static JavaArchive createTestArchive() {
-      return Archives.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create("test.jar", JavaArchive.class)
          .addClasses(TemperatureConverter.class)
          .addManifestResource(
             new ByteArrayAsset("<beans/>".getBytes()), 
@@ -224,7 +224,7 @@ public class TemperatureConverterTest {
 
    @Deployment
    public static JavaArchive createTestArchive() {
-      return Archives.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create("test.jar", JavaArchive.class)
          .addClasses(TemperatureConverter.class)
          .addManifestResource(
             new ByteArrayAsset("<beans/>".getBytes()), 
