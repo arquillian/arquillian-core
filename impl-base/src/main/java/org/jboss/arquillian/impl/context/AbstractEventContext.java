@@ -47,16 +47,25 @@ public abstract class AbstractEventContext implements Context
       this.objectStore = new HashMap<Class<?>, Object>();
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.Context#register(java.lang.Class, org.jboss.arquillian.spi.event.suite.EventHandler)
+    */
    public <K extends Event> void register(Class<? extends K> eventType, EventHandler<? super K> handler)
    {
       eventManager.register(eventType, handler);
    }
    
+   /**
+    * @return
+    */
    protected EventManager getEventManager() 
    {
       return eventManager;
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.Context#add(java.lang.Class, java.lang.Object)
+    */
    public <B> void add(Class<B> type, B instance) 
    {
       Validate.notNull(type, "Type must be specified");
@@ -65,12 +74,15 @@ public abstract class AbstractEventContext implements Context
       objectStore.put(type, instance);
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.Context#get(java.lang.Class)
+    */
    @SuppressWarnings("unchecked")
    public <B> B get(Class<B> type)
    {
       Validate.notNull(type, "Type must be specified");
       
-      Object instance = objectStore.get(type);
+      B instance = (B)objectStore.get(type);
       if(instance == null) 
       {
          Context parentContext = getParentContext();
@@ -79,14 +91,20 @@ public abstract class AbstractEventContext implements Context
             instance = parentContext.get(type);
          }
       }
-      return (B) instance;
+      return instance;
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.Context#getServiceLoader()
+    */
    public ServiceLoader getServiceLoader()
    {
       return get(ServiceLoader.class);
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.Context#fire(org.jboss.arquillian.spi.event.Event)
+    */
    public void fire(Event event)
    {
       Context parent = getParentContext();

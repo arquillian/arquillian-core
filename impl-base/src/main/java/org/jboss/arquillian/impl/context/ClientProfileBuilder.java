@@ -46,6 +46,9 @@ import org.jboss.arquillian.spi.event.suite.Test;
 public class ClientProfileBuilder implements ProfileBuilder
 {
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildSuiteContext(org.jboss.arquillian.impl.context.SuiteContext)
+    */
    public void buildSuiteContext(SuiteContext context) 
    {
       context.register(BeforeSuite.class, new ContainerCreator());
@@ -62,6 +65,9 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(After.class, timer);
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildClassContext(org.jboss.arquillian.impl.context.ClassContext, java.lang.Class)
+    */
    public void buildClassContext(ClassContext context, Class<?> testClass)
    {
       // TODO: move out to SerivceLoader
@@ -72,10 +78,12 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(AfterClass.class, new ContainerUndeployer());
 
       context.register(BeforeClass.class, new ActivateRunModeTypeLocal());
-      
    }
 
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext, java.lang.Object)
+    */
    public void buildTestContext(TestContext context, Object testInstance)
    {
       context.register(Test.class, new ContainerTestExecuter());
