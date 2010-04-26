@@ -45,7 +45,7 @@ public class TestEnrichers
    public static Object[] enrich(Context context, Method method)
    {
       Object[] values = new Object[method.getParameterTypes().length];
-      DefaultServiceLoader<TestEnricher> serviceLoader = DefaultServiceLoader
+      ServiceLoader<TestEnricher> serviceLoader = ServiceLoader
             .load(TestEnricher.class);
       for (TestEnricher enricher : serviceLoader)
       {

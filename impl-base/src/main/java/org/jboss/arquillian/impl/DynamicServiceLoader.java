@@ -19,8 +19,7 @@ package org.jboss.arquillian.impl;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.spi.ServiceLoader;
-import org.jboss.arquillian.spi.util.DefaultServiceLoader;
+import org.jboss.arquillian.spi.util.ServiceLoader;
 
 /**
  * DynamicServiceLoader
@@ -28,7 +27,7 @@ import org.jboss.arquillian.spi.util.DefaultServiceLoader;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DynamicServiceLoader implements ServiceLoader
+public class DynamicServiceLoader implements org.jboss.arquillian.spi.ServiceLoader
 {
    private static Logger logger = Logger.getLogger(DynamicServiceLoader.class.getName());
    
@@ -37,7 +36,7 @@ public class DynamicServiceLoader implements ServiceLoader
     */
    public <T> Collection<T> all(Class<T> serviceClass)
    {
-      return DefaultServiceLoader.load(serviceClass).getProviders();
+      return ServiceLoader.load(serviceClass).getProviders();
    }
    
    /* (non-Javadoc)
@@ -45,7 +44,7 @@ public class DynamicServiceLoader implements ServiceLoader
     */
    public <T> T onlyOne(Class<T> serviceClass)
    {
-      Collection<T> providers = DefaultServiceLoader.load(serviceClass).getProviders();
+      Collection<T> providers = ServiceLoader.load(serviceClass).getProviders();
       verifyOnlyOneOrSameImplementation(serviceClass, providers);
 
       return providers.iterator().next();

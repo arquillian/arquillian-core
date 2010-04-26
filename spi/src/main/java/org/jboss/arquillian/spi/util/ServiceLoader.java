@@ -43,7 +43,7 @@ import java.util.Set;
  * @author Pete Muir
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
  */
-public class DefaultServiceLoader<S> implements Iterable<S>
+public class ServiceLoader<S> implements Iterable<S>
 {
    
    private static final String SERVICES = "META-INF/services";
@@ -64,23 +64,9 @@ public class DefaultServiceLoader<S> implements Iterable<S>
     * @param service The interface or abstract class representing the service
     * @return A new service loader
     */
-   public static <S> DefaultServiceLoader<S> load(Class<S> service)
+   public static <S> ServiceLoader<S> load(Class<S> service)
    {
-      return load(SERVICES, service, Thread.currentThread().getContextClassLoader());
-   }
-   
-   public static <S> DefaultServiceLoader<S> load(String directoryName, Class<S> service)
-   {
-      return load(directoryName, service, Thread.currentThread().getContextClassLoader());
-   }
-   
-   public static <S> DefaultServiceLoader<S> load(String directoryName, Class<S> service, ClassLoader loader)
-   {
-      if (loader == null)
-      {
-         loader = service.getClassLoader();
-      }
-      return new DefaultServiceLoader<S>(directoryName, service, loader);
+      return load(service, Thread.currentThread().getContextClassLoader());
    }
 
    /**
@@ -92,9 +78,13 @@ public class DefaultServiceLoader<S> implements Iterable<S>
     *           (or, failing that, the bootstrap class loader) is to be used
     * @return A new service loader
     */
-   public static <S> DefaultServiceLoader<S> load(Class<S> service, ClassLoader loader)
+   public static <S> ServiceLoader<S> load(Class<S> service, ClassLoader loader)
    {
-      return load(SERVICES, service, loader);
+      if (loader == null)
+      {
+         loader = service.getClassLoader();
+      }
+      return new ServiceLoader<S>(service, loader);
    }
 
    /**
@@ -118,7 +108,7 @@ public class DefaultServiceLoader<S> implements Iterable<S>
     * @param service The interface or abstract class representing the service
     * @return A new service loader
     */
-   public static <S> DefaultServiceLoader<S> loadInstalled(Class<S> service)
+   public static <S> ServiceLoader<S> loadInstalled(Class<S> service)
    {
       throw new UnsupportedOperationException();
    }
@@ -129,10 +119,10 @@ public class DefaultServiceLoader<S> implements Iterable<S>
    
    private Set<S> providers;
 
-   private DefaultServiceLoader(String prefix, Class<S> service, ClassLoader loader)
+   private ServiceLoader(Class<S> service, ClassLoader loader)
    {
       this.loader = loader;
-      this.serviceFile = prefix + "/" + service.getName();
+      this.serviceFile = SERVICES + "/" + service.getName();
       this.expectedType = service;
    }
    
@@ -197,7 +187,7 @@ public class DefaultServiceLoader<S> implements Iterable<S>
                            }
                            catch (ClassCastException e)
                            {
-                              throw new IllegalStateException(line + " does not implement " + expectedType);
+                              throw new IllegalStateException("Extension " + line + " does not implement Extension");
                            }
                            Constructor<? extends S> constructor = serviceClass.getConstructor();
                            if(!constructor.isAccessible()) {

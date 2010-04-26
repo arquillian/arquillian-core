@@ -38,7 +38,7 @@ public final class TestRunners
     */
    public static TestRunner getTestRunner() 
    {
-      DefaultServiceLoader<TestRunner> serviceLoader = DefaultServiceLoader.load(
+      ServiceLoader<TestRunner> serviceLoader = ServiceLoader.load(
             TestRunner.class, 
             SecurityActions.getThreadContextClassLoader());
 
