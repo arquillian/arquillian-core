@@ -163,7 +163,7 @@ final class SecurityActions
       }
    }
 
-   public static boolean isClassPresent(String name) 
+   static boolean isClassPresent(String name) 
    {
       try 
       {
@@ -177,7 +177,7 @@ final class SecurityActions
       }
    }
    
-   public static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) 
+   static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) 
    {
       List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>()
       {
@@ -201,7 +201,7 @@ final class SecurityActions
       return declaredAccessableFields;
    }
 
-   public static List<Method> getMethodsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) 
+   static List<Method> getMethodsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) 
    {
       List<Method> declaredAccessableMethods = AccessController.doPrivileged(new PrivilegedAction<List<Method>>()
       {

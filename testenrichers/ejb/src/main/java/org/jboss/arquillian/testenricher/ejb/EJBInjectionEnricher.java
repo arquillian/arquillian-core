@@ -59,6 +59,31 @@ public class EJBInjectionEnricher implements TestEnricher
      return new Object[method.getParameterTypes().length];
    }
    
+   /**
+    * Obtains all field in the specified class which contain the specified annotation
+    * @param clazz
+    * @param annotation
+    * @return
+    * @throws IllegalArgumentException If either argument is not specified
+    */
+   //TODO Hack, this leaks out privileged operations outside the package.  Extract out properly.
+   protected List<Field> getFieldsWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotation)
+         throws IllegalArgumentException
+   {
+      // Precondition checks
+      if (clazz == null)
+      {
+         throw new IllegalArgumentException("clazz must be specified");
+      }
+      if (annotation == null)
+      {
+         throw new IllegalArgumentException("annotation must be specified");
+      }
+
+      // Delegate to the privileged operations
+      return SecurityActions.getFieldsWithAnnotation(clazz, annotation);
+   }
+   
    protected void injectClass(Context context, Object testCase) 
    {
       try 
