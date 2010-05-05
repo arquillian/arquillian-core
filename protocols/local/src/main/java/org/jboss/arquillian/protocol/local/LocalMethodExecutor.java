@@ -29,7 +29,9 @@ import org.jboss.arquillian.spi.TestResult.Status;
  */
 public class LocalMethodExecutor implements ContainerMethodExecutor
 {
-
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.ContainerMethodExecutor#invoke(org.jboss.arquillian.spi.TestMethodExecutor)
+    */
    public TestResult invoke(TestMethodExecutor testMethodExecutor)
    {
       TestResult result = new TestResult();
@@ -43,6 +45,7 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
          result.setStatus(Status.FAILED);
          result.setThrowable(e);
       }
+      result.setEnd(System.currentTimeMillis());
       return result;
    }
 }

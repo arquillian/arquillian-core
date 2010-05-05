@@ -54,15 +54,23 @@ public class TestResult implements Serializable
    private Status status;
    private Throwable throwable;
 
+   private long start;
+   private long end;
+   
    /**
-    * Create a empty result. 
+    * Create a empty result.<br/> 
+    * <br/>
+    * Start time is set to Current Milliseconds.
     */
    public TestResult()
    {
+      this(null);
    }
    
    /**
-    * Create a new TestResult.
+    * Create a new TestResult.<br/>
+    * <br/>
+    * Start time is set to Current Milliseconds.
     * 
     * @param status The result status.
     */
@@ -72,7 +80,9 @@ public class TestResult implements Serializable
    }
    
    /**
-    * Create a new TestResult.
+    * Create a new TestResult.<br/>
+    * <br/>
+    * Start time is set to Current Milliseconds.
     * 
     * @param status The result status.
     * @param throwable thrown exception if any
@@ -81,6 +91,8 @@ public class TestResult implements Serializable
    {
       this.status = status;
       this.throwable = throwable;
+      
+      this.start = System.currentTimeMillis();
    }
 
    /**
@@ -108,5 +120,45 @@ public class TestResult implements Serializable
    public void setThrowable(Throwable throwable)
    {
       this.throwable = throwable;
+   }
+   
+   /**
+    * Set the start time of the test.
+    * 
+    * @param start Start time in milliseconds
+    */
+   public void setStart(long start)
+   {
+      this.start = start;
+   }
+   
+   /**
+    * Get the start time.
+    * 
+    * @return Start time in milliseconds
+    */
+   public long getStart()
+   {
+      return start;
+   }
+   
+   /**
+    * Set the end time of the test.
+    * 
+    * @param End time in milliseconds
+    */
+   public void setEnd(long end)
+   {
+      this.end = end;
+   }
+   
+   /**
+    * Get the end time.
+    * 
+    * @return End time in milliseconds
+    */
+   public long getEnd()
+   {
+      return end;
    }
 }
