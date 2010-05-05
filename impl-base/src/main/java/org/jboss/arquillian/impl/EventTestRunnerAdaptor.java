@@ -113,7 +113,8 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
       
       Test test = new Test(testMethodExecutor);
-      contextLifecycle.createRestoreTestContext(testMethodExecutor.getInstance()).fire(test);
-      return test.getTestResult();
+      TestContext context = contextLifecycle.createRestoreTestContext(testMethodExecutor.getInstance());
+      context.fire(test);
+      return context.get(TestResult.class);
    }
 }

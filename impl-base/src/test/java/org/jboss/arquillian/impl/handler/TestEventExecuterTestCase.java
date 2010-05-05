@@ -62,18 +62,19 @@ public class TestEventExecuterTestCase
       TestEventExecuter handler = new TestEventExecuter();
       handler.callback(context, event);
 
+      TestResult result = context.get(TestResult.class);
       Assert.assertNotNull(
             "Should have set result",
-            event.getTestResult());
+            result);
 
       Assert.assertEquals(
             "Should have passed test",
             TestResult.Status.PASSED,
-            event.getTestResult().getStatus());
+            result.getStatus());
 
       Assert.assertNull(
             "Should not have set cause",
-            event.getTestResult().getThrowable());
+            result.getThrowable());
    }
 
    @Test
@@ -92,19 +93,21 @@ public class TestEventExecuterTestCase
       TestEventExecuter handler = new TestEventExecuter();
       handler.callback(context, event);
 
+      TestResult result = context.get(TestResult.class);
+      
       Assert.assertNotNull(
             "Should have set result",
-            event.getTestResult());
+            result);
 
       Assert.assertEquals(
             "Should have failed test",
             TestResult.Status.FAILED,
-            event.getTestResult().getStatus());
+            result.getStatus());
 
       Assert.assertEquals(
             "Should have set failed cause",
             exception,
-            event.getTestResult().getThrowable());
+            result.getThrowable());
    }
 
    private Method getTestMethod(String name) throws Exception

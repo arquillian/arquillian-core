@@ -31,7 +31,6 @@ import org.jboss.arquillian.spi.event.suite.TestEvent;
  */
 public class TestCaseEnricher implements EventHandler<TestEvent>
 {
-   
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.event.EventHandler#callback(org.jboss.arquillian.impl.context.Context, java.lang.Object)
     */

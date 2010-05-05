@@ -17,7 +17,6 @@
 package org.jboss.arquillian.spi.event.suite;
 
 import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
 
 /**
  * Event fired to execute the Test method
@@ -28,7 +27,6 @@ import org.jboss.arquillian.spi.TestResult;
 public class Test extends TestEvent
 {
    private TestMethodExecutor testMethodExecutor;
-   private TestResult testResult;
    
    /**
     * @param testMethodExecutor The executor responsible for executing the test method
@@ -46,15 +44,5 @@ public class Test extends TestEvent
    public TestMethodExecutor getTestMethodExecutor()
    {
       return testMethodExecutor;
-   }
-   
-   public TestResult getTestResult()
-   {
-      return testResult;
-   }
-   
-   public void setTestResult(TestResult testResult)
-   {
-      this.testResult = testResult;
    }
 }

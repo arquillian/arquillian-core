@@ -27,7 +27,10 @@ import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 /**
  * A Handler for creating and setting up a {@link DeployableContainer} for use. <br/>
  * <br/>
- * 
+ *  <b>Fires:</b><br/>
+ *   {@link BeforeSetup}<br/>
+ *   {@link AfterSetup}<br/>
+ * <br/>
  *  <b>Imports:</b><br/>
  *   {@link Configuration}<br/>
  *  <br/>
@@ -42,7 +45,9 @@ import org.jboss.arquillian.spi.event.suite.SuiteEvent;
  */
 public class ContainerCreator implements EventHandler<SuiteEvent>
 {
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
+    */
    public void callback(Context context, SuiteEvent event) throws Exception 
    {
       DeployableContainer container = context.getServiceLoader().onlyOne(DeployableContainer.class);

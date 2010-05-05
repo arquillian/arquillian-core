@@ -102,7 +102,7 @@ public class ContainerTestExecuterTestCase
       Assert.assertEquals(
             "Should set result on event",
             result,
-            event.getTestResult());
+            context.get(TestResult.class));
    }
    
    private Method getTestMethod(String name) throws Exception

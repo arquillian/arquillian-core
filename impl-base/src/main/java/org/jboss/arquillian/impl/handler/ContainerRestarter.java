@@ -18,13 +18,22 @@ package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.event.container.AfterStart;
+import org.jboss.arquillian.spi.event.container.AfterStop;
+import org.jboss.arquillian.spi.event.container.BeforeStart;
+import org.jboss.arquillian.spi.event.container.BeforeStop;
 import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 
 /**
  * A Handler for restarting the {@link DeployableContainer} for every X deployments.<br/>
  * <br/>
- *
+ *  <b>Fires:</b><br/>
+ *   {@link BeforeStop}<br/>
+ *   {@link AfterStop}<br/>
+ *   {@link BeforeStart}<br/>
+ *   {@link AfterStart}<br/>
+ * <br/>
  *  <b>Imports:</b><br/>
  *   {@link DeployableContainer}<br/>
  *   
@@ -38,7 +47,9 @@ public class ContainerRestarter implements EventHandler<SuiteEvent>
    
    private int deploymentCount = 0;
    
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
+    */
    public void callback(Context context, SuiteEvent event) throws Exception
    {
       if(deploymentCount == getMaxDeployments(context) -1)

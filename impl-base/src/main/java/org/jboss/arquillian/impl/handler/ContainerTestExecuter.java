@@ -27,9 +27,11 @@ import org.jboss.arquillian.spi.event.suite.Test;
 /**
  * A Handler for executing the remote Test Method.<br/>
  * <br/>
- *
  *  <b>Imports:</b><br/>
  *   {@link DeployableContainer}<br/>
+ *  <br/>
+ *  <b>Exports:</b><br/>
+ *   {@link TestResult}<br/>
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -37,15 +39,15 @@ import org.jboss.arquillian.spi.event.suite.Test;
  */
 public class ContainerTestExecuter implements EventHandler<Test>
 {
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
+    */
    public void callback(Context context, Test event) throws Exception
    {
       ContainerMethodExecutor executor = context.get(ContainerMethodExecutor.class);
       Validate.stateNotNull(executor, "No " + ContainerMethodExecutor.class.getName() + " found in context");
       
       TestResult result = executor.invoke(event.getTestMethodExecutor());
-      
-      // TODO: move to context ? 
-      event.setTestResult(result);
+      context.add(TestResult.class, result);
    }
 }

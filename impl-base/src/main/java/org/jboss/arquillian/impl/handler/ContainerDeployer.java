@@ -29,7 +29,10 @@ import org.jboss.shrinkwrap.api.Archive;
 /**
  * A Handler for creating and deploying the generated {@link Archive} to the container. <br/>
  * <br/>
- * 
+ *  <b>Fires:</b><br/>
+ *   {@link BeforeDeploy}<br/>
+ *   {@link AfterDeploy}<br/>
+ * <br/>
  *  <b>Imports:</b><br/>
  *   {@link DeployableContainer}<br/>
  *   {@link Archive}<br/>

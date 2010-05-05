@@ -19,7 +19,9 @@ package org.jboss.arquillian.impl.handler;
 import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.spi.event.container.AfterUnDeploy;
+import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.spi.event.suite.ClassEvent;
 import org.jboss.arquillian.spi.event.suite.EventHandler;
@@ -28,7 +30,10 @@ import org.jboss.shrinkwrap.api.Archive;
 /**
  * A Handler for undeploying the generated {@link Archive} from the container. <br/>
  * <br/>
- * 
+  *  <b>Fires:</b><br/>
+ *   {@link BeforeDeploy}<br/>
+ *   {@link AfterDeploy}<br/>
+ * <br/>
  *  <b>Imports:</b><br/>
  *   {@link DeployableContainer}<br/>
  *   {@link Archive}<br/>
@@ -41,7 +46,9 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class ContainerUndeployer implements EventHandler<ClassEvent>
 {
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
+    */
    public void callback(Context context, ClassEvent event) throws Exception
    {
       DeployableContainer container = context.get(DeployableContainer.class);

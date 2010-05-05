@@ -23,29 +23,32 @@ import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
- * A Handler for executing the Test Method.
+ * A Handler for executing the Test Method.<br/>
+ *  <br/>
+ *  <b>Exports:</b><br/>
+ *   {@link TestResult}<br/>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class TestEventExecuter implements EventHandler<Test>
 {
-   
-   /**
-    * @param context
-    * @param event
-    * @throws Exception
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
    public void callback(Context context, Test event) throws Exception 
    {
+      TestResult result = new TestResult();
       try 
       {
          event.getTestMethodExecutor().invoke();
-         event.setTestResult(new TestResult(Status.PASSED));
+         result.setStatus(Status.PASSED);
       } 
       catch (Throwable e) 
       {
-         event.setTestResult(new TestResult(Status.FAILED, e));
+         result.setStatus(Status.FAILED);
+         result.setThrowable(e);
       }
+      context.add(TestResult.class, result);
    }
 }

@@ -41,7 +41,9 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class ArchiveGenerator implements EventHandler<ClassEvent>
 {
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
+    */
    public void callback(Context context, ClassEvent event) throws Exception
    {
       DeploymentGenerator generator = context.get(DeploymentGenerator.class);
