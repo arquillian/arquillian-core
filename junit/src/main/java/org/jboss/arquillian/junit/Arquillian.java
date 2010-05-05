@@ -28,6 +28,9 @@ import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.spi.util.TestEnrichers;
+import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -58,26 +61,32 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
-         // TODO: The JVM is never shutdown, hook never called. Figure out how to kill it
-         Runtime.getRuntime().addShutdownHook(new Thread() 
-         {
-            @Override
-            public void run()
-            {
-               try  
-               {
-                  if(deployableTest.get() != null) 
-                  {
-                     deployableTest.get().beforeSuite();
-                  }
-               } 
-               catch (Exception e) 
-               {
-                  throw new RuntimeException("Could not stop container", e);
-               }
-            }
-         });
       }
+   }
+   
+   @Override
+   public void run(RunNotifier notifier)
+   {
+      // register to listen for RunFinished to exeucte AfterSuite
+      notifier.addListener(new RunListener() 
+      {
+         @Override
+         public void testRunFinished(Result result) throws Exception
+         {
+            try  
+            {
+               if(deployableTest.get() != null) 
+               {
+                  deployableTest.get().afterSuite();
+               }
+            } 
+            catch (Exception e) 
+            {
+               throw new RuntimeException("Could not stop container", e);
+            }
+         }
+      });
+      super.run(notifier);
    }
 
    @Override
