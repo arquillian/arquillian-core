@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.testng;
 
-import org.jboss.arquillian.impl.TestResultImpl;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.testng.ITestContext;
@@ -67,14 +66,14 @@ public class TestListener implements ITestListener
    {
       if(context.getFailedTests().size() > 0) 
       {
-         return new TestResultImpl(
+         return new TestResult(
                Status.FAILED, 
                context.getFailedTests().getAllResults().iterator().next().getThrowable());
       } 
       else if(context.getSkippedTests().size() > 0)
       {
-         return new TestResultImpl(Status.SKIPPED);
+         return new TestResult(Status.SKIPPED);
       }
-      return new TestResultImpl(Status.PASSED); 
+      return new TestResult(Status.PASSED); 
    }
 }

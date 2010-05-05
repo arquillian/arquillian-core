@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.impl.TestResultImpl;
 import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.arquillian.spi.event.suite.Test;
@@ -41,11 +41,11 @@ public class TestEventExecuter implements EventHandler<Test>
       try 
       {
          event.getTestMethodExecutor().invoke();
-         event.setTestResult(new TestResultImpl(Status.PASSED));
+         event.setTestResult(new TestResult(Status.PASSED));
       } 
       catch (Throwable e) 
       {
-         event.setTestResult(new TestResultImpl(Status.FAILED, e));
+         event.setTestResult(new TestResult(Status.FAILED, e));
       }
    }
 }

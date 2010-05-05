@@ -17,7 +17,6 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.impl.TestResultImpl;
 import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
@@ -68,6 +67,6 @@ public class JUnitTestRunner implements TestRunner
       {
          status = Status.SKIPPED;
       }
-      return new TestResultImpl(status, throwable);
+      return new TestResult(status, throwable);
    }
 }

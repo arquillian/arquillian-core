@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
+import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.util.TestRunners;
 
 /**
@@ -151,28 +152,6 @@ public class ServletTestRunner extends HttpServlet
    
    private TestResult createFailedResult(Throwable throwable)
    {
-      return new FailedResult(throwable);
-   }
-   
-   public static class FailedResult implements TestResult {
-      
-      private static final long serialVersionUID = 1L;
-
-      private Throwable throwable;
-      
-      public FailedResult(Throwable throwable)
-      {
-         this.throwable = throwable;
-      }
-      
-      public Status getStatus()
-      {
-         return Status.FAILED;
-      }
-      
-      public Throwable getThrowable()
-      {
-         return throwable;
-      }
+      return new TestResult(Status.FAILED, throwable);
    }
 }

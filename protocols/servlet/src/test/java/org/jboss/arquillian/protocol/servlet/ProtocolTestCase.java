@@ -62,7 +62,7 @@ public class ProtocolTestCase
    @Test
    public void shouldReturnTestResult() throws Exception 
    {
-      MockTestRunner.add(new TestResultImpl(Status.PASSED, null));
+      MockTestRunner.add(new TestResult(Status.PASSED, null));
       
       ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL());
       TestResult result = executor.invoke(new MockTestExecutor());
@@ -80,7 +80,7 @@ public class ProtocolTestCase
    @Test
    public void shouldReturnThrownException() throws Exception 
    {
-      MockTestRunner.add(new TestResultImpl(Status.FAILED, new Exception().fillInStackTrace()));
+      MockTestRunner.add(new TestResult(Status.FAILED, new Exception().fillInStackTrace()));
       
       ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL());
       TestResult result = executor.invoke(new MockTestExecutor());
@@ -182,30 +182,6 @@ public class ProtocolTestCase
       catch (Exception e) 
       {
          throw new RuntimeException("Could not create url", e);
-      }
-   }
-   
-   public static class TestResultImpl implements TestResult {
-
-      private static final long serialVersionUID = 1L;
-
-      private Status status;
-      private Throwable throwable;
-      
-      public TestResultImpl(Status status, Throwable throwable)
-      {
-         this.status = status;
-         this.throwable = throwable;
-      }
-
-      public Status getStatus()
-      {
-         return status;
-      }
-
-      public Throwable getThrowable()
-      {
-         return throwable;
       }
    }
    

@@ -20,11 +20,9 @@ import java.lang.reflect.Method;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.impl.TestResultImpl;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.handler.ContainerTestExecuter;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestMethodExecutor;
@@ -71,7 +69,7 @@ public class ContainerTestExecuterTestCase
    @Test
    public void shouldInvokeContainerMethodExecutor() throws Exception 
    {
-      TestResult result = new TestResultImpl(Status.PASSED);
+      TestResult result = new TestResult(Status.PASSED);
       Mockito.when(executor.invoke(testExecutor)).thenReturn(result);
       Mockito.when(testExecutor.getInstance()).thenReturn(this);
       Mockito.when(testExecutor.getMethod()).thenReturn(
@@ -88,7 +86,7 @@ public class ContainerTestExecuterTestCase
    @Test
    public void shouldSetTestResult() throws Exception 
    {
-      TestResult result = new TestResultImpl(Status.PASSED);
+      TestResult result = new TestResult(Status.PASSED);
       Mockito.when(executor.invoke(testExecutor)).thenReturn(result);
       Mockito.when(testExecutor.getInstance()).thenReturn(this);
       Mockito.when(testExecutor.getMethod()).thenReturn(

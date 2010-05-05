@@ -19,6 +19,7 @@ package org.jboss.arquillian.protocol.local;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.TestResult.Status;
 
 /**
  * LocalMethodExecutor
@@ -31,29 +32,17 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
 
    public TestResult invoke(TestMethodExecutor testMethodExecutor)
    {
+      TestResult result = new TestResult();
       try 
       {
          testMethodExecutor.invoke();
-         
-         return new TestResult()
-         {
-            private static final long serialVersionUID = 1L;
-
-            public Throwable getThrowable() { return null; }
-            
-            public Status getStatus() { return Status.PASSED; }
-         };
+         result.setStatus(Status.PASSED);
       }
       catch (final Throwable e) 
       {
-         return new TestResult() 
-         {
-            private static final long serialVersionUID = 1L;
-
-            public Status getStatus() {return Status.FAILED; }
-            
-            public Throwable getThrowable() {return e;}
-         };
+         result.setStatus(Status.FAILED);
+         result.setThrowable(e);
       }
+      return result;
    }
 }
