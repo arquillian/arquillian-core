@@ -64,18 +64,26 @@ public class InjectionTestCase
       
       String messageBody = "ping";
       
-      Connection connection = factory.createConnection();
-      Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-      QueueRequestor requestor = new QueueRequestor((QueueSession)session, dlq);
+      Connection connection = null;
+      try
+      {
+         connection = factory.createConnection();
+         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+         QueueRequestor requestor = new QueueRequestor((QueueSession)session, dlq);
 
-      connection.start();
-      
-      Message request = session.createTextMessage(messageBody);
-      Message response = requestor.request(request, 5000);
-      
-      Assert.assertEquals(
-            "Should have responded with same message",
-            messageBody,
-            ((TextMessage)response).getText());
+         connection.start();
+         
+         Message request = session.createTextMessage(messageBody);
+         Message response = requestor.request(request, 5000);
+         
+         Assert.assertEquals(
+               "Should have responded with same message",
+               messageBody,
+               ((TextMessage)response).getText());
+      }
+      finally
+      {
+         connection.close();
+      }
    }
 }
