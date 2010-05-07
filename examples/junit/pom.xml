@@ -208,6 +208,7 @@
                         <include>com/acme/cdi/*</include>
                         <include>com/acme/cdi/payment/*</include>
                         <include>com/acme/cdi/random/*</include>
+                        <include>com/acme/web/*</include>
                      </includes>
                   </configuration>
                </plugin>
