@@ -26,7 +26,8 @@
   <!-- Aggregate Modules -->
   <modules>
     
-    <module>servlet</module>
+    <module>servlet-ee5</module>
+    <module>servlet-ee6</module>
     <module>local</module>
 
   </modules>

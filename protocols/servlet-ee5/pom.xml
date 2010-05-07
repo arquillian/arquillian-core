@@ -15,9 +15,9 @@
 
    <!-- Artifact Configuration -->
    <groupId>org.jboss.arquillian.protocol</groupId>
-   <artifactId>arquillian-protocol-servlet</artifactId>
-   <name>Arquillian Protocol Servlet</name>
-   <description>Protocol handler for communicating using a servlet / http</description>
+   <artifactId>arquillian-protocol-servlet-ee5</artifactId>
+   <name>Arquillian Protocol Servlet EE5</name>
+   <description>Protocol handler for communicating using a servlet / http. WebArchive containing web.xml.</description>
 
 
    <!-- Properties -->
