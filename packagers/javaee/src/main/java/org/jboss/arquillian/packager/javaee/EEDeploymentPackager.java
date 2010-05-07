@@ -22,6 +22,7 @@ import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
@@ -32,24 +33,116 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  */
 public class EEDeploymentPackager implements DeploymentPackager
 {
-
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.shrinkwrap.api.Archive, java.util.Collection)
+    */
    public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
    {
-      EnterpriseArchive fullDeployment = ShrinkWrap.create("test.ear", EnterpriseArchive.class)
-                  .addModule(applicationArchive);
-
-      for (Archive<?> moduleArchive : auxiliaryArchives)
+      if(EnterpriseArchive.class.isInstance(applicationArchive))
       {
-         if (WebArchive.class.isInstance(moduleArchive))
-         {
-            fullDeployment.addModule(moduleArchive);
-         } 
-         else
-         {
-            fullDeployment.addLibrary(moduleArchive);
-         }
+         return handleArchive(EnterpriseArchive.class.cast(applicationArchive), auxiliaryArchives);
+      } 
+
+      if(WebArchive.class.isInstance(applicationArchive))
+      {
+         return handleArchive(WebArchive.class.cast(applicationArchive), auxiliaryArchives);
+      } 
+
+      if(JavaArchive.class.isInstance(applicationArchive))
+      {
+         return handleArchive(JavaArchive.class.cast(applicationArchive), auxiliaryArchives);
       }
-      return fullDeployment;
+      
+      throw new IllegalArgumentException(EEDeploymentPackager.class.getName()  + 
+            " can not handle archive of type " +  applicationArchive.getClass().getName());
    }
 
+   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives) 
+   {
+      if(containsArchiveOfType(WebArchive.class, auxiliaryArchives)) 
+      {
+         throw new IllegalArgumentException("Can not merge two " + WebArchive.class.getName() + "'s. " +
+                "Please verify that your using the correct protocol extensions, " +
+                "or try deploying as a " + EnterpriseArchive.class.getName() + " instead");
+      }
+      return applicationArchive
+                  .addLibraries(
+                        auxiliaryArchives.toArray(new Archive<?>[0]));
+   }
+
+   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives) 
+   {
+      if(containsArchiveOfType(WebArchive.class, auxiliaryArchives))
+      {
+         EnterpriseArchive deployment = ShrinkWrap.create("test.ear", EnterpriseArchive.class)
+                                             .addModule(applicationArchive);
+         for (Archive<?> moduleArchive : auxiliaryArchives)
+         {
+            if (WebArchive.class.isInstance(moduleArchive))
+            {
+               deployment.addModule(moduleArchive);
+            } 
+            else
+            {
+               deployment.addLibrary(moduleArchive);
+            }
+         }
+         return deployment;
+      }
+      else 
+      {
+         WebArchive deployment = ShrinkWrap.create("test.war", WebArchive.class);
+         deployment.addLibraries(auxiliaryArchives.toArray(new Archive[0]));
+         deployment.addLibraries(applicationArchive);
+         return deployment;
+      }
+   }
+
+   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives) 
+   {
+      if(!containsArchiveOfType(WebArchive.class, auxiliaryArchives))
+      {
+         for (Archive<?> moduleArchive : auxiliaryArchives)
+         {
+            if ("arquillian-protocol.jar".equals(moduleArchive.getName()) && 
+                  JavaArchive.class.isInstance(moduleArchive))
+            {
+               applicationArchive.addModule(
+                     ShrinkWrap.create("test.war", WebArchive.class)
+                              .addLibraries(moduleArchive));
+            } 
+            else
+            {
+               applicationArchive.addLibrary(moduleArchive);
+            }
+         }
+      }
+      else
+      {
+         for (Archive<?> moduleArchive : auxiliaryArchives)
+         {
+            if (WebArchive.class.isInstance(moduleArchive))
+            {
+               applicationArchive.addModule(moduleArchive);
+            } 
+            else
+            {
+               applicationArchive.addLibrary(moduleArchive);
+            }
+         }
+      }
+      return applicationArchive;
+   }
+   
+   private boolean containsArchiveOfType(Class<? extends Archive<?>> clazz, Collection<Archive<?>> archives) 
+   {
+      for(Archive<?> archive : archives)
+      {
+         if(clazz.isInstance(archive))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
 }
