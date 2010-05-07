@@ -130,21 +130,31 @@ public class EJBInjectionEnricher implements TestEnricher
    {
       // TODO: figure out test context ? 
       InitialContext initcontext = createContext(context);
-      try 
+      
+      String[] jndiNames = {
+            "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
+            "java:global/test.ear/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+            "test/" + fieldType.getSimpleName() + "Bean/local",
+            "test/" + fieldType.getSimpleName() + "Bean/remote",
+            "test/" + fieldType.getSimpleName() + "/no-interface",
+            fieldType.getSimpleName() + "Bean/local",
+            fieldType.getSimpleName() + "Bean/remote",
+            fieldType.getSimpleName() + "/no-interface"
+      };
+      
+      for(String jndiName : jndiNames)
       {
-         return initcontext.lookup("java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean");
-      } 
-      catch (NamingException e) 
-      {
-    	  try 
-    	  {
-    	     return initcontext.lookup("test/" + fieldType.getSimpleName() + "Bean/local");
-    	  } 
-    	  catch (NamingException e2) 
-    	  {
-    	     return initcontext.lookup("test/" + fieldType.getSimpleName() + "Bean/remote");    	    
-    	  }
+         try 
+         {
+            return initcontext.lookup(jndiName);
+         } 
+         catch (NamingException e) 
+         {
+            // no-op, try next
+         }
       }
+      throw new NamingException("No EJB found in JNDI, tried the following names: " + jndiNames);
    }
    
    protected InitialContext createContext(Context context) throws Exception

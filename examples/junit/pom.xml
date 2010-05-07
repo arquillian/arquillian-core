@@ -204,6 +204,7 @@
                   <configuration>
                      <includes>
                         <include>com/acme/ejb/*</include>
+                        <include>com/acme/ejb31/*</include>
                      </includes>
                   </configuration>
                </plugin>
