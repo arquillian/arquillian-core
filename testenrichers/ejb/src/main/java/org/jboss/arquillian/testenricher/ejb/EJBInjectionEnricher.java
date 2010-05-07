@@ -134,6 +134,8 @@ public class EJBInjectionEnricher implements TestEnricher
       String[] jndiNames = {
             "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
             "java:global/test.ear/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName() + "Bean",
             "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
             "test/" + fieldType.getSimpleName() + "Bean/local",
             "test/" + fieldType.getSimpleName() + "Bean/remote",
@@ -154,11 +156,23 @@ public class EJBInjectionEnricher implements TestEnricher
             // no-op, try next
          }
       }
-      throw new NamingException("No EJB found in JNDI, tried the following names: " + jndiNames);
+      throw new NamingException("No EJB found in JNDI, tried the following names: " + joinJndiNames(jndiNames));
    }
    
    protected InitialContext createContext(Context context) throws Exception
    {
       return new InitialContext();
+   }
+   
+   // Simple helper for printing the jndi names
+   private String joinJndiNames(String[] strings)
+   {
+      StringBuilder sb = new StringBuilder();
+      
+      for(String string: strings)
+      {
+         sb.append(string).append(", ");
+      }
+      return sb.toString();
    }
 }
