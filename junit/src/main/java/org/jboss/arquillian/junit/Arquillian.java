@@ -24,6 +24,7 @@ import java.util.List;
 import org.jboss.arquillian.impl.DeployableTestBuilder;
 import org.jboss.arquillian.impl.XmlConfigurationBuilder;
 import org.jboss.arquillian.spi.Configuration;
+import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
@@ -62,12 +63,27 @@ public class Arquillian extends BlockJUnit4ClassRunner
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
       }
+      /* TODO: HACK
+       *  If in-container, the Thread will be reused between multiple TestRuns.
+       *  We need to call BeginSuite before everyone. But only once if not. 
+       */
+      else if(ContainerProfile.CONTAINER == DeployableTestBuilder.getProfile())
+      {
+         try 
+         {
+            deployableTest.get().beforeSuite();
+         }
+         catch (Exception e) 
+         {
+            throw new InitializationError(Arrays.asList((Throwable)e));
+         }
+      }
    }
    
    @Override
    public void run(RunNotifier notifier)
    {
-      // register to listen for RunFinished to exeucte AfterSuite
+      // register to listen for RunFinished to execute AfterSuite
       notifier.addListener(new RunListener() 
       {
          @Override
@@ -82,7 +98,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
             } 
             catch (Exception e) 
             {
-               throw new RuntimeException("Could not stop container", e);
+               throw new RuntimeException("Could not run @AfterSuite", e);
             }
          }
       });
