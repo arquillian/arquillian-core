@@ -204,6 +204,8 @@
                   <configuration>
                      <includes>
                         <include>com/acme/ejb/*</include>
+                        <include>com/acme/cdi/*</include>
+                        <include>com/acme/cdi/payment/*</include>
                      </includes>
                   </configuration>
                </plugin>

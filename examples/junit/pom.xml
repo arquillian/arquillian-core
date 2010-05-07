@@ -205,6 +205,9 @@
                      <includes>
                         <include>com/acme/ejb/*</include>
                         <include>com/acme/ejb31/*</include>
+                        <include>com/acme/cdi/*</include>
+                        <include>com/acme/cdi/payment/*</include>
+                        <include>com/acme/cdi/random/*</include>
                      </includes>
                   </configuration>
                </plugin>
