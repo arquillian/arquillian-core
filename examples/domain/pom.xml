@@ -65,6 +65,12 @@
          <version>1.4.1</version> 
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>jboss.web</groupId> 
+         <artifactId>servlet-api</artifactId> 
+         <version>3.0.0.alpha-25</version> 
+         <scope>provided</scope>
+      </dependency>
 
    </dependencies>
 

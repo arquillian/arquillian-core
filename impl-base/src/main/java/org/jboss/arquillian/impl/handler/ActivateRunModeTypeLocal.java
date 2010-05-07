@@ -24,7 +24,6 @@ import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
 
 /**
  * Handler that will setup the context as defined by the {@link RunModeType#LOCAL}. <br/>
@@ -37,26 +36,17 @@ import org.jboss.arquillian.spi.event.suite.EventHandler;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ActivateRunModeTypeLocal implements EventHandler<BeforeClass>
+public class ActivateRunModeTypeLocal extends AbstractRunModeHandler<BeforeClass>
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(java.lang.Object, java.lang.Object)
-    */
-   public void callback(Context context, BeforeClass event)
-         throws Exception
+   
+   @Override
+   protected void hasLocalRunMode(Context context)
    {
-      if(event.getTestClass().isAnnotationPresent(RunMode.class))
-      {
-         RunModeType runModeType = event.getTestClass().getAnnotation(RunMode.class).value();
-         if(RunModeType.LOCAL == runModeType) 
-         {
-            context.add(ContainerMethodExecutor.class, new LocalMethodExecutor());
-         }
-      }
+      context.add(ContainerMethodExecutor.class, new LocalMethodExecutor());      
    }
    
    // TODO: this is a copy of the protocol-local Executor. Move to SPI and remove protocol local? 
-   private static class LocalMethodExecutor implements ContainerMethodExecutor 
+   static class LocalMethodExecutor implements ContainerMethodExecutor 
    {
       /* (non-Javadoc)
        * @see org.jboss.arquillian.spi.ContainerMethodExecutor#invoke(org.jboss.arquillian.spi.TestMethodExecutor)
