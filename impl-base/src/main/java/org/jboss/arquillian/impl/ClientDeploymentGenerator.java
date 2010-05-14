@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jboss.arquillian.api.RunMode;
+import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
 import org.jboss.arquillian.spi.ApplicationArchiveProcessor;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
@@ -49,15 +51,25 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
    {
       Validate.notNull(testCase, "TestCase must be specified");
 
-      DeploymentPackager packager = serviceLoader.onlyOne(DeploymentPackager.class);
-
-      Archive<?> applicationArchive = serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
-      applyApplicationProcessors(applicationArchive, testCase);
       
-      List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
-      applyAuxiliaryProcessors(auxiliaryArchives);
-
-      return packager.generateDeployment(applicationArchive, auxiliaryArchives);
+      Archive<?> applicationArchive = serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
+      
+      // Only further package tests in RunModeType.REMOTE
+      // ARQ-139
+      final RunMode runMode = testCase.getAnnotation(RunMode.class);
+      if (runMode != null && RunModeType.REMOTE.equals(runMode.value()))
+      {
+         DeploymentPackager packager = serviceLoader.onlyOne(DeploymentPackager.class);
+         applyApplicationProcessors(applicationArchive, testCase);
+         List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
+         applyAuxiliaryProcessors(auxiliaryArchives);
+         return packager.generateDeployment(applicationArchive, auxiliaryArchives);
+      }
+      else
+      {
+         // Don't wrap/repackage anything, return the user's deployment intact
+         return applicationArchive;
+      }
    }
    
    private List<Archive<?>> loadAuxiliaryArchives() 
