@@ -20,18 +20,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.arquillian.api.RunMode;
-import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
 import org.jboss.arquillian.spi.ApplicationArchiveProcessor;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.AuxiliaryArchiveProcessor;
+import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Responsible for 
+ * Responsible for calling the Packager SPIs, {@link DeploymentPackager}, {@link ApplicationArchiveGenerator},
+ * {@link ApplicationArchiveProcessor}, {@link AuxiliaryArchiveAppender} and {@link AuxiliaryArchiveProcessor}. <br/>
+ * The end result is the Deployment deployed to the {@link DeployableContainer} for testing.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -51,25 +52,15 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
    {
       Validate.notNull(testCase, "TestCase must be specified");
 
-      
+      DeploymentPackager packager = serviceLoader.onlyOne(DeploymentPackager.class);
+
       Archive<?> applicationArchive = serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
+      applyApplicationProcessors(applicationArchive, testCase);
       
-      // Only further package tests in RunModeType.REMOTE
-      // ARQ-139
-      final RunMode runMode = testCase.getAnnotation(RunMode.class);
-      if (runMode != null && RunModeType.REMOTE.equals(runMode.value()))
-      {
-         DeploymentPackager packager = serviceLoader.onlyOne(DeploymentPackager.class);
-         applyApplicationProcessors(applicationArchive, testCase);
-         List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
-         applyAuxiliaryProcessors(auxiliaryArchives);
-         return packager.generateDeployment(applicationArchive, auxiliaryArchives);
-      }
-      else
-      {
-         // Don't wrap/repackage anything, return the user's deployment intact
-         return applicationArchive;
-      }
+      List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
+      applyAuxiliaryProcessors(auxiliaryArchives);
+
+      return packager.generateDeployment(applicationArchive, auxiliaryArchives);
    }
    
    private List<Archive<?>> loadAuxiliaryArchives() 

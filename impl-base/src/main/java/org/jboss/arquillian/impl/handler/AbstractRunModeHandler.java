@@ -36,15 +36,26 @@ public abstract class AbstractRunModeHandler<T extends ClassEvent> implements Ev
     */
    public final void callback(Context context, ClassEvent event) throws Exception
    {
+      boolean isLocalMode = false;
       if(event.getTestClass().isAnnotationPresent(RunMode.class))
       {
          RunModeType runModeType = event.getTestClass().getAnnotation(RunMode.class).value();
          if(RunModeType.LOCAL == runModeType) 
          {
-            hasLocalRunMode(context);
+            isLocalMode = true;
          }
+      }
+      if(isLocalMode)
+      {
+         hasLocalRunMode(context);
+      } 
+      else
+      {
+         hasRemoteRunMode(context);
       }
    }
    
    protected abstract void hasLocalRunMode(Context context);
+   
+   protected abstract void hasRemoteRunMode(Context context);
 }

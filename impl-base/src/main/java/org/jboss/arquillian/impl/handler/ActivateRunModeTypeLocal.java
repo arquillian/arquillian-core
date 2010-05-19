@@ -44,6 +44,12 @@ public class ActivateRunModeTypeLocal extends AbstractRunModeHandler<BeforeClass
    {
       context.add(ContainerMethodExecutor.class, new LocalMethodExecutor());      
    }
+
+   @Override
+   protected void hasRemoteRunMode(Context context)
+   {
+      // NO-OP, Use the ContainerMethodExecutor provided by the DeployableContainer
+   }
    
    // TODO: this is a copy of the protocol-local Executor. Move to SPI and remove protocol local? 
    static class LocalMethodExecutor implements ContainerMethodExecutor 

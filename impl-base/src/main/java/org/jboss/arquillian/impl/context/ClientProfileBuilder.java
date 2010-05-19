@@ -16,9 +16,8 @@
  */
 package org.jboss.arquillian.impl.context;
 
-import org.jboss.arquillian.impl.ClientDeploymentGenerator;
-import org.jboss.arquillian.impl.DeploymentGenerator;
 import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
+import org.jboss.arquillian.impl.handler.ActivateRunModeTypeDeployment;
 import org.jboss.arquillian.impl.handler.ArchiveGenerator;
 import org.jboss.arquillian.impl.handler.ContainerCreator;
 import org.jboss.arquillian.impl.handler.ContainerDeployer;
@@ -70,16 +69,18 @@ public class ClientProfileBuilder implements ProfileBuilder
     */
    public void buildClassContext(ClassContext context, Class<?> testClass)
    {
-      // TODO: move out to SerivceLoader
-      context.add(DeploymentGenerator.class, new ClientDeploymentGenerator(context.getServiceLoader()));
-      
+      /*
+       * If RunMode LOCAL a local DeploymentGenerator that returns the ApplicationArchive is bound to the context,
+       * else the ClientDeploymentGenerator is used. 
+       */
+      context.register(BeforeClass.class, new ActivateRunModeTypeDeployment());
+
       context.register(BeforeClass.class, new ArchiveGenerator());
       context.register(BeforeClass.class, new ContainerDeployer());
       context.register(AfterClass.class, new ContainerUndeployer());
 
       context.register(BeforeClass.class, new ActivateRunModeTypeLocal());
    }
-
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext, java.lang.Object)

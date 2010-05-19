@@ -20,6 +20,8 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.RunMode;
 import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.impl.ApplicationArchiveDeploymentGenerator;
+import org.jboss.arquillian.impl.ClientDeploymentGenerator;
 import org.jboss.arquillian.impl.DeploymentGenerator;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
@@ -38,24 +40,52 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ActivateRunModeTypeLocalDeploymentTestCase
+public class ActivateRunModeTypeDeploymentTestCase
 {
    @Mock
    private ServiceLoader serviceLoader;
    
    @Test
-   public void shouldExportContainerMethodExecutorIfLocalMode() throws Exception 
+   public void shouldExportApplicationArchiveDeploymentGeneratorIfLocalMode() throws Exception 
+   {
+      verifyExportAndType(TestWithRunModeLocal.class, ApplicationArchiveDeploymentGenerator.class);
+   }
+
+   @Test
+   public void shouldExportClientDeploymentGeneratorIfRemoteMode() throws Exception 
+   {
+      verifyExportAndType(TestWithRunModeRemote.class, ClientDeploymentGenerator.class);
+   }
+   
+   @Test
+   public void shouldExportClientDeploymentGeneratorIfNoModeSet() throws Exception 
+   {
+      verifyExportAndType(TestWithRunModeNone.class, ClientDeploymentGenerator.class);
+   }
+
+   private void verifyExportAndType(Class<?> testCaseClass, Class<?> deploymentGeneratorClass) throws Exception 
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      ActivateRunModeTypeLocalDeployment handler = new ActivateRunModeTypeLocalDeployment();
-      handler.callback(context, new BeforeClass(TestWithRunModeLocal.class));
+      ActivateRunModeTypeDeployment handler = new ActivateRunModeTypeDeployment();
+      handler.callback(context, new BeforeClass(testCaseClass));
       
       Assert.assertNotNull(
             "Should have exported a " + DeploymentGenerator.class,
             context.get(DeploymentGenerator.class));
+      
+      Assert.assertEquals(
+            "Verify that the correct " + DeploymentGenerator.class.getName() + " was exported", 
+            deploymentGeneratorClass,
+            context.get(DeploymentGenerator.class).getClass());
    }
 
+   
    @RunMode(RunModeType.LOCAL)
    private static class TestWithRunModeLocal { }
+
+   @RunMode(RunModeType.REMOTE)
+   private static class TestWithRunModeRemote { }
+
+   private static class TestWithRunModeNone { }
 }
