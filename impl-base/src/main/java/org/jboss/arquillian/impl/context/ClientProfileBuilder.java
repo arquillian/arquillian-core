@@ -16,8 +16,9 @@
  */
 package org.jboss.arquillian.impl.context;
 
-import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
 import org.jboss.arquillian.impl.handler.ActivateRunModeTypeDeployment;
+import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
+import org.jboss.arquillian.impl.handler.ArchiveDeploymentExporter;
 import org.jboss.arquillian.impl.handler.ArchiveGenerator;
 import org.jboss.arquillian.impl.handler.ContainerCreator;
 import org.jboss.arquillian.impl.handler.ContainerDeployer;
@@ -80,6 +81,8 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(AfterClass.class, new ContainerUndeployer());
 
       context.register(BeforeClass.class, new ActivateRunModeTypeLocal());
+      
+      context.register(BeforeClass.class, new ArchiveDeploymentExporter());
    }
    
    /* (non-Javadoc)

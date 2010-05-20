@@ -31,6 +31,7 @@ import org.junit.Test;
  * XmlConfigurationBuilderTestCase
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class XmlConfigurationBuilderTestCase
@@ -63,6 +64,11 @@ public class XmlConfigurationBuilderTestCase
       ConfigurationBuilder builder = new XmlConfigurationBuilder("arquillian.xml", serviceLoader);
       Configuration configuration = builder.build();
       Assert.assertNotNull(configuration);
+
+      Assert.assertEquals(
+            "Should set properties on " + Configuration.class.getName(), 
+            "/tmp",
+            configuration.getDeploymentExportPath());
       
       // retrieve the container configuration
       MockContainerConfiguration containerConfig = configuration.getContainerConfig(MockContainerConfiguration.class);
@@ -74,6 +80,7 @@ public class XmlConfigurationBuilderTestCase
       Assert.assertEquals(2L, containerConfig.getPropertyLong());
       Assert.assertEquals(3D, containerConfig.getPropertyDouble(), 0);
       Assert.assertEquals(true, containerConfig.getPropertyBoolean());
+      
    }
    
    /**

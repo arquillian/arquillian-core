@@ -37,6 +37,8 @@ public class Configuration
    private Map<Class<? extends ContainerConfiguration>, ContainerConfiguration> containersConfig = 
       new HashMap<Class<? extends ContainerConfiguration>, ContainerConfiguration>();
 
+   private String deploymentExportPath = null;
+   
    /**
     * Puts a {@link ContainerConfiguration} implementation in the containersConfig
     * field. If the {@link ContainerConfiguration} already exists, it just replaces
@@ -76,5 +78,24 @@ public class Configuration
          return itr.next().getValue();
       }
       return null;
+   }
+   
+   /**
+    * Sets the Path used to export deployments.
+    *  
+    * @param deploymentExportPath String representation of path to use to export archives
+    */
+   public void setDeploymentExportPath(String deploymentExportPath)
+   {
+      this.deploymentExportPath = deploymentExportPath;
+   }
+   
+   /**
+    * Get the set export path for deployments. 
+    * @return Set path or null if not set
+    */
+   public String getDeploymentExportPath()
+   {
+      return deploymentExportPath;
    }
 }

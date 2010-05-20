@@ -41,6 +41,7 @@ import org.w3c.dom.NodeList;
  * it just returns an empty {@link org.jboss.arquillian.spi.Configuration} object.
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class XmlConfigurationBuilder implements ConfigurationBuilder
@@ -89,6 +90,9 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
       this.serviceLoader = serviceLoader;
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.ConfigurationBuilder#build()
+    */
    public Configuration build() throws ConfigurationException
    {      
       // the configuration object we are going to return
@@ -101,70 +105,104 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
       {
          configuration.addContainerConfig(containerConfiguration);
       }
-      
+
+      try
+      {
+         Document arquillianConfiguration = loadArquillianConfiguration(resourcePath);
+         if(arquillianConfiguration != null)
+         {
+            populateConfiguration(arquillianConfiguration, containersConfigurations);
+            populateConfiguration(arquillianConfiguration, configuration);
+         }
+      } 
+      catch (Exception e) 
+      {
+         throw new ConfigurationException("Could not create configuration", e);
+      }
+      return configuration;
+   }
+
+   private Document loadArquillianConfiguration(String resourcePath) throws Exception
+   {
+      InputStream inputStream = null;
       try
       {
          // load the xml configuration file
          ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         InputStream inputStream = classLoader.getResourceAsStream(resourcePath);
+         inputStream = classLoader.getResourceAsStream(resourcePath);
          
          if (inputStream != null) 
          {
             log.info("building configuration from XML file: " + resourcePath);
-            Document document = getDocument(inputStream);
-            
-            // load all the container nodes
-            NodeList nodeList = document.getDocumentElement().getElementsByTagNameNS("*", "container");
-            for (int i=0; i < nodeList.getLength(); i++) 
-            {
-               Node containerNode = nodeList.item(i); 
-               
-               // retrieve the package
-               String pkg = containerNode.getNamespaceURI().replaceFirst("urn:arq:", "");
-               
-               // try to find a ContainerConfiguration that matches the package
-               ContainerConfiguration containerConfig = matchContainerConfiguration(containersConfigurations, pkg);
-               
-               if (containerConfig != null) 
-               {
-                  // map the nodes
-                  mapNodesToProperties(containerConfig, containerNode);
-                  
-                  // add the ContainerConfiguration to the configuration
-               }
-            }
+            return getDocument(inputStream);
          }
-         else
+         else 
          {
             log.fine("No " + resourcePath + " file found");
          }
-      }
-      catch (Exception e)
+      } 
+      finally 
       {
-         throw new ConfigurationException(e.getMessage(), e);
+         if(inputStream != null)
+         {
+            try { inputStream.close(); } catch (Exception e) { /* NO-OP */ }
+         }
       }
-      return configuration;
+      return null;
+   }
+
+   private void populateConfiguration(Document xmlDocument, Collection<ContainerConfiguration> containersConfigurations) throws Exception
+   {
+      // load all the container nodes
+      NodeList nodeList = xmlDocument.getDocumentElement().getElementsByTagNameNS("*", "container");
+      for (int i=0; i < nodeList.getLength(); i++) 
+      {
+         Node containerNode = nodeList.item(i); 
+         
+         // retrieve the package
+         String pkg = containerNode.getNamespaceURI().replaceFirst("urn:arq:", "");
+         
+         // try to find a ContainerConfiguration that matches the package
+         ContainerConfiguration containerConfig = matchContainerConfiguration(containersConfigurations, pkg);
+         
+         if (containerConfig != null) 
+         {
+            // map the nodes
+            mapNodesToProperties(containerConfig, containerNode);
+         }
+      }
    }
    
+   private void populateConfiguration(Document xmlDocument, Configuration configuration) throws Exception
+   {
+      // try to map all child nodes
+      NodeList nodeList = xmlDocument.getDocumentElement().getElementsByTagNameNS("*", "engine");
+      for (int i=0; i < nodeList.getLength(); i++) 
+      {
+         Node node = nodeList.item(i); 
+         mapNodesToProperties(configuration, node);
+      }
+   }
+
    /**
-    * Fills the properties of the ContainerConfiguration implementation object with the 
-    * information from the container XML fragment (the containerNode argument). 
-    * @param containerConfig the ContainerConfiguration object to be filled from the XML fragment
-    * @param containerNode the XML node that represents the container configuration.
-    * @throws Exception if there is a problem filling the ContainerConfiguration object.
+    * Fills the properties of the Configuration implementation object with the 
+    * information from the XML fragment. 
+    * @param configurationObject the object to be filled from the XML fragment
+    * @param xmlNode the XML node that represents the configuration.
+    * @throws Exception if there is a problem filling the object.
     */
-   private void mapNodesToProperties(ContainerConfiguration containerConfig, Node containerNode) throws Exception
+   private void mapNodesToProperties(Object configurationObject, Node xmlNode) throws Exception
    {
       // validation
-      Validate.notNull(containerConfig, "No container configuration specified");
-      Validate.notNull(containerNode, "No container XML Node specified");
+      Validate.notNull(configurationObject, "No ConfigurationObject specified");
+      Validate.notNull(xmlNode, "No XML Node specified");
       
-      log.fine("filling container configuration for class: " + containerConfig.getClass().getName());
+      log.fine("filling container configuration for class: " + configurationObject.getClass().getName());
       
-      // here we will store the properties taken from the child elements of the container node
+      // here we will store the properties taken from the child elements of the node
       Map<String,String> properties = new HashMap<String,String>(); 
       
-      NodeList childNodes = containerNode.getChildNodes();
+      NodeList childNodes = xmlNode.getChildNodes();
       for (int i=0; i < childNodes.getLength(); i++) 
       {
          Node child = childNodes.item(i);
@@ -176,19 +214,19 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
          }
       }
       
-      // set the properties found in the container XML fragment to the ContainerConfiguration
+      // set the properties found in the container XML fragment to the Configuration Object
       for (Map.Entry<String, String> property : properties.entrySet()) 
       {
-         Field field = containerConfig.getClass().getDeclaredField(property.getKey());
+         Field field = configurationObject.getClass().getDeclaredField(property.getKey());
          field.setAccessible(true);
          Object value = convert(field.getType(), property.getValue());
-         field.set(containerConfig, value);
+         field.set(configurationObject, value);
       }
    }
    
    /**
     * Creates all the properties from a single Node element. The element must be a child of the
-    * container root element.
+    * 'section' root element.
     * @param element the XML Node from which we are going to create the properties.
     * @return a Map of properties names and values mapped from the XML Node element.
     */
