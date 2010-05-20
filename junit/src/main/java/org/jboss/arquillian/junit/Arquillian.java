@@ -47,9 +47,19 @@ public class Arquillian extends BlockJUnit4ClassRunner
 {
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
    
+   /*
+    * Eclipse hack:
+    * When running multiple TestCases, Eclipse will create a new runner for each of them.
+    * This results in that AfterSuite is call pr TestCase, but BeforeSuite only on the first created instance.
+    * A instance of all TestCases are created before the first one is started, so we keep track of which one 
+    * was the last one created. The last one created is the only one allowed to call AfterSuite.
+    */
+   private static ThreadLocal<Arquillian> lastCreatedRunner = new ThreadLocal<Arquillian>();
+   
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
+      lastCreatedRunner.set(this);
       if(deployableTest.get() == null) 
       {
          Configuration configuration = new XmlConfigurationBuilder().build();
@@ -91,9 +101,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             try  
             {
-               if(deployableTest.get() != null) 
+               if(deployableTest.get() != null && lastCreatedRunner.get() == Arquillian.this) 
                {
                   deployableTest.get().afterSuite();
+                  lastCreatedRunner.set(null);
                }
             } 
             catch (Exception e) 
