@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 
 
 /**
- * Verify the that JUnit integration adaptor fires the expected events.
+ * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -63,18 +63,26 @@ public class JUnitIntegrationTestCase
    }
    
    @Test
-   public void shouldHandleTheLifecycleCorrectlyOnMultipleTestRuns() throws Throwable 
+   public void shouldHandleTheLifecycleCorrectlyOnMultipleTestRunsWithExceptions() throws Throwable 
    {
       JUnitCore runner = new JUnitCore();
       Result result = runner.run(
             Request.classes(TestClass1.class, TestClass1.class));
 
-      if(result.getFailures().size() > 0)
-      {
-         throw result.getFailures().get(0).getException();
-      }
+      Assert.assertEquals(
+            "Verify that both exceptions thrown bubbled up",
+            2, result.getFailureCount());
       
-      Assert.assertTrue(result.wasSuccessful());
+      // Exceptions returned are wrapped in a FiredEventException, verify the cause 
+      Assert.assertEquals(
+            "Verify exception thrown",
+            "deploy", result.getFailures().get(0).getException().getCause().getMessage());
+      
+      Assert.assertEquals(
+            "Verify exception thrown",
+            "undeploy", result.getFailures().get(1).getException().getCause().getMessage());
+      
+      Assert.assertFalse(result.wasSuccessful());
       
       assertCallbacks();
    }
@@ -96,8 +104,8 @@ public class JUnitIntegrationTestCase
       Assert.assertEquals("Verify undeployed twice", 
             2, (int)containerCallbacks.get("undeploy"));
       
-      Assert.assertEquals("Verify test invoked twice", 
-            2, (int)containerCallbacks.get("shouldBeInvoked"));
+      Assert.assertEquals("Verify test invoked only once, first run should fail during deploy", 
+            1, (int)containerCallbacks.get("shouldBeInvoked"));
    }
    
    @RunWith(Arquillian.class)
@@ -110,7 +118,7 @@ public class JUnitIntegrationTestCase
       }
       
       @Test
-      public void shouldBeInvoked() 
+      public void shouldBeInvoked() throws Exception 
       {
          JUnitIntegrationTestCase.wasCalled("shouldBeInvoked");
       }

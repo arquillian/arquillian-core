@@ -18,6 +18,7 @@ package org.jboss.arquillian.junit;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.spi.util.TestEnrichers;
+import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -161,8 +163,17 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            statementWithAfters.evaluate();
-            deployableTest.get().afterClass(Arquillian.this.getTestClass().getJavaClass());
+            new MultiStatementExecutor().execute
+            (
+                  new Statement() { public void evaluate() throws Throwable
+                  {
+                     statementWithAfters.evaluate();
+                  }},
+                  new Statement() { public void evaluate() throws Throwable 
+                  {
+                     deployableTest.get().afterClass(Arquillian.this.getTestClass().getJavaClass());
+                  }}
+            );
          }
       };
    }
@@ -191,8 +202,17 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            statementWithAfters.evaluate();
-            deployableTest.get().after(target, method.getMethod());
+            new MultiStatementExecutor().execute
+            (
+                  new Statement() { public void evaluate() throws Throwable 
+                  {
+                     statementWithAfters.evaluate();
+                  }},
+                  new Statement() { public void evaluate() throws Throwable 
+                  {
+                     deployableTest.get().after(target, method.getMethod());
+                  }}
+            );
          }
       };
    }
@@ -229,5 +249,42 @@ public class Arquillian extends BlockJUnit4ClassRunner
             }
          }
       };
+   }
+
+   /**
+    * A helper class to safely execute multiple statements in one.<br/>
+    * 
+    * Will execute all statements even if they fail, all exceptions will be kept. If multiple {@link Statement}s
+    * fail, a {@link MultipleFailureException} will be thrown.
+    *
+    * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+    * @version $Revision: $
+    */
+   private class MultiStatementExecutor 
+   {
+      public void execute(Statement... statements) throws Throwable 
+      {
+         List<Throwable> exceptions = new ArrayList<Throwable>();
+         for(Statement command : statements) 
+         {
+            try
+            {
+               command.evaluate();
+            } 
+            catch (Exception e) 
+            {
+               exceptions.add(e);
+            }
+         }
+         if(exceptions.isEmpty())
+         {
+            return;
+         }
+         if(exceptions.size() == 1)
+         {
+            throw exceptions.get(0);
+         }
+         throw new MultipleFailureException(exceptions);
+      }
    }
 }

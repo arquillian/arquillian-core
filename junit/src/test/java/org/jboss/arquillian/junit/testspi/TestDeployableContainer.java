@@ -36,6 +36,8 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class TestDeployableContainer implements DeployableContainer
 {
+   private int numberOfTimesDeployed = 0;
+   
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeployableContainer#setup(org.jboss.arquillian.spi.Context, org.jboss.arquillian.spi.Configuration)
     */
@@ -46,8 +48,7 @@ public class TestDeployableContainer implements DeployableContainer
 
 
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeployableContainer#start(org.jboss.arquillian.spi.Context)
-    */
+    * @see org.jboss.arquillian.spi.DeployableContainer#start(org.jboss.arquillian.spi.Context)    */
    public void start(Context context) throws LifecycleException
    {
       JUnitIntegrationTestCase.wasCalled("start");
@@ -66,7 +67,13 @@ public class TestDeployableContainer implements DeployableContainer
     */
    public ContainerMethodExecutor deploy(Context context, Archive<?> archive) throws DeploymentException
    {
+      numberOfTimesDeployed++;
       JUnitIntegrationTestCase.wasCalled("deploy");
+      if(numberOfTimesDeployed == 1) 
+      {
+         throw new RuntimeException("deploy");
+      }
+
       return new ContainerMethodExecutor()
       {
          public TestResult invoke(TestMethodExecutor testMethodExecutor)
@@ -93,5 +100,9 @@ public class TestDeployableContainer implements DeployableContainer
    public void undeploy(Context context, Archive<?> archive) throws DeploymentException
    {
       JUnitIntegrationTestCase.wasCalled("undeploy");
+      if(numberOfTimesDeployed == 1)
+      {
+         throw new RuntimeException("undeploy");
+      }
    }
 }
