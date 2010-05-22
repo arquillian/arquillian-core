@@ -32,7 +32,8 @@
       <version.shrinkwrap_shrinkwrap>1.0.0-alpha-9</version.shrinkwrap_shrinkwrap>
       <version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
       <version.javaee_api>6.0</version.javaee_api>
-      <version.jetty_jetty>6.1.9</version.jetty_jetty>
+      <version.jetty_jetty>6.1.9</version.jetty_jetty> 
+      <version.mockito_all>1.8.3</version.mockito_all>
 
    </properties>
 
@@ -249,7 +250,7 @@
          <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.8.3</version>
+            <version>${version.mockito_all}</version>
           </dependency>
 	
       </dependencies>
