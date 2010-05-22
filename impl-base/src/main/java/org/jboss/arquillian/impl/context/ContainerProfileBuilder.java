@@ -16,27 +16,53 @@
  */
 package org.jboss.arquillian.impl.context;
 
+import org.jboss.arquillian.impl.handler.ExecutionTimer;
 import org.jboss.arquillian.impl.handler.TestCaseEnricher;
 import org.jboss.arquillian.impl.handler.TestEventExecuter;
+import org.jboss.arquillian.spi.event.suite.After;
+import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.arquillian.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
- * ClientContextCreator
+ * ContainerProfileBuilder
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class ContainerProfileBuilder implements ProfileBuilder
 {
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildSuiteContext(org.jboss.arquillian.impl.context.SuiteContext)
+    */
    public void buildSuiteContext(SuiteContext context) 
    {
+// TODO: create configuration option to turn on/off time ?
+//      EventHandler<SuiteEvent> timer = new ExecutionTimer();
+//      context.register(BeforeSuite.class, timer);
+//      context.register(AfterSuite.class, timer);
+//      context.register(BeforeClass.class, timer);
+//      context.register(AfterClass.class, timer);
+//      context.register(Before.class, timer);
+//      context.register(Test.class, timer);
+//      context.register(After.class, timer);
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildClassContext(org.jboss.arquillian.impl.context.ClassContext, java.lang.Class)
+    */
    public void buildClassContext(ClassContext context, Class<?> testClass)
    {
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.context.ProfileBuilder#buildTestContext(org.jboss.arquillian.impl.context.TestContext, java.lang.Object)
+    */
    public void buildTestContext(TestContext context, Object testInstance)
    {
       context.register(Before.class, new TestCaseEnricher());

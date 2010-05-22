@@ -51,18 +51,19 @@ public class ClientProfileBuilder implements ProfileBuilder
     */
    public void buildSuiteContext(SuiteContext context) 
    {
+// TODO: create configuration option to turn on/off time ?
+//      EventHandler<SuiteEvent> timer = new ExecutionTimer();
+//      context.register(BeforeSuite.class, timer);
+//      context.register(AfterSuite.class, timer);
+//      context.register(BeforeClass.class, timer);
+//      context.register(AfterClass.class, timer);
+//      context.register(Before.class, timer);
+//      context.register(Test.class, timer);
+//      context.register(After.class, timer);
+
       context.register(BeforeSuite.class, new ContainerCreator());
       context.register(BeforeSuite.class, new ContainerStarter());
       context.register(AfterSuite.class, new ContainerStopper());
-      
-      EventHandler<SuiteEvent> timer = new ExecutionTimer();
-      context.register(BeforeSuite.class, timer);
-      context.register(AfterSuite.class, timer);
-      context.register(BeforeClass.class, timer);
-      context.register(AfterClass.class, timer);
-      context.register(Before.class, timer);
-      context.register(Test.class, timer);
-      context.register(After.class, timer);
    }
    
    /* (non-Javadoc)
