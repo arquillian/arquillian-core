@@ -226,13 +226,6 @@
            <version>${version.shrinkwrap_shrinkwrap}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.embedded</groupId>
-            <artifactId>jboss-embedded-assembly</artifactId>
-            <classifier>launcher</classifier>
-            <type>jar</type>
-            <version>${version.jboss_embedded}</version>
-         </dependency>
-         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>${version.javaee_api}</version>
