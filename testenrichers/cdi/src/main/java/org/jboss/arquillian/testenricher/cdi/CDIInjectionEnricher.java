@@ -16,12 +16,9 @@
  */
 package org.jboss.arquillian.testenricher.cdi;
 
-import java.lang.annotation.Annotation;
-
 import java.lang.reflect.Method;
 
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.naming.InitialContext;
@@ -38,7 +35,7 @@ import org.jboss.arquillian.spi.TestEnricher;
 public class CDIInjectionEnricher implements TestEnricher 
 {
    private static final String JNDI_BEAN_MANAGER = "java:comp/BeanManager";
-   private static final String JNDI_BEAN_MANAGER_JBOSS = "java:app/BeanManager";
+   private static final String JNDI_BEAN_MANAGER_JBOSS = "java:global/test/arquillian-protocol/BeanManager";
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
    
    /* (non-Javadoc)
@@ -65,24 +62,22 @@ public class CDIInjectionEnricher implements TestEnricher
         {
              return values;
         }
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Class<?>[] parameterTypes = method.getParameterTypes();
         for(int i = 0; i < parameterTypes.length; i++)
         {
-           Class<?> parameterType = parameterTypes[i];
-           Annotation[] parameterAnnotation = parameterAnnotations[i];
-           values[i] = getInstanceByType(beanManager, parameterType, parameterAnnotation);
+           values[i] = getInstanceByType(beanManager, i, method);
         }
      }
      return values;
    }
    
    @SuppressWarnings("unchecked")
-   private <T> T getInstanceByType(BeanManager manager, Class<T> type, Annotation... bindings)
+   private <T> T getInstanceByType(BeanManager manager, final int position, final Method method)
    {
-      final Bean<?> bean = manager.resolve(manager.getBeans(type, bindings));
       CreationalContext<?> cc = manager.createCreationalContext(null);
-      return (T) manager.getReference(bean, type, cc);
+      return (T)manager.getInjectableReference(
+            new MethodParameterInjectionPoint<T>(method, position), 
+            cc);
    }
    
    protected void injectClass(Context context, Object testCase) 
