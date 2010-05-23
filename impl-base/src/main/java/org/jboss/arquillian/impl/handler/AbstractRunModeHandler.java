@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.api.RunMode;
+import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.event.suite.ClassEvent;
@@ -36,26 +36,26 @@ public abstract class AbstractRunModeHandler<T extends ClassEvent> implements Ev
     */
    public final void callback(Context context, ClassEvent event) throws Exception
    {
-      boolean isLocalMode = false;
-      if(event.getTestClass().isAnnotationPresent(RunMode.class))
+      boolean isClientMode = false;
+      if(event.getTestClass().isAnnotationPresent(Run.class))
       {
-         RunModeType runModeType = event.getTestClass().getAnnotation(RunMode.class).value();
-         if(RunModeType.LOCAL == runModeType) 
+         RunModeType runModeType = event.getTestClass().getAnnotation(Run.class).value();
+         if(RunModeType.AS_CLIENT == runModeType) 
          {
-            isLocalMode = true;
+            isClientMode = true;
          }
       }
-      if(isLocalMode)
+      if(isClientMode)
       {
-         hasLocalRunMode(context);
+         hasClientRunMode(context);
       } 
       else
       {
-         hasRemoteRunMode(context);
+         hasContainerRunMode(context);
       }
    }
    
-   protected abstract void hasLocalRunMode(Context context);
+   protected abstract void hasClientRunMode(Context context);
    
-   protected abstract void hasRemoteRunMode(Context context);
+   protected abstract void hasContainerRunMode(Context context);
 }

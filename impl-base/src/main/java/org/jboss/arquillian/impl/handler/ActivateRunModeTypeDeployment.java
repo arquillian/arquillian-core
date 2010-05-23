@@ -30,9 +30,9 @@ import org.jboss.arquillian.spi.event.suite.BeforeClass;
 
 /**
  * Handler that will setup the context as defined by the {@link RunModeType}.<br/>
- * <b>{@link RunModeType#LOCAL}</b>: Binds the {@link ApplicationArchiveDeploymentGenerator}, a {@link DeploymentGenerator} that only 
+ * <b>{@link RunModeType#AS_CLIENT}</b>: Binds the {@link ApplicationArchiveDeploymentGenerator}, a {@link DeploymentGenerator} that only 
  * use the {@link ApplicationArchiveGenerator} SPI.<br/>
- * <b>{@link RunModeType#REMOTE}</b>: Binds the {@link ClientDeploymentGenerator}, a {@link DeploymentGenerator} that use the 
+ * <b>{@link RunModeType#IN_CONTAINER}</b>: Binds the {@link ClientDeploymentGenerator}, a {@link DeploymentGenerator} that use the 
  * full Packager SPI. {@link DeploymentPackager}, {@link ApplicationArchiveGenerator}, {@link ApplicationArchiveProcessor}, {@link AuxiliaryArchiveAppender} and
  * {@link AuxiliaryArchiveProcessor}<br/>
  * <br/>  
@@ -50,7 +50,7 @@ public class ActivateRunModeTypeDeployment extends AbstractRunModeHandler<Before
     * @see org.jboss.arquillian.impl.handler.AbstractRunModeHandler#hasLocalRunMode(org.jboss.arquillian.spi.Context)
     */
    @Override
-   protected void hasLocalRunMode(Context context)
+   protected void hasClientRunMode(Context context)
    {
       context.add(DeploymentGenerator.class, new ApplicationArchiveDeploymentGenerator(context.getServiceLoader()));
    }
@@ -59,7 +59,7 @@ public class ActivateRunModeTypeDeployment extends AbstractRunModeHandler<Before
     * @see org.jboss.arquillian.impl.handler.AbstractRunModeHandler#hasRemoteRunMode(org.jboss.arquillian.spi.Context)
     */
    @Override
-   protected void hasRemoteRunMode(Context context)
+   protected void hasContainerRunMode(Context context)
    {
       context.add(DeploymentGenerator.class, new ClientDeploymentGenerator(context.getServiceLoader()));      
    }

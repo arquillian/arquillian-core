@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl.context;
 
 import org.jboss.arquillian.impl.handler.ActivateRunModeTypeDeployment;
-import org.jboss.arquillian.impl.handler.ActivateRunModeTypeLocal;
+import org.jboss.arquillian.impl.handler.ActivateRunModeTypeClient;
 import org.jboss.arquillian.impl.handler.ArchiveDeploymentExporter;
 import org.jboss.arquillian.impl.handler.ArchiveGenerator;
 import org.jboss.arquillian.impl.handler.ContainerCreator;
@@ -26,15 +26,10 @@ import org.jboss.arquillian.impl.handler.ContainerStarter;
 import org.jboss.arquillian.impl.handler.ContainerStopper;
 import org.jboss.arquillian.impl.handler.ContainerTestExecuter;
 import org.jboss.arquillian.impl.handler.ContainerUndeployer;
-import org.jboss.arquillian.impl.handler.ExecutionTimer;
-import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.spi.event.suite.Before;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
@@ -72,7 +67,7 @@ public class ClientProfileBuilder implements ProfileBuilder
    public void buildClassContext(ClassContext context, Class<?> testClass)
    {
       /*
-       * If RunMode LOCAL a local DeploymentGenerator that returns the ApplicationArchive is bound to the context,
+       * If RunMode AS_CLIENT a local DeploymentGenerator that returns the ApplicationArchive is bound to the context,
        * else the ClientDeploymentGenerator is used. 
        */
       context.register(BeforeClass.class, new ActivateRunModeTypeDeployment());
@@ -81,7 +76,7 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(BeforeClass.class, new ContainerDeployer());
       context.register(AfterClass.class, new ContainerUndeployer());
 
-      context.register(BeforeClass.class, new ActivateRunModeTypeLocal());
+      context.register(BeforeClass.class, new ActivateRunModeTypeClient());
       
       context.register(BeforeClass.class, new ArchiveDeploymentExporter());
    }

@@ -18,7 +18,7 @@ package org.jboss.arquillian.impl.handler;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.api.RunMode;
+import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
@@ -48,7 +48,7 @@ public class ActivateRunModeTypeLocalTestCase
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      ActivateRunModeTypeLocal handler = new ActivateRunModeTypeLocal();
+      ActivateRunModeTypeClient handler = new ActivateRunModeTypeClient();
       handler.callback(context, new BeforeClass(TestWithRunModeLocal.class));
       
       Assert.assertNotNull(
@@ -61,7 +61,7 @@ public class ActivateRunModeTypeLocalTestCase
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      ActivateRunModeTypeLocal handler = new ActivateRunModeTypeLocal();
+      ActivateRunModeTypeClient handler = new ActivateRunModeTypeClient();
       handler.callback(context, new BeforeClass(TestWithRunModeRemote.class));
       
       Assert.assertNull(
@@ -74,7 +74,7 @@ public class ActivateRunModeTypeLocalTestCase
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      ActivateRunModeTypeLocal handler = new ActivateRunModeTypeLocal();
+      ActivateRunModeTypeClient handler = new ActivateRunModeTypeClient();
       handler.callback(context, new BeforeClass(TestWithNoRunMode.class));
       
       Assert.assertNull(
@@ -82,10 +82,10 @@ public class ActivateRunModeTypeLocalTestCase
             context.get(ContainerMethodExecutor.class));
    }
 
-   @RunMode(RunModeType.LOCAL)
+   @Run(RunModeType.AS_CLIENT)
    private static class TestWithRunModeLocal { }
 
-   @RunMode(RunModeType.REMOTE)
+   @Run(RunModeType.IN_CONTAINER)
    private static class TestWithRunModeRemote { }
 
    private static class TestWithNoRunMode { }

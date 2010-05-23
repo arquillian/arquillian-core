@@ -16,13 +16,14 @@
  */
 package com.acme.web;
 
+import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.RunMode;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -38,7 +39,7 @@ import org.junit.runner.RunWith;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-@RunMode(RunModeType.LOCAL)
+@Run(AS_CLIENT)
 public class LocalRunServletTestCase
 {
    @Deployment

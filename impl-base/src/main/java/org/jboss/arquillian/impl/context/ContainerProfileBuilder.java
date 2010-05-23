@@ -16,17 +16,9 @@
  */
 package org.jboss.arquillian.impl.context;
 
-import org.jboss.arquillian.impl.handler.ExecutionTimer;
 import org.jboss.arquillian.impl.handler.TestCaseEnricher;
 import org.jboss.arquillian.impl.handler.TestEventExecuter;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.spi.event.suite.Before;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.spi.event.suite.Test;
 
 /**

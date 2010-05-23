@@ -25,15 +25,15 @@ package org.jboss.arquillian.api;
 public enum RunModeType
 {
    /**
-    * In LOCAL mode the @Deployment is processed and deployed to the Container, 
+    * In AS_CLIENT mode the @Deployment is processed and deployed to the Container, 
     * but the test is not executed inside the container.  
     */
-   LOCAL,
+   AS_CLIENT,
    
    /**
-    * In Remote mode the @Deployment is processed and deployed to the container along side the test
+    * In IN_CONTAINER mode the @Deployment is processed and deployed to the container along side the test
     * case and the test case is executed inside the container. <br/>
     * This is the default mode when none specified. 
     */
-   REMOTE
+   IN_CONTAINER
 }

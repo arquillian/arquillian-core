@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.api.RunMode;
+import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.Context;
@@ -26,8 +26,8 @@ import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 
 /**
- * Handler that will setup the context as defined by the {@link RunModeType#LOCAL}. <br/>
- * Only activates local run mode if the TestClass is annotated with a {@link RunModeType#LOCAL} {@link RunMode}.<br/> 
+ * Handler that will setup the context as defined by the {@link RunModeType#AS_CLIENT}. <br/>
+ * Only activates local run mode if the TestClass is annotated with a {@link RunModeType#AS_CLIENT} {@link Run}.<br/> 
  * <br/>  
  * 
  *  <b>Exports:</b><br/>
@@ -36,17 +36,17 @@ import org.jboss.arquillian.spi.event.suite.BeforeClass;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ActivateRunModeTypeLocal extends AbstractRunModeHandler<BeforeClass>
+public class ActivateRunModeTypeClient extends AbstractRunModeHandler<BeforeClass>
 {
    
    @Override
-   protected void hasLocalRunMode(Context context)
+   protected void hasClientRunMode(Context context)
    {
       context.add(ContainerMethodExecutor.class, new LocalMethodExecutor());      
    }
 
    @Override
-   protected void hasRemoteRunMode(Context context)
+   protected void hasContainerRunMode(Context context)
    {
       // NO-OP, Use the ContainerMethodExecutor provided by the DeployableContainer
    }

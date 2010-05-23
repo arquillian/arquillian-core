@@ -18,7 +18,7 @@ package org.jboss.arquillian.impl.handler;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.api.RunMode;
+import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.ApplicationArchiveDeploymentGenerator;
 import org.jboss.arquillian.impl.ClientDeploymentGenerator;
@@ -81,10 +81,10 @@ public class ActivateRunModeTypeDeploymentTestCase
    }
 
    
-   @RunMode(RunModeType.LOCAL)
+   @Run(RunModeType.AS_CLIENT)
    private static class TestWithRunModeLocal { }
 
-   @RunMode(RunModeType.REMOTE)
+   @Run(RunModeType.IN_CONTAINER)
    private static class TestWithRunModeRemote { }
 
    private static class TestWithRunModeNone { }

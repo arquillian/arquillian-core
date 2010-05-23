@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.TYPE)
-public @interface RunMode
+public @interface Run
 {
    RunModeType value();
 }

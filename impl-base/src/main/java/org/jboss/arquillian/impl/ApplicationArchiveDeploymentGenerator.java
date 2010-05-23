@@ -22,7 +22,7 @@ import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * A {@link DeploymentGenerator} that will return the ApplicationArchive as is. Used for {@link RunModeType#LOCAL}.
+ * A {@link DeploymentGenerator} that will return the ApplicationArchive as is. Used for {@link RunModeType#AS_CLIENT}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
