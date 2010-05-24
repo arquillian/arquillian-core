@@ -326,11 +326,9 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<includes>
-									<include>com/acme/ejb/*</include>
-									<include>com/acme/jms/*</include>
-									<include>com/acme/resources/*</include>
-								</includes>
+								<include>com/acme/ejb/*</include>
+								<include>com/acme/jms/*</include>
+								<include>com/acme/resources/*</include>
 							</includes>
 						</configuration>
 					</plugin>
