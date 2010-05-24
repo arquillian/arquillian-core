@@ -118,8 +118,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<include>com/acme/cdi/payment/*</include>
-								<include>com/acme/cdi/random/*</include>
+		                        <include>com/acme/cdi/*</include>
+		                        <include>com/acme/cdi/payment/*</include>
 							</includes>
 						</configuration>
 					</plugin>
@@ -198,8 +198,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<include>com/acme/cdi/payment/*</include>
-								<include>com/acme/cdi/random/*</include>
+		                        <include>com/acme/cdi/*</include>
 							</includes>
 						</configuration>
 					</plugin>
@@ -327,9 +326,11 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<include>com/acme/ejb/*</include>
-								<include>com/acme/jms/*</include>
-								<include>com/acme/resources/*</include>
+								<includes>
+									<include>com/acme/ejb/*</include>
+									<include>com/acme/jms/*</include>
+									<include>com/acme/resources/*</include>
+								</includes>
 							</includes>
 						</configuration>
 					</plugin>
@@ -395,11 +396,8 @@
 						<configuration>
 							<includes>
 								<include>com/acme/ejb/*</include>
-								<include>com/acme/ejb31/*</include>
 								<include>com/acme/cdi/*</include>
 								<include>com/acme/cdi/payment/*</include>
-								<include>com/acme/cdi/random/*</include>
-								<!-- <include>com/acme/web/*</include>  -->
 							</includes>
 						</configuration>
 					</plugin>
