@@ -266,7 +266,7 @@
 							-->
 							<argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-${version.jboss_60}/lib/endorsed -Djboss.home=${project.build.directory}/jboss-${version.jboss_60} -Djboss.boot.server.log.dir=${project.build.directory}/jboss-${version.jboss_60}</argLine>
 							<excludes>
-								<exclude>com/acme/cdi/InjectionTestCase</exclude> <!-- Weld Deployer issue in M3 -->
+								<exclude>com/acme/cdi/*</exclude> <!-- Weld Deployer issue in M3 -->
 							</excludes>
 						</configuration>
 					</plugin>
@@ -379,7 +379,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<excludes>
-								<exclude>com/acme/cdi/InjectionTestCase</exclude> <!-- Weld Deployer issue in M3 -->
+								<exclude>com/acme/cdi/*</exclude> <!-- Weld Deployer issue in M3 -->
 							</excludes>
 						</configuration>
 					</plugin>
