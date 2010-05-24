@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.jbossas-local-60">
+
+	<title>JBoss AS 6.0 - Remote + Lifecycle</title>
+
+	<para id="container.jbossas-local-60.description">
+		A DeployableContainer implementation that can run and connect to a remote(different JVM, same machine) 
+		JBoss AS 6.0 instance. 
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run. 
+	</para>
+
+	<table id="container.jbossas-local-60.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="5">
+			<colspec colnum="1" colname="ejb" colwidth="1*" />
+			<colspec colnum="2" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="3" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="4" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="5" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (CDI)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0"/>
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+
+	<section id="container.jbossas-local-60.configuration">
+		<title>Configuration</title>
+
+		<para>
+			Namespace: urn:arq:org.jboss.arquillian.jbossas.local60
+		</para>
+		<table frame="all">
+			<title>Container Configuration Options</title>
+			<tgroup cols="4">
+				<colspec colnum="1" colname="name" colwidth="4*" />
+				<colspec colnum="2" colname="type" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="1*" />
+				<colspec colnum="4" colname="description" colwidth="4*" />
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>profileName</entry>
+						<entry>String</entry>
+						<entry>default</entry>
+						<entry>ProfileService profileKey. Used to load the correct profile into the DeploymentManager.</entry>
+					</row>
+					<row>
+						<entry>bindAddress</entry>
+						<entry>String</entry>
+						<entry>localhost</entry>
+						<entry>The Address the server should bind to.</entry>
+					</row>
+					<row>
+						<entry>httpPort</entry>
+						<entry>int</entry>
+						<entry>8080</entry>
+						<entry>Used by Servlet Protocol to connect to the server.</entry>
+					</row>
+					<row>
+						<entry>jbossHome</entry>
+						<entry>String</entry>
+						<entry>$JBOSS_HOME</entry>
+						<entry>The JBoss configuration to start.</entry>
+					</row>
+					<row>
+						<entry>javaHome</entry>
+						<entry>String</entry>
+						<entry>$JAVA_HOME</entry>
+						<entry>The Java runtime to use to start the server.</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<para>Example of Maven profile setup</para>
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>jbossas-local-60</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-jbossas-remote-60</artifactId>
+			<version>1.0.0.Alpha2</version>
+		</dependency>
+        <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-server-manager</artifactId>
+            <version>1.0.3.GA</version>
+        </dependency>
+		<dependency>
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-client</artifactId>
+			<version>6.0.0.20100429-M3</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+</profile>]]></programlisting>
+
+</section>

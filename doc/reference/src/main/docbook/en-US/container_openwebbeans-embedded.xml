@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.openwebbeans-embedded">
+
+	<title>Apache OpenWebBeans - Embedded</title>
+
+	<para id="container.openwebbeans-embedded.description">
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		WeldApache OpenWebBeans(CDI) instance. No EE APIs are available.
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run.   
+	</para>
+
+	<table id="container.openwebbeans-embedded.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="5">
+			<colspec colnum="1" colname="ejb" colwidth="1*" />
+			<colspec colnum="2" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="3" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="4" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="5" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (CDI)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+	
+	<warning>
+		Local EJBs only, which get treated as managed beans. Transactions, security and EJB context injection are not applied.
+	</warning>
+
+	<para>Example of Maven profile setup</para>
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>openwebbeans-embedded</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-openwebbeans-embedded</artifactId>
+			<version>1.0.0.Alpha2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.openwebbeans</groupId>
+			<artifactId>openwebbeans-spi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.openwebbeans</groupId>
+			<artifactId>openwebbeans-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-el_2.2_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jta_1.1_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-validation_1.0_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-interceptor_1.1_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jcdi_1.0_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-atinject_1.0_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-servlet_2.5_spec</artifactId>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.openwebbeans</groupId>
+				<artifactId>openwebbeans</artifactId>	
+				<version>1.0.0-M4</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</profile>]]></programlisting>
+
+</section>

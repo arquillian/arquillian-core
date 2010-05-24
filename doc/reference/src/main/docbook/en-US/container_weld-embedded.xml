@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.weld-embedded">
+
+	<title>Weld SE - Embedded</title>
+
+	<para id="container.weld-embedded.description">
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		Weld(CDI reference implementation) SE edition. No EE APIs are available.
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run.   
+	</para>
+
+	<table id="container.weld-embedded.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="5">
+			<colspec colnum="1" colname="ejb" colwidth="1*" />
+			<colspec colnum="2" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="3" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="4" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="5" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (CDI)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+	
+	<warning>
+		Local EJBs only, which get treated as managed beans. Transactions, security and EJB context injection are not applied.
+	</warning>
+
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>weld-embedded</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-weld-embedded</artifactId>
+			<version>1.0.0.Alpha2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.weld</groupId>
+				<artifactId>weld-core-bom</artifactId>
+				<version>1.0.1-SP1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</profile>]]></programlisting>
+</section>

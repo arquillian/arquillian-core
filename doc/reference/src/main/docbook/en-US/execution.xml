@@ -90,7 +90,7 @@
       </itemizedlist>
 
       <para>
-         Consult the <ulink url="http://docs.jboss.org/shrinkwrap/1.0.0-alpha-6/api/">ShrinkWrap API</ulink> to discover all the options you have available for constructing the test archive.
+         Consult the <ulink url="http://docs.jboss.org/shrinkwrap/1.0.0-alpha-9/">ShrinkWrap API</ulink> to discover all the options you have available for constructing the test archive.
       </para>
 
    </section>
@@ -204,6 +204,124 @@ for each method annotated with @Test in the @Artifact that is not otherwise disa
 -->
 
    </section>
+
+	<section>
+		<title>Test run modes</title>
+		
+		<para>
+			Your application normally has two sides to it, it's the internal view and the external view. So far we've focused
+			on the internal view and showed you how to test your application from the inside. This is great for things 
+			like asserting on HTTP session state or calling local EJBs, but it doesn't tell you much about how the world
+			perceives you. So your external view is how you're application is viewed by others. This can be by WebServices, 
+			remote EJBs	or plain Servlets. While you can reach remote EJBs from the inside of the container, you're not using 
+			it in the same way as you would if you were a client. Does your object serialization work? Does your network work?
+		</para>
+		<para>			
+			This is why Arquillian comes with two run modes, <literal>IN_CONTAINER</literal> and <literal>AS_CLIENT</literal>.
+			<literal>IN_CONTAINER</literal> is for your internal view and <literal>AS_CLIENT</literal> is for your external view.
+			Lets dive a bit deeper into the differences between the run modes and see how they effect your test execution and packaging.			
+		</para>
+
+		<section>
+			<title>Mode: in-container</title>
+			<programlisting role="JAVA">@RunWith(Arquillian.class)
+@Run(IN_CONTAINER)
+public class MyTestCase</programlisting>			
+			<para>
+				Lets start with the advanced one first. As we just talked about, to be able to run in-container, we need
+				to repackage your defined <literal>@Deployment</literal> to add some of the Arquillian internals. This gives 
+				us the ability to communicate with the test, enrich the test and run the test remotely. 
+				When in this run mode your test is no longer living in your local JVM, but in the remote container. 
+				This is the default mode.
+			</para>
+
+			<para>
+				Here is a overview of the inputted <literal>@Deployment</literal> and the expected 
+				output of the packaging process.
+			</para>			
+			<table frame="all">
+			   <title>EEDeploymentPackager rules</title>
+			   <tgroup cols="4">
+			      <colspec colnum="1" colname="name" colwidth="2*"/>
+			      <colspec colnum="2" colname="type" colwidth="1*"/>
+			      <colspec colnum="3" colname="compliance" colwidth="2*"/>
+			      <colspec colnum="4" colname="artifactId" colwidth="5*"/>
+			      <thead>
+			         <row>
+			            <entry>@Deployment</entry>
+			            <entry>Serlvet EE v.</entry>
+			            <entry>Output</entry>
+			            <entry>Action</entry>
+			         </row>
+			      </thead>
+			      <tbody>
+			         <row>
+			           <entry>JavaArchive</entry>
+			           <entry>EE 5</entry>
+			           <entry>EnterpriseArchive</entry>
+			           <entry>Create a new EnterpriseArchive, add Deployment and ServletProtocl as module, the other Auxiliary Archives as libraries.</entry>
+			         </row>
+			         <row>
+			           <entry>WebArchive</entry>
+			           <entry>EE 5</entry>
+			           <entry>Exception</entry>
+			           <entry>Can not merge two WebArchives and both packed in a EnterpriseArchive will result in isolation issues.</entry>
+			         </row>
+			         <row>
+			           <entry>EnterpriseArchive</entry>
+			           <entry>EE 5</entry>
+			           <entry>EnterpriseArchive</entry>
+			           <entry>Same as JavaArchive, but using the Deployment defined EnterpriseArchive instead of creating a new.</entry>
+			         </row>
+			         <row>
+			           <entry>JavaArchive</entry>
+			           <entry>EE 6</entry>
+			           <entry>WebArchive</entry>
+			           <entry>Creates a new WebArchive, adds Deployment and Auxiliary Archives as libraries.</entry>
+			         </row>
+			         <row>
+			           <entry>WebArchive</entry>
+			           <entry>EE 6</entry>
+			           <entry>WebArchive</entry>
+			           <entry>Adds Deployment and Auxiliary Archives as libraries.</entry>
+			         </row>
+			         <row>
+			           <entry>EnterpriseArchive</entry>
+			           <entry>EE 6</entry>
+			           <entry>EnterpriseArchive</entry>
+			           <entry>Finds the protocol JavaArchive based on name(arquillian-protocol.jar), wraps this jar in a WebArchive and adds it as a module. The other Auxiliary Archives are added as libraries.</entry>
+			         </row>
+			      </tbody>
+			   </tgroup>
+			</table>
+			
+		</section>		
+
+		<section>
+			<title>Mode: as-client</title>
+			<programlisting role="JAVA">@RunWith(Arquillian.class)
+@Run(AS_CLIENT)
+public class MyTestCase</programlisting>			
+			<para>
+				Now this mode is the easy part. As apposed to in-container mode which repackages and overrides the test 
+				execution, the as-client mode does as little as possible. It does not repackage your <literal>@Deployment</literal>
+				nor does it forward the test execution to a remote server. Your test case is running in your JVM as expected
+				and you're free to test the container from the outside, as your clients see it. The only thing Arquillian 
+				does is to control the lifecycle of your <literal>@Deployment</literal>.  
+			</para>
+		</section>		
+		
+		<tip>
+			<para>
+				The effect of the different run modes depend on the <literal>DeployableContainer</literal> used. 
+				Both modes might seem to behave the same in some Embedded containers, but you should avoid
+				mixing your internal and external view tests. One thing is that they should test different
+				aspects of your application and different usecases, another is that you will miss the 
+				benefits of switching <literal>DeployableContainers</literal> and run the same tests suite against
+				a remote server if you do.
+			</para>
+		</tip>
+	</section>
 
 <!--
 vim:et:ts=3:sw=3:tw=120

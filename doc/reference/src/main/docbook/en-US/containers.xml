@@ -98,39 +98,61 @@
             </thead>
             <tbody>
                <row>
-                 <entry>JBoss AS 5.1</entry>
+                 <entry><link linkend="container.jbossas-remote-51">JBoss AS 5.1</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 5</entry>
                  <entry>arquillian-jbossas-remote-51</entry>
                </row>
                <row>
-                 <entry>JBoss AS 6.0 M2</entry>
+                 <entry><link linkend="container.jbossas-local-51">JBoss AS 5.1</link></entry>
+                 <entry>remote + lifecycle</entry>
+                 <entry>Java EE 5</entry>
+                 <entry>arquillian-jbossas-local-51</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.jbossas-remote-60">JBoss AS 6.0 M3</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-remote-60</entry>
                </row>
-<!-- 
                <row>
-                 <entry>JBoss Embedded AS</entry>
+                 <entry><link linkend="container.jbossas-local-60">JBoss AS 6.0 M3</link></entry>
+                 <entry>remote + lifecycle</entry>
+                 <entry>Java EE 6</entry>
+                 <entry>arquillian-jbossas-local-60</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.jbossas-embedded-60">JBoss Embedded AS 6.0 M3</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-embedded-60</entry>
                </row>
--->               
                <row>
-                 <entry>Embedded GlassFish V3</entry>
+                 <entry><link linkend="container.reloaded">JBoss Reloaded</link></entry>
+                 <entry>embedded</entry>
+                 <entry>JBoss MC</entry>
+                 <entry>arquillian-reloaded</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.glassfish-embedded30">GlassFish Embedded 3.0</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-glassfish-embedded-30</entry>
                </row>
                <row>
-                 <entry>Weld SE</entry>
+                 <entry><link linkend="container.weld-embedded">Weld SE</link></entry>
                  <entry>embedded</entry>
                  <entry>CDI</entry>
                  <entry>arquillian-weld-embedded</entry>
                </row>
                <row>
-                 <entry>Apache OpenEJB</entry>
+                 <entry><link linkend="container.openwebbeans-embedded">Apache OpenWebBeans</link></entry>
+                 <entry>embedded</entry>
+                 <entry>CDI</entry>
+                 <entry>arquillian-openwebbeans-embedded</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.openejb-embedded">Apache OpenEJB</link></entry>
                  <entry>embedded</entry>
                  <entry>EJB 3.0</entry>
                  <entry>arquillian-openejb</entry>
@@ -140,13 +162,69 @@
       </table>
 
       <para>
-         Support for other containers is planned, including GlassFish V3(remote), Tomcat and Jetty. We don't have plans to
-         provide implementations for Spring or Guice at this time, but we welcome a contribution from the community,
-         because it's certainly possible.
+         Support for other containers is planned, including GlassFish V3(remote), Weblogic(remote), OSGI, 
+         Tomcat, Jetty, Hibernate and JBoss JCA Embedded. 
       </para>
 
    </section>
 
+	<section id="containers.configuration">
+		<title>Container configuration</title>
+		
+		<para>
+			You can come a long way with default values, but at some point you may need to customize some of the container 
+			settings to fit your environment. We're going to have a look at how this can be done with Arquillian. 
+			Arquillian will look for a file named <filename>arquillian.xml</filename> in the root of your classpath. 
+			If it exists it will be auto loaded, else default values will be used. So this file is not a requirement.
+		</para>
+		
+		<para>
+			Lets imagine that we're working for the company example.com and in our environment we have two servers; 
+			test.example.com and hudson.example.com. test.example.com is the JBoss instance we use for our integration
+			tests and hudson.example.com is our continuous integration server that we want to run our integration suite
+			from. You do want continuous integration testing, right? All containers default to localhost, so we obviously 
+			can't have that if we want to test against our remote test server. 
+		</para>
+		
+		<programlisting role="XML"><![CDATA[<?xml version="1.0"?>
+	
+<arquillian xmlns="http://jboss.com/arquillian"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:jboss="urn:arq:org.jboss.arquillian.jbossas.remote60">
+
+	<engine>
+		<deploymentExportPath>/tmp</deploymentExportPath>
+	</engine>
+	
+	<jboss:container>
+		<jboss:remoteServerAddress>test.example.com</jboss:remoteServerAddress>
+		<jboss:remoteServerHttpPort>8181</jboss:remoteServerHttpPort>
+		<jboss:localDeploymentBindAddress>hudson.example.com</jboss:localDeploymentBindAddress>
+		<jboss:localDeploymentBindPort>7000</jboss:localDeploymentBindPort>
+	</jboss:container>	
+
+</arquillian>]]></programlisting>
+		
+		<para>
+			That should do it! What we have done here is to declare a XML namespace using the defined name for the 
+			JBoss AS 6.0 Remote container. This is needed by Arquillian to know which ContainerConfiguraiton your trying to 
+			create. Next step is to create a <emphasis>container</emphasis> element in that namespace and add the options you 
+			want to configure inside. In this example we're saying that the server we want to test against can be found on
+			address test.example.com using port 8181, and the remote server can communicate back to us on address hudson.example.com
+			on port 7000. The callback is needed by some containers as a way of transferring the deployment 
+			to the remote server, the deployment initialization is then based on URLs. 
+		</para>
+		
+		<tip>
+			For a complete overview of all the containers and their configuration options, 
+			see <xref linkend="container.reference"/>
+		</tip>
+		
+		<warning>
+			Some containers require a jndi.properties file on classpath with the containers standard
+			JNDI properties for the initial connection.
+		</warning>
+	</section>
 <!--
 vim:et:ts=3:sw=3:tw=120
 -->

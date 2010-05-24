@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.glassfish-embedded-30">
+
+	<title>GlassFish 3.0 - Embedded</title>
+
+	<para id="container.glassfish-embedded-30.description">
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		GlassFish 3.0 instance. 
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run. 
+	</para>
+
+	<table id="container.glassfish-embedded-30.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="5">
+			<colspec colnum="1" colname="ejb" colwidth="1*" />
+			<colspec colnum="2" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="3" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="4" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="5" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (CDI)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0"/>
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+
+	<section id="container.glassfish-embedded-30.configuration">
+		<title>Configuration</title>
+
+		<para>
+			Namespace: urn:arq:org.jboss.arquillian.glassfish.embedded60
+		</para>
+		<table frame="all">
+			<title>Container Configuration Options</title>
+			<tgroup cols="4">
+				<colspec colnum="1" colname="name" colwidth="4*" />
+				<colspec colnum="2" colname="type" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="1*" />
+				<colspec colnum="4" colname="description" colwidth="4*" />
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>bindPort</entry>
+						<entry>int</entry>
+						<entry>8181</entry>
+						<entry>The port the server should bind to.</entry>
+					</row>
+					<row>
+						<entry>instanceRoot</entry>
+						<entry>String</entry>
+						<entry>target/glassfish_(RANDOM)</entry>
+						<entry>The instanceRoot to use for booting the server. If it does not exist, a default structure will be created.</entry>
+					</row>
+					<row>
+						<entry>autoDelete</entry>
+						<entry>boolean</entry>
+						<entry>true</entry>
+						<entry>Should the deployments be deleted on shutdown.</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<para>Example of Maven profile setup</para>
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>glassfish-embedded-30</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-glassfish-embedded-30</artifactId>
+			<version>1.0.0.Alpha2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.extras</groupId>
+			<artifactId>glassfish-embedded-all</artifactId>
+			<version>3.0.1-b02</version>
+		</dependency>
+	</dependencies>
+</profile>]]></programlisting>
+
+</section>

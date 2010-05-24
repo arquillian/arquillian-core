@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<chapter id="container.reference">
+	<title>Complete Container Reference</title>
+
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-remote-51.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-local-51.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-remote-60.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-local-60.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-embedded-60.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_reloaded.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-embedded-30.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_weld-embedded.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openwebbeans-embedded.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openejb-embedded.xml" />
+ 
+</chapter>

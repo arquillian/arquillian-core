@@ -62,9 +62,17 @@
          following equation in the specified order:
       </para>
       
-      <programlisting>"java:global/test.ear/test/" + unqualified interface name + "Bean"</programlisting>
-      <programlisting>"test/" + unqualified interface name + "Bean/local"</programlisting>
-      <programlisting>"test/" + unqualified interface name + "Bean/remote"</programlisting>
+      <programlisting>"java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
+"java:global/test.ear/test/" + fieldType.getSimpleName(),
+"java:global/test/" + fieldType.getSimpleName(),
+"java:global/test/" + fieldType.getSimpleName() + "Bean",
+"java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+"test/" + unqualified interface name + "Bean/local",
+"test/" + unqualified interface name + "Bean/remote",
+"test/" + unqualified interface name + "/no-interface",
+unqualified interface name + "Bean/local",
+unqualified interface name + "Bean/remote",
+unqualified interface name + "/no-interface"</programlisting>
       
       <para>
          If no matching beans were found in those locations the injection will fail.
@@ -72,7 +80,7 @@
 
       <warning>
          <para>
-            At the moment, the lookup for an EJB session reference relies on a common naming convention of EJB beans.
+            At the moment, the lookup for an EJB session reference relies on some common naming convention of EJB beans.
             In the future the lookup will rely on the standard JNDI naming conventions established in Java EE 6.
          </para>
       </warning>

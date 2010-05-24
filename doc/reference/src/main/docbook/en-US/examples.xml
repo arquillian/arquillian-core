@@ -18,7 +18,7 @@ svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/junit/ ar
    <para>
       Running these tests from the command line is easy. The examples run against all the servers supported
       by Arquillian (of course, you must choose a container that is capable of deploying EJBs for these tests).
-      To run the test, we'll use Maven. For this tutorial, we'll use JBoss AS 6 (currently at Milestone 2), for
+      To run the test, we'll use Maven. For this tutorial, we'll use JBoss AS 6 (currently at Milestone 3), for
       which we use the <literal>jbossas-remote-60</literal> profile.
    </para>
    
@@ -28,7 +28,7 @@ svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/junit/ ar
       use <literal>$JBOSS_HOME</literal> to refer to this location throughout the tutorial.
    </para>
    
-   <programlisting><![CDATA[$ unzip jboss-6.0.0.M2.zip && mv jboss-6.0.0.20100216-M2 $JBOSS_HOME && $JBOSS_HOME/bin/run.sh]]></programlisting>
+   <programlisting><![CDATA[$ unzip jboss-6.0.0.20100429-M3.zip && mv jboss-6.0.0.20100429-M3 $JBOSS_HOME && $JBOSS_HOME/bin/run.sh]]></programlisting>
 
    <para>
       Now, we tell Maven to run the tests, for both JUnit and TestNG:
