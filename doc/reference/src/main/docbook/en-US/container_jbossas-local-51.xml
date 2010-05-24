@@ -58,9 +58,9 @@
 		<table frame="all">
 			<title>Container Configuration Options</title>
 			<tgroup cols="4">
-				<colspec colnum="1" colname="name" colwidth="4*" />
+				<colspec colnum="1" colname="name" colwidth="2*" />
 				<colspec colnum="2" colname="type" colwidth="1*" />
-				<colspec colnum="3" colname="default" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="3*" />
 				<colspec colnum="4" colname="description" colwidth="4*" />
 				<thead>
 					<row>
