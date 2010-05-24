@@ -19,301 +19,432 @@
    <name>Arquillian Example JUnit</name>
    <description>JUnit example of Arquillian Usage</description>
    <!-- Properties -->
-   <properties>
+	<properties>
 
-      <!-- Versioning -->
-
+      	<!-- Versioning -->
+		<version.weld_core>1.0.1-SP1</version.weld_core>
+		<version.org.apache.openejb_openejb.core>3.1.2</version.org.apache.openejb_openejb.core>
+		<version.openwebbeans>1.0.0-M4</version.openwebbeans>
+		<version.jboss_60>6.0.0.20100429-M3</version.jboss_60>
+		<version.jboss_51>5.1.0.GA</version.jboss_51>
+		<version.glassfish_30>3.0.1-b02</version.glassfish_30>
+		
    </properties>
 
-   <profiles>
-      <profile>
-         <id>default</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <dependencies>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <!-- Surefire -->
-               <plugin>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <!-- ARQ-60 -->
-                     <skip>true</skip>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-      <profile>
-         <id>weld-embedded</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-weld-embedded</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <includes>
-                        <include>com/acme/cdi/payment/*</include>
-                        <include>com/acme/cdi/random/*</include>
-                     </includes>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-      <profile>
-         <id>openwebbeans-embedded</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-openwebbeans-embedded</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <includes>
-                        <include>com/acme/cdi/payment/*</include>
-                        <include>com/acme/cdi/random/*</include>
-                     </includes>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-      <profile>
-         <id>jbossas-embedded-60</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jbossas-embedded-60</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <dependencyManagement>
-          <dependencies>
-              <dependency>
-               <groupId>org.jboss.jbossas</groupId>
-               <artifactId>jboss-as-depchain</artifactId>
-               <version>6.0.0.20100429-M3</version>
-               <type>pom</type>
-               <scope>import</scope>
-            </dependency>
-          </dependencies>
-         </dependencyManagement>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.20100429-M3/client/jbossws-native-client.jar</additionalClasspathElement>
-                    <!--
-                      Because jbossweb.sar contains shared web.xml,
-                      which must be visible from same CL as
-                      TomcatDeployer.class.getClassLoader
-                    -->
-                    <additionalClasspathElement>${project.build.directory}/jboss-6.0.0.20100429-M3/server/default/deploy/jbossweb.sar</additionalClasspathElement>
-                  </additionalClasspathElements>
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<!-- Surefire -->
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<!-- ARQ-60 -->
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>weld-embedded</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-weld-embedded</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<!-- org.jboss.weld -->
+				<dependency>
+					<groupId>org.jboss.weld</groupId>
+					<artifactId>weld-core</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.weld</groupId>
+					<artifactId>weld-api</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>javax.el</groupId>
+					<artifactId>el-api</artifactId>
+					<version>1.2</version>
+				</dependency>
+			</dependencies>
+			<dependencyManagement>
+				<dependencies>
+					<!-- org.jboss.weld -->
+					<dependency>
+						<groupId>org.jboss.weld</groupId>
+						<artifactId>weld-core-bom</artifactId>
+						<version>${version.weld_core}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/cdi/payment/*</include>
+								<include>com/acme/cdi/random/*</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>openwebbeans-embedded</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-openwebbeans-embedded</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.openwebbeans</groupId>
+					<artifactId>openwebbeans-spi</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.openwebbeans</groupId>
+					<artifactId>openwebbeans-impl</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-el_2.2_spec</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-validation_1.0_spec</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-interceptor_1.1_spec</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jcdi_1.0_spec</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-atinject_1.0_spec</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-servlet_2.5_spec</artifactId>
+				</dependency>
+			</dependencies>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.openwebbeans</groupId>
+						<artifactId>openwebbeans</artifactId>
+						<version>${version.openwebbeans}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/cdi/payment/*</include>
+								<include>com/acme/cdi/random/*</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jbossas-embedded-60</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-jbossas-embedded-60</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.jbossas</groupId>
+					<artifactId>jboss-as-depchain</artifactId>
+					<version>${version.jboss_60}</version>
+					<type>pom</type>
+				</dependency>
+			</dependencies>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.jboss.jbossas</groupId>
+						<artifactId>jboss-as-depchain</artifactId>
+						<version>${version.jboss_60}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<additionalClasspathElements>
+								<additionalClasspathElement>${project.build.directory}/jboss-${version.jboss_60}/client/jbossws-native-client.jar</additionalClasspathElement>
+								<!--
+									Because jbossweb.sar contains shared web.xml, which must be
+									visible from same CL as TomcatDeployer.class.getClassLoader
+								-->
+								<additionalClasspathElement>${project.build.directory}/jboss-${version.jboss_60}/server/default/deploy/jbossweb.sar</additionalClasspathElement>
+							</additionalClasspathElements>
 
-                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                  <trimStackTrace>false</trimStackTrace>
-                  <printSummary>true</printSummary>
-                  <forkMode>once</forkMode>
+							<redirectTestOutputToFile>true</redirectTestOutputToFile>
+							<trimStackTrace>false</trimStackTrace>
+							<printSummary>true</printSummary>
+							<forkMode>once</forkMode>
 
-                  <!--
-                    MaxPermSize Required to bump the space for relective
-                    data like classes, methods, etc. EMB-41. Endorsed
-                    required for things like WS support (EMB-61)
-                  -->
-                  <argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-6.0.0.20100429-M3/lib/endorsed -Djboss.home=${project.build.directory}/jboss-6.0.0.20100429-M3 -Djboss.boot.server.log.dir=${project.build.directory}/jboss-6.0.0.20100429-M3</argLine>
-                </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-           <executions>
-              <execution>
-                <id>unpack</id>
-                <phase>process-test-classes</phase> <!-- So run before testing -->
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-              <configuration>
-                <artifactItems>
-                  <artifactItem>
-                    <groupId>org.jboss.jbossas</groupId>
-                    <artifactId>jboss-as-distribution</artifactId>
-                    <version>6.0.0.20100429-M3</version>
-                    <type>zip</type>
-                    <overWrite>false</overWrite>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                  </artifactItem>
-                </artifactItems>
-              </configuration>
-              </execution>
-            </executions>
-          </plugin>
-		</plugins>
-       </build>
-	  </profile>
-      <profile>
-         <id>jbossas-remote-51</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jbossas-remote-51</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <includes>
-                        <include>com/acme/ejb/*</include>
-                        <include>com/acme/jms/*</include>
-                        <include>com/acme/resources/*</include>
-                     </includes>
-                  </configuration>
-               </plugin>
-            </plugins>
-            <testResources>
-               <testResource>
-                  <directory>src/test/jboss-resources</directory>
-               </testResource>
-            </testResources>
-         </build>
-      </profile>
-      <profile>
-         <id>jbossas-remote-60</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-jbossas-remote-60</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <testResources>
-               <testResource>
-                  <directory>src/test/jboss-resources</directory>
-               </testResource>
-            </testResources>
-         </build>
-      </profile>
-      <profile>
-         <id>glassfish-embedded-30</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-glassfish-embedded-30</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <includes>
-                        <include>com/acme/ejb/*</include>
-                        <include>com/acme/ejb31/*</include>
-                        <include>com/acme/cdi/*</include>
-                        <include>com/acme/cdi/payment/*</include>
-                        <include>com/acme/cdi/random/*</include>
-                        <include>com/acme/web/*</include>
-                     </includes>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-      <profile>
-         <id>openejb</id>
-         <dependencies>
-            <dependency>
-               <groupId>org.jboss.arquillian.container</groupId>
-               <artifactId>arquillian-openejb</artifactId>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency> <!-- Need on all profiles except Glassfish to compile, api is not 100% up to date with final spec -->
-               <groupId>org.jboss.ejb3</groupId> 
-               <artifactId>jboss-ejb3-api</artifactId> 
-               <version>3.1.0</version>
-               <scope>test</scope>
-            </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <includes>
-                        <include>com/acme/ejb/*</include>
-                     </includes>
-                     <excludes>
-                        <exclude>**/TemperatureConverterTestCase*</exclude>
-                     </excludes>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-   </profiles>
+							<!--
+								MaxPermSize Required to bump the space for relective data like
+								classes, methods, etc. EMB-41. Endorsed required for things like
+								WS support (EMB-61)
+							-->
+							<argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-${version.jboss_60}/lib/endorsed -Djboss.home=${project.build.directory}/jboss-${version.jboss_60} -Djboss.boot.server.log.dir=${project.build.directory}/jboss-${version.jboss_60}</argLine>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack</id>
+								<phase>process-test-classes</phase> <!-- So run before testing -->
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.jboss.jbossas</groupId>
+											<artifactId>jboss-as-distribution</artifactId>
+											<version>${version.jboss_60}</version>
+											<type>zip</type>
+											<overWrite>false</overWrite>
+											<outputDirectory>${project.build.directory}</outputDirectory>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jbossas-remote-51</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-jbossas-remote-51</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.jbossas</groupId>
+					<artifactId>jboss-as-client</artifactId>
+					<version>${version.jboss_51}</version>
+					<type>pom</type>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/ejb/*</include>
+								<include>com/acme/jms/*</include>
+								<include>com/acme/resources/*</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+				<testResources>
+					<testResource>
+						<directory>src/test/jboss-resources</directory>
+					</testResource>
+				</testResources>
+			</build>
+		</profile>
+		<profile>
+			<id>jbossas-remote-60</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-jbossas-remote-60</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.jbossas</groupId>
+					<artifactId>jboss-as-client</artifactId>
+					<version>${version.jboss_60}</version>
+					<type>pom</type>
+				</dependency>
+			</dependencies>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>src/test/jboss-resources</directory>
+					</testResource>
+				</testResources>
+			</build>
+		</profile>
+		<profile>
+			<id>glassfish-embedded-30</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-glassfish-embedded-30</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.extras</groupId>
+					<artifactId>glassfish-embedded-all</artifactId>
+					<version>${version.glassfish_30}</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/ejb/*</include>
+								<include>com/acme/ejb31/*</include>
+								<include>com/acme/cdi/*</include>
+								<include>com/acme/cdi/payment/*</include>
+								<include>com/acme/cdi/random/*</include>
+								<!-- <include>com/acme/web/*</include>  -->
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>openejb</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-openejb</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.openejb</groupId>
+					<artifactId>openejb-core</artifactId>
+					<version>${version.org.apache.openejb_openejb.core}</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/ejb/*</include>
+							</includes>
+							<excludes>
+								<exclude>**/TemperatureConverterTestCase*</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
    <!-- Dependencies -->
    <dependencies>
@@ -328,6 +459,13 @@
          <groupId>org.jboss.arquillian.example</groupId>
          <artifactId>arquillian-example-domain</artifactId>
          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>javax.enterprise</groupId> 
+         <artifactId>cdi-api</artifactId> 
+         <version>1.0-SP1</version> 
+         <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -349,12 +487,6 @@
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>javax.enterprise</groupId> 
-         <artifactId>cdi-api</artifactId> 
-         <version>1.0-SP1</version> 
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
          <groupId>javax.mail</groupId> 
          <artifactId>mail</artifactId> 
          <version>1.4.1</version> 
@@ -366,7 +498,6 @@
          <artifactId>junit</artifactId>
          <scope>test</scope>
       </dependency>
-	
    </dependencies>
 
 </project>
