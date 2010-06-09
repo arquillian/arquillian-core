@@ -58,6 +58,7 @@
     <module>packagers</module>
     <module>containers</module>
 
+    <module>frameworks</module>
     <module>examples</module>
 
     <module>doc/reference</module>
