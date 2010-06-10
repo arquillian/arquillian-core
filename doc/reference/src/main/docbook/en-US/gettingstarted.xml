@@ -354,11 +354,6 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
       </para>
       
       <note>
-      <para>
-         You <emphasis>must</emphasis> use the 5.11 version of the TestNG Eclipse plugin, which can be downloaded from
-         <ulink url="http://testng.org/testng-eclipse-5.11.0.18.zip">testng.org</ulink>. The TestNG update site will give
-         you version 5.12 which is not compatible with any released version of TestNG core.
-      </para>
    </note>
       
       <para>

@@ -50,14 +50,6 @@ $ mvn test -Pjbossas-remote-60]]></programlisting>
       are writing your tests with TestNG, you need the Eclipse <ulink url="http://testng.org">TestNG plugin</ulink>.
    </para>
    
-   <note>
-      <para>
-         You <emphasis>must</emphasis> use the 5.11 version of the TestNG Eclipse plugin, which can be downloaded from
-         <ulink url="http://testng.org/testng-eclipse-5.11.0.18.zip">testng.org</ulink>. The TestNG update site will give
-         you version 5.12 which is not compatible with any released version of TestNG core.
-      </para>
-   </note>
-   
    <para>
       Since the examples in this guide are based on a Maven 2 project, you will also need the m2eclipse plugin. Instructions for
       using the m2eclipse update site to add the m2eclipse plugin to Eclipse are provided on the m2eclipse home page.
