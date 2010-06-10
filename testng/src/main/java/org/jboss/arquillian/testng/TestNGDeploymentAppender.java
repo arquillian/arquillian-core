@@ -19,6 +19,8 @@ package org.jboss.arquillian.testng;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.Filter;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -40,11 +42,15 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
       return ShrinkWrap.create("arquillian-testng.jar", JavaArchive.class)
                .addPackages(
                      true, 
-                     Filters.exclude("/org/testng/junit/.*"),
+                     // exclude com.sun.javadoc.Doclet loading, not in OpenJDK
+                     Filters.exclude("/org/testng/junit/.*"), 
                      TestNG.class.getPackage(),
-                     Inject.class.getPackage(),
                      Package.getPackage("org.jboss.arquillian.testng"))
-               .addPackage(TestNG.class.getPackage())
+               .addPackages(
+                     true,
+                     // exclude AOP Alliance reference, not provided as part of TestNG jar
+                     Filters.exclude(".*/InterceptorStackCallback\\$InterceptedMethodInvocation.*"),
+                     Inject.class.getPackage())
                .addServiceProvider(
                      TestRunner.class, 
                      TestNGTestRunner.class);
