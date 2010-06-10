@@ -10,6 +10,7 @@
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
       <version>5</version>
+      <relativePath />
    </parent>
 
    <!-- Model Version -->
@@ -38,68 +39,48 @@
    </properties>
 
    <!-- Maven 2 Repositories -->
-   <repositories>
-      <repository>
-         <id>jboss.org</id>
-         <name>JBoss Repository</name>
-         <url>https://repository.jboss.org/nexus/content/groups/public</url>
-         <releases>
-            <enabled>true</enabled>
-         </releases>
-         <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-         </snapshots>
-      </repository>
-      <repository>
-	 <id>jboss-deprecated</id>
-         <name>JBoss Deprecated</name>
-         <url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
-         <layout>default</layout>
-         <releases>
-           <enabled>true</enabled>
-           <updatePolicy>never</updatePolicy>
-         </releases>
-         <snapshots>
-           <enabled>false</enabled>
-         </snapshots>
-      </repository>      
-      <repository>
-         <id>java.dev.net</id>
-         <url>http://download.java.net/maven/2/</url>
-         <releases>
-            <enabled>true</enabled>
-         </releases>
-         <snapshots>
+<repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+   <repository>
+          <id>jboss-deprecated</id>
+          <name>JBoss Deprecated</name>
+          <url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
+          <layout>default</layout>
+          <releases>
             <enabled>true</enabled>
             <updatePolicy>never</updatePolicy>
-         </snapshots>
-      </repository>
-      <repository>
-         <id>java.dev.net.glassfish</id>
-         <url>http://download.java.net/maven/glassfish</url>
-         <releases>
-            <enabled>true</enabled>
-         </releases>
-         <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-         </snapshots>
-      </repository>
-   </repositories>
-   <pluginRepositories>
-      <pluginRepository>
-         <id>jboss.org</id>
-         <name>JBoss Repository</name>
-         <url>https://repository.jboss.org/nexus/content/groups/public</url>
-         <releases>
-            <enabled>true</enabled>
-         </releases>
-         <snapshots>
+          </releases>
+          <snapshots>
             <enabled>false</enabled>
-         </snapshots>
-      </pluginRepository>
-   </pluginRepositories>
+          </snapshots>
+        </repository>
+	</repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
    <!-- SCM -->
    <scm>
