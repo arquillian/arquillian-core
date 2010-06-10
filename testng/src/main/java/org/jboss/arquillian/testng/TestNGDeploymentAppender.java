@@ -19,21 +19,12 @@ package org.jboss.arquillian.testng;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.TestNG;
-import org.testng.annotations.Test;
-import org.testng.collections.Maps;
-import org.testng.internal.AnnotationTypeEnum;
-import org.testng.log.TextFormatter;
-import org.testng.log4testng.Logger;
-import org.testng.remote.RemoteTestNG;
-import org.testng.reporters.XMLUtils;
-import org.testng.util.RetryAnalyzerCount;
-import org.testng.v6.TestPlan;
-import org.testng.xml.XmlSuite;
 
-import com.thoughtworks.qdox.Searcher;
+import com.google.inject.Inject;
 
 /**
  * TestNGDeploymentAppender
@@ -49,18 +40,9 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
       return ShrinkWrap.create("arquillian-testng.jar", JavaArchive.class)
                .addPackages(
                      true, 
-                     Test.class.getPackage(),
-                     AnnotationTypeEnum.class.getPackage(),
-                     RetryAnalyzerCount.class.getPackage(),
-                     TextFormatter.class.getPackage(),
-                     Logger.class.getPackage(),
-                     TestPlan.class.getPackage(),
-                     XmlSuite.class.getPackage(),
-                     Searcher.class.getPackage(),
-                     Maps.class.getPackage(),
-                     //IJUnitTestRunner.class.getPackage(),
-                     RemoteTestNG.class.getPackage(),
-                     XMLUtils.class.getPackage(),
+                     Filters.exclude("/org/testng/junit/.*"),
+                     TestNG.class.getPackage(),
+                     Inject.class.getPackage(),
                      Package.getPackage("org.jboss.arquillian.testng"))
                .addPackage(TestNG.class.getPackage())
                .addServiceProvider(

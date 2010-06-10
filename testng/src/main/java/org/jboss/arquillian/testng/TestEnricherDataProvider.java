@@ -18,7 +18,6 @@ package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.testng.annotations.DataProvider;
 

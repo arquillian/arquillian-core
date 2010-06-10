@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <!-- Parent -->
-   <parent>
-      <groupId>org.jboss.arquillian</groupId>
-      <artifactId>arquillian-build</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>../../build/pom.xml</relativePath>
-   </parent>
+	<!-- Parent -->
+	<parent>
+		<groupId>org.jboss.arquillian</groupId>
+		<artifactId>arquillian-build</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../../build/pom.xml</relativePath>
+	</parent>
 
-   <!-- Model Version -->
-   <modelVersion>4.0.0</modelVersion>
+	<!-- Model Version -->
+	<modelVersion>4.0.0</modelVersion>
 
-   <!-- Artifact Configuration -->
-   <groupId>org.jboss.arquillian.example</groupId>
-   <artifactId>arquillian-example-testng</artifactId>
-   <name>Arquillian Example TestNG</name>
-   <description>TestNG example of Arquillian Usage</description>
+	<!-- Artifact Configuration -->
+	<groupId>org.jboss.arquillian.example</groupId>
+	<artifactId>arquillian-example-testng</artifactId>
+	<name>Arquillian Example TestNG</name>
+	<description>TestNG example of Arquillian Usage</description>
 
-   <!-- Properties -->
-   <properties>
+	<!-- Properties -->
+	<properties>
 
-      	<!-- Versioning -->
+		<!-- Versioning -->
 		<version.weld_core>1.0.1-SP1</version.weld_core>
 		<version.org.apache.openejb_openejb.core>3.1.2</version.org.apache.openejb_openejb.core>
 		<version.openwebbeans>1.0.0-M4</version.openwebbeans>
@@ -31,7 +31,7 @@
 		<version.glassfish_30>3.0.1-b02</version.glassfish_30>
 
 
-   </properties>
+	</properties>
 
 	<profiles>
 		<profile>
@@ -118,8 +118,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-		                        <include>com/acme/cdi/*</include>
-		                        <include>com/acme/cdi/payment/*</include>
+								<include>com/acme/cdi/*</include>
+								<include>com/acme/cdi/payment/*</include>
 							</includes>
 						</configuration>
 					</plugin>
@@ -198,7 +198,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-		                        <include>com/acme/cdi/*</include>
+								<include>com/acme/cdi/*</include>
 							</includes>
 						</configuration>
 					</plugin>
@@ -264,7 +264,12 @@
 								classes, methods, etc. EMB-41. Endorsed required for things like
 								WS support (EMB-61)
 							-->
-							<argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-${version.jboss_60}/lib/endorsed -Djboss.home=${project.build.directory}/jboss-${version.jboss_60} -Djboss.boot.server.log.dir=${project.build.directory}/jboss-${version.jboss_60}</argLine>
+							<argLine>-Xmx512m -XX:MaxPermSize=256m
+								-Djava.net.preferIPv4Stack=true
+								-Djava.util.logging.manager=org.jboss.logmanager.LogManager
+								-Djava.endorsed.dirs=${project.build.directory}/jboss-${version.jboss_60}/lib/endorsed
+								-Djboss.home=${project.build.directory}/jboss-${version.jboss_60}
+								-Djboss.boot.server.log.dir=${project.build.directory}/jboss-${version.jboss_60}</argLine>
 							<excludes>
 								<exclude>com/acme/cdi/*</exclude> <!-- Weld Deployer issue in M3 -->
 								<exclude>com/acme/cdi/translate/*</exclude>
@@ -461,60 +466,65 @@
 	</profiles>
 
 
-   <!-- Dependencies -->
-   <dependencies>
+	<!-- Dependencies -->
+	<dependencies>
 
-      <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-testng</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian</groupId>
+			<artifactId>arquillian-testng</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-      <dependency>
-         <groupId>org.jboss.arquillian.example</groupId>
-         <artifactId>arquillian-example-domain</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.example</groupId>
+			<artifactId>arquillian-example-domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-      <dependency>
-         <groupId>javax.enterprise</groupId> 
-         <artifactId>cdi-api</artifactId> 
-         <version>1.0-SP1</version> 
-         <scope>provided</scope>
-      </dependency>
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.0-SP1</version>
+			<scope>provided</scope>
+		</dependency>
 
-      <dependency>
-         <groupId>javax.jms</groupId> 
-         <artifactId>jms</artifactId> 
-         <version>1.1</version> 
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax.annotation</groupId> 
-         <artifactId>jsr250-api</artifactId> 
-         <version>1.0</version> 
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax.persistence</groupId> 
-         <artifactId>persistence-api</artifactId> 
-         <version>1.0</version> 
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax.mail</groupId> 
-         <artifactId>mail</artifactId> 
-         <version>1.4.1</version> 
-         <scope>test</scope>
-      </dependency>
-      
-      <dependency>
-         <groupId>org.testng</groupId>
-         <artifactId>testng</artifactId>
-         <classifier>jdk15</classifier>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.inject</groupId> <!-- Needed by TestNG -->
+			<artifactId>guice</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
 
 </project>

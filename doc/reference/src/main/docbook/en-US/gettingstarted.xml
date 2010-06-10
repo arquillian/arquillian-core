@@ -74,9 +74,14 @@
       <programlisting role="XML"><![CDATA[<dependency> 
    <groupId>org.testng</groupId> 
    <artifactId>testng</artifactId> 
-   <version>5.10</version> 
-   <classifier>jdk15</classifier> 
+   <version>5.12.1</version> 
    <scope>test</scope> 
+</dependency> 
+<dependency> <!-- Needed by TestNG -->
+   <groupId>com.google.inject</groupId> 
+   <artifactId>guice</artifactId> 
+   <version>2.0</version> 
+   <scope>provided</scope> 
 </dependency> 
 
 <dependency>
@@ -84,7 +89,8 @@
    <artifactId>arquillian-testng</artifactId>
    <version>${arquillian.version}</version>
    <scope>test</scope>
-</dependency>]]></programlisting>
+</dependency>
+]]></programlisting>
 
      <para>
         That covers the libraries you need to write your first Arquillian test case. We'll revisit the pom.xml file in a

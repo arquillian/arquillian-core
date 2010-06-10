@@ -27,6 +27,7 @@ import org.jboss.arquillian.spi.TestRunner;
 import org.testng.TestNG;
 import org.testng.internal.AnnotationTypeEnum;
 import org.testng.xml.XmlClass;
+import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
@@ -65,7 +66,7 @@ public class TestNGTestRunner implements TestRunner
       test.setName("Arquillian - " + className);
       List<XmlClass> testClasses = new ArrayList<XmlClass>();
       XmlClass testClass = new XmlClass(className);
-      testClass.getIncludedMethods().add(methodName);
+      testClass.getIncludedMethods().add(new XmlInclude(methodName));
       testClasses.add(testClass);
       test.setXmlClasses(testClasses);
       return suite;
