@@ -70,8 +70,11 @@ public class ResourceInjectionEnricher implements TestEnricher
          
          for(Field field : annotatedFields) 
          {
-            Object ejb = lookup(getResourceName(field));
-            field.set(testCase, ejb);
+            if(field.get(testCase) == null) // only try to lookup fields that are not already set
+            {
+               Object ejb = lookup(getResourceName(field));
+               field.set(testCase, ejb);
+            }
          }
          
          List<Method> methods = SecurityActions.getMethodsWithAnnotation(

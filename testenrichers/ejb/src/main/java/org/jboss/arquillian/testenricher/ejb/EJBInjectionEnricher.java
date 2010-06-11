@@ -97,8 +97,11 @@ public class EJBInjectionEnricher implements TestEnricher
          
          for(Field field : annotatedFields) 
          {
-            Object ejb = lookupEJB(context, field.getType());
-            field.set(testCase, ejb);
+            if(field.get(testCase) == null) // only try to lookup fields that are not already set
+            {
+               Object ejb = lookupEJB(context, field.getType());
+               field.set(testCase, ejb);
+            }
          }
          
          List<Method> methods = SecurityActions.getMethodsWithAnnotation(
