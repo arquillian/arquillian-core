@@ -24,8 +24,8 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -138,7 +138,7 @@ public class ServiceLoader<S> implements Iterable<S>
     */
    public void reload()
    {
-      providers = new HashSet<S>();
+      providers = new LinkedHashSet<S>();
       Enumeration<URL> enumeration = null;
       boolean errorOccurred = false;
 

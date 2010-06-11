@@ -55,6 +55,35 @@ public class DynamicServiceLoaderTestCase
             2, services.size());
    }
    
+   @Test
+   public void shouldReturnDefinedOrderInServicesFile() throws Exception
+   {
+      for(int i = 0; i < 10; i++)
+      {
+         Collection<Service> services = new DynamicServiceLoader().all(Service.class);
+         verifyOrder(services);
+      }
+   }
+
+   private void verifyOrder(Collection<Service> services)
+   {
+      int i = 0;
+      for(Service service : services)
+      {
+         switch(i)
+         {
+            case 0:
+               Assert.assertEquals(service.getClass(), ServiceImpl1.class);
+               break;
+            case 1:
+               Assert.assertEquals(service.getClass(), ServiceImpl2.class);
+               break;
+         }
+         i++;
+      }
+   }
+   
+   
    public interface Service {}
    public static class ServiceImpl1 implements Service {}
    public static class ServiceImpl2 implements Service {}
