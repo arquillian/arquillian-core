@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
+<attributes version="1.0">
+    <fileobject name="ArquillianJUnitTest.java">
+        <attr name="SystemFileSystem.icon" urlvalue="nbresloc:/org/netbeans/modules/junit/resources/JUnitLogo.png"/>
+        <attr name="SystemFileSystem.localizingBundle" serialvalue="aced0005737200316f72672e6f70656e6964652e66696c6573797374656d732e4d756c746946696c654f626a65637424566f696456616c7565d9ec9c94d5fd3ca40c0000787077040000000178"/>
+        <attr name="displayName" stringvalue="Arquillian JUnit Test"/>
+        <attr name="instantiatingIterator" newvalue="org.netbeans.modules.java.project.NewJavaFileWizardIterator"/>
+        <attr name="javax.script.ScriptEngine" stringvalue="freemarker"/>
+        <attr name="position" intvalue="50"/>
+        <attr name="template" boolvalue="true"/>
+        <attr name="templateWizardURL" urlvalue="nbresloc:/org/netbeans/modules/java/project/resources/Class.html"/>
+    </fileobject>
+</attributes>
