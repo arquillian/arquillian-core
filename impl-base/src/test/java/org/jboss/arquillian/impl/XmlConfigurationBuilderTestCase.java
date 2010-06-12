@@ -80,6 +80,8 @@ public class XmlConfigurationBuilderTestCase
       Assert.assertEquals(2L, containerConfig.getPropertyLong());
       Assert.assertEquals(3D, containerConfig.getPropertyDouble(), 0);
       Assert.assertEquals(true, containerConfig.getPropertyBoolean());
+      Assert.assertEquals("inherited", containerConfig.getPropertyInherited());
+      Assert.assertEquals("char", containerConfig.getC());
       
    }
    
@@ -133,13 +135,28 @@ public class XmlConfigurationBuilderTestCase
          return (T) new MockContainerConfiguration();
       }
    }
-   
+
+   class AbstractMockContainerConfiguration
+   {
+      private String propertyInherited;
+
+      public String getPropertyInherited()
+      {
+         return propertyInherited;
+      }
+
+      public void setPropertyInherited(String propertyInherited)
+      {
+         this.propertyInherited = propertyInherited;
+      }
+   }
+
    /**
     * Mocks a ContainerConfiguration implementation
     * 
     * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
     */
-   class MockContainerConfiguration implements ContainerConfiguration
+   class MockContainerConfiguration extends AbstractMockContainerConfiguration implements ContainerConfiguration
    {
       private String propertyString;
       
@@ -151,6 +168,7 @@ public class XmlConfigurationBuilderTestCase
       
       private boolean propertyBoolean;
 
+      private String c;
       
       public ContainerProfile getContainerProfile()
       {
@@ -206,7 +224,17 @@ public class XmlConfigurationBuilderTestCase
       {
          this.propertyBoolean = propertyBoolean;
       }
-      
+
+      public String getC()
+      {
+         return c;
+      }
+
+      public void setC(String c)
+      {
+         this.c = c;
+      }
+
    }
 
 }

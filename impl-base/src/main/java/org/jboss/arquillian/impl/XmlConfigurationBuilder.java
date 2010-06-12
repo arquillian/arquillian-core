@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +42,7 @@ import org.w3c.dom.NodeList;
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author Dan Allen
  * @version $Revision: $
  */
 public class XmlConfigurationBuilder implements ConfigurationBuilder
@@ -213,14 +214,29 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
             properties.putAll(getPropertiesFromNode(child));
          }
       }
-      
+
+      Map<String, Method> setters = new HashMap<String, Method>();
+      for (Method candidate : configurationObject.getClass().getMethods())
+      {
+         String methodName = candidate.getName();
+         if (methodName.matches("^set[A-Z].*") &&
+               candidate.getReturnType().equals(Void.TYPE) &&
+               candidate.getParameterTypes().length == 1)
+         {
+            candidate.setAccessible(true);
+            setters.put(methodName.substring(3, 4).toLowerCase() + methodName.substring(4), candidate);
+         }
+      }
+
       // set the properties found in the container XML fragment to the Configuration Object
       for (Map.Entry<String, String> property : properties.entrySet()) 
       {
-         Field field = configurationObject.getClass().getDeclaredField(property.getKey());
-         field.setAccessible(true);
-         Object value = convert(field.getType(), property.getValue());
-         field.set(configurationObject, value);
+         if (setters.containsKey(property.getKey()))
+         {
+            Method method = setters.get(property.getKey());
+            Object value = convert(method.getParameterTypes()[0], property.getValue());
+            method.invoke(configurationObject, value);
+         }
       }
    }
    
