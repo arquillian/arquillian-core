@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class NamedAccessTest extends DeploymentTest
+public abstract class NamedAccessTest extends DeploymentTest
 {
    @Inject
    BeanManager beanManager;
