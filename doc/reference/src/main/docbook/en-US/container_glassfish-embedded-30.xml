@@ -86,16 +86,28 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry>bindPort</entry>
+						<entry>bindHttpPort</entry>
 						<entry>int</entry>
 						<entry>8181</entry>
-						<entry>The port the server should bind to.</entry>
+						<entry>The HTTP port the server should bind to.</entry>
 					</row>
 					<row>
 						<entry>instanceRoot</entry>
 						<entry>String</entry>
 						<entry>target/glassfish_(RANDOM)</entry>
 						<entry>The instanceRoot to use for booting the server. If it does not exist, a default structure will be created.</entry>
+					</row>
+					<row>
+						<entry>domainXml</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>The relative or absolute path to the domain.xml file that will be used to configure the instance. If absent, the default domain.xml configuration will be used.</entry>
+					</row>
+					<row>
+						<entry>sunResourcesXml</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>The relative or absolute path to the sun-resources.xml file that will be used to add resources to the instance using the add-resources asadmin command.</entry>
 					</row>
 					<row>
 						<entry>autoDelete</entry>
