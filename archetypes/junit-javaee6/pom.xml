@@ -117,6 +117,12 @@
                <includes>
                   <include>**/*Test.java</include>
                </includes>
+               <systemProperties>
+                  <property>
+                     <name>derby.stream.error.file</name>
+                     <value>target/derby.log</value>
+                  </property>
+               </systemProperties>
             </configuration>
          </plugin>
       </plugins>
