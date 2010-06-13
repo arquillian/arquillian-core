@@ -94,10 +94,8 @@
             <configuration>
                <source>1.6</source>
                <target>1.6</target>
-               <!-- Uncomment if you want to generate the JPA 2 metamodel -->
-               <!--
+               <!-- Remove argument if you want to generate the JPA 2 metamodel -->
                <compilerArgument>-proc:none</compilerArgument>
-               -->
             </configuration>
          </plugin>
 
