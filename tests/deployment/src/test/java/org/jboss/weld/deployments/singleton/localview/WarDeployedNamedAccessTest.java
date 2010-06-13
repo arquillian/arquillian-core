@@ -12,7 +12,7 @@ public class WarDeployedNamedAccessTest extends NamedAccessTest
    @Deployment
    public static JavaArchive assemble()
    {
-      return createCDIArchive(NamedAccessTest.class, LocalViewSingletonEJB.class, RemoteI.class, LocalI.class);
+      return createCDIArchive(NamedAccessTest.class, LocalViewSingletonEJB.class, LocalI.class);
    }
 
 }

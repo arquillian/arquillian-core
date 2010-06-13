@@ -11,7 +11,7 @@ public class WarDeployedNamedAccessTest extends NamedAccessTest
    @Deployment
    public static JavaArchive assemble()
    {
-      return createCDIArchive(NamedAccessTest.class, NoViewStatelessEJB.class, RemoteI.class);
+      return createCDIArchive(NamedAccessTest.class, NoViewStatelessEJB.class);
    }
 
 }
