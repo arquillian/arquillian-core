@@ -108,11 +108,11 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>jbossas-local-60</id>
+	<id>jbossas-local-51</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-jbossas-local-60</artifactId>
+			<artifactId>arquillian-jbossas-local-51</artifactId>
 			<version>1.0.0.Alpha2</version>
 		</dependency>
         <dependency>
