@@ -28,6 +28,7 @@
 		<version.openwebbeans>1.0.0-M4</version.openwebbeans>
 		<version.jboss_60>6.0.0.20100429-M3</version.jboss_60>
 		<version.jboss_51>5.1.0.GA</version.jboss_51>
+		<version.jboss_50>5.0.1.GA</version.jboss_50>
 		<version.glassfish_30>3.0.1-b02</version.glassfish_30>
 
 
@@ -302,6 +303,51 @@
 						</executions>
 					</plugin>
 				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jbossas-remote-50</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-jbossas-remote-50</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.jbossas</groupId>
+					<artifactId>jboss-as-client</artifactId>
+					<version>${version.jboss_50}</version>
+					<type>pom</type>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/ejb/*</include>
+								<include>com/acme/jms/*</include>
+								<include>com/acme/resources/*</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+				<testResources>
+					<testResource>
+						<directory>src/test/jboss-resources</directory>
+					</testResource>
+				</testResources>
 			</build>
 		</profile>
 		<profile>
