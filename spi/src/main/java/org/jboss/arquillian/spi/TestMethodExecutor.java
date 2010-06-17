@@ -28,6 +28,11 @@ public interface TestMethodExecutor
 {
    Method getMethod();
    Object getInstance();
+   /*
+    *  TODO: the internal state TestResult is FAILED with Exception set, but it might have passed
+    *  due to the TestFrameworks ExpectedExceptions. We need to know this information to set the correct state.
+    */
+   //Class<?> getExpectedException();  
    void invoke() throws Throwable;
    
 }
