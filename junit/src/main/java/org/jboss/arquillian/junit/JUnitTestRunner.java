@@ -21,9 +21,12 @@ import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
 
 /**
  * JUnitTestRunner
@@ -37,14 +40,27 @@ public class JUnitTestRunner implements TestRunner
 {
    public TestResult execute(Class<?> testClass, String methodName)
    {
+      final ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();
       DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);
       JUnitCore runner = new JUnitCore();
+      runner.addListener(new RunListener() {
+         @Override
+         public void testFinished(Description description) throws Exception
+         {
+            Test test = description.getAnnotation(Test.class);
+            if(test != null && test.expected() != Test.None.class)
+            {
+               exceptionHolder.setException(Arquillian.caughtTestException.get());
+            }
+         }
+      });
       Result result = runner.run(
             Request.method(
                   testClass, 
                   methodName));
-      
-      return convertToTestResult(result);
+     
+      DeployableTestBuilder.clearProfile();
+      return convertToTestResult(result, exceptionHolder.getException());
    }
 
    /**
@@ -53,11 +69,10 @@ public class JUnitTestRunner implements TestRunner
     * @param result JUnit Test Run Result
     * @return The TestResult representation of the JUnit Result
     */
-   private TestResult convertToTestResult(Result result) 
+   private TestResult convertToTestResult(Result result, Throwable expectedException) 
    {
       Status status = Status.PASSED;
-      Throwable throwable = null;
-      
+      Throwable throwable = expectedException;
       if(result.getFailureCount() > 0) 
       {
          status = Status.FAILED;
@@ -68,5 +83,19 @@ public class JUnitTestRunner implements TestRunner
          status = Status.SKIPPED;
       }
       return new TestResult(status, throwable);
+   }
+   
+   private class ExpectedExceptionHolder {
+      private Throwable exception = null;
+      
+      public void setException(Throwable exception)
+      {
+         this.exception = exception;
+      }
+      
+      public Throwable getException()
+      {
+         return exception;
+      }
    }
 }

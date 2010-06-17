@@ -47,9 +47,17 @@ import org.junit.runners.model.Statement;
  */
 public class Arquillian extends BlockJUnit4ClassRunner
 {
-   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
-   
    /*
+    * @HACK
+    * JUnit Hack:
+    * In JUnit a Exception is thrown and verified/swallowed if @Test(expected) is set. We need to transfer this
+    * Exception back to the client so the client side can throw it again. This to avoid a incontainer working but failing
+    * on client side due to no Exception thrown. 
+    */
+   public static ThreadLocal<Throwable> caughtTestException = new ThreadLocal<Throwable>();
+
+   /*
+    * @HACK
     * Eclipse hack:
     * When running multiple TestCases, Eclipse will create a new runner for each of them.
     * This results in that AfterSuite is call pr TestCase, but BeforeSuite only on the first created instance.
@@ -57,6 +65,8 @@ public class Arquillian extends BlockJUnit4ClassRunner
     * was the last one created. The last one created is the only one allowed to call AfterSuite.
     */
    private static ThreadLocal<Arquillian> lastCreatedRunner = new ThreadLocal<Arquillian>();
+
+   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
    
    public Arquillian(Class<?> klass) throws InitializationError
    {
@@ -75,7 +85,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
       }
-      /* TODO: HACK
+      /* @HACK
        *  If in-container, the Thread will be reused between multiple TestRuns.
        *  We need to call BeginSuite before everyone. But only once if not. 
        */
@@ -229,8 +239,17 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                public void invoke() throws Throwable
                {
-                  Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
-                  method.invokeExplosively(test, (Object[])parameterValues);
+                  try
+                  {
+                     Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
+                     method.invokeExplosively(test, (Object[])parameterValues);
+                  } 
+                  catch (Throwable e) 
+                  {
+                     // Force a way to return the thrown Exception from the Container the client. 
+                     caughtTestException.set(e);
+                     throw e;
+                  }
                }
                
                public Method getMethod()

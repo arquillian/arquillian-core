@@ -53,6 +53,7 @@ public class TestNGTestRunner implements TestRunner
       
       runner.run();
 
+      DeployableTestBuilder.clearProfile();
       return resultListener.getTestResult(); 
    }
    

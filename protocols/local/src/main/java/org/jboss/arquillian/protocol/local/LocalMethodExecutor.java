@@ -42,6 +42,11 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
       }
       catch (final Throwable e) 
       {
+         /*
+          *  TODO: the internal state TestResult is FAILED with Exception set, but it might have passed
+          *  due to the TestFrameworks ExpectedExceptions. We need to know this information to set the correct state.
+          */
+
          result.setStatus(Status.FAILED);
          result.setThrowable(e);
       }

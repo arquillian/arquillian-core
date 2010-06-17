@@ -50,6 +50,11 @@ public class DeployableTestBuilder
    {
       return DeployableTestBuilder.profile;
    }
+   
+   public static void clearProfile() 
+   {
+      DeployableTestBuilder.profile = null;
+   }
 
    /**
     * @return
