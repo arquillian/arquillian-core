@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.impl.handler;
 
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.event.container.AfterStart;
@@ -43,8 +44,6 @@ import org.jboss.arquillian.spi.event.suite.SuiteEvent;
  */
 public class ContainerRestarter implements EventHandler<SuiteEvent>
 {
-   private static final int MAX_DEPLOYMENTS_BEFORE_RESTART = 5;
-   
    private int deploymentCount = 0;
    
    /* (non-Javadoc)
@@ -52,19 +51,26 @@ public class ContainerRestarter implements EventHandler<SuiteEvent>
     */
    public void callback(Context context, SuiteEvent event) throws Exception
    {
-      if(deploymentCount == getMaxDeployments(context) -1)
+      if(shouldRestart(context))
       {
          new ContainerStopper().callback(context, event);
          new ContainerStarter().callback(context, event);
-         
-         deploymentCount = 0;
       }
-      deploymentCount++;
    }
    
-   private int getMaxDeployments(Context context)
+   private boolean shouldRestart(Context context)
    {
-      //context.get(Configuration.class).getMaxDeploymentsBeforeRestart();
-      return MAX_DEPLOYMENTS_BEFORE_RESTART;
+      Configuration configuration = context.get(Configuration.class); 
+      int maxDeployments = configuration == null ? -1:configuration.getMaxDeploymentsBeforeRestart();
+      if(maxDeployments > -1) 
+      {
+         if((maxDeployments -1 ) == deploymentCount)
+         {
+            deploymentCount = 0;
+            return true;
+         }
+      }
+      deploymentCount++;
+      return false;
    }
 }

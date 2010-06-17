@@ -18,6 +18,7 @@ package org.jboss.arquillian.impl.handler;
 
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
+import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.event.container.AfterStart;
@@ -56,7 +57,11 @@ public class ContainerRestarterTestCase
    @Test
    public void shouldRestartContainerForEveryX() throws Exception 
    {
+      Configuration configuration = new Configuration();
+      configuration.setMaxDeploymentsBeforeRestart(5);
+      
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
+      context.add(Configuration.class, configuration);
       context.add(DeployableContainer.class, container);
       context.register(BeforeStart.class, eventHandler);
       context.register(AfterStart.class, eventHandler);
@@ -76,6 +81,36 @@ public class ContainerRestarterTestCase
       
       // verify that all the events where fired (2 times restart * 4(2 start + 2 stop))
       Mockito.verify(eventHandler, Mockito.times(8)).callback(
+            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
+   }
+   
+   @Test
+   public void shouldNotForceRestartIfMaxDeploymentsNotSet() throws Exception
+   {
+      Configuration configuration = new Configuration();
+      configuration.setMaxDeploymentsBeforeRestart(-1);
+      
+      ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
+      context.add(Configuration.class, configuration);
+      context.add(DeployableContainer.class, container);
+      context.register(BeforeStart.class, eventHandler);
+      context.register(AfterStart.class, eventHandler);
+      context.register(BeforeStop.class, eventHandler);
+      context.register(AfterStop.class, eventHandler);
+      
+      ContainerRestarter handler = new ContainerRestarter();
+      
+      for(int i = 0; i < 10; i++)
+      {
+         handler.callback(context, new SuiteEvent());
+      }
+      
+      // verify that the container was restarted twice
+      Mockito.verify(container, Mockito.times(0)).stop(context);
+      Mockito.verify(container, Mockito.times(0)).start(context);
+      
+      // verify that all the events where fired (2 times restart * 4(2 start + 2 stop))
+      Mockito.verify(eventHandler, Mockito.times(0)).callback(
             Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
    }
 }

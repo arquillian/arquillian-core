@@ -22,6 +22,7 @@ import org.jboss.arquillian.impl.handler.ArchiveDeploymentExporter;
 import org.jboss.arquillian.impl.handler.ArchiveGenerator;
 import org.jboss.arquillian.impl.handler.ContainerCreator;
 import org.jboss.arquillian.impl.handler.ContainerDeployer;
+import org.jboss.arquillian.impl.handler.ContainerRestarter;
 import org.jboss.arquillian.impl.handler.ContainerStarter;
 import org.jboss.arquillian.impl.handler.ContainerStopper;
 import org.jboss.arquillian.impl.handler.ContainerTestExecuter;
@@ -58,6 +59,7 @@ public class ClientProfileBuilder implements ProfileBuilder
 
       context.register(BeforeSuite.class, new ContainerCreator());
       context.register(BeforeSuite.class, new ContainerStarter());
+      context.register(BeforeClass.class, new ContainerRestarter());
       context.register(AfterSuite.class, new ContainerStopper());
    }
    
@@ -73,12 +75,12 @@ public class ClientProfileBuilder implements ProfileBuilder
       context.register(BeforeClass.class, new ActivateRunModeTypeDeployment());
 
       context.register(BeforeClass.class, new ArchiveGenerator());
+      context.register(BeforeClass.class, new ArchiveDeploymentExporter());
       context.register(BeforeClass.class, new ContainerDeployer());
       context.register(AfterClass.class, new ContainerUndeployer());
 
       context.register(BeforeClass.class, new ActivateRunModeTypeClient());
-      
-      context.register(BeforeClass.class, new ArchiveDeploymentExporter());
+
    }
    
    /* (non-Javadoc)
