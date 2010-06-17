@@ -38,6 +38,7 @@ public class Configuration
       new HashMap<Class<? extends ContainerConfiguration>, ContainerConfiguration>();
 
    private String deploymentExportPath = null;
+   private int maxDeploymentsBeforeRestart = -1;
    
    /**
     * Puts a {@link ContainerConfiguration} implementation in the containersConfig
@@ -97,5 +98,25 @@ public class Configuration
    public String getDeploymentExportPath()
    {
       return deploymentExportPath;
+   }
+   
+   /**
+    * The max number of deployments to a container before restart is forced.
+    * 
+    * @return -1 if not set 
+    */
+   public int getMaxDeploymentsBeforeRestart()
+   {
+      return maxDeploymentsBeforeRestart;
+   }
+   
+   /**
+    * Set how many deployments are allowed before a container restart is forced.
+    * 
+    * @param maxDeploymentsBeforeRestart number of deployments
+    */
+   public void setMaxDeploymentsBeforeRestart(int maxDeploymentsBeforeRestart)
+   {
+      this.maxDeploymentsBeforeRestart = maxDeploymentsBeforeRestart;
    }
 }
