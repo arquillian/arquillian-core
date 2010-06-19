@@ -26,7 +26,7 @@ public class ${name}
    @Inject BeanManager beanManager;
 
    @Test
-   public void testCdiBootstrap()
+   public void testCdiBootstrap() throws Exception
    {
       assertNotNull(beanManager);
       assertFalse(beanManager.getBeans(BeanManager.class).isEmpty());
