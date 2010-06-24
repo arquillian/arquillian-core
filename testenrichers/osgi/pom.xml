@@ -13,17 +13,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Artifact Configuration -->
-  <groupId>org.jboss.arquillian.protocol</groupId>
-  <artifactId>arquillian-protocol-jmx</artifactId>
-  <name>Arquillian Protocol JMX</name>
-  <description>Protocol handler for communicating via JMX</description>
+  <groupId>org.jboss.arquillian.testenricher</groupId>
+  <artifactId>arquillian-testenricher-osgi</artifactId>
+  <name>Arquillian TestEnricher OSGi</name>
+  <description>OSGi TestEnricher for the Arquillian Project</description>
 
 
   <!-- Properties -->
   <properties>
-
-    <!-- Versioning -->
-
   </properties>
 
   <!-- Dependencies -->
@@ -35,23 +32,17 @@
       <artifactId>arquillian-spi</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-spi</artifactId>
-    </dependency>
 
     <dependency>
-      <groupId>org.jboss.arquillian</groupId>
-      <artifactId>arquillian-junit</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
     </dependency>
+    
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
     </dependency>
-
   </dependencies>
 </project>
 

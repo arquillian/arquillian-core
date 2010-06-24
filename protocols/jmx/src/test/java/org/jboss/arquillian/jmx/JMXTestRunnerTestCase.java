@@ -18,7 +18,15 @@ package org.jboss.arquillian.jmx;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
+
 import org.jboss.arquillian.protocol.jmx.JMXTestRunner;
+import org.jboss.arquillian.protocol.jmx.JMXTestRunnerMBean;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.junit.Test;
@@ -33,13 +41,36 @@ import org.junit.Test;
 public class JMXTestRunnerTestCase
 {
    @Test
-   public void testFrameworkInjection() throws Throwable
+   public void testJMXTestRunner() throws Throwable
    {
-      JMXTestRunner testRunner = new JMXTestRunner();
-      TestResult result = testRunner.runTestMethodLocal(DummyTestCase.class.getName(), "testMethod");
-      assertNotNull("TestResult not null", result);
-      assertNotNull("Status not null", result.getStatus());
-      if (result.getStatus() == Status.FAILED)
-         throw result.getThrowable();
+      MBeanServer mbeanServer = getMBeanServer();
+      ObjectName oname = JMXTestRunner.register(mbeanServer);
+      
+      try
+      {
+         JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
+         TestResult result = testRunner.runTestMethodLocal(DummyTestCase.class.getName(), "testMethod");
+         
+         assertNotNull("TestResult not null", result);
+         assertNotNull("Status not null", result.getStatus());
+         if (result.getStatus() == Status.FAILED)
+            throw result.getThrowable();
+      }
+      finally
+      {
+         mbeanServer.unregisterMBean(oname);
+      }
+   }
+
+   private MBeanServer getMBeanServer()
+   {
+      ArrayList<MBeanServer> mbeanServers = MBeanServerFactory.findMBeanServer(null);
+      MBeanServer mbeanServer = (mbeanServers.size() < 1 ? MBeanServerFactory.createMBeanServer() : mbeanServers.get(0));
+      return mbeanServer;
+   }
+
+   private <T> T getMBeanProxy(MBeanServer mbeanServer, ObjectName name, Class<T> interf)
+   {
+      return (T)MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
    }
 }

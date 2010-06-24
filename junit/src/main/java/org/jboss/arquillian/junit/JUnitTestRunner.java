@@ -16,11 +16,14 @@
  */
 package org.jboss.arquillian.junit;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.jboss.arquillian.impl.DeployableTestBuilder;
 import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.spi.TestRunner;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -34,31 +37,32 @@ import org.junit.runner.notification.RunListener;
  * A Implementation of the Arquillian TestRunner SPI for JUnit.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author thomas.diesler@jboss.com
  * @version $Revision: $
  */
 public class JUnitTestRunner implements TestRunner
 {
+   /** 
+    * Overwrite to provide additional run listeners. 
+    */
+   protected List<RunListener> getRunListeners()
+   {
+      return Collections.emptyList();
+   }
+
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      final ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();
       DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);
       JUnitCore runner = new JUnitCore();
-      runner.addListener(new RunListener() {
-         @Override
-         public void testFinished(Description description) throws Exception
-         {
-            Test test = description.getAnnotation(Test.class);
-            if(test != null && test.expected() != Test.None.class)
-            {
-               exceptionHolder.setException(Arquillian.caughtTestException.get());
-            }
-         }
-      });
-      Result result = runner.run(
-            Request.method(
-                  testClass, 
-                  methodName));
-     
+
+      ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();
+      runner.addListener(exceptionHolder);
+
+      for (RunListener listener : getRunListeners())
+         runner.addListener(listener);
+
+      Result result = runner.run(Request.method(testClass, methodName));
+
       DeployableTestBuilder.clearProfile();
       return convertToTestResult(result, exceptionHolder.getException());
    }
@@ -69,33 +73,39 @@ public class JUnitTestRunner implements TestRunner
     * @param result JUnit Test Run Result
     * @return The TestResult representation of the JUnit Result
     */
-   private TestResult convertToTestResult(Result result, Throwable expectedException) 
+   private TestResult convertToTestResult(Result result, Throwable expectedException)
    {
       Status status = Status.PASSED;
       Throwable throwable = expectedException;
-      if(result.getFailureCount() > 0) 
+      if (result.getFailureCount() > 0)
       {
          status = Status.FAILED;
          throwable = result.getFailures().get(0).getException();
       }
-      if(result.getIgnoreCount() > 0) 
+      if (result.getIgnoreCount() > 0)
       {
          status = Status.SKIPPED;
       }
       return new TestResult(status, throwable);
    }
-   
-   private class ExpectedExceptionHolder {
-      private Throwable exception = null;
-      
-      public void setException(Throwable exception)
-      {
-         this.exception = exception;
-      }
-      
+
+   private class ExpectedExceptionHolder extends RunListener
+   {
+      private Throwable exception;
+
       public Throwable getException()
       {
          return exception;
+      }
+
+      @Override
+      public void testFinished(Description description) throws Exception
+      {
+         Test test = description.getAnnotation(Test.class);
+         if (test != null && test.expected() != Test.None.class)
+         {
+            exception = Arquillian.caughtTestException.get();
+         }
       }
    }
 }

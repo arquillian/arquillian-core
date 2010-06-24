@@ -23,55 +23,86 @@ package org.jboss.arquillian.bundle;
 
 // $Id$
 
+import java.util.ArrayList;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+
+import org.jboss.arquillian.protocol.jmx.JMXTestRunner;
+import org.jboss.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleListener;
+import org.osgi.framework.ServiceReference;
 
 /**
- * This is the Husky {@link BundleActivator}.
+ * This is the Arquillian {@link BundleActivator}.
  * 
- * It unconditionally starts the {@link JMXConnector}.
+ * It unconditionally starts the {@link JMXTestRunner}.
  * 
- * If the {@link SocketConnector#PROP_SOCKET_CONNECTOR_HOST} and 
- * {@link SocketConnector#PROP_SOCKET_CONNECTOR_PORT} properites are set it also
- * starts the {@link SocketConnector}.
- * 
- * Finally it starts the {@link HuskyExtender}, which is a {@link BundleListener}
- * that looks for manifest headers called  {@link ManifestProcessor#HEADER_TEST_PACKAGE}. 
- * 
- * 
- * @author Thomas.Diesler@jboss.com
+ * @author thomas.diesler@jboss.com
  * @since 17-May-2009
  */
 public class ArquillianActivator implements BundleActivator
 {
-   private SocketConnector socketConnector;
-   private JMXConnector jmxConnector;
+   // Provide logging
+   private static Logger log = Logger.getLogger(ArquillianActivator.class);
 
+   // An thread local association 
+   static BundleContext bundleContext;
+   
+   @Override
    public void start(BundleContext context) throws Exception
    {
-      jmxConnector = new JMXConnector(context);
-      jmxConnector.start();
-
-      if (SocketConnector.isRemoteConnection(context))
-      {
-         socketConnector = new SocketConnector(context);
-         socketConnector.start();
-      }
+      ArquillianActivator.bundleContext = context;
+      
+      // Register the JMX TestRunner
+      MBeanServer mbeanServer = getMBeanServer(context);
+      JMXTestRunner.register(mbeanServer);
    }
 
+   @Override
    public void stop(BundleContext context) throws Exception
    {
-      if (socketConnector != null)
+      // Unregister the JMX TestRunner
+      MBeanServer mbeanServer = getMBeanServer(context);
+      JMXTestRunner.unregister(mbeanServer);
+      
+      ArquillianActivator.bundleContext = null;
+   }
+
+   private MBeanServer getMBeanServer(BundleContext context)
+   {
+      MBeanServer mbeanServer = null;
+      
+      // Check if there is an MBeanServer service already
+      ServiceReference sref = context.getServiceReference(MBeanServer.class.getName());
+      if (sref != null)
       {
-         socketConnector.stop();
-         socketConnector = null;
+         mbeanServer = (MBeanServer)context.getService(sref);
+         log.debug("Found MBeanServer fom service: " + mbeanServer.getDefaultDomain());
+         return mbeanServer;
       }
 
-      if (jmxConnector != null)
+      ArrayList<MBeanServer> serverArr = MBeanServerFactory.findMBeanServer(null);
+      if (serverArr.size() > 1)
+         log.warn("Multiple MBeanServer instances: " + serverArr);
+
+      if (serverArr.size() > 0)
       {
-         jmxConnector.stop();
-         jmxConnector = null;
+         mbeanServer = serverArr.get(0);
+         log.debug("Found MBeanServer: " + mbeanServer.getDefaultDomain());
       }
+
+      if (mbeanServer == null)
+      {
+         log.debug("No MBeanServer, create one ...");
+         mbeanServer = MBeanServerFactory.createMBeanServer();
+      }
+      
+      // Register the MBeanServer under the system context
+      BundleContext syscontext = context.getBundle(0).getBundleContext();
+      syscontext.registerService(MBeanServer.class.getName(), mbeanServer, null);
+      
+      return mbeanServer;
    }
 }

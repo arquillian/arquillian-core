@@ -28,6 +28,9 @@ import org.jboss.arquillian.spi.TestResult;
  */
 public interface JMXTestRunnerMBean
 {
+   /** The ObjectName for this service: jboss.arquillian:service=jmx-test-runner */
+   String OBJECT_NAME = "jboss.arquillian:service=jmx-test-runner";
+   
    /**
     * Runs a test method on the given test class
     *

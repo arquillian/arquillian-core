@@ -67,6 +67,8 @@ testenrichers/cdi/.classpath
 testenrichers/cdi/target
 testenrichers/ejb/.classpath
 testenrichers/ejb/target
+testenrichers/osgi/.classpath
+testenrichers/osgi/target
 testenrichers/resource/.classpath
 testenrichers/resource/target
 testng/target

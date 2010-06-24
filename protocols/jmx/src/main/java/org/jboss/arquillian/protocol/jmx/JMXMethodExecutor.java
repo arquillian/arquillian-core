@@ -16,6 +16,15 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
+
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
@@ -29,26 +38,58 @@ import org.jboss.arquillian.spi.TestResult.Status;
  */
 public class JMXMethodExecutor implements ContainerMethodExecutor
 {
+   private MBeanServer cachedMBeanServer;
+   
    @Override
    public TestResult invoke(TestMethodExecutor testMethodExecutor)
    {
-      TestResult result = new TestResult();
+      if(testMethodExecutor == null) 
+         throw new IllegalArgumentException("TestMethodExecutor null");
+      
+      String testClass = testMethodExecutor.getInstance().getClass().getName();
+      String testMethod = testMethodExecutor.getMethod().getName();
+
+      TestResult result = null;
       try 
       {
-         testMethodExecutor.invoke();
-         result.setStatus(Status.PASSED);
+         MBeanServer mbeanServer = getMBeanServer();
+         ObjectName objectName = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+         JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, objectName, JMXTestRunnerMBean.class);
+
+         // Invoke the remote test method
+         InputStream resultStream = testRunner.runTestMethodRemote(testClass, testMethod);
+         
+         // Unmarshall the TestResult
+         ObjectInputStream ois = new ObjectInputStream(resultStream);
+         result = (TestResult)ois.readObject();
       }
       catch (final Throwable e) 
       {
-         /*
-          *  TODO: the internal state TestResult is FAILED with Exception set, but it might have passed
-          *  due to the TestFrameworks ExpectedExceptions. We need to know this information to set the correct state.
-          */
-
-         result.setStatus(Status.FAILED);
+         result = new TestResult(Status.FAILED);
          result.setThrowable(e);
       }
-      result.setEnd(System.currentTimeMillis());
+      finally
+      {
+         result.setEnd(System.currentTimeMillis());
+      }
       return result;
+   }
+
+   private MBeanServer getMBeanServer()
+   {
+      if (cachedMBeanServer == null)
+      {
+         ArrayList<MBeanServer> mbeanServers = MBeanServerFactory.findMBeanServer(null);
+         if (mbeanServers.size() < 1)
+            throw new IllegalStateException("No MBeanServer available");
+         
+         cachedMBeanServer = mbeanServers.get(0);
+      }
+      return cachedMBeanServer;
+   }
+
+   private <T> T getMBeanProxy(MBeanServer mbeanServer, ObjectName name, Class<T> interf)
+   {
+      return (T)MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
    }
 }

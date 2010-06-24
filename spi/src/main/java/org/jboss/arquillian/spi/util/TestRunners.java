@@ -28,24 +28,35 @@ import org.jboss.arquillian.spi.TestRunner;
  */
 public final class TestRunners
 {
-   private TestRunners() {}
-   
+   // Hide ctor
+   private TestRunners()
+   {
+   }
+
    /**
-    * Dynamically loads / creates a new instance of a test runner. 
+    * Dynamically loads an instance of a test runner. 
     * 
     * @return A Initialized TestRunner
     * @throws IllegalStateException if multiple TestRunners found in classpath.
     */
-   public static TestRunner getTestRunner() 
+   public static TestRunner getTestRunner()
    {
-      ServiceLoader<TestRunner> serviceLoader = ServiceLoader.load(
-            TestRunner.class, 
-            SecurityActions.getThreadContextClassLoader());
+      return getTestRunner(SecurityActions.getThreadContextClassLoader());
+   }
 
-      if(serviceLoader.getProviders().size() > 1) 
-      {
+   /**
+    * Dynamically loads an instance of a test runner. 
+    * 
+    * @return A Initialized TestRunner
+    * @throws IllegalStateException if multiple TestRunners found in classpath.
+    */
+   public static TestRunner getTestRunner(ClassLoader classLoader)
+   {
+      ServiceLoader<TestRunner> serviceLoader = ServiceLoader.load(TestRunner.class, classLoader);
+
+      if (serviceLoader.getProviders().size() > 1)
          throw new IllegalStateException("Multiple TestRunners found, only one allowed. Check your classpath");
-      }
+      
       return serviceLoader.iterator().next();
    }
 }

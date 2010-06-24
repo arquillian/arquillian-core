@@ -14,7 +14,7 @@
 
   <!-- Artifact Configuration -->
   <artifactId>arquillian-bundle</artifactId>
-  <name>Arquillian Bundle</name>
+  <name>Arquillian OSGi Bundle</name>
   <description>Arquillian OSGi Bundle</description>
   <packaging>bundle</packaging>
 
@@ -32,33 +32,41 @@
           <instructions>
             <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>org.jboss.arquillian.bundle.ArquillianActivator</Bundle-Activator>
-            <Export-Package>
-              org.jboss.arquillian.bundle;version=${version},
-            </Export-Package>
+            <Export-Package></Export-Package>
             <Import-Package>
               javax.management*,
               javax.naming,
-              javax.xml.parsers, 
+              javax.xml.parsers,
               org.w3c.dom,
-              
+
+              org.jboss.logging;version="[2.1,3.0)",
+
               org.osgi.framework;version="[1.5,2.0)",
-              org.osgi.jmx.framework;version="[1.0,2.0)",
               org.osgi.util.tracker;version="[1.4,2.0)",
             </Import-Package>
             <Private-Package>
+              org.jboss.arquillian.bundle,
             </Private-Package>
+            <DynamicImport-Package>*</DynamicImport-Package>
             <Embed-Transitive>true</Embed-Transitive>
             <Embed-Dependency>
               arquillian-api;inline=false,
               arquillian-impl-base;inline=false,
               arquillian-junit;inline=false,
+              arquillian-protocol-jmx;inline=false,
               arquillian-spi;inline=false,
+              arquillian-testenricher-osgi;inline=false,
               shrinkwrap-api;inline=false,
               shrinkwrap-impl-base;inline=false,
               shrinkwrap-spi;inline=false,
+              javax.inject;inline=false,
               junit;inline=false,
             </Embed-Dependency>
             <_exportcontents>
+              javax.inject;version=${version.javax.inject_javax.inject},
+              org.jboss.shrinkwrap.api;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.spec;version=${version.shrinkwrap_shrinkwrap},
+              org.junit;version=${version.junit_junit},
             </_exportcontents>
           </instructions>
         </configuration>
@@ -82,9 +90,23 @@
   <!-- Dependencies -->
   <dependencies>
     <dependency>
+      <groupId>org.jboss.arquillian.testenricher</groupId>
+      <artifactId>arquillian-testenricher-osgi</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-jmx</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.arquillian</groupId>
       <artifactId>arquillian-junit</artifactId>
       <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-spi</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

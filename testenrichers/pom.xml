@@ -28,6 +28,7 @@
     
     <module>cdi</module>
     <module>ejb</module>
+    <module>osgi</module>
     <module>resource</module>
 
   </modules>

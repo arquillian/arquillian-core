@@ -22,10 +22,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.util.TestRunners;
+import org.jboss.logging.Logger;
 
 /**
  * An MBean to run test methods in container.
@@ -35,8 +40,29 @@ import org.jboss.arquillian.spi.util.TestRunners;
  */
 public class JMXTestRunner implements JMXTestRunnerMBean
 {
+   // Provide logging
+   private static Logger log = Logger.getLogger(JMXTestRunner.class);
+
+   public static ObjectName register(MBeanServer mbeanServer) throws JMException
+   {
+      ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+      mbeanServer.registerMBean(new JMXTestRunner(), oname);
+      log.debug("JMXTestRunner registered: " + oname);
+      return oname;
+   }
+
+   public static void unregister(MBeanServer mbeanServer) throws JMException
+   {
+      ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+      if (mbeanServer.isRegistered(oname))
+      {
+         mbeanServer.unregisterMBean(oname);
+         log.debug("JMXTestRunner unregistered: " + oname);
+      }
+   }
+
    @Override
-   public TestResult runTestMethodLocal(String className, String methodName) 
+   public TestResult runTestMethodLocal(String className, String methodName)
    {
       return runTestMethodInternal(className, methodName);
    }
@@ -45,7 +71,7 @@ public class JMXTestRunner implements JMXTestRunnerMBean
    public InputStream runTestMethodRemote(String className, String methodName)
    {
       TestResult result = runTestMethodInternal(className, methodName);
-      
+
       // Marshall the TestResult
       try
       {
@@ -64,16 +90,17 @@ public class JMXTestRunner implements JMXTestRunnerMBean
 
    private TestResult runTestMethodInternal(String className, String methodName)
    {
-      try 
+      try
       {
-         Class<?> testClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-         
-         TestRunner runner = TestRunners.getTestRunner();
-         
+         ClassLoader classLoader = getClass().getClassLoader();
+         Class<?> testClass = classLoader.loadClass(className);
+
+         TestRunner runner = TestRunners.getTestRunner(classLoader);
+
          TestResult testResult = runner.execute(testClass, methodName);
          return testResult;
-      } 
-      catch(Throwable th) 
+      }
+      catch (Throwable th)
       {
          return new TestResult(Status.FAILED, th);
       }

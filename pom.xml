@@ -57,11 +57,11 @@
     <module>protocols</module>
     <module>testenrichers</module>
     <module>packagers</module>
+    <module>bundle</module>
     <module>containers</module>
 
     <module>frameworks</module>
     <module>examples</module>
-    <module>bundle</module>
 
     <module>doc/reference</module>
 </modules>
