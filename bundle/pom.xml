@@ -55,6 +55,7 @@
               arquillian-junit;inline=false,
               arquillian-protocol-jmx;inline=false,
               arquillian-spi;inline=false,
+              arquillian-testenricher-osgi;inline=false,
               shrinkwrap-api;inline=false,
               shrinkwrap-impl-base;inline=false,
               shrinkwrap-spi;inline=false,
@@ -93,6 +94,11 @@
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-jmx</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testenricher</groupId>
+      <artifactId>arquillian-testenricher-osgi</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>

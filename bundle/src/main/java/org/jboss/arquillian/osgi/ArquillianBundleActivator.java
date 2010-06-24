@@ -23,16 +23,13 @@ package org.jboss.arquillian.osgi;
 
 // $Id$
 
-import java.util.ArrayList;
-
-import javax.management.JMException;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 
 import org.jboss.arquillian.protocol.jmx.JMXTestRunner;
+import org.jboss.arquillian.testenricher.osgi.BundleContextHolder;
+import org.jboss.arquillian.testenricher.osgi.OSGiTestEnricher;
 import org.jboss.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -82,47 +79,6 @@ public class ArquillianBundleActivator implements BundleActivator
       mbeanServer.unregisterMBean(new ObjectName(BundleContextHolder.OBJECT_NAME));
    }
 
-   static MBeanServer findOrCreateMBeanServer()
-   {
-      MBeanServer mbeanServer = null;
-
-      ArrayList<MBeanServer> serverArr = MBeanServerFactory.findMBeanServer(null);
-      if (serverArr.size() > 1)
-         log.warn("Multiple MBeanServer instances: " + serverArr);
-
-      if (serverArr.size() > 0)
-      {
-         mbeanServer = serverArr.get(0);
-         log.debug("Found MBeanServer: " + mbeanServer.getDefaultDomain());
-      }
-
-      if (mbeanServer == null)
-      {
-         log.debug("No MBeanServer, create one ...");
-         mbeanServer = MBeanServerFactory.createMBeanServer();
-      }
-
-      return mbeanServer;
-   }
-   
-   /**
-    * Get the BundleContext associated with the arquillian-bundle
-    */
-   static BundleContext getBundleContext()
-   {
-      try
-      {
-         MBeanServer mbeanServer = findOrCreateMBeanServer();
-         ObjectName oname = new ObjectName(BundleContextHolder.OBJECT_NAME);
-         BundleContextHolder holder = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, oname, BundleContextHolder.class, false);
-         return holder.getBundleContext();
-      }
-      catch (JMException ex)
-      {
-         throw new IllegalStateException("Cannot obtain arquillian-bundle context", ex);
-      }
-   }
-   
    private MBeanServer getMBeanServer(BundleContext context)
    {
       // Check if the MBeanServer is registered as an OSGi service 
@@ -135,6 +91,6 @@ public class ArquillianBundleActivator implements BundleActivator
       }
       
       // Find or create the MBeanServer
-      return findOrCreateMBeanServer();
+      return OSGiTestEnricher.findOrCreateMBeanServer();
    }
 }

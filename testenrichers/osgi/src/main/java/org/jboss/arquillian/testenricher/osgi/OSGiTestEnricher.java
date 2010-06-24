@@ -18,22 +18,31 @@ package org.jboss.arquillian.testenricher.osgi;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
 
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.logging.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * The OSGi TestEnricher
  * 
- * The enricher supports the injection of the Framework and the Bundle under test.
+ * The enricher supports the injection of the system BundleContext and the test Bundle.
  * 
  * <pre><code>
  *    @Inject
- *    BundleContext sysctx;
+ *    BundleContext context;
  * 
  *    @Inject
  *    Bundle bundle;
@@ -44,23 +53,13 @@ import org.osgi.framework.BundleContext;
  */
 public class OSGiTestEnricher implements TestEnricher
 {
+   // Provide logging
+   private static Logger log = Logger.getLogger(OSGiTestEnricher.class);
+   
    @Override
    public void enrich(Context context, Object testCase)
    {
       Class<? extends Object> testClass = testCase.getClass();
-      enrichInternal(context, testClass, testCase);
-   }
-
-   /**
-    * Enrich the static fields on the test case
-    */
-   public void enrich(Context context, Class<?> testClass)
-   {
-      enrichInternal(context, testClass, null);
-   }
-
-   private void enrichInternal(Context context, Class<?> testClass, Object testCase)
-   {
       for (Field field : testClass.getDeclaredFields())
       {
          if (field.isAnnotationPresent(Inject.class))
@@ -77,12 +76,17 @@ public class OSGiTestEnricher implements TestEnricher
       }
    }
 
+   @Override
+   public Object[] resolve(Context context, Method method)
+   {
+      return null;
+   }
+   
    private void injectBundleContext(Context context, Object testCase, Field field) 
    {
       try
       {
-         BundleContext sysctx = context.get(BundleContext.class);
-         field.set(testCase, sysctx);
+         field.set(testCase, getSystemBundleContext(context));
       }
       catch (IllegalAccessException ex)
       {
@@ -94,8 +98,7 @@ public class OSGiTestEnricher implements TestEnricher
    {
       try
       {
-         Bundle bundle = context.get(Bundle.class);
-         field.set(testCase, bundle);
+         field.set(testCase, getTestBundle(context, testCase.getClass()));
       }
       catch (IllegalAccessException ex)
       {
@@ -103,9 +106,73 @@ public class OSGiTestEnricher implements TestEnricher
       }
    }
 
-   @Override
-   public Object[] resolve(Context context, Method method)
+   private BundleContext getSystemBundleContext(Context context)
    {
-      return null;
+      BundleContext bundleContext = context.get(BundleContext.class);
+      if (bundleContext == null)
+         bundleContext = getBundleContextFromHolder();
+      
+      // Make sure this is really the system context
+      bundleContext = bundleContext.getBundle(0).getBundleContext();
+      return bundleContext;
    }
+
+   private Bundle getTestBundle(Context context, Class<?> testClass)
+   {
+      Bundle testbundle = context.get(Bundle.class);
+      if (testbundle == null)
+      {
+         // Get the test bundle from PackageAdmin with the test class as key 
+         BundleContext bundleContext = getSystemBundleContext(context);
+         ServiceReference sref = bundleContext.getServiceReference(PackageAdmin.class.getName());
+         PackageAdmin pa = (PackageAdmin)bundleContext.getService(sref);
+         testbundle = pa.getBundle(testClass);
+      }
+      return testbundle;
+   }
+
+   /**
+    * Get the BundleContext associated with the arquillian-bundle
+    */
+   private BundleContext getBundleContextFromHolder()
+   {
+      try
+      {
+         MBeanServer mbeanServer = findOrCreateMBeanServer();
+         ObjectName oname = new ObjectName(BundleContextHolder.OBJECT_NAME);
+         BundleContextHolder holder = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, oname, BundleContextHolder.class, false);
+         return holder.getBundleContext();
+      }
+      catch (JMException ex)
+      {
+         throw new IllegalStateException("Cannot obtain arquillian-bundle context", ex);
+      }
+   }
+   
+   /**
+    * Find or create the MBeanServer
+    */
+   public static MBeanServer findOrCreateMBeanServer()
+   {
+      MBeanServer mbeanServer = null;
+
+      ArrayList<MBeanServer> serverArr = MBeanServerFactory.findMBeanServer(null);
+      if (serverArr.size() > 1)
+         log.warn("Multiple MBeanServer instances: " + serverArr);
+
+      if (serverArr.size() > 0)
+      {
+         mbeanServer = serverArr.get(0);
+         log.debug("Found MBeanServer: " + mbeanServer.getDefaultDomain());
+      }
+
+      if (mbeanServer == null)
+      {
+         log.debug("No MBeanServer, create one ...");
+         mbeanServer = MBeanServerFactory.createMBeanServer();
+      }
+
+      return mbeanServer;
+   }
+   
 }
