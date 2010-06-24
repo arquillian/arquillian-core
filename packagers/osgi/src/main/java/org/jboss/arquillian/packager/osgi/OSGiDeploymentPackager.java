@@ -16,107 +16,67 @@
  */
 package org.jboss.arquillian.packager.osgi;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Collection;
 
 import org.jboss.arquillian.spi.DeploymentPackager;
+import org.jboss.osgi.spi.util.BundleInfo;
+import org.jboss.osgi.vfs.AbstractVFS;
+import org.jboss.osgi.vfs.VirtualFile;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Packager for running Arquillian against OSGi containers.
  *
- * @author Thomas.Diesler@jboss.com
+ * @author thomas.diesler@jboss.com
  * @version $Revision: $
  */
 public class OSGiDeploymentPackager implements DeploymentPackager
 {
-   public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
+   public Archive<?> generateDeployment(Archive<?> bundleArchive, Collection<Archive<?>> auxiliaryArchives)
    {
-      if(JavaArchive.class.isInstance(applicationArchive))
+      if(JavaArchive.class.isInstance(bundleArchive))
       {
-         return handleArchive(JavaArchive.class.cast(applicationArchive), auxiliaryArchives);
+         return handleArchive(JavaArchive.class.cast(bundleArchive), auxiliaryArchives);
       }
       
       throw new IllegalArgumentException(OSGiDeploymentPackager.class.getName()  + 
-            " can not handle archive of type " +  applicationArchive.getClass().getName());
+            " can not handle archive of type " +  bundleArchive.getClass().getName());
    }
 
-   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives) 
+   private Archive<?> handleArchive(JavaArchive archive, Collection<Archive<?>> auxiliaryArchives) 
    {
-      if(containsArchiveOfType(WebArchive.class, auxiliaryArchives))
+      try
       {
-         EnterpriseArchive deployment = ShrinkWrap.create("test.ear", EnterpriseArchive.class)
-                                             .addModule(applicationArchive);
-         for (Archive<?> moduleArchive : auxiliaryArchives)
-         {
-            if (WebArchive.class.isInstance(moduleArchive))
-            {
-               deployment.addModule(moduleArchive);
-            } 
-            else
-            {
-               deployment.addLibrary(moduleArchive);
-            }
-         }
-         return deployment;
+         VirtualFile virtualFile = toVirtualFile(archive);
+         BundleInfo info = BundleInfo.createBundleInfo(virtualFile);
+         return new BundleArchive(archive, info);
       }
-      else 
+      catch (RuntimeException rte)
       {
-         WebArchive deployment = ShrinkWrap.create("test.war", WebArchive.class);
-         deployment.addLibraries(auxiliaryArchives.toArray(new Archive[0]));
-         deployment.addLibraries(applicationArchive);
-         return deployment;
+         throw rte;
+      }
+      catch (Exception ex)
+      {
+         throw new IllegalArgumentException("Not a valid OSGi bundle: " + archive, ex);
       }
    }
 
-   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives) 
+   private VirtualFile toVirtualFile(Archive<?> archive) throws IOException, MalformedURLException
    {
-      if(!containsArchiveOfType(WebArchive.class, auxiliaryArchives))
-      {
-         for (Archive<?> moduleArchive : auxiliaryArchives)
-         {
-            if ("arquillian-protocol.jar".equals(moduleArchive.getName()) && 
-                  JavaArchive.class.isInstance(moduleArchive))
-            {
-               applicationArchive.addModule(
-                     ShrinkWrap.create("test.war", WebArchive.class)
-                              .addLibraries(moduleArchive));
-            } 
-            else
-            {
-               applicationArchive.addLibrary(moduleArchive);
-            }
-         }
-      }
-      else
-      {
-         for (Archive<?> moduleArchive : auxiliaryArchives)
-         {
-            if (WebArchive.class.isInstance(moduleArchive))
-            {
-               applicationArchive.addModule(moduleArchive);
-            } 
-            else
-            {
-               applicationArchive.addLibrary(moduleArchive);
-            }
-         }
-      }
-      return applicationArchive;
-   }
-   
-   private boolean containsArchiveOfType(Class<? extends Archive<?>> clazz, Collection<Archive<?>> archives) 
-   {
-      for(Archive<?> archive : archives)
-      {
-         if(clazz.isInstance(archive))
-         {
-            return true;
-         }
-      }
-      return false;
+      // [TODO] Can this be done in memory?
+      ZipExporter exporter = archive.as(ZipExporter.class);
+      String archiveName = archive.getName();
+      int dotIndex = archiveName.lastIndexOf(".");
+      if (dotIndex > 0)
+         archiveName = archiveName.substring(0, dotIndex);
+      File target = File.createTempFile(archiveName + "-", ".jar");
+      exporter.exportZip(target, true);
+      target.deleteOnExit();
+      return AbstractVFS.getRoot(target.toURI().toURL());
    }
 }

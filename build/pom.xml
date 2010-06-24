@@ -28,9 +28,11 @@
     <version.javaee_api>6.0</version.javaee_api>
     <version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
     <version.jboss_osgi_spi>1.0.7-SNAPSHOT</version.jboss_osgi_spi>
+    <version.jboss_osgi_vfs>1.0.0</version.jboss_osgi_vfs>
     <version.jetty_jetty>6.1.9</version.jetty_jetty>
     <version.junit_junit>4.6</version.junit_junit>
     <version.mockito_all>1.8.3</version.mockito_all>
+    <version.osgi>4.2.0</version.osgi>
     <version.shrinkwrap_shrinkwrap>1.0.0-alpha-9</version.shrinkwrap_shrinkwrap>
     <version.testng_testng>5.12.1</version.testng_testng>
 
@@ -189,6 +191,16 @@
         <version>${version.jboss_osgi_spi}</version>
       </dependency>
       <dependency>
+        <groupId>org.jboss.osgi.vfs</groupId>
+        <artifactId>jboss-osgi-vfs</artifactId>
+        <version>${version.jboss_osgi_vfs}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.osgi.vfs</groupId>
+        <artifactId>jboss-osgi-vfs30</artifactId>
+        <version>${version.jboss_osgi_vfs}</version>
+      </dependency>
+      <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
         <artifactId>shrinkwrap-api</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
@@ -217,6 +229,16 @@
         <groupId>javax</groupId>
         <artifactId>javaee-api</artifactId>
         <version>${version.javaee_api}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>${version.osgi}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.compendium</artifactId>
+        <version>${version.osgi}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

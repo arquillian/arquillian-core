@@ -16,155 +16,63 @@
  */
 package org.jboss.arquillian.packager.osgi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import static org.junit.Assert.*;
 
-import org.jboss.arquillian.packager.osgi.OSGiDeploymentPackager;
+import java.io.InputStream;
+
+import org.jboss.osgi.testing.OSGiManifestBuilder;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.Asset;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
- * EEDeploymentPackagerTestCase
+ * OSGiDeploymentPackagerTestCase
  *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author thomas.diesler@jboss.com
  * @version $Revision: $
  */
 public class OSGiDeploymentPackagerTestCase
 {
    @Test
-   public void shouldHandleJavaArchiveEE5Protocol() throws Exception
+   public void testValidBundle() throws Exception
    {
-      Archive<?> archive = new OSGiDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
-            createAuxiliaryArchivesEE5());
-      
-      Assert.assertTrue(
-            "Verify that a defined JavaArchive using EE5 WebArchive protocol is build as EnterpriseArchive",
-            EnterpriseArchive.class.isInstance(archive));
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives EE Modules are placed in /",
-            archive.contains(ArchivePaths.create("/arquillian-protocol.war")));
-      
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /lib",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
-
-      Assert.assertTrue(
-            "Verify that the applicationArchive is placed in /",
-            archive.contains(ArchivePaths.create("/applicationArchive.jar")));
+      final JavaArchive archive = ShrinkWrap.create("test-archive.jar", JavaArchive.class);
+      archive.setManifest(new Asset()
+      {
+         public InputStream openStream()
+         {
+            OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
+            builder.addBundleSymbolicName(archive.getName());
+            builder.addBundleManifestVersion(2);
+            return builder.openStream();
+         }
+      });
+      Archive<?> result = new OSGiDeploymentPackager().generateDeployment(archive, null);
+      assertNotNull("Result archive not null", result);
    }
    
    @Test
-   public void shouldHandleJavaArchiveEE6Protocol() throws Exception
+   public void testInvalidBundle() throws Exception
    {
-      Archive<?> archive = new OSGiDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
-            createAuxiliaryArchivesEE6());
-      
-      Assert.assertTrue(
-            "Verify that a defined JavaArchive using EE6 JavaArchive protocol is build as WebArchive",
-            WebArchive.class.isInstance(archive));
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
-            archive.contains(ArchivePaths.create("/WEB-INF/lib/arquillian-protocol.jar")));
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
-            archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive2.jar")));
-      
-      Assert.assertTrue(
-            "Verify that the applicationArchive is placed in /WEB-INF/lib",
-            archive.contains(ArchivePaths.create("/WEB-INF/lib/applicationArchive.jar")));
-   }
-
-   // as of now, War inside War is not supported. need to merge ? 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldHandleWebArchiveEE5Protocol() throws Exception
-   {
-      new OSGiDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
-            createAuxiliaryArchivesEE5());
-      
-   }
-
-   @Test
-   public void shouldHandleWebArchiveEE6Protocol() throws Exception
-   {
-      Archive<?> archive = new OSGiDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
-            createAuxiliaryArchivesEE6());
-      
-      Assert.assertTrue(
-            "Verify that a defined WebArchive using EE6 JavaArchive protocol is build as WebArchive",
-            WebArchive.class.isInstance(archive));
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
-            archive.contains(ArchivePaths.create("/WEB-INF/lib/arquillian-protocol.jar")));
-      
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
-            archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive2.jar")));
-   }
-
-   @Test
-   public void shouldHandleEnterpriseArchiveEE5Protocol() throws Exception
-   {
-      Archive<?> archive = new OSGiDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
-            createAuxiliaryArchivesEE5());
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /",
-            archive.contains(ArchivePaths.create("arquillian-protocol.war")));
-      
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /lib",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
-
-   }
-
-   @Test
-   public void shouldHandleEnterpriseArchiveEE6Protocol() throws Exception
-   {
-      Archive<?> archive = new OSGiDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
-            createAuxiliaryArchivesEE6());
-      
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /",
-            archive.contains(ArchivePaths.create("test.war")));
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /lib",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
-   }
-
-   private Collection<Archive<?>> createAuxiliaryArchivesEE6() 
-   {
-      List<Archive<?>> archives = new ArrayList<Archive<?>>();
-      archives.add(ShrinkWrap.create("arquillian-protocol.jar", JavaArchive.class));
-      archives.add(ShrinkWrap.create("auxiliaryArchive2.jar", JavaArchive.class));
-      
-      return archives;
-   }
-
-   private Collection<Archive<?>> createAuxiliaryArchivesEE5() 
-   {
-      List<Archive<?>> archives = new ArrayList<Archive<?>>();
-      archives.add(ShrinkWrap.create("arquillian-protocol.war", WebArchive.class));
-      archives.add(ShrinkWrap.create("auxiliaryArchive2.jar", JavaArchive.class));
-      
-      return archives;
+      final JavaArchive archive = ShrinkWrap.create("test-archive.jar", JavaArchive.class);
+      archive.setManifest(new Asset()
+      {
+         public InputStream openStream()
+         {
+            OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
+            return builder.openStream();
+         }
+      });
+      try
+      {
+         new OSGiDeploymentPackager().generateDeployment(archive, null);
+         fail("RuntimeException expected");
+      }
+      catch (RuntimeException ex)
+      {
+         // expected
+      }
    }
 }
