@@ -50,9 +50,14 @@ public class JUnitTestRunner implements TestRunner
       return Collections.emptyList();
    }
 
+   protected ContainerProfile getProfile()
+   {
+      return ContainerProfile.CONTAINER;
+   }
+
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);
+      DeployableTestBuilder.setProfile(getProfile());
       JUnitCore runner = new JUnitCore();
 
       ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();

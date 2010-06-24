@@ -31,7 +31,7 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
-            <Bundle-Activator>org.jboss.arquillian.bundle.ArquillianActivator</Bundle-Activator>
+            <Bundle-Activator>org.jboss.arquillian.osgi.ArquillianBundleActivator</Bundle-Activator>
             <Export-Package></Export-Package>
             <Import-Package>
               javax.management*,
@@ -45,7 +45,7 @@
               org.osgi.util.tracker;version="[1.4,2.0)",
             </Import-Package>
             <Private-Package>
-              org.jboss.arquillian.bundle,
+              org.jboss.arquillian.osgi,
             </Private-Package>
             <DynamicImport-Package>*</DynamicImport-Package>
             <Embed-Transitive>true</Embed-Transitive>
@@ -55,7 +55,6 @@
               arquillian-junit;inline=false,
               arquillian-protocol-jmx;inline=false,
               arquillian-spi;inline=false,
-              arquillian-testenricher-osgi;inline=false,
               shrinkwrap-api;inline=false,
               shrinkwrap-impl-base;inline=false,
               shrinkwrap-spi;inline=false,
@@ -64,8 +63,10 @@
             </Embed-Dependency>
             <_exportcontents>
               javax.inject;version=${version.javax.inject_javax.inject},
+              org.jboss.arquillian.junit;version=${version},
               org.jboss.shrinkwrap.api;version=${version.shrinkwrap_shrinkwrap},
               org.jboss.shrinkwrap.api.spec;version=${version.shrinkwrap_shrinkwrap},
+              org.junit.runner;version=${version.junit_junit},
               org.junit;version=${version.junit_junit},
             </_exportcontents>
           </instructions>
@@ -90,11 +91,6 @@
   <!-- Dependencies -->
   <dependencies>
     <dependency>
-      <groupId>org.jboss.arquillian.testenricher</groupId>
-      <artifactId>arquillian-testenricher-osgi</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-jmx</artifactId>
       <version>${version}</version>
@@ -103,6 +99,10 @@
       <groupId>org.jboss.arquillian</groupId>
       <artifactId>arquillian-junit</artifactId>
       <version>${version}</version>
+    </dependency>
+    <dependency>
+     <groupId>javax.inject</groupId>
+     <artifactId>javax.inject</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
