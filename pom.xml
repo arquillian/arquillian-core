@@ -61,6 +61,7 @@
 
     <module>frameworks</module>
     <module>examples</module>
+    <module>bundle</module>
 
     <module>doc/reference</module>
 </modules>

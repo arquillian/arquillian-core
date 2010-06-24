@@ -6,6 +6,8 @@ api/.settings/
 api/target
 build/.project
 build/.settings/
+bundle/.classpath
+bundle/target
 containers/glassfish-embedded-30/target
 containers/jbossas-embedded-60/target
 containers/jbossas-local-51/target
