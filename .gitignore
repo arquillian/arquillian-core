@@ -51,6 +51,8 @@ packagers/javaee/.classpath
 packagers/javaee/.project
 packagers/javaee/.settings/
 packagers/javaee/target
+protocols/jmx/.classpath
+protocols/jmx/target
 protocols/local/.classpath
 protocols/local/target
 packagers/osgi/target/
