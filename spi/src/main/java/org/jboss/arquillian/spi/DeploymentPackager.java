@@ -21,7 +21,7 @@ import java.util.Collection;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Extension point for the DeployableContainer to prepare the Archives for deployment.
+ * Extension point for the {@link DeployableContainer} to prepare the Archives for deployment.
  * 
  * Example:
  * - Create a EAR, WAR

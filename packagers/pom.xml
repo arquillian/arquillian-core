@@ -26,8 +26,9 @@
   <!-- Aggregate Modules -->
   <modules>
     
-    <module>javaee</module>
     <module>applicationarchive</module>
+    <module>javaee</module>
+    <module>osgi</module>
 
   </modules>
 
