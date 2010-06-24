@@ -25,6 +25,7 @@
   <properties>
 
     <!-- Versioning -->
+    <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
     <version.javaee_api>6.0</version.javaee_api>
     <version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
     <version.jboss_osgi_spi>1.0.7-SNAPSHOT</version.jboss_osgi_spi>
@@ -185,6 +186,11 @@
   <!-- Dependency Management -->
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${version.javax.inject_javax.inject}</version>
+      </dependency>
       <dependency>
         <groupId>org.jboss.osgi</groupId>
         <artifactId>jboss-osgi-spi</artifactId>
