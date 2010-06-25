@@ -17,9 +17,6 @@
 package org.jboss.arquillian.spi;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
-import org.jboss.arquillian.api.Deployment;
 
 
 /**
@@ -58,18 +55,5 @@ public class TestClass
    public <A extends Annotation> A getAnnotation(Class<A> annotation)
    {
       return testClass.getAnnotation(annotation);
-   }
-   
-   public Method findDeploymentMethod() 
-   {
-      Method[] methods = testClass.getMethods();
-      for(Method method: methods)
-      {
-         if(method.isAnnotationPresent(Deployment.class)) 
-         {
-            return method;
-         }
-      }
-      return null;
    }
 }
