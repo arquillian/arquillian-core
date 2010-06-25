@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -26,7 +27,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.junit.Test;
-
 
 /**
  * DeploymentAnnotationArchiveGeneratorTestCase
@@ -36,81 +36,85 @@ import org.junit.Test;
  */
 public class DeploymentAnnotationArchiveGeneratorTestCase
 {
-   
+
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnDeploymentNotPresent() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(DeploymentNotPresent.class);
+      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentNotPresent.class));
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnDeploymentNotStatic() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(DeploymentNotStatic.class);
+      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentNotStatic.class));
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnDeploymentWrongReturnType() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(DeploymentWrongReturnType.class);
+      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentWrongReturnType.class));
    }
-   
+
    @Test
    public void shouldThrowExceptionOnDeploymentOk() throws Exception
    {
-      Archive<?> archive = new DeploymentAnnotationArchiveGenerator()
-                                 .generateApplicationArchive(DeploymentOK.class);
-      
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentOK.class));
+
       ArchivePath testPath = ArchivePaths.create(DeploymentOK.class.getName().replaceAll("\\.", "/") + ".class");
-      
+
       // verify that the test class was added to the archive
       Assert.assertNotNull(archive.contains(testPath));
    }
-   
+
    @Test
    public void shouldNotIncludeTheTestClassIfClassesNotSupportedByTheArchive() throws Exception
    {
-      Archive<?> archive = new DeploymentAnnotationArchiveGenerator()
-                              .generateApplicationArchive(DeploymentClassesNotSupported.class);
-      
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentClassesNotSupported.class));
+
       // verify that nothing was added to the archive
       Assert.assertTrue(archive.getContent().isEmpty());
    }
 
-   private static class DeploymentNotPresent {}
-   
-   private static class DeploymentNotStatic 
+   private static class DeploymentNotPresent
+   {
+   }
+
+   private static class DeploymentNotStatic
    {
       @SuppressWarnings("unused")
       @Deployment
-      public Archive<?> test() {
+      public Archive<?> test()
+      {
          return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
    }
-   
+
    private static class DeploymentWrongReturnType
    {
       @SuppressWarnings("unused")
       @Deployment
-      public Object test() {
+      public Object test()
+      {
          return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
    }
-   
+
    private static class DeploymentOK
    {
       @SuppressWarnings("unused")
       @Deployment
-      public static JavaArchive test() {
+      public static JavaArchive test()
+      {
          return ShrinkWrap.create("test.jar", JavaArchive.class);
       }
    }
-   
-   private static class DeploymentClassesNotSupported 
+
+   private static class DeploymentClassesNotSupported
    {
       @SuppressWarnings("unused")
       @Deployment
-      public static ResourceAdapterArchive test() {
+      public static ResourceAdapterArchive test()
+      {
          return ShrinkWrap.create("test.jar", ResourceAdapterArchive.class);
       }
    }

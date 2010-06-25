@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
+import org.jboss.arquillian.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.container.ClassContainer;
 
@@ -32,12 +33,12 @@ import org.jboss.shrinkwrap.api.container.ClassContainer;
  */
 public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveGenerator 
 {
-
-   public Archive<?> generateApplicationArchive(Class<?> testCase)
+   @Override
+   public Archive<?> generateApplicationArchive(TestClass testCase)
    {
       Validate.notNull(testCase, "TestCase must be specified");
       
-      Method deploymentMethod = findDeploymentMethod(testCase);
+      Method deploymentMethod = testCase.findDeploymentMethod();
       if(deploymentMethod == null) 
       {
          throw new IllegalArgumentException("No method annotated with " + Deployment.class.getName() + " found");
@@ -59,7 +60,7 @@ public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveG
             if(ClassContainer.class.isInstance(archive)) 
             {
                ClassContainer<?> classContainer = ClassContainer.class.cast(archive);
-               classContainer.addClass(testCase);
+               classContainer.addClass(testCase.getJavaClass());
             }
          } 
          catch (UnsupportedOperationException e) 
@@ -77,18 +78,5 @@ public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveG
       {
          throw new RuntimeException("Could not get Deployment", e);
       }
-   }
-   
-   private static Method findDeploymentMethod(Class<?> testCase) 
-   {
-      Method[] methods = testCase.getMethods();
-      for(Method method: methods)
-      {
-         if(method.isAnnotationPresent(Deployment.class)) 
-         {
-            return method;
-         }
-      }
-      return null;
    }
 }

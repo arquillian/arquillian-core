@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,6 +29,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 
 /**
@@ -41,7 +43,8 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleJavaArchiveEE5Protocol() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
+      Context context = Mockito.mock(Context.class);
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
             ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
             createAuxiliaryArchivesEE5());
       
@@ -65,7 +68,8 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleJavaArchiveEE6Protocol() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
+      Context context = Mockito.mock(Context.class);
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
             ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
             createAuxiliaryArchivesEE6());
       
@@ -90,7 +94,8 @@ public class EEDeploymentPackagerTestCase
    @Test(expected = IllegalArgumentException.class)
    public void shouldHandleWebArchiveEE5Protocol() throws Exception
    {
-      new EEDeploymentPackager().generateDeployment(
+      Context context = Mockito.mock(Context.class);
+      new EEDeploymentPackager().generateDeployment(context,
             ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
             createAuxiliaryArchivesEE5());
       
@@ -99,7 +104,8 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleWebArchiveEE6Protocol() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
+      Context context = Mockito.mock(Context.class);
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
             ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
             createAuxiliaryArchivesEE6());
       
@@ -119,7 +125,8 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleEnterpriseArchiveEE5Protocol() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
+      Context context = Mockito.mock(Context.class);
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
             ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
             createAuxiliaryArchivesEE5());
 
@@ -136,7 +143,8 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleEnterpriseArchiveEE6Protocol() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
+      Context context = Mockito.mock(Context.class);
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
             ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
             createAuxiliaryArchivesEE6());
       

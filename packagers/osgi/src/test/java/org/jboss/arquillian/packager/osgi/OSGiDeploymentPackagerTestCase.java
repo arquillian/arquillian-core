@@ -16,16 +16,19 @@
  */
 package org.jboss.arquillian.packager.osgi;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.osgi.testing.OSGiManifestBuilder;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.Asset;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * OSGiDeploymentPackagerTestCase
@@ -49,7 +52,9 @@ public class OSGiDeploymentPackagerTestCase
             return builder.openStream();
          }
       });
-      Archive<?> result = new OSGiDeploymentPackager().generateDeployment(archive, null);
+      
+      Context context = Mockito.mock(Context.class);
+      Archive<?> result = new OSGiDeploymentPackager().generateDeployment(context, archive, null);
       assertNotNull("Result archive not null", result);
    }
    
@@ -67,7 +72,8 @@ public class OSGiDeploymentPackagerTestCase
       });
       try
       {
-         new OSGiDeploymentPackager().generateDeployment(archive, null);
+         Context context = Mockito.mock(Context.class);
+         new OSGiDeploymentPackager().generateDeployment(context, archive, null);
          fail("RuntimeException expected");
       }
       catch (RuntimeException ex)

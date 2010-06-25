@@ -21,12 +21,10 @@ import org.jboss.arquillian.spi.event.suite.EventHandler;
 
 
 /**
- * 
+ * The arquillian test lifecycle context.  
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
- * @param <X>
- * @param <T>
  */
 public interface Context 
 {

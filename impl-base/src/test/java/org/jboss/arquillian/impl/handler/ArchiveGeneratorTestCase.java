@@ -22,6 +22,7 @@ import org.jboss.arquillian.impl.DeploymentGenerator;
 import org.jboss.arquillian.impl.context.ClassContext;
 import org.jboss.arquillian.impl.context.SuiteContext;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.event.suite.ClassEvent;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -52,9 +53,8 @@ public class ArchiveGeneratorTestCase
    public void shouldThrowIllegalStateExceptionOnMissingDeploymentGenerator() throws Exception
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
-      
       ArchiveGenerator handler = new ArchiveGenerator();
-      handler.callback(context, new ClassEvent(getClass()));
+      handler.callback(context, new ClassEvent(new TestClass(getClass())));
    }
 
    @Test
@@ -62,18 +62,19 @@ public class ArchiveGeneratorTestCase
    {
       final Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
       
-      Mockito.when(generator.generate(getClass())).thenAnswer(new Answer<Archive<?>>()
+      TestClass testClass = new TestClass(getClass());
+      ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
+      Mockito.when(generator.generate(context, testClass)).thenAnswer(new Answer<Archive<?>>()
       {
          public Archive<?> answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable {
             return deployment;
          }
       });
       
-      ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       context.add(DeploymentGenerator.class, generator);
 
       ArchiveGenerator handler = new ArchiveGenerator();
-      handler.callback(context, new ClassEvent(getClass()));
+      handler.callback(context, new ClassEvent(testClass));
       
       Assert.assertNotNull(
             "Should have exported " + Archive.class.getSimpleName(), 

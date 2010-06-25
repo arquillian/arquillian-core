@@ -36,5 +36,5 @@ public interface ApplicationArchiveGenerator
     * @param testCase Current test case class
     * @return The Generated Archive
     */
-   Archive<?> generateApplicationArchive(Class<?> testCaseClass);
+   Archive<?> generateApplicationArchive(TestClass testClass);
 }

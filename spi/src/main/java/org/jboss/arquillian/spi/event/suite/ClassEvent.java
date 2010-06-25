@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.spi.event.suite;
 
+import org.jboss.arquillian.spi.TestClass;
+
 
 /**
  * Base for events fired in the Test Class execution cycle.
@@ -25,7 +27,7 @@ package org.jboss.arquillian.spi.event.suite;
  */
 public class ClassEvent extends SuiteEvent
 {
-   private Class<?> testClass;
+   private TestClass testClass;
    
    /**
     * @param testClass The Test case {@link Class}
@@ -33,12 +35,21 @@ public class ClassEvent extends SuiteEvent
     */
    public ClassEvent(Class<?> testClass)
    {
+      this(new TestClass(testClass));
+   }
+   
+   /**
+    * @param testClass The Test case {@link Class}
+    * @throws IllegalArgumentException if testCase is null 
+    */
+   public ClassEvent(TestClass testClass)
+   {
       Validate.notNull(testClass, "TestClass must be specified");
       
       this.testClass = testClass;
    }
    
-   public Class<?> getTestClass()
+   public TestClass getTestClass()
    {
       return testClass;
    }

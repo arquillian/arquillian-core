@@ -46,6 +46,7 @@ junit/.classpath
 junit/.project
 junit/.settings/
 junit/target
+packagers/applicationarchive/.classpath
 packagers/applicationarchive/target
 packagers/javaee/.classpath
 packagers/javaee/.project

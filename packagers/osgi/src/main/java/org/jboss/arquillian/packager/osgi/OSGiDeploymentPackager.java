@@ -17,11 +17,11 @@
 package org.jboss.arquillian.packager.osgi;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Collection;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeploymentPackager;
+import org.jboss.arquillian.spi.TestClass;
 import org.jboss.osgi.spi.util.BundleInfo;
 import org.jboss.osgi.vfs.AbstractVFS;
 import org.jboss.osgi.vfs.VirtualFile;
@@ -37,24 +37,28 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  */
 public class OSGiDeploymentPackager implements DeploymentPackager
 {
-   public Archive<?> generateDeployment(Archive<?> bundleArchive, Collection<Archive<?>> auxiliaryArchives)
+   @Override
+   public Archive<?> generateDeployment(Context context, Archive<?> bundleArchive, Collection<Archive<?>> auxiliaryArchives)
    {
       if(JavaArchive.class.isInstance(bundleArchive))
       {
-         return handleArchive(JavaArchive.class.cast(bundleArchive), auxiliaryArchives);
+         return handleArchive(context, (JavaArchive)bundleArchive, auxiliaryArchives);
       }
       
       throw new IllegalArgumentException(OSGiDeploymentPackager.class.getName()  + 
             " can not handle archive of type " +  bundleArchive.getClass().getName());
    }
 
-   private Archive<?> handleArchive(JavaArchive archive, Collection<Archive<?>> auxiliaryArchives) 
+   private Archive<?> handleArchive(Context context, JavaArchive archive, Collection<Archive<?>> auxiliaryArchives) 
    {
       try
       {
-         VirtualFile virtualFile = toVirtualFile(archive);
-         BundleInfo info = BundleInfo.createBundleInfo(virtualFile);
-         return new BundleArchive(archive, info);
+         TestClass testClass = context.get(TestClass.class);
+         //if (testClass == null)
+         //   throw new IllegalStateException("Cannot obtain TestClass");
+         
+         validateBundleArchive(archive);
+         return archive;
       }
       catch (RuntimeException rte)
       {
@@ -66,17 +70,25 @@ public class OSGiDeploymentPackager implements DeploymentPackager
       }
    }
 
-   private VirtualFile toVirtualFile(Archive<?> archive) throws IOException, MalformedURLException
+   private void validateBundleArchive(Archive<?> archive) throws Exception
    {
-      // [TODO] Can this be done in memory?
-      ZipExporter exporter = archive.as(ZipExporter.class);
       String archiveName = archive.getName();
       int dotIndex = archiveName.lastIndexOf(".");
       if (dotIndex > 0)
          archiveName = archiveName.substring(0, dotIndex);
+      
+      // [TODO] Can this be done in memory?
       File target = File.createTempFile(archiveName + "-", ".jar");
-      exporter.exportZip(target, true);
-      target.deleteOnExit();
-      return AbstractVFS.getRoot(target.toURI().toURL());
+      try
+      {
+         ZipExporter exporter = archive.as(ZipExporter.class);
+         exporter.exportZip(target, true);
+         VirtualFile virtualFile = AbstractVFS.getRoot(target.toURI().toURL());
+         BundleInfo.createBundleInfo(virtualFile);
+      }
+      finally
+      {
+         target.delete();
+      }
    }
 }

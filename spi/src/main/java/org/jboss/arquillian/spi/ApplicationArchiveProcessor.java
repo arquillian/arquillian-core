@@ -35,5 +35,5 @@ public interface ApplicationArchiveProcessor
     * @param applicationArchive The user defined deployment archive
     * @param testClass The users test class
     */
-   void process(Archive<?> applicationArchive, Class<?> testCaseClass);
+   void process(Archive<?> applicationArchive, TestClass testClass);
 }

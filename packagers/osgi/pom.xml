@@ -56,10 +56,15 @@
       <artifactId>shrinkwrap-spi</artifactId>
     </dependency>
 
-    <!-- External Projects -->
+    <!-- Test Dependencies -->
     <dependency>
       <groupId>org.jboss.osgi.vfs</groupId>
       <artifactId>jboss-osgi-vfs30</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

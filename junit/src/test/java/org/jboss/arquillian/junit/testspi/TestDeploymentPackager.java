@@ -18,6 +18,7 @@ package org.jboss.arquillian.junit.testspi;
 
 import java.util.Collection;
 
+import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -29,10 +30,8 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class TestDeploymentPackager implements DeploymentPackager
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.shrinkwrap.api.Archive, java.util.Collection)
-    */
-   public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
+   @Override
+   public Archive<?> generateDeployment(Context context, Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
    {
       return applicationArchive;
    }
