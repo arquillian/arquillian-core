@@ -42,7 +42,7 @@ public class OSGiDeploymentPackager implements DeploymentPackager
    {
       if(JavaArchive.class.isInstance(bundleArchive))
       {
-         return handleArchive(context, (JavaArchive)bundleArchive, auxiliaryArchives);
+         return handleArchive(context, JavaArchive.class.cast(bundleArchive), auxiliaryArchives);
       }
       
       throw new IllegalArgumentException(OSGiDeploymentPackager.class.getName()  + 
