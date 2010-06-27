@@ -72,8 +72,8 @@ public class ResourceInjectionEnricher implements TestEnricher
          {
             if(field.get(testCase) == null) // only try to lookup fields that are not already set
             {
-               Object ejb = lookup(getResourceName(field));
-               field.set(testCase, ejb);
+               Object resource = lookup(getResourceName(field));
+               field.set(testCase, resource);
             }
          }
          
