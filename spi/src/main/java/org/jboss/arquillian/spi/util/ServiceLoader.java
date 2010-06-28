@@ -187,7 +187,7 @@ public class ServiceLoader<S> implements Iterable<S>
                            }
                            catch (ClassCastException e)
                            {
-                              throw new IllegalStateException("Extension " + line + " does not implement Extension");
+                              throw new IllegalStateException("Service " + line + " does not implement expected type " + expectedType.getName());
                            }
                            Constructor<? extends S> constructor = serviceClass.getConstructor();
                            if(!constructor.isAccessible()) {
