@@ -17,6 +17,7 @@
 package org.jboss.arquillian.testenricher.cdi;
 
 import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.BeanManager;
@@ -34,9 +35,12 @@ import org.jboss.arquillian.spi.TestEnricher;
  */
 public class CDIInjectionEnricher implements TestEnricher 
 {
-   private static final String JNDI_BEAN_MANAGER = "java:comp/BeanManager";
-   private static final String JNDI_BEAN_MANAGER_JBOSS = "java:global/test/arquillian-protocol/BeanManager";
+   private static final String STANDARD_BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
+   private static final String SERVLET_BEAN_MANAGER_JNDI_NAME = "java:comp/env/BeanManager";
+   private static final String JBOSSAS_BEAN_MANAGER_JNDI_NAME = "java:global/test/arquillian-protocol/BeanManager";
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
+
+   private static final Logger log = Logger.getLogger(CDIInjectionEnricher.class.getName());
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
@@ -88,6 +92,11 @@ public class CDIInjectionEnricher implements TestEnricher
          if(beanManager != null) {
             injectNonContextualInstance(beanManager, testCase);            
          }
+         else
+         {
+            // Better would be to raise an exception if @Inject is present in class and BeanManager cannot be found
+            log.info("Skipping CDI injections. Either beans.xml is not present or the BeanManager could not be located in JNDI.");
+         }
       }
       catch (Exception e) 
       {
@@ -108,16 +117,22 @@ public class CDIInjectionEnricher implements TestEnricher
    {
       try 
       {
-         return (BeanManager)new InitialContext().lookup(JNDI_BEAN_MANAGER);   
+         return (BeanManager) new InitialContext().lookup(STANDARD_BEAN_MANAGER_JNDI_NAME);
       }
       catch (Exception e) 
       {
-         // TODO: hack until JBoss fix BeanManager binding 
+         try
+         {
+            return (BeanManager) new InitialContext().lookup(SERVLET_BEAN_MANAGER_JNDI_NAME);
+         }
+         catch (Exception se) {}
+
+         // TODO: hack until BeanManager binding fixed in JBoss AS
          try 
          {
-            return (BeanManager)new InitialContext().lookup(JNDI_BEAN_MANAGER_JBOSS);
+            return (BeanManager) new InitialContext().lookup(JBOSSAS_BEAN_MANAGER_JNDI_NAME);
          } 
-         catch (Exception e2) 
+         catch (Exception je)
          {
             return null;
          }
