@@ -22,7 +22,8 @@
 	<properties>
 
       	<!-- Versioning -->
-		<version.weld_core>1.0.1-SP1</version.weld_core>
+		<!--<version.weld_core>1.0.1-SP1</version.weld_core>
+		--><version.weld_core>1.0.2-SNAPSHOT</version.weld_core>
 		<version.org.apache.openejb_openejb.core>3.1.2</version.org.apache.openejb_openejb.core>
 		<version.openwebbeans>1.0.0-M4</version.openwebbeans>
 		<version.jboss_60>6.0.0.20100429-M3</version.jboss_60>
@@ -63,11 +64,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>weld-embedded</id>
+			<id>weld-se-embedded</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-weld-embedded</artifactId>
+					<artifactId>arquillian-weld-se-embedded-1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -126,11 +127,99 @@
 			</build>
 		</profile>
 		<profile>
+			<id>weld-ee-embedded</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.container</groupId>
+					<artifactId>arquillian-weld-ee-embedded</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<!--
+						Need on all profiles except Glassfish to compile, api is not 100%
+						up to date with final spec
+					-->
+					<groupId>org.jboss.ejb3</groupId>
+					<artifactId>jboss-ejb3-api</artifactId>
+					<version>3.1.0</version>
+				</dependency>
+				<!-- org.jboss.weld -->
+				<dependency>
+					<groupId>org.jboss.weld</groupId>
+					<artifactId>weld-core</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.weld</groupId>
+					<artifactId>weld-api</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>javax.el</groupId>
+					<artifactId>el-api</artifactId>
+					<version>2.2</version>
+				</dependency>
+				<dependency>
+					<groupId>javax.transaction</groupId>
+					<artifactId>jta</artifactId>
+					<version>1.1</version>
+					<scope>provided</scope>
+				</dependency>
+		
+				<dependency>
+					<groupId>javax.persistence</groupId>
+					<artifactId>persistence-api</artifactId>
+					<version>1.0</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+					<version>1.0.0.GA</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.spec.javax.servlet</groupId>
+					<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+					<version>1.0.0.Beta2</version>
+					<scope>provided</scope>
+				</dependency>
+				
+			</dependencies>
+			<dependencyManagement>
+				<dependencies>
+					<!-- org.jboss.weld -->
+					<dependency>
+						<groupId>org.jboss.weld</groupId>
+						<artifactId>weld-core-bom</artifactId>
+						<version>${version.weld_core}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>com/acme/cdi/conversation/*TestCase*</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>openwebbeans-embedded</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-openwebbeans-embedded</artifactId>
+					<artifactId>arquillian-openwebbeans-embedded-1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -206,11 +295,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-embedded-60</id>
+			<id>jbossas-embedded-6</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-embedded-60</artifactId>
+					<artifactId>arquillian-jbossas-embedded-6</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -299,11 +388,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-remote-50</id>
+			<id>jbossas-remote-5</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-remote-50</artifactId>
+					<artifactId>arquillian-jbossas-remote-5</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -348,7 +437,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-remote-51</artifactId>
+					<artifactId>arquillian-jbossas-remote-5.1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -389,11 +478,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-remote-60</id>
+			<id>jbossas-remote-6</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-remote-60</artifactId>
+					<artifactId>arquillian-jbossas-remote-6</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -432,11 +521,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>glassfish-embedded-30</id>
+			<id>glassfish-embedded-3</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-glassfish-embedded-30</artifactId>
+					<artifactId>arquillian-glassfish-embedded-3</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -465,11 +554,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>openejb</id>
+			<id>openejb-embedded</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-openejb</artifactId>
+					<artifactId>arquillian-openejb-embedded-3.1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>

@@ -65,11 +65,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>weld-embedded</id>
+			<id>weld-se-embedded</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-weld-embedded</artifactId>
+					<artifactId>arquillian-weld-se-embedded-1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -132,7 +132,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-openwebbeans-embedded</artifactId>
+					<artifactId>arquillian-openwebbeans-embedded-1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -207,11 +207,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-embedded-60</id>
+			<id>jbossas-embedded-6</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-embedded-60</artifactId>
+					<artifactId>arquillian-jbossas-embedded-6</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -306,11 +306,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-remote-50</id>
+			<id>jbossas-remote-5</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-remote-50</artifactId>
+					<artifactId>arquillian-jbossas-remote-5</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -355,7 +355,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-remote-51</artifactId>
+					<artifactId>arquillian-jbossas-remote-5.1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -396,11 +396,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-remote-60</id>
+			<id>jbossas-remote-6</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-jbossas-remote-60</artifactId>
+					<artifactId>arquillian-jbossas-remote-6</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -440,11 +440,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>glassfish-embedded-30</id>
+			<id>glassfish-embedded-3</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-glassfish-embedded-30</artifactId>
+					<artifactId>arquillian-glassfish-embedded-3</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -470,11 +470,11 @@
 			</build>
 		</profile>
 		<profile>
-			<id>openejb</id>
+			<id>openejb-embedded</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-openejb</artifactId>
+					<artifactId>arquillian-openejb-embedded-3.1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
