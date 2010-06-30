@@ -11,7 +11,8 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-local-60.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-embedded-60.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_reloaded.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-embedded-30.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-remote-3.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-embedded-3.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_weld-embedded.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openwebbeans-embedded.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openejb-embedded.xml" />

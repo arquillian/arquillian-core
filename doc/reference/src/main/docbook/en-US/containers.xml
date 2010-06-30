@@ -134,10 +134,16 @@
                  <entry>arquillian-reloaded</entry>
                </row>
                <row>
-                 <entry><link linkend="container.glassfish-embedded30">GlassFish Embedded 3.0</link></entry>
+                 <entry><link linkend="container.glassfish-remote-3">GlassFish Remote 3</link></entry>
+                 <entry>remote</entry>
+                 <entry>Java EE 6</entry>
+                 <entry>arquillian-glassfish-remote-3</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.glassfish-embedded-3">GlassFish Embedded 3</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-glassfish-embedded-30</entry>
+                 <entry>arquillian-glassfish-embedded-3</entry>
                </row>
                <row>
                  <entry><link linkend="container.weld-embedded">Weld SE</link></entry>
