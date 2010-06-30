@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.tomcat-embedded-6">
+
+	<title>Tomcat Embedded 6</title>
+
+	<para id="container.tomcat-embedded-6.description">
+      A DeployableContainer implementation that can run and connect to a
+      embedded (same JVM) Tomcat 6 Servlet Container. Only select EE APIs are
+      available, such as JNDI and Servlet 2.5. This implementation has
+      lifecycle support, so the container will be started and stopped as part
+      of the test run.
+	</para>
+
+	<table id="container.tomcat-embedded-6.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="6">
+			<colspec colnum="1" colname="resource" colwidth="1*" />
+			<colspec colnum="2" colname="ejb" colwidth="1*" />
+			<colspec colnum="3" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="4" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="5" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="6" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@Resource</entry>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (CDI)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+               </entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+	
+	<warning>
+     CDI support requires use of Weld Servlet.
+	</warning>
+
+	<warning>
+     In-container testing requires manually adding the Arquillian Protocol Servlet to the test
+     archive's web.xml. See the in-container test in the Tomcat Embedded 6 container source
+     for an example.
+	</warning>
+
+	<section id="container.tomcat-embedded-6.configuration">
+		<title>Configuration</title>
+
+		<para>
+			Namespace: urn:arq:org.jboss.arquillian.tomcat.embedded_6
+		</para>
+		<table frame="all">
+			<title>Container Configuration Options</title>
+			<tgroup cols="4">
+				<colspec colnum="1" colname="name" colwidth="2*" />
+				<colspec colnum="2" colname="type" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="3*" />
+				<colspec colnum="4" colname="description" colwidth="4*" />
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>bindHttpPort</entry>
+						<entry>int</entry>
+						<entry>9090</entry>
+						<entry>The HTTP port the server should bind to.</entry>
+					</row>
+					<row>
+						<entry>bindAddress</entry>
+						<entry>String</entry>
+						<entry>localhost</entry>
+						<entry>The host the server should be run on.</entry>
+					</row>
+					<row>
+						<entry>tomcatHome</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>Optional location of a Tomcat installation to link against.</entry>
+					</row>
+					<row>
+						<entry>serverName</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>Optional name of the server</entry>
+					</row>
+					<row>
+						<entry>appBase</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>Optional relative or absolute path to the directory where applications are deployed (e.g., webapps).</entry>
+					</row>
+					<row>
+						<entry>workDir</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>Optional relative or absolute path to the directory where applications are expanded and session serialization data is stored (e.g., work).</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<para>Example of Maven profile setup</para>
+
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>tomcat-embedded</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-tomcat-embedded-6</artifactId>
+			<version>1.0.0.Alpha3</version>
+         <scope>test</scope>
+		</dependency>
+      <dependency>
+         <groupId>org.apache.tomcat</groupId>
+         <artifactId>catalina</artifactId>
+         <version>6.0.26</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.tomcat</groupId>
+         <artifactId>coyote</artifactId>
+         <version>6.0.26</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.tomcat</groupId>
+         <artifactId>jasper</artifactId>
+         <version>6.0.26</version>
+         <scope>provided</scope>
+      </dependency>
+      <!-- Weld servlet, EL and JSP required for testing CDI injections -->
+      <dependency>
+         <groupId>org.jboss.weld.servlet</groupId>
+         <artifactId>weld-servlet</artifactId>
+         <version>1.0.1-Final</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.glassfish.web</groupId>
+         <artifactId>el-impl</artifactId>
+         <version>2.2</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet.jsp</groupId>
+         <artifactId>jsp-api</artifactId>
+         <version>2.2</version>
+         <scope>test</scope>
+      </dependency>
+	</dependencies>
+</profile>]]></programlisting>
+</section>

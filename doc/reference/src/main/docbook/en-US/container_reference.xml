@@ -16,5 +16,8 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_weld-embedded.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openwebbeans-embedded.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openejb-embedded.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jetty-embedded-6_1.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jetty-embedded-7.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_tomcat-embedded-6.xml" />
  
 </chapter>

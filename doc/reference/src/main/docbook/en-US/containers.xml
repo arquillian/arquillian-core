@@ -163,13 +163,31 @@
                  <entry>EJB 3.0</entry>
                  <entry>arquillian-openejb</entry>
                </row>
+               <row>
+                 <entry><link linkend="container.jetty-embedded-6_1">Jetty Embedded 6.1</link></entry>
+                 <entry>embedded</entry>
+                 <entry>Servlet 2.5</entry>
+                 <entry>arquillian-jetty-embedded-6.1</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.jetty-embedded-7">Jetty Embedded 7</link></entry>
+                 <entry>embedded</entry>
+                 <entry>Servlet ~3.0</entry>
+                 <entry>arquillian-jetty-embedded-7</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.tomcat-embedded-6">Tomcat Embedded 6</link></entry>
+                 <entry>embedded</entry>
+                 <entry>Servlet 2.5</entry>
+                 <entry>arquillian-tomcat-embedded-6</entry>
+               </row>
             </tbody>
          </tgroup>
       </table>
 
       <para>
-         Support for other containers is planned, including GlassFish V3(remote), Weblogic(remote), OSGI, 
-         Tomcat, Jetty, Hibernate and JBoss JCA Embedded. 
+         Support for other containers is planned, including Weblogic (remote), WebSphere (remote), Hibernate and JBoss
+         JCA Embedded.
       </para>
 
    </section>
