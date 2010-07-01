@@ -2,18 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.openejb-embedded">
+<section id="container.weld-se-embedded-1">
 
-	<title>Apache OpenEJB - Embedded</title>
+	<title>Weld SE 1.0 - Embedded</title>
 
-	<para id="container.openejb-embedded.description">
+	<para id="container.weld-se-embedded-1.description">
 		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
-		Apache OpenEJB instance. EJB 3.0 APIs are available, but no JMS.
+		Weld(CDI reference implementation) SE edition. No EE APIs are available.
 		This implementation has lifecycle support, so the container will be started and stopped as part of
 		the test run.   
 	</para>
 
-	<table id="container.openejb-embedded.injection" frame="all">
+	<table id="container.weld-se-embedded-1.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -40,30 +40,64 @@
 							</imageobject>
 						</mediaobject>
 					</entry>
-					<entry></entry>
-					<entry></entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
 					<entry></entry>
 					<entry></entry>
 				</row>
 			</tbody>
 		</tgroup>
 	</table>
+	
+	<warning>
+		Local EJBs only, which get treated as managed beans. Transactions, security and EJB context injection are not applied.
+	</warning>
 
-	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>openejb</id>
+	<id>weld-se-embedded-1</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-openejb</artifactId>
-			<version>1.0.0.Alpha2</version>
+			<artifactId>arquillian-weld-se-embedded-1</artifactId>
+			<version>1.0.0.Alpha3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.openejb</groupId>
-			<artifactId>openejb-core</artifactId>
-			<version>3.1.2</version>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.weld</groupId>
+				<artifactId>weld-core-bom</artifactId>
+				<version>1.0.1-SP1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </profile>]]></programlisting>
-
 </section>

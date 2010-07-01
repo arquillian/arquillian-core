@@ -4,7 +4,7 @@
 
 <section id="container.jetty-embedded-6_1">
 
-	<title>Jetty Embedded 6.1</title>
+	<title>Jetty 6.1 - Embedded</title>
 
 	<para id="container.jetty-embedded-6_1.description">
       A DeployableContainer implementation that can run and connect to a

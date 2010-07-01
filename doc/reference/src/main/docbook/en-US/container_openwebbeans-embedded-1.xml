@@ -2,18 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.openwebbeans-embedded">
+<section id="container.openwebbeans-embedded-1">
 
-	<title>Apache OpenWebBeans - Embedded</title>
+	<title>Apache OpenWebBeans 1.0 - Embedded</title>
 
-	<para id="container.openwebbeans-embedded.description">
+	<para id="container.openwebbeans-embedded-1.description">
 		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
 		WeldApache OpenWebBeans(CDI) instance. No EE APIs are available.
 		This implementation has lifecycle support, so the container will be started and stopped as part of
 		the test run.   
 	</para>
 
-	<table id="container.openwebbeans-embedded.injection" frame="all">
+	<table id="container.openwebbeans-embedded-1.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -69,12 +69,12 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>openwebbeans-embedded</id>
+	<id>openwebbeans-embedded-1</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-openwebbeans-embedded</artifactId>
-			<version>1.0.0.Alpha2</version>
+			<artifactId>arquillian-openwebbeans-embedded-1</artifactId>
+			<version>1.0.0.Alpha3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.openwebbeans</groupId>

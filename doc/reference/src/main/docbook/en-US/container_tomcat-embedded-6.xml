@@ -4,7 +4,7 @@
 
 <section id="container.tomcat-embedded-6">
 
-	<title>Tomcat Embedded 6</title>
+	<title>Tomcat 6.0 - Embedded</title>
 
 	<para id="container.tomcat-embedded-6.description">
       A DeployableContainer implementation that can run and connect to a

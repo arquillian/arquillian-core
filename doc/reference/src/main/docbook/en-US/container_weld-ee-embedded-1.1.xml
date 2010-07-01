@@ -2,18 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.weld-embedded">
+<section id="container.weld-ee-embedded-11">
 
-	<title>Weld SE - Embedded</title>
+	<title>Weld EE 1.1 - Embedded</title>
 
-	<para id="container.weld-embedded.description">
+	<para id="container.weld-ee-embedded-11.description">
 		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
-		Weld(CDI reference implementation) SE edition. No EE APIs are available.
+		Weld(CDI reference implementation) EE version. Mock EE APIs are available.
 		This implementation has lifecycle support, so the container will be started and stopped as part of
 		the test run.   
 	</para>
 
-	<table id="container.weld-embedded.injection" frame="all">
+	<table id="container.weld-ee-embedded-11.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -68,12 +68,12 @@
 	</warning>
 
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>weld-embedded</id>
+	<id>weld-ee-embedded-1.1</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-weld-embedded</artifactId>
-			<version>1.0.0.Alpha2</version>
+			<artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+			<version>1.0.0.Alpha3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld</groupId>

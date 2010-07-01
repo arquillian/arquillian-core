@@ -29,7 +29,7 @@
       </para>
 
       <programlisting role="XML"><![CDATA[<properties>
-   <arquillian.version>1.0.0.Alpha2</arquillian.version>
+   <arquillian.version>1.0.0.Alpha3</arquillian.version>
 </properties>]]></programlisting>
 
       <para>
@@ -288,11 +288,11 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
 
       <programlisting role="XML"><![CDATA[<profiles>
    <profile>
-      <id>jbossas-remote-60</id>
+      <id>jbossas-remote-6</id>
       <dependencies>
          <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-jbossas-remote-60</artifactId>
+            <artifactId>arquillian-jbossas-remote-6</artifactId>
             <version>${arquillian.version}</version>
          </dependency>
       </dependencies>
@@ -306,10 +306,10 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
 
       <para>
          All that's left is to execute the tests. In Maven, that's easy. Simply run the Maven test goal with the
-         <literal>jbossas-remote-60</literal> profile activated:
+         <literal>jbossas-remote-6</literal> profile activated:
       </para>
 
-      <programlisting><![CDATA[mvn test -Pjbossas-remote-60]]></programlisting>
+      <programlisting><![CDATA[mvn test -Pjbossas-remote-6]]></programlisting>
 
       <para>
         You should see that the two tests pass.

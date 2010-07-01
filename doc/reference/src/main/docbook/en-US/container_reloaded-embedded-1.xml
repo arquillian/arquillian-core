@@ -2,18 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.reloaded">
+<section id="container.reloaded-embedded-1">
 
-	<title>JBoss Reloaded - Embedded</title>
+	<title>JBoss Reloaded 1.0 - Embedded</title>
 
-	<para id="container.reloaded.description">
+	<para id="container.reloaded-embedded-1.description">
 		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
 		JBoss Reloaded(MicroContainer + VirtualDeploymentFramework) instance. 
 		This implementation has lifecycle support, so the container will be started and stopped as part of
 		the test run. 	
 	</para>
 
-	<table id="container.reloaded.injection" frame="all">
+	<table id="container.reloaded-embedded-1.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />

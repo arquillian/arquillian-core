@@ -2,19 +2,19 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.jbossas-remote-51">
+<section id="container.jbossas-remote-5">
 
-	<title>JBoss AS 5.1 - Remote</title>
+	<title>JBoss AS 5 - Remote</title>
 
-	<para id="container.jbossas-remote-51.description">
+	<para id="container.jbossas-remote-5.description">
 		A DeployableContainer implementation that can connect and run against a remote(different JVM, different machine) running 
-		JBoss AS 5.1 instance. 
+		JBoss AS 5 instance. 
 		This implementation has no lifecycle support, so it can not be started or stopped. 
 	</para>
 
 	<warning>This container needs a jndi.properties file on classpath to be able to connect to the remote running instance.</warning>
 
-	<table id="container.jbossas-remote-51.injection" frame="all">
+	<table id="container.jbossas-remote-5.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -50,11 +50,11 @@
 		</tgroup>
 	</table>
 
-	<section id="container.jbossas-remote-51.configuration">
+	<section id="container.jbossas-remote-5.configuration">
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.jbossas.remote51
+			Namespace: urn:arq:org.jboss.arquillian.container.jbossas.remote_5
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
@@ -109,17 +109,17 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>jbossas-remote-51</id>
+	<id>jbossas-remote-5</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-jbossas-remote-51</artifactId>
-			<version>1.0.0.Alpha2</version>
+			<artifactId>arquillian-jbossas-remote-5</artifactId>
+			<version>1.0.0.Alpha3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-client</artifactId>
-			<version>5.1.0.GA</version>
+			<version>5.0.1.GA</version>
 			<type>pom</type>
 		</dependency>
 	</dependencies>

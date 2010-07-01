@@ -2,19 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.jbossas-remote-60">
+<section id="container.jbossas-managed-51">
 
-	<title>JBoss AS 6.0 - Remote</title>
+	<title>JBoss AS 5.1 - Managed</title>
 
-	<para id="container.jbossas-remote-60.description">
-		A DeployableContainer implementation that can connect and run against a remote(different JVM, different machine) running 
-		JBoss AS 6.0 instance. 
-		This implementation has no lifecycle support, so it can not be started or stopped. 
+	<para id="container.jbossas-managed-51.description">
+		A DeployableContainer implementation that can run and connect to a remote(different JVM, same machine) 
+		JBoss AS 5.1 instance. 
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run. 
 	</para>
 
-	<warning>This container needs a jndi.properties file on classpath to be able to connect to the remote running instance.</warning>
-
-	<table id="container.jbossas-remote-60.injection" frame="all">
+	<table id="container.jbossas-managed-51.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -41,22 +40,8 @@
 							</imageobject>
 						</mediaobject>
 					</entry>
-					<entry>
-						<mediaobject>
-							<imageobject>
-								<imagedata fileref="images/fact_good.png" format="PNG"
-									align="center" scalefit="0" />
-							</imageobject>
-						</mediaobject>
-					</entry>
-					<entry>
-						<mediaobject>
-							<imageobject>
-								<imagedata fileref="images/fact_good.png" format="PNG"
-									align="center" scalefit="0" />
-							</imageobject>
-						</mediaobject>
-					</entry>
+					<entry></entry>
+					<entry></entry>
 					<entry></entry>
 					<entry></entry>
 				</row>
@@ -64,18 +49,18 @@
 		</tgroup>
 	</table>
 
-	<section id="container.jbossas-remote-60.configuration">
+	<section id="container.jbossas-managed-51.configuration">
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.jbossas.remote60
+			Namespace: urn:arq:org.jboss.arquillian.container.jbossas.managed_5_1
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
 			<tgroup cols="4">
-				<colspec colnum="1" colname="name" colwidth="4*" />
+				<colspec colnum="1" colname="name" colwidth="2*" />
 				<colspec colnum="2" colname="type" colwidth="1*" />
-				<colspec colnum="3" colname="default" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="3*" />
 				<colspec colnum="4" colname="description" colwidth="4*" />
 				<thead>
 					<row>
@@ -93,28 +78,28 @@
 						<entry>ProfileService profileKey. Used to load the correct profile into the DeploymentManager.</entry>
 					</row>
 					<row>
-						<entry>remoteServerAddress</entry>
+						<entry>bindAddress</entry>
 						<entry>String</entry>
 						<entry>localhost</entry>
-						<entry>Used by Servlet Protocol to connect to the remote server.</entry>
+						<entry>The Address the server should bind to.</entry>
 					</row>
 					<row>
-						<entry>remoteServerHttpPort</entry>
+						<entry>httpPort</entry>
 						<entry>int</entry>
 						<entry>8080</entry>
-						<entry>Used by Servlet Protocol to connect to the remote server.</entry>
+						<entry>Used by Servlet Protocol to connect to the server.</entry>
 					</row>
 					<row>
-						<entry>localDeploymentBindAddress</entry>
+						<entry>jbossHome</entry>
 						<entry>String</entry>
-						<entry>localhost</entry>
-						<entry>Bind Address for the HTTP server serving deployments to the remote server. Address must be reachable from remote server.</entry>
+						<entry>$JBOSS_HOME</entry>
+						<entry>The JBoss configuration to start.</entry>
 					</row>
 					<row>
-						<entry>localDeploymentBindPort</entry>
-						<entry>int</entry>
-						<entry>9999</entry>
-						<entry>Bind Port for the HTTP server serving deployments to the remote server. Port must be reachable from remote server.</entry>
+						<entry>javaHome</entry>
+						<entry>String</entry>
+						<entry>$JAVA_HOME</entry>
+						<entry>The Java runtime to use to start the server.</entry>
 					</row>
 				</tbody>
 			</tgroup>
@@ -123,17 +108,22 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>jbossas-remote-60</id>
+	<id>jbossas-managed-5.1</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-jbossas-remote-60</artifactId>
-			<version>1.0.0.Alpha2</version>
+			<artifactId>arquillian-jbossas-managed-5.1</artifactId>
+			<version>1.0.0.Alpha3</version>
 		</dependency>
+        <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-server-manager</artifactId>
+            <version>1.0.3.GA</version>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-client</artifactId>
-			<version>6.0.0.20100429-M3</version>
+			<version>5.1.0.GA</version>
 			<type>pom</type>
 		</dependency>
 	</dependencies>

@@ -4,13 +4,13 @@
 
 <section id="container.glassfish-embedded-3">
 
-	<title>GlassFish 3 - Embedded</title>
+	<title>GlassFish 3.0 - Embedded</title>
 
 	<para id="container.glassfish-embedded-3.description">
-      A DeployableContainer implementation that can run and connect to a
-      embedded (same JVM) GlassFish 3 instance.  This implementation has
-      lifecycle support, so the container will be started and stopped as part
-      of the test run. 
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		GlassFish 3.0 instance. 
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run. 
 	</para>
 
 	<table id="container.glassfish-embedded-3.injection" frame="all">
@@ -57,14 +57,7 @@
 						</mediaobject>
 					</entry>
 					<entry></entry>
-					<entry>
-						<mediaobject>
-							<imageobject>
-								<imagedata fileref="images/fact_good.png" format="PNG"
-									align="center" scalefit="0" />
-							</imageobject>
-						</mediaobject>
-               </entry>
+					<entry></entry>
 				</row>
 			</tbody>
 		</tgroup>
@@ -74,7 +67,7 @@
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.glassfish.embedded_3
+			Namespace: urn:arq:org.jboss.arquillian.container.glassfish.embedded_3
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
@@ -114,7 +107,7 @@
 						<entry>sunResourcesXml</entry>
 						<entry>String</entry>
 						<entry></entry>
-						<entry>The relative or absolute path to the sun-resources.xml file that will be used to add resources to the instance using the asadmin add-resources command.</entry>
+						<entry>The relative or absolute path to the sun-resources.xml file that will be used to add resources to the instance using the add-resources asadmin command.</entry>
 					</row>
 					<row>
 						<entry>autoDelete</entry>
@@ -139,7 +132,7 @@
 		<dependency>
 			<groupId>org.glassfish.extras</groupId>
 			<artifactId>glassfish-embedded-all</artifactId>
-			<version>3.0.1-b19</version>
+			<version>3.0.1-b02</version>
 		</dependency>
 	</dependencies>
 </profile>]]></programlisting>

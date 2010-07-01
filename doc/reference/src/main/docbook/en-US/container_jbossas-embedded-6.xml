@@ -2,18 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.jbossas-embedded-60">
+<section id="container.jbossas-embedded-6">
 
-	<title>JBoss Embedded AS 6.0 - Embedded</title>
+	<title>JBoss AS 6.0 - Embedded</title>
 
-	<para id="container.jbossas-embedded-60.description">
+	<para id="container.jbossas-embedded-6.description">
 		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
 		JBoss AS 6.0 instance. 
 		This implementation has lifecycle support, so the container will be started and stopped as part of
 		the test run. 
 	</para>
 
-	<table id="container.jbossas-embedded-60.injection" frame="all">
+	<table id="container.jbossas-embedded-6.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -63,19 +63,19 @@
 		</tgroup>
 	</table>
 
-	<section id="container.jbossas-embedded-60.configuration">
+	<section id="container.jbossas-embedded-6.configuration">
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.jbossas.embedded60
+			Namespace: urn:arq:org.jboss.arquillian.container.jbossas.embedded_6
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
 			<tgroup cols="4">
-				<colspec colnum="1" colname="name" colwidth="4*" />
+				<colspec colnum="1" colname="name" colwidth="3*" />
 				<colspec colnum="2" colname="type" colwidth="1*" />
 				<colspec colnum="3" colname="default" colwidth="1*" />
-				<colspec colnum="4" colname="description" colwidth="4*" />
+				<colspec colnum="4" colname="description" colwidth="5*" />
 				<thead>
 					<row>
 						<entry>Name</entry>
@@ -110,12 +110,12 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>jbossas-embedded-60</id>
+	<id>jbossas-embedded-6</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-jbossas-embedded-60</artifactId>
-			<version>${project.version}</version>
+			<artifactId>arquillian-jbossas-embedded-6</artifactId>
+			<version>1.0.0.Alpha3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>

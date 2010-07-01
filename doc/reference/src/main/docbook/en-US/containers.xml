@@ -98,96 +98,107 @@
             </thead>
             <tbody>
                <row>
+                 <entry><link linkend="container.jbossas-remote-5">JBoss AS 5</link></entry>
+                 <entry>remote</entry>
+                 <entry>Java EE 5</entry>
+                 <entry>arquillian-jbossas-remote-5</entry>
+               </row>
+               <row>
                  <entry><link linkend="container.jbossas-remote-51">JBoss AS 5.1</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 5</entry>
-                 <entry>arquillian-jbossas-remote-51</entry>
+                 <entry>arquillian-jbossas-remote-5.1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-local-51">JBoss AS 5.1</link></entry>
-                 <entry>remote + lifecycle</entry>
+                 <entry><link linkend="container.jbossas-managed-51">JBoss AS 5.1</link></entry>
+                 <entry>managed</entry>
                  <entry>Java EE 5</entry>
-                 <entry>arquillian-jbossas-local-51</entry>
+                 <entry>arquillian-jbossas-managed-5.1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-remote-60">JBoss AS 6.0 M3</link></entry>
+                 <entry><link linkend="container.jbossas-remote-6">JBoss AS 6.0 M3</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-jbossas-remote-60</entry>
+                 <entry>arquillian-jbossas-remote-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-local-60">JBoss AS 6.0 M3</link></entry>
-                 <entry>remote + lifecycle</entry>
+                 <entry><link linkend="container.jbossas-managed-6">JBoss AS 6.0 M3</link></entry>
+                 <entry>managed</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-jbossas-local-60</entry>
+                 <entry>arquillian-jbossas-managed-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-embedded-60">JBoss Embedded AS 6.0 M3</link></entry>
+                 <entry><link linkend="container.jbossas-embedded-6">JBoss AS 6.0 M3</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-jbossas-embedded-60</entry>
+                 <entry>arquillian-jbossas-embedded-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.reloaded">JBoss Reloaded</link></entry>
+                 <entry><link linkend="container.reloaded-embedded-1">JBoss Reloaded 1.0</link></entry>
                  <entry>embedded</entry>
                  <entry>JBoss MC</entry>
-                 <entry>arquillian-reloaded</entry>
+                 <entry>arquillian-reloaded-embedded-1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.glassfish-remote-3">GlassFish Remote 3</link></entry>
+                 <entry><link linkend="container.glassfish-embedded-3">GlassFish 3.0</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-glassfish-remote-3</entry>
                </row>
                <row>
-                 <entry><link linkend="container.glassfish-embedded-3">GlassFish Embedded 3</link></entry>
+                 <entry><link linkend="container.glassfish-embedded-3">GlassFish 3.0</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-glassfish-embedded-3</entry>
                </row>
                <row>
-                 <entry><link linkend="container.weld-embedded">Weld SE</link></entry>
+                 <entry><link linkend="container.tomcat-embedded-6">Tomcat 6.0</link></entry>
                  <entry>embedded</entry>
-                 <entry>CDI</entry>
-                 <entry>arquillian-weld-embedded</entry>
+                 <entry>Servlet 2.5</entry>
+                 <entry>arquillian-tomcat-embedded-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.openwebbeans-embedded">Apache OpenWebBeans</link></entry>
-                 <entry>embedded</entry>
-                 <entry>CDI</entry>
-                 <entry>arquillian-openwebbeans-embedded</entry>
-               </row>
-               <row>
-                 <entry><link linkend="container.openejb-embedded">Apache OpenEJB</link></entry>
-                 <entry>embedded</entry>
-                 <entry>EJB 3.0</entry>
-                 <entry>arquillian-openejb</entry>
-               </row>
-               <row>
-                 <entry><link linkend="container.jetty-embedded-6_1">Jetty Embedded 6.1</link></entry>
+                 <entry><link linkend="container.tomcat-embedded-6">Jetty 6.1</link></entry>
                  <entry>embedded</entry>
                  <entry>Servlet 2.5</entry>
                  <entry>arquillian-jetty-embedded-6.1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jetty-embedded-7">Jetty Embedded 7</link></entry>
+                 <entry><link linkend="container.jetty-embedded-7">Jetty 7.0</link></entry>
                  <entry>embedded</entry>
                  <entry>Servlet ~3.0</entry>
                  <entry>arquillian-jetty-embedded-7</entry>
                </row>
                <row>
-                 <entry><link linkend="container.tomcat-embedded-6">Tomcat Embedded 6</link></entry>
+                 <entry><link linkend="container.weld-se-embedded-1">Weld SE 1.0</link></entry>
                  <entry>embedded</entry>
-                 <entry>Servlet 2.5</entry>
-                 <entry>arquillian-tomcat-embedded-6</entry>
+                 <entry>CDI</entry>
+                 <entry>arquillian-weld-se-embedded-1</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.weld-ee-embedded-11">Weld EE 1.1</link></entry>
+                 <entry>embedded</entry>
+                 <entry>CDI</entry>
+                 <entry>arquillian-weld-ee-embedded-1.1</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.openwebbeans-embedded">Apache OpenWebBeans 1.0</link></entry>
+                 <entry>embedded</entry>
+                 <entry>CDI</entry>
+                 <entry>arquillian-openwebbeans-embedded-1</entry>
+               </row>
+               <row>
+                 <entry><link linkend="container.openejb-embedded">Apache OpenEJB 3.1</link></entry>
+                 <entry>embedded</entry>
+                 <entry>EJB 3.0</entry>
+                 <entry>arquillian-openejb-embedded-3.1</entry>
                </row>
             </tbody>
          </tgroup>
       </table>
 
       <para>
-         Support for other containers is planned, including Weblogic (remote), WebSphere (remote), Hibernate and JBoss
-         JCA Embedded.
+         Support for other containers is planned, including Weblogic (remote), WebSphere (remote) and Hibernate.
       </para>
 
    </section>

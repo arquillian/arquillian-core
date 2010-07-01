@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.openejb-embedded-31">
+
+	<title>Apache OpenEJB 3.1 - Embedded</title>
+
+	<para id="container.openejb-embedded-31.description">
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		Apache OpenEJB instance. EJB 3.0 APIs are available, but no JMS.
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run.   
+	</para>
+
+	<table id="container.openejb-embedded-31.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="5">
+			<colspec colnum="1" colname="ejb" colwidth="1*" />
+			<colspec colnum="2" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="3" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="4" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="5" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (CDI)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+
+	<para>Example of Maven profile setup</para>
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>openejb-embedded-3.1</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-openejb-3.1</artifactId>
+			<version>1.0.0.Alpha3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.openejb</groupId>
+			<artifactId>openejb-core</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+	</dependencies>
+</profile>]]></programlisting>
+
+</section>
