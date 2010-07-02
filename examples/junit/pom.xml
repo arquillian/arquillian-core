@@ -118,7 +118,6 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<include>com/acme/cdi/payment/*</include>
 								<include>com/acme/cdi/random/*</include>
 							</includes>
 						</configuration>
@@ -131,7 +130,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
-					<artifactId>arquillian-weld-ee-embedded</artifactId>
+					<artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 				<dependency>
@@ -207,7 +206,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<include>com/acme/cdi/conversation/*TestCase*</include>
+								<include>com/acme/cdi/payment/*</include>
+								<include>com/acme/cdi/conversation/*</include>
 							</includes>
 						</configuration>
 					</plugin>

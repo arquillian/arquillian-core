@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.acme.cdi.payment;
+package com.acme.cdi.random;
+
+import javax.inject.Inject;
+
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * 
@@ -31,25 +34,24 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@RunWith(Arquillian.class)
-public class SynchronousPaymentProcessorTestCase 
-{
+public class RandomTestCase extends Arquillian {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
 		return ShrinkWrap.create("test.jar", JavaArchive.class)
 				.addPackage(
-						Synchronous.class.getPackage()
+						Random.class.getPackage()
 				)
 				.addManifestResource(
-						"com/acme/cdi/payment/beans.xml",
+						new ByteArrayAsset("<beans/>".getBytes()),
 						ArchivePaths.create("beans.xml"));
 	}
+
+	@Inject @Random int randomNumber;
 	
 	@Test
-	public void shouldBeReplacedByAMock(@Synchronous PaymentProcessor processor) throws Exception
+	public void shouldRun() throws Exception 
 	{
-       processor.process("");
-	   Assert.assertTrue(MockPaymentProcessor.HAS_BEEN_CALLED);
+	   Assert.assertTrue(randomNumber < 101);
 	}
 }
