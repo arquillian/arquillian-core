@@ -29,6 +29,7 @@ import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.logging.Logger;
 
 /**
  * JMXMethodExecutor
@@ -38,7 +39,8 @@ import org.jboss.arquillian.spi.TestResult.Status;
  */
 public class JMXMethodExecutor implements ContainerMethodExecutor
 {
-   private MBeanServer cachedMBeanServer;
+   // Provide logging
+   private static Logger log = Logger.getLogger(JMXMethodExecutor.class);
    
    @Override
    public TestResult invoke(TestMethodExecutor testMethodExecutor)
@@ -52,7 +54,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
       TestResult result = null;
       try 
       {
-         MBeanServer mbeanServer = getMBeanServer();
+         MBeanServer mbeanServer = findOrCreateMBeanServer();
          ObjectName objectName = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
          JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, objectName, JMXTestRunnerMBean.class);
 
@@ -75,21 +77,31 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
       return result;
    }
 
-   private MBeanServer getMBeanServer()
-   {
-      if (cachedMBeanServer == null)
-      {
-         ArrayList<MBeanServer> mbeanServers = MBeanServerFactory.findMBeanServer(null);
-         if (mbeanServers.size() < 1)
-            throw new IllegalStateException("No MBeanServer available");
-         
-         cachedMBeanServer = mbeanServers.get(0);
-      }
-      return cachedMBeanServer;
-   }
-
    private <T> T getMBeanProxy(MBeanServer mbeanServer, ObjectName name, Class<T> interf)
    {
       return (T)MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
+   }
+
+   private MBeanServer findOrCreateMBeanServer()
+   {
+      MBeanServer mbeanServer = null;
+
+      ArrayList<MBeanServer> serverArr = MBeanServerFactory.findMBeanServer(null);
+      if (serverArr.size() > 1)
+         log.warn("Multiple MBeanServer instances: " + serverArr);
+
+      if (serverArr.size() > 0)
+      {
+         mbeanServer = serverArr.get(0);
+         log.debug("Found MBeanServer: " + mbeanServer.getDefaultDomain());
+      }
+
+      if (mbeanServer == null)
+      {
+         log.debug("No MBeanServer, create one ...");
+         mbeanServer = MBeanServerFactory.createMBeanServer();
+      }
+
+      return mbeanServer;
    }
 }
