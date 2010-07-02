@@ -18,7 +18,6 @@ package org.jboss.arquillian.packager.applicationarchive;
 
 import java.util.Collection;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -31,10 +30,8 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class ApplicationArchiveDeploymentPackager implements DeploymentPackager
 {
-   @Override
-   public Archive<?> generateDeployment(Context context, Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
+   public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
    {
       return applicationArchive;
    }
-
 }

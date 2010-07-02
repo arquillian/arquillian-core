@@ -20,16 +20,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 
 /**
@@ -43,8 +42,7 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleJavaArchiveEE5Protocol() throws Exception
    {
-      Context context = Mockito.mock(Context.class);
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
             ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
             createAuxiliaryArchivesEE5());
       
@@ -68,8 +66,7 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleJavaArchiveEE6Protocol() throws Exception
    {
-      Context context = Mockito.mock(Context.class);
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
             ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
             createAuxiliaryArchivesEE6());
       
@@ -94,8 +91,7 @@ public class EEDeploymentPackagerTestCase
    @Test(expected = IllegalArgumentException.class)
    public void shouldHandleWebArchiveEE5Protocol() throws Exception
    {
-      Context context = Mockito.mock(Context.class);
-      new EEDeploymentPackager().generateDeployment(context,
+      new EEDeploymentPackager().generateDeployment(
             ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
             createAuxiliaryArchivesEE5());
       
@@ -104,8 +100,7 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleWebArchiveEE6Protocol() throws Exception
    {
-      Context context = Mockito.mock(Context.class);
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
             ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
             createAuxiliaryArchivesEE6());
       
@@ -125,8 +120,7 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleEnterpriseArchiveEE5Protocol() throws Exception
    {
-      Context context = Mockito.mock(Context.class);
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
             ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
             createAuxiliaryArchivesEE5());
 
@@ -143,8 +137,7 @@ public class EEDeploymentPackagerTestCase
    @Test
    public void shouldHandleEnterpriseArchiveEE6Protocol() throws Exception
    {
-      Context context = Mockito.mock(Context.class);
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(context,
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
             ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
             createAuxiliaryArchivesEE6());
       
@@ -155,6 +148,35 @@ public class EEDeploymentPackagerTestCase
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
             archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
+   }
+
+   @Test
+   public void shouldHandleEnterpriseArchiveEE6ProtocolWithExistingWAR() throws Exception
+   {
+      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
+            ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class)
+                        .addModule(ShrinkWrap.create("test.war", WebArchive.class)
+                                       .addClass(Test.class)), 
+            createAuxiliaryArchivesEE6());
+      
+      Assert.assertTrue(
+            "Verify that the applicationArchive still contains WebArchive in /",
+            archive.contains(ArchivePaths.create("test.war")));
+
+      Assert.assertTrue(
+            "Verify that the auxiliaryArchives are placed in /lib",
+            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
+
+      Archive<?> applicationArchive = ((ArchiveAsset)archive.get(ArchivePaths.create("test.war")).getAsset()).getArchive(); 
+      Assert.assertTrue(
+            "Verify that the auxiliaryArchive protocol is placed in applicationArchive WebArchive",
+            applicationArchive.contains(ArchivePaths.create("/WEB-INF/lib/arquillian-protocol.jar")));
+
+      Assert.assertTrue(
+            "Verify that the applicationArchive has not been overwritten",
+            applicationArchive.contains(ArchivePaths.create("/WEB-INF/classes/org/junit/Test.class")));
+
+      
    }
 
    private Collection<Archive<?>> createAuxiliaryArchivesEE6() 

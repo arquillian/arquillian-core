@@ -24,7 +24,6 @@ import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
 import org.jboss.arquillian.spi.ApplicationArchiveProcessor;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.AuxiliaryArchiveProcessor;
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.ServiceLoader;
@@ -50,20 +49,19 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
       this.serviceLoader = serviceLoader;
    }
    
-   @Override
-   public Archive<?> generate(Context context, TestClass testCase)
+   public Archive<?> generate(TestClass testCase)
    {
       Validate.notNull(testCase, "TestCase must be specified");
 
       DeploymentPackager packager = serviceLoader.onlyOne(DeploymentPackager.class);
 
-      Archive<?> archive = serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
-      applyApplicationProcessors(archive, testCase);
+      Archive<?> applicationArchive = serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
+      applyApplicationProcessors(applicationArchive, testCase);
       
       List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
       applyAuxiliaryProcessors(auxiliaryArchives);
 
-      return packager.generateDeployment(context, archive, auxiliaryArchives);
+      return packager.generateDeployment(applicationArchive, auxiliaryArchives);
    }
    
    private List<Archive<?>> loadAuxiliaryArchives() 

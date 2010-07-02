@@ -64,7 +64,7 @@ public class ArchiveGeneratorTestCase
       
       TestClass testClass = new TestClass(getClass());
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
-      Mockito.when(generator.generate(context, testClass)).thenAnswer(new Answer<Archive<?>>()
+      Mockito.when(generator.generate(testClass)).thenAnswer(new Answer<Archive<?>>()
       {
          public Archive<?> answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable {
             return deployment;

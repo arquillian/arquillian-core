@@ -19,9 +19,7 @@ package org.jboss.arquillian.packager.osgi;
 import java.io.File;
 import java.util.Collection;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.DeploymentPackager;
-import org.jboss.arquillian.spi.TestClass;
 import org.jboss.osgi.spi.util.BundleInfo;
 import org.jboss.osgi.vfs.AbstractVFS;
 import org.jboss.osgi.vfs.VirtualFile;
@@ -38,25 +36,21 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 public class OSGiDeploymentPackager implements DeploymentPackager
 {
    @Override
-   public Archive<?> generateDeployment(Context context, Archive<?> bundleArchive, Collection<Archive<?>> auxiliaryArchives)
+   public Archive<?> generateDeployment(Archive<?> bundleArchive, Collection<Archive<?>> auxiliaryArchives)
    {
       if(JavaArchive.class.isInstance(bundleArchive))
       {
-         return handleArchive(context, JavaArchive.class.cast(bundleArchive), auxiliaryArchives);
+         return handleArchive(JavaArchive.class.cast(bundleArchive), auxiliaryArchives);
       }
       
       throw new IllegalArgumentException(OSGiDeploymentPackager.class.getName()  + 
             " can not handle archive of type " +  bundleArchive.getClass().getName());
    }
 
-   private Archive<?> handleArchive(Context context, JavaArchive archive, Collection<Archive<?>> auxiliaryArchives) 
+   private Archive<?> handleArchive(JavaArchive archive, Collection<Archive<?>> auxiliaryArchives) 
    {
       try
       {
-         TestClass testClass = context.get(TestClass.class);
-         //if (testClass == null)
-         //   throw new IllegalStateException("Cannot obtain TestClass");
-         
          validateBundleArchive(archive);
          return archive;
       }

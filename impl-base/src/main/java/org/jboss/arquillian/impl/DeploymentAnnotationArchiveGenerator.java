@@ -33,12 +33,11 @@ import org.jboss.shrinkwrap.api.container.ClassContainer;
  */
 public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveGenerator 
 {
-   @Override
    public Archive<?> generateApplicationArchive(TestClass testCase)
    {
       Validate.notNull(testCase, "TestCase must be specified");
       
-      Method deploymentMethod = findDeploymentMethod(testCase);
+      Method deploymentMethod = testCase.getMethod(Deployment.class);
       if(deploymentMethod == null) 
       {
          throw new IllegalArgumentException("No method annotated with " + Deployment.class.getName() + " found");
@@ -78,18 +77,5 @@ public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveG
       {
          throw new RuntimeException("Could not get Deployment", e);
       }
-   }
-
-   private Method findDeploymentMethod(TestClass testClass) 
-   {
-      Method[] methods = testClass.getJavaClass().getMethods();
-      for(Method method: methods)
-      {
-         if(method.isAnnotationPresent(Deployment.class)) 
-         {
-            return method;
-         }
-      }
-      return null;
    }
 }

@@ -32,16 +32,9 @@ import org.jboss.shrinkwrap.api.Archive;
 public interface DeploymentPackager
 {
    /**
-    * Inspect, validate and optionally modify the user defined archive.
-    * 
-    * Additional archives can be added to the given list of auxiliaryArchives.
-    * The returned archive together with the auxiliaryArchives will get deployed 
-    * to the container.
-    * 
-    * @param context The test lifecycle context
-    * @param archive The user defined deployment archive
+    * @param applicationArchive The user defined deployment archive
     * @param auxiliaryArchives All found system defined deployment archives
     * @return A archive to deploy
     */
-   Archive<?> generateDeployment(Context context, Archive<?> archive, Collection<Archive<?>> auxiliaryArchives);
+   Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives);
 }

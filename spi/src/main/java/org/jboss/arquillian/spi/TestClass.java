@@ -17,6 +17,7 @@
 package org.jboss.arquillian.spi;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 
 /**
@@ -55,5 +56,18 @@ public class TestClass
    public <A extends Annotation> A getAnnotation(Class<A> annotation)
    {
       return testClass.getAnnotation(annotation);
+   }
+   
+   public Method getMethod(Class<? extends Annotation> annotation)
+   {
+      Method[] methods = testClass.getMethods();
+      for(Method method: methods)
+      {
+         if(method.isAnnotationPresent(annotation)) 
+         {
+            return method;
+         }
+      }
+      return null;
    }
 }
