@@ -433,7 +433,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jbossas-remote-51</id>
+			<id>jbossas-remote-5.1</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.jboss.arquillian.container</groupId>
@@ -514,6 +514,7 @@
 						<configuration>
 							<excludes>
 								<exclude>com/acme/cdi/*</exclude> <!-- Weld Deployer issue in M3 -->
+								<exclude>com/acme/cdi/conversation/*</exclude>
 							</excludes>
 						</configuration>
 					</plugin>
