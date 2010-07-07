@@ -4,7 +4,7 @@
 		xmlns:mock="urn:arq:org.jboss.arquillian.impl">
 
 	<engine>
-		<deploymentExportPath>/tmp</deploymentExportPath>
+		<deploymentExportPath>/tmp/</deploymentExportPath>
 	</engine>
 	
 	<mock:container>

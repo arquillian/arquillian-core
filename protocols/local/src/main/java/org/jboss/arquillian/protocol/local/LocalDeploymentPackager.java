@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.packager.applicationarchive;
-
-import java.util.Collection;
+package org.jboss.arquillian.protocol.local;
 
 import org.jboss.arquillian.spi.DeploymentPackager;
+import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * A packager that only returns the given ApplicationArchive. Used by containers
- * where no extra special packaging is required.
+ * LocalDeploymentPackager
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ApplicationArchiveDeploymentPackager implements DeploymentPackager
+public class LocalDeploymentPackager implements DeploymentPackager
 {
-   public Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
+    */
+   public Archive<?> generateDeployment(TestDeployment testDeployment)
    {
-      return applicationArchive;
+      return testDeployment.getApplicationArchive();
    }
 }

@@ -16,25 +16,22 @@
  */
 package org.jboss.arquillian.spi;
 
-import java.util.Collection;
-
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Extension point for the {@link DeployableContainer} to prepare the Archives for deployment.
+ * Extension point for the Protocol to prepare the Archives for deployment.
  * 
  * Example:
  * - Create a EAR, WAR
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public interface DeploymentPackager
 {
    /**
-    * @param applicationArchive The user defined deployment archive
-    * @param auxiliaryArchives All found system defined deployment archives
-    * @return A archive to deploy
+    * @param testDeployment Value object containing the application {@link Archive} and other auxiliary library {@link Archive}s. 
+    * @return The prepared archive for deployment.
     */
-   Archive<?> generateDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives);
+   Archive<?> generateDeployment(TestDeployment testDeployment);
 }

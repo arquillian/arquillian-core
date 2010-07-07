@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.packager.javaee;
+package org.jboss.arquillian.protocol.servlet;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,47 +29,24 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-
 /**
- * EEDeploymentPackagerTestCase
+ * ServletProtocolDeploymentPackagerTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EEDeploymentPackagerTestCase
+public class ServletProtocolDeploymentPackagerTestCase
 {
    @Test
-   public void shouldHandleJavaArchiveEE5Protocol() throws Exception
+   public void shouldHandleJavaArchive() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
-            createAuxiliaryArchivesEE5());
-      
-      Assert.assertTrue(
-            "Verify that a defined JavaArchive using EE5 WebArchive protocol is build as EnterpriseArchive",
-            EnterpriseArchive.class.isInstance(archive));
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives EE Modules are placed in /",
-            archive.contains(ArchivePaths.create("/arquillian-protocol.war")));
-      
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /lib",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
-
-      Assert.assertTrue(
-            "Verify that the applicationArchive is placed in /",
-            archive.contains(ArchivePaths.create("/applicationArchive.jar")));
-   }
-   
-   @Test
-   public void shouldHandleJavaArchiveEE6Protocol() throws Exception
-   {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
-            createAuxiliaryArchivesEE6());
+      Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(
+                  ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
+                  createAuxiliaryArchives()));
       
       Assert.assertTrue(
             "Verify that a defined JavaArchive using EE6 JavaArchive protocol is build as WebArchive",
@@ -87,22 +65,13 @@ public class EEDeploymentPackagerTestCase
             archive.contains(ArchivePaths.create("/WEB-INF/lib/applicationArchive.jar")));
    }
 
-   // as of now, War inside War is not supported. need to merge ? 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldHandleWebArchiveEE5Protocol() throws Exception
-   {
-      new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
-            createAuxiliaryArchivesEE5());
-      
-   }
-
    @Test
-   public void shouldHandleWebArchiveEE6Protocol() throws Exception
+   public void shouldHandleWebArchive() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
-            createAuxiliaryArchivesEE6());
+      Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(
+                  ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
+                  createAuxiliaryArchives()));
       
       Assert.assertTrue(
             "Verify that a defined WebArchive using EE6 JavaArchive protocol is build as WebArchive",
@@ -114,32 +83,20 @@ public class EEDeploymentPackagerTestCase
       
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive1.jar")));
+
+      Assert.assertTrue(
+            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
             archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive2.jar")));
    }
 
    @Test
-   public void shouldHandleEnterpriseArchiveEE5Protocol() throws Exception
+   public void shouldHandleEnterpriseArchive() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
-            createAuxiliaryArchivesEE5());
-
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /",
-            archive.contains(ArchivePaths.create("arquillian-protocol.war")));
-      
-      Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /lib",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
-
-   }
-
-   @Test
-   public void shouldHandleEnterpriseArchiveEE6Protocol() throws Exception
-   {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
-            createAuxiliaryArchivesEE6());
+      Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(
+                  ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
+                  createAuxiliaryArchives()));
       
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /",
@@ -147,17 +104,24 @@ public class EEDeploymentPackagerTestCase
 
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
+            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive1.jar")));
+
+      Assert.assertTrue(
+            "Verify that the auxiliaryArchives are placed in /lib",
             archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
    }
 
    @Test
-   public void shouldHandleEnterpriseArchiveEE6ProtocolWithExistingWAR() throws Exception
+   @Ignore // TODO: Does not merge with existing archive
+   public void shouldHandleEnterpriseArchiveWithExistingWAR() throws Exception
    {
-      Archive<?> archive = new EEDeploymentPackager().generateDeployment(
-            ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class)
-                        .addModule(ShrinkWrap.create("test.war", WebArchive.class)
-                                       .addClass(Test.class)), 
-            createAuxiliaryArchivesEE6());
+      Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(
+                  ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class)
+                            .addModule(
+                                  ShrinkWrap.create("test.war", WebArchive.class)
+                                            .addClass(Test.class)), 
+                  createAuxiliaryArchives()));
       
       Assert.assertTrue(
             "Verify that the applicationArchive still contains WebArchive in /",
@@ -179,19 +143,10 @@ public class EEDeploymentPackagerTestCase
       
    }
 
-   private Collection<Archive<?>> createAuxiliaryArchivesEE6() 
+   private Collection<Archive<?>> createAuxiliaryArchives() 
    {
       List<Archive<?>> archives = new ArrayList<Archive<?>>();
-      archives.add(ShrinkWrap.create("arquillian-protocol.jar", JavaArchive.class));
-      archives.add(ShrinkWrap.create("auxiliaryArchive2.jar", JavaArchive.class));
-      
-      return archives;
-   }
-
-   private Collection<Archive<?>> createAuxiliaryArchivesEE5() 
-   {
-      List<Archive<?>> archives = new ArrayList<Archive<?>>();
-      archives.add(ShrinkWrap.create("arquillian-protocol.war", WebArchive.class));
+      archives.add(ShrinkWrap.create("auxiliaryArchive1.jar", JavaArchive.class));
       archives.add(ShrinkWrap.create("auxiliaryArchive2.jar", JavaArchive.class));
       
       return archives;

@@ -67,7 +67,7 @@ public class XmlConfigurationBuilderTestCase
 
       Assert.assertEquals(
             "Should set properties on " + Configuration.class.getName(), 
-            "/tmp",
+            "/tmp/",
             configuration.getDeploymentExportPath());
       
       // retrieve the container configuration

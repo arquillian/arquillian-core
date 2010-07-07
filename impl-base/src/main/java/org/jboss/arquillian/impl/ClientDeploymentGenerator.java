@@ -25,6 +25,7 @@ import org.jboss.arquillian.spi.ApplicationArchiveProcessor;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.AuxiliaryArchiveProcessor;
 import org.jboss.arquillian.spi.DeployableContainer;
+import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestClass;
@@ -61,7 +62,7 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
       List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();
       applyAuxiliaryProcessors(auxiliaryArchives);
 
-      return packager.generateDeployment(applicationArchive, auxiliaryArchives);
+      return packager.generateDeployment(new TestDeployment(applicationArchive, auxiliaryArchives));
    }
    
    private List<Archive<?>> loadAuxiliaryArchives() 
