@@ -56,8 +56,7 @@
     <!-- Extensions -->
     <module>protocols</module>
     <module>testenrichers</module>
-    <module>packagers</module>
-    <module>bundle</module>
+<!--    <module>bundle</module>a -->
     <module>containers</module>
 
     <module>frameworks</module>
