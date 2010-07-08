@@ -42,7 +42,7 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
                            SecurityActions.class,
                            ServletTestRunner.class)
                      .addManifestResource(
-                           "org/jboss/arquillian/protocol/servlet/web-fragment.xml",
+                           "org/jboss/arquillian/protocol/servlet_3/web-fragment.xml",
                            "web-fragment.xml");
    }
 }
