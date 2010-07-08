@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet;
+package org.jboss.arquillian.protocol.servlet_3;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URL;
 
+import org.jboss.arquillian.protocol.servlet_3.ServletMethodExecutor;
+import org.jboss.arquillian.protocol.servlet_3.ServletTestRunner;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;

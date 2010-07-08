@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet;
+package org.jboss.arquillian.protocol.servlet_3;
 
+import org.jboss.arquillian.protocol.servlet_3.ProtocolDeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.junit.Assert;

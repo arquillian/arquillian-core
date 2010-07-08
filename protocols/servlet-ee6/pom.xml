@@ -15,9 +15,9 @@
 
    <!-- Artifact Configuration -->
    <groupId>org.jboss.arquillian.protocol</groupId>
-   <artifactId>arquillian-protocol-servlet-ee6</artifactId>
-   <name>Arquillian Protocol Servlet EE6</name>
-   <description>Protocol handler for communicating using a servlet / http. JavaArchive containing web-fragment.xml</description>
+   <artifactId>arquillian-protocol-servlet-3</artifactId>
+   <name>Arquillian Protocol Servlet 3.x</name>
+   <description>Protocol handler for communicating using a servlet / http following the Servlet 3.x spec.</description>
 
 
    <!-- Properties -->
