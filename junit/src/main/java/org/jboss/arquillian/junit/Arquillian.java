@@ -25,7 +25,6 @@ import java.util.List;
 import org.jboss.arquillian.impl.DeployableTestBuilder;
 import org.jboss.arquillian.impl.XmlConfigurationBuilder;
 import org.jboss.arquillian.spi.Configuration;
-import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
@@ -54,6 +53,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
     * Exception back to the client so the client side can throw it again. This to avoid a incontainer working but failing
     * on client side due to no Exception thrown. 
     */
+   // Cleaned up in JUnitTestRunner
    public static ThreadLocal<Throwable> caughtTestException = new ThreadLocal<Throwable>();
 
    /*
@@ -85,21 +85,6 @@ public class Arquillian extends BlockJUnit4ClassRunner
             throw new InitializationError(Arrays.asList((Throwable)e));
          }
       }
-      /* @HACK
-       *  If in-container, the Thread will be reused between multiple TestRuns.
-       *  We need to call BeginSuite before everyone. But only once if not. 
-       */
-      else if(ContainerProfile.CONTAINER == DeployableTestBuilder.getProfile())
-      {
-         try 
-         {
-            deployableTest.get().beforeSuite();
-         }
-         catch (Exception e) 
-         {
-            throw new InitializationError(Arrays.asList((Throwable)e));
-         }
-      }
    }
    
    @Override
@@ -117,6 +102,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                {
                   deployableTest.get().afterSuite();
                   lastCreatedRunner.set(null);
+                  deployableTest.set(null);
                }
             } 
             catch (Exception e) 

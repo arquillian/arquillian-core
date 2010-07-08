@@ -110,6 +110,7 @@ public class JUnitTestRunner implements TestRunner
          if (test != null && test.expected() != Test.None.class)
          {
             exception = Arquillian.caughtTestException.get();
+            Arquillian.caughtTestException.set(null);
          }
       }
    }
