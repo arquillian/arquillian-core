@@ -14,34 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet;
+package org.jboss.arquillian.protocol.servlet_2_5;
 
-import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.TestRunner;
 
 /**
- * ProtocolDeploymentAppender
+ * MockTestRunner
  * 
- * DeploymentAppender to add required resources for the protocol servlet to run  
- * in container.
+ * TestRunner that will return what you want for testing
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
+public class MockTestRunner implements TestRunner
 {
-
-   public Archive<?> createAuxiliaryArchive()
+   public static List<TestResult> wantedResults = new ArrayList<TestResult>();
+   
+   public static void add(TestResult wantedTestResult) 
    {
-      WebArchive archive = ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
-                     .setWebXML("org/jboss/arquillian/protocol/servlet/web.xml")
-                     .addClasses(
-                           SecurityActions.class,
-                           ServletTestRunner.class
-                     );
-      return archive;
+      wantedResults.add(wantedTestResult);
    }
-
+   
+   public TestResult execute(Class<?> testClass, String methodName)
+   {
+      return wantedResults.get(0);
+   }
+   
+//   public void execute(TestResultCallback callback, Class<?>... classes) 
+//   {
+//      for(TestResult result : wantedResults)
+//      {
+//         callback.handle(result);
+//      }
+//   }
 }

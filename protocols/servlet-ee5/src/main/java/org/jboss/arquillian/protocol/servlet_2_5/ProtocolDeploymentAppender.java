@@ -14,32 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet;
+package org.jboss.arquillian.protocol.servlet_2_5;
 
+import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.junit.Assert;
-import org.junit.Test;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * ProtocolDeploymentAppenderTestCase
+ * ProtocolDeploymentAppender
  * 
+ * DeploymentAppender to add required resources for the protocol servlet to run  
+ * in container.
+ *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDeploymentAppenderTestCase
+public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
 {
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception {
-      
-      Archive<?> archive = new ProtocolDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added web.xml",
-            archive.contains(ArchivePaths.create("WEB-INF/web.xml"))
-      );
-      
-      System.out.println(archive.toString(true));
+   public Archive<?> createAuxiliaryArchive()
+   {
+      WebArchive archive = ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
+                     .setWebXML("org/jboss/arquillian/protocol/servlet/web.xml")
+                     .addClasses(
+                           SecurityActions.class,
+                           ServletTestRunner.class
+                     );
+      return archive;
    }
+
 }
