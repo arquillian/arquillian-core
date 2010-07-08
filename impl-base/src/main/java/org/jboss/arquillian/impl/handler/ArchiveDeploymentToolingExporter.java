@@ -20,12 +20,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.jboss.arquillian.impl.ToolingDeploymentFormatter;
+import org.jboss.arquillian.impl.Validate;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.event.suite.ClassEvent;
 import org.jboss.arquillian.spi.event.suite.EventHandler;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.impl.base.Validate;
 
 /**
  * Handler that will export a XML version of the Deployed Archive. 

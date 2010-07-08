@@ -16,7 +16,11 @@
  */
 package org.jboss.arquillian.example;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -24,13 +28,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
-import static org.junit.Assert.*;
+
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,7 +51,7 @@ public class GamePersistenceTest
    @Deployment
    public static Archive<?> createTestArchive()
    {
-      return ShrinkWrap.create("test.war", WebArchive.class)
+      return ShrinkWrap.create(WebArchive.class, "test.war")
             .addPackage(Game.class.getPackage())
             .addWebResource("test-persistence.xml", "classes/META-INF/persistence.xml")
             .addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");

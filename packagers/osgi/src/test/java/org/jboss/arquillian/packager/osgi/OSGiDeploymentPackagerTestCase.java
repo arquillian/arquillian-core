@@ -23,8 +23,8 @@ import java.io.InputStream;
 
 import org.jboss.osgi.testing.OSGiManifestBuilder;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.Asset;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class OSGiDeploymentPackagerTestCase
    @Test
    public void testValidBundle() throws Exception
    {
-      final JavaArchive archive = ShrinkWrap.create("test-archive.jar", JavaArchive.class);
+      final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test-archive.jar");
       archive.setManifest(new Asset()
       {
          public InputStream openStream()
@@ -58,7 +58,7 @@ public class OSGiDeploymentPackagerTestCase
    @Test
    public void testInvalidBundle() throws Exception
    {
-      final JavaArchive archive = ShrinkWrap.create("test-archive.jar", JavaArchive.class);
+      final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test-archive.jar");
       archive.setManifest(new Asset()
       {
          public InputStream openStream()

@@ -10,7 +10,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,8 +19,8 @@ public class ${name}
 {
    @Deployment
    public static Archive<?> createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
-         .addManifestResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
+         .addManifestResource(new StringAsset("", "beans.xml");
    }
 
    @Inject BeanManager beanManager;

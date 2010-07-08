@@ -18,33 +18,36 @@ package org.jboss.arquillian.impl;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.spi.Context;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.impl.base.ArchiveBase;
+import org.jboss.shrinkwrap.spi.Configurable;
 
 /**
- * ArquillianDeploymentAppender
+ * Appender to package up Arquillian api/spi/impl and ShrinkWrap api/spi/impl
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
 {
-   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.AuxiliaryArchiveAppender#createAuxiliaryArchive()
+    */
    public Archive<?> createAuxiliaryArchive()
    {
       
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class ,"arquillian-core.jar")
                         .addPackages(
                               true,
-                              //Package.getPackage("org.jboss.arquillian.api"), // TODO: figure out why this does not work.. 
-                              Deployment.class.getPackage(),
-                              Package.getPackage("org.jboss.arquillian.impl"),
-                              Package.getPackage("org.jboss.arquillian.spi"),
-                              Package.getPackage("org.jboss.shrinkwrap.api"),
-                              Package.getPackage("org.jboss.shrinkwrap.impl.base"),
-                              Package.getPackage("org.jboss.shrinkwrap.spi"));
+                              Deployment.class.getPackage(), // "org.jboss.arquillian.api"
+                              ConfigurationBuilder.class.getPackage(), // "org.jboss.arquillian.impl"
+                              Context.class.getPackage(), // "org.jboss.arquillian.spi"
+                              Archive.class.getPackage(), // "org.jboss.shrinkwrap.api" 
+                              ArchiveBase.class.getPackage(), // "org.jboss.shrinkwrap.impl.base"
+                              Configurable.class.getPackage()); // "org.jboss.shrinkwrap.spi"
       return archive;
    }
-
 }

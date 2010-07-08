@@ -35,7 +35,7 @@ public class JUnitDeploymentAppender implements AuxiliaryArchiveAppender
 
    public Archive<?> createAuxiliaryArchive()
    {
-      JavaArchive archive = ShrinkWrap.create("arquillian-junit.jar", JavaArchive.class)
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
                         .addPackages(
                               true, 
                               Package.getPackage("org.junit"),
