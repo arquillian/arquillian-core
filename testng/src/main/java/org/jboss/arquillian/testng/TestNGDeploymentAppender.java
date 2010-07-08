@@ -37,7 +37,7 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
 
    public Archive<?> createAuxiliaryArchive()
    {
-      return ShrinkWrap.create("arquillian-testng.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "arquillian-testng.jar")
                .addPackages(
                      true, 
                      // exclude com.sun.javadoc.Doclet loading, not in OpenJDK
