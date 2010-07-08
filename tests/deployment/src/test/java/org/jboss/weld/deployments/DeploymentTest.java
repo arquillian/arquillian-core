@@ -10,10 +10,10 @@ import junit.framework.Assert;
 
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 
 public class DeploymentTest
 {
@@ -28,17 +28,17 @@ public class DeploymentTest
 
    protected static JavaArchive createCDIArchive(String name, Class<?>... classes)
    {
-      return ShrinkWrap.create(name, JavaArchive.class).addClasses(classes).addClass(DeploymentTest.class).addManifestResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+      return ShrinkWrap.create(JavaArchive.class, name).addClasses(classes).addClass(DeploymentTest.class).addManifestResource(new ByteArrayAsset(new byte[0]), "beans.xml");
    }
 
    protected static WebArchive createWebArchive(Archive<?>... archives)
    {
-      return ShrinkWrap.create("test.war", WebArchive.class).addLibraries(archives).addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
+      return ShrinkWrap.create(WebArchive.class, "test.war").addLibraries(archives).addWebResource(new ByteArrayAsset(new byte[0]), "beans.xml");
    }
 
    protected static EnterpriseArchive createEnterpriseArchive(Archive<?>... archives)
    {
-      return ShrinkWrap.create("test.ear", EnterpriseArchive.class).addLibraries(archives);
+      return ShrinkWrap.create(EnterpriseArchive.class, "test.ear").addLibraries(archives);
    }
   
    @SuppressWarnings("unchecked")

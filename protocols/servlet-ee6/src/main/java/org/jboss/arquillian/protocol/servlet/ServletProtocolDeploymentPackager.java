@@ -73,7 +73,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
 
    private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
    {
-         return ShrinkWrap.create("test.war", WebArchive.class)
+         return ShrinkWrap.create(WebArchive.class, "test.war")
                   .addLibraries(applicationArchive, protocol)
                   .addLibraries(auxiliaryArchives.toArray(new Archive[0]));
    }
@@ -87,7 +87,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       else
       {
          applicationArchive.addModule(
-                  ShrinkWrap.create("test.war", WebArchive.class)
+                  ShrinkWrap.create(WebArchive.class, "test.war")
                      .addLibrary(protocol))
                .addLibraries(
                      auxiliaryArchives.toArray(new Archive<?>[0]));

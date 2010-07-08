@@ -85,7 +85,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public Archive<?> test()
       {
-         return ShrinkWrap.create("test.jar", JavaArchive.class);
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
    }
 
@@ -95,7 +95,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public Object test()
       {
-         return ShrinkWrap.create("test.jar", JavaArchive.class);
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
    }
 
@@ -105,7 +105,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public static JavaArchive test()
       {
-         return ShrinkWrap.create("test.jar", JavaArchive.class);
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
    }
 
@@ -115,7 +115,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public static ResourceAdapterArchive test()
       {
-         return ShrinkWrap.create("test.jar", ResourceAdapterArchive.class);
+         return ShrinkWrap.create(ResourceAdapterArchive.class, "test.jar");
       }
    }
 }

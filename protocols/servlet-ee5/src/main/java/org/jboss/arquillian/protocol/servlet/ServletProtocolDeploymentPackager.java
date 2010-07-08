@@ -71,7 +71,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
 
    private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-      return ShrinkWrap.create("test.ear", EnterpriseArchive.class)
+      return ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
                         .addModule(applicationArchive)
                         .addModule(protocol)
                         .addLibraries(auxiliaryArchives.toArray(new Archive[0]));

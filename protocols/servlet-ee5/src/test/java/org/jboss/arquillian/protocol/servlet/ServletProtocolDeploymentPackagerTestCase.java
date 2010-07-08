@@ -45,7 +45,7 @@ public class ServletProtocolDeploymentPackagerTestCase
    {
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
-                     ShrinkWrap.create("applicationArchive.jar", JavaArchive.class), 
+                     ShrinkWrap.create(JavaArchive.class, "applicationArchive.jar"), 
                      createAuxiliaryArchives()));
       
       Assert.assertTrue(
@@ -71,7 +71,7 @@ public class ServletProtocolDeploymentPackagerTestCase
    {
       new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
-                  ShrinkWrap.create("applicationArchive.war", WebArchive.class), 
+                  ShrinkWrap.create(WebArchive.class, "applicationArchive.war"), 
                   createAuxiliaryArchives()));
       
    }
@@ -81,7 +81,7 @@ public class ServletProtocolDeploymentPackagerTestCase
    {
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
-                  ShrinkWrap.create("applicationArchive.ear", EnterpriseArchive.class), 
+                  ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear"), 
                   createAuxiliaryArchives()));
 
       Assert.assertTrue(
@@ -100,8 +100,8 @@ public class ServletProtocolDeploymentPackagerTestCase
    private Collection<Archive<?>> createAuxiliaryArchives() 
    {
       List<Archive<?>> archives = new ArrayList<Archive<?>>();
-      archives.add(ShrinkWrap.create("auxiliaryArchive1.jar", WebArchive.class));
-      archives.add(ShrinkWrap.create("auxiliaryArchive2.jar", JavaArchive.class));
+      archives.add(ShrinkWrap.create(JavaArchive.class, "auxiliaryArchive1.jar"));
+      archives.add(ShrinkWrap.create(JavaArchive.class, "auxiliaryArchive2.jar"));
       
       return archives;
    }

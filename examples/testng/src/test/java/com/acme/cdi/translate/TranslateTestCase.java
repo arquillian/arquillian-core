@@ -22,8 +22,8 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,7 +31,7 @@ public class TranslateTestCase extends Arquillian {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return ShrinkWrap.create("test.jar", JavaArchive.class)
+		return ShrinkWrap.create(JavaArchive.class, "test.jar")
 				.addPackage(
 						TranslateController.class.getPackage())
 				.addManifestResource(

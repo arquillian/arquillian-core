@@ -45,7 +45,7 @@ public class LocalRunServletTestCase
    @Deployment
    public static WebArchive createDeployment() 
    {
-      return ShrinkWrap.create("test.war", WebArchive.class)
+      return ShrinkWrap.create(WebArchive.class, "test.war")
                .addClass(TestServlet.class);
    }
    

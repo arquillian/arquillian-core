@@ -22,8 +22,8 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class RandomTestCase {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return ShrinkWrap.create("test.jar", JavaArchive.class)
+		return ShrinkWrap.create(JavaArchive.class, "test.jar")
 				.addPackage(
 						Random.class.getPackage()
 				)

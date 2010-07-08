@@ -37,7 +37,7 @@ public class InjectionTestCase extends Arquillian
 {
    @Deployment
    public static JavaArchive createDeployment() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class);
+      return ShrinkWrap.create(JavaArchive.class, "test.jar");
    }
    
    @Resource(mappedName = "java:/Mail") Session mailSession;

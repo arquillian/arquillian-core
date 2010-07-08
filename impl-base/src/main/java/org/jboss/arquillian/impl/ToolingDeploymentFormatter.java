@@ -22,14 +22,14 @@ import java.net.URL;
 
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Asset;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
+import org.jboss.shrinkwrap.api.asset.UrlAsset;
 import org.jboss.shrinkwrap.api.formatter.Formatter;
 import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 import org.jboss.shrinkwrap.impl.base.asset.ClassAsset;
 import org.jboss.shrinkwrap.impl.base.asset.ClassLoaderAsset;
-import org.jboss.shrinkwrap.impl.base.asset.FileAsset;
-import org.jboss.shrinkwrap.impl.base.asset.UrlAsset;
 
 /**
  * ToolingDeploymentFormatter
