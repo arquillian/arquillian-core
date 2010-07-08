@@ -48,6 +48,9 @@
     <module>spi</module>
     <module>build</module>
     <module>impl-base</module>
+ 
+    <!-- Tools -->
+<!--    <module>archetypes/junit-javaee6</module> -->
 
     <!-- Test Framework -->
     <module>junit</module>
