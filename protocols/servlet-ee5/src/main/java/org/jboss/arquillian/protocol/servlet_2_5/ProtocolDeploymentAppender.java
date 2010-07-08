@@ -36,7 +36,7 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
    public Archive<?> createAuxiliaryArchive()
    {
       WebArchive archive = ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
-                     .setWebXML("org/jboss/arquillian/protocol/servlet/web.xml")
+                     .setWebXML("org/jboss/arquillian/protocol/servlet_2_5/web.xml")
                      .addClasses(
                            SecurityActions.class,
                            ServletTestRunner.class
