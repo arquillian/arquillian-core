@@ -26,7 +26,7 @@
   <!-- Aggregate Modules -->
   <modules>
     
-    <module>servlet-ee5</module>
+    <module>servlet-2.5</module>
     <module>servlet-ee6</module>
     <module>local</module>
     <module>jmx</module>
