@@ -61,7 +61,8 @@
 	</table>
 	
 	<warning>
-     CDI support requires use of Weld Servlet.
+     CDI support requires use of Weld Servlet and associated configuration. The WAR will
+     have to be unpacked as well (the default) in order for Weld to locate the classes.
 	</warning>
 
 	<warning>
