@@ -20,7 +20,7 @@ public class ${name}
    @Deployment
    public static Archive<?> createTestArchive() {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
-         .addManifestResource(new StringAsset("", "beans.xml");
+         .addManifestResource(new StringAsset(""), "beans.xml");
    }
 
    @Inject BeanManager beanManager;
