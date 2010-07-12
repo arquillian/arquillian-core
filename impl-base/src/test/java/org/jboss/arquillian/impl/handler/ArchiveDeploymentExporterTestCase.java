@@ -65,7 +65,7 @@ public class ArchiveDeploymentExporterTestCase
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      context.add(Archive.class, ShrinkWrap.create(ARCHIVE_NAME, JavaArchive.class).addClass(getClass()));
+      context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass()));
       
       ArchiveDeploymentExporter handler = new ArchiveDeploymentExporter();
       handler.callback(context, new BeforeClass(getClass()));
@@ -78,7 +78,7 @@ public class ArchiveDeploymentExporterTestCase
    {
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      context.add(Archive.class, ShrinkWrap.create(ARCHIVE_NAME, JavaArchive.class).addClass(getClass()));
+      context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass()));
       context.add(Configuration.class,  new Configuration());
       
       ArchiveDeploymentExporter handler = new ArchiveDeploymentExporter();
@@ -95,7 +95,7 @@ public class ArchiveDeploymentExporterTestCase
       
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       
-      context.add(Archive.class, ShrinkWrap.create(ARCHIVE_NAME, JavaArchive.class).addClass(getClass()));
+      context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass()));
       context.add(Configuration.class,  configuration);
       
       ArchiveDeploymentExporter handler = new ArchiveDeploymentExporter();

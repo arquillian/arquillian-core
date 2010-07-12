@@ -52,7 +52,7 @@ public class ArchiveDeploymentToolingExporterTestCase
       System.setProperty(ArchiveDeploymentToolingExporter.ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER, EXPORT_FOLDER);
       
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
-      context.add(Archive.class, ShrinkWrap.create("test.jar", JavaArchive.class));
+      context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, "test.jar"));
       
       ArchiveDeploymentToolingExporter handler = new ArchiveDeploymentToolingExporter();
       handler.callback(context, new ClassEvent(getClass()));

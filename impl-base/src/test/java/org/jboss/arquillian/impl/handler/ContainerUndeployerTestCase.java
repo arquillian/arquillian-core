@@ -75,7 +75,7 @@ public class ContainerUndeployerTestCase
    @Test
    public void shouldUndeployArchive() throws Exception
    {
-      Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
+      Archive<?> deployment = ShrinkWrap.create(JavaArchive.class, "test.jar");
       
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
       context.add(DeployableContainer.class, container);

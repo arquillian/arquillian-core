@@ -60,7 +60,7 @@ public class ArchiveGeneratorTestCase
    @Test
    public void shouldGenerateArchive() throws Exception
    {
-      final Archive<?> deployment = ShrinkWrap.create("test.jar", JavaArchive.class);
+      final Archive<?> deployment = ShrinkWrap.create(JavaArchive.class, "test.jar");
       
       TestClass testClass = new TestClass(getClass());
       ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
