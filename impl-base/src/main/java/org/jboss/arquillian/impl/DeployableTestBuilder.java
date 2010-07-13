@@ -20,6 +20,7 @@ import org.jboss.arquillian.impl.context.ClientProfileBuilder;
 import org.jboss.arquillian.impl.context.ContainerProfileBuilder;
 import org.jboss.arquillian.impl.context.ContextLifecycleManager;
 import org.jboss.arquillian.impl.context.ProfileBuilder;
+import org.jboss.arquillian.impl.context.ServiceLoadableProfileBuilder;
 import org.jboss.arquillian.impl.context.StandaloneProfileBuilder;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ContainerConfiguration;
@@ -111,10 +112,11 @@ public class DeployableTestBuilder
 
       ContextLifecycleManager eventManager = new ContextLifecycleManager(
             configuration, 
-            profileBuilder,
+            new ServiceLoadableProfileBuilder(serviceLoader, profileBuilder),
             serviceLoader
       );
 
       return new EventTestRunnerAdaptor(eventManager);
    }
+   
 }
