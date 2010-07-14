@@ -59,7 +59,7 @@
     <!-- Extensions -->
     <module>protocols</module>
     <module>testenrichers</module>
-<!--    <module>bundle</module>a -->
+    <module>bundle</module>
     <module>containers</module>
 
     <module>frameworks</module>

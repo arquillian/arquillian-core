@@ -56,7 +56,6 @@ public class OSGiTestEnricher implements TestEnricher
    // Provide logging
    private static Logger log = Logger.getLogger(OSGiTestEnricher.class);
    
-   @Override
    public void enrich(Context context, Object testCase)
    {
       Class<? extends Object> testClass = testCase.getClass();
@@ -76,7 +75,6 @@ public class OSGiTestEnricher implements TestEnricher
       }
    }
 
-   @Override
    public Object[] resolve(Context context, Method method)
    {
       return null;

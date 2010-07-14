@@ -43,15 +43,40 @@ public class JMXTestRunner implements JMXTestRunnerMBean
    // Provide logging
    private static Logger log = Logger.getLogger(JMXTestRunner.class);
 
-   public static ObjectName register(MBeanServer mbeanServer) throws JMException
+   private TestClassLoader testClassLoader;
+   
+   public interface TestClassLoader
+   {
+      Class<?> loadTestClass(String className) throws ClassNotFoundException;
+   }
+   
+   public JMXTestRunner(TestClassLoader classLoader)
+   {
+      this.testClassLoader = classLoader;
+      
+      // Initialize the default TestClassLoader
+      if (testClassLoader == null)
+      {
+         testClassLoader = new TestClassLoader()
+         {
+            public Class<?> loadTestClass(String className) throws ClassNotFoundException
+            {
+               ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
+               return classLoader.loadClass(className);
+            }
+         };
+      }
+   }
+
+   public ObjectName registerMBean(MBeanServer mbeanServer) throws JMException
    {
       ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
-      mbeanServer.registerMBean(new JMXTestRunner(), oname);
+      mbeanServer.registerMBean(this, oname);
       log.debug("JMXTestRunner registered: " + oname);
       return oname;
    }
 
-   public static void unregister(MBeanServer mbeanServer) throws JMException
+   public void unregisterMBean(MBeanServer mbeanServer) throws JMException
    {
       ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
       if (mbeanServer.isRegistered(oname))
@@ -61,13 +86,11 @@ public class JMXTestRunner implements JMXTestRunnerMBean
       }
    }
 
-   @Override
    public TestResult runTestMethodLocal(String className, String methodName)
    {
       return runTestMethodInternal(className, methodName);
    }
 
-   @Override
    public InputStream runTestMethodRemote(String className, String methodName)
    {
       TestResult result = runTestMethodInternal(className, methodName);
@@ -92,11 +115,9 @@ public class JMXTestRunner implements JMXTestRunnerMBean
    {
       try
       {
-         ClassLoader classLoader = getClass().getClassLoader();
-         Class<?> testClass = classLoader.loadClass(className);
-
-         TestRunner runner = TestRunners.getTestRunner(classLoader);
-
+         TestRunner runner = TestRunners.getTestRunner(JMXTestRunner.class.getClassLoader());
+         Class<?> testClass = testClassLoader.loadTestClass(className);
+         
          TestResult testResult = runner.execute(testClass, methodName);
          return testResult;
       }

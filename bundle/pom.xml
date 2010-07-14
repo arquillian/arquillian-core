@@ -66,6 +66,7 @@
               javax.inject;version=${version.javax.inject_javax.inject},
               org.jboss.arquillian.junit;version=${version},
               org.jboss.shrinkwrap.api;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.asset;version=${version.shrinkwrap_shrinkwrap},
               org.jboss.shrinkwrap.api.spec;version=${version.shrinkwrap_shrinkwrap},
               org.junit.runner;version=${version.junit_junit},
               org.junit;version=${version.junit_junit},

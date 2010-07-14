@@ -42,7 +42,6 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
    // Provide logging
    private static Logger log = Logger.getLogger(JMXMethodExecutor.class);
    
-   @Override
    public TestResult invoke(TestMethodExecutor testMethodExecutor)
    {
       if(testMethodExecutor == null) 
