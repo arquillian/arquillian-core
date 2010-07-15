@@ -23,14 +23,29 @@
   <url>http://www.jboss.org</url>
   <description>Arquillian Protocol Aggregator</description>
 
-  <!-- Aggregate Modules -->
-  <modules>
-    
-    <module>servlet-2.5</module>
-    <module>servlet-3</module>
-    <module>local</module>
-    <module>jmx</module>
+  <!--  Profiles -->
+  <profiles>
+  
+    <!-- Build all Arquillian modules -->
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>servlet-2.5</module>
+        <module>servlet-3</module>
+        <module>local</module>
+        <module>jmx</module>
+      </modules>
+    </profile>
 
-  </modules>
-
+    <!-- Build Arquillian OSGi modules -->
+    <profile>
+      <id>osgi</id>
+      <modules>
+        <module>jmx</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

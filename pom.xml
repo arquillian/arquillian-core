@@ -41,31 +41,63 @@
   <url>http://www.jboss.org</url>
   <description>Arquillian Aggregator</description>
 
-  <!-- Aggregate Modules -->
-  <modules>
-    <!-- Core -->
-    <module>api</module>
-    <module>spi</module>
-    <module>build</module>
-    <module>impl-base</module>
- 
-    <!-- Tools -->
-<!--    <module>archetypes/junit-javaee6</module> -->
+  <!--  Profiles -->
+  <profiles>
+  
+    <!-- Build all Arquillian modules -->
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+      
+        <!-- Core -->
+        <module>api</module>
+        <module>spi</module>
+        <module>build</module>
+        <module>impl-base</module>
+     
+        <!-- Tools -->
+        <!-- module>archetypes/junit-javaee6</module -->
+    
+        <!-- Test Framework -->
+        <module>junit</module>
+        <module>testng</module>
+    
+        <!-- Extensions -->
+        <module>protocols</module>
+        <module>testenrichers</module>
+        <module>bundle</module>
+        <module>containers</module>
+    
+        <module>frameworks</module>
+        <module>examples</module>
+    
+        <module>doc/reference</module>
+      </modules>
+    </profile>
 
-    <!-- Test Framework -->
-    <module>junit</module>
-    <module>testng</module>
-
-    <!-- Extensions -->
-    <module>protocols</module>
-    <module>testenrichers</module>
-    <module>bundle</module>
-    <module>containers</module>
-
-    <module>frameworks</module>
-    <module>examples</module>
-
-    <module>doc/reference</module>
-</modules>
+    <!-- Build Arquillian OSGi modules -->
+    <profile>
+      <id>osgi</id>
+      <modules>
+      
+        <!-- Core -->
+        <module>api</module>
+        <module>spi</module>
+        <module>impl-base</module>
+     
+        <!-- Test Framework -->
+        <module>junit</module>
+    
+        <!-- Extensions -->
+        <module>protocols</module>
+        <module>testenrichers</module>
+        <module>bundle</module>
+        <module>containers</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>

@@ -30,7 +30,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>org.jboss.arquillian.osgi.ArquillianBundleActivator</Bundle-Activator>
             <Export-Package></Export-Package>
             <Import-Package>
@@ -64,7 +64,7 @@
             </Embed-Dependency>
             <_exportcontents>
               javax.inject;version=${version.javax.inject_javax.inject},
-              org.jboss.arquillian.junit;version=${version},
+              org.jboss.arquillian.junit;version=${project.version},
               org.jboss.shrinkwrap.api;version=${version.shrinkwrap_shrinkwrap},
               org.jboss.shrinkwrap.api.asset;version=${version.shrinkwrap_shrinkwrap},
               org.jboss.shrinkwrap.api.spec;version=${version.shrinkwrap_shrinkwrap},
@@ -95,17 +95,17 @@
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-jmx</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-osgi</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian</groupId>
       <artifactId>arquillian-junit</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
      <groupId>javax.inject</groupId>
