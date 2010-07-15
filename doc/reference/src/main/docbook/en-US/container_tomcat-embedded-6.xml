@@ -7,11 +7,11 @@
 	<title>Tomcat 6.0 - Embedded</title>
 
 	<para id="container.tomcat-embedded-6.description">
-      A DeployableContainer implementation that can run and connect to a
-      embedded (same JVM) Tomcat 6 Servlet Container. Only select EE APIs are
-      available, such as JNDI and Servlet 2.5. This implementation has
-      lifecycle support, so the container will be started and stopped as part
-      of the test run.
+      A DeployableContainer implementation that manages the complete lifecycle
+      of an embedded (same JVM) Tomcat 6 Servlet Container. (Keep in mind that
+      only select EE APIs are available in Tomcat 6, such as JNDI and Servlet
+      2.5). Test archives are adapted to Tomcat's StandardContext API by
+      ShrinkWrap and deployed programmatically.
 	</para>
 
 	<table id="container.tomcat-embedded-6.injection" frame="all">
@@ -65,11 +65,39 @@
      have to be unpacked as well (the default) in order for Weld to locate the classes.
 	</warning>
 
-	<warning>
-     In-container testing requires manually adding the Arquillian Protocol Servlet to the test
-     archive's web.xml. See the in-container test in the Tomcat Embedded 6 container source
-     for an example.
-	</warning>
+	<para>
+     Running an in-container test on Tomcat 6 currently requires that you add
+     the Arquillian Protocol Servlet to the test archive's web.xml, a temporary
+     measure until <ulink src="http://jira.jboss.org/browse/ARQ-217">ARQ-217</ulink> is resolved. The listing
+     below shows a minimum web.xml containing the required Servlet mapping:
+   </para>
+   
+   <programlisting role="XML"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5"
+   xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+      http://java.sun.com/xml/ns/javaee
+      http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+   <servlet>
+      <servlet-name>ServletTestRunner</servlet-name>
+      <servlet-class>org.jboss.arquillian.protocol.servlet_3.ServletTestRunner</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+      <servlet-name>ServletTestRunner</servlet-name>
+      <url-pattern>/ArquillianServletRunner</url-pattern>
+   </servlet-mapping>
+
+</web-app>]]></programlisting>
+
+   <para>
+      If you forget to add this Servlet mapping for a test using the
+      in-container run mode, you will get a failure with the message "Kept
+      getting 404s" because Arquillian can't communicate with the deployed
+      application.
+   </para>
 
 	<section id="container.tomcat-embedded-6.configuration">
 		<title>Configuration</title>
