@@ -20,6 +20,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.api.Run;
+import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.ApplicationArchiveGenerator;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
@@ -54,9 +56,17 @@ public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveG
       {
          Archive<?> archive = (Archive<?>)deploymentMethod.invoke(null);
          // TODO: handle deployment attributes like autoAddPakcage etc..
+         
+         // TODO: move the RunMode handling to one location
+         RunModeType runMode = RunModeType.IN_CONTAINER;
+         if(testCase.isAnnotationPresent(Run.class))
+         {
+            runMode = testCase.getAnnotation(Run.class).value();
+         }
+         
          try
          {
-            if(ClassContainer.class.isInstance(archive)) 
+            if(ClassContainer.class.isInstance(archive) && runMode == RunModeType.IN_CONTAINER) 
             {
                ClassContainer<?> classContainer = ClassContainer.class.cast(archive);
                classContainer.addClass(testCase.getJavaClass());

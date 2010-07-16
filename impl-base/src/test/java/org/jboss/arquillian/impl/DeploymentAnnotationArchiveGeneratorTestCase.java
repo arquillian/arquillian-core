@@ -19,6 +19,8 @@ package org.jboss.arquillian.impl;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.api.Run;
+import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -40,27 +42,31 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnDeploymentNotPresent() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentNotPresent.class));
+      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(
+            new TestClass(DeploymentNotPresent.class));
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnDeploymentNotStatic() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentNotStatic.class));
+      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(
+            new TestClass(DeploymentNotStatic.class));
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnDeploymentWrongReturnType() throws Exception
    {
-      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentWrongReturnType.class));
+      new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(
+            new TestClass(DeploymentWrongReturnType.class));
    }
 
    @Test
-   public void shouldThrowExceptionOnDeploymentOk() throws Exception
+   public void shouldIncludeTestClassInDeployment() throws Exception
    {
-      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentOK.class));
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(
+            new TestClass(DeploymentOK.class));
 
-      ArchivePath testPath = ArchivePaths.create(DeploymentOK.class.getName().replaceAll("\\.", "/") + ".class");
+      ArchivePath testPath = createArchivePath(DeploymentOK.class);
 
       // verify that the test class was added to the archive
       Assert.assertNotNull(archive.contains(testPath));
@@ -69,12 +75,30 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
    @Test
    public void shouldNotIncludeTheTestClassIfClassesNotSupportedByTheArchive() throws Exception
    {
-      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(new TestClass(DeploymentClassesNotSupported.class));
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(
+            new TestClass(DeploymentClassesNotSupported.class));
 
       // verify that nothing was added to the archive
       Assert.assertTrue(archive.getContent().isEmpty());
    }
 
+   @Test
+   public void shouldNotIncludeTheTestClassIfRunAsClient() throws Exception
+   {
+      Archive<?> archive = new DeploymentAnnotationArchiveGenerator().generateApplicationArchive(
+            new TestClass(DeploymentRunAsClient.class));
+      
+      ArchivePath testPath = createArchivePath(DeploymentRunAsClient.class);
+      
+      // verify that the test class was not added
+      Assert.assertFalse(archive.contains(testPath));
+   }
+   
+   private ArchivePath createArchivePath(Class<?> clazz)
+   {
+      return ArchivePaths.create(clazz.getName().replaceAll("\\.", "/") + ".class");
+   }
+   
    private static class DeploymentNotPresent
    {
    }
@@ -85,7 +109,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public Archive<?> test()
       {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
+         return ShrinkWrap.create(JavaArchive.class);
       }
    }
 
@@ -95,7 +119,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public Object test()
       {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
+         return ShrinkWrap.create(JavaArchive.class);
       }
    }
 
@@ -105,7 +129,7 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public static JavaArchive test()
       {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
+         return ShrinkWrap.create(JavaArchive.class);
       }
    }
 
@@ -115,7 +139,18 @@ public class DeploymentAnnotationArchiveGeneratorTestCase
       @Deployment
       public static ResourceAdapterArchive test()
       {
-         return ShrinkWrap.create(ResourceAdapterArchive.class, "test.jar");
+         return ShrinkWrap.create(ResourceAdapterArchive.class);
+      }
+   }
+
+   @Run(RunModeType.AS_CLIENT)
+   private static class DeploymentRunAsClient
+   {
+      @SuppressWarnings("unused")
+      @Deployment
+      public static JavaArchive test()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
       }
    }
 }
