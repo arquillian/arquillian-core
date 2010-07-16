@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl.handler;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.Context;
@@ -34,6 +35,8 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
  */
 public class ArchiveDeploymentExporter implements EventHandler<ClassEvent>
 {
+   private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
@@ -41,12 +44,26 @@ public class ArchiveDeploymentExporter implements EventHandler<ClassEvent>
    {
       Archive<?> deployment = context.get(Archive.class);
       Configuration configuration = context.get(Configuration.class);
-      
-      if(deployment != null && (configuration != null && configuration.getDeploymentExportPath() != null))
+
+      if (deployment != null && configuration != null && configuration.getDeploymentExportPath() != null)
       {
+         // TODO: should prepping the export directory be in the configuration builder?
+         String exportPath = configuration.getDeploymentExportPath();
+         File exportDir = new File(exportPath);
+         if (exportDir.isFile())
+         {
+            log.warning("Deployment export disabled. Export path points to an existing file: " + exportPath);
+            return;
+         }
+         else if (!exportDir.isDirectory() && !exportDir.mkdirs())
+         {
+            log.warning("Deployment export directory could not be created: " + exportPath);
+            return;
+         }
+
          deployment.as(ZipExporter.class).exportZip(
-               new File(configuration.getDeploymentExportPath() + deployment.getName()), 
-               true);
+            new File(exportDir, event.getTestClass().getName() + "_" + deployment.getName()),
+            true);
       }
    }
 }

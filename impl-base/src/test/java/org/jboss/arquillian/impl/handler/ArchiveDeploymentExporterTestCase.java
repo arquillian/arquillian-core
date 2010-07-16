@@ -106,7 +106,7 @@ public class ArchiveDeploymentExporterTestCase
 
    private void fileShouldExist(boolean bol) 
    {
-      File file = new File(EXPORT_PATH + ARCHIVE_NAME);
+      File file = new File(EXPORT_PATH + getClass().getName() + "_" + ARCHIVE_NAME);
       
       Assert.assertEquals("File exists", bol, file.exists());
       
