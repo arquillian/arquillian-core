@@ -16,7 +16,7 @@
   <!-- Artifact Configuration -->
   <groupId>org.jboss.arquillian.protocol</groupId>
   <artifactId>arquillian-protocol-jmx-osgi</artifactId>
-  <name>Arquillian Protocol JMS OSGi</name>
+  <name>Arquillian Protocol JMX OSGi</name>
   <description>OSGi JMX Protocol for the Arquillian project</description>
 
 
