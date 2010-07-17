@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-build</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
+  </parent>
+
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Artifact Configuration -->
+  <groupId>org.jboss.arquillian.protocol</groupId>
+  <artifactId>arquillian-protocol-jmx-osgi-bundle</artifactId>
+  <name>Arquillian Protocol JMX OSGi Bundle</name>
+  <description>Arquillian OSGi Bundlei for JMX MBean registration</description>
+  <packaging>bundle</packaging>
+
+  <!-- Properties -->
+  <properties>
+    <!-- Versioning -->
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Activator>org.jboss.arquillian.osgi.ArquillianBundleActivator</Bundle-Activator>
+            <Export-Package></Export-Package>
+            <Import-Package>
+              javax.management*,
+              javax.naming,
+              javax.xml.parsers,
+              org.w3c.dom,
+
+              org.jboss.logging;version="[2.1,3.0)",
+
+              org.osgi.framework;version="[1.5,2.0)",
+              org.osgi.util.tracker;version="[1.4,2.0)",
+            </Import-Package>
+            <Private-Package>
+              org.jboss.arquillian.osgi,
+            </Private-Package>
+            <DynamicImport-Package>*</DynamicImport-Package>
+            <Embed-Transitive>true</Embed-Transitive>
+            <Embed-Dependency>
+              arquillian-api;inline=false,
+              arquillian-impl-base;inline=false,
+              arquillian-junit;inline=false,
+              arquillian-protocol-jmx;inline=false,
+              arquillian-testenricher-osgi;inline=false,
+              arquillian-spi;inline=false,
+              shrinkwrap-api;inline=false,
+              shrinkwrap-impl-base;inline=false,
+              shrinkwrap-spi;inline=false,
+              javax.inject;inline=false,
+              junit;inline=false,
+            </Embed-Dependency>
+            <_exportcontents>
+              javax.inject;version=${version.javax.inject_javax.inject},
+              org.jboss.arquillian.junit;version=${project.version},
+              org.jboss.shrinkwrap.api;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.asset;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.container;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.exporter;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.formatter;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.importer;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.serialization;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.spec;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.importer;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.formatter;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.exporter;version=${version.shrinkwrap_shrinkwrap},
+              org.jboss.shrinkwrap.api.container;version=${version.shrinkwrap_shrinkwrap},
+              org.junit.runner;version=${version.junit_junit},
+              org.junit;version=${version.junit_junit},
+            </_exportcontents>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <!-- PluginManagement -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>2.1.0</version>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-jmx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testenricher</groupId>
+      <artifactId>arquillian-testenricher-osgi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian</groupId>
+      <artifactId>arquillian-junit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+     <groupId>javax.inject</groupId>
+     <artifactId>javax.inject</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>
+

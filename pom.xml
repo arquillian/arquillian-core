@@ -66,9 +66,10 @@
         <module>testng</module>
     
         <!-- Extensions -->
+        
+        <module>testenrichers</module> 
         <module>protocols</module>
-        <module>testenrichers</module>
-        <module>bundle</module>
+        
         <module>containers</module>
     
         <module>frameworks</module>
@@ -92,9 +93,8 @@
         <module>junit</module>
     
         <!-- Extensions -->
-        <module>protocols</module>
         <module>testenrichers</module>
-        <module>bundle</module>
+        <module>protocols</module>
         <module>containers</module>
       </modules>
     </profile>

@@ -59,9 +59,9 @@ protocols/local/.classpath
 protocols/local/target
 packagers/osgi/.classpath
 packagers/osgi/target
-protocols/servlet-ee5/target
-protocols/servlet-ee6/.classpath
-protocols/servlet-ee6/target
+protocols/servlet-2.5/target
+protocols/servlet-3/.classpath
+protocols/servlet-3/target
 spi/.classpath
 spi/.project
 spi/.settings
