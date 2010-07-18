@@ -41,7 +41,7 @@ public class OSGiDeploymentPackagerTestCase
    @Test
    public void testValidBundle() throws Exception
    {
-      final JavaArchive archive = ShrinkWrap.create("test-archive.jar", JavaArchive.class);
+      final JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
       archive.setManifest(new Asset()
       {
          public InputStream openStream()
@@ -60,7 +60,7 @@ public class OSGiDeploymentPackagerTestCase
    @Test
    public void testInvalidBundle() throws Exception
    {
-      final JavaArchive archive = ShrinkWrap.create("test-archive.jar", JavaArchive.class);
+      final JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
       archive.setManifest(new Asset()
       {
          public InputStream openStream()

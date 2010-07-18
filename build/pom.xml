@@ -24,6 +24,9 @@
   <!-- Properties -->
   <properties>
 
+	<!-- Plugin version -->
+	<version.surefire.plugin>2.5</version.surefire.plugin>
+
     <!-- Versioning -->
     <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
     <version.javaee_api>6.0</version.javaee_api>
@@ -32,10 +35,10 @@
     <version.jboss_osgi_spi>1.0.10-SNAPSHOT</version.jboss_osgi_spi>
     <version.jboss_osgi_vfs>1.0.0</version.jboss_osgi_vfs>
     <version.jetty_jetty>6.1.9</version.jetty_jetty>
-    <version.junit_junit>4.6</version.junit_junit>
+    <version.junit_junit>4.8.1</version.junit_junit>
     <version.mockito_all>1.8.3</version.mockito_all>
     <version.osgi>4.2.0</version.osgi>
-    <version.shrinkwrap_shrinkwrap>1.0.0-alpha-10</version.shrinkwrap_shrinkwrap>
+    <version.shrinkwrap_shrinkwrap>1.0.0-alpha-11</version.shrinkwrap_shrinkwrap>
     <version.testng_testng>5.12.1</version.testng_testng>
 
   </properties>
@@ -107,6 +110,15 @@
 
   <!-- Build -->
   <build>
+	<pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-surefire-plugin</artifactId> 
+				<version>${version.surefire.plugin}</version> 
+			</plugin>
+		</plugins>
+	</pluginManagement>
     <plugins>
 
       <!-- JBoss-specific Packaging -->
@@ -242,6 +254,27 @@
         <artifactId>shrinkwrap-extension-vfs3</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+         <artifactId>shrinkwrap-extension-classloader</artifactId>
+        <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+         <artifactId>shrinkwrap-extension-tomcat-6</artifactId>
+        <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.shrinkwrap</groupId>
+         <artifactId>shrinkwrap-extension-jetty-6</artifactId>
+         <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.shrinkwrap</groupId>
+         <artifactId>shrinkwrap-extension-jetty-7</artifactId>
+         <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+
       <dependency>
         <groupId>javax</groupId>
         <artifactId>javaee-api</artifactId>
