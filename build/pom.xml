@@ -251,6 +251,11 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-extension-vdf</artifactId>
+        <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
         <artifactId>shrinkwrap-extension-vfs3</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
