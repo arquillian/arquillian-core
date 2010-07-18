@@ -76,9 +76,9 @@ public class InjectionTestCase extends Arquillian
          Message response = requestor.request(request, 5000);
          
          Assert.assertEquals(
-               "Should have responded with same message",
                messageBody,
-               ((TextMessage)response).getText());
+               ((TextMessage)response).getText(),
+               "Should have responded with same message");
       }
       finally
       {

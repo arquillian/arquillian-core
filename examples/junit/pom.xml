@@ -33,6 +33,17 @@
 		
    </properties>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<parallel>none</parallel>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<profiles>
 		<profile>
 			<id>default</id>
@@ -594,6 +605,18 @@
 				</plugins>
 			</build>
 		</profile>
+<!--
+		<profile>
+			<id>coverage</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.arquillian.framework</groupId>
+					<artifactId>arquillian-framework-cobertura</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+-->
 	</profiles>
 
    <!-- Dependencies -->
@@ -653,6 +676,7 @@
          <artifactId>junit</artifactId>
          <scope>test</scope>
       </dependency>
+
    </dependencies>
 
 </project>
