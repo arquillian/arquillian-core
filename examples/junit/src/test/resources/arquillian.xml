@@ -5,7 +5,9 @@
 		xmlns:weldee="urn:arq:org.jboss.arquillian.container.weld.ee.embedded_1_1">
 
 	<weldee:container>
+<!-- Revert until 1.1 Weld is released.. https://jira.jboss.org/browse/ARQ-185
 		<enableConversationScope>true</enableConversationScope>
+-->		
 	</weldee:container>	
 
 </arquillian>

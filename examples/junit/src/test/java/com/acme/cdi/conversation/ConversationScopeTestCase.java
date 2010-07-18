@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,6 +37,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Ignore // Revert until 1.1 Weld is released.. https://jira.jboss.org/browse/ARQ-185
 @RunWith(Arquillian.class)
 public class ConversationScopeTestCase
 {
