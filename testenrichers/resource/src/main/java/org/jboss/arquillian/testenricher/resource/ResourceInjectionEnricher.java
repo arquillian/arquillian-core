@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.naming.InitialContext;
@@ -28,7 +29,10 @@ import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
- * Enricher that provide @Resource class and method argument injection.
+ * Enricher that provide @Resource field and method argument injection. <br/>
+ * <br/>
+ * Field Resources will only be injected if the current value is NULL or primitive default value.
+ * 
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -37,6 +41,10 @@ public class ResourceInjectionEnricher implements TestEnricher
 {
    private static final String RESOURCE_LOOKUP_PREFIX = "java:/comp/env";
    private static final String ANNOTATION_NAME = "javax.annotation.Resource";
+   
+   
+   private static final Logger log = Logger.getLogger(ResourceInjectionEnricher.class.getName());
+   
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
@@ -70,7 +78,12 @@ public class ResourceInjectionEnricher implements TestEnricher
          
          for(Field field : annotatedFields) 
          {
-            if(field.get(testCase) == null) // only try to lookup fields that are not already set
+            /*
+             * only try to lookup fields that are not already set or primitives
+             * (we don't really know if they have been set or not)
+             */
+            Object currentValue = field.get(testCase);
+            if(shouldInject(field, currentValue))
             {
                Object resource = lookup(getResourceName(field));
                field.set(testCase, resource);
@@ -94,12 +107,50 @@ public class ResourceInjectionEnricher implements TestEnricher
             Object resource = lookup(getResourceName(method.getAnnotation(Resource.class)));
             method.invoke(testCase, resource);
          }
-         
       } 
       catch (Exception e) 
       {
          throw new RuntimeException("Could not inject members", e);
       }
+   }
+
+   private boolean shouldInject(Field field, Object currentValue)
+   {
+      Class<?> type = field.getType();
+      if(type.isPrimitive())
+      {
+         if(isPrimitiveNull(currentValue)) 
+         {
+            log.fine("Primitive field " + field.getName() + " has been detected to have the default primitive value, " +
+            		"can not determine if it has already been injected. Re-injecting field.");
+            return true;
+         }
+      }
+      else
+      {
+         if(currentValue == null)
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+   
+   private boolean isPrimitiveNull(Object currentValue)
+   {
+      String stringValue = String.valueOf(currentValue);
+      if("0".equals(stringValue) || "0.0".equals(stringValue) || "false".equals(stringValue))
+      {
+         return true;
+      } 
+      else if(Character.class.isInstance(currentValue))
+      {
+         if( Character.class.cast(currentValue) == (char)0) 
+         {
+            return true;
+         }
+      }
+      return false;
    }
 
    protected Object lookup(String jndiName) throws Exception 
