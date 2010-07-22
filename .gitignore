@@ -55,10 +55,10 @@ packagers/javaee/.settings
 packagers/javaee/target
 protocols/jmx/.classpath
 protocols/jmx/target
+protocols/jmx-osgi-bundle/.classpath
+protocols/jmx-osgi/.classpath
 protocols/local/.classpath
 protocols/local/target
-packagers/osgi/.classpath
-packagers/osgi/target
 protocols/servlet-2.5/target
 protocols/servlet-3/.classpath
 protocols/servlet-3/target
