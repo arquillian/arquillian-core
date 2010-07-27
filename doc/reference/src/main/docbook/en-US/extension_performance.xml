@@ -7,11 +7,67 @@
 	<title>Performance</title>
 
 	<para id="extension.performance.description">
+      The performance extension to Arquillian is a simple way of checking that the code you want to test performs within the range you want it to. It's can also automatically catch any performance regressions that might be added to your applications.
+      - and as Arquillian itself, its very easy to use.
 	</para>
 
-	Code example
-	<programlisting role="JAVA"><![CDATA[]]></programlisting>
+    <sect2>
+	<title>Code example</title>
+	<programlisting role="JAVA"><![CDATA[]]>
+// include other arquillian imports here...
+import org.jboss.arquillian.performance.annotation.Performance;
+import org.jboss.arquillian.performance.annotation.PerformanceTest;
 
-	Maven setup example
-	<programlisting role="XML"><![CDATA[]]></programlisting>
+@PerformanceTest(resultsThreshold=2)
+@RunWith(Arquillian.class)
+public class WorkHardCdiTestCase
+{
+   @Deployment
+   public static JavaArchive createDeployment() {
+       return ShrinkWrap.create(JavaArchive.class ,"test.jar")
+               .addPackage( WorkHard.class.getPackage())
+               .addManifestResource(
+                       new ByteArrayAsset("<beans/>".getBytes()),
+                       ArchivePaths.create("beans.xml"));
+   }
+   
+   @Inject HardWorker worker;
+   
+   @Test
+   @Performance(time=20)
+   public void doHardWork() throws Exception 
+   {
+      Assert.assertEquals(21, worker.workingHard(), 0d);
+   }
+}
+    </programlisting>
+    <para>
+      As you can see the only two additions needed are <literal>@Performance </literal> and
+     <literal>@PerformanceTest</literal>. They do different things and can be used seperately or combined. 
+     </para>
+     <para>
+     <literal>@Performance </literal> require one argument, <literal>time</literal> (a double) which set the required maximum time that the test is allowed to spend in milliseconds. If the test exceeds that time it will fail with an exception explaining the cause.
+    </para>
+    <para>
+      <literal>@PerformanceTest </literal> will cause every testrun of that test to be saved and every new run will compare results with previous runs. If the new testrun exceeds the previous runs with a defined threshold an exception will be thrown. The threshold can be set with the parameter <literal>resultsThreshold</literal>. It is by default set to 1d. 
+
+    </para>
+    <para>
+      How threshold is calculated: <literal>resultsThreshold * newTime &lt; oldTime</literal>.
+    </para>
+    </sect2>
+
+    <sect2>
+	<title>Maven setup example</title>
+    <para>
+      The only extra dependency needed is to add <literal>arquillian-performance</literal> to your pom.xml. Take a look at the <xref linkend="gettingstarted"/> to see how you set up arquillian using maven.
+    </para>
+	<programlisting role="XML"><![CDATA[<dependency>
+   <groupId>org.jboss.arquillian.extension</groupId>
+   <artifactId>arquillian-performance</artifactId>
+   <version>${arquillian.version}</version>
+   <scope>test</scope>
+</dependency>]]>
+    </programlisting>
+    </sect2>
 </section>
