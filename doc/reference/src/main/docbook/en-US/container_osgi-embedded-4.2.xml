@@ -49,7 +49,7 @@
 	</table>
 
 	<note>
-		@javax.inject.Inject is used for injection. Support injection of Bundle and Bundle context.
+		<para>This container use <literal>@javax.inject.Inject</literal> as a injection point marker. Supports injection of Bundle and BundleContext.</para>
 	</note>
 	
 	<programlisting role="XML"><![CDATA[<profile>
