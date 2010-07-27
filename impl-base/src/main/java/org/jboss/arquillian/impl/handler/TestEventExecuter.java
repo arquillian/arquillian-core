@@ -49,7 +49,10 @@ public class TestEventExecuter implements EventHandler<Test>
          result.setStatus(Status.FAILED);
          result.setThrowable(e);
       }
-      result.setEnd(System.currentTimeMillis());
+      finally 
+      {
+         result.setEnd(System.currentTimeMillis());         
+      }
       context.add(TestResult.class, result);
    }
 }

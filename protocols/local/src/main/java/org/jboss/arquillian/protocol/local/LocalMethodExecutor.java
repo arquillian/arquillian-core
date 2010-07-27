@@ -50,7 +50,10 @@ public class LocalMethodExecutor implements ContainerMethodExecutor
          result.setStatus(Status.FAILED);
          result.setThrowable(e);
       }
-      result.setEnd(System.currentTimeMillis());
+      finally 
+      {
+         result.setEnd(System.currentTimeMillis());
+      }
       return result;
    }
 }

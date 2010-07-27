@@ -69,6 +69,10 @@ public class ActivateRunModeTypeClient extends AbstractRunModeHandler<BeforeClas
          {
             result.setStatus(Status.FAILED);
             result.setThrowable(e);
+         } 
+         finally 
+         {
+            result.setEnd(System.currentTimeMillis());
          }
          return result;
       }
