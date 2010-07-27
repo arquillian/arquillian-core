@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.osgi-embedded-42">
+
+	<title>OSGi 4.2 - Embedded</title>
+
+	<para id="container.osgi-embedded-42.description">
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		OSGi container. This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run.   
+	</para>
+
+	<table id="container.osgi-embedded-42.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="5">
+			<colspec colnum="1" colname="ejb" colwidth="1*" />
+			<colspec colnum="2" colname="ejb_local" colwidth="2*" />
+			<colspec colnum="3" colname="inject_cdi" colwidth="2*" />
+			<colspec colnum="4" colname="inject_mc" colwidth="2*" />
+			<colspec colnum="5" colname="persistence" colwidth="3*" />
+			<thead>
+				<row>
+					<entry>@EJB</entry>
+					<entry>@EJB (no-interface)</entry>
+					<entry>@Inject (JSR-330)</entry>
+					<entry>@Inject (MC)</entry>
+					<entry>@PersistenceContext @PersistenceUnit</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry></entry>
+					<entry></entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+					<entry></entry>
+					<entry></entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+
+	<note>
+		@javax.inject.Inject is used for injection. Support injection of Bundle and Bundle context.
+	</note>
+	
+	<programlisting role="XML"><![CDATA[<profile>
+	<id>osgi-embedded-4.2</id>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-osgi-embedded-4.2</artifactId>
+			<version>1.0.0.Alpha3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.osgi.framework</groupId>
+			<artifactId>jboss-osgi-framework-core</artifactId>
+			<version>1.0.0.Alpha6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.osgi.resolver</groupId>
+			<artifactId>jbosgi-resolver-felix</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+	    <dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging-log4j</artifactId>
+			<version>2.1.0.GA</version>
+		</dependency>
+	</dependencies>
+</profile>]]></programlisting>
+</section>

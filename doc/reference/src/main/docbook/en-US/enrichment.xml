@@ -109,7 +109,7 @@ public static JavaArchive createTestArchive() {
       <title>Active scopes</title>
 
       <para>
-         When running your tests the embedded Weld SE container, Arquillian activates scopes as follows:
+         When running your tests the embedded Weld EE container, Arquillian activates scopes as follows:
       </para>
 
       <itemizedlist>

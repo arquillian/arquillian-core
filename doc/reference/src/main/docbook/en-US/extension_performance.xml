@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="extension.performance">
+
+	<title>Performance</title>
+
+	<para id="extension.performance.description">
+	</para>
+
+	Code example
+	<programlisting role="JAVA"><![CDATA[]]></programlisting>
+
+	Maven setup example
+	<programlisting role="XML"><![CDATA[]]></programlisting>
+</section>

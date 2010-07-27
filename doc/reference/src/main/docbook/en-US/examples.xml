@@ -7,19 +7,19 @@
    <para>
       The following examples demonstrate the use of Arquillian. Currently Arquillian is distributed as a Maven only
       project, so you'll need to grab the examples from SVN. You can choose between a 
-      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/junit">JUnit example</ulink> and a 
-      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha1/examples/testng">TestNG example</ulink>. In this 
+      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/junit">JUnit example</ulink> and a 
+      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/testng">TestNG example</ulink>. In this 
       tutorial we show you how to use both.
    </para>
    
-   <programlisting><![CDATA[svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/testng/ arquillian-example-testng
-svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/junit/ arquillian-example-junit]]></programlisting>
+   <programlisting><![CDATA[svn co http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/testng/ arquillian-example-testng
+svn co http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/junit arquillian-example-junit]]></programlisting>
          
    <para>
       Running these tests from the command line is easy. The examples run against all the servers supported
       by Arquillian (of course, you must choose a container that is capable of deploying EJBs for these tests).
       To run the test, we'll use Maven. For this tutorial, we'll use JBoss AS 6 (currently at Milestone 3), for
-      which we use the <literal>jbossas-remote-60</literal> profile.
+      which we use the <literal>jbossas-remote-6</literal> profile.
    </para>
    
    <para>
@@ -35,10 +35,10 @@ svn co http://anonsvn.jboss.org/repos/common/arquillian/trunk/examples/junit/ ar
    </para>
       
    <programlisting><![CDATA[$ cd arquillian-example-testng/ 
-$ mvn test -Pjbossas-remote-60
+$ mvn test -Pjbossas-remote-6
 
 $ cd ../arquillian-example-junit/
-$ mvn test -Pjbossas-remote-60]]></programlisting>
+$ mvn test -Pjbossas-remote-6]]></programlisting>
    
    <para>
       You can also run the tests in an IDE. We'll show you how to run the tests in Eclipse, with m2eclipse installed, next.
@@ -61,7 +61,7 @@ $ mvn test -Pjbossas-remote-60]]></programlisting>
       Once the plugins are installed, import your Maven project into the Eclipse workspace. Before executing the
       test, you need to enable the profile for the target container, as we did on the command line. We'll
       go ahead and activate the profile globally for the project (we also need the <literal>default</literal> profile, read the note above for more). Right click on the project and select Properties.
-      Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-60</literal>; you also need
+      Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-6</literal>; you also need
       to tell Maven to not resolve dependencies from the workspace (this interferes with resource loading):
    </para>
    
@@ -126,7 +126,7 @@ import org.junit.runner.RunWith;
 public class InjectionTestCase {
    @Deployment
    public static JavaArchive createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(GreetingManager.class, GreetingManagerBean.class);
    }
 
@@ -165,7 +165,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -177,10 +177,9 @@ public class InjectionTestCase
 {
    @Deployment
    public static JavaArchive createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(GreetingManager.class, GreetingManagerBean.class)
-         .addManifestResource(new ByteArrayAsset(new byte[0])), 
-			   ArchivePaths.create("beans.xml"));
+         .addManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
    }
 
    @Inject GreetingManager greetingManager;
@@ -252,7 +251,7 @@ public class InjectionTestCase
       <programlisting role="JAVA"><![CDATA[public class UserRepositoryTest extends Arquillian {
    @Deployment
    public static JavaArchive createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(User.class, UserRepository.class, UserRepositoryBean.class)
          .addManifestResource(
 			"test-persistence.xml", 
@@ -307,7 +306,7 @@ import com.acme.util.jms.QueueRequestor;
 public class InjectionTestCase {
    @Deployment
    public static JavaArchive createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(MessageEcho.class, QueueRequestor.class);
    }
 

@@ -90,7 +90,7 @@
       </itemizedlist>
 
       <para>
-         Consult the <ulink url="http://docs.jboss.org/shrinkwrap/1.0.0-alpha-9/">ShrinkWrap API</ulink> to discover all the options you have available for constructing the test archive.
+         Consult the <ulink url="http://docs.jboss.org/shrinkwrap/1.0.0-alpha-11/">ShrinkWrap API</ulink> to discover all the options you have available for constructing the test archive.
       </para>
 
    </section>
@@ -236,16 +236,14 @@ public class MyTestCase</programlisting>
 				Here is an overview of the expected output of the packaging process when you provide a <literal>@Deployment</literal>.			
 			</para>			
 			<table frame="all">
-			   <title>EEDeploymentPackager rules</title>
-			   <tgroup cols="4">
+			   <title>Servlet Protocol 2.5 rules</title>
+			   <tgroup cols="3">
 			      <colspec colnum="1" colname="name" colwidth="2*"/>
-			      <colspec colnum="2" colname="type" colwidth="1*"/>
-			      <colspec colnum="3" colname="compliance" colwidth="2*"/>
-			      <colspec colnum="4" colname="artifactId" colwidth="5*"/>
+			      <colspec colnum="2" colname="output" colwidth="2*"/>
+			      <colspec colnum="3" colname="artifactId" colwidth="6*"/>
 			      <thead>
 			         <row>
 			            <entry>@Deployment</entry>
-			            <entry>Servlet EE v.</entry>
 			            <entry>Output</entry>
 			            <entry>Action</entry>
 			         </row>
@@ -253,13 +251,11 @@ public class MyTestCase</programlisting>
 			      <tbody>
 			         <row>
 			           <entry>JavaArchive</entry>
-			           <entry>EE 5</entry>
 			           <entry>EnterpriseArchive</entry>
 			           <entry>Create a new <literal>EnterpriseArchive</literal>, add <literal>@Deployment</literal> and <literal>ServletProtocol</literal> as module, the other <literal>Auxiliary Archives</literal> as libraries.</entry>
 			         </row>
 			         <row>
 			           <entry>WebArchive</entry>
-			           <entry>EE 5</entry>
 			           <entry>Exception</entry>
 			           <entry>
 		           			Can not merge two <literal>WebArchives</literal> and both packaged in a <literal>EnterpriseArchive</literal> will result in isolation issues.
@@ -271,34 +267,47 @@ public class MyTestCase</programlisting>
 			         </row>
 			         <row>
 			           <entry>EnterpriseArchive</entry>
-			           <entry>EE 5</entry>
 			           <entry>EnterpriseArchive</entry>
 			           <entry>Same as <literal>JavaArchive</literal>, but using the <literal>@Deployment</literal> defined <literal>EnterpriseArchive</literal> instead of creating a new.</entry>
 			         </row>
+			      </tbody>
+			   </tgroup>
+			</table>
+			<table frame="all">
+			   <title>Servlet Protocol 3.0 rules</title>
+			   <tgroup cols="3">
+			      <colspec colnum="1" colname="name" colwidth="2*"/>
+			      <colspec colnum="2" colname="output" colwidth="2*"/>
+			      <colspec colnum="3" colname="artifactId" colwidth="6*"/>
+			      <thead>
+			         <row>
+			            <entry>@Deployment</entry>
+			            <entry>Output</entry>
+			            <entry>Action</entry>
+			         </row>
+			      </thead>
+			      <tbody>
 			         <row>
 			           <entry>JavaArchive</entry>
-			           <entry>EE 6</entry>
 			           <entry>WebArchive</entry>
 			           <entry>Creates a new <literal>WebArchive</literal>, adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
 			         </row>
 			         <row>
 			           <entry>WebArchive</entry>
-			           <entry>EE 6</entry>
 			           <entry>WebArchive</entry>
 			           <entry>Adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
 			         </row>
 			         <row>
 			           <entry>EnterpriseArchive</entry>
-			           <entry>EE 6</entry>
 			           <entry>EnterpriseArchive</entry>
-			           <entry>Finds the protocol <literal>JavaArchive</literal> based on name(<filename>arquillian-protocol.jar</filename>), wraps this jar in a <literal>WebArchive</literal> and adds it as a module. The other <literal>Auxiliary Archives</literal> are added as libraries.</entry>
+			           <entry>Creates a new <literal>WebArchive</literal>, adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
 			         </row>
 			      </tbody>
 			   </tgroup>
 			</table>
 			<note>
 				<para>
-					In Alpha-2 Arquillian only has one protocol implementation for communicating with remote servers, the servlet protocol.
+					In Alpha3 Arquillian only has one type of protocol implementation for communicating with remote servers, the servlet protocol.
 					So the reason for the big difference in packaging between EE 5 and EE 6 containers is mainly due to the support of 
 					Web Fragments in the EE 6 specification. Web Fragments lets Arquillian add it self to the <literal>@Deployment</literal> 
 					without drastically changing it, but it also means it has to be a <literal>WebArchive</literal> in the deployment. 

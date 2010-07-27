@@ -56,7 +56,7 @@
       <programlisting role="XML"><![CDATA[<dependency> 
    <groupId>junit</groupId> 
    <artifactId>junit</artifactId> 
-   <version>4.6</version> 
+   <version>4.8.1</version> 
    <scope>test</scope> 
 </dependency> 
 
@@ -162,7 +162,7 @@
 
       <programlisting role="JAVA"><![CDATA[@Deployment
 public static JavaArchive createTestArchive() {
-   return ShrinkWrap.create("test.jar", JavaArchive.class)
+   return ShrinkWrap.create(JavaArchive.class, "test.jar")
       .addClasses(TemperatureConverter.class)
       .addManifestResource(
             new ByteArrayAsset("<beans/>".getBytes()), 
@@ -192,10 +192,10 @@ public class TemperatureConverterTest {
 
    @Deployment
    public static JavaArchive createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(TemperatureConverter.class)
          .addManifestResource(
-            new ByteArrayAsset("<beans/>".getBytes()), 
+            EmptyAsset.INSTANCE, 
             ArchivePaths.create("beans.xml")); 
    }
 
@@ -224,10 +224,10 @@ public class TemperatureConverterTest {
 
    @Deployment
    public static JavaArchive createTestArchive() {
-      return ShrinkWrap.create("test.jar", JavaArchive.class)
+      return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(TemperatureConverter.class)
          .addManifestResource(
-            new ByteArrayAsset("<beans/>".getBytes()), 
+            EmptyAsset.INSTANCE,, 
             ArchivePaths.create("beans.xml")); 
    }
 
@@ -295,6 +295,12 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
             <artifactId>arquillian-jbossas-remote-6</artifactId>
             <version>${arquillian.version}</version>
          </dependency>
+		<dependency>
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-client</artifactId>
+			<version>6.0.0.20100429-M3</version>
+			<type>pom</type>
+		</dependency>
       </dependencies>
    </profile>
 </profiles>]]></programlisting>
@@ -361,7 +367,7 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
          Once the plugins are installed, import your Maven project into the Eclipse workspace. Before executing the
          test, you need to enable the profile for the target container, as you did in the previous section. We'll
          go ahead and activate the profile globally for the project. Right click on the project and select Properties.
-         Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-60</literal>; you also need
+         Select the Maven property sheet and in the first form field, enter <literal>jbossas-remote-6</literal>; you also need
          to tell Maven to not resolve depedencies from the workspace (this interferes with resource loading):
       </para>
 
@@ -413,7 +419,7 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 
       <para>
          Import your Maven project into NetBeans. Then, look for a select menu in the main toolbar, which you can
-         use to set the active Maven profile. Select the <literal>jbossas-remote-60</literal> profile as shown here:
+         use to set the active Maven profile. Select the <literal>jbossas-remote-6</literal> profile as shown here:
       </para>
 
       <mediaobject>

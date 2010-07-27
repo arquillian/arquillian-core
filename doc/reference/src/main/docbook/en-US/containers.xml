@@ -225,7 +225,7 @@
 	
 <arquillian xmlns="http://jboss.com/arquillian"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:jboss="urn:arq:org.jboss.arquillian.jbossas.remote60">
+		xmlns:jboss="urn:arq:org.jboss.arquillian.container.jbossas.remote_6">
 
  <engine>
    <deploymentExportPath>/tmp</deploymentExportPath>
