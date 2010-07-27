@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.arquillian.test</groupId>
 	<artifactId>deployment</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0.Alpha3</version>
 
 	<properties>
-		<arquillian.version>1.0.0-SNAPSHOT</arquillian.version>
+		<arquillian.version>1.0.0.Alpha3</arquillian.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
