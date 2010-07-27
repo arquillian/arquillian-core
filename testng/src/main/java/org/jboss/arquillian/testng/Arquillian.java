@@ -54,17 +54,18 @@ public abstract class Arquillian implements IHookable
       if(deployableTest.get() == null)
       {
          Configuration configuration = new XmlConfigurationBuilder().build();
-         deployableTest.set(DeployableTestBuilder.build(configuration));
+         TestRunnerAdaptor adaptor = DeployableTestBuilder.build(configuration);
+         adaptor.beforeSuite(); 
+         deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
       }
-      deployableTest.get().beforeSuite();
    }
 
    @AfterSuite(alwaysRun = true)
    public void arquillianAfterSuite() throws Exception
    {
-      if (deployableTest.get() == null)
+      if (deployableTest.get() == null) 
       {
-         return;
+         return; // beforeSuite failed
       }
       deployableTest.get().afterSuite();
       deployableTest.set(null);
@@ -153,8 +154,14 @@ public abstract class Arquillian implements IHookable
    @DataProvider(name = Arquillian.ARQUILLIAN_DATA_PROVIDER)
    public Object[][] arquillianArgumentProvider(Method method) 
    {
-      Object[] parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), method);
       Object[][] values = new Object[1][method.getParameterTypes().length];
+      
+      if (deployableTest.get() == null)
+      {
+         return values;
+      }
+
+      Object[] parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), method);
       values[0] = parameterValues; 
       
       return values;

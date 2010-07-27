@@ -71,26 +71,39 @@ public class Arquillian extends BlockJUnit4ClassRunner
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
-      lastCreatedRunner.set(this);
-      if(deployableTest.get() == null) 
+      try
       {
-         Configuration configuration = new XmlConfigurationBuilder().build();
-         deployableTest.set(DeployableTestBuilder.build(configuration));
-         try 
+         // first time we're being initialized
+         if(deployableTest.get() == null)   
          {
-            deployableTest.get().beforeSuite();
-         } 
-         catch (Exception e) 
-         {
-            throw new InitializationError(Arrays.asList((Throwable)e));
+            // no, initialization has been attempted before, refuse to do anything else
+            if(lastCreatedRunner.get() != null)  
+            {
+                throw new RuntimeException("Arquillian has previously been attempted initialized, but failed. See previous exceptions for cause.");
+            }
+            Configuration configuration = new XmlConfigurationBuilder().build();
+            TestRunnerAdaptor adaptor = DeployableTestBuilder.build(configuration);
+            try 
+            {
+               // don't set it if beforeSuite fails
+               adaptor.beforeSuite();
+               deployableTest.set(adaptor);
+            } 
+            catch (Exception e) 
+            {
+               throw new InitializationError(Arrays.asList((Throwable)e));
+            }
          }
+      }
+      finally 
+      {
+         lastCreatedRunner.set(this);
       }
    }
    
    @Override
    public void run(RunNotifier notifier)
    {
-      // register to listen for RunFinished to execute AfterSuite
       notifier.addListener(new RunListener() 
       {
          @Override
@@ -144,8 +157,15 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            deployableTest.get().beforeClass(Arquillian.this.getTestClass().getJavaClass());
-            statementWithBefores.evaluate();
+            try
+            {
+               deployableTest.get().beforeClass(Arquillian.this.getTestClass().getJavaClass());
+               statementWithBefores.evaluate();
+            } 
+            catch (Exception e) // catch and rethrow only to be able to set a break point. 
+            {
+               throw e;
+            }
          }
       };
    }
