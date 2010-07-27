@@ -19,55 +19,70 @@
    
    <section id="mission">
       <title>Mission statement</title>
-      <para>
-         The mission of the Arquillian project is to provide a simple test harness that developers can use to produce a
-         broad range of integration tests for their Java applications (most likely enterprise applications). A test case
-         may be executed within the container, deployed alongside the code under test, or by coordinating with the
-         container, acting as a client to the deployed code.
-      </para>
+	<para>
+		Arquillian is the missing link in Java EE development. Developers have long had to fend for themselves in the testing stage, burdened with 
+		bootstrapping the infrastructure on which the test depends. That's time lost, and it places a high barrier to entry on integration testing. 
+		Arquillian tears down that barrier.
+	</para>                                                                            
+	
+	<para>
+		Arquillian is a container-oriented test framework. It picks up where unit tests leave off, targeting the integration of application code 
+		inside a real runtime environment. Just as Java EE 5 simplified the server programming model by providing declarative services for POJOs, 
+		Arquillian equips tests with container lifecycle management and enrichment.
+	</para>
+	
+	<para>
+		With Arquillian, you write a basic test case and annotate it with declarative behavior that says, "run with Arquillian." Launching the 
+		test is as simple as right-clicking the test class in the IDE and selecting Run As > JUnit or TestNG test. 
+		Based on the classpath configuration, Arquillian starts or binds to the target container (JBoss AS, GlassFish, OpenEJB, etc) and 
+		deploys the test case bundled with the test archive defined in the @Deployment method. Your test executes inside the container and 
+		enjoys all the same services as an application component. That means you get dependency and resource injection into the test, 
+		you can access EJBs, you can load a persistence unit, you can get a handle to a database connection, etc. Yet, on the surface, 
+		it looks like any other unit test. (Arquillian also has a client execution mode, which only deploys the test archive, not the test case).	
+	</para>
 
-      <para>
-         Arquillian defines two styles of container, remote and embedded. A remote container resides in a separate JVM
-         from the test runner. Its lifecycle may be managed by Arquillian, or Arquillian may bind to a container that is
-         already started. An embedded container resides in the same JVM and is mostly likely managed by Arquillian.
-         Containers can be further classified by their capabilities. Examples include a fully compliant Java EE
-         application server (e.g., GlassFish, JBoss AS, Embedded GlassFish), a Servlet container (e.g., Tomcat, Jetty)
-         and a bean container (e.g., Weld SE). Arquillian ensures that the container used for testing is pluggable, so
-         the developer is not locked into a proprietary testing environment.
-      </para>
- 
-      <para>
-         Arquillian seeks to minimize the burden on the developer to carry out integration testing by handling all
-         aspects of test execution, including:
-      </para>
- 
+	<para>
+		Instead of bringing your runtime to the test, Arquillian brings your test to the runtime.
+	</para>
+
+	<para>
+		Features of Arquillian include:	
+
       <itemizedlist>
          <listitem>
-            <para>managing the lifecycle of the container (start/stop),</para>
+            <para>Runnable from both JUnit and TestNG</para>
          </listitem>
          <listitem>
-            <para>bundling the test class with dependent classes and resources into a deployable archive,</para>
+            <para>Abstracts out server lifecycle and deployment</para>
          </listitem>
          <listitem>
-            <para>enhancing the test class (e.g., resolving @Inject, @EJB and @Resource injections),</para>
+            <para>Injects resources like managed beans, EJBs or objects from JNDI into the test instance</para>
          </listitem>
          <listitem>
-            <para>deploying the archive to test (deploy/undeploy) and</para>
+            <para>Zero reliance upon a formal build; can be run or debugged from IDEs like Eclipse, IDEA, NetBeans</para>
          </listitem>
          <listitem>
-            <para>capturing results and failures.</para>
+            <para>Supports remote and embedded containers: JBoss AS, GlassFish, Jetty, Tomcat, OpenEJB, OSGi and more on the way</para>
+         </listitem>
+         <listitem>
+            <para>Enables pass-by-reference between the test and the server, even if the server is in another JVM from the test launcher</para>
+         </listitem>
+         <listitem>
+            <para>Provides an extensible SPI - plug in your own containers and take advantage of the Arquillian bus to provide services to the test</para>
          </listitem>
       </itemizedlist>
- 
-      <para>
-         To avoid introducing unnecessary complexity into the developer's build environment, Arquillian integrates
-         transparently with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using
-         existing IDE, Ant and Maven test plugins without any add-ons.
-      </para>
- 
-      <para>
-         Arquillian makes integration testing a breeze.
-      </para>
+
+	</para>
+
+	<para>
+		No longer does writing a test involve system administration tasks. No more custom scripts or copy-paste Maven configuration. 
+		No more full builds. No more test classpath mayhem. No more looking up resources manually in JNDI. No more reliance on coarse-grained, 
+		black-box testing.		
+	</para>
+
+	<para>
+		Arquillian keeps you focused on the test, while enjoying the services provided by the container. And it's turning heads.	
+	</para>
 
    </section>
 

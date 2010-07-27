@@ -103,7 +103,7 @@
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.tomcat.embedded_6
+			Namespace: urn:arq:org.jboss.arquillian.container.tomcat.embedded_6
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>

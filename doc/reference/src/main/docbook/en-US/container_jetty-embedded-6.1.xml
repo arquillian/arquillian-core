@@ -69,7 +69,7 @@
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.jetty.embedded_6_1
+			Namespace: urn:arq:org.jboss.arquillian.container.jetty.embedded_6_1
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>

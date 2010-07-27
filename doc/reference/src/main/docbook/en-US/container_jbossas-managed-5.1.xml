@@ -101,6 +101,12 @@
 						<entry>$JAVA_HOME</entry>
 						<entry>The Java runtime to use to start the server.</entry>
 					</row>
+					<row>
+						<entry>javaVmArguments</entry>
+						<entry>String</entry>
+						<entry>-Xmx512m -XX:MaxPermSize=128m</entry>
+						<entry>JVM arguments used to start the server.</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
