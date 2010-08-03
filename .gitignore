@@ -1,5 +1,7 @@
 .project
 .settings
+.classpath
+target
 api/.classpath
 api/.project
 api/.settings
