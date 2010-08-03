@@ -1,7 +1,9 @@
 .project
-.settings
+.settings/
 .classpath
-target
+target/
+test-output/
+transaction.log
 api/.classpath
 api/.project
 api/.settings
