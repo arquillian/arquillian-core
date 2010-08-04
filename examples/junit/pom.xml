@@ -25,7 +25,7 @@
 		<version.weld_core>1.0.1-SP1</version.weld_core>
 		<version.org.apache.openejb_openejb.core>3.1.2</version.org.apache.openejb_openejb.core>
 		<version.openwebbeans>1.0.0-M4</version.openwebbeans>
-		<version.jboss_60>6.0.0.20100429-M3</version.jboss_60>
+		<version.jboss_60>6.0.0.20100721-M4</version.jboss_60>
 		<version.jboss_51>5.1.0.GA</version.jboss_51>
 		<version.jboss_50>5.0.1.GA</version.jboss_50>
 		<version.glassfish_30>3.0.1-b02</version.glassfish_30>
@@ -59,6 +59,12 @@
 					<artifactId>jboss-ejb3-api</artifactId>
 					<version>3.1.0</version>
 				</dependency>
+		      <dependency>
+		         <groupId>javax.persistence</groupId> 
+		         <artifactId>persistence-api</artifactId> 
+		         <version>1.0</version> 
+		         <scope>test</scope>
+		      </dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -363,10 +369,7 @@
 								classes, methods, etc. EMB-41. Endorsed required for things like
 								WS support (EMB-61)
 							-->
-							<argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-${version.jboss_60}/lib/endorsed -Djboss.home=${project.build.directory}/jboss-${version.jboss_60} -Djboss.boot.server.log.dir=${project.build.directory}/jboss-${version.jboss_60}</argLine>
-							<excludes>
-								<exclude>com/acme/cdi/*</exclude> <!-- Weld Deployer issue in M3 -->
-							</excludes>
+							<argLine>-Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.endorsed.dirs=${project.build.directory}/jboss-${version.jboss_60}/lib/endorsed -Djboss.home=${project.build.directory}/jboss-${version.jboss_60} -Djboss.boot.server.log.dir=${project.build.directory}/jboss-${version.jboss_60} -Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -523,7 +526,6 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<excludes>
-								<exclude>com/acme/cdi/*</exclude> <!-- Weld Deployer issue in M3 -->
 								<exclude>com/acme/cdi/conversation/*</exclude>
 							</excludes>
 						</configuration>
@@ -649,12 +651,6 @@
       <dependency>
          <groupId>javax.annotation</groupId> 
          <artifactId>jsr250-api</artifactId> 
-         <version>1.0</version> 
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>javax.persistence</groupId> 
-         <artifactId>persistence-api</artifactId> 
          <version>1.0</version> 
          <scope>test</scope>
       </dependency>
