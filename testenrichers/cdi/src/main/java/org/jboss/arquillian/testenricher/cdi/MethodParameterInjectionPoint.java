@@ -24,11 +24,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedCallable;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Qualifier;
 
 /**
  * MethodParameterInjectionPoint
@@ -68,8 +71,23 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint
     */
    public Set<Annotation> getQualifiers()
    {
-      return new HashSet<Annotation>(
-            Arrays.asList(method.getParameterAnnotations()[position]));
+      Set<Annotation> qualifiers = new HashSet<Annotation>();
+      for(Annotation annotation : method.getParameterAnnotations()[position])
+      {
+         if(annotation.getClass().isAnnotationPresent(Qualifier.class))
+         {
+            qualifiers.add(annotation);
+         }
+      }
+      /*
+       * TODO: ARQ-240 We should not add @Default by default, this should be handled by CDI. 
+       * Due to bug in Weld 1.0.0.SP4(fixed in trunk). Remove this when 1.1.0 is out. 
+       */
+      if(qualifiers.size() == 0)
+      {
+         qualifiers.add(new DefaultLiteral());
+      }
+      return qualifiers;
    }
 
    /* (non-Javadoc)
@@ -77,7 +95,7 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint
     */
    public Type getType()
    {
-      return method.getParameterTypes()[position];
+      return findTypeOrGenericType();
    }
 
    /* (non-Javadoc)
@@ -142,25 +160,26 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint
        */
       public Set<Annotation> getAnnotations()
       {
-         return getQualifiers();
+         return new HashSet<Annotation>(Arrays.asList(method.getParameterAnnotations()[position]));
       }
 
       /* (non-Javadoc)
        * @see javax.enterprise.inject.spi.Annotated#getBaseType()
        */
-      // TODO: what is the BaseType ? 
       public Type getBaseType()
       {
-         return method.getParameterTypes()[position];
+         return getType();
       }
 
       /* (non-Javadoc)
        * @see javax.enterprise.inject.spi.Annotated#getTypeClosure()
        */
-      // TODO: what is the TypeClosure ?
       public Set<Type> getTypeClosure()
       {
-         return new HashSet<Type>(Arrays.asList(getBaseType()));
+         Set<Type> types = new HashSet<Type>();
+         types.add(findTypeOrGenericType());
+         types.add(Object.class);
+         return types; 
       }
 
       /* (non-Javadoc)
@@ -170,5 +189,19 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint
       {
          return getAnnotation(annotationType) != null;
       }
+   }
+   
+   private Type findTypeOrGenericType()
+   {
+      if(method.getGenericParameterTypes().length > 0)
+      {
+         return method.getGenericParameterTypes()[position];
+      }
+      return method.getParameterTypes()[position];
+   }
+   
+   private static class DefaultLiteral extends AnnotationLiteral<Default> implements Default 
+   {
+      private static final long serialVersionUID = 1L;
    }
 }
