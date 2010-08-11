@@ -176,19 +176,19 @@
       <dependency>
          <groupId>org.apache.tomcat</groupId>
          <artifactId>catalina</artifactId>
-         <version>6.0.26</version>
+         <version>6.0.29</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.apache.tomcat</groupId>
          <artifactId>coyote</artifactId>
-         <version>6.0.26</version>
+         <version>6.0.29</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.apache.tomcat</groupId>
          <artifactId>jasper</artifactId>
-         <version>6.0.26</version>
+         <version>6.0.29</version>
          <scope>provided</scope>
       </dependency>
       <!-- Weld servlet, EL and JSP required for testing CDI injections -->
