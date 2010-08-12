@@ -129,7 +129,7 @@
       </dependency>
       <!-- plus and naming requires for using JNDI -->
       <dependency>
-         <groupId>org.mortbay.jetty</groupId>
+         <groupId>org.eclipse.jetty</groupId>
          <artifactId>jetty-plus</artifactId>
          <version>7.0.2.v20100331</version>
          <scope>test</scope>
