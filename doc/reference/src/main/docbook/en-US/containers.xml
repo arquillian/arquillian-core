@@ -116,19 +116,19 @@
                  <entry>arquillian-jbossas-managed-5.1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-remote-6">JBoss AS 6.0 M3</link></entry>
+                 <entry><link linkend="container.jbossas-remote-6">JBoss AS 6.0 M4</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-remote-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-managed-6">JBoss AS 6.0 M3</link></entry>
+                 <entry><link linkend="container.jbossas-managed-6">JBoss AS 6.0 M4</link></entry>
                  <entry>managed</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-managed-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-embedded-6">JBoss AS 6.0 M3</link></entry>
+                 <entry><link linkend="container.jbossas-embedded-6">JBoss AS 6.0 M4</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-embedded-6</entry>

@@ -120,7 +120,7 @@
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-depchain</artifactId>
-			<version>6.0.0.20100429-M3</version>
+			<version>6.0.0.20100721-M4</version>
 			<type>pom</type>
 		</dependency>
 	</dependencies>
@@ -129,7 +129,7 @@
 			<dependency>
 				<groupId>org.jboss.jbossas</groupId>
 				<artifactId>jboss-as-depchain</artifactId>
-				<version>6.0.0.20100429-M3</version>
+				<version>6.0.0.20100721-M4</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

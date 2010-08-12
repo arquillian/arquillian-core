@@ -16,7 +16,7 @@
       <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
       <version.arquillian>1.0.0-SNAPSHOT</version.arquillian>
       <version.glassfish>3.0.1-b19</version.glassfish>
-      <version.jboss-as-client>6.0.0.20100429-M3</version.jboss-as-client>
+      <version.jboss-as-client>6.0.0.20100721-M4</version.jboss-as-client>
       <version.jboss-javaee6-spec>1.0.0.Beta4</version.jboss-javaee6-spec>
       <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
       <version.junit>4.8.1</version.junit>
@@ -243,7 +243,7 @@
                <type>pom</type>
                <scope>provided</scope>
             </dependency>
-            <!-- cdi is missing from jboss-as-client 6.0.0.M3 -->
+            <!-- cdi is missing from jboss-as-client 6.0.0.M4 -->
             <dependency>
                <groupId>javax.enterprise</groupId>
                <artifactId>cdi-api</artifactId>
