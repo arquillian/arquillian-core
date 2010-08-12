@@ -72,6 +72,7 @@
         
         <module>containers</module>
     
+	<module>extensions</module>
         <module>frameworks</module>
         <module>examples</module>
     
