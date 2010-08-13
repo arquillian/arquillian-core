@@ -62,8 +62,19 @@
 	
 	<warning>
      CDI support requires use of Weld Servlet and associated configuration. The WAR will
-     have to be unpacked as well (the default) in order for Weld to locate the classes.
+     have to be unpacked as well in order for Weld to locate the classes. See the following configuration example.
 	</warning>
+		<programlisting><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+<arquillian xmlns="http://jboss.com/arquillian" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:tomcat6="urn:arq:org.jboss.arquillian.container.tomcat.embedded_6"> 
+
+  <tomcat6:container> 
+      <!-- unpackArchive must be true if using the Weld Servlet module --> 
+  <tomcat6:unpackArchive>true</tomcat6:unpackArchive> 
+</tomcat6:container> 
+
+</arquillian>]]></programlisting>
 
 	<para>
      Running an in-container test on Tomcat 6 currently requires that you add
@@ -156,6 +167,12 @@
 						<entry>String</entry>
 						<entry></entry>
 						<entry>Optional relative or absolute path to the directory where applications are expanded and session serialization data is stored (e.g., work).</entry>
+					</row>
+					<row>
+						<entry>unpackArchive</entry>
+						<entry>boolean</entry>
+						<entry>true</entry>
+						<entry>Specify if the deployment should be deployed exploded or compressed.</entry>
 					</row>
 				</tbody>
 			</tgroup>
