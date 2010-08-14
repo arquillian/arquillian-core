@@ -53,21 +53,37 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
    public Context getActiveContext()
    {
+      if(activeContext.empty())
+      {
+         return null;
+      }
       return activeContext.peek();
    }
    
    public void beforeSuite() throws Exception
    {
       Context suiteContext = contextLifecycle.createRestoreSuiteContext();
-      suiteContext.fire(new BeforeSuite());
-      activeContext.push(suiteContext);
+      try
+      {
+         suiteContext.fire(new BeforeSuite());
+      }
+      finally
+      {
+         activeContext.push(suiteContext);         
+      }
    }
 
    public void afterSuite() throws Exception
    {
       contextLifecycle.createRestoreSuiteContext().fire(new AfterSuite());
-      activeContext.pop();
-      contextLifecycle.destroySuiteContext();
+      try
+      {
+         contextLifecycle.destroySuiteContext();
+      }
+      finally
+      {
+         activeContext.pop();                  
+      }
    }
 
    public void beforeClass(Class<?> testClass) throws Exception
@@ -75,8 +91,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testClass, "TestClass must be specified");
       
       Context classContext = contextLifecycle.createRestoreClassContext(testClass);
-      classContext.fire(new BeforeClass(testClass));
-      activeContext.push(classContext);
+      try
+      {
+         classContext.fire(new BeforeClass(testClass));
+      }
+      finally
+      {
+         activeContext.push(classContext);
+      }
    }
 
    public void afterClass(Class<?> testClass) throws Exception
@@ -84,8 +106,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testClass, "TestClass must be specified");
       
       contextLifecycle.createRestoreClassContext(testClass).fire(new AfterClass(testClass));
-      activeContext.pop();
-      contextLifecycle.destroyClassContext(testClass);
+      try
+      {
+         contextLifecycle.destroyClassContext(testClass);         
+      }
+      finally
+      {
+         activeContext.pop();
+      }
    }
 
    public void before(Object testInstance, Method testMethod) throws Exception
@@ -94,8 +122,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testMethod, "TestMethod must be specified");
       
       TestContext testContext = contextLifecycle.createRestoreTestContext(testInstance);
-      testContext.fire(new Before(testInstance, testMethod));
-      activeContext.push(testContext);
+      try
+      {
+         testContext.fire(new Before(testInstance, testMethod));
+      }
+      finally
+      {
+         activeContext.push(testContext);
+      }
    }
 
    public void after(Object testInstance, Method testMethod) throws Exception
@@ -104,8 +138,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testMethod, "TestMethod must be specified");
 
       contextLifecycle.createRestoreTestContext(testInstance).fire(new After(testInstance, testMethod));
-      activeContext.pop();
-      contextLifecycle.destroyTestContext(testInstance);
+      try
+      {
+         contextLifecycle.destroyTestContext(testInstance);
+      }
+      finally
+      {
+         activeContext.pop();
+      }
    }
    
    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
