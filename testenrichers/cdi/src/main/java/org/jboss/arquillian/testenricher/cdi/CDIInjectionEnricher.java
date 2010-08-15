@@ -80,7 +80,7 @@ public class CDIInjectionEnricher implements TestEnricher
    {
       CreationalContext<?> cc = manager.createCreationalContext(null);
       return (T)manager.getInjectableReference(
-            new MethodParameterInjectionPoint<T>(method, position), 
+            new MethodParameterInjectionPoint<T>(method, position, manager), 
             cc);
    }
    

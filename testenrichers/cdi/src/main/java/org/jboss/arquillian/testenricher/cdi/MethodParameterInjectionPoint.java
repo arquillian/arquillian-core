@@ -29,25 +29,28 @@ import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedCallable;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Qualifier;
 
 /**
  * MethodParameterInjectionPoint
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author Pete Muir
  * @version $Revision: $
  */
 public class MethodParameterInjectionPoint<T> implements InjectionPoint
 {
    private Method method;
    private int position;
+   private BeanManager beanManager;
    
-   public MethodParameterInjectionPoint(Method method, int position)
+   public MethodParameterInjectionPoint(Method method, int position, BeanManager beanManager)
    {
       this.method = method;
       this.position = position;
+      this.beanManager = beanManager;
    }
    
    /* (non-Javadoc)
@@ -74,7 +77,7 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint
       Set<Annotation> qualifiers = new HashSet<Annotation>();
       for(Annotation annotation : method.getParameterAnnotations()[position])
       {
-         if(annotation.getClass().isAnnotationPresent(Qualifier.class))
+         if(beanManager.isQualifier(annotation.annotationType()))
          {
             qualifiers.add(annotation);
          }
