@@ -28,7 +28,7 @@
 		<version.jboss_60>6.0.0.20100721-M4</version.jboss_60>
 		<version.jboss_51>5.1.0.GA</version.jboss_51>
 		<version.jboss_50>5.0.1.GA</version.jboss_50>
-		<version.glassfish_30>3.0.1-b02</version.glassfish_30>
+		<version.glassfish_30>3.1-b09</version.glassfish_30>
 		
    </properties>
 
