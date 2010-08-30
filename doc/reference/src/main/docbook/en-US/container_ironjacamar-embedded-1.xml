@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="container.ironjacamar-embedded-1">
+
+	<title>IronJacamar 1.0 - Embedded</title>
+
+	<para id="container.ironjacamar-embedded-1.description">
+      A DeployableContainer implementation that can run and connect to a
+      embedded (same JVM) Ironjacamar 1.0 JCA Container. Only the Java EE Connector 
+      Architecture 1.6 API is available. This implementation has
+      lifecycle support, so the container will be started and stopped as part
+      of the test run.
+	</para>
+
+	<table id="container.ironjacamar-embedded-1.injection" frame="all">
+		<title>Container Injection Support Matrix</title>
+		<tgroup cols="1">
+			<colspec colnum="1" colname="resource" colwidth="1*" />
+			<thead>
+				<row>
+					<entry>@Resource</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+					</entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+
+        <para id="container.ironjacamar-embedded-1.setup">
+          The IronJacamar <ulink url="http://docs.jboss.org/ironjacamar/userguide/en/html/">user guide</ulink> contains information
+          on how to setup the IronJacamar/Embedded environment.
+        </para>
+
+        <para id="container.ironjacamar-embedded-1.maven">
+          The IronJacamar artifacts are located in the <ulink url="http://repository.jboss.org/nexus/content/groups/public/">JBoss Nexus repository</ulink> under the group id
+	  <programlisting>
+org.jboss.ironjacamar
+          </programlisting>
+        </para>
+
+        <para id="container.ironjacamar-embedded-1.homepage">
+          More information about IronJacamar is available at <ulink url="http://www.jboss.org/ironjacamar/">http://www.jboss.org/ironjacamar/</ulink>.
+        </para>
+</section>
