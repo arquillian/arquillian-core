@@ -21,16 +21,28 @@
       <title>Container varieties</title>
 
       <para>
-         There are two styles of containers that you can target in Arquillian:
+         You can run the same test case against various containers with Arquillian. The test class does not reference
+         the container directly, which means you don't get locked into a proprietary test environment. It also means you
+         can select the optimal container for development or easily test the compatibility of your application.
+      </para>
+
+      <para>
+         Arquillian recognizes three container interaction styles:
       </para> 
 
       <orderedlist>
          <listitem>
-            <para>remote &#8212; resides in a separate JVM from the test runner; its lifecycle may be managed by Arquillian,
-            or Arquillian may bind to a container that is already started</para>
+            <para>a <emphasis>remote</emphasis> container resides in a separate JVM from the test runner; Arquillian binds to the container to
+            deploy and undeploy the test archive and invokes tests via a remote protocol (typically HTTP)</para>
          </listitem>
          <listitem>
-            <para>embedded &#8212; resides in the same JVM as the test runner; its lifecycle is likely managed by Arquillian</para>
+            <para>an <emphasis>embedded</emphasis> container resides in the same JVM as the test runner; lifecycle managed by Arquillian; tests
+            are executed via a local protocol for containers without a web component (e.g., Embedded EJB) and via a
+            remote protocol for containers that have a web component (e.g., Embedded Java EE)</para>
+         </listitem>
+         <listitem>
+            <para>a <emphasis>managed</emphasis> container is the same as a remote container, but in addition, its
+            lifecycle (startup/shutdown) is managed by Arquillian and is run as a separate process</para>
          </listitem>
       </orderedlist>
 
@@ -54,6 +66,27 @@
          Arquillian provides SPIs that handle each of the tasks involved in controlling the runtime environment,
          executing the tests and aggregating the results. So in theory, you can support just about any environment that
          can be controlled with the set of hooks you are given.
+      </para>
+
+   </section>
+
+   <section>
+      <title>Container management</title>
+
+      <para>
+         While the management of an <emphasis>embedded</emphasis> container is straightforward, you may wonder how
+         Arquillian knows where the remote and managed containers are installed. Actually, Arquillian only needs to know
+         the install path of <emphasis>managed</emphasis> containers (e.g., jbossas-managed-6). In this case, since
+         Arquillian manages the container process, it must have access to the container's startup script. For managed
+         JBoss AS containers, the install path is read from the environment variable JBOSS_HOME.
+      </para>
+
+      <para>
+         For <emphasis>remote</emphasis> containers (e.g., jbossas-remote-6), Arquillian simply needs to know that the
+         container is running and communicates with it using a remote protocol (e.g., JNDI). For remote JBoss AS
+         containers, the JNDI settings are set in a jndi.properties file on the classpath. You also have to set the
+         remote address and HTTP port in the container configuration if they differ from the default values (localhost
+         and 8080 for JBoss AS, respectively).
       </para>
 
    </section>
