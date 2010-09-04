@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-openejb-3.1</artifactId>
-			<version>1.0.0.Alpha3</version>
+			<version>1.0.0.Alpha4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.openejb</groupId>

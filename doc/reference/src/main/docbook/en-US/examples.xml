@@ -6,14 +6,21 @@
 
    <para>
       The following examples demonstrate the use of Arquillian. Currently Arquillian is distributed as a Maven only
-      project, so you'll need to grab the examples from SVN. You can choose between a 
-      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/junit">JUnit example</ulink> and a 
-      <ulink url="http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/testng">TestNG example</ulink>. In this 
+      project, so you'll need to grab the examples from Git. You can choose between a 
+      <ulink url="http://github.com/arquillian/arquillian/tree/1.0.0.Alpha4/examples/junit">JUnit example</ulink> and a 
+      <ulink url="http://github.com/arquillian/arquillian/tree/1.0.0.Alpha4/examples/testng">TestNG example</ulink>. In this 
       tutorial we show you how to use both.
    </para>
    
-   <programlisting><![CDATA[svn co http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/testng/ arquillian-example-testng
-svn co http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/examples/junit arquillian-example-junit]]></programlisting>
+   <programlisting><![CDATA[git clone git://github.com/arquillian/arquillian.git arquillian
+cd arquillian
+git checkout 1.0.0.Alpha4]]></programlisting>
+	
+	If you want to try the JUnit examples do:
+   <programlisting><![CDATA[cd examples/junit]]></programlisting>
+
+	Or if you want to try the TestNG examples do:
+   <programlisting><![CDATA[cd examples/testng]]></programlisting>
          
    <para>
       Running these tests from the command line is easy. The examples run against all the servers supported
@@ -34,8 +41,7 @@ svn co http://anonsvn.jboss.org/repos/common/arquillian/tags/1.0.0.Alpha3/exampl
       Now, we tell Maven to run the tests, for both JUnit and TestNG:
    </para>
       
-   <programlisting><![CDATA[$ cd arquillian-example-testng/ 
-$ mvn test -Pjbossas-remote-6
+   <programlisting><![CDATA[$ mvn test -Pjbossas-remote-6
 
 $ cd ../arquillian-example-junit/
 $ mvn test -Pjbossas-remote-6]]></programlisting>

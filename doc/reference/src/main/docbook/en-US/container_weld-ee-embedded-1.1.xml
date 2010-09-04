@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-			<version>1.0.0.Alpha3</version>
+			<version>1.0.0.Alpha4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld</groupId>
