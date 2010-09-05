@@ -307,7 +307,7 @@ public class MyTestCase</programlisting>
 			</table>
 			<note>
 				<para>
-					In Alpha3 Arquillian only has one type of protocol implementation for communicating with remote servers, the servlet protocol.
+					In Alpha4 Arquillian only has one type of protocol implementation for communicating with remote servers, the servlet protocol.
 					So the reason for the big difference in packaging between EE 5 and EE 6 containers is mainly due to the support of 
 					Web Fragments in the EE 6 specification. Web Fragments lets Arquillian add it self to the <literal>@Deployment</literal> 
 					without drastically changing it, but it also means it has to be a <literal>WebArchive</literal> in the deployment. 

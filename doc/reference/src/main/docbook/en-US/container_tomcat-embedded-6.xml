@@ -187,7 +187,7 @@ xmlns:tomcat6="urn:arq:org.jboss.arquillian.container.tomcat.embedded_6">
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-tomcat-embedded-6</artifactId>
-			<version>1.0.0.Alpha3</version>
+			<version>1.0.0.Alpha4</version>
          <scope>test</scope>
 		</dependency>
       <dependency>
