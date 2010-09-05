@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-openwebbeans-embedded-1</artifactId>
-			<version>1.0.0.Alpha4</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.openwebbeans</groupId>

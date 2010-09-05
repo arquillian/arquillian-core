@@ -118,7 +118,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-jetty-embedded-7</artifactId>
-			<version>1.0.0.Alpha4</version>
+			<version>1.0.0-SNAPSHOT</version>
          <scope>test</scope>
 		</dependency>
       <dependency>

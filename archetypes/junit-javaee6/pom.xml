@@ -9,12 +9,12 @@
    <packaging>jar</packaging>
    <name>${projectName}</name>
    <description>Arquillian JUnit project for testing Java EE 6 applications</description>
-   <version>1.0.0.Alpha4</version>
+   <version>1.0.0-SNAPSHOT</version>
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
-      <version.arquillian>1.0.0.Alpha4</version.arquillian>
+      <version.arquillian>1.0.0-SNAPSHOT</version.arquillian>
       <version.glassfish>3.0.1-b19</version.glassfish>
       <version.jboss-as-client>6.0.0.20100721-M4</version.jboss-as-client>
       <version.jboss-javaee6-spec>1.0.0.Beta4</version.jboss-javaee6-spec>

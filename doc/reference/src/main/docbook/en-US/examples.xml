@@ -7,14 +7,14 @@
    <para>
       The following examples demonstrate the use of Arquillian. Currently Arquillian is distributed as a Maven only
       project, so you'll need to grab the examples from Git. You can choose between a 
-      <ulink url="http://github.com/arquillian/arquillian/tree/1.0.0.Alpha4/examples/junit">JUnit example</ulink> and a 
-      <ulink url="http://github.com/arquillian/arquillian/tree/1.0.0.Alpha4/examples/testng">TestNG example</ulink>. In this 
+      <ulink url="http://github.com/arquillian/arquillian/tree/1.0.0-SNAPSHOT/examples/junit">JUnit example</ulink> and a 
+      <ulink url="http://github.com/arquillian/arquillian/tree/1.0.0-SNAPSHOT/examples/testng">TestNG example</ulink>. In this 
       tutorial we show you how to use both.
    </para>
    
    <programlisting><![CDATA[git clone git://github.com/arquillian/arquillian.git arquillian
 cd arquillian
-git checkout 1.0.0.Alpha4]]></programlisting>
+git checkout 1.0.0-SNAPSHOT]]></programlisting>
 	
 	If you want to try the JUnit examples do:
    <programlisting><![CDATA[cd examples/junit]]></programlisting>

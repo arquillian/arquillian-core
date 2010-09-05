@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-jbossas-managed-5.1</artifactId>
-			<version>1.0.0.Alpha4</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
         <dependency>
             <groupId>org.jboss.jbossas</groupId>
