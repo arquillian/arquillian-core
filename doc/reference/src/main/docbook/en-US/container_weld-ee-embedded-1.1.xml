@@ -134,4 +134,54 @@
 		</dependencies>
 	</dependencyManagement>
 </profile>]]></programlisting>
+
+	<para>
+		To run Weld EE Embedded you also need the Java EE APIs. 
+		These APIs might be provided to you by other dependencies like <literal>org.jboss.jbossas:jboss-as-client</literal>, 
+		<literal>org.jboss.spec:jboss-javaee-6.0</literal> or 
+		<literal>org.glassfish.extras:glassfish-embedded-all</literal>. 
+	</para>
+	<programlisting role="XML"><![CDATA[<dependency>
+    <groupId>javax.el</groupId>
+    <artifactId>el-api</artifactId>
+    <version>2.2</version>
+    <scope>test</scope>
+ </dependency>
+ <dependency>
+    <groupId>org.glassfish.web</groupId>
+    <artifactId>el-impl</artifactId>
+    <version>2.1.2-b04</version>
+    <scope>test</scope>
+ </dependency>
+ <dependency>
+    <groupId>org.jboss.spec.javax.servlet</groupId>
+    <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+    <version>1.0.0.Beta2</version>
+    <scope>test</scope>
+ </dependency>
+ <dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>1.0.0.GA</version>
+    <scope>test</scope>
+ </dependency>
+ <dependency>
+    <groupId>javax.transaction</groupId>
+    <artifactId>jta</artifactId>
+    <version>1.1</version>
+    <scope>test</scope>
+ </dependency>
+ <dependency>
+    <groupId>javax.persistence</groupId>
+    <artifactId>persistence-api</artifactId>
+    <version>1.0</version>
+    <scope>test</scope>
+ </dependency>
+ <dependency>
+    <groupId>org.jboss.ejb3</groupId>
+    <artifactId>jboss-ejb3-api</artifactId>
+    <version>3.1.0</version>
+    <scope>test</scope>
+ </dependency>]]></programlisting>
+	
 </section>
