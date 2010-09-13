@@ -23,6 +23,7 @@ import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ConfigurationException;
 import org.jboss.arquillian.spi.ContainerConfiguration;
 import org.jboss.arquillian.spi.ContainerProfile;
+import org.jboss.arquillian.spi.ExtensionConfiguration;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import org.junit.Test;
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @version $Revision: $
  */
 public class XmlConfigurationBuilderTestCase
@@ -58,7 +60,7 @@ public class XmlConfigurationBuilderTestCase
    public void testValidConfigurationFile() throws Exception 
    {
       // create a mock ServiceLoader that returns our MockContainerConfiguration
-      ServiceLoader serviceLoader = new MockServiceLoader();
+      ServiceLoader serviceLoader = new MockServiceLoader(new MockContainerConfiguration());
       
       // build the configuration
       ConfigurationBuilder builder = new XmlConfigurationBuilder("arquillian.xml", serviceLoader);
@@ -105,7 +107,7 @@ public class XmlConfigurationBuilderTestCase
    {
       Configuration configuration = new XmlConfigurationBuilder(
             "missing_arquillian.xml", 
-            new MockServiceLoader()).build();
+            new MockServiceLoader(new MockContainerConfiguration())).build();
       
       ContainerConfiguration containerConfiguration = configuration.getActiveContainerConfiguration();
       Assert.assertNotNull(containerConfiguration);
@@ -114,25 +116,65 @@ public class XmlConfigurationBuilderTestCase
       Assert.assertNotNull(mockContainerConfiguration);
    }
    
+   @Test
+   public void testMockExtensionConfiguration() throws Exception
+   {
+      // create a mock ServiceLoader that returns our MockContainerConfiguration
+      ServiceLoader serviceLoader = new MockServiceLoader(new MockExtensionConfiguration());
+      
+      // build the configuration
+      ConfigurationBuilder builder = new XmlConfigurationBuilder("arquillian-extension.xml", serviceLoader);
+      Configuration configuration = builder.build();
+      Assert.assertNotNull(configuration);
+      
+      MockExtensionConfiguration extensionConfig = configuration.getExtensionConfig(MockExtensionConfiguration.class);
+      Assert.assertNotNull(extensionConfig);
+      
+      // check that the properties have the correct value
+      Assert.assertEquals("*superbrowser /usr/local/bin/superbrowser", extensionConfig.getBrowser());
+      Assert.assertEquals(8888, extensionConfig.getServerPort());
+      Assert.assertEquals("localhost", extensionConfig.getServerHost());
+   }
+   
    /**
-    * Mocks the ServiceLoader to return our MockContainerConfiguration
+    * Mocks the ServiceLoader to return configuration we want to test
     * 
     * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
+    * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
     */
    class MockServiceLoader implements ServiceLoader 
    {
-      @SuppressWarnings("unchecked")
+      private Object instance;
       
+      /**
+       * 
+       * @param instance
+       */
+      public MockServiceLoader(Object instance) {
+         this.instance = instance;
+      }
+      
+      
+      @SuppressWarnings("unchecked")      
       public <T> Collection<T> all(Class<T> serviceClass)
       {
-         return (Collection<T>) Collections.singleton(new MockContainerConfiguration());
+         if(serviceClass.isAssignableFrom(instance.getClass())) 
+         {         
+            return (Collection<T>) Collections.singleton(instance);
+         }
+         
+         return Collections.emptyList();
       }
 
-      @SuppressWarnings("unchecked")
-      
+      @SuppressWarnings("unchecked")      
       public <T> T onlyOne(Class<T> serviceClass)
       {
-         return (T) new MockContainerConfiguration();
+         if(serviceClass.isAssignableFrom(instance.getClass()))
+         {
+            return (T) instance;
+         }
+         
+         return null;
       }
       
       /* (non-Javadoc)
@@ -243,6 +285,64 @@ public class XmlConfigurationBuilderTestCase
          this.c = c;
       }
 
+   }
+   
+   class MockExtensionConfiguration implements ExtensionConfiguration
+   {
+      private String browser;
+      
+      private int serverPort;
+      
+      private String serverHost;
+
+      /**
+       * @return the browser
+       */
+      public String getBrowser()
+      {
+         return browser;
+      }
+
+      /**
+       * @param browser the browser to set
+       */
+      public void setBrowser(String browser)
+      {
+         this.browser = browser;
+      }
+
+      /**
+       * @return the serverPort
+       */
+      public int getServerPort()
+      {
+         return serverPort;
+      }
+
+      /**
+       * @param serverPort the serverPort to set
+       */
+      public void setServerPort(int serverPort)
+      {
+         this.serverPort = serverPort;
+      }
+
+      /**
+       * @return the serverHost
+       */
+      public String getServerHost()
+      {
+         return serverHost;
+      }
+
+      /**
+       * @param serverHost the serverHost to set
+       */
+      public void setServerHost(String serverHost)
+      {
+         this.serverHost = serverHost;
+      }
+     
    }
 
 }

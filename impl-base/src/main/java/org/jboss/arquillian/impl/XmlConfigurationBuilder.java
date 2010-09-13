@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ConfigurationException;
 import org.jboss.arquillian.spi.ContainerConfiguration;
+import org.jboss.arquillian.spi.ExtensionConfiguration;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -43,6 +44,7 @@ import org.w3c.dom.NodeList;
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author Dan Allen
+ * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
  * @version $Revision: $
  */
 public class XmlConfigurationBuilder implements ConfigurationBuilder
@@ -106,13 +108,22 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
       {
          configuration.addContainerConfig(containerConfiguration);
       }
+      
+      Collection<ExtensionConfiguration> extensionsConfigurations = serviceLoader.all(ExtensionConfiguration.class);
+      log.fine("Extension Configurations: " + containersConfigurations.size());
 
+      for(ExtensionConfiguration extensionConfiguration : extensionsConfigurations)
+      {
+         configuration.addExtensionConfig(extensionConfiguration);
+      }
+      
       try
       {
          Document arquillianConfiguration = loadArquillianConfiguration(resourcePath);
          if(arquillianConfiguration != null)
          {
-            populateConfiguration(arquillianConfiguration, containersConfigurations);
+            populateConfiguration(arquillianConfiguration, containersConfigurations, "container");
+            populateConfiguration(arquillianConfiguration, extensionsConfigurations, "extension");            
             populateConfiguration(arquillianConfiguration, configuration);
          }
       } 
@@ -152,24 +163,34 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
       return null;
    }
 
-   private void populateConfiguration(Document xmlDocument, Collection<ContainerConfiguration> containersConfigurations) throws Exception
+   /**
+    * Populates a configuration by finding appropriate configuration for either
+    * a container or an extension in the XML document.
+    * @param <T> the type of configuration, either container or extension
+    * @param xmlDocument the document to be parsed
+    * @param subConfigurations the collection of available configuration for given type
+    * @param localName the local part of qualified name in of the node in the document
+    *        which should contain configuration
+    * @throws Exception
+    */
+   private <T> void populateConfiguration(Document xmlDocument, Collection<T> subConfigurations, String localName) throws Exception
    {
       // load all the container nodes
-      NodeList nodeList = xmlDocument.getDocumentElement().getElementsByTagNameNS("*", "container");
+      NodeList nodeList = xmlDocument.getDocumentElement().getElementsByTagNameNS("*", localName);
       for (int i=0; i < nodeList.getLength(); i++) 
       {
-         Node containerNode = nodeList.item(i); 
+         Node subConfigNode = nodeList.item(i); 
          
          // retrieve the package
-         String pkg = containerNode.getNamespaceURI().replaceFirst("urn:arq:", "");
+         String pkg = subConfigNode.getNamespaceURI().replaceFirst("urn:arq:", "");
          
          // try to find a ContainerConfiguration that matches the package
-         ContainerConfiguration containerConfig = matchContainerConfiguration(containersConfigurations, pkg);
+         T subConfiguration = matchSubConfiguration(subConfigurations, pkg);
          
-         if (containerConfig != null) 
+         if (subConfiguration != null) 
          {
             // map the nodes
-            mapNodesToProperties(containerConfig, containerNode);
+            mapNodesToProperties(subConfiguration, subConfigNode);
          }
       }
    }
@@ -266,34 +287,34 @@ public class XmlConfigurationBuilder implements ConfigurationBuilder
    }
    
    /**
-    * Matches a ContainerConfiguration implementation object with the pkg parameter.
-    * @param pkg the package prefix used to match the ContainerConfiguration.
-    * @return the ContainerConfiguration implementation object that matches the package, 
-    * null otherwise.
+    * Matches a Configuration implementation object with the pkg parameter.
+    * @param subConfigurations The collection of configuration to be searched for
+    * @param pkg the package prefix used to match the configuration.
+    * @return the configuration implementation object that matches the package, 
+    * @{code null} otherwise.
     */
-   private ContainerConfiguration matchContainerConfiguration(Collection<ContainerConfiguration> containerConfigurations, String pkg) 
+   private <T> T matchSubConfiguration(Collection<T> subConfigurations, String pkg) 
    {
-      log.fine("trying to match a container configuration for package: " + pkg);
-      // load all the containers configurations 
+      log.fine("trying to match a configuration for package: " + pkg);
       
-      ContainerConfiguration containerConfig = null;
       
-      // select the container configuration that matches the package
-      for (ContainerConfiguration cc : containerConfigurations) 
+      T subConfiguration = null;      
+      // select the configuration that matches the package
+      for (T sc : subConfigurations) 
       {
-         if (cc.getClass().getName().startsWith(pkg)) 
+         if (sc.getClass().getName().startsWith(pkg)) 
          {
-            containerConfig = cc;                     
+            subConfiguration = sc;                  
          }
       }
       
       // warn: we didn't find the class
-      if (containerConfig == null)
+      if (subConfiguration == null)
       {
-         log.warning("No container configuration found for URI: java:urn:" + pkg);
+         log.warning("No configuration found for URI: java:urn:" + pkg);
       }
       
-      return containerConfig;
+      return subConfiguration;
    }
    
    /**

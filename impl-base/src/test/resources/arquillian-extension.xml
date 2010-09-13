@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<arquillian xmlns="http://jboss.com/arquillian"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:mock="urn:arq:org.jboss.arquillian.impl">
+
+	<engine>
+		<deploymentExportPath>/tmp/</deploymentExportPath>
+	</engine>
+	
+	<mock:extension>
+		<mock:browser>*superbrowser /usr/local/bin/superbrowser</mock:browser>
+		<mock:serverPort>8888</mock:serverPort>
+        <mock:serverHost>localhost</mock:serverHost>      
+	</mock:extension>	
+
+</arquillian>
