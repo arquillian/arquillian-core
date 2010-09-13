@@ -26,9 +26,12 @@ import org.jboss.arquillian.spi.TestEnricher;
  * 
  * Helper for enriching TestCase instances based on multiple TestEnrichers.
  * 
+ * @deprecated When TestNG get support for Phases Listeners, this should be moved out as a EventHandler in the before phase. Remove ServiceLoader
+ * 
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Deprecated
 public class TestEnrichers
 {
    private TestEnrichers()
