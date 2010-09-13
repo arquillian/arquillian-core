@@ -46,4 +46,16 @@ public interface ServiceLoader
     * @throws IllegalStateException if more then one implementation of serviceClass found
     */
    <T> T onlyOne(Class<T> serviceClass);
+   
+   /**
+    * Load a single service implementation. 
+    * 
+    * Method should returns a new instance of defaultServiceClass if no other instance is found.
+    * 
+    * @param <T>
+    * @param serviceClass The service interface to load a implementation for
+    * @param defaultServiceClass If no other implementations found, create a instance of this class
+    * @return A instance of serviceClass
+    */
+   <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass);
 }

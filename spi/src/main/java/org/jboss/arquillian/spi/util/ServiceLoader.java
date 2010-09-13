@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -177,37 +178,7 @@ public class ServiceLoader<S> implements Iterable<S>
 
                      if (line.length() > 0)
                      {
-                        try
-                        {
-                           Class<?> clazz = loader.loadClass(line);
-                           Class<? extends S> serviceClass;
-                           try
-                           {
-                              serviceClass = clazz.asSubclass(expectedType);
-                           }
-                           catch (ClassCastException e)
-                           {
-                              throw new IllegalStateException("Service " + line + " does not implement expected type " + expectedType.getName());
-                           }
-                           Constructor<? extends S> constructor = serviceClass.getConstructor();
-                           if(!constructor.isAccessible()) {
-                              constructor.setAccessible(true);
-                           }
-                           S instance = constructor.newInstance();
-                           providers.add(instance);
-                        }
-                        catch (NoClassDefFoundError e)
-                        {
-                           throw e;
-                        }
-                        catch (InstantiationException e)
-                        {
-                           throw e;
-                        }
-                        catch (IllegalAccessException e)
-                        {
-                           throw e;
-                        }
+                        providers.add(createInstance(line));
                      }
                   }
                   catch (Exception e)
@@ -228,8 +199,41 @@ public class ServiceLoader<S> implements Iterable<S>
          }
       }
    }
-   
-   
+
+   public S createInstance(String line) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
+         NoClassDefFoundError, InstantiationException, IllegalAccessException
+   {
+      try
+      {
+         Class<?> clazz = loader.loadClass(line);
+         Class<? extends S> serviceClass;
+         try
+         {
+            serviceClass = clazz.asSubclass(expectedType);
+         }
+         catch (ClassCastException e)
+         {
+            throw new IllegalStateException("Service " + line + " does not implement expected type " + expectedType.getName());
+         }
+         Constructor<? extends S> constructor = serviceClass.getConstructor();
+         if(!constructor.isAccessible()) {
+            constructor.setAccessible(true);
+         }
+         return constructor.newInstance();
+      }
+      catch (NoClassDefFoundError e)
+      {
+         throw e;
+      }
+      catch (InstantiationException e)
+      {
+         throw e;
+      }
+      catch (IllegalAccessException e)
+      {
+         throw e;
+      }
+   }
 
    /**
     * Lazily loads the available providers of this loader's service.

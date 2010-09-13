@@ -36,6 +36,7 @@ public class DynamicServiceLoader implements org.jboss.arquillian.spi.ServiceLoa
     */
    public <T> Collection<T> all(Class<T> serviceClass)
    {
+      Validate.notNull(serviceClass, "ServiceClass must be provided");
       return ServiceLoader.load(serviceClass).getProviders();
    }
    
@@ -44,12 +45,41 @@ public class DynamicServiceLoader implements org.jboss.arquillian.spi.ServiceLoa
     */
    public <T> T onlyOne(Class<T> serviceClass)
    {
+      Validate.notNull(serviceClass, "ServiceClass must be provided");
       Collection<T> providers = ServiceLoader.load(serviceClass).getProviders();
       verifyOnlyOneOrSameImplementation(serviceClass, providers);
 
       return providers.iterator().next();
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.ServiceLoader#onlyOne(java.lang.Class, java.lang.Class)
+    */
+   public <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass)
+   {
+      Validate.notNull(serviceClass, "ServiceClass must be provided");
+      Validate.notNull(defaultServiceClass, "DefaultServiceImpl must be provided");
+      
+      ServiceLoader<T> serviceLoader = ServiceLoader.load(serviceClass); 
+      Collection<T> providers = serviceLoader.getProviders();
+      try
+      { 
+         verifyOnlyOneOrSameImplementation(serviceClass, providers);
+         return providers.iterator().next();
+      }
+      catch (IllegalStateException e) 
+      {
+         try
+         {
+            return serviceLoader.createInstance(defaultServiceClass.getName());
+         }
+         catch (Exception e2) 
+         {
+            throw new IllegalStateException("Could not create default service instance", e2);
+         }
+      }
+   }
+   
    private void verifyOnlyOneOrSameImplementation(Class<?> serviceClass, Collection<?> providers)
    {
       if(providers == null || providers.size() == 0)

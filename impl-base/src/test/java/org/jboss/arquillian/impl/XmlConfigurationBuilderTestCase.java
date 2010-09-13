@@ -134,6 +134,14 @@ public class XmlConfigurationBuilderTestCase
       {
          return (T) new MockContainerConfiguration();
       }
+      
+      /* (non-Javadoc)
+       * @see org.jboss.arquillian.spi.ServiceLoader#onlyOne(java.lang.Class, java.lang.Class)
+       */
+      public <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass)
+      {
+         return onlyOne(serviceClass);
+      }
    }
 
    class AbstractMockContainerConfiguration
