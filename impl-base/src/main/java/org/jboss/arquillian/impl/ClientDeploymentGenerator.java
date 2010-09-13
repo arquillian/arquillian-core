@@ -56,7 +56,10 @@ public class ClientDeploymentGenerator implements DeploymentGenerator
 
       DeploymentPackager packager = serviceLoader.onlyOne(DeploymentPackager.class);
 
-      Archive<?> applicationArchive = serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
+      Archive<?> applicationArchive = serviceLoader.onlyOne(
+            ApplicationArchiveGenerator.class,
+            DeploymentAnnotationArchiveGenerator.class).generateApplicationArchive(testCase);
+      
       applyApplicationProcessors(applicationArchive, testCase);
       
       List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives();

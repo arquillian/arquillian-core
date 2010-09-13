@@ -42,6 +42,8 @@ public class ApplicationArchiveDeploymentGenerator implements DeploymentGenerato
     */
    public Archive<?> generate(TestClass testCase)
    {
-      return serviceLoader.onlyOne(ApplicationArchiveGenerator.class).generateApplicationArchive(testCase);
+      return serviceLoader.onlyOne(
+            ApplicationArchiveGenerator.class, 
+            DeploymentAnnotationArchiveGenerator.class).generateApplicationArchive(testCase);
    }
 }

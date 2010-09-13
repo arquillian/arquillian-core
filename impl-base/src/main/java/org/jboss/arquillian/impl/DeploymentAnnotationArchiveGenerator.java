@@ -28,13 +28,27 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.container.ClassContainer;
 
 /**
- * UserCreatedArchiveGenerator
+ * This ApplicationArchiveGenerator implementation will look for a 
+ * method with the following signature to generate the deployment:<br/>
+ * <br/>
+ * <code>
+ * @Deployment
+ * static Archive<?> x() {}
+ * </code> 
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public class DeploymentAnnotationArchiveGenerator implements ApplicationArchiveGenerator 
 {
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.ApplicationArchiveGenerator#generateApplicationArchive(org.jboss.arquillian.spi.TestClass)
+    */
+   /**
+    * @throws IllegalAccessException if no method annotated with {@link Deployment} found
+    * @throws IllegalAccessException if annotated method is non static
+    * @throws IllegalAccessException if annotated methods return type is not Archive<?>
+    */
    public Archive<?> generateApplicationArchive(TestClass testCase)
    {
       Validate.notNull(testCase, "TestCase must be specified");
