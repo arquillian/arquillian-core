@@ -79,6 +79,20 @@ public class DynamicServiceLoaderTestCase
             service.getClass());
    }
 
+   @Test
+   public void shouldNotReturnDefaultServiceImplIfOtherIsFound() throws Exception
+   {
+      Service2 service = new DynamicServiceLoader().onlyOne(
+            Service2.class, 
+            DefaultService2Impl.class);
+      
+      Assert.assertNotNull(service);
+      Assert.assertEquals(
+            "Verify that the default provided service class was returned",
+            Service2Impl.class, 
+            service.getClass());
+   }
+
    private void verifyOrder(Collection<Service> services)
    {
       int i = 0;
@@ -103,6 +117,7 @@ public class DynamicServiceLoaderTestCase
    
    public interface Service2 {}
    public static class Service2Impl implements Service2 {}
+   public static class DefaultService2Impl implements Service2 {}
 
    public interface NonRegisteredService {}
    public static class DefaultNonRegisteredServiceImpl implements NonRegisteredService {}
