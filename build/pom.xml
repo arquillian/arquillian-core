@@ -109,6 +109,10 @@
   </licenses>
 
   <!-- Build -->
+  <prerequisites>
+        <maven>3.0-beta-1</maven>
+  </prerequisites>
+
   <build>
 	<pluginManagement>
 		<plugins>
@@ -183,9 +187,6 @@
         </executions>
         <configuration>
           <rules>
-            <requireMavenVersion>
-              <version>[3.0-beta-1,)</version> <!-- Must be Maven > 3 -->
-            </requireMavenVersion>
             <requireJavaVersion>
               <version>1.6.0</version> <!-- Must be JDK6 -->
             </requireJavaVersion>
