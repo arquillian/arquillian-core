@@ -23,7 +23,7 @@
 	<properties>
 
 		<!-- Versioning -->
-		<version.weld_core>1.0.1-SP1</version.weld_core>
+		<version.weld_core>1.0.1-SP4</version.weld_core>
 		<version.weld_core_11>1.1.0.Beta1</version.weld_core_11>
 		<version.org.apache.openejb_openejb.core>3.1.2</version.org.apache.openejb_openejb.core>
 		<version.openwebbeans>1.0.0-M4</version.openwebbeans>
