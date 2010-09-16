@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="extension.selenium">
+
+	<title>Selenium</title>
+
+	<para id="extension.selenium.description">
+      The Selenium extension to Arquillian provides a simple way of including functional tests for your web based application. 
+      Using Selenium becomes very easy, because Arquillian will automatically create and hold required objects, so you can
+      purely concentrate on test development.
+	</para>
+
+    <sect2>
+	<title>Code example</title>
+	<programlisting role="JAVA"><![CDATA[
+import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;   
+   
+// include other arquillian imports here...
+import org.jboss.arquillian.selenium.annotation.Selenium;
+
+// Selenium related imports
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+
+@RunWith(Arquillian.class)
+@Run(AS_CLIENT)
+public class WorkHardCdiTestCase
+{
+   @Deployment
+   public static WebArchive createDeployment()
+   {
+      return ShrinkWrap.create(WebArchive.class, "weld-login.war")
+         .addClasses(Credentials.class, LoggedIn.class, Login.class, User.class, Users.class)
+         .addWebResource(new File("src/test/webapp/WEB-INF/beans.xml"), 
+            "beans.xml")
+         .addWebResource(new File("src/test/webapp/WEB-INF/faces-config.xml"), 
+            "faces-config.xml")
+         .addWebResource(new File("src/test/resources/import.sql"), 
+            ArchivePaths.create("classes/import.sql"))
+         .addResource(new File("src/test/webapp/index.html"), 
+            ArchivePaths.create("index.html"))
+         .addResource(new File("src/test/webapp/home.xhtml"), 
+            ArchivePaths.create("home.xhtml"))
+         .addResource(new File("src/test/webapp/template.xhtml"), 
+            ArchivePaths.create("template.xhtml"))
+         .addResource(new File("src/test/webapp/users.xhtml"), 
+            ArchivePaths.create("users.xhtml"))
+         .addManifestResource(new File("src/test/resources/META-INF/persistence.xml"))
+         .setWebXML(new File("src/test/webapp/WEB-INF/web.xml"));
+   }
+   
+   @Selenium 
+   private WebDriver driver;   
+   
+   @Test   
+   public void testLogin() throws Exception 
+   {
+      driver.get("http://localhost:8080/example/home.jsf");
+
+      driver.findElement(By.id("loginForm:username").sendKeys("demo");      
+      driver.findElement(By.id("loginForm:password").sendKeys("demo");
+      driver.findElement(By.id("loginForm:login").click();
+      Assert.assertTrue("User should be logged in", 
+         isElementPresent(By.xpath("//li[contains(text(), 'Welcome')]");
+   }
+
+   // check is element is presence on page, fails otherwise
+   private boolean isElementPresent(By by)
+   {
+      try
+      {
+         driver.findElement(by);
+         return true;  
+      }
+      catch (NoSuchElementException e) {
+         return false;
+      }
+   }   
+}
+]]></programlisting>
+    <para>
+      As you can see the only two additions needed are <literal>@Run(AS_CLIENT)</literal> and
+     <literal>@Selenium</literal>. The first one sets the run mode of Arquillian, 
+     while the latter one will provide all the functionality required to use Selenium.
+    </para>
+    <para>
+      A Selenium driver instance is created before the first method of class is run and later
+      injected to a field annotated with <literal>@Selenium</literal> annotation. After the last
+      method it is automatically destroyed. This means the session context stays persistent within
+      test methods but not within test classes.
+    </para>
+    <para>
+      By default, the extension will use <literal>HtmlUnitDriver</literal>, being the simplest
+      browser having no UI and requiring no extra configuration. If you want to launch Selenium
+      tests against different browser, see <xref linkend="extension.selenium.customization" />.
+    </para>
+    </sect2>
+
+    <sect2>
+	<title>Maven setup example</title>
+    <para>
+      You have to add <literal>arquillian-selenium</literal> to your pom.xml as well as Selenium dependencies. 
+      Take a look at the <xref linkend="gettingstarted"/> to see how you set up arquillian using Maven.
+    </para>
+	<programlisting role="XML"><![CDATA[
+<dependency>
+   <groupId>org.jboss.arquillian.extension</groupId>
+   <artifactId>arquillian-selenium</artifactId>
+   <version>${arquillian.version}</version>
+   <scope>test</scope>
+</dependency>
+
+<!-- Selenium dependencies -->
+<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium</artifactId>
+    <version>2.0a5</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>1.5.10</version>
+    <scope>test</scope>
+</dependency>
+]]></programlisting>
+    </sect2>
+    
+    <sect2 id="extension.selenium.customization">
+    <title>Customizing Selenium object</title>
+    <para>The big advantage of Arquillian Selenium extension is its flexibility. We provide you reasonable
+    default, but if they are not sufficient or if they do not fulfill your needs, you can change them.
+    Following section expects you to have a knowledge of Selenium.</para>
+    
+    <para>
+    Arquillian Selenium provides two ways how to modify its configuration, either you can use XML based 
+    Arquillian configuration you know from arquillian.xml or you can pass system properties 
+    in configuration of Maven Surefire plugin. The latter way takes precedence if both are used.
+    </para>
+    
+    <para>
+    Let's start with the simplest change. You want to see your test running in a browser, for example
+    Firefox. To do this, you have to add <literal>selenium-firefox-driver</literal> and configure the class
+    used to launch the driver:
+    </para>
+    <programlisting role="XML"><![CDATA[
+<dependency>
+   <artifactId>selenium-firefox-driver</artifactId>
+   <groupId>org.seleniumhq.selenium</groupId>
+   <version>2.0a5</version>
+   <scope>test</scope>
+</dependency>
+]]></programlisting>    
+    
+    <para>
+    The configuration of class will be shown using Surefire plugin configuration. Implementation class
+    <literal>org.openqa.selenium.Firefox.FirefoxDriver</literal> is a WebDriver driver present in the
+    artifact defined above. 
+    </para>
+    <programlisting role="XML"><![CDATA[
+<build>
+   <plugins>
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-surefire-plugin</artifactId>        
+         <configuration>
+            <systemPropertyVariables>
+               <arquillian.selenium.webdriver.implementation>
+                  org.openqa.selenium.firefox.FirefoxDriver
+               </arquillian.selenium.webdriver.implementation>
+            </systemPropertyVariables>
+         </configuration>
+      </plugin>
+   </plugins>
+</build> 
+]]></programlisting>      
+    
+    <para>
+    Selenium 2.0 is a new project. You might have a lot of functional tests already written in Selenium 1.0.
+    Do you think you have to rewrite them? You are wrong! Using them in Arquillian is as simple as
+    annotating with <literal>@Selenium</literal> annotation because both Arquillian Selenium and Selenium 2.0
+    can use original <literal>DefaultSelenium</literal>.
+    </para>
+      <programlisting role="JAVA"><![CDATA[
+import static org.jboss.arquillian.api.RunModeType.AS_CLIENT;   
+   
+// include other arquillian imports here...
+import org.jboss.arquillian.selenium.annotation.Selenium;
+
+// Selenium related imports
+import com.thoughtworks.selenium.DefaultSelenium;
+
+@RunWith(Arquillian.class)
+@Run(AS_CLIENT)
+public class WorkHardCdiTestCase
+{   
+   @Selenium
+   private DefaultSelenium driver;
+
+   @Test
+   public void testLogin()
+   {
+      driver.open("http://localhost:8080/example/home.jsf");
+
+      driver.type("id=loginForm:username", "demo");
+      driver.type("id=loginForm:password", "demo");
+      driver.click("id="loginForm:login");
+      driver.waitForPageToLoad("15000");
+
+      Assert.assertTrue("User should be logged in!", 
+         driver.isElementPresent("xpath=//li[contains(text(),'Welcome')]"));
+   }      
+}
+]]></programlisting>
+   
+   <para>
+   Selenium 1.0 can be configured to use a different browser, in the same way as described for using 
+   <literal>FirefoxWebDriver</literal>. The system properties is named <literal>arquillian.selenium.browser</literal>, you
+   can pass familiar strings like <literal>*firefoxproxy /opt/firefox-3.0/firefox</literal>.
+   You can configure Selenium speed (<literal>arquillian.selenium.speed)</literal>, timeout (<literal>arquillian.selenium.timeout</literal>),
+   a machine where Selenium server is running (<literal>arquillian.selenium.server.host</literal>) or
+   the port (<literal>arquillian.selenium.server.port</literal>).  
+   </para> 
+   
+   <para>
+   But that's not all! Imagine, you don't even have to start your own Selenium server! If you add 
+   <literal>selenium-server</literal> artifact to dependencies, you can configure Arquillian to automatically
+   launch Selenium server before start of the test phase and destroy it after. Add the following artifact:
+   </para>
+    <programlisting role="XML"><![CDATA[
+<dependency>
+   <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-server</artifactId>
+      <version>2.0a5</version>
+   </dependency>
+</dependency>
+]]></programlisting> 
+
+   <para>
+   Once Selenium server is on the class path, you can enable it by property <literal>arquillian.selenium.server.enable</literal>.
+   In fact, you can even bind it to different port (this configuration is shared by server and client part) 
+   by <literal>arquillian.selenium.server.port</literal>, you can pass additional arguments, such as 
+   Firefox profile by <literal>arquillian.selenium.server.cmdline</literal> and redirect its output
+   to a file named in <literal>arquillian.selenium.server.output</literal>. If that not enough, you 
+   can provide your own Selenium server by putting it in dependencies and specify its class name
+   in <literal>arquillian.selenium.server.classname</literal>.
+   </para>  
+   
+   <para>
+   If you need even more customization, you have a possibility. You can override a driver instantiation
+   and let Selenium use your own implementation, such as modified <literal>DefaultSelenium</literal>.
+   All you have to do is to implement <literal>org.jboss.arquillian.selenium.instantiator.Instantiator</literal>
+   interface and add its class as a parameter to <literal>@Selenium</literal> annotation, such as
+   <literal>@Selenium(instantiator = CustomInstantiator.class)</literal>. For instance, we have tried to launch legacy 
+   WebDriver and a different Selenium version by a custom instantiator.
+   </para>
+       
+   </sect2>
+    
+</section>
