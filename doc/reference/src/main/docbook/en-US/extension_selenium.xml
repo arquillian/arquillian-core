@@ -256,8 +256,7 @@ public class WorkHardCdiTestCase
    and let Selenium use your own implementation, such as modified <literal>DefaultSelenium</literal>.
    All you have to do is to implement <literal>org.jboss.arquillian.selenium.spi.Instantiator</literal>
    interface and return greater precedence in <literal>getPrecedence()</literal> than zero. 
-   Once you are done, simply register your class via SPI as a implementation of <literal>org.jboss.arquillian.selenium.spi.Instantiator</literal> service.
-   For instance, we have tried to launch legacy WebDriver and a different Selenium version by a custom instantiator.
+   Once you are done, simply register your class via SPI as a implementation of <literal>org.jboss.arquillian.selenium.spi.Instantiator</literal> service.   
    </para>
        
    </sect2>
