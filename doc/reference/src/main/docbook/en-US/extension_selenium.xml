@@ -140,7 +140,97 @@ public class WorkHardCdiTestCase
     Arquillian Selenium provides two ways how to modify its configuration, either you can use XML based 
     Arquillian configuration you know from arquillian.xml or you can pass system properties 
     in configuration of Maven Surefire plugin. The latter way takes precedence if both are used.
+    The listing of available arguments follows in <xref linkend="extension.selenium.customization.description" />.
     </para>
+    
+    <table id="extension.selenium.customization.description" frame="all">
+      <title>Arquillian Selenium customization</title>
+      <tgroup cols="3">
+         <colspec colnum="1" colname="name" colwidth="4*" />
+         <colspec colnum="2" colname="default" colwidth="4*" />
+         <colspec colnum="3" colname="description" colwidth="5*" />
+         <thead>
+            <row>
+               <entry>Name</entry>
+               <entry>Default value</entry>
+               <entry>Description</entry>
+            </row>
+         </thead>
+         <tbody>
+            <row>
+               <entry>serverEnable</entry>
+               <entry>false</entry>
+               <entry>Determines if Selenium server is started and closed before test suite.
+               This is necessary only for tests using <literal>DefaultSelenium</literal> as a browser.</entry>               
+            </row>
+            <row>
+               <entry>serverPort</entry>
+               <entry>14444</entry>
+               <entry>A port where Selenium server is running. If starting of Selenium server is enabled,
+               this is the port where it is listening after start.</entry>
+            </row>
+            <row>
+               <entry>serverPort</entry>
+               <entry>localhost</entry>
+               <entry>A machine Selenium server is running. If starting of Selenium server is enabled,
+               it is always started on <literal>localhost</literal>.</entry>
+            </row>
+            <row>
+               <entry>serverImplemenation</entry>
+               <entry>org.openqa.selenium.
+                      server.SeleniumServer</entry>
+               <entry>A fully qualified name of class which is used to launch the Selenium server.</entry>
+            </row>
+            <row>
+               <entry>serverOutput</entry>
+               <entry>target/selenium-server-output.log</entry>
+               <entry>A name of file where the output of Selenium server is written to.</entry>         
+            </row>
+            <row>
+               <entry>serverCmdline</entry>
+               <entry>(empty)</entry>
+               <entry>Additional arguments which can be passed to Selenium server while it's starting,
+               such as <literal>-firefoxProfileTemplate /path/to/a/template</literal>.</entry>
+            </row>
+            <row>
+               <entry>serverToken</entry>
+               <entry>Started org.openqa.jetty.jetty.Server</entry>
+               <entry>A string which, if found in server's output, determines that server was properly started.</entry>            
+            </row>
+            <row>
+               <entry>url</entry>
+               <entry>http://localhost:8080</entry>
+               <entry>The URL opened in the browser, which encapsulates the session.</entry>
+            </row>
+            <row>
+               <entry>timeout</entry>
+               <entry>60000</entry>
+               <entry>Time limit in milliseconds which determines operation failed, either for
+               executing Selenium command or starting Selenium server.</entry>
+            </row>
+            <row>
+               <entry>speed</entry>
+               <entry>0</entry>
+               <entry>Time delay in milliseconds before each Selenium command is sent.</entry>
+            </row>
+            <row>
+               <entry>browser</entry>
+               <entry>*firefoxproxy</entry>
+               <entry>Identification of the browser for needs of <literal>DefaultSelenium</literal>.
+                Use can use variants including path to binary, such as: *firefoxproxy /opt/firefox-3.0/firefox.
+               </entry>
+            </row>
+            <row>
+               <entry>webdriverImplementation</entry>
+               <entry>org.openqa.selenium.
+                      htmlunit.HtmlUnitDriver</entry>
+               <entry>Browser implementation for WebDriver browser, that is the name of class to be instantiated.
+               Needed for <literal>WebDriver</literal> tests only.</entry>
+            </row>
+         </tbody>
+       </tgroup>
+    </table>
+   
     
     <para>
     Let's start with the simplest change. You want to see your test running in a browser, for example
@@ -155,11 +245,24 @@ public class WorkHardCdiTestCase
    <scope>test</scope>
 </dependency>
 ]]></programlisting>    
-    
+
+    <para>You can pass configuration in arquillian.xml file:</para>
+    <programlisting role="XML"><![CDATA[
+<arquillian xmlns="http://jboss.com/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+   xmlns:selenium="urn:arq:org.jboss.arquillian.selenium">
+
+   <selenium:extension>
+      <selenium:webdriverImplemenation>
+         org.openqa.selenium.firefox.FirefoxDriver
+      </selenium:webdriverImplemenation>
+   </selenium:extension> 
+]]></programlisting>    
+        
     <para>
-    The configuration of class will be shown using Surefire plugin configuration. Implementation class
-    <literal>org.openqa.selenium.Firefox.FirefoxDriver</literal> is a WebDriver driver present in the
-    artifact defined above. 
+    Or via System properties passed to Maven Surefire plugin. The name of the system property can be easily
+    derived, it is <literal>arquillian.selenium.</literal> + name of property in the table where each upper
+    case letter is replaced with a dot '.' and its lower case equivalent, e.g. <literal>webdriverImplemenation</literal>
+    becomes <literal>arquillian.selenium.webdriver.implementation</literal>.
     </para>
     <programlisting role="XML"><![CDATA[
 <build>
@@ -177,7 +280,8 @@ public class WorkHardCdiTestCase
       </plugin>
    </plugins>
 </build> 
-]]></programlisting>      
+]]></programlisting>        
+       
     
     <para>
     Selenium 2.0 is a new project. You might have a lot of functional tests already written in Selenium 1.0.
@@ -219,11 +323,9 @@ public class WorkHardCdiTestCase
    
    <para>
    Selenium 1.0 can be configured to use a different browser, in the same way as described for using 
-   <literal>FirefoxWebDriver</literal>. The system properties is named <literal>arquillian.selenium.browser</literal>, you
-   can pass familiar strings like <literal>*firefoxproxy /opt/firefox-3.0/firefox</literal>.
-   You can configure Selenium speed (<literal>arquillian.selenium.speed)</literal>, timeout (<literal>arquillian.selenium.timeout</literal>),
-   a machine where Selenium server is running (<literal>arquillian.selenium.server.host</literal>) or
-   the port (<literal>arquillian.selenium.server.port</literal>).  
+   <literal>FirefoxWebDriver</literal> via <literal>browser</literal> property. You can as well
+   determine Selenium speed, timeout and both machine name and port where Selenium server is running.
+   See <xref linkend="extension.selenium.customization.description" />.
    </para> 
    
    <para>
@@ -242,13 +344,11 @@ public class WorkHardCdiTestCase
 ]]></programlisting> 
 
    <para>
-   Once Selenium server is on the class path, you can enable it by property <literal>arquillian.selenium.server.enable</literal>.
-   In fact, you can even bind it to different port (this configuration is shared by server and client part) 
-   by <literal>arquillian.selenium.server.port</literal>, you can pass additional arguments, such as 
-   Firefox profile by <literal>arquillian.selenium.server.cmdline</literal> and redirect its output
-   to a file named in <literal>arquillian.selenium.server.output</literal>. If that not enough, you 
+   Once Selenium server is on the class path, you can enable it by a property <literal>serverEnable</literal>.
+   In fact, you can even bind it to a different port, pass additional arguments, such as 
+   Firefox profile and redirect its output. If that not enough, you 
    can provide your own Selenium server by putting it in dependencies and specify its class name
-   in <literal>arquillian.selenium.server.classname</literal>.
+   in property <literal>serverImplementation</literal>.
    </para>  
    
    <para>
