@@ -24,141 +24,146 @@ import java.io.Serializable;
  * 
  * @author Pete Muir
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- *
+ * 
  */
-public class TestResult implements Serializable
-{
-   private static final long serialVersionUID = 1L;
+public final class TestResult implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-   /**
-    * The test status
-    * @author Pete Muir
-    *
-    */
-   public enum Status
-   {
-      /**
-       * The test passed
-       */
-      PASSED,
-      /**
-       * The test failed
-       */
-      FAILED,
-      /**
-       * The test was skipped due to some deployment problem
-       */
-      SKIPPED;
-   }
+	/**
+	 * The test status
+	 * 
+	 * @author Pete Muir
+	 * 
+	 */
+	public enum Status {
+		/**
+		 * The test passed
+		 */
+		PASSED,
+		/**
+		 * The test failed
+		 */
+		FAILED,
+		/**
+		 * The test was skipped due to some deployment problem
+		 */
+		SKIPPED;
+	}
 
-   private Status status;
-   private Throwable throwable;
+	private Status status;
+	transient private Throwable throwable;
+	private ExceptionProxy exceptionProxy;
 
-   private long start;
-   private long end;
-   
-   /**
-    * Create a empty result.<br/> 
-    * <br/>
-    * Start time is set to Current Milliseconds.
-    */
-   public TestResult()
-   {
-      this(null);
-   }
-   
-   /**
-    * Create a new TestResult.<br/>
-    * <br/>
-    * Start time is set to Current Milliseconds.
-    * 
-    * @param status The result status.
-    */
-   public TestResult(Status status)
-   {
-      this(status, null);
-   }
-   
-   /**
-    * Create a new TestResult.<br/>
-    * <br/>
-    * Start time is set to Current Milliseconds.
-    * 
-    * @param status The result status.
-    * @param throwable thrown exception if any
-    */
-   public TestResult(Status status, Throwable throwable)
-   {
-      this.status = status;
-      this.throwable = throwable;
-      
-      this.start = System.currentTimeMillis();
-   }
+	private long start;
+	private long end;
 
-   /**
-    * Get the status of this test
-    */
-   public Status getStatus() 
-   {
-      return status;
-   }
+	/**
+	 * Create a empty result.<br/>
+	 * <br/>
+	 * Start time is set to Current Milliseconds.
+	 */
+	public TestResult() {
+		this(null);
+	}
 
-   public void setStatus(Status status)
-   {
-      this.status = status;
-   }
-   
-   /**
-    * If the test failed, the exception that was thrown. It does not need to be
-    * the root cause.
-    */
-   public Throwable getThrowable() 
-   {
-      return throwable;
-   }
-   
-   public void setThrowable(Throwable throwable)
-   {
-      this.throwable = throwable;
-   }
-   
-   /**
-    * Set the start time of the test.
-    * 
-    * @param start Start time in milliseconds
-    */
-   public void setStart(long start)
-   {
-      this.start = start;
-   }
-   
-   /**
-    * Get the start time.
-    * 
-    * @return Start time in milliseconds
-    */
-   public long getStart()
-   {
-      return start;
-   }
-   
-   /**
-    * Set the end time of the test.
-    * 
-    * @param End time in milliseconds
-    */
-   public void setEnd(long end)
-   {
-      this.end = end;
-   }
-   
-   /**
-    * Get the end time.
-    * 
-    * @return End time in milliseconds
-    */
-   public long getEnd()
-   {
-      return end;
-   }
+	/**
+	 * Create a new TestResult.<br/>
+	 * <br/>
+	 * Start time is set to Current Milliseconds.
+	 * 
+	 * @param status
+	 *            The result status.
+	 */
+	public TestResult(Status status) {
+		this(status, null);
+	}
+
+	/**
+	 * Create a new TestResult.<br/>
+	 * <br/>
+	 * Start time is set to Current Milliseconds.
+	 * 
+	 * @param status
+	 *            The result status.
+	 * @param throwable
+	 *            thrown exception if any
+	 */
+	public TestResult(Status status, Throwable throwable) {
+		this.status = status;		
+		setThrowable(throwable);
+
+		this.start = System.currentTimeMillis();
+	}
+
+	/**
+	 * Get the status of this test
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	/**
+	 * If the test failed, the exception that was thrown. It does not need to be
+	 * the root cause.
+	 */
+	public Throwable getThrowable() {
+		if (throwable == null) {
+			if (exceptionProxy != null) {
+				throwable = exceptionProxy.createException();	
+			}			
+		}
+		return throwable;
+	}
+
+	public void setThrowable(Throwable throwable) {
+		this.throwable = throwable;		
+		this.exceptionProxy = ExceptionProxy.createForException(throwable);
+	}
+
+	/**
+	 * Set the start time of the test.
+	 * 
+	 * @param start
+	 *            Start time in milliseconds
+	 */
+	public void setStart(long start) {
+		this.start = start;
+	}
+
+	/**
+	 * Get the start time.
+	 * 
+	 * @return Start time in milliseconds
+	 */
+	public long getStart() {
+		return start;
+	}
+
+	/**
+	 * Set the end time of the test.
+	 * 
+	 * @param End
+	 *            time in milliseconds
+	 */
+	public void setEnd(long end) {
+		this.end = end;
+	}
+
+	/**
+	 * Get the end time.
+	 * 
+	 * @return End time in milliseconds
+	 */
+	public long getEnd() {
+		return end;
+	}
+
+	public ExceptionProxy getExceptionProxy() {
+		
+		return exceptionProxy;
+	}	
 }
