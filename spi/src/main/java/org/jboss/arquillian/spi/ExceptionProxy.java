@@ -101,7 +101,6 @@ public class ExceptionProxy implements Serializable {
 	 * @return Instance of the Throwable class.
 	 */
 	private Throwable constructExceptionForClass(Class<?> clazz) {
-		System.out.println("Constructing object for class "+clazz+" With message "+message);
 		Object object = buildObjectFromClassConstructors(clazz);
 
 		if (object == null) {
