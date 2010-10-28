@@ -24,9 +24,9 @@
 	<properties>
 
 		<!-- Versioning -->
-		<version.weld-core>1.0.0-SP4</version.weld-core>
+		<version.weld-core>1.1.0.Beta1</version.weld-core>
 		<version.javax-el>2.2</version.javax-el>
-		<version.slf4j>1.5.9.RC1</version.slf4j>
+		<version.slf4j>1.5.10</version.slf4j>
 		
 	</properties>
 
@@ -71,6 +71,12 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>${version.slf4j}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.cal10n</groupId>
+			<artifactId>cal10n-api</artifactId>
+			<version>0.7.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

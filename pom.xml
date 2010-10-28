@@ -51,28 +51,20 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-      
-        <!-- Core -->
         <module>api</module>
         <module>spi</module>
         <module>build</module>
         <module>impl-base</module>
-     
-        <!-- Tools -->
-        <!-- module>archetypes/junit-javaee6</module -->
-    
-        <!-- Test Framework -->
+
         <module>junit</module>
         <module>testng</module>
-    
-        <!-- Extensions -->
-        
+     
         <module>testenrichers</module> 
         <module>protocols</module>
         
         <module>containers</module>
     
-	<module>extensions</module>
+        <module>extensions</module>
         <module>frameworks</module>
         <module>examples</module>
     

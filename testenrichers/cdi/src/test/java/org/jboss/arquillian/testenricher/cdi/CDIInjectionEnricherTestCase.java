@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
 import junit.framework.Assert;
@@ -29,7 +31,9 @@ import org.jboss.weld.bootstrap.api.Environments;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
+import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Deployment;
+import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.context.api.helpers.ConcurrentHashMapBeanStore;
 import org.jboss.weld.ejb.spi.EjbDescriptor;
 import org.jboss.weld.manager.api.WeldManager;
@@ -167,11 +171,11 @@ public class CDIInjectionEnricherTestCase
             return Collections.emptyList();
          }
          
-         public Collection<URL> getBeansXml()
+         public BeansXml getBeansXml()
          {
             try
             {
-               return Arrays.asList(new URL(null, "memory://beans.xml", new URLStreamHandler()
+               Collection<URL> beansXmlPaths = Arrays.asList(new URL(null, "archive://beans.xml", new URLStreamHandler()
                {
                   @Override
                   protected URLConnection openConnection(URL u) throws IOException
@@ -187,6 +191,7 @@ public class CDIInjectionEnricherTestCase
                      };
                   }
                }));
+               return bootstrap.parse(beansXmlPaths);
             } 
             catch (Exception e) 
             {
@@ -199,9 +204,14 @@ public class CDIInjectionEnricherTestCase
             return Collections.emptyList();
          }
          
-         public Collection<Class<?>> getBeanClasses()
+         public Collection<String> getBeanClasses()
          {
-            return Arrays.asList(classes);
+            Collection<String> beanClasses = new ArrayList<String>();
+            for (Class<?> c : classes)
+            {
+               beanClasses.add(c.getName());
+            }
+            return beanClasses;
          }
       };
       final Deployment deployment = new Deployment() 
@@ -220,6 +230,11 @@ public class CDIInjectionEnricherTestCase
                Class<?> beanClass)
          {
             return beanArchive;
+         }
+
+         public Iterable<Metadata<Extension>> getExtensions()
+         {
+            return Collections.emptyList();
          }
       };
       return deployment;
