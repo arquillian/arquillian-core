@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,25 +16,27 @@
  */
 package org.jboss.arquillian.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 /**
- * Specifies the RunMode a Test should run in.
+ * A interface that describes how you can deploy a named Deployment during test execution.
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Inherited
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Run
+public interface Deployer
 {
-   RunModeType value() default RunModeType.IN_CONTAINER;
+
+   /**
+    * Deploy a named deployment.
+    * 
+    * @param name The name of the deployment
+    */
+   public void deploy(String name);
+   
+   /**
+    * UnDeploy a named deployment.
+    * 
+    * @param name The name of the deployment
+    */
+   public void undeploy(String name);
+   
 }

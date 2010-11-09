@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,44 +21,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 /**
- * Deployment
+ * DeploymentTarget
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Deployment 
+@java.lang.annotation.Target(ElementType.METHOD)
+public @interface DeploymentTarget
 {
-   /**
-    * Name the deployment so you can reference it using the Deployer API
-    * @return The name of this Deployment
-    */
-   String name() default "NO-NAME";
-   
-   /**
-    * Describes whether or not this deployment should be deployed during Test startup.
-    * 
-    * @return
-    */
-   boolean startup() default true;
-   
-   /**
-    * If multiple deployments are specified against the same target and defined as startup, this control the order of which they
-    * will be given to the Container.
-    * 
-    * @return
-    */
-   int order() default -1;
-   
-   /**
-    * Defines if this deployment should be wrapped up based on the protocol so the testcase can be executed incontainer. 
-    * 
-    * @return
-    */
-   boolean testable() default true;
+   String value();
 }
