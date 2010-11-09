@@ -24,7 +24,6 @@ import java.util.List;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -43,18 +42,18 @@ public class EJBInjectionEnricher implements TestEnricher
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
-   public void enrich(Context context, Object testCase)
+   public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
-         injectClass(context, testCase);
+         injectClass(testCase);
       }
    }
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Context context, Method method) 
+   public Object[] resolve(Method method) 
    {
      return new Object[method.getParameterTypes().length];
    }
@@ -84,7 +83,7 @@ public class EJBInjectionEnricher implements TestEnricher
       return SecurityActions.getFieldsWithAnnotation(clazz, annotation);
    }
    
-   protected void injectClass(Context context, Object testCase) 
+   protected void injectClass(Object testCase) 
    {
       try 
       {
@@ -99,7 +98,7 @@ public class EJBInjectionEnricher implements TestEnricher
          {
             if(field.get(testCase) == null) // only try to lookup fields that are not already set
             {
-               Object ejb = lookupEJB(context, field.getType());
+               Object ejb = lookupEJB(field.getType());
                field.set(testCase, ejb);
             }
          }
@@ -118,7 +117,7 @@ public class EJBInjectionEnricher implements TestEnricher
             {
                throw new RuntimeException("@EJB only allowed on 'set' methods");
             }
-            Object ejb = lookupEJB(context, method.getParameterTypes()[0]);
+            Object ejb = lookupEJB(method.getParameterTypes()[0]);
             method.invoke(testCase, ejb);
          }
          
@@ -129,10 +128,10 @@ public class EJBInjectionEnricher implements TestEnricher
       }
    }
    
-   protected Object lookupEJB(Context context, Class<?> fieldType) throws Exception 
+   protected Object lookupEJB(Class<?> fieldType) throws Exception 
    {
       // TODO: figure out test context ? 
-      InitialContext initcontext = createContext(context);
+      InitialContext initcontext = createContext();
       
       String[] jndiNames = {
             "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
@@ -162,7 +161,7 @@ public class EJBInjectionEnricher implements TestEnricher
       throw new NamingException("No EJB found in JNDI, tried the following names: " + joinJndiNames(jndiNames));
    }
    
-   protected InitialContext createContext(Context context) throws Exception
+   protected InitialContext createContext() throws Exception
    {
       return new InitialContext();
    }

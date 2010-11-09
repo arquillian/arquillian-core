@@ -24,7 +24,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.naming.InitialContext;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -45,23 +44,23 @@ public class CDIInjectionEnricher implements TestEnricher
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
-   public void enrich(Context context, Object testCase)
+   public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
-         injectClass(context, testCase);
+         injectClass(testCase);
       }
    }
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Context context, Method method) 
+   public Object[] resolve(Method method) 
    {
      Object[] values = new Object[method.getParameterTypes().length];
      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
      {
-        BeanManager beanManager = lookupBeanManager(context);
+        BeanManager beanManager = lookupBeanManager();
         if(beanManager == null) 
         {
              return values;
@@ -84,11 +83,11 @@ public class CDIInjectionEnricher implements TestEnricher
             cc);
    }
    
-   protected void injectClass(Context context, Object testCase) 
+   protected void injectClass(Object testCase) 
    {
       try 
       {
-         BeanManager beanManager = lookupBeanManager(context);
+         BeanManager beanManager = lookupBeanManager();
          if(beanManager != null) {
             injectNonContextualInstance(beanManager, testCase);            
          }
@@ -114,7 +113,7 @@ public class CDIInjectionEnricher implements TestEnricher
       injectionTarget.inject(instance, creationalContext);
    }
 
-   protected BeanManager lookupBeanManager(Context context) 
+   protected BeanManager lookupBeanManager() 
    {
       try 
       {

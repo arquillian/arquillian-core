@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.naming.InitialContext;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -49,7 +48,7 @@ public class ResourceInjectionEnricher implements TestEnricher
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
-   public void enrich(Context context, Object testCase)
+   public void enrich(Object testCase)
    {
       if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
       {
@@ -60,7 +59,7 @@ public class ResourceInjectionEnricher implements TestEnricher
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Context context, Method method) 
+   public Object[] resolve(Method method) 
    {
      return new Object[method.getParameterTypes().length];
    }
