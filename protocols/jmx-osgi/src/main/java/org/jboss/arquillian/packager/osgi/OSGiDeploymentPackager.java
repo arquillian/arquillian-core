@@ -19,8 +19,8 @@ package org.jboss.arquillian.packager.osgi;
 import java.io.File;
 import java.util.Collection;
 
-import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.TestDeployment;
+import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.osgi.spi.util.BundleInfo;
 import org.jboss.osgi.vfs.AbstractVFS;
 import org.jboss.osgi.vfs.VirtualFile;
