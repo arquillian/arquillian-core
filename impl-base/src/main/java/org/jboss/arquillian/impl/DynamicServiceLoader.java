@@ -54,11 +54,21 @@ public class DynamicServiceLoader implements ServiceLoader
     */
    public <T> Collection<T> all(Class<T> serviceClass)
    {
+      return all(SecurityActions.getThreadContextClassLoader(), serviceClass);
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.ServiceLoader#all(java.lang.ClassLoader, java.lang.Class)
+    */
+   @Override
+   public <T> Collection<T> all(ClassLoader classLoader, Class<T> serviceClass)
+   {
+      Validate.notNull(classLoader, "ClassLoader must be provided");
       Validate.notNull(serviceClass, "ServiceClass must be provided");
       
       return createInstances(
             serviceClass, 
-            load(serviceClass, SecurityActions.getThreadContextClassLoader()));
+            load(serviceClass, classLoader));
    }
    
    /* (non-Javadoc)
@@ -66,9 +76,19 @@ public class DynamicServiceLoader implements ServiceLoader
     */
    public <T> T onlyOne(Class<T> serviceClass)
    {
+      return onlyOne(SecurityActions.getThreadContextClassLoader(), serviceClass);
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.ServiceLoader#onlyOne(java.lang.ClassLoader, java.lang.Class)
+    */
+   @Override
+   public <T> T onlyOne(ClassLoader classLoader, Class<T> serviceClass)
+   {
+      Validate.notNull(classLoader, "ClassLoader must be provided");
       Validate.notNull(serviceClass, "ServiceClass must be provided");
 
-      Set<Class<? extends T>> serviceImpls = load(serviceClass, SecurityActions.getThreadContextClassLoader());
+      Set<Class<? extends T>> serviceImpls = load(serviceClass, classLoader);
       verifyOnlyOneOrSameImplementation(serviceClass, serviceImpls);
       
       return createInstance(serviceImpls.iterator().next());
@@ -79,12 +99,22 @@ public class DynamicServiceLoader implements ServiceLoader
     */
    public <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass)
    {
+      return onlyOne(SecurityActions.getThreadContextClassLoader(), serviceClass, defaultServiceClass);
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.ServiceLoader#onlyOne(java.lang.ClassLoader, java.lang.Class, java.lang.Class)
+    */
+   @Override
+   public <T> T onlyOne(ClassLoader classLoader, Class<T> serviceClass, Class<? extends T> defaultServiceClass)
+   {
+      Validate.notNull(classLoader, "ClassLoader must be provided");
       Validate.notNull(serviceClass, "ServiceClass must be provided");
       Validate.notNull(defaultServiceClass, "DefaultServiceClass must be provided");
       
       Class<? extends T> serviceImplToCreate = defaultServiceClass;
       
-      Set<Class<? extends T>> serviceImpls = load(serviceClass, SecurityActions.getThreadContextClassLoader());
+      Set<Class<? extends T>> serviceImpls = load(serviceClass, classLoader);
       if(serviceImpls.size() > 0)
       {
          verifySameImplementation(serviceClass, serviceImpls);

@@ -16,15 +16,13 @@
  */
 package org.jboss.arquillian.impl;
 
-import org.jboss.arquillian.impl.context.ClientProfileBuilder;
-import org.jboss.arquillian.impl.context.ContainerProfileBuilder;
-import org.jboss.arquillian.impl.context.ContextLifecycleManager;
-import org.jboss.arquillian.impl.context.ProfileBuilder;
-import org.jboss.arquillian.impl.context.ServiceLoadableProfileBuilder;
-import org.jboss.arquillian.impl.context.StandaloneProfileBuilder;
-import org.jboss.arquillian.spi.Configuration;
-import org.jboss.arquillian.spi.ContainerConfiguration;
+import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.core.context.ClassContextImpl;
+import org.jboss.arquillian.impl.core.context.ContainerContextImpl;
+import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
+import org.jboss.arquillian.impl.core.context.TestContextImpl;
 import org.jboss.arquillian.spi.ContainerProfile;
+import org.jboss.arquillian.spi.Profile;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
 
@@ -62,61 +60,28 @@ public class DeployableTestBuilder
     */
    public static TestRunnerAdaptor build() 
    {
-      return build(DeployableTestBuilder.profile);
+      return build(DeployableTestBuilder.profile == null ? ContainerProfile.CLIENT:DeployableTestBuilder.profile);
    }
    
-   // TODO: fix the ContainerProfile loading/selecting
-   public static TestRunnerAdaptor build(Configuration configuration)
-   {
-      ContainerProfile profile = DeployableTestBuilder.profile;
-      ContainerConfiguration activeConfiguration = configuration.getActiveContainerConfiguration();
-      if(activeConfiguration != null && profile == null) 
-      {
-         profile = activeConfiguration.getContainerProfile();
-      }
-      return build(profile, configuration);
-   }
-   
-   public static TestRunnerAdaptor build(ContainerProfile profile) 
-   {
-      return build(profile, new XmlConfigurationBuilder().build());
-   }
-   
-   public static TestRunnerAdaptor build(ContainerProfile profile, Configuration configuration) 
-   {
-      ProfileBuilder profileBuilder = null;
-      switch(profile) 
-      {
-         case STANDALONE:
-            profileBuilder = new StandaloneProfileBuilder();
-            break;
-         case CONTAINER:
-            profileBuilder = new ContainerProfileBuilder();
-            break;
-         case CLIENT:
-            profileBuilder = new ClientProfileBuilder();
-            break;
-         default: // TODO: create profile builders dynamic
-            throw new IllegalArgumentException("Unknon profile " + profile);
-      }
-      return build(profileBuilder, configuration);
-   }
-   
-   /**
-    * @param profileBuilder
-    * @return
-    */
-   public static TestRunnerAdaptor build(ProfileBuilder profileBuilder, Configuration configuration)
+   public static TestRunnerAdaptor build(ContainerProfile profileType) 
    {
       ServiceLoader serviceLoader = new DynamicServiceLoader();
-
-      ContextLifecycleManager eventManager = new ContextLifecycleManager(
-            configuration, 
-            new ServiceLoadableProfileBuilder(serviceLoader, profileBuilder),
-            serviceLoader
-      );
-
-      return new EventTestRunnerAdaptor(eventManager);
+      ManagerBuilder builder = ManagerBuilder.from()
+         .context(SuiteContextImpl.class)
+         .context(ClassContextImpl.class)
+         .context(TestContextImpl.class)
+         .context(ContainerContextImpl.class);
+         
+      Profile profile = serviceLoader.onlyOne(Profile.class, ArquillianProfile.class);
+      switch (profileType)
+      {
+         case CLIENT :
+            builder.extensions(profile.getClientProfile().toArray(new Class<?>[0]));
+            break;
+         case CONTAINER :
+            builder.extensions(profile.getContainerProfile().toArray(new Class<?>[0]));
+            break;
+      }
+      return new EventTestRunnerAdaptor(builder.create());     
    }
-   
 }

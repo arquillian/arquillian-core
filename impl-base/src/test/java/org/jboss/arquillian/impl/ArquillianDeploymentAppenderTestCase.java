@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.impl;
 
+import org.jboss.arquillian.impl.client.deployment.ArquillianDeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 

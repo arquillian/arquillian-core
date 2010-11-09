@@ -18,10 +18,13 @@ package org.jboss.arquillian.impl.handler;
 
 import java.util.Collection;
 
-import org.jboss.arquillian.spi.Context;
+import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+import org.jboss.arquillian.spi.core.Injector;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.annotation.Inject;
+import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
  * A Handler for enriching the Test instance.<br/>
@@ -29,17 +32,21 @@ import org.jboss.arquillian.spi.event.suite.TestEvent;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCaseEnricher implements EventHandler<TestEvent>
+public class TestCaseEnricher 
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.event.EventHandler#callback(org.jboss.arquillian.impl.context.Context, java.lang.Object)
-    */
-   public void callback(Context context, TestEvent event) throws Exception
+   @Inject
+   private Instance<ServiceLoader> serviceLoader;
+   
+   @Inject
+   private Instance<Injector> injector;
+
+   public void enrich(@Observes Before event) throws Exception
    {
-      Collection<TestEnricher> testEnrichers = context.getServiceLoader().all(TestEnricher.class);
+      Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
       for(TestEnricher enricher : testEnrichers) 
       {
-         enricher.enrich(context, event.getTestInstance());
+         injector.get().inject(enricher);
+         enricher.enrich(event.getTestInstance());
       }
    }
 }

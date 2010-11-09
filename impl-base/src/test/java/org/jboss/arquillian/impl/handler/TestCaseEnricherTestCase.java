@@ -18,12 +18,12 @@ package org.jboss.arquillian.impl.handler;
 
 import java.util.Arrays;
 
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.context.TestContext;
+import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
+import org.jboss.arquillian.spi.event.suite.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -37,7 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestCaseEnricherTestCase
+public class TestCaseEnricherTestCase extends AbstractManagerTestBase
 {
    @Mock
    private ServiceLoader serviceLoader;
@@ -45,17 +45,20 @@ public class TestCaseEnricherTestCase
    @Mock
    private TestEnricher enricher;
    
+   @Override
+   protected void addExtensions(ManagerBuilder builder)
+   {
+      builder.extension(TestCaseEnricher.class);
+   }
+   
    @Test
    public void shouldCallAllEnrichers() throws Exception
    {
       Mockito.when(serviceLoader.all(TestEnricher.class)).thenReturn(Arrays.asList(enricher, enricher));
+      bind(SuiteScoped.class, ServiceLoader.class, serviceLoader);
       
-      TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
-      TestEvent event = new TestEvent(this, getClass().getMethod("shouldCallAllEnrichers"));
+      fire(new Before(this, getClass().getMethod("shouldCallAllEnrichers")));
       
-      TestCaseEnricher handler = new TestCaseEnricher();
-      handler.callback(context, event);
-      
-      Mockito.verify(enricher, Mockito.times(2)).enrich(context, this);
+      Mockito.verify(enricher, Mockito.times(2)).enrich(this);
    }
 }

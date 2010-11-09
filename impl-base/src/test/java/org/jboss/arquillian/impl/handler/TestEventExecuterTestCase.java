@@ -20,11 +20,8 @@ import java.lang.reflect.Method;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.impl.context.ClassContext;
-import org.jboss.arquillian.impl.context.SuiteContext;
-import org.jboss.arquillian.impl.context.TestContext;
-import org.jboss.arquillian.impl.handler.TestEventExecuter;
-import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.junit.Test;
@@ -41,11 +38,14 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestEventExecuterTestCase
+public class TestEventExecuterTestCase extends AbstractManagerTestBase
 {
-   @Mock
-   private ServiceLoader serviceLoader;
-
+   @Override
+   protected void addExtensions(ManagerBuilder builder)
+   {
+      builder.extension(TestEventExecuter.class);
+   }
+   
    @Mock
    private TestMethodExecutor testExecutor;
 
@@ -56,13 +56,11 @@ public class TestEventExecuterTestCase
       Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldReturnPassed"));
       
-      TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
-
       org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
-      TestEventExecuter handler = new TestEventExecuter();
-      handler.callback(context, event);
-
-      TestResult result = context.get(TestResult.class);
+   
+      fire(event);
+      
+      TestResult result = getManager().resolve(TestResult.class);
       Assert.assertNotNull(
             "Should have set result",
             result);
@@ -87,14 +85,11 @@ public class TestEventExecuterTestCase
             getTestMethod("shouldReturnFailedOnException"));
       Mockito.doThrow(exception).when(testExecutor).invoke();
       
-      TestContext context = new TestContext(new ClassContext(new SuiteContext(serviceLoader)));
-
       org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
-      TestEventExecuter handler = new TestEventExecuter();
-      handler.callback(context, event);
 
-      TestResult result = context.get(TestResult.class);
-      
+      fire(event);
+
+      TestResult result = getManager().resolve(TestResult.class);
       Assert.assertNotNull(
             "Should have set result",
             result);

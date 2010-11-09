@@ -16,10 +16,12 @@
  */
 package org.jboss.arquillian.impl.handler;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.core.InstanceProducer;
+import org.jboss.arquillian.spi.core.annotation.Inject;
+import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.core.annotation.TestScoped;
 import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
@@ -31,12 +33,12 @@ import org.jboss.arquillian.spi.event.suite.Test;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestEventExecuter implements EventHandler<Test>
+public class TestEventExecuter 
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.event.suite.EventHandler#callback(org.jboss.arquillian.spi.Context, java.lang.Object)
-    */
-   public void callback(Context context, Test event) throws Exception 
+   @Inject @TestScoped
+   private InstanceProducer<TestResult> testResult;
+   
+   public void execute(@Observes Test event) throws Exception 
    {
       TestResult result = new TestResult();
       try 
@@ -53,6 +55,6 @@ public class TestEventExecuter implements EventHandler<Test>
       {
          result.setEnd(System.currentTimeMillis());         
       }
-      context.add(TestResult.class, result);
+      testResult.set(result);
    }
 }
