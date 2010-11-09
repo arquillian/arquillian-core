@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet.v_3;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
 
-import org.jboss.arquillian.protocol.servlet_3.ServletMethodExecutor;
-import org.jboss.arquillian.protocol.servlet_3.ServletTestRunner;
+import org.jboss.arquillian.protocol.servlet.MockTestRunner;
+import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
+import org.jboss.arquillian.protocol.servlet.TestUtil;
+import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
@@ -40,7 +42,6 @@ import org.mortbay.jetty.servlet.Context;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Ignore // need to fix the javaee api dep
 public class ProtocolTestCase 
 {
 
@@ -51,7 +52,7 @@ public class ProtocolTestCase
    {
       server = new Server(8181);
       Context root = new Context(server, "/arquillian-protocol", Context.SESSIONS);
-      root.addServlet(ServletTestRunner.class, "/*");
+      root.addServlet(ServletTestRunner.class, "/ArquillianServletRunner");
       server.start();
    }
    
@@ -71,7 +72,7 @@ public class ProtocolTestCase
       
       Assert.assertEquals(
             "Should have returned a passed test",
-            MockTestRunner.wantedResults.get(0).getStatus(),
+            MockTestRunner.wantedResults.getStatus(),
             result.getStatus());
       
       Assert.assertNull(
@@ -89,11 +90,11 @@ public class ProtocolTestCase
       
       Assert.assertEquals(
             "Should have returned a passed test",
-            MockTestRunner.wantedResults.get(0).getStatus(),
+            MockTestRunner.wantedResults.getStatus(),
             result.getStatus());
       
       Assert.assertNotNull(
-            "No Exception should have been thrown",
+            "Exception should have been thrown",
             result.getThrowable());
       
    }
@@ -146,20 +147,13 @@ public class ProtocolTestCase
             result.getThrowable() instanceof ClassNotFoundException);
    }
 
-   private URL createBaseURL() {
-      try 
-      {
-         return new URL("http", "localhost", server.getConnectors()[0].getPort(), "/");
-      } 
-      catch (Exception e) 
-      {
-         throw new RuntimeException("Could not create URL", e);
-      }
+   private URI createBaseURL() {
+      return URI.create("http://localhost:" + server.getConnectors()[0].getPort() +  "/arquillian-protocol");
    }
    
    private URL createURL(String outputMode, String testClass, String methodName) 
    {
-      StringBuilder url = new StringBuilder(createBaseURL().toExternalForm()).append("arquillian-protocol/");
+      StringBuilder url = new StringBuilder(createBaseURL().toASCIIString() + "/ArquillianServletRunner");
       boolean first = true;
       if(outputMode != null) 
       {

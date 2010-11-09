@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet.runner;
 
 import java.lang.reflect.Constructor;
 import java.security.AccessController;
@@ -31,7 +31,7 @@ import java.security.PrivilegedExceptionAction;
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  * @version $Revision: $
  */
-final class SecurityActions
+public final class SecurityActions
 {
 
    //-------------------------------------------------------------------------------||

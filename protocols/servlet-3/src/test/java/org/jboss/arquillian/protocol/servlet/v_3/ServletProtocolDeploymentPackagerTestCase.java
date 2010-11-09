@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet.v_3;
 
 import java.util.ArrayList;
 
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.arquillian.protocol.servlet_3.ServletProtocolDeploymentPackager;
+import org.jboss.arquillian.protocol.servlet.v_3.ServletProtocolDeploymentPackager;
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;

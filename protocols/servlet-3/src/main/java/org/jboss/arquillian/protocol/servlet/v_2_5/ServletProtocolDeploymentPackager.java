@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet.v_2_5;
 
 import java.util.Collection;
 
-import org.jboss.arquillian.spi.DeploymentPackager;
 import org.jboss.arquillian.spi.TestDeployment;
+import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
@@ -39,7 +39,8 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
     */
    public Archive<?> generateDeployment(TestDeployment testDeployment)
    {
-      Archive<?> protocol = new ProtocolDeploymentAppender().createAuxiliaryArchive();
+      WebArchive protocol = WebArchive.class.cast(
+            new ProtocolDeploymentAppender().createAuxiliaryArchive());
       
       Archive<?> applicationArchive = testDeployment.getApplicationArchive();
       Collection<Archive<?>> auxiliaryArchives = testDeployment.getAuxiliaryArchives();
@@ -63,22 +64,20 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
             " can not handle archive of type " +  applicationArchive.getClass().getName());
    }
 
-   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
+   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-      return applicationArchive
-                  .addLibraries(
-                        auxiliaryArchives.toArray(new Archive<?>[0]))
-                  .addLibrary(protocol);
+      throw new IllegalArgumentException("The " + ServletProtocolDeploymentPackager.class.getSimpleName() + " can't merge web.xml files.");
    }
 
-   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
+   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-         return ShrinkWrap.create(WebArchive.class, "test.war")
-                  .addLibraries(applicationArchive, protocol)
-                  .addLibraries(auxiliaryArchives.toArray(new Archive[0]));
+      return ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
+                        .addModule(applicationArchive)
+                        .addModule(protocol)
+                        .addLibraries(auxiliaryArchives.toArray(new Archive[0]));
    }
 
-   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
+   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
       if(false) // contains web archive
       {
@@ -86,9 +85,8 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       }
       else
       {
-         applicationArchive.addModule(
-                  ShrinkWrap.create(WebArchive.class, "test.war")
-                     .addLibrary(protocol))
+         applicationArchive
+               .addModule(protocol)
                .addLibraries(
                      auxiliaryArchives.toArray(new Archive<?>[0]));
       }

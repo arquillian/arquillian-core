@@ -1,0 +1,2 @@
+org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol
+org.jboss.arquillian.protocol.servlet.v_3.ServletProtocol

@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet.v_3;
 
-import org.jboss.arquillian.spi.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
+import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -37,12 +38,11 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
     */
    public Archive<?> createAuxiliaryArchive()
    {
+      // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
       return ShrinkWrap.create(JavaArchive.class, "arquillian-protocol.jar")
-                     .addClasses(
-                           SecurityActions.class,
-                           ServletTestRunner.class)
+                     .addPackage(SecurityActions.class.getPackage()) // servlet.runner
                      .addManifestResource(
-                           "org/jboss/arquillian/protocol/servlet_3/web-fragment.xml",
+                           "org/jboss/arquillian/protocol/servlet/v_3/web-fragment.xml",
                            "web-fragment.xml");
    }
 }

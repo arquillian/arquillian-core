@@ -7,7 +7,7 @@
 
    <servlet>
        <servlet-name>ServletTestRunner</servlet-name>
-       <servlet-class>org.jboss.arquillian.protocol.servlet_3.ServletTestRunner</servlet-class>
+       <servlet-class>org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner</servlet-class>
    </servlet>
    <servlet-mapping>
        <servlet-name>ServletTestRunner</servlet-name>

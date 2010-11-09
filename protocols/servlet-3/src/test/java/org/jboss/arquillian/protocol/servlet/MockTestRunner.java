@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.jboss.arquillian.protocol.servlet;
 
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
@@ -32,16 +29,16 @@ import org.jboss.arquillian.spi.TestRunner;
  */
 public class MockTestRunner implements TestRunner
 {
-   public static List<TestResult> wantedResults = new ArrayList<TestResult>();
+   public static TestResult wantedResults;
    
    public static void add(TestResult wantedTestResult) 
    {
-      wantedResults.add(wantedTestResult);
+      wantedResults = wantedTestResult;
    }
    
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      return wantedResults.get(0);
+      return wantedResults;
    }
    
 //   public void execute(TestResultCallback callback, Class<?>... classes) 

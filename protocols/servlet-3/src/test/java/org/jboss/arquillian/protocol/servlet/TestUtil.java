@@ -14,33 +14,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet;
 
-import org.jboss.arquillian.protocol.servlet_3.ProtocolDeploymentAppender;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.junit.Assert;
-import org.junit.Test;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.net.URL;
 
 /**
- * ProtocolDeploymentAppenderTestCase
+ * TestUtil
  * 
+ * Internal helper for testcase to do http request
+ *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDeploymentAppenderTestCase
+public class TestUtil
 {
+   private TestUtil() {}
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception {
-      
-      Archive<?> archive = new ProtocolDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added web.xml",
-            archive.contains(ArchivePaths.create("META-INF/web-fragment.xml"))
-      );
-      
-      System.out.println(archive.toString(true));
+   public static Object execute(URL url) 
+   {
+      ObjectInputStream input = null;
+      try 
+      {
+         input = new ObjectInputStream(url.openStream());
+         return input.readObject();
+      }
+      catch (Exception e) 
+      {
+         throw new RuntimeException("Could not fetch url " + url);
+      }
+      finally 
+      {
+         close(input);
+      }
+   }
+   
+   private static void close(InputStream input) 
+   {
+      if(input == null) 
+      {
+         return;
+      }
+      try 
+      {
+         input.close();
+      } 
+      catch (Exception e) 
+      {
+         // ignore
+      }
    }
 }

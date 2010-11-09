@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet_3;
+package org.jboss.arquillian.protocol.servlet;
 
 import java.io.ObjectInputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -33,11 +34,11 @@ import org.jboss.arquillian.spi.TestResult;
  */
 public class ServletMethodExecutor implements ContainerMethodExecutor
 {
-   private URL baseURL;
+   private URI baseURI;
    
-   public ServletMethodExecutor(URL baseURL)
+   public ServletMethodExecutor(URI baseURI)
    {
-      this.baseURL = baseURL;
+      this.baseURI = baseURI;
    }
    
    public TestResult invoke(TestMethodExecutor testMethodExecutor) 
@@ -48,7 +49,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       }
       
       Class<?> testClass = testMethodExecutor.getInstance().getClass();
-      String url = baseURL.toExternalForm() + "test/ArquillianServletRunner" +  
+      String url = baseURI.toASCIIString() + "/ArquillianServletRunner" +  
                         "?outputMode=serializedObject&className=" + testClass.getName() + 
                         "&methodName=" + testMethodExecutor.getMethod().getName();
       

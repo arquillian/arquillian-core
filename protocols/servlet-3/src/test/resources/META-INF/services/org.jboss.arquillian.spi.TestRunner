@@ -1,1 +1,1 @@
-org.jboss.arquillian.protocol.servlet_3.MockTestRunner
+org.jboss.arquillian.protocol.servlet.MockTestRunner
