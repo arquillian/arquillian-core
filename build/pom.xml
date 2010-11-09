@@ -38,9 +38,11 @@
     <version.junit_junit>4.8.1</version.junit_junit>
     <version.mockito_all>1.8.3</version.mockito_all>
     <version.osgi>4.2.0</version.osgi>
-    <version.shrinkwrap_shrinkwrap>1.0.0-alpha-11</version.shrinkwrap_shrinkwrap>
+    <!-- <version.shrinkwrap_shrinkwrap>1.0.0-alpha-11</version.shrinkwrap_shrinkwrap> -->
+    <version.shrinkwrap_shrinkwrap>1.0.0-SNAPSHOT</version.shrinkwrap_shrinkwrap>
+    <version.shrinkwrap_descriptors>1.0.0-alpha-1-SNAPSHOT</version.shrinkwrap_descriptors>
     <version.testng_testng>5.12.1</version.testng_testng>
-
+	<version.jboss_modules>1.0.0.Beta7-SNAPSHOT</version.jboss_modules>
   </properties>
 
   <!-- Maven 2 Repositories -->
@@ -247,6 +249,11 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-extension-dependencies</artifactId>
+        <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
         <artifactId>shrinkwrap-extension-glassfish</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
@@ -258,11 +265,6 @@
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
         <artifactId>shrinkwrap-extension-vfs3</artifactId>
-        <version>${version.shrinkwrap_shrinkwrap}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap</groupId>
-         <artifactId>shrinkwrap-extension-classloader</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
       <dependency>
@@ -280,6 +282,11 @@
          <artifactId>shrinkwrap-extension-jetty-7</artifactId>
          <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+        <artifactId>shrinkwrap-descriptors-api</artifactId>
+        <version>${version.shrinkwrap_descriptors}</version>
+      </dependency>
 
       <dependency>
         <groupId>javax</groupId>
@@ -296,6 +303,7 @@
         <artifactId>org.osgi.compendium</artifactId>
         <version>${version.osgi}</version>
       </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
