@@ -14,22 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.event.container;
+package org.jboss.arquillian.spi.client.container;
 
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.deployment.Deployment;
-
+import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 
 /**
- * Event fired After DeployableContainer deployment.
+ * DeployableContainer
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterDeploy extends DeployerEvent
+public interface DeployableContainer<T extends ContainerConfiguration>
 {
-   public AfterDeploy(DeployableContainer<?> deployableContainer, Deployment... deployments)
-   {
-      super(deployableContainer, deployments);
-   }
+   ProtocolDescription getDefaultProtocol();
+   
+   Class<T> getConfigurationClass();
+   
+   void setup(T configuration);
+   
+   void start() throws LifecycleException;
+   
+   ProtocolMetaData deploy(Deployment... deployments) throws DeploymentException;
+   
+   void undeploy(Deployment... deployments) throws DeploymentException;
+
+   void stop() throws LifecycleException;
 }

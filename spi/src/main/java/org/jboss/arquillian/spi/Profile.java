@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,24 +16,17 @@
  */
 package org.jboss.arquillian.spi;
 
-import org.jboss.shrinkwrap.api.Archive;
+import java.util.Collection;
 
 /**
- * Extension point for client side deployment enhancements.
- * 
- * Example:
- * - Annotations to help define meta data for the deployment 
+ * Profile
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ApplicationArchiveProcessor
+public interface Profile
 {
-   /**
-    * 
-    * 
-    * @param applicationArchive The user defined deployment archive
-    * @param testClass The users test class
-    */
-   void process(Archive<?> applicationArchive, TestClass testClass);
+   Collection<Class<?>> getClientProfile();
+   
+   Collection<Class<?>> getContainerProfile();
 }

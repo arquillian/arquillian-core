@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.spi.event.container;
 
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
+
 
 /**
  * Event fired Before DeployableContainer undeployment.
@@ -23,6 +26,10 @@ package org.jboss.arquillian.spi.event.container;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeforeUnDeploy extends ContainerEvent
+public class BeforeUnDeploy extends DeployerEvent
 {
+   public BeforeUnDeploy(DeployableContainer<?> deployableContainer, Deployment... deployments)
+   {
+      super(deployableContainer, deployments);
+   }
 }

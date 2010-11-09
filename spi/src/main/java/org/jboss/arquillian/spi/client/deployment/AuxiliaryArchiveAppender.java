@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.deployment;
 
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Extension point to alter system defined deployments.
- * 
- * Example:
- * - Add beans.xml to EE modules
+ * SPI used for modules who need to add classes/resources to the deployed archive.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface AuxiliaryArchiveProcessor
+public interface AuxiliaryArchiveAppender
 {
    /**
-    * Called once for each found ArchiveAppender
+    * Create a archive containing the needed resources for this extension 
+    * to run in-container.
     * 
-    * @param auxiliaryArchive The system defined deployment archive
+    * @return A Archive of any type
     */
-   void process(Archive<?> auxiliaryArchive);
+   Archive<?> createAuxiliaryArchive();
 }

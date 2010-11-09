@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,27 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
-
-import org.jboss.shrinkwrap.api.Archive;
+package org.jboss.arquillian.spi.client.test;
 
 /**
- * Class responsible for creating the ApplicationArchive.
- * 
- * Example:
- *  - handle @Deployment
- *  - @Artifact
+ * TestMethod
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ApplicationArchiveGenerator
+public class TestMethod
 {
-   /**
-    * Generate a new Archive based on the given test case.
-    * 
-    * @param testCase Current test case class
-    * @return The Generated Archive
-    */
-   Archive<?> generateApplicationArchive(TestClass testClass);
+   private TargetDescription target;
 }

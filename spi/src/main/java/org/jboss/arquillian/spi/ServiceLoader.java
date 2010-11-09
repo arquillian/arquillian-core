@@ -36,6 +36,16 @@ public interface ServiceLoader
    <T> Collection<T>  all(Class<T> serviceClass);
    
    /**
+    * Load multiple service implementations.
+    * 
+    * @param <T>
+    * @param classLoader The ClassLoader to use
+    * @param serviceClass The service interface to load a implementations for
+    * @return A {@link Collection} of all instances of serviceClass 
+    */
+   <T> Collection<T>  all(ClassLoader classLoader, Class<T> serviceClass);
+
+   /**
     * Load a single service implementation. 
     * 
     * Method should throw {@link IllegalStateException} if multiple instances of serviceClass found.
@@ -50,6 +60,19 @@ public interface ServiceLoader
    /**
     * Load a single service implementation. 
     * 
+    * Method should throw {@link IllegalStateException} if multiple instances of serviceClass found.
+    * 
+    * @param <T>
+    * @param classLoader The ClassLoader to use
+    * @param serviceClass The service interface to load a implementation for
+    * @return A instance of serviceClass
+    * @throws IllegalStateException if more then one implementation of serviceClass found
+    */
+   <T> T onlyOne(ClassLoader classLoader, Class<T> serviceClass);
+   
+   /**
+    * Load a single service implementation. 
+    * 
     * Method should returns a new instance of defaultServiceClass if no other instance is found.
     * 
     * @param <T>
@@ -58,4 +81,17 @@ public interface ServiceLoader
     * @return A instance of serviceClass
     */
    <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass);
+
+   /**
+    * Load a single service implementation. 
+    * 
+    * Method should returns a new instance of defaultServiceClass if no other instance is found.
+    * 
+    * @param <T>
+    * @param classLoader The ClassLoader to use
+    * @param serviceClass The service interface to load a implementation for
+    * @param defaultServiceClass If no other implementations found, create a instance of this class
+    * @return A instance of serviceClass
+    */
+   <T> T onlyOne(ClassLoader classLoader, Class<T> serviceClass, Class<? extends T> defaultServiceClass);
 }

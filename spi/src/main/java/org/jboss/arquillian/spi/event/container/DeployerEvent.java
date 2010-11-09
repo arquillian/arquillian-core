@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,18 +18,30 @@ package org.jboss.arquillian.spi.event.container;
 
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.deployment.Deployment;
-
+import org.jboss.arquillian.spi.util.Validate;
 
 /**
- * Event fired After DeployableContainer deployment.
+ * DeployerEvent
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterDeploy extends DeployerEvent
+public class DeployerEvent extends ContainerEvent
 {
-   public AfterDeploy(DeployableContainer<?> deployableContainer, Deployment... deployments)
+   private Deployment[] deployments;
+   
+   public DeployerEvent(DeployableContainer<?> deployableContainer, Deployment... deployments)
    {
-      super(deployableContainer, deployments);
+      super(deployableContainer);
+      Validate.notNull(deployments, "Deployments must be specified");
+      this.deployments = deployments;
+   }
+   
+   /**
+    * @return the deployments
+    */
+   public Deployment[] getDeployments()
+   {
+      return deployments;
    }
 }

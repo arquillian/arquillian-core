@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.protocol;
 
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.asset.Asset;
 
 /**
- * SPI used for modules who need to add classes/resources to the deployed archive.
+ * A Appender for adding {@link Asset}s to the Protocol Archive. <br/>
+ * Used for e.g. Adding beans.xml to the Servlet Protocol so it can reach the BeanManager if the applicationArchive contains beans.  
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface AuxiliaryArchiveAppender
+public interface ProtocolArchiveAppender
 {
    /**
-    * Create a archive containing the needed resources for this extension 
-    * to run in-container.
-    * 
-    * @return A Archive of any type
+    * @param protocolArchive
+    * @param applicationArchive
     */
-   Archive<?> createAuxiliaryArchive();
+   void append(Archive<?> protocolArchive, Archive<?> applicationArchive);
 }

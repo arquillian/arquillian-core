@@ -16,7 +16,9 @@
  */
 package org.jboss.arquillian.spi.event.container;
 
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.event.Event;
+import org.jboss.arquillian.spi.util.Validate;
 
 /**
  * Base for events fired in the Container life cycle
@@ -26,4 +28,19 @@ import org.jboss.arquillian.spi.event.Event;
  */
 public class ContainerEvent implements Event
 {
+   private DeployableContainer<?> deployableContainer;
+   
+   public ContainerEvent(DeployableContainer<?> deployableContainer)
+   {
+      Validate.notNull(deployableContainer, "DeployableContainer must be specified");
+      this.deployableContainer = deployableContainer;
+   }
+   
+   /**
+    * @return the deployableContainer
+    */
+   public DeployableContainer<?> getDeployableContainer()
+   {
+      return deployableContainer;
+   }
 }

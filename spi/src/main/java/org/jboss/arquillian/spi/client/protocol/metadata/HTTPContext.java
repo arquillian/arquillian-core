@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,21 +14,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.protocol.metadata;
 
-import org.jboss.arquillian.spi.event.suite.EventHandler;
+import java.net.URI;
 
 /**
- * SPI for adding {@link EventHandler}s to the Arquillian core TestContext
+ * WebContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestContextAppender
+public class HTTPContext
 {
+   private String host;
+   private int port;
+   
+   private String contextRoot;
+
+   public HTTPContext(String host, int port, String contextRoot)
+   {
+      this.host = host;
+      this.port = port;
+      this.contextRoot = contextRoot;
+   }
+
    /**
-    * 
-    * @param context TestContext
+    * @return the ip
     */
-   void append(Context context);
+   public String getHost()
+   {
+      return host;
+   }
+
+   /**
+    * @return the port
+    */
+   public int getPort()
+   {
+      return port;
+   }
+
+   /**
+    * @return the contextRoot
+    */
+   public String getContextRoot()
+   {
+      return contextRoot;
+   }
+   
+   public URI getBaseURI()
+   {
+      return URI.create("http://" + host + ":" + port + "/" + contextRoot);
+   }
 }

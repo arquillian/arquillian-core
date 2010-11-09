@@ -14,27 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.event.suite;
+package org.jboss.arquillian.spi.client.deployment;
 
-import org.jboss.arquillian.spi.Context;
-
+import org.jboss.arquillian.spi.TestClass;
+import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * EventHandler
+ * Extension point for client side deployment enhancements.
+ * 
+ * Example:
+ * - Annotations to help define meta data for the deployment 
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
- * @param <X> The Context
- * @param <T> The Event 
  */
-public interface EventHandler<T>
+public interface ApplicationArchiveProcessor
 {
-   
    /**
-    * @param context
-    * @param event
-    * @throws Exception
+    * 
+    * 
+    * @param applicationArchive The user defined deployment archive
+    * @param testClass The users test class
     */
-   void callback(Context context, T event) throws Exception;
-   
+   void process(Archive<?> applicationArchive, TestClass testClass);
 }

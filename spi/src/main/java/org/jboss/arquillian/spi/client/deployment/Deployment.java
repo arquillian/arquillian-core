@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,24 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.deployment;
 
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
- * Extension point for the Protocol to prepare the Archives for deployment.
- * 
- * Example:
- * - Create a EAR, WAR
+ * Deployment
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentPackager
+public interface Deployment
 {
+   String getName();
+   
    /**
-    * @param testDeployment Value object containing the application {@link Archive} and other auxiliary library {@link Archive}s. 
-    * @return The prepared archive for deployment.
+    * @return the archive
     */
-   Archive<?> generateDeployment(TestDeployment testDeployment);
+   Archive<?> getArchive();
+
+   /**
+    * @return the descriptor
+    */
+   Descriptor getDescriptor();
+
+   boolean isDescriptorDeployment();
+
+   boolean isArchiveDeployment();
+
 }

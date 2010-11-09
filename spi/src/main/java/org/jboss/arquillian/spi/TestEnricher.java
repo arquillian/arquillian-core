@@ -34,7 +34,7 @@ public interface TestEnricher
     *  
     * @param testCase The test case instance
     */
-   void enrich(Context context, Object testCase);
+   void enrich(Object testCase);
    
    /**
     * Extension point to add features to the test method arguments.<br/>
@@ -48,5 +48,5 @@ public interface TestEnricher
     * @param method
     * @return A Object[] of Arguments 
     */
-   Object[] resolve(Context context, Method method);
+   Object[] resolve(Method method);
 }

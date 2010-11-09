@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.spi.event.container;
 
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
+
 
 /**
  * Event fired Before the DeployableContainer is setup.
@@ -25,4 +27,8 @@ package org.jboss.arquillian.spi.event.container;
  */
 public class BeforeSetup extends ContainerEvent
 {
+   public BeforeSetup(DeployableContainer<?> deployableContainer)
+   {
+      super(deployableContainer);
+   }
 }

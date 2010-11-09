@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.container;
 
 /**
  * A marker for container configuration implementations.
@@ -24,10 +24,5 @@ package org.jboss.arquillian.spi;
  */
 public interface ContainerConfiguration
 {
-   /**
-    * 
-    * @return
-    */
-   ContainerProfile getContainerProfile();
    
 }

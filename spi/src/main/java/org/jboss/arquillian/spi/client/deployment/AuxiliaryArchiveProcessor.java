@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.deployment;
+
+import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * LifecycleException
+ * Extension point to alter system defined deployments.
+ * 
+ * Example:
+ * - Add beans.xml to EE modules
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LifecycleException extends Exception
+public interface AuxiliaryArchiveProcessor
 {
-   private static final long serialVersionUID = 1L;
-
-   public LifecycleException(String message)
-   {
-      super(message);
-   }
-   
-   public LifecycleException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
-
+   /**
+    * Called once for each found ArchiveAppender
+    * 
+    * @param auxiliaryArchive The system defined deployment archive
+    */
+   void process(Archive<?> auxiliaryArchive);
 }

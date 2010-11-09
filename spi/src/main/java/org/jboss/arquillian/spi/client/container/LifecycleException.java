@@ -14,20 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
-
-import org.jboss.arquillian.spi.event.suite.EventHandler;
+package org.jboss.arquillian.spi.client.container;
 
 /**
- * SPI for adding {@link EventHandler}s to the Arquillian core SuiteContext
+ * LifecycleException
  *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface SuiteContextAppender
+public class LifecycleException extends Exception
 {
-   /**
-    * @param context SuiteContext
-    */
-   void append(Context context);
+   private static final long serialVersionUID = 1L;
+
+   public LifecycleException(String message)
+   {
+      super(message);
+   }
+   
+   public LifecycleException(String message, Throwable cause)
+   {
+      super(message, cause);
+   }
+
 }

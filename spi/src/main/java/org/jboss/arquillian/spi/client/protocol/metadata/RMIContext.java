@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,25 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.protocol.metadata;
 
-import org.jboss.shrinkwrap.api.Archive;
+import javax.naming.InitialContext;
 
 /**
- * DeployableContainer
+ * RMIContext
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer
+public class RMIContext
 {
-   void setup(Context context, Configuration configuration);
-   
-   void start(Context context) throws LifecycleException;
-   
-   ContainerMethodExecutor deploy(Context context, Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Context context, Archive<?> archive) throws DeploymentException;
+   private String ip;
+   private int port;
 
-   void stop(Context context) throws LifecycleException;
+   
+   /**
+    * @return the ip
+    */
+   public String getIp()
+   {
+      return ip;
+   }
+   
+   /**
+    * @return the port
+    */
+   public int getPort()
+   {
+      return port;
+   }
+   
+   public InitialContext getInitialContext() 
+   {
+      return null;
+   }
 }

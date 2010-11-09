@@ -25,7 +25,6 @@ package org.jboss.arquillian.spi;
 public enum ContainerProfile 
 {
    CLIENT,
-   CONTAINER,
-   STANDALONE
+   CONTAINER
 }
 

@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.event.container;
+package org.jboss.arquillian.spi.client.deployment;
 
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
-
+import org.jboss.arquillian.spi.TestDeployment;
+import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Event fired After DeployableContainer deployment.
+ * Extension point for the Protocol to prepare the Archives for deployment.
+ * 
+ * Example:
+ * - Create a EAR, WAR
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterDeploy extends DeployerEvent
+public interface DeploymentPackager
 {
-   public AfterDeploy(DeployableContainer<?> deployableContainer, Deployment... deployments)
-   {
-      super(deployableContainer, deployments);
-   }
+   /**
+    * @param testDeployment Value object containing the application {@link Archive} and other auxiliary library {@link Archive}s. 
+    * @return The prepared archive for deployment.
+    */
+   Archive<?> generateDeployment(TestDeployment testDeployment);
 }

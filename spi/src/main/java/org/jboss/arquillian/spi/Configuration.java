@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
+
 /**
  * Holds the global Arquillian configuration and a Map of {@link ContainerConfiguration} implementations objects. It is built by
  * {@link org.jboss.arquillian.impl.ConfigurationBuilder}s

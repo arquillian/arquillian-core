@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.event.container;
-
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
-
+package org.jboss.arquillian.spi.client.container;
 
 /**
- * Event fired After DeployableContainer deployment.
+ * DeploymentException
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterDeploy extends DeployerEvent
+public class DeploymentException extends Exception
 {
-   public AfterDeploy(DeployableContainer<?> deployableContainer, Deployment... deployments)
+   private static final long serialVersionUID = 1L;
+
+   public DeploymentException(String message)
    {
-      super(deployableContainer, deployments);
+      super(message);
    }
+   
+   public DeploymentException(String message, Throwable cause)
+   {
+      super(message, cause);
+   }
+
 }

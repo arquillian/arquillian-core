@@ -28,16 +28,16 @@ import java.lang.reflect.Method;
  */
 public interface TestRunnerAdaptor
 {
-   /*
-    *  TODO: reevaluate this. a  basic stack that will peek at the top, suite/class/test context.
-    *  used to fetch the context outside the test adaptor inside the test framework integration to 
-    *  do method argumnet injection. 
-    */
-   /**
-    * @return
-    */
-   Context getActiveContext();
-   
+//   /*
+//    *  TODO: reevaluate this. a  basic stack that will peek at the top, suite/class/test context.
+//    *  used to fetch the context outside the test adaptor inside the test framework integration to 
+//    *  do method argumnet injection. 
+//    */
+//   /**
+//    * @return
+//    */
+//   Context getActiveContext();
+//   
    /**
     * @throws Exception
     */

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,26 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.protocol;
 
 /**
- * DeploymentException
+ * SPI Marker interface for auto configuration of protocol
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentException extends Exception
+public interface ProtocolConfiguration
 {
-   private static final long serialVersionUID = 1L;
-
-   public DeploymentException(String message)
-   {
-      super(message);
-   }
-   
-   public DeploymentException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
 
 }

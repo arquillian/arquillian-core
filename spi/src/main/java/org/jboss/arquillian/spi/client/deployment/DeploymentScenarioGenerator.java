@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.client.deployment;
 
-import org.jboss.arquillian.spi.event.suite.EventHandler;
+import org.jboss.arquillian.spi.TestClass;
 
 /**
- *  * SPI for adding {@link EventHandler}s to the Arquillian core ClassContext
+ * Extension point for building a {@link DeploymentScenario} from a {@link TestClass}
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ClassContextAppender
+public interface DeploymentScenarioGenerator
 {
    /**
-    * @param context ClassContext
+    * Extract all meta data related to a {@link TestClass}.
+    *  
+    * @param testClass Data to extract meta data based on.
+    * @return The given {@link TestClass}s {@link DeploymentScenario}
     */
-   void append(Context context);
+   DeploymentScenario generate(TestClass testClass);
 }

@@ -18,7 +18,6 @@ package org.jboss.arquillian.spi.util;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -45,14 +44,14 @@ public class TestEnrichers
     * @param method
     * @return the argument values
     */
-   public static Object[] enrich(Context context, Method method)
+   public static Object[] enrich(Method method)
    {
       Object[] values = new Object[method.getParameterTypes().length];
       ServiceLoader<TestEnricher> serviceLoader = ServiceLoader
             .load(TestEnricher.class);
       for (TestEnricher enricher : serviceLoader)
       {
-         mergeValues(values, enricher.resolve(context, method));
+         mergeValues(values, enricher.resolve(method));
       }
       return values;
    }

@@ -18,6 +18,8 @@ package org.jboss.arquillian.spi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -70,4 +72,19 @@ public class TestClass
       }
       return null;
    }
+   
+   public Method[] getMethods(Class<? extends Annotation> annotation)
+   {
+      List<Method> foundMethods = new ArrayList<Method>();
+      Method[] methods = testClass.getMethods();
+      for(Method method: methods)
+      {
+         if(method.isAnnotationPresent(annotation)) 
+         {
+            foundMethods.add(method);
+         }
+      }
+      return foundMethods.toArray(new Method[0]);
+   }
+
 }
