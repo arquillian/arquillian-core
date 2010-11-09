@@ -17,16 +17,12 @@
 package org.jboss.arquillian.junit.testspi;
 
 import org.jboss.arquillian.junit.JUnitIntegrationTestCase;
-import org.jboss.arquillian.spi.Configuration;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.Context;
-import org.jboss.arquillian.spi.DeployableContainer;
-import org.jboss.arquillian.spi.DeploymentException;
-import org.jboss.arquillian.spi.LifecycleException;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.spi.client.container.DeploymentException;
+import org.jboss.arquillian.spi.client.container.LifecycleException;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
+import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 
 /**
  * TestDeployableContainer
@@ -34,38 +30,39 @@ import org.jboss.shrinkwrap.api.Archive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestDeployableContainer implements DeployableContainer
+public class TestDeployableContainer implements DeployableContainer<TestContainerConfiguration>
 {
    private int numberOfTimesDeployed = 0;
    
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeployableContainer#setup(org.jboss.arquillian.spi.Context, org.jboss.arquillian.spi.Configuration)
+    * @see org.jboss.arquillian.spi.client.container.DeployableContainer#getDefaultProtocol()
     */
-   public void setup(Context context, Configuration configuration)
+   public ProtocolDescription getDefaultProtocol()
+   {
+      return new ProtocolDescription("Local");
+   }
+   
+   public Class<TestContainerConfiguration> getConfigurationClass()
+   {
+      return TestContainerConfiguration.class;
+   }
+   
+   public void setup(TestContainerConfiguration configuration)
    {
       JUnitIntegrationTestCase.wasCalled("setup");
    }
 
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeployableContainer#start(org.jboss.arquillian.spi.Context)    */
-   public void start(Context context) throws LifecycleException
+   public void start() throws LifecycleException
    {
       JUnitIntegrationTestCase.wasCalled("start");
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeployableContainer#stop(org.jboss.arquillian.spi.Context)
-    */
-   public void stop(Context context) throws LifecycleException
+   public void stop() throws LifecycleException
    {
       JUnitIntegrationTestCase.wasCalled("stop");
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeployableContainer#deploy(org.jboss.arquillian.spi.Context, org.jboss.shrinkwrap.api.Archive)
-    */
-   public ContainerMethodExecutor deploy(Context context, Archive<?> archive) throws DeploymentException
+   public ProtocolMetaData deploy(Deployment... deployments) throws DeploymentException
    {
       numberOfTimesDeployed++;
       JUnitIntegrationTestCase.wasCalled("deploy");
@@ -74,34 +71,10 @@ public class TestDeployableContainer implements DeployableContainer
          throw new RuntimeException("deploy");
       }
 
-      return new ContainerMethodExecutor()
-      {
-         public TestResult invoke(TestMethodExecutor testMethodExecutor)
-         {
-            TestResult result = new TestResult();
-            try
-            {
-               testMethodExecutor.invoke();
-               result.setStatus(Status.PASSED);
-            }
-            catch (Throwable e) 
-            {
-               /*
-                *  TODO: the internal state TestResult is FAILED with Exception set, but it might have passed
-                *  due to the TestFrameworks ExpectedExceptions. We need to know this information to set the correct state.
-                */
-               result.setStatus(Status.FAILED);
-               result.setThrowable(e);
-            }
-            return result;
-         }
-      };
+      return new ProtocolMetaData();
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeployableContainer#undeploy(org.jboss.arquillian.spi.Context, org.jboss.shrinkwrap.api.Archive)
-    */
-   public void undeploy(Context context, Archive<?> archive) throws DeploymentException
+   public void undeploy(Deployment... deployments) throws DeploymentException
    {
       JUnitIntegrationTestCase.wasCalled("undeploy");
       if(numberOfTimesDeployed == 1)

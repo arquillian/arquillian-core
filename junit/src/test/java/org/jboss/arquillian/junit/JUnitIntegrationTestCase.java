@@ -22,6 +22,8 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.api.DeploymentTarget;
+import org.jboss.arquillian.api.Protocol;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
@@ -67,20 +69,20 @@ public class JUnitIntegrationTestCase
    {
       JUnitCore runner = new JUnitCore();
       Result result = runner.run(
-            Request.classes(TestClass1.class, TestClass1.class));
+            Request.classes(ArquillianClass1.class, ArquillianClass1.class));
 
       Assert.assertEquals(
             "Verify that both exceptions thrown bubbled up",
             2, result.getFailureCount());
       
-      // Exceptions returned are wrapped in a FiredEventException, verify the cause 
+      // Exceptions returned are wrapped in a InvocationException and InvocatioTargetException, verify the cause 
       Assert.assertEquals(
             "Verify exception thrown",
-            "deploy", result.getFailures().get(0).getException().getCause().getMessage());
+            "deploy", result.getFailures().get(0).getException().getCause().getCause().getMessage());
       
       Assert.assertEquals(
             "Verify exception thrown",
-            "undeploy", result.getFailures().get(1).getException().getCause().getMessage());
+            "undeploy", result.getFailures().get(1).getException().getCause().getCause().getMessage());
       
       Assert.assertFalse(result.wasSuccessful());
       
@@ -109,14 +111,16 @@ public class JUnitIntegrationTestCase
    }
    
    @RunWith(Arquillian.class)
-   public static class TestClass1 
+   public static class ArquillianClass1 
    {
-      @Deployment
+      @Protocol("local")
+      @Deployment(name = "test")
       public static JavaArchive create() 
       {
          return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
       
+      @DeploymentTarget("test")
       @Test
       public void shouldBeInvoked() throws Exception 
       {

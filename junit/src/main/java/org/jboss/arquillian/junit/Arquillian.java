@@ -23,12 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.impl.XmlConfigurationBuilder;
-import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
-import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
@@ -81,8 +78,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                 throw new RuntimeException("Arquillian has previously been attempted initialized, but failed. See previous exceptions for cause.");
             }
-            Configuration configuration = new XmlConfigurationBuilder().build();
-            TestRunnerAdaptor adaptor = DeployableTestBuilder.build(configuration);
+            TestRunnerAdaptor adaptor = DeployableTestBuilder.build();
             try 
             {
                // don't set it if beforeSuite fails
@@ -247,8 +243,8 @@ public class Arquillian extends BlockJUnit4ClassRunner
                {
                   try
                   {
-                     Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
-                     method.invokeExplosively(test, (Object[])parameterValues);
+                     //Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
+                     method.invokeExplosively(test); //, (Object[])parameterValues);
                   } 
                   catch (Throwable e) 
                   {

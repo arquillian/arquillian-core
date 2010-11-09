@@ -17,7 +17,7 @@
 package org.jboss.arquillian.junit.testspi;
 
 import org.jboss.arquillian.spi.TestDeployment;
-import org.jboss.arquillian.spi.DeploymentPackager;
+import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**

@@ -19,12 +19,9 @@ package org.jboss.arquillian.testng;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.DeployableTestBuilder;
-import org.jboss.arquillian.impl.XmlConfigurationBuilder;
-import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
-import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
@@ -53,8 +50,7 @@ public abstract class Arquillian implements IHookable
    {
       if(deployableTest.get() == null)
       {
-         Configuration configuration = new XmlConfigurationBuilder().build();
-         TestRunnerAdaptor adaptor = DeployableTestBuilder.build(configuration);
+         TestRunnerAdaptor adaptor = DeployableTestBuilder.build();
          adaptor.beforeSuite(); 
          deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
       }
@@ -161,7 +157,8 @@ public abstract class Arquillian implements IHookable
          return values;
       }
 
-      Object[] parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), method);
+      // TestEnrichers.enrich(deployableTest.get().getActiveContext(), method); // should be handled inside a enricher
+      Object[] parameterValues = new Object[method.getParameterTypes().length]; 
       values[0] = parameterValues; 
       
       return values;

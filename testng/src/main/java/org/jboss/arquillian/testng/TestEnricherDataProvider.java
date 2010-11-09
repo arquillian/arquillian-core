@@ -18,7 +18,6 @@ package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.spi.util.TestEnrichers;
 import org.testng.annotations.DataProvider;
 
 /**
@@ -34,7 +33,8 @@ public class TestEnricherDataProvider {
 	@DataProvider(name = PROVIDER_NAME)
 	public static Object[][] enrich(Method method) 
 	{
-		Object[] parameterValues = TestEnrichers.enrich(null, method);
+	   // actual enrichment happens inside a Observer
+		Object[] parameterValues = new Object[method.getParameterTypes().length]; 
 		Object[][] values = new Object[1][method.getParameterTypes().length];
 		values[0] = parameterValues; 
 		
