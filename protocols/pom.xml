@@ -35,7 +35,6 @@
       <modules>
         <module>servlet-2.5</module>
         <module>servlet-3</module>
-        <module>local</module>
         <module>jmx</module>
         <module>jmx-osgi</module>
         <module>jmx-osgi-bundle</module>
