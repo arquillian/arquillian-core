@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl.core.spi.context;
 
 import org.jboss.arquillian.impl.core.context.IdBoundContext;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 
 /**
  * ContainerContext
@@ -24,7 +25,7 @@ import org.jboss.arquillian.impl.core.context.IdBoundContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentContext extends IdBoundContext<String>
+public interface DeploymentContext extends IdBoundContext<DeploymentDescription>
 {
 
 }

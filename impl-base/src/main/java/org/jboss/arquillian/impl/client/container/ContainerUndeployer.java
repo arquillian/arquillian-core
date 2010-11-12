@@ -18,13 +18,12 @@ package org.jboss.arquillian.impl.client.container;
 
 import java.util.List;
 
-import org.jboss.arquillian.impl.MapObject;
 import org.jboss.arquillian.impl.ThreadContext;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
+import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
@@ -59,7 +58,10 @@ import org.jboss.shrinkwrap.api.Archive;
 public class ContainerUndeployer 
 {
    @Inject 
-   private Instance<ContainerContext> containerContext;
+   private Instance<ContainerContext> containerContextProvider;
+   
+   @Inject 
+   private Instance<DeploymentContext> deploymentContextProvider;
    
    @Inject 
    private Instance<ContainerRegistry> registry;
@@ -75,6 +77,9 @@ public class ContainerUndeployer
 
    public void undeploy(@Observes AfterClass event) throws Exception
    {
+      ContainerContext containerContext = containerContextProvider.get();
+      DeploymentContext deploymentContext = deploymentContextProvider.get();
+
       ContainerRegistry reg = registry.get();
       DeploymentScenario scenario = deploymentScenario.get();
       
@@ -84,21 +89,40 @@ public class ContainerUndeployer
          Container container = reg.getContainer(target);
          
          ThreadContext.set(container.getClassLoader());
-         containerContext.get().activate(container.getName());
          try
          {
+            containerContext.activate(container.getName());
             DeployableContainer<?> deployableContainer = container.getDeployableContainer();
-            Deployment[] deployments = MapObject.convert(startUpDeployments.toArray(new DeploymentDescription[0]));
+            DeploymentDescription[] deployments = startUpDeployments.toArray(new DeploymentDescription[0]);
             
-            before.fire(new BeforeUnDeploy(deployableContainer, deployments));
-            
-            deployableContainer.undeploy(deployments);
-            
-            after.fire(new AfterUnDeploy(deployableContainer, deployments));
+            for(DeploymentDescription deployment : deployments)
+            {
+               try
+               {
+                  deploymentContext.activate(deployment);
+                  before.fire(new BeforeUnDeploy(deployableContainer, deployment));
+                  
+                  if(deployment.isArchiveDeployment())
+                  {
+                     deployableContainer.undeploy(
+                           deployment.getTestableArchive() != null ? deployment.getTestableArchive():deployment.getArchive());
+                  }
+                  else
+                  {
+                     deployableContainer.undeploy(deployment.getDescriptor());                     
+                  }
+                  
+                  after.fire(new AfterUnDeploy(deployableContainer, deployment));
+               }
+               finally
+               {
+                  deploymentContext.deactivate();
+               }
+            }
          } 
          finally 
          {
-            containerContext.get().deactivate();
+            containerContext.deactivate();
             ThreadContext.reset();
          }
       }

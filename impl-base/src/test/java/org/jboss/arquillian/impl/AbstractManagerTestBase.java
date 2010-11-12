@@ -28,12 +28,14 @@ import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.ManagerImpl;
 import org.jboss.arquillian.impl.core.context.ClassContextImpl;
 import org.jboss.arquillian.impl.core.context.ContainerContextImpl;
+import org.jboss.arquillian.impl.core.context.DeploymentContextImpl;
 import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
 import org.jboss.arquillian.impl.core.context.TestContextImpl;
 import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
 import org.jboss.arquillian.impl.core.spi.context.Context;
+import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.impl.core.spi.context.TestContext;
 import org.jboss.arquillian.spi.core.Injector;
@@ -124,7 +126,8 @@ public abstract class AbstractManagerTestBase
       builder.context(SuiteContextImpl.class)
             .context(ClassContextImpl.class)
             .context(TestContextImpl.class)
-            .context(ContainerContextImpl.class);
+            .context(ContainerContextImpl.class)
+            .context(DeploymentContextImpl.class);
    }
 
    protected abstract void addExtensions(ManagerBuilder builder);
@@ -157,6 +160,9 @@ public abstract class AbstractManagerTestBase
       @Inject
       private Instance<ContainerContext> containerContext;
 
+      @Inject
+      private Instance<DeploymentContext> deploymentContext;
+
       public void register(@Observes Object event)
       {
          if(register.get() == null)
@@ -172,7 +178,8 @@ public abstract class AbstractManagerTestBase
                   .add(SuiteContext.class, suiteContext.get().isActive())
                   .add(ClassContext.class, classContext.get().isActive())
                   .add(TestContext.class, testContext.get().isActive())
-                  .add(ContainerContext.class, containerContext.get().isActive()));
+                  .add(ContainerContext.class, containerContext.get().isActive())
+                  .add(DeploymentContext.class, deploymentContext.get().isActive()));
       }
    }
  

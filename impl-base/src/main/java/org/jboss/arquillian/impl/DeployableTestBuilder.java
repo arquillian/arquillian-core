@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.context.ClassContextImpl;
 import org.jboss.arquillian.impl.core.context.ContainerContextImpl;
+import org.jboss.arquillian.impl.core.context.DeploymentContextImpl;
 import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
 import org.jboss.arquillian.impl.core.context.TestContextImpl;
 import org.jboss.arquillian.spi.ContainerProfile;
@@ -70,7 +71,8 @@ public class DeployableTestBuilder
          .context(SuiteContextImpl.class)
          .context(ClassContextImpl.class)
          .context(TestContextImpl.class)
-         .context(ContainerContextImpl.class);
+         .context(ContainerContextImpl.class)
+         .context(DeploymentContextImpl.class);
          
       Profile profile = serviceLoader.onlyOne(Profile.class, ArquillianProfile.class);
       switch (profileType)

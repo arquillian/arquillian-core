@@ -76,7 +76,7 @@ public class ContainerCreator
          try
          {
             DeployableContainer deployableContainer = container.getDeployableContainer();
-            //injector.get().inject(deployableContainer); // TODO: this should be moved to the ContianerCreator...
+            injector.get().inject(deployableContainer); // TODO: this should be moved to the ContianerCreator...
             
             before.fire(new BeforeSetup(deployableContainer));
             

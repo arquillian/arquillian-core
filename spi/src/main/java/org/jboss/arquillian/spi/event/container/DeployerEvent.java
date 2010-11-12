@@ -17,7 +17,7 @@
 package org.jboss.arquillian.spi.event.container;
 
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.util.Validate;
 
 /**
@@ -28,20 +28,20 @@ import org.jboss.arquillian.spi.util.Validate;
  */
 public class DeployerEvent extends ContainerEvent
 {
-   private Deployment[] deployments;
+   private DeploymentDescription deployment;
    
-   public DeployerEvent(DeployableContainer<?> deployableContainer, Deployment... deployments)
+   public DeployerEvent(DeployableContainer<?> deployableContainer, DeploymentDescription deployment)
    {
       super(deployableContainer);
-      Validate.notNull(deployments, "Deployments must be specified");
-      this.deployments = deployments;
+      Validate.notNull(deployment, "Deployment must be specified");
+      this.deployment = deployment;
    }
    
    /**
     * @return the deployments
     */
-   public Deployment[] getDeployments()
+   public DeploymentDescription getDeployment()
    {
-      return deployments;
+      return deployment;
    }
 }

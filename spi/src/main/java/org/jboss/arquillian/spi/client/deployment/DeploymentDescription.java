@@ -28,7 +28,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentDescription implements Deployment
+public class DeploymentDescription
 {
    private String name;
    private boolean startup = true;

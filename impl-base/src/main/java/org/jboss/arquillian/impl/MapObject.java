@@ -23,10 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.arquillian.impl.client.container.DeploymentWrapper;
 import org.jboss.arquillian.impl.configuration.model.PropertyImpl;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 
 /**
  * MapObjectPopulator
@@ -80,21 +77,6 @@ public class MapObject
       return urls;
    }
    
-   /**
-    * @param deployments
-    * @return
-    */
-   public static Deployment[] convert(DeploymentDescription[] deployments)
-   {
-      Deployment[] wrapped = new Deployment[deployments.length];
-      for(int i = 0; i < deployments.length; i++)
-      {
-         wrapped[i] = new DeploymentWrapper(deployments[i]);
-      }
-      return wrapped;
-   }
-
-
    public static Map<String, String> convert(Set<PropertyImpl> properties)
    {
       Validate.notNull(properties, "Properties must be specified");

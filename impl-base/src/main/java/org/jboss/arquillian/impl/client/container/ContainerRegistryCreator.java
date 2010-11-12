@@ -22,6 +22,7 @@ import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
 import org.jboss.arquillian.impl.configuration.model.GroupImpl;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
@@ -46,6 +47,20 @@ public class ContainerRegistryCreator
    {
       ContainerRegistry reg = new ContainerRegistry();
       ServiceLoader serviceLoader = loader.get();
+      
+      // TODO: find if any deployableContainers on classpath
+      try
+      {
+         DeployableContainer<?> deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
+         if(deployableContainer != null)
+         {
+            reg.create(new ContainerImpl("default"), serviceLoader);
+         }
+      } 
+      catch (Exception e) 
+      {
+         // ugnore
+      }
       
       ArquillianModel model = event.getSchemaModel();
 

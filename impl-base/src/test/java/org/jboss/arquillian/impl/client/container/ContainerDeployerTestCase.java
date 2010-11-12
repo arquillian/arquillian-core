@@ -24,22 +24,21 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
+import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
-import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.core.annotation.ClassScoped;
-import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Ignore;
@@ -86,7 +85,7 @@ public class ContainerDeployerTestCase extends AbstractManagerTestBase
       
       Container container = Mockito.mock(Container.class);
       final DeployableContainer<ContainerConfiguration> deployableContainer = Mockito.mock(DeployableContainer.class);
-      Mockito.when(deployableContainer.deploy(Mockito.isA(Deployment.class))).thenReturn(new ProtocolMetaData());
+      Mockito.when(deployableContainer.deploy(Mockito.isA(Archive.class))).thenReturn(new ProtocolMetaData());
       
       ContainerRegistry registry = Mockito.mock(ContainerRegistry.class);
       bind(ApplicationScoped.class, ContainerRegistry.class, registry);
@@ -106,7 +105,7 @@ public class ContainerDeployerTestCase extends AbstractManagerTestBase
       fire(new BeforeClass(ContainerDeployerTestCase.class));
       
       // verify that the deployment was deployed to the container
-      Mockito.verify(deployableContainer).deploy(Mockito.any(Deployment.class));
+      Mockito.verify(deployableContainer).deploy(Mockito.any(Archive.class));
       
       // verify that the ContainerMethodExecutor was exported
       ContainerContext context = getManager().getContext(ContainerContext.class);
@@ -121,7 +120,9 @@ public class ContainerDeployerTestCase extends AbstractManagerTestBase
       // verify that all the events where fired
       assertEventFired(BeforeDeploy.class, 1);
       assertEventFiredInContext(BeforeDeploy.class, ContainerContext.class);
+      assertEventFiredInContext(BeforeDeploy.class, DeploymentContext.class);
       assertEventFired(AfterDeploy.class, 1);
       assertEventFiredInContext(AfterDeploy.class, ContainerContext.class);
+      assertEventFiredInContext(AfterDeploy.class, DeploymentContext.class);
    }
 }

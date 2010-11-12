@@ -22,6 +22,7 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
+import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
@@ -37,6 +38,7 @@ import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.event.container.AfterUnDeploy;
 import org.jboss.arquillian.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Ignore;
@@ -90,7 +92,7 @@ public class ContainerUndeployerTestCase extends AbstractManagerTestBase
       
       Container container = Mockito.mock(Container.class);
       final DeployableContainer<ContainerConfiguration> deployableContainer = Mockito.mock(DeployableContainer.class);
-      Mockito.when(deployableContainer.deploy(scenario.getDeployments().get(0))).thenReturn(new ProtocolMetaData());
+      Mockito.when(deployableContainer.deploy(Mockito.isA(Archive.class))).thenReturn(new ProtocolMetaData());
       
       ContainerRegistry registry = Mockito.mock(ContainerRegistry.class);
       containerRegistry.set(registry);
@@ -110,13 +112,15 @@ public class ContainerUndeployerTestCase extends AbstractManagerTestBase
       fire(new AfterClass(ContainerUndeployerTestCase.class));
       
       // verify that the deployment was undeployed from the container
-      Mockito.verify(deployableContainer).undeploy(scenario.getDeployments().get(0));
+      Mockito.verify(deployableContainer).undeploy(Mockito.isA(Archive.class));
 
       // verify that all the events where fired
       // verify that all the events where fired
       assertEventFired(BeforeUnDeploy.class, 1);
       assertEventFiredInContext(BeforeUnDeploy.class, ContainerContext.class);
+      assertEventFiredInContext(BeforeUnDeploy.class, DeploymentContext.class);
       assertEventFired(AfterUnDeploy.class, 1);
       assertEventFiredInContext(AfterUnDeploy.class, ContainerContext.class);
+      assertEventFiredInContext(AfterUnDeploy.class, DeploymentContext.class);
    }
 }

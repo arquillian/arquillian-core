@@ -20,9 +20,10 @@ import org.jboss.arquillian.junit.JUnitIntegrationTestCase;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.container.DeploymentException;
 import org.jboss.arquillian.spi.client.container.LifecycleException;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * TestDeployableContainer
@@ -62,7 +63,16 @@ public class TestDeployableContainer implements DeployableContainer<TestContaine
       JUnitIntegrationTestCase.wasCalled("stop");
    }
 
-   public ProtocolMetaData deploy(Deployment... deployments) throws DeploymentException
+   // TODO : implement tests
+   public void deploy(Descriptor descriptor) throws DeploymentException
+   {
+   }
+   
+   public void undeploy(Descriptor descriptor) throws DeploymentException
+   {
+   }
+
+   public ProtocolMetaData deploy(Archive<?> deployment) throws DeploymentException
    {
       numberOfTimesDeployed++;
       JUnitIntegrationTestCase.wasCalled("deploy");
@@ -74,7 +84,7 @@ public class TestDeployableContainer implements DeployableContainer<TestContaine
       return new ProtocolMetaData();
    }
 
-   public void undeploy(Deployment... deployments) throws DeploymentException
+   public void undeploy(Archive<?> deployment) throws DeploymentException
    {
       JUnitIntegrationTestCase.wasCalled("undeploy");
       if(numberOfTimesDeployed == 1)

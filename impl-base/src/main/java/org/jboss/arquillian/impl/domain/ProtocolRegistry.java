@@ -83,6 +83,10 @@ public class ProtocolRegistry
             return def;
          }
       }
+      if(protocols.size() == 1)
+      {
+         return protocols.get(0);
+      }
       return null;
    }
 

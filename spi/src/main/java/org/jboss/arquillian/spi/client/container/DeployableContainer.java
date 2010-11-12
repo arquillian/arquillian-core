@@ -16,9 +16,10 @@
  */
 package org.jboss.arquillian.spi.client.container;
 
-import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * DeployableContainer
@@ -28,17 +29,25 @@ import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
  */
 public interface DeployableContainer<T extends ContainerConfiguration>
 {
-   ProtocolDescription getDefaultProtocol();
-   
+   // ControllableContainer
    Class<T> getConfigurationClass();
    
    void setup(T configuration);
    
    void start() throws LifecycleException;
-   
-   ProtocolMetaData deploy(Deployment... deployments) throws DeploymentException;
-   
-   void undeploy(Deployment... deployments) throws DeploymentException;
 
    void stop() throws LifecycleException;
+
+   // DeployableContainer
+   ProtocolDescription getDefaultProtocol();
+
+   ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException;
+   
+   void undeploy(Archive<?> archive) throws DeploymentException;
+
+   // Admin ?
+   void deploy(Descriptor descriptor) throws DeploymentException;
+   
+   void undeploy(Descriptor descriptor) throws DeploymentException;
+
 }

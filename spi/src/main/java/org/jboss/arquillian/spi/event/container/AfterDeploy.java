@@ -17,7 +17,7 @@
 package org.jboss.arquillian.spi.event.container;
 
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 
 
 /**
@@ -28,8 +28,8 @@ import org.jboss.arquillian.spi.client.deployment.Deployment;
  */
 public class AfterDeploy extends DeployerEvent
 {
-   public AfterDeploy(DeployableContainer<?> deployableContainer, Deployment... deployments)
+   public AfterDeploy(DeployableContainer<?> deployableContainer, DeploymentDescription deployment)
    {
-      super(deployableContainer, deployments);
+      super(deployableContainer, deployment);
    }
 }

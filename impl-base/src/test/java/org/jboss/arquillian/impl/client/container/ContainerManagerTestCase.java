@@ -25,7 +25,7 @@ import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -66,8 +66,8 @@ public class ContainerManagerTestCase
       
       Thread.currentThread().setContextClassLoader(classLoader);
 
-      DeploymentDescription deployment = new DeploymentDescription("_TEST_", ShrinkWrap.create(JavaArchive.class)
-            .addManifestResource(EmptyAsset.INSTANCE, "beans.xml"));
+      Archive<?> deployment = ShrinkWrap.create(JavaArchive.class)
+            .addManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
       deployableContainer.deploy(deployment);
       deployableContainer.undeploy(deployment);
