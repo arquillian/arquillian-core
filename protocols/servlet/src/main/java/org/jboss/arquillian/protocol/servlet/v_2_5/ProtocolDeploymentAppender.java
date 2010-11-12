@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
@@ -48,7 +49,7 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
                            Descriptors.create(WebAppDescriptor.class)
                               .version("2.5")
                               .displayName("Arquillian")
-                              .servlet("org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner", "/*")
+                              .servlet("org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner", ServletMethodExecutor.ARQUILLIAN_SERVLET)
                               .exportAsString()
                      ));
    }

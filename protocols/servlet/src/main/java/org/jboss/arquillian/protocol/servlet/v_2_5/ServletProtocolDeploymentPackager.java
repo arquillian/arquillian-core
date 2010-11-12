@@ -18,13 +18,21 @@ package org.jboss.arquillian.protocol.servlet.v_2_5;
 
 import java.util.Collection;
 
+import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
+import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
 
 /**
  * ServletProtocolDeploymentPackager
@@ -66,30 +74,63 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
 
    private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-      throw new IllegalArgumentException("The " + ServletProtocolDeploymentPackager.class.getSimpleName() + " can't merge web.xml files.");
+      ArchivePath webXmlPath = ArchivePaths.create("WEB-INF/web.xml");
+      if(applicationArchive.contains(webXmlPath))
+      {
+         WebAppDescriptor applicationWebXml = Descriptors.importAs(WebAppDescriptor.class).from(
+               applicationArchive.get(webXmlPath).getAsset().openStream());
+         
+         mergeWithDescriptor(applicationWebXml); 
+         applicationArchive.setWebXML(new StringAsset(applicationWebXml.exportAsString()));
+         applicationArchive.merge(protocol, Filters.exclude(".*web\\.xml.*"));
+      }
+      else 
+      {
+         applicationArchive.merge(protocol);
+      }
+      applicationArchive.addLibraries(auxiliaryArchives.toArray(new Archive<?>[0]));
+      return applicationArchive;
    }
-
+   
    private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
       return ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
                         .addModule(applicationArchive)
-                        .addModule(protocol)
+                        .addModule(
+                              protocol.setWebXML(
+                                    new StringAsset(getDefaultDescriptor().exportAsString())))
                         .addLibraries(auxiliaryArchives.toArray(new Archive[0]));
    }
 
    private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-      if(false) // contains web archive
+      boolean applicationArchiveContainsWars = !applicationArchive.getContent(Filters.include(".*\\.war")).isEmpty();
+      if(applicationArchiveContainsWars)
       {
-         // find web archive and attach our self to it
+         // find web archive and attach our self to it, SHRINKWRAP-192
+         throw new UnsupportedOperationException("Can not merge with a WebArchive inside a EnterpriseArchive");
       }
       else
       {
          applicationArchive
-               .addModule(protocol)
+               .addModule(
+                     protocol.setWebXML(
+                           new StringAsset(getDefaultDescriptor().exportAsString())))
                .addLibraries(
                      auxiliaryArchives.toArray(new Archive<?>[0]));
       }
       return applicationArchive;
    }
+   
+   private WebAppDescriptor getDefaultDescriptor() 
+   {
+      return Descriptors.create(WebAppDescriptor.class)
+                  .displayName("Arquillian Servlet 2.5 Protocol")
+                  .servlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET);
+   }
+   
+   private void mergeWithDescriptor(WebAppDescriptor descriptor) 
+   {
+      descriptor.servlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET);
+   }   
 }

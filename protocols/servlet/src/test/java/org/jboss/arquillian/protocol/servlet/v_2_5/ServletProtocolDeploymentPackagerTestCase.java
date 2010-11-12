@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocolDeploymentPackager;
+import org.jboss.arquillian.protocol.servlet.TestUtil;
+import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -66,15 +67,26 @@ public class ServletProtocolDeploymentPackagerTestCase
             archive.contains(ArchivePaths.create("/applicationArchive.jar")));
    }
    
-   // as of now, War inside War is not supported. need to merge ? 
-   @Test(expected = IllegalArgumentException.class)
+
+   @Test
    public void shouldHandleWebArchive() throws Exception
    {
-      new ServletProtocolDeploymentPackager().generateDeployment(
+      Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
-                  ShrinkWrap.create(WebArchive.class, "applicationArchive.war"), 
+                  ShrinkWrap.create(WebArchive.class, "applicationArchive.war")
+                     .addClass(getClass())
+                     .setWebXML("test-web.xml"), 
                   createAuxiliaryArchives()));
-      
+
+      Assert.assertTrue(
+            "verify that the ServletTestRunner was added to the archive",
+            archive.contains("/WEB-INF/classes/org/jboss/arquillian/protocol/servlet/runner/ServletTestRunner.class"));
+
+
+      String webXmlContent = TestUtil.convertToString(archive.get("WEB-INF/web.xml").getAsset().openStream());
+      Assert.assertTrue(
+            "verify that the ServletTestRunner servlet was added to the web.xml",
+            webXmlContent.contains(ServletTestRunner.class.getName()));
    }
 
    @Test

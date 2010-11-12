@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet.v_3;
+package org.jboss.arquillian.protocol.servlet;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 
-import org.jboss.arquillian.protocol.servlet.MockTestRunner;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
-import org.jboss.arquillian.protocol.servlet.TestUtil;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
@@ -52,7 +50,7 @@ public class ProtocolTestCase
    {
       server = new Server(8181);
       Context root = new Context(server, "/arquillian-protocol", Context.SESSIONS);
-      root.addServlet(ServletTestRunner.class, "/ArquillianServletRunner");
+      root.addServlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET);
       server.start();
    }
    

@@ -40,12 +40,4 @@ public class MockTestRunner implements TestRunner
    {
       return wantedResults;
    }
-   
-//   public void execute(TestResultCallback callback, Class<?>... classes) 
-//   {
-//      for(TestResult result : wantedResults)
-//      {
-//         callback.handle(result);
-//      }
-//   }
 }
