@@ -31,7 +31,7 @@ import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
  */
 public class LocalProtocol implements Protocol<LocalProtocolConfiguration>
 {
-   public static final String NAME = "local";
+   public static final String NAME = "Local";
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
