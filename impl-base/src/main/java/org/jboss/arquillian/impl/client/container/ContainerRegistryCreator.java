@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.impl.client.container;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.logging.Logger;
+
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
 import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
@@ -37,6 +41,10 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
  */
 public class ContainerRegistryCreator
 {
+   private static final String ARQUILLIAN_LAUNCH_FILE = "arquillian.launch";
+
+   private Logger log = Logger.getLogger(ContainerRegistryCreator.class.getName());
+   
    @Inject @ApplicationScoped
    private InstanceProducer<ContainerRegistry> registry;
    
@@ -47,33 +55,86 @@ public class ContainerRegistryCreator
    {
       ContainerRegistry reg = new ContainerRegistry();
       ServiceLoader serviceLoader = loader.get();
-      
-      // TODO: find if any deployableContainers on classpath
-      try
-      {
-         DeployableContainer<?> deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
-         if(deployableContainer != null)
-         {
-            reg.create(new ContainerImpl("default"), serviceLoader);
-         }
-      } 
-      catch (Exception e) 
-      {
-         // ugnore
-      }
-      
+
       ArquillianModel model = event.getSchemaModel();
 
-      // TODO: findActivatedGroupOrContainer
-      for(GroupImpl group : model.getGroups())
+      String activeConfiguration = getActivatedConfiguration();
+      if(activeConfiguration != null)
       {
-         for(ContainerImpl container : group.getContainers())
+         for(ContainerImpl container : model.getContainers())
          {
-            reg.create(container, serviceLoader);
+            if(activeConfiguration.equals(container.getName()))
+            {
+               reg.create(container, serviceLoader);            
+            }
+         }
+         for(GroupImpl group : model.getGroups())
+         {
+            if(activeConfiguration.equals(group.getName()))
+            {
+               for(ContainerImpl container : group.getContainers())
+               {
+                  reg.create(container, serviceLoader);
+               }
+            }
+         }
+      }
+      else
+      {
+         try
+         {
+            DeployableContainer<?> deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
+            if(deployableContainer != null)
+            {
+               reg.create(new ContainerImpl("default"), serviceLoader);
+            }
+         } 
+         catch (Exception e) 
+         {
+            // ugnore
          }
       }
 
       // export
       registry.set(reg);
+   }
+   
+   private String getActivatedConfiguration() 
+   {
+      try
+      {
+         return readActivatedValue(
+               new BufferedReader(
+                     new InputStreamReader(
+                           Thread.currentThread().getContextClassLoader().getResourceAsStream(ARQUILLIAN_LAUNCH_FILE))));
+         
+      }
+      catch (Exception e) 
+      {
+         log.info("Could not read active container configuration: " + e.getMessage());
+      }
+      return null;
+   }
+   
+   private String readActivatedValue(BufferedReader reader)
+      throws Exception
+   {
+      String value;
+      try
+      {
+         while( (value = reader.readLine()) != null)
+         {
+            if(value.startsWith("#"))
+            {
+               continue;
+            }
+            return value;
+         }
+      }
+      finally
+      {
+         reader.close();
+      }
+      return null;
    }
 }
