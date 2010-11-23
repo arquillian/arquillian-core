@@ -17,13 +17,16 @@
 package org.jboss.arquillian.impl.client.protocol;
 
 import org.jboss.arquillian.api.DeploymentTarget;
+import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
+import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.impl.domain.ProtocolRegistry;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
@@ -66,14 +69,20 @@ public class RemoteTestExecuter
    private Instance<ProtocolMetaData> protocolMetadata;
 
    @Inject
-   private Instance<ContainerContext> containerContext;
+   private Instance<ContainerContext> containerContextProvider;
+
+   @Inject
+   private Instance<DeploymentContext> deploymentContextProvider;
 
    @Inject @TestScoped
    private InstanceProducer<TestResult> testResult;
 
    public void execute(@Observes Test event) throws Exception
    {
-      // TODO : move as a abstract on TestMethodExecutor
+      ContainerContext containerContext = containerContextProvider.get();
+      DeploymentContext deploymentContext = deploymentContextProvider.get();
+      
+      // TODO : move as a abstract/SPI on TestMethodExecutor
       DeploymentTargetDescription target = null;
       if(event.getTestMethod().isAnnotationPresent(DeploymentTarget.class))
       {
@@ -84,40 +93,86 @@ public class RemoteTestExecuter
          target = DeploymentTargetDescription.DEFAULT;
       }
       
-      DeploymentDescription deployment = deploymentScenario.get().getDeployment(target);
-
-      Container container = containerRegistry.get().getContainer(deployment.getTarget());
-      ProtocolRegistry protoReg = protocolRegistry.get();
+      DeploymentScenario scenario = deploymentScenario.get();
       
+      try
+      {
+         DeploymentDescription deployment = scenario.getDeployment(target);
+
+         Container container = containerRegistry.get().getContainer(deployment.getTarget());
+         containerContext.activate(container.getName());
+
+         try
+         {
+            // TODO: split up local vs remote execution in two handlers, fire a new set of events LocalExecute RemoteExecute
+            deploymentContext.activate(deployment);
+            if(scenario.getRunMode() == RunModeType.AS_CLIENT) // TODO: DeploymentScenario should not depend on RunModeType API
+            {
+               testResult.set(executeLocal(event));
+            }
+            else
+            {
+               testResult.set(executeRemote(event, deployment, container));
+            }
+         }
+         finally
+         {
+            deploymentContext.deactivate();
+         }
+      }
+      finally 
+      {
+         containerContext.deactivate();
+      }
+   }
+
+   private TestResult executeRemote(Test event, DeploymentDescription deployment, Container container) throws Exception
+   {
+      ProtocolRegistry protoReg = protocolRegistry.get();
+
       // if no default marked or specific protocol defined in the registry, use the DeployableContainers defaultProtocol.
       ProtocolDefinition protocol = protoReg.getProtocol(deployment.getProtocol());
       if(protocol == null)
       {
          protocol = protoReg.getProtocol(container.getDeployableContainer().getDefaultProtocol());
       }
+    
+      ProtocolConfiguration protocolConfiguration;
       
-      try
+      if(container.hasProtocolConfiguration(protocol.getProtocolDescription()))
       {
-         containerContext.get().activate(container.getName());
-         ProtocolConfiguration protocolConfiguration;
-         
-         if(container.hasProtocolConfiguration(protocol.getProtocolDescription()))
-         {
-            protocolConfiguration = protocol.createProtocolConfiguration(
-                  container.getProtocolConfiguration(protocol.getProtocolDescription()));
-         } 
-         else
-         {
-            protocolConfiguration = protocol.createProtocolConfiguration();
-         }
-         
-         // TODO: cast to raw type to get away from generic issue.. 
-         ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(protocolConfiguration, protocolMetadata.get());
-         testResult.set(executor.invoke(event.getTestMethodExecutor()));
+         protocolConfiguration = protocol.createProtocolConfiguration(
+               container.getProtocolConfiguration(protocol.getProtocolDescription()));
+      } 
+      else
+      {
+         protocolConfiguration = protocol.createProtocolConfiguration();
+      }
+      // TODO: cast to raw type to get away from generic issue.. 
+      ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(protocolConfiguration, protocolMetadata.get());
+      return executor.invoke(event.getTestMethodExecutor());
+   }
+
+   /**
+    * 
+    */
+   private TestResult executeLocal(Test event)
+   {
+      TestResult result = new TestResult();
+      try 
+      {
+         event.getTestMethodExecutor().invoke();
+         result.setStatus(Status.PASSED);
+      } 
+      catch (Throwable e) 
+      {
+         result.setStatus(Status.FAILED);
+         result.setThrowable(e);
       }
       finally 
       {
-         containerContext.get().deactivate();
+         result.setEnd(System.currentTimeMillis());         
       }
+      return result;
    }
 }
