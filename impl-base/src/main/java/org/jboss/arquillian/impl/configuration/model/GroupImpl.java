@@ -58,6 +58,14 @@ public class GroupImpl
    }
    
    /**
+    * @return the name
+    */
+   public String getName()
+   {
+      return name;
+   }
+   
+   /**
     * @return the containers
     */
    public List<ContainerImpl> getContainers()
