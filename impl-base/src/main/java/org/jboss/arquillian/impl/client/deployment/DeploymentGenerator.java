@@ -100,6 +100,10 @@ public class DeploymentGenerator
      ProtocolRegistry proReg = protocolRegistry.get();
      for(ProtocolDescription proDesc : scenario.getProtocols())
      {
+        if(ProtocolDescription.DEFAULT.equals(proDesc))
+        {
+           continue;
+        }
         ProtocolDefinition protocol = proReg.getProtocol(proDesc);
         if(protocol == null)
         {
@@ -136,7 +140,13 @@ public class DeploymentGenerator
          // TODO: could be optimalized to only be loaded pr Container
          List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(deployment);
          
-         Protocol<?> protocol = protoReg.getProtocol(deployment.getProtocol()).getProtocol();
+         ProtocolDefinition protocolDefinition = protoReg.getProtocol(deployment.getProtocol());
+         if(protocolDefinition == null)
+         {
+            protocolDefinition = protoReg.getProtocol(
+                  containerRegistry.get().getContainer(deployment.getTarget()).getDeployableContainer().getDefaultProtocol());
+         }
+         Protocol<?> protocol = protocolDefinition.getProtocol();
          DeploymentPackager packager = protocol.getPackager();
 
          Archive<?> applicationArchive = deployment.getArchive();
