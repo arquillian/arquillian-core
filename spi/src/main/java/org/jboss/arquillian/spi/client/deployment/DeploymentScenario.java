@@ -122,7 +122,7 @@ public class DeploymentScenario
    {
       for(DeploymentDescription deployment : deployments)
       {
-         if(deployment.getName().equals(target))
+         if(deployment.getName().equals(target.getName()))
          {
             return deployment;
          }
