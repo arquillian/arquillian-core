@@ -35,7 +35,7 @@ public class HTTPContext
    {
       this.host = host;
       this.port = port;
-      this.contextRoot = contextRoot;
+      this.contextRoot = cleanContextRoot(contextRoot);
    }
 
    /**
@@ -64,6 +64,15 @@ public class HTTPContext
    
    public URI getBaseURI()
    {
-      return URI.create("http://" + host + ":" + port + "/" + contextRoot);
+      return URI.create("http://" + host + ":" + port + contextRoot);
+   }
+   
+   private String cleanContextRoot(String contextRoot)
+   {
+      if(!contextRoot.startsWith("/"))
+      {
+         return "/" + contextRoot;
+      }
+      return contextRoot;
    }
 }
