@@ -51,7 +51,7 @@ public class ProtocolRegistryTestCase
    }
    
    @Test
-   public void shouldBeAbleToDefaultProtocol() throws Exception
+   public void shouldBeAbleToDefaultProtocolIfOnlyOneFound() throws Exception
    {
       ProtocolRegistry registry = createRegistry()
                   .addProtocol(new ProtocolDefinition(protocol, new ProtocolImpl()));
@@ -76,20 +76,7 @@ public class ProtocolRegistryTestCase
    }
 
    @Test
-   public void shouldBeAbleToDefaultToNonLocalProtocol() throws Exception
-   {
-      Protocol<?> localProtocol = Mockito.mock(Protocol.class);
-      Mockito.when(localProtocol.getDescription()).thenReturn(new ProtocolDescription("local"));
-      
-      ProtocolRegistry registry = createRegistry()
-                  .addProtocol(new ProtocolDefinition(protocol, new ProtocolImpl()))
-                  .addProtocol(new ProtocolDefinition(localProtocol, new ProtocolImpl()));
-      
-      Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());            
-   }
-
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionIfTryingToDefaultWithMultipleNonLocalProtocols() throws Exception
+   public void shouldReturnNullTryingToDefaultWithMultipleNonDefinedDefaultProtocols() throws Exception
    {
       Protocol<?> localProtocol = Mockito.mock(Protocol.class);
       Mockito.when(localProtocol.getDescription()).thenReturn(new ProtocolDescription("local"));
@@ -101,8 +88,7 @@ public class ProtocolRegistryTestCase
                   .addProtocol(new ProtocolDefinition(localProtocol, new ProtocolImpl()))
                   .addProtocol(new ProtocolDefinition(otherProtocol, new ProtocolImpl()));
       
-      // throws IllegalArgumentException
-      registry.getProtocol(ProtocolDescription.DEFAULT);            
+      Assert.assertNull(registry.getProtocol(ProtocolDescription.DEFAULT));            
    }
    
    @Test(expected = IllegalArgumentException.class)

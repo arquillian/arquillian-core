@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.impl.domain;
 
-import java.net.URLClassLoader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,8 +56,15 @@ public class ContainerRegistry
          {
             DependencyBuilder.ArtifactBuilder<?> builder = Dependencies.artifacts(
                   definition.getDependencies().toArray(new String[0]));
+            URL[] resolvedURLs = MapObject.convert(builder.resolveAsFiles());
 
-            containerClassLoader = new URLClassLoader(MapObject.convert(builder.resolveAsFiles()));
+//            System.out.println(definition.getName());
+//            for(URL url : resolvedURLs)
+//            {
+//               System.out.println(url);
+//            }
+            
+            containerClassLoader = new FilteredURLClassLoader(resolvedURLs, "org.jboss.(arquillian|shrinkwrap)..*");
          }
          else
          {
