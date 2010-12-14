@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.impl.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.arquillian.impl.configuration.api.ProtocolDef;
-import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
-import org.jboss.arquillian.impl.configuration.model.PropertyImpl;
-import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
+import org.jboss.shrinkwrap.descriptor.api.Node;
 
 /**
  * ProtocolDefImpl
@@ -30,9 +30,9 @@ import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
  */
 public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
 {
-   private ProtocolImpl protocol;
+   private Node protocol;
    
-   public ProtocolDefImpl(ArquillianModel model, ContainerImpl container, ProtocolImpl protocol)
+   public ProtocolDefImpl(Node model, Node container, Node protocol)
    {
       super(model, container);
       this.protocol = protocol;
@@ -43,12 +43,51 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
    //-------------------------------------------------------------------------------------||
 
    /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ProtocolDef#getType()
+    */
+   @Override
+   public String getType()
+   {
+      return protocol.attribute("type");
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ProtocolDef#setType(java.lang.String)
+    */
+   @Override
+   public ProtocolDef setType(String type)
+   {
+      protocol.attribute("type", type);
+      return this;
+   }
+   
+   /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.ProtocolDescription#property(java.lang.String, java.lang.String)
     */
    @Override
    public ProtocolDef property(String name, String value)
    {
-      protocol.getProperties().add(new PropertyImpl(name, value));
+      protocol.getOrCreate("configuration").create("property").attribute("name", name).text(value);
       return this;
    }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ContainerDef#getProperties()
+    */
+   @Override
+   public Map<String, String> getProtocolProperties()
+   {
+      Node props = protocol.getSingle("configuration");
+      Map<String, String> properties = new HashMap<String, String>();
+      
+      if(props != null)
+      {
+         for(Node prop: props.get("property"))
+         {
+            properties.put(prop.attribute("name"), prop.text());
+         }
+      }
+      return properties;
+   }
+
 }

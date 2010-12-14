@@ -1,2 +1,2 @@
 implClass=org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl
-modelClass=org.jboss.arquillian.impl.configuration.model.ArquillianModel
+importerClass=org.jboss.shrinkwrap.descriptor.impl.base.XMLImporter

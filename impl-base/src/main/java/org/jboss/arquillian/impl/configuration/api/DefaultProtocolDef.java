@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.impl.configuration.api;
 
+import java.util.Map;
+
 /**
  * DefaultProtocolDescription
  *
@@ -24,5 +26,11 @@ package org.jboss.arquillian.impl.configuration.api;
  */
 public interface DefaultProtocolDef extends ArquillianDescriptor
 {
+   DefaultProtocolDef setType(String type);
+   
+   String getType();
+   
    DefaultProtocolDef property(String name, String value);
+   
+   Map<String, String> getProperties();
 }

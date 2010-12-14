@@ -19,7 +19,7 @@ package org.jboss.arquillian.impl.client.protocol;
 import java.util.Collection;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
-import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
+import org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef;
 import org.jboss.arquillian.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.impl.domain.ProtocolRegistry;
 import org.jboss.arquillian.spi.ServiceLoader;
@@ -50,14 +50,14 @@ public class ProtocolRegistryCreator
       Collection<Protocol> protocols = serviceLoader.get().all(Protocol.class); 
 
       Protocol defaultProtocol = null;
-      ProtocolImpl protocolImpl = event.getSchemaModel().getProtocol();
-      if(protocolImpl != null)
+      DefaultProtocolDef defaultProtcolDef = event.getDefaultProtocol();
+      if(defaultProtcolDef != null)
       {
-         defaultProtocol = findMatch(new ProtocolDescription(protocolImpl.getType()), protocols);
+         defaultProtocol = findMatch(new ProtocolDescription(defaultProtcolDef.getType()), protocols);
          if(defaultProtocol == null)
          {
             // TODO: add printout of found protocols
-            throw new IllegalStateException("Defined default protocol " + protocolImpl.getType() + " can not be found on classpath");
+            throw new IllegalStateException("Defined default protocol " + defaultProtcolDef.getType() + " can not be found on classpath");
          }
       }
       ProtocolRegistry registry = new ProtocolRegistry();
@@ -65,7 +65,7 @@ public class ProtocolRegistryCreator
       {
          if(defaultProtocol != null && protocol.equals(defaultProtocol))
          {
-            registry.addProtocol(new ProtocolDefinition(protocol, protocolImpl, true));   
+            registry.addProtocol(new ProtocolDefinition(protocol, defaultProtcolDef.getProperties(), true));   
          }
          else
          {

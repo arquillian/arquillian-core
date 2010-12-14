@@ -138,7 +138,7 @@ final class Reflections
     */
    private static boolean isObserverMethod(Method method)
    {
-      if(method.getParameterTypes().length != 1)
+      if(method.getParameterTypes().length != 1 || method.getParameterAnnotations().length != 1)
       {
          return false;
       }

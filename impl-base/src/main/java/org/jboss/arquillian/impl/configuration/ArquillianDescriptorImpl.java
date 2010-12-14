@@ -16,15 +16,21 @@
  */
 package org.jboss.arquillian.impl.configuration;
 
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef;
 import org.jboss.arquillian.impl.configuration.api.GroupDef;
-import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
-import org.jboss.arquillian.impl.configuration.model.GroupImpl;
-import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
-import org.jboss.shrinkwrap.descriptor.impl.base.SchemaDescriptorImplBase;
+import org.jboss.arquillian.impl.configuration.api.ProtocolDef;
+import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
+import org.jboss.shrinkwrap.descriptor.api.Node;
+import org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase;
+import org.jboss.shrinkwrap.descriptor.impl.base.XMLExporter;
+import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
 
 /**
  * ArquillianDescriptor
@@ -32,13 +38,13 @@ import org.jboss.shrinkwrap.descriptor.impl.base.SchemaDescriptorImplBase;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArquillianDescriptorImpl extends SchemaDescriptorImplBase<ArquillianModel> implements ArquillianDescriptor
+public class ArquillianDescriptorImpl extends NodeProviderImplBase implements ArquillianDescriptor
 {
    //-------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   private ArquillianModel model;
+   private Node model;
    
    //-------------------------------------------------------------------------------------||
    // Constructor ------------------------------------------------------------------------||
@@ -46,10 +52,10 @@ public class ArquillianDescriptorImpl extends SchemaDescriptorImplBase<Arquillia
 
    public ArquillianDescriptorImpl()
    {
-      this(new ArquillianModel());
+      this(new Node("arquillian"));
    }
    
-   public ArquillianDescriptorImpl(ArquillianModel model)
+   public ArquillianDescriptorImpl(Node model)
    {
       this.model = model;
    }
@@ -64,17 +70,25 @@ public class ArquillianDescriptorImpl extends SchemaDescriptorImplBase<Arquillia
    @Override
    public DefaultProtocolDef defaultProtocol(String type)
    {
-      ProtocolImpl protocol = new ProtocolImpl(type);
-      model.setProtocol(protocol);
-      return new DefaultProtocolDefImpl(model, protocol);
+      return new DefaultProtocolDefImpl(model, model.getOrCreate("protocol")).setType(type);
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#getDefaultProtocol()
+    */
+   @Override
+   public DefaultProtocolDef getDefaultProtocol()
+   {
+      if(model.getSingle("protocol") != null)
+      {
+         return new DefaultProtocolDefImpl(model, model.getSingle("protocol"));
+      }
+      return null;
    }
    
    public ContainerDef container(String name) 
    {
-      ContainerImpl container = new ContainerImpl(name); 
-      model.getContainers().add(container);
-      
-      return new ContainerDefImpl(model, container);
+      return new ContainerDefImpl(model, model.create("container")).setContainerName(name);
    }
 
    /* (non-Javadoc)
@@ -83,9 +97,35 @@ public class ArquillianDescriptorImpl extends SchemaDescriptorImplBase<Arquillia
    @Override
    public GroupDef group(String name)
    {
-      GroupImpl group = new GroupImpl(name);
-      model.getGroups().add(group);
-      return new GroupDefImpl(getSchemaModel(), group);
+      return new GroupDefImpl(model, model.create("group")).setGroupName(name);
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#getContainers()
+    */
+   @Override
+   public List<ContainerDef> getContainers()
+   {
+      List<ContainerDef> containers = new ArrayList<ContainerDef>();
+      for(Node container : model.get("container"))
+      {
+         containers.add(new ContainerDefImpl(model, container));
+      }
+      return containers;
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#getGroups()
+    */
+   @Override
+   public List<GroupDef> getGroups()
+   {
+      List<GroupDef> groups = new ArrayList<GroupDef>();
+      for(Node group : model.get("group"))
+      {
+         groups.add(new GroupDefImpl(model, group));
+      }
+      return groups;
    }
    
    //-------------------------------------------------------------------------------------||
@@ -93,12 +133,20 @@ public class ArquillianDescriptorImpl extends SchemaDescriptorImplBase<Arquillia
    //-------------------------------------------------------------------------------------||
 
    /* (non-Javadoc)
-    * @see org.jboss.shrinkwrap.descriptor.spi.SchemaDescriptorProvider#getSchemaModel()
+    * @see org.jboss.shrinkwrap.descriptor.spi.NodeProvider#getRootNode()
     */
    @Override
-   public ArquillianModel getSchemaModel()
+   public Node getRootNode()
    {
       return model;
    }
    
+   /* (non-Javadoc)
+    * @see org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase#getExporter()
+    */
+   @Override
+   protected DescriptorExporter getExporter()
+   {
+      return new XMLExporter();
+   }
 }

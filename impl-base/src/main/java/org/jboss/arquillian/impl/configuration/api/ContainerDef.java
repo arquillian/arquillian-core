@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.impl.configuration.api;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * ContainerDescription
  *
@@ -24,11 +27,23 @@ package org.jboss.arquillian.impl.configuration.api;
  */
 public interface ContainerDef extends ArquillianDescriptor
 {
+   String getContainerName();
+   
+   ContainerDef setContainerName(String name);
+   
    ContainerDef setDefault();
+   
+   boolean isDefault();
    
    ContainerDef dependency(String artifactId);
    
    ContainerDef property(String name, String value);
    
+   Map<String, String> getContainerProperties();
+   
    ProtocolDef protocol(String type);
+   
+   List<ProtocolDef> getProtocols();
+   
+   List<String> getDependencies();
 }

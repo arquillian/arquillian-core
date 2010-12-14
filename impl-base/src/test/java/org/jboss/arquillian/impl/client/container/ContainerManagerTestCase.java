@@ -19,7 +19,7 @@ package org.jboss.arquillian.impl.client.container;
 import java.util.ServiceLoader;
 
 import org.jboss.arquillian.impl.DynamicServiceLoader;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
+import org.jboss.arquillian.impl.configuration.ContainerDefImpl;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.Configuration;
@@ -47,11 +47,11 @@ public class ContainerManagerTestCase
    {
       ContainerRegistry manager = new ContainerRegistry();
       Container container = manager.create(
-            new ContainerImpl("Weld-SE-Embedded")
-            .addDependency("org.jboss.arquillian.container:arquillian-weld-se-embedded-1.1:1.0.0-SNAPSHOT")
-            .addDependency("org.jboss.weld:weld-core:1.1.0.Beta1")
-            .addDependency("org.slf4j:slf4j-simple:1.5.10")
-            .addDependency("javax.el:el-api:2.2"),
+            new ContainerDefImpl().setContainerName("Weld-SE-Embedded")
+            .dependency("org.jboss.arquillian.container:arquillian-weld-se-embedded-1.1:1.0.0-SNAPSHOT")
+            .dependency("org.jboss.weld:weld-core:1.1.0.Beta1")
+            .dependency("org.slf4j:slf4j-simple:1.5.10")
+            .dependency("javax.el:el-api:2.2"),
             new DynamicServiceLoader());
    
       ClassLoader classLoader = container.getClassLoader();

@@ -94,4 +94,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       manager.fire(new Test(testMethodExecutor));
       return manager.resolve(TestResult.class);
    }
+   
+   public void shutdown()
+   {
+      manager.shutdown();
+   }
 }

@@ -16,11 +16,12 @@
  */
 package org.jboss.arquillian.impl.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.impl.configuration.api.GroupDef;
-import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
-import org.jboss.arquillian.impl.configuration.model.GroupImpl;
+import org.jboss.shrinkwrap.descriptor.api.Node;
 
 /**
  * GroupDefImpl
@@ -30,9 +31,9 @@ import org.jboss.arquillian.impl.configuration.model.GroupImpl;
  */
 public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
 {
-   private GroupImpl group;
+   private Node group;
    
-   public GroupDefImpl(ArquillianModel model, GroupImpl group)
+   public GroupDefImpl(Node model, Node group)
    {
       super(model);
       this.group = group;
@@ -43,14 +44,46 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
    //-------------------------------------------------------------------------------------||
 
    /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#setName(java.lang.String)
+    */
+   @Override
+   public GroupDef setGroupName(String name)
+   {
+      group.attribute("qualifier", name);
+      return this;
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupName()
+    */
+   @Override
+   public String getGroupName()
+   {
+      return group.attribute("qualifier");
+   }
+   
+   /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
     */
    @Override
    public ContainerDef container(String name)
    {
-      ContainerImpl container = new ContainerImpl(name);
-      group.getContainers().add(container);
-      return new GroupContainerDefImpl(getSchemaModel(), group, container);
+      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getRootNode(), group, group.create("container"));
+      contianer.setContainerName(name);
+      return contianer;
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupContainers()
+    */
+   @Override
+   public List<ContainerDef> getGroupContainers()
+   {
+      List<ContainerDef> containers = new ArrayList<ContainerDef>();
+      for(Node container : group.get("container"))
+      {
+         containers.add(new GroupContainerDefImpl(getRootNode(), group, container));
+      }
+      return containers;
+   }
 }

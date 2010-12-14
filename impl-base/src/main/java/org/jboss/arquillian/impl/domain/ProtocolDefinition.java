@@ -16,9 +16,11 @@
  */
 package org.jboss.arquillian.impl.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.arquillian.impl.MapObject;
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
@@ -33,20 +35,20 @@ import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 public class ProtocolDefinition
 {
    private Protocol<?> protocol;
-   private ProtocolImpl protocolConfiguration;
+   private Map<String, String> protocolConfiguration;
    private boolean defaultProtocol = false;
    
    public ProtocolDefinition(Protocol<?> protocol)
    {
-      this(protocol, new ProtocolImpl(), false);
+      this(protocol, new HashMap<String, String>(), false);
    }
 
-   public ProtocolDefinition(Protocol<?> protocol, ProtocolImpl protocolConfiguration)
+   public ProtocolDefinition(Protocol<?> protocol, Map<String, String> protocolConfiguration)
    {
       this(protocol, protocolConfiguration, false);
    }
    
-   public ProtocolDefinition(Protocol<?> protocol, ProtocolImpl protocolConfiguration, boolean defaultProtocol)
+   public ProtocolDefinition(Protocol<?> protocol, Map<String, String> protocolConfiguration, boolean defaultProtocol)
    {
       Validate.notNull(protocol, "Protocol must be specified");
       Validate.notNull(protocolConfiguration, "ProtocolConfiguration must be specified");
@@ -89,7 +91,7 @@ public class ProtocolDefinition
    /**
     * @return the protocolConfiguration
     */
-   public ProtocolImpl getProtocolConfiguration()
+   public Map<String, String> getProtocolConfiguration()
    {
       return protocolConfiguration;
    }
@@ -111,11 +113,11 @@ public class ProtocolDefinition
     * @return
     * @throws Exception
     */
-   public ProtocolConfiguration createProtocolConfiguration(ProtocolImpl configuration) throws Exception
+   public ProtocolConfiguration createProtocolConfiguration(Map<String, String> configuration) throws Exception
    {
       Validate.notNull(configuration, "ProtocolConfiguration must be specified");
       ProtocolConfiguration config = protocol.getProtocolConfigurationClass().newInstance();
-      MapObject.populate(config, configuration.getProperties());
+      MapObject.populate(config, configuration);
       return config;
    }
 }

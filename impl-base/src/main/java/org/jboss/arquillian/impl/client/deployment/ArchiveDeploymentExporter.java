@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.spi.Configuration;
+import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
@@ -36,9 +37,11 @@ public class ArchiveDeploymentExporter
 {
 //   private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());
 
-   public void callback(BeforeDeploy event) throws Exception
+   public void callback(@Observes BeforeDeploy event) throws Exception
    {
-//      Archive<?> deployment = context.get(Archive.class);
+      event.getDeployment().getTestableArchive().as(ZipExporter.class).exportTo(
+            new File("target/" + event.getDeployment().getTestableArchive().getName()), true);
+      //      Archive<?> deployment = context.get(Archive.class);
 //      Configuration configuration = context.get(Configuration.class);
 //
 //      if (deployment != null && configuration != null && configuration.getDeploymentExportPath() != null)

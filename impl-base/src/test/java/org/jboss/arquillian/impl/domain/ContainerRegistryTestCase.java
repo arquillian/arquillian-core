@@ -18,7 +18,7 @@ package org.jboss.arquillian.impl.domain;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
+import org.jboss.arquillian.impl.configuration.ContainerDefImpl;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -58,7 +58,7 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerImpl(name), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName(name), serviceLoader);
       
       Container container = registry.getContainer(TargetDescription.DEFAULT);
       
@@ -73,8 +73,8 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerImpl("some-other-name"), serviceLoader);
-      registry.create(new ContainerImpl(name).setDefault(true), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName("some-other-name"), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName(name).setDefault(), serviceLoader);
       
       Container container = registry.getContainer(TargetDescription.DEFAULT);
       
@@ -90,8 +90,8 @@ public class ContainerRegistryTestCase
       String prop = "prop-value";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerImpl(name)
-                           .addProperty("property", prop), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName(name)
+                           .property("property", prop), serviceLoader);
       
       Container container = registry.getContainer(new TargetDescription(name));
       
@@ -111,8 +111,8 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerImpl("other-name"), serviceLoader);
-      registry.create(new ContainerImpl(name), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName("other-name"), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName(name), serviceLoader);
       
       Container container = registry.getContainer(new TargetDescription(name));
       

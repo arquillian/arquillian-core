@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.impl.configuration.api;
 
+import java.util.List;
+
 /**
  * GroupDescription
  *
@@ -24,5 +26,11 @@ package org.jboss.arquillian.impl.configuration.api;
  */
 public interface GroupDef extends ArquillianDescriptor
 {
+   String getGroupName();
+   
+   GroupDef setGroupName(String name);
+   
    ContainerDef container(String name);
+   
+   List<ContainerDef> getGroupContainers();
 }

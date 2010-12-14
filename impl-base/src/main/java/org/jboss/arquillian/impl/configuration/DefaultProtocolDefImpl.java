@@ -16,10 +16,11 @@
  */
 package org.jboss.arquillian.impl.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef;
-import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
-import org.jboss.arquillian.impl.configuration.model.PropertyImpl;
-import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
+import org.jboss.shrinkwrap.descriptor.api.Node;
 
 /**
  * DefaultProtocolDefImpl
@@ -29,9 +30,9 @@ import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
  */
 public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements DefaultProtocolDef
 {
-   private ProtocolImpl protocol;
+   private Node protocol;
 
-   public DefaultProtocolDefImpl(ArquillianModel model, ProtocolImpl protocol)
+   public DefaultProtocolDefImpl(Node model, Node protocol)
    {
       super(model);
       this.protocol = protocol;
@@ -42,12 +43,46 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
    //-------------------------------------------------------------------------------------||
 
    /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef#setType(java.lang.String)
+    */
+   @Override
+   public DefaultProtocolDef setType(String type)
+   {
+      protocol.attribute("type", type);
+      return this;
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef#getType()
+    */
+   @Override
+   public String getType()
+   {
+      return protocol.attribute("type");
+   }
+   
+   /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.ProtocolDescription#property(java.lang.String, java.lang.String)
     */
    @Override
    public DefaultProtocolDef property(String name, String value)
    {
-      protocol.getProperties().add(new PropertyImpl(name, value));
+      protocol.getOrCreate("configuration").create("property").attribute("name", name).text(value);
       return this;
+   }
+   
+   public Map<String, String> getProperties()
+   {
+      Node props = protocol.getSingle("configuration");
+      Map<String, String> properties = new HashMap<String, String>();
+      
+      if(props != null)
+      {
+         for(Node prop: props.get("property"))
+         {
+            properties.put(prop.attribute("name"), prop.text());
+         }
+      }
+      return properties;
    }
 }

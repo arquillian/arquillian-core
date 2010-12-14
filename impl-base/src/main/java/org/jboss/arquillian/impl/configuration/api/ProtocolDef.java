@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.impl.configuration.api;
 
+import java.util.Map;
+
 /**
  * ProtocolDescription
  *
@@ -24,5 +26,11 @@ package org.jboss.arquillian.impl.configuration.api;
  */
 public interface ProtocolDef extends ContainerDef
 {
+   String getType();
+   
+   ProtocolDef setType(String type);
+   
    ProtocolDef property(String name, String value);
+   
+   Map<String, String> getProtocolProperties();
 }

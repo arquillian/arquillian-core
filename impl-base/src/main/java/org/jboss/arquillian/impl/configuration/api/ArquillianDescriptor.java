@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.impl.configuration.api;
 
-import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
+import java.util.List;
+
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
-import org.jboss.shrinkwrap.descriptor.spi.SchemaDescriptorProvider;
 
 /**
  * ArquillianDescriptor
@@ -26,11 +26,17 @@ import org.jboss.shrinkwrap.descriptor.spi.SchemaDescriptorProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ArquillianDescriptor extends Descriptor, SchemaDescriptorProvider<ArquillianModel>
+public interface ArquillianDescriptor extends Descriptor
 {
    DefaultProtocolDef defaultProtocol(String type);
+   
+   DefaultProtocolDef getDefaultProtocol();
    
    ContainerDef container(String name);
    
    GroupDef group(String name);
+   
+   List<ContainerDef> getContainers();
+   
+   List<GroupDef> getGroups();
 }

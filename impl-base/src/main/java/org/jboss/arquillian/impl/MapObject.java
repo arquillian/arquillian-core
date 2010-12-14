@@ -19,11 +19,7 @@ package org.jboss.arquillian.impl;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import org.jboss.arquillian.impl.configuration.model.PropertyImpl;
 
 /**
  * MapObjectPopulator
@@ -33,11 +29,6 @@ import org.jboss.arquillian.impl.configuration.model.PropertyImpl;
  */
 public class MapObject
 {
-   public static void populate(Object object, Set<PropertyImpl> properties) throws Exception
-   {
-      populate(object, convert(properties));
-   }
-   
    public static void populate(Object object, Map<String, String> values) throws Exception
    {
       for (Method candidate : object.getClass().getMethods())
@@ -77,17 +68,6 @@ public class MapObject
       return urls;
    }
    
-   public static Map<String, String> convert(Set<PropertyImpl> properties)
-   {
-      Validate.notNull(properties, "Properties must be specified");
-      Map<String, String> values = new HashMap<String, String>();
-      for(PropertyImpl property : properties)
-      {
-         values.put(property.getName(), property.getValue());
-      }
-      return values;
-   }
-
    /**
     * Converts a String value to the specified class.
     * @param clazz

@@ -18,8 +18,8 @@ package org.jboss.arquillian.impl.domain;
 
 import org.jboss.arquillian.impl.MapObject;
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
-import org.jboss.arquillian.impl.configuration.model.ProtocolImpl;
+import org.jboss.arquillian.impl.configuration.api.ContainerDef;
+import org.jboss.arquillian.impl.configuration.api.ProtocolDef;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
@@ -37,9 +37,9 @@ public class Container
    private DeployableContainer<?> deployableContainer;
    private String name;
    
-   private ContainerImpl containerConfiguration;
+   private ContainerDef containerConfiguration;
    
-   public Container(String name, ClassLoader classLoader, DeployableContainer<?> deployableContainer, ContainerImpl containerConfiguration)
+   public Container(String name, ClassLoader classLoader, DeployableContainer<?> deployableContainer, ContainerDef containerConfiguration)
    {
       Validate.notNull(name, "Name must be specified");
       Validate.notNull(classLoader, "ClassLoader must be specified");
@@ -79,7 +79,7 @@ public class Container
    /**
     * @return the containerConfiguration
     */
-   public ContainerImpl getContainerConfiguration()
+   public ContainerDef getContainerConfiguration()
    {
       return containerConfiguration;
    }
@@ -90,13 +90,13 @@ public class Container
    public ContainerConfiguration createDeployableConfiguration() throws Exception
    {
       ContainerConfiguration config = deployableContainer.getConfigurationClass().newInstance();
-      MapObject.populate(config, containerConfiguration.getProperties());
+      MapObject.populate(config, containerConfiguration.getContainerProperties());
       return config;
    }
    
    public boolean hasProtocolConfiguration(ProtocolDescription description)
    {
-      for(ProtocolImpl protocol : containerConfiguration.getProtocols())
+      for(ProtocolDef protocol : containerConfiguration.getProtocols())
       {
          if(description.getName().equals(protocol.getType()))
          {
@@ -106,9 +106,9 @@ public class Container
       return false;
    }
 
-   public ProtocolImpl getProtocolConfiguration(ProtocolDescription description)
+   public ProtocolDef getProtocolConfiguration(ProtocolDescription description)
    {
-      for(ProtocolImpl protocol : containerConfiguration.getProtocols())
+      for(ProtocolDef protocol : containerConfiguration.getProtocols())
       {
          if(description.getName().equals(protocol.getType()))
          {

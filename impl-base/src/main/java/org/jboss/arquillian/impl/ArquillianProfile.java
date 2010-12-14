@@ -29,6 +29,7 @@ import org.jboss.arquillian.impl.client.container.ContainerRegistryCreator;
 import org.jboss.arquillian.impl.client.container.ContainerStarter;
 import org.jboss.arquillian.impl.client.container.ContainerStopper;
 import org.jboss.arquillian.impl.client.container.ContainerUndeployer;
+import org.jboss.arquillian.impl.client.deployment.ArchiveDeploymentExporter;
 import org.jboss.arquillian.impl.client.deployment.DeploymentGenerator;
 import org.jboss.arquillian.impl.client.protocol.ProtocolRegistryCreator;
 import org.jboss.arquillian.impl.client.protocol.RemoteTestExecuter;
@@ -69,6 +70,9 @@ public class ArquillianProfile implements Profile
             TestCaseEnricher.class,
             RemoteTestExecuter.class,
             ContainerStopper.class,
+            
+            // utils
+            ArchiveDeploymentExporter.class,
             
             // core
             ContextDeActivator.class

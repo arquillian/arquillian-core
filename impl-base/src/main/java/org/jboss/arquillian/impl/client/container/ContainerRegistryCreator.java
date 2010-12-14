@@ -20,10 +20,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.impl.configuration.ContainerDefImpl;
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
-import org.jboss.arquillian.impl.configuration.model.ArquillianModel;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
-import org.jboss.arquillian.impl.configuration.model.GroupImpl;
+import org.jboss.arquillian.impl.configuration.api.ContainerDef;
+import org.jboss.arquillian.impl.configuration.api.GroupDef;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -56,23 +56,21 @@ public class ContainerRegistryCreator
       ContainerRegistry reg = new ContainerRegistry();
       ServiceLoader serviceLoader = loader.get();
 
-      ArquillianModel model = event.getSchemaModel();
-
       String activeConfiguration = getActivatedConfiguration();
       if(activeConfiguration != null)
       {
-         for(ContainerImpl container : model.getContainers())
+         for(ContainerDef container : event.getContainers())
          {
-            if(activeConfiguration.equals(container.getName()))
+            if(activeConfiguration.equals(container.getContainerName()))
             {
                reg.create(container, serviceLoader);            
             }
          }
-         for(GroupImpl group : model.getGroups())
+         for(GroupDef group : event.getGroups())
          {
-            if(activeConfiguration.equals(group.getName()))
+            if(activeConfiguration.equals(group.getGroupName()))
             {
-               for(ContainerImpl container : group.getContainers())
+               for(ContainerDef container : group.getContainers())
                {
                   reg.create(container, serviceLoader);
                }
@@ -86,7 +84,7 @@ public class ContainerRegistryCreator
             DeployableContainer<?> deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
             if(deployableContainer != null)
             {
-               reg.create(new ContainerImpl("default"), serviceLoader);
+               reg.create(new ContainerDefImpl().setContainerName("default"), serviceLoader);
             }
          } 
          catch (Exception e) 

@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.jboss.arquillian.impl.MapObject;
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.impl.configuration.model.ContainerImpl;
+import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
@@ -45,7 +45,7 @@ public class ContainerRegistry
       this.containers = new ArrayList<Container>();
    }
    
-   public Container create(ContainerImpl definition, ServiceLoader loader)
+   public Container create(ContainerDef definition, ServiceLoader loader)
    {
       Validate.notNull(definition, "Definition must be specified");
 
@@ -73,14 +73,14 @@ public class ContainerRegistry
             
          return addContainer(
                new Container(
-                     definition.getName(), 
+                     definition.getContainerName(), 
                      containerClassLoader, 
                      loader.onlyOne(containerClassLoader, DeployableContainer.class),
                      definition));
       }
       catch (Exception e) 
       {
-         throw new ContainerCreationException("Could not create Container " + definition.getName(), e);
+         throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
       }
    }
 

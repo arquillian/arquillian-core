@@ -142,7 +142,7 @@ public class RemoteTestExecuter
       if(container.hasProtocolConfiguration(protocol.getProtocolDescription()))
       {
          protocolConfiguration = protocol.createProtocolConfiguration(
-               container.getProtocolConfiguration(protocol.getProtocolDescription()));
+               container.getProtocolConfiguration(protocol.getProtocolDescription()).getProtocolProperties());
       } 
       else
       {
