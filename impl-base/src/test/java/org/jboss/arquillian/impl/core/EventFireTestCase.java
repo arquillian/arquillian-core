@@ -17,6 +17,8 @@
 package org.jboss.arquillian.impl.core;
 
 
+import java.io.IOException;
+
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.ManagerImpl;
 import org.jboss.arquillian.spi.core.annotation.Observes;
@@ -43,6 +45,27 @@ public class EventFireTestCase
       Assert.assertTrue(manager.getExtension(ExtensionWithObservers.class).methodOneWasCalled);
    }
    
+   @Test
+   public void shouldBeAbleToFireExceptionEventOnFailingObserver() throws Exception
+   {
+      ManagerImpl manager = ManagerBuilder.from()
+         .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
+      
+      manager.fire(new String("should cause exception"));
+      
+      Assert.assertTrue(manager.getExtension(ExtensionObservingException.class).methodOneWasCalled);
+   }
+
+   @Test(expected = IOException.class)
+   public void shouldBeAbleToDetectExceptionEventLoopAndThrowOriginalException() throws Exception
+   {
+      ManagerImpl manager = ManagerBuilder.from()
+         .extensions(ExtensionObservingExceptionLoop.class).create();
+      
+      manager.fire(new IOException("should cause exception"));
+      
+  }
+
    private static class ExtensionWithObservers 
    {
       private boolean methodOneWasCalled = false;
@@ -54,4 +77,32 @@ public class EventFireTestCase
       }
    }
 
+   private static class ExtensionWithExceptionObserver 
+   {
+      @SuppressWarnings("unused")
+      public void methodOne(@Observes String object)
+      {
+         throw new IllegalStateException("Illegal state");
+      }
+   }
+
+   private static class ExtensionObservingException 
+   {
+      private boolean methodOneWasCalled = false;
+
+      @SuppressWarnings("unused")
+      public void methodOne(@Observes IllegalStateException exception)
+      {
+         methodOneWasCalled = true;
+      }
+   }
+
+   private static class ExtensionObservingExceptionLoop 
+   {
+      @SuppressWarnings("unused")
+      public void methodOne(@Observes IOException exception) throws IOException
+      {
+         throw new IOException();
+      }
+   }
 }

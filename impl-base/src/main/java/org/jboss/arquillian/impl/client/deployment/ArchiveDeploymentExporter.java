@@ -39,8 +39,8 @@ public class ArchiveDeploymentExporter
 
    public void callback(@Observes BeforeDeploy event) throws Exception
    {
-      event.getDeployment().getTestableArchive().as(ZipExporter.class).exportTo(
-            new File("target/" + event.getDeployment().getTestableArchive().getName()), true);
+//      event.getDeployment().getTestableArchive().as(ZipExporter.class).exportTo(
+  //          new File("target/" + event.getDeployment().getTestableArchive().getName()), true);
       //      Archive<?> deployment = context.get(Archive.class);
 //      Configuration configuration = context.get(Configuration.class);
 //

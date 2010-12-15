@@ -102,9 +102,8 @@ public class ContainerDeployer
          {
             containerContext.activate(container.getName());
             DeployableContainer<?> deployableContainer = container.getDeployableContainer();
-            DeploymentDescription[] deployments = startUpDeployments.toArray(new DeploymentDescription[0]);
             
-            for(DeploymentDescription deployment : deployments)
+            for(DeploymentDescription deployment : startUpDeployments)
             {
                deploymentContext.activate(deployment);
                try

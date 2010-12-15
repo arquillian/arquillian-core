@@ -57,15 +57,17 @@ public class ContainerRegistryCreator
       ServiceLoader serviceLoader = loader.get();
 
       String activeConfiguration = getActivatedConfiguration();
+      for(ContainerDef container : event.getContainers())
+      {
+         if(
+               (activeConfiguration != null && activeConfiguration.equals(container.getContainerName())) ||
+               (activeConfiguration == null && container.isDefault()))
+         {
+            reg.create(container, serviceLoader);            
+         }
+      }
       if(activeConfiguration != null)
       {
-         for(ContainerDef container : event.getContainers())
-         {
-            if(activeConfiguration.equals(container.getContainerName()))
-            {
-               reg.create(container, serviceLoader);            
-            }
-         }
          for(GroupDef group : event.getGroups())
          {
             if(activeConfiguration.equals(group.getGroupName()))
@@ -77,7 +79,7 @@ public class ContainerRegistryCreator
             }
          }
       }
-      else
+      else if(reg.getContainers().size() == 0)
       {
          try
          {

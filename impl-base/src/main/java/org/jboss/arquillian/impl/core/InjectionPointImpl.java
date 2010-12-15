@@ -95,7 +95,7 @@ public class InjectionPointImpl implements InjectionPoint
       }
       catch (Exception e) 
       {
-         throw new InvocationException(e);
+         throw new InvocationException(e.getCause());
       }
    }
 }

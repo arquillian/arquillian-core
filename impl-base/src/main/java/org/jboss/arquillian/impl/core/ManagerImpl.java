@@ -24,6 +24,7 @@ import org.jboss.arquillian.impl.core.context.ApplicationContextImpl;
 import org.jboss.arquillian.impl.core.spi.EventPoint;
 import org.jboss.arquillian.impl.core.spi.Extension;
 import org.jboss.arquillian.impl.core.spi.InjectionPoint;
+import org.jboss.arquillian.impl.core.spi.InvocationException;
 import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
@@ -82,10 +83,25 @@ public class ManagerImpl implements Manager
       List<ObserverMethod> observers = resolveObservers(event.getClass());
       for(ObserverMethod observer : observers)
       {
-         observer.invoke(event);
+         try
+         {
+            observer.invoke(event);
+         } 
+         catch (InvocationException e) 
+         {
+            // getCause(InocationTargetException).getCause(RealCause);
+            Throwable toBeFired = e.getCause();
+            // same type of exception being fired as caught, throw to avoid loop
+            if(toBeFired.getClass() == event.getClass())
+            {
+               // this will throw checked exception if any, and will break the declaration of fire(), will throw the original cause
+               UncheckedThrow.throwUnchecked(toBeFired);
+            }
+            fire(toBeFired);
+         }
       }
    }
-
+   
    @Override
    public <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance) 
    {

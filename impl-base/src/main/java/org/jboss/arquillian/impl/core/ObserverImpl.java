@@ -72,7 +72,7 @@ public class ObserverImpl implements ObserverMethod
       }
       catch (Exception e) 
       {
-         throw new InvocationException(e);
+         throw new InvocationException(e.getCause());
       }
    }
 
