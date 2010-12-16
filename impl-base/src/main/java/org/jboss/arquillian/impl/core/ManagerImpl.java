@@ -89,6 +89,26 @@ public class ManagerImpl implements Manager
          } 
          catch (InvocationException e) 
          {
+            fireException(e.getCause());
+         }
+      }
+   }
+
+   private void fireException(Throwable event)
+   {
+      List<ObserverMethod> observers = resolveObservers(event.getClass());
+      if(observers.size() == 0) // no one is handling this Exception, throw it out.
+      {
+         UncheckedThrow.throwUnchecked(event);
+      }
+      for(ObserverMethod observer : observers)
+      {
+         try
+         {
+            observer.invoke(event);
+         }
+         catch (Exception e) 
+         {
             // getCause(InocationTargetException).getCause(RealCause);
             Throwable toBeFired = e.getCause();
             // same type of exception being fired as caught, throw to avoid loop
@@ -97,7 +117,7 @@ public class ManagerImpl implements Manager
                // this will throw checked exception if any, and will break the declaration of fire(), will throw the original cause
                UncheckedThrow.throwUnchecked(toBeFired);
             }
-            fire(toBeFired);
+            fireException(toBeFired);
          }
       }
    }

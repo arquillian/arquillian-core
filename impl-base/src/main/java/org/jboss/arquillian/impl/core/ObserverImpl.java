@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.impl.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.core.spi.InvocationException;
@@ -72,6 +73,10 @@ public class ObserverImpl implements ObserverMethod
       }
       catch (Exception e) 
       {
+         if(e instanceof InvocationTargetException)
+         {
+            throw new InvocationException(((InvocationTargetException)e).getTargetException());
+         }
          throw new InvocationException(e.getCause());
       }
    }
