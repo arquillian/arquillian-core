@@ -80,4 +80,9 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
+   
+   /**
+    * Shutdown Arquillian cleanly.  
+    */
+   void shutdown();
 }

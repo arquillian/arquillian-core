@@ -64,7 +64,9 @@ public abstract class Arquillian implements IHookable
          return; // beforeSuite failed
       }
       deployableTest.get().afterSuite();
+      deployableTest.get().shutdown();
       deployableTest.set(null);
+      deployableTest.remove();
    }
 
    @BeforeClass(alwaysRun = true)

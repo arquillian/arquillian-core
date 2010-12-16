@@ -110,8 +110,11 @@ public class Arquillian extends BlockJUnit4ClassRunner
                if(deployableTest.get() != null && lastCreatedRunner.get() == Arquillian.this) 
                {
                   deployableTest.get().afterSuite();
+                  deployableTest.get().shutdown();
                   lastCreatedRunner.set(null);
+                  lastCreatedRunner.remove();
                   deployableTest.set(null);
+                  deployableTest.remove();
                }
             } 
             catch (Exception e) 
