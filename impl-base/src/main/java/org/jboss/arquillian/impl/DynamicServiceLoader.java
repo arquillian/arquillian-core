@@ -214,7 +214,7 @@ public class DynamicServiceLoader implements ServiceLoader
                      line = line.substring(0, comment);
                   }
    
-                  line.trim();
+                  line = line.trim();
    
                   if (line.length() > 0)
                   {
