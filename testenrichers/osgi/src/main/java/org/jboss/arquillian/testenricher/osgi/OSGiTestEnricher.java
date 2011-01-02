@@ -27,8 +27,8 @@ import javax.management.MBeanServerFactory;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
-import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.logging.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -55,8 +55,14 @@ public class OSGiTestEnricher implements TestEnricher
 {
    // Provide logging
    private static Logger log = Logger.getLogger(OSGiTestEnricher.class);
+
+   @org.jboss.arquillian.spi.core.annotation.Inject 
+   private Instance<BundleContext> bundleContextInst;
    
-   public void enrich(Context context, Object testCase)
+   @org.jboss.arquillian.spi.core.annotation.Inject 
+   private Instance<Bundle> bundleInst;
+
+   public void enrich(Object testCase)
    {
       Class<? extends Object> testClass = testCase.getClass();
       for (Field field : testClass.getDeclaredFields())
@@ -65,26 +71,26 @@ public class OSGiTestEnricher implements TestEnricher
          {
             if (field.getType().isAssignableFrom(BundleContext.class))
             {
-               injectBundleContext(context, testCase, field);
+               injectBundleContext(testCase, field);
             }
             if (field.getType().isAssignableFrom(Bundle.class))
             {
-               injectBundle(context, testCase, field);
+               injectBundle(testCase, field);
             }
          }
       }
    }
 
-   public Object[] resolve(Context context, Method method)
+   public Object[] resolve(Method method)
    {
       return null;
    }
    
-   private void injectBundleContext(Context context, Object testCase, Field field) 
+   private void injectBundleContext(Object testCase, Field field) 
    {
       try
       {
-         field.set(testCase, getSystemBundleContext(context));
+         field.set(testCase, getSystemBundleContext());
       }
       catch (IllegalAccessException ex)
       {
@@ -92,11 +98,11 @@ public class OSGiTestEnricher implements TestEnricher
       }
    }
 
-   private void injectBundle(Context context, Object testCase, Field field) 
+   private void injectBundle(Object testCase, Field field) 
    {
       try
       {
-         field.set(testCase, getTestBundle(context, testCase.getClass()));
+         field.set(testCase, getTestBundle(testCase.getClass()));
       }
       catch (IllegalAccessException ex)
       {
@@ -104,9 +110,9 @@ public class OSGiTestEnricher implements TestEnricher
       }
    }
 
-   private BundleContext getSystemBundleContext(Context context)
+   private BundleContext getSystemBundleContext()
    {
-      BundleContext bundleContext = context.get(BundleContext.class);
+      BundleContext bundleContext = bundleContextInst.get();
       if (bundleContext == null)
          bundleContext = getBundleContextFromHolder();
       
@@ -115,13 +121,13 @@ public class OSGiTestEnricher implements TestEnricher
       return bundleContext;
    }
 
-   private Bundle getTestBundle(Context context, Class<?> testClass)
+   private Bundle getTestBundle(Class<?> testClass)
    {
-      Bundle testbundle = context.get(Bundle.class);
+      Bundle testbundle = bundleInst.get();
       if (testbundle == null)
       {
          // Get the test bundle from PackageAdmin with the test class as key 
-         BundleContext bundleContext = getSystemBundleContext(context);
+         BundleContext bundleContext = getSystemBundleContext();
          ServiceReference sref = bundleContext.getServiceReference(PackageAdmin.class.getName());
          PackageAdmin pa = (PackageAdmin)bundleContext.getService(sref);
          testbundle = pa.getBundle(testClass);
