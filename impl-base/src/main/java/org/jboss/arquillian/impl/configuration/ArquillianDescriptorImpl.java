@@ -23,6 +23,7 @@ import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef;
 import org.jboss.arquillian.impl.configuration.api.EngineDef;
+import org.jboss.arquillian.impl.configuration.api.ExtensionDef;
 import org.jboss.arquillian.impl.configuration.api.GroupDef;
 import org.jboss.shrinkwrap.descriptor.api.Node;
 import org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase;
@@ -105,6 +106,12 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    {
       return new GroupDefImpl(model, model.create("group")).setGroupName(name);
    }
+   
+   @Override
+   public ExtensionDef extension(String name)
+   {
+      return new ExtensionDefImpl(model, model.create("extension")).setExtensionName(name);
+   }
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#getContainers()
@@ -132,6 +139,17 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
          groups.add(new GroupDefImpl(model, group));
       }
       return groups;
+   }
+   
+   @Override
+   public List<ExtensionDef> getExtensions()
+   {
+      List<ExtensionDef> extensions = new ArrayList<ExtensionDef>();
+      for(Node extension: model.get("extension"))
+      {
+         extensions.add(new ExtensionDefImpl(model, extension));
+      }
+      return extensions;
    }
    
    //-------------------------------------------------------------------------------------||

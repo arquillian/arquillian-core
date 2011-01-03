@@ -43,12 +43,14 @@ public class ArquillianDescriptorTestCase
    private static final String GROUP_NAME_2 = "jbossas-embedded-group";
    private static final String DEPENDENCY_1 = "org.test:test";
    private static final String DEPENDENCY_2 = "org.test:test2";
+   private static final String EXTENSION_NAME_1 = "selenium";
+   private static final String EXTENSION_NAME_2 = "performance";
    private static final String PROPERTY_NAME_1 = "test-name";
    private static final String PROPERTY_VALUE_1 = "test-value";
    private static final String PROPERTY_NAME_2 = "test2-name";
    private static final String PROPERTY_VALUE_2 = "test2-value";
    private static final String PROPERTY_NAME_3 = "test3-name";
-   private static final String PROPERTY_VALUE_3 = "test3-value";
+   private static final String PROPERTY_VALUE_3 = "test3-value";   
    
    private static final Integer PROPERTY_INT_VALUE_1 = 10;
    
@@ -185,6 +187,26 @@ public class ArquillianDescriptorTestCase
    }
    
    @Test
+   public void shouldBeAbleToAddExtension() throws Exception
+   {
+      desc = create()
+            .extension(EXTENSION_NAME_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+               .property(PROPERTY_NAME_2, PROPERTY_VALUE_2)
+            .extension(EXTENSION_NAME_2)
+               .property(PROPERTY_NAME_3, PROPERTY_VALUE_3).exportAsString();
+      
+      assertXPath(desc, "/arquillian/extension/@qualifier", EXTENSION_NAME_1, EXTENSION_NAME_2);
+      assertXPath(desc, "/arquillian/extension[1]/configuration/property[1]/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/extension[1]/configuration/property[1]/text()", PROPERTY_VALUE_1);
+      assertXPath(desc, "/arquillian/extension[1]/configuration/property[2]/@name", PROPERTY_NAME_2);
+      assertXPath(desc, "/arquillian/extension[1]/configuration/property[2]/text()", PROPERTY_VALUE_2);
+      
+      assertXPath(desc, "/arquillian/extension[2]/configuration/property/@name", PROPERTY_NAME_3);
+      assertXPath(desc, "/arquillian/extension[2]/configuration/property/text()", PROPERTY_VALUE_3);        
+   }
+   
+   @Test
    public void shouldBeAbleToAddEverything() throws Exception
    {
       desc = create()
@@ -206,6 +228,8 @@ public class ArquillianDescriptorTestCase
                   .protocol(PROTOCOL_TYPE_3)
                      .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
                .container(CONTAINER_NAME_4)
+            .extension(EXTENSION_NAME_1) 
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_2)
             .exportAsString();
             
    }

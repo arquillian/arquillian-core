@@ -16,34 +16,21 @@
  */
 package org.jboss.arquillian.impl.configuration.api;
 
-import java.util.List;
-
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+import java.util.Map;
 
 /**
- * ArquillianDescriptor
+ * ExtensionDef
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ArquillianDescriptor extends Descriptor
+public interface ExtensionDef extends ArquillianDescriptor
 {
-   EngineDef engine();
+   String getExtensionName();
    
-   DefaultProtocolDef defaultProtocol(String type);
+   ExtensionDef setExtensionName(String name);
    
-   DefaultProtocolDef getDefaultProtocol();
+   ExtensionDef property(String name, String value);
    
-   ContainerDef container(String name);
-   
-   GroupDef group(String name);
-   
-   ExtensionDef extension(String name);
-   
-   List<ContainerDef> getContainers();
-   
-   List<GroupDef> getGroups();
-   
-   List<ExtensionDef> getExtensions();   
-   
+   Map<String, String> getExtensionProperties();   
 }
