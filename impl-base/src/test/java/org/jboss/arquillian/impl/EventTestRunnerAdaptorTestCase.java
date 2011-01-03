@@ -18,7 +18,10 @@ package org.jboss.arquillian.impl;
 
 import java.lang.reflect.Method;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.impl.core.spi.context.TestContext;
@@ -49,11 +52,18 @@ public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
    protected void addExtensions(ManagerBuilder builder) 
    {  
    }
+   
+   @Override
+   protected void startContexts(Manager manager)
+   {
+      // this is a test of the Context activation, don't auto start
+   }
 
    @Test
    public void shouldHandleLifeCycleEvents() throws Exception 
    {
-      EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(getManager());
+      Manager manager = getManager();
+      EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(manager);
       
       Class<?> testClass = getClass();
       Method testMethod = testClass.getMethod("shouldHandleLifeCycleEvents");
@@ -63,32 +73,56 @@ public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
       Mockito.when(testExecutor.getInstance()).thenReturn(testInstance);
       Mockito.when(testExecutor.getMethod()).thenReturn(testMethod);
       
+      // no active contexts 
+      verify(false, false, false, manager);
+
       adaptor.beforeSuite();
       assertEventFired(BeforeSuite.class, 1);
       assertEventFiredInContext(BeforeSuite.class, SuiteContext.class);
-      
+      // suite context active
+      verify(true, false, false, manager);
+
       adaptor.beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(BeforeClass.class, 1);
       assertEventFiredInContext(BeforeClass.class, ClassContext.class);
-      
+      // suite and class context active
+      verify(true, true, false, manager);
+
       adaptor.before(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(Before.class, 1);
       assertEventFiredInContext(Before.class, TestContext.class);
+      // suite, class and test context active
+      verify(true, true, true, manager);
 
       adaptor.test(testExecutor);
       assertEventFired(org.jboss.arquillian.spi.event.suite.Test.class, 1);
       assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, TestContext.class);
-
+      // suite, class and test context active
+      verify(true, true, true, manager);
+      
       adaptor.after(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(After.class, 1);
       assertEventFiredInContext(After.class, TestContext.class);
+      // only suite and class context active
+      verify(true, true, false, manager);
 
       adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(AfterClass.class, 1);
       assertEventFiredInContext(AfterClass.class, ClassContext.class);
+      // only suite context active when done
+      verify(true, false, false, manager);
 
       adaptor.afterSuite();
       assertEventFired(AfterSuite.class, 1);
       assertEventFiredInContext(AfterSuite.class, SuiteContext.class);
+      // no active contexts when done
+      verify(false, false, false, manager);
+   }
+
+   private void verify(boolean suite, boolean clazz, boolean test, Manager manager)
+   {
+      Assert.assertEquals(suite, manager.getContext(SuiteContext.class).isActive());
+      Assert.assertEquals(clazz, manager.getContext(ClassContext.class).isActive());
+      Assert.assertEquals(test, manager.getContext(TestContext.class).isActive());
    }
 }
