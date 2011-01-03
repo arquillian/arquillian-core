@@ -22,6 +22,7 @@ import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.impl.core.spi.context.TestContext;
+import org.jboss.arquillian.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
@@ -66,11 +67,11 @@ public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
       assertEventFired(BeforeSuite.class, 1);
       assertEventFiredInContext(BeforeSuite.class, SuiteContext.class);
       
-      adaptor.beforeClass(testClass);
+      adaptor.beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(BeforeClass.class, 1);
       assertEventFiredInContext(BeforeClass.class, ClassContext.class);
       
-      adaptor.before(testInstance, testMethod);
+      adaptor.before(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(Before.class, 1);
       assertEventFiredInContext(Before.class, TestContext.class);
 
@@ -78,11 +79,11 @@ public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
       assertEventFired(org.jboss.arquillian.spi.event.suite.Test.class, 1);
       assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, TestContext.class);
 
-      adaptor.after(testInstance, testMethod);
+      adaptor.after(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(After.class, 1);
       assertEventFiredInContext(After.class, TestContext.class);
 
-      adaptor.afterClass(testClass);
+      adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(AfterClass.class, 1);
       assertEventFiredInContext(AfterClass.class, ClassContext.class);
 

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit.testspi;
+package org.jboss.arquillian.spi.event.suite;
 
-import org.jboss.arquillian.spi.TestDeployment;
-import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
-import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.arquillian.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.spi.event.Event;
 
 /**
- * TestDeploymentPackager
+ * Describes a Event with the capability of Vetoing the execution of a method. 
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestDeploymentPackager implements DeploymentPackager
+public interface LifecycleEvent extends Event
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.shrinkwrap.api.Archive, java.util.Collection)
+   /**
+    * Get the call back handler for this lifecycle method.
+    * @return the executor
     */
-   public Archive<?> generateDeployment(TestDeployment deploymentMetadata)
-   {
-      return deploymentMetadata.getApplicationArchive();
-   }
+   LifecycleMethodExecutor getExecutor();
+   
 }

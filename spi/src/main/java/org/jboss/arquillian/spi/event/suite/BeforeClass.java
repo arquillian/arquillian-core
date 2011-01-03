@@ -16,19 +16,31 @@
  */
 package org.jboss.arquillian.spi.event.suite;
 
+import org.jboss.arquillian.spi.LifecycleMethodExecutor;
+
 /**
  * Event fired Before the Class execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeforeClass extends ClassEvent
+public class BeforeClass extends ClassLifecycleEvent
 {
+   
    /**
-    * @param testClass The Test case {@link Class}
+    * @param testClass The source for this BeforeClass event
     */
    public BeforeClass(Class<?> testClass)
    {
       super(testClass);
+   }
+
+   /**
+    * @param testClass The source for this BeforeClass event
+    * @param executor A call back when the LifecycleMethod represented by this event should be invoked
+    */
+   public BeforeClass(Class<?> testClass, LifecycleMethodExecutor executor)
+   {
+      super(testClass, executor);
    }
 }

@@ -20,8 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.jboss.arquillian.impl.bootstrap.ConfigurationRegistrar;
-import org.jboss.arquillian.impl.bootstrap.ContextActivator;
-import org.jboss.arquillian.impl.bootstrap.ContextDeActivator;
 import org.jboss.arquillian.impl.bootstrap.ServiceLoaderRegistrar;
 import org.jboss.arquillian.impl.client.container.ContainerCreator;
 import org.jboss.arquillian.impl.client.container.ContainerDeployer;
@@ -55,12 +53,11 @@ public class ArquillianProfile implements Profile
       return Arrays.asList
       (
             // core
-            ContextActivator.class,
             ServiceLoaderRegistrar.class,
             ConfigurationRegistrar.class,
             ProtocolRegistryCreator.class,
             ContainerRegistryCreator.class,
-            
+
             // container / deploy / test
             ContainerCreator.class,
             ContainerStarter.class,
@@ -72,10 +69,9 @@ public class ArquillianProfile implements Profile
             ContainerStopper.class,
             
             // utils
-            ArchiveDeploymentExporter.class,
-            
+            ArchiveDeploymentExporter.class
+
             // core
-            ContextDeActivator.class
       );
    }
 
@@ -89,16 +85,19 @@ public class ArquillianProfile implements Profile
       return Arrays.asList
       (
             // core
-            ContextActivator.class,
             ServiceLoaderRegistrar.class,
-            //ConfigurationRegistrar.class,
             
+            // execute the Test lifecycles, we want to execute After before what we do
+            AfterLifecycleEventExecuter.class,
+
             // container / deploy / test
             TestCaseEnricher.class,
             TestEventExecuter.class,
             
+            // execute the Test lifecycles, we want to execute Before after what we do
+            BeforeLifecycleEventExecuter.class
+
             // core
-            ContextDeActivator.class
       );
    }
 }

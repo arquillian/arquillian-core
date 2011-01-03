@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.impl.DeployableTestBuilder;
+import org.jboss.arquillian.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
@@ -156,14 +157,18 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            try
+            final Callback before = new Callback();
+            deployableTest.get().beforeClass(Arquillian.this.getTestClass().getJavaClass(), new LifecycleMethodExecutor()
             {
-               deployableTest.get().beforeClass(Arquillian.this.getTestClass().getJavaClass());
-               statementWithBefores.evaluate();
-            } 
-            catch (Exception e) // catch and rethrow only to be able to set a break point. 
+               public void invoke() throws Throwable
+               {
+                  before.called();
+                  statementWithBefores.evaluate(); 
+               }
+            });
+            if(!before.wasCalled()) 
             {
-               throw e;
+               originalStatement.evaluate();
             }
          }
       };
@@ -172,27 +177,29 @@ public class Arquillian extends BlockJUnit4ClassRunner
    @Override
    protected Statement withAfterClasses(final Statement originalStatement)
    {
-      final Statement statementWithAfters = super.withAfterClasses(originalStatement);
+      final Statement onlyAfters = super.withAfterClasses(new EmptyStatement());
       return new Statement() 
       {
          @Override
          public void evaluate() throws Throwable
          {
-            new MultiStatementExecutor().execute
+            multiExecute
             (
-                  new Statement() { public void evaluate() throws Throwable
+               originalStatement,
+               new Statement() { @Override public void evaluate() throws Throwable 
+               {
+                  deployableTest.get().afterClass(Arquillian.this.getTestClass().getJavaClass(), new LifecycleMethodExecutor()
                   {
-                     statementWithAfters.evaluate();
-                  }},
-                  new Statement() { public void evaluate() throws Throwable 
-                  {
-                     deployableTest.get().afterClass(Arquillian.this.getTestClass().getJavaClass());
-                  }}
+                     public void invoke() throws Throwable
+                     {
+                        onlyAfters.evaluate();
+                     }
+                  });
+               }}
             );
          }
       };
-   }
-   
+   }   
    @Override
    protected Statement withBefores(final FrameworkMethod method, final Object target, final Statement originalStatement)
    {
@@ -202,36 +209,49 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            deployableTest.get().before(target, method.getMethod());
-            statementWithBefores.evaluate();
+            final Callback before = new Callback();
+            deployableTest.get().before(target, method.getMethod(), new LifecycleMethodExecutor()
+            {
+               public void invoke() throws Throwable
+               {
+                  before.called();
+                  statementWithBefores.evaluate();            
+               }
+            });
+            if(!before.wasCalled()) 
+            {
+               originalStatement.evaluate();
+            }
          }
       };
-   }
-   
+   }   
    @Override
    protected Statement withAfters(final FrameworkMethod method, final Object target, final Statement originalStatement)
    {
-      final Statement statementWithAfters = super.withAfters(method, target, originalStatement);
+      final Statement onlyAfters = super.withAfters(method, target, new EmptyStatement());
       return new Statement()
       {
          @Override
          public void evaluate() throws Throwable
          {
-            new MultiStatementExecutor().execute
+            multiExecute
             (
-                  new Statement() { public void evaluate() throws Throwable 
+               originalStatement, 
+               new Statement() { @Override public void evaluate() throws Throwable
+               {
+                  deployableTest.get().after(target, method.getMethod(), new LifecycleMethodExecutor()
                   {
-                     statementWithAfters.evaluate();
-                  }},
-                  new Statement() { public void evaluate() throws Throwable 
-                  {
-                     deployableTest.get().after(target, method.getMethod());
-                  }}
+                     public void invoke() throws Throwable
+                     {
+                        onlyAfters.evaluate();               
+                     }
+                  });
+               }}
             );
          }
       };
    }
-   
+      
    @Override
    protected Statement methodInvoker(final FrameworkMethod method, final Object test)
    {
@@ -284,31 +304,52 @@ public class Arquillian extends BlockJUnit4ClassRunner
     * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
     * @version $Revision: $
     */
-   private class MultiStatementExecutor 
+   private void multiExecute(Statement... statements) throws Throwable 
    {
-      public void execute(Statement... statements) throws Throwable 
+      List<Throwable> exceptions = new ArrayList<Throwable>();
+      for(Statement command : statements) 
       {
-         List<Throwable> exceptions = new ArrayList<Throwable>();
-         for(Statement command : statements) 
+         try
          {
-            try
-            {
-               command.evaluate();
-            } 
-            catch (Exception e) 
-            {
-               exceptions.add(e);
-            }
-         }
-         if(exceptions.isEmpty())
+            command.evaluate();
+         } 
+         catch (Exception e) 
          {
-            return;
+            exceptions.add(e);
          }
-         if(exceptions.size() == 1)
-         {
-            throw exceptions.get(0);
-         }
-         throw new MultipleFailureException(exceptions);
+      }
+      if(exceptions.isEmpty())
+      {
+         return;
+      }
+      if(exceptions.size() == 1)
+      {
+         throw exceptions.get(0);
+      }
+      throw new MultipleFailureException(exceptions);
+   }
+   
+   private class Callback {
+      
+      private boolean wasCalled = false;
+      
+      public boolean wasCalled() 
+      {
+         return wasCalled;
+      }
+      
+      public void called() 
+      {
+         wasCalled = true;
       }
    }
+   
+   private class EmptyStatement extends Statement
+   {
+      @Override
+      public void evaluate() throws Throwable
+      {
+      }
+   }
+   
 }

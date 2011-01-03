@@ -14,47 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.bootstrap;
+package org.jboss.arquillian.impl;
 
-import org.jboss.arquillian.impl.core.spi.context.ClassContext;
-import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
-import org.jboss.arquillian.impl.core.spi.context.TestContext;
-import org.jboss.arquillian.spi.core.Instance;
-import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.Before;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.spi.event.suite.LifecycleEvent;
 
 /**
- * SuiteContextActivator
+ * Observer that executes the Before phases on the test case.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
+ * @see AfterLifecycleEventExecuter
  */
-public class ContextActivator
+public class BeforeLifecycleEventExecuter
 {
-   @Inject
-   public Instance<SuiteContext> suiteContext;
-
-   @Inject
-   public Instance<ClassContext> classContext;
-   
-   @Inject
-   public Instance<TestContext> testContext;
-
-   public void activateSuite(@Observes BeforeSuite event)
+   public void on(@Observes BeforeClass event) throws Throwable
    {
-      suiteContext.get().activate();
+      execute(event);
    }
-   
-   public void activateClass(@Observes BeforeClass event)
+
+   public void on(@Observes Before event) throws Throwable
    {
-      classContext.get().activate(event.getTestClass().getJavaClass());
+      execute(event);
    }
-   
-   public void activateTest(@Observes Before event)
+
+   private void execute(LifecycleEvent event) throws Throwable
    {
-      testContext.get().activate(event.getTestInstance());
+      event.getExecutor().invoke();
    }
 }

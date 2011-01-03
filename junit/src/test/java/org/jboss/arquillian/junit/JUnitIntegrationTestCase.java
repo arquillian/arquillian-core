@@ -23,9 +23,12 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.DeploymentTarget;
-import org.jboss.arquillian.api.Protocol;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -49,7 +52,11 @@ public class JUnitIntegrationTestCase
       containerCallbacks.put("stop", 0);
       containerCallbacks.put("deploy", 0);
       containerCallbacks.put("undeploy", 0);
+      containerCallbacks.put("beforeClass", 0);
+      containerCallbacks.put("before", 0);
       containerCallbacks.put("shouldBeInvoked", 0);
+      containerCallbacks.put("after", 0);
+      containerCallbacks.put("afterClass", 0);
    }
    
    public static void wasCalled(String name) 
@@ -70,7 +77,7 @@ public class JUnitIntegrationTestCase
       JUnitCore runner = new JUnitCore();
       Result result = runner.run(
             Request.classes(ArquillianClass1.class, ArquillianClass1.class));
-
+      
       Assert.assertEquals(
             "Verify that both exceptions thrown bubbled up",
             2, result.getFailureCount());
@@ -78,11 +85,11 @@ public class JUnitIntegrationTestCase
       // Exceptions returned are wrapped in a InvocationException and InvocatioTargetException, verify the cause 
       Assert.assertEquals(
             "Verify exception thrown",
-            "deploy", result.getFailures().get(0).getException().getCause().getCause().getMessage());
+            "deploy", result.getFailures().get(0).getException().getMessage());
       
       Assert.assertEquals(
             "Verify exception thrown",
-            "undeploy", result.getFailures().get(1).getException().getCause().getCause().getMessage());
+            "undeploy", result.getFailures().get(1).getException().getMessage());
       
       Assert.assertFalse(result.wasSuccessful());
       
@@ -106,25 +113,59 @@ public class JUnitIntegrationTestCase
       Assert.assertEquals("Verify undeployed twice", 
             2, (int)containerCallbacks.get("undeploy"));
       
+      Assert.assertEquals("Verify beforeClass not called", 
+            0, (int)containerCallbacks.get("beforeClass"));
+      
+      Assert.assertEquals("Verify before not called", 
+            0, (int)containerCallbacks.get("before"));
+
       Assert.assertEquals("Verify test invoked only once, first run should fail during deploy", 
             1, (int)containerCallbacks.get("shouldBeInvoked"));
+
+      Assert.assertEquals("Verify after not called", 
+            0, (int)containerCallbacks.get("after"));
+
+      Assert.assertEquals("Verify afterClass not called", 
+            0, (int)containerCallbacks.get("afterClass"));
    }
    
    @RunWith(Arquillian.class)
    public static class ArquillianClass1 
    {
-      @Protocol("local")
       @Deployment(name = "test")
       public static JavaArchive create() 
       {
          return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
-      
-      @DeploymentTarget("test")
-      @Test
+
+      @BeforeClass
+      public static void beforeClass() 
+      {
+         wasCalled("beforeClass");
+      }
+
+      @AfterClass
+      public static void afterClass() 
+      {
+         wasCalled("afterClass");
+      }
+
+      @Before
+      public void before() 
+      {
+         wasCalled("before");
+      }
+
+      @After
+      public void after() 
+      {
+         wasCalled("after");
+      }
+
+      @Test @DeploymentTarget("test")
       public void shouldBeInvoked() throws Exception 
       {
-         JUnitIntegrationTestCase.wasCalled("shouldBeInvoked");
+         wasCalled("shouldBeInvoked");
       }
    }
 }

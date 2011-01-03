@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.junit.testspi;
 
-import org.jboss.arquillian.spi.ContainerProfile;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 
 /**

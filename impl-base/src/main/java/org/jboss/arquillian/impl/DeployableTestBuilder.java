@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.context.ClassContextImpl;
 import org.jboss.arquillian.impl.core.context.ContainerContextImpl;
@@ -74,15 +77,22 @@ public class DeployableTestBuilder
          .context(ContainerContextImpl.class)
          .context(DeploymentContextImpl.class);
          
-      Profile profile = serviceLoader.onlyOne(Profile.class, ArquillianProfile.class);
-      switch (profileType)
+      List<Profile> profiles = new ArrayList<Profile>();
+      profiles.add(new ArquillianProfile());
+      profiles.addAll(serviceLoader.all(Profile.class));
+      
+      //Profile profile = serviceLoader.onlyOne(Profile.class, ArquillianProfile.class);
+      for(Profile profile : profiles)
       {
-         case CLIENT :
-            builder.extensions(profile.getClientProfile().toArray(new Class<?>[0]));
-            break;
-         case CONTAINER :
-            builder.extensions(profile.getContainerProfile().toArray(new Class<?>[0]));
-            break;
+         switch (profileType)
+         {
+            case CLIENT :
+               builder.extensions(profile.getClientProfile().toArray(new Class<?>[0]));
+               break;
+            case CONTAINER :
+               builder.extensions(profile.getContainerProfile().toArray(new Class<?>[0]));
+               break;
+         }
       }
       return new EventTestRunnerAdaptor(builder.create());     
    }

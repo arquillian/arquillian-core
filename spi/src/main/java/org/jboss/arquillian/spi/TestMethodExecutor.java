@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestMethodExecutor
+public interface TestMethodExecutor extends LifecycleMethodExecutor
 {
    Method getMethod();
    Object getInstance();
@@ -33,6 +33,4 @@ public interface TestMethodExecutor
     *  due to the TestFrameworks ExpectedExceptions. We need to know this information to set the correct state.
     */
    //Class<?> getExpectedException();  
-   void invoke() throws Throwable;
-   
 }

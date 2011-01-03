@@ -14,50 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.bootstrap;
+package org.jboss.arquillian.impl;
 
-import org.jboss.arquillian.impl.core.spi.context.ClassContext;
-import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
-import org.jboss.arquillian.impl.core.spi.context.TestContext;
-import org.jboss.arquillian.spi.core.Instance;
-import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.spi.event.suite.LifecycleEvent;
 
 /**
- * SuiteContextActivator
+ * Observer that executes the After phases on the test case.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
+ * @see BeforeLifecycleEventExecuter
  */
-public class ContextDeActivator
+public class AfterLifecycleEventExecuter
 {
-   @Inject
-   public Instance<SuiteContext> suiteContext;
-
-   @Inject
-   public Instance<ClassContext> classContext;
-   
-   @Inject
-   public Instance<TestContext> testContext;
-
-   public void deactivateSuite(@Observes AfterSuite event)
+   public void on(@Observes AfterClass event) throws Throwable
    {
-      suiteContext.get().deactivate();
-      suiteContext.get().destroy();
+      execute(event);
    }
 
-   public void deactivateClass(@Observes AfterClass event)
+   public void on(@Observes After event) throws Throwable
    {
-      classContext.get().deactivate();
-      classContext.get().destroy(event.getTestClass().getJavaClass());
+      execute(event);
    }
-   
-   public void deactivateTest(@Observes After event)
+
+   private void execute(LifecycleEvent event) throws Throwable
    {
-      testContext.get().deactivate();
-      testContext.get().destroy(event.getTestInstance());
+      event.getExecutor().invoke();
    }
 }

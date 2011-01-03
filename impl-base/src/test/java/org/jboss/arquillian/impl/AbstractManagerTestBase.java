@@ -26,6 +26,7 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.ManagerImpl;
+import org.jboss.arquillian.impl.core.UncheckedThrow;
 import org.jboss.arquillian.impl.core.context.ClassContextImpl;
 import org.jboss.arquillian.impl.core.context.ContainerContextImpl;
 import org.jboss.arquillian.impl.core.context.DeploymentContextImpl;
@@ -165,6 +166,11 @@ public abstract class AbstractManagerTestBase
 
       public void register(@Observes Object event)
       {
+         if(event instanceof Throwable)
+         {
+            // we are listening to Object which is not really a good thing, so throw exceptions if found.
+            UncheckedThrow.throwUnchecked((Throwable)event);
+         }
          if(register.get() == null)
          {
             register.set(new EventRegister());

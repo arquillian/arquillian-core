@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
-
-import org.jboss.arquillian.spi.TestClass;
-import org.jboss.shrinkwrap.api.Archive;
+package org.jboss.arquillian.spi;
 
 /**
- * DeploymentGenerator
+ * Generic wrapper for invoking Lifecycle methods. <br/>
+ * <br/>
+ * Used to e.g. veto invocation of @Before/@After methods on the Client side.
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentGenerator 
+public interface LifecycleMethodExecutor
 {
-
-   /**
-    * @param testCase
-    * @return
-    */
-   Archive<?> generate(TestClass testCase);
+   public static final LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor()
+   {
+      public void invoke() throws Throwable
+      {
+      }
+   };
+   
+   void invoke() throws Throwable;
 
 }
