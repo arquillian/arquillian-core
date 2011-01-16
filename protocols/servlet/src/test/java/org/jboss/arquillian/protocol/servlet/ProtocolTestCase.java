@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
@@ -183,7 +182,7 @@ public class ProtocolTestCase
       
       private static final long serialVersionUID = 1L;
 
-      public void invoke() throws Throwable
+      public void invoke(Object... parameters) throws Throwable
       {
       }
       
