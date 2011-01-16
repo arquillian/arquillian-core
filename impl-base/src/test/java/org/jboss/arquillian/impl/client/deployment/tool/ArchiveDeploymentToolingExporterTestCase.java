@@ -24,6 +24,7 @@ import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Ignore // not implemented
 @RunWith(MockitoJUnitRunner.class)
 public class ArchiveDeploymentToolingExporterTestCase extends AbstractManagerTestBase
 {

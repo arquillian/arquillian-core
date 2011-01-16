@@ -250,12 +250,13 @@ public class Arquillian extends BlockJUnit4ClassRunner
          {
             TestResult result = deployableTest.get().test(new TestMethodExecutor()
             {
-               public void invoke() throws Throwable
+               @Override
+               public void invoke(Object... parameters) throws Throwable
                {
                   try
                   {
                      //Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
-                     method.invokeExplosively(test); //, (Object[])parameterValues);
+                     method.invokeExplosively(test, parameters); //, (Object[])parameterValues);
                   } 
                   catch (Throwable e) 
                   {

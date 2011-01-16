@@ -30,9 +30,14 @@ import org.jboss.arquillian.impl.client.container.ContainerUndeployer;
 import org.jboss.arquillian.impl.client.deployment.ArchiveDeploymentExporter;
 import org.jboss.arquillian.impl.client.deployment.DeploymentGenerator;
 import org.jboss.arquillian.impl.client.protocol.ProtocolRegistryCreator;
-import org.jboss.arquillian.impl.client.protocol.RemoteTestExecuter;
-import org.jboss.arquillian.impl.handler.TestCaseEnricher;
-import org.jboss.arquillian.impl.handler.TestEventExecuter;
+import org.jboss.arquillian.impl.enricher.ClientTestEnricher;
+import org.jboss.arquillian.impl.enricher.ContainerTestEnricher;
+import org.jboss.arquillian.impl.execution.AfterLifecycleEventExecuter;
+import org.jboss.arquillian.impl.execution.BeforeLifecycleEventExecuter;
+import org.jboss.arquillian.impl.execution.ClientTestExecuter;
+import org.jboss.arquillian.impl.execution.ContainerTestExecuter;
+import org.jboss.arquillian.impl.execution.LocalTestExecuter;
+import org.jboss.arquillian.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.spi.Profile;
 
 /**
@@ -64,7 +69,9 @@ public class ArquillianProfile implements Profile
             DeploymentGenerator.class,
             ContainerDeployer.class,
             ContainerUndeployer.class,
-            TestCaseEnricher.class,
+            ClientTestEnricher.class,
+            ClientTestExecuter.class,
+            LocalTestExecuter.class,
             RemoteTestExecuter.class,
             ContainerStopper.class,
             
@@ -91,8 +98,9 @@ public class ArquillianProfile implements Profile
             AfterLifecycleEventExecuter.class,
 
             // container / deploy / test
-            TestCaseEnricher.class,
-            TestEventExecuter.class,
+            ContainerTestEnricher.class,
+            ContainerTestExecuter.class,
+            LocalTestExecuter.class,
             
             // execute the Test lifecycles, we want to execute Before after what we do
             BeforeLifecycleEventExecuter.class

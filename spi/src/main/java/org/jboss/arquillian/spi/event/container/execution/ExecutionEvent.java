@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi;
+package org.jboss.arquillian.spi.event.container.execution;
 
-import java.lang.reflect.Method;
+import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.event.Event;
 
 /**
- * TestMethodExecutor
+ * ExecutionEvent
  *
- * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestMethodExecutor 
+public interface ExecutionEvent extends Event
 {
-   Method getMethod();
-   Object getInstance();
-   /*
-    *  TODO: the internal state TestResult is FAILED with Exception set, but it might have passed
-    *  due to the TestFrameworks ExpectedExceptions. We need to know this information to set the correct state.
-    */
-   //Class<?> getExpectedException();  
+
+   TestMethodExecutor getExecutor();
    
-   void invoke(Object... parameters) throws Throwable;
 }

@@ -51,9 +51,10 @@ public class InjectorImpl implements Injector
     * @see org.jboss.arquillian.api.Injector#inject(java.lang.Object)
     */
    @Override
-   public void inject(Object target)
+   public <T> T inject(T target) 
    {
       Validate.notNull(target, "Target must be specified.");
       manager.inject(target);
+      return target;
    }
 }

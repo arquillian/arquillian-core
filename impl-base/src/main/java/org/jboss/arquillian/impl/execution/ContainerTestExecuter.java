@@ -14,40 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.client.protocol.local;
+package org.jboss.arquillian.impl.execution;
 
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.core.Event;
-import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
+import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.container.execution.LocalExecutionEvent;
+import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
- * LocalContainerMethodExecutor
+ * TestExecutor for running in container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalContainerMethodExecutor implements ContainerMethodExecutor
+public class ContainerTestExecuter
 {
    @Inject
-   private Event<LocalExecutionEvent> event;
-
-   @Inject 
-   private Instance<TestResult> testResult;
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.ContainerMethodExecutor#invoke(org.jboss.arquillian.spi.TestMethodExecutor)
-    */
-   public TestResult invoke(TestMethodExecutor testMethodExecutor)
+   private Event<LocalExecutionEvent> localEvent;
+   
+   public void execute(@Observes Test event) throws Exception
    {
-      /*
-       *  TODO: when we fire a LocalExecutionEvent from a ContainerMethodExecutor, 
-       *  both the LocalTestExecutor and RemoteTestExecutor will set the same TestResult. 
-       */
-      event.fire(new LocalExecutionEvent(testMethodExecutor));
-      return testResult.get();
+      localEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
    }
 }

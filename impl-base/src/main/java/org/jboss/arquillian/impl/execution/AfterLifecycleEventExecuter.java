@@ -14,18 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.spi.core;
+package org.jboss.arquillian.impl.execution;
+
+import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.event.suite.After;
+import org.jboss.arquillian.spi.event.suite.AfterClass;
+import org.jboss.arquillian.spi.event.suite.LifecycleEvent;
 
 /**
- * Injector
+ * Observer that executes the After phases on the test case.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
+ * @see BeforeLifecycleEventExecuter
  */
-public interface Injector
+public class AfterLifecycleEventExecuter
 {
-   /**
-    * @param target
-    */
-   <T> T inject(T target);
+   public void on(@Observes AfterClass event) throws Throwable
+   {
+      execute(event);
+   }
+
+   public void on(@Observes After event) throws Throwable
+   {
+      execute(event);
+   }
+
+   private void execute(LifecycleEvent event) throws Throwable
+   {
+      event.getExecutor().invoke();
+   }
 }

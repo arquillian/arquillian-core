@@ -22,6 +22,9 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.core.Injector;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.annotation.Inject;
 
 /**
  * A Protocol that invokes the {@link TestMethodExecutor#invoke()} directly.
@@ -32,6 +35,9 @@ import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 public class LocalProtocol implements Protocol<LocalProtocolConfiguration>
 {
    public static final String NAME = "Local";
+   
+   @Inject
+   private Instance<Injector> injector;
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
@@ -62,7 +68,6 @@ public class LocalProtocol implements Protocol<LocalProtocolConfiguration>
     */
    public ContainerMethodExecutor getExecutor(LocalProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData)
    {
-      return new LocalContainerMethodExecutor();
+      return injector.get().inject(new LocalContainerMethodExecutor());
    }
-
 }

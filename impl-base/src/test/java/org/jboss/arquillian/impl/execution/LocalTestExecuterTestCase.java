@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.handler;
+package org.jboss.arquillian.impl.execution;
 
 import java.lang.reflect.Method;
 
@@ -22,8 +22,12 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.execution.LocalTestExecuter;
+import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
+import org.jboss.arquillian.spi.event.container.execution.LocalExecutionEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,27 +42,30 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestEventExecuterTestCase extends AbstractManagerTestBase
+public class LocalTestExecuterTestCase extends AbstractManagerTestBase
 {
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extension(TestEventExecuter.class);
+      builder.extension(LocalTestExecuter.class);
    }
    
    @Mock
    private TestMethodExecutor testExecutor;
 
+   @Mock
+   private ServiceLoader serviceLoader;
+   
    @Test
    public void shouldReturnPassed() throws Throwable
    {
+      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+      
       Mockito.when(testExecutor.getInstance()).thenReturn(this);
       Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldReturnPassed"));
       
-      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
-   
-      fire(event);
+      fire(new LocalExecutionEvent(testExecutor));
       
       TestResult result = getManager().resolve(TestResult.class);
       Assert.assertNotNull(
@@ -78,6 +85,8 @@ public class TestEventExecuterTestCase extends AbstractManagerTestBase
    @Test
    public void shouldReturnFailedOnException() throws Throwable
    {
+      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+      
       Exception exception = new Exception();
       
       Mockito.when(testExecutor.getInstance()).thenReturn(this);
@@ -85,9 +94,8 @@ public class TestEventExecuterTestCase extends AbstractManagerTestBase
             getTestMethod("shouldReturnFailedOnException"));
       Mockito.doThrow(exception).when(testExecutor).invoke();
       
-      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
-
-      fire(event);
+      
+      fire(new LocalExecutionEvent(testExecutor));
 
       TestResult result = getManager().resolve(TestResult.class);
       Assert.assertNotNull(

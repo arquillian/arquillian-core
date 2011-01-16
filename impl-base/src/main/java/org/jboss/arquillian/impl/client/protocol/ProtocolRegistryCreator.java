@@ -25,6 +25,7 @@ import org.jboss.arquillian.impl.domain.ProtocolRegistry;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.spi.core.Injector;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
@@ -39,6 +40,9 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
  */
 public class ProtocolRegistryCreator
 {
+   @Inject
+   private Instance<Injector> injector;
+   
    @Inject 
    private Instance<ServiceLoader> serviceLoader;
    
@@ -63,6 +67,7 @@ public class ProtocolRegistryCreator
       ProtocolRegistry registry = new ProtocolRegistry();
       for(Protocol protocol : protocols)
       {
+         injector.get().inject(protocol); // TODO: should be moved to ServiceRegistry, during Service creation
          if(defaultProtocol != null && protocol.equals(defaultProtocol))
          {
             registry.addProtocol(new ProtocolDefinition(protocol, defaultProtcolDef.getProperties(), true));   

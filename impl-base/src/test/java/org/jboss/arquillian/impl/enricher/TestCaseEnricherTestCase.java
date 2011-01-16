@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.handler;
+package org.jboss.arquillian.impl.enricher;
 
 import java.util.Arrays;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.enricher.ContainerTestEnricher;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
@@ -48,7 +49,7 @@ public class TestCaseEnricherTestCase extends AbstractManagerTestBase
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extension(TestCaseEnricher.class);
+      builder.extension(ContainerTestEnricher.class);
    }
    
    @Test

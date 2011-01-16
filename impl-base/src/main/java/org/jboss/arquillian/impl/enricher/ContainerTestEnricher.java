@@ -14,47 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.handler;
+package org.jboss.arquillian.impl.enricher;
 
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.arquillian.spi.core.InstanceProducer;
+import java.util.Collection;
+
+import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.spi.core.Injector;
+import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.core.annotation.TestScoped;
-import org.jboss.arquillian.spi.event.suite.Test;
+import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
- * A Handler for executing the Test Method.<br/>
- *  <br/>
- *  <b>Exports:</b><br/>
- *   {@link TestResult}<br/>
+ * A Handler for enriching the Test instance.<br/>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestEventExecuter 
+public class ContainerTestEnricher 
 {
-   @Inject @TestScoped
-   private InstanceProducer<TestResult> testResult;
+   @Inject
+   private Instance<ServiceLoader> serviceLoader;
    
-   public void execute(@Observes Test event) throws Exception 
+   @Inject
+   private Instance<Injector> injector;
+
+   public void enrich(@Observes Before event) throws Exception
    {
-      TestResult result = new TestResult();
-      try 
+      Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
+      for(TestEnricher enricher : testEnrichers) 
       {
-         event.getTestMethodExecutor().invoke();
-         result.setStatus(Status.PASSED);
-      } 
-      catch (Throwable e) 
-      {
-         result.setStatus(Status.FAILED);
-         result.setThrowable(e);
+         injector.get().inject(enricher);
+         enricher.enrich(event.getTestInstance());
       }
-      finally 
-      {
-         result.setEnd(System.currentTimeMillis());         
-      }
-      testResult.set(result);
    }
 }

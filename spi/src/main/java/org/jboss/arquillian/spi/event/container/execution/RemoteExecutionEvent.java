@@ -14,34 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl;
+package org.jboss.arquillian.spi.event.container.execution;
 
-import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.LifecycleEvent;
+import org.jboss.arquillian.spi.TestMethodExecutor;
 
 /**
- * Observer that executes the After phases on the test case.
+ * LocalExecutionEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
- * @see BeforeLifecycleEventExecuter
  */
-public class AfterLifecycleEventExecuter
+public class RemoteExecutionEvent implements ExecutionEvent
 {
-   public void on(@Observes AfterClass event) throws Throwable
+   private TestMethodExecutor executor;
+   
+   public RemoteExecutionEvent(TestMethodExecutor executor)
    {
-      execute(event);
+      this.executor = executor;
    }
-
-   public void on(@Observes After event) throws Throwable
+   
+   @Override
+   public TestMethodExecutor getExecutor()
    {
-      execute(event);
-   }
-
-   private void execute(LifecycleEvent event) throws Throwable
-   {
-      event.getExecutor().invoke();
+      return executor;
    }
 }

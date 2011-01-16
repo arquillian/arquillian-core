@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.client.protocol;
+package org.jboss.arquillian.impl.execution;
 
 import java.lang.reflect.Method;
 
@@ -22,11 +22,14 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.core.annotation.ClassScoped;
+import org.jboss.arquillian.spi.event.container.execution.RemoteExecutionEvent;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,6 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteTestExecuterTestCase extends AbstractManagerTestBase
 {
@@ -61,7 +65,7 @@ public class RemoteTestExecuterTestCase extends AbstractManagerTestBase
       Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldThrowIllegalStateOnMissingContainerMethodExecutor"));
 
-      fire(new org.jboss.arquillian.spi.event.suite.Test(testExecutor));
+      fire(new RemoteExecutionEvent(testExecutor));
    }
    
    @Test

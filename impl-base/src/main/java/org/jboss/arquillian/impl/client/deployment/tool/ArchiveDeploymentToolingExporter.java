@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.jboss.arquillian.impl.Validate;
+import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
+import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * Handler that will export a XML version of the Deployed Archive. 
@@ -42,13 +44,12 @@ public class ArchiveDeploymentToolingExporter
       {
          return;
       }
-/*      
-      Archive<?> deployment = context.get(Archive.class); // deployment not in context?, nothing to do
+      Archive<?> deployment = event.getDeployment().getTestableArchive(); // deployment not in context?, nothing to do
       if(deployment == null)
       {
          return;
       }
-      
+/*      
       TestClass testClass = event.getTestClass();
       String deploymentContent = deployment.toString(new ToolingDeploymentFormatter(testClass.getJavaClass()));
       writeOutToFile(

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl.client.deployment;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -26,6 +27,7 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Ignore
 public class ValidateDeploymentScenarioTestCase
 {
 

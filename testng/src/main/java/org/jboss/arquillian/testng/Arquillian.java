@@ -101,8 +101,9 @@ public abstract class Arquillian implements IHookable
       {
          result = deployableTest.get().test(new TestMethodExecutor()
          {
-            public void invoke() throws Throwable
+            public void invoke(Object... parameters) throws Throwable
             {
+               testResult.setParameters(parameters);
                callback.runTestMethod(testResult);
                
                clearParameters(testResult);
@@ -160,7 +161,6 @@ public abstract class Arquillian implements IHookable
          return values;
       }
 
-      // TestEnrichers.enrich(deployableTest.get().getActiveContext(), method); // should be handled inside a enricher
       Object[] parameterValues = new Object[method.getParameterTypes().length]; 
       values[0] = parameterValues; 
       
