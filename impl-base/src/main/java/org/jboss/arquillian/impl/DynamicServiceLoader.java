@@ -174,12 +174,12 @@ public class DynamicServiceLoader implements ServiceLoader
       }
    }
    
-   private String toClassString(Collection<?> providers)
+   private <T> String toClassString(Collection<Class<? extends T>> providers)
    {
       StringBuilder sb = new StringBuilder();
-      for(Object provider : providers)
+      for(Class<?> provider : providers)
       {
-         sb.append(provider.getClass().getName()).append(", ");
+         sb.append(provider.getName()).append(", ");
       }
       return sb.subSequence(0, sb.length()-2).toString();
    }
