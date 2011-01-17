@@ -38,8 +38,11 @@ public class JUnitDeploymentAppender implements AuxiliaryArchiveAppender
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
                         .addPackages(
                               true, 
-                              Package.getPackage("org.junit"),
-                              Package.getPackage("org.hamcrest"),
+                              junit.framework.Assert.class.getPackage(),
+                              junit.extensions.TestSetup.class.getPackage(),
+                              junit.runner.BaseTestRunner.class.getPackage(),
+                              org.junit.Assert.class.getPackage(),
+                              org.hamcrest.Matcher.class.getPackage(),
                               Arquillian.class.getPackage())
                         .addServiceProvider(
                               TestRunner.class, 
