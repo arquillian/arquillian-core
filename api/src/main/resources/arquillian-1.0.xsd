@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema 
+	xmlns:tns="http://www.jboss.org/arquillian-1.0"
+	xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.jboss.org/arquillian-1.0">
+    
+    <element name="arquillian">
+    	<complexType>
+	    	<sequence>
+	    		<element ref="tns:defaultProtocol" minOccurs="0" maxOccurs="1" />
+	    		<element ref="tns:container" minOccurs="0" maxOccurs="unbounded" />
+	    		<element ref="tns:group" minOccurs="0" maxOccurs="unbounded"/>
+	    	</sequence>
+    	</complexType>
+		<unique name="unique-qualifier-container-group">
+			<annotation>
+				<documentation>
+					@qualifier must be unique between containers and groups. Used to select which to run.
+				</documentation>
+			</annotation>
+			<selector xpath="tns:container|tns:group" />
+			<field xpath="@qualifier" />
+		</unique>
+    </element>
+
+	<element name="group">
+		<annotation>
+			<documentation>
+				You can run tests against multiple containers in the same run. To do this you define them as a group. All 
+				containers in the group will be started during the run.
+			</documentation>
+		</annotation>
+	    <complexType>
+	    	<choice>
+	    		<element ref="tns:container" minOccurs="1" maxOccurs="unbounded" />
+	    	</choice>
+	    	<attribute name="qualifier" type="string" use="required" />
+	    </complexType>
+	</element>
+	
+    <element name="container">
+	    <complexType>
+	    	<sequence minOccurs="1" maxOccurs="1">
+	    		<element ref="tns:configuration" minOccurs="0" maxOccurs="1" />
+	    		<element ref="tns:dependencies" minOccurs="0" maxOccurs="1"  />
+	    		<element ref="tns:protocol" minOccurs="0" maxOccurs="unbounded" />
+	    	</sequence>
+	    	<attribute name="qualifier" type="string" use="optional" />
+	    	<attribute name="default" type="boolean" use="optional" default="false"/>
+	    </complexType>
+	</element>
+	
+	<element name="defaultProtocol">
+		<complexType>
+			<sequence minOccurs="0" maxOccurs="unbounded">
+				<element ref="tns:property" />
+			</sequence>		
+			<attribute name="type" type="string" use="required" />
+		</complexType>
+		<unique name="unique-property-within-protocol">
+			<annotation>
+				<documentation>
+					Property must be unique.
+				</documentation>
+			</annotation>
+			<selector xpath="tns:property" />
+			<field xpath="@name" />
+		</unique>
+	</element>
+	
+	<element name="protocol">
+		<complexType>
+			<sequence minOccurs="1" maxOccurs="unbounded">
+				<element ref="tns:property"/>
+			</sequence>		
+			<attribute name="type" type="string" use="required" />
+		</complexType>
+		<unique name="unique-property-within-default-protocol">
+			<annotation>
+				<documentation>
+					Property must be unique.
+				</documentation>
+			</annotation>
+			<selector xpath="tns:property" />
+			<field xpath="@name" />
+		</unique>
+	</element>
+	
+	<element name="configuration">
+		<complexType>
+			<sequence minOccurs="1" maxOccurs="unbounded">
+				<element ref="tns:property"/>
+			</sequence>
+		</complexType>
+		<unique name="unique-property-within-configuration">
+			<annotation>
+				<documentation>
+					Property must be unique.
+				</documentation>
+			</annotation>
+			<selector xpath="tns:property" />
+			<field xpath="@name" />
+		</unique>
+	</element>
+	
+	<element name="dependencies">
+		<complexType>
+			<sequence minOccurs="1" maxOccurs="unbounded">
+				<element ref="tns:dependency" />
+			</sequence>
+		</complexType>
+		<unique name="unique-dependency-within-container">
+			<annotation>
+				<documentation>
+					Dependencies must be unique.
+				</documentation>
+			</annotation>
+			<selector xpath="tns:dependency" />
+			<field xpath="." />
+		</unique>
+	</element>
+
+	<element name="dependency">
+		<complexType>
+			<simpleContent>
+				<extension base="string" />
+			</simpleContent>
+		</complexType>
+	</element>
+	
+
+	<element name="property">
+		<complexType>
+			<simpleContent>
+				<extension base="string">
+					<attribute name="name" type="string" use="required" />
+				</extension>
+			</simpleContent>
+		</complexType>
+	</element>
+
+</schema>
