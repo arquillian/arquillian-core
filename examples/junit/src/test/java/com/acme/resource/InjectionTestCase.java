@@ -38,7 +38,7 @@ public class InjectionTestCase
 {
    @Deployment
    public static JavaArchive createDeployment() {
-      return ShrinkWrap.create(JavaArchive.class, "test.jar");
+      return ShrinkWrap.create(JavaArchive.class);
    }
    
    @Resource(mappedName = "java:/Mail") Session mailSession;

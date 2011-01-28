@@ -50,6 +50,7 @@
 					<groupId>org.jboss.ejb3</groupId>
 					<artifactId>jboss-ejb3-api</artifactId>
 					<version>3.1.0</version>
+					<scope>provided</scope>
 				</dependency>
 				<dependency>
 					<groupId>javax.persistence</groupId>

@@ -22,7 +22,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,12 +39,12 @@ public class RandomTestCase {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return ShrinkWrap.create(JavaArchive.class, "test.jar")
+		return ShrinkWrap.create(JavaArchive.class)
 				.addPackage(
 						Random.class.getPackage()
 				)
 				.addManifestResource(
-						new ByteArrayAsset("<beans/>".getBytes()),
+						EmptyAsset.INSTANCE,
 						ArchivePaths.create("beans.xml"));
 	}
 

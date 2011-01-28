@@ -18,7 +18,6 @@ package com.acme.cdi.payment;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
@@ -32,13 +31,11 @@ public class SynchronousPaymentProcessorTestCase extends Arquillian {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return ShrinkWrap.create(JavaArchive.class, "test.jar")
+		return ShrinkWrap.create(JavaArchive.class)
 				.addPackage(
 						Synchronous.class.getPackage()
 				)
-				.addManifestResource(
-						"com/acme/cdi/payment/beans.xml",
-						ArchivePaths.create("beans.xml"));
+				.addManifestResource("com/acme/cdi/payment/beans.xml", "beans.xml");
 	}
 	
 	@Test(dataProvider = Arquillian.ARQUILLIAN_DATA_PROVIDER)  

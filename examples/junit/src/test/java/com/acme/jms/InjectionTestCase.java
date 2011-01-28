@@ -47,7 +47,7 @@ public class InjectionTestCase
 {
    @Deployment
    public static JavaArchive createDeployment() {
-      return ShrinkWrap.create(JavaArchive.class, "test.jar")
+      return ShrinkWrap.create(JavaArchive.class)
             .addClasses(
                   MessageEcho.class, 
                   QueueRequestor.class);

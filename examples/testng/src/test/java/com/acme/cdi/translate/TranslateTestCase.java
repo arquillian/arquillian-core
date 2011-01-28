@@ -20,9 +20,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -31,12 +30,10 @@ public class TranslateTestCase extends Arquillian {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return ShrinkWrap.create(JavaArchive.class, "test.jar")
+		return ShrinkWrap.create(JavaArchive.class)
 				.addPackage(
 						TranslateController.class.getPackage())
-				.addManifestResource(
-						new ByteArrayAsset("<beans/>".getBytes()),
-						ArchivePaths.create("beans.xml"));
+				.addManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 	
 	@Inject TranslateController controller;
