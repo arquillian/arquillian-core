@@ -103,26 +103,39 @@ public abstract class Arquillian implements IHookable
          {
             public void invoke(Object... parameters) throws Throwable
             {
-               testResult.setParameters(parameters);
+               /*
+                *  The parameters are stored in the InvocationHandler, so we can't set them on the test result directly.
+                *  Copy the Arquillian found parameters to the InvocationHandlers parameters
+                */
+               copyParameters(parameters, callback.getParameters());
                callback.runTestMethod(testResult);
                
-               clearParameters(testResult);
+               // Parameters can be contextual, so extract information 
+               swapWithClassNames(callback.getParameters());
+               testResult.setParameters(callback.getParameters());
             }
-
-            private void clearParameters(final ITestResult testResult)
+            
+            private void copyParameters(Object[] source, Object[] target)
+            {
+               for(int i = 0; i < source.length; i++)
+               {
+                  target[i] = source[i];
+               }
+            }
+            
+            private void swapWithClassNames(Object[] source)
             {
                // clear parameters. they can be contextual and might fail TestNG during the report writing.
-               Object[] parameters = testResult.getParameters();
-               for(int i = 0; parameters != null && i < parameters.length; i++)
+               for(int i = 0; source != null && i < source.length; i++)
                {
-                  Object parameter = parameters[i];
+                  Object parameter = source[i];
                   if(parameter != null)
                   {
-                     parameters[i] = parameter.getClass().getName();
+                     source[i] = parameter.toString();
                   }
                   else
                   {
-                     parameters[i] = "null";
+                     source[i] = "null";
                   }
                }
             }

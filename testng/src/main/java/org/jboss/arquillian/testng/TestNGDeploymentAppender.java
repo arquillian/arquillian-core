@@ -19,6 +19,8 @@ package org.jboss.arquillian.testng;
 import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.Filter;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -37,20 +39,42 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
 
    public Archive<?> createAuxiliaryArchive()
    {
-      return ShrinkWrap.create(JavaArchive.class, "arquillian-testng.jar")
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-testng.jar")
                .addPackages(
                      true, 
                      // exclude com.sun.javadoc.Doclet loading, not in OpenJDK
                      Filters.exclude("/org/testng/junit/.*|/org/testng/eclipse/.*"), 
                      TestNG.class.getPackage(),
                      Package.getPackage("org.jboss.arquillian.testng"))
-               .addPackages(
-                     true,
-                     // exclude AOP Alliance reference, not provided as part of TestNG jar
-                     Filters.exclude(".*/InterceptorStackCallback\\$InterceptedMethodInvocation.*"),
-                     Inject.class.getPackage())
                .addServiceProvider(
                      TestRunner.class, 
                      TestNGTestRunner.class);
+   
+      /* Attempt to add Guice if on classpath. TestNG 5.12 > use Guice */
+      // exclude AOP Alliance reference, not provided as part of TestNG jar
+      optionalPackages(
+            archive, 
+            Filters.exclude(".*/InterceptorStackCallback\\$InterceptedMethodInvocation.*"), 
+            Inject.class.getPackage().getName());
+         
+      /* Attempt to add com.beust, internal TestNG package 5.14 > */
+      optionalPackages(
+            archive, 
+            Filters.includeAll(), 
+            "com.beust");
+
+      return archive;
+   }
+   
+   private void optionalPackages(JavaArchive jar, Filter<ArchivePath> filter, String... packages)
+   {
+      try
+      {
+         jar.addPackages(
+               true, 
+               filter,
+               packages);
+      }
+      catch (Exception e) { /* optional packages NO-OP */  }
    }
 }

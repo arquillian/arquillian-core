@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>5</version>
+    <version>6-beta-1</version>
     <relativePath />
   </parent>
 
@@ -41,7 +41,7 @@
     <!-- <version.shrinkwrap_shrinkwrap>1.0.0-alpha-11</version.shrinkwrap_shrinkwrap> -->
     <version.shrinkwrap_shrinkwrap>1.0.0-SNAPSHOT</version.shrinkwrap_shrinkwrap>
     <version.shrinkwrap_descriptors>1.0.0-alpha-1-SNAPSHOT</version.shrinkwrap_descriptors>
-    <version.testng_testng>5.12.1</version.testng_testng>
+    <version.testng_testng>5.14.6</version.testng_testng>
 	<version.jboss_modules>1.0.0.Beta7-SNAPSHOT</version.jboss_modules>
   </properties>
 
