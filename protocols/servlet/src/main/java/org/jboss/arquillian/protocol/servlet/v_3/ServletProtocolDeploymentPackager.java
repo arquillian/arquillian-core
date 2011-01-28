@@ -16,15 +16,26 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_3;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.Filters;
+import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.ee.application.ApplicationDescriptor;
+import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 
 /**
  * ServletProtocolDeploymentPackager
@@ -39,7 +50,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
     */
    public Archive<?> generateDeployment(TestDeployment testDeployment)
    {
-      Archive<?> protocol = new ProtocolDeploymentAppender().createAuxiliaryArchive();
+      JavaArchive protocol = new ProtocolDeploymentAppender().createAuxiliaryArchive();
       
       Archive<?> applicationArchive = testDeployment.getApplicationArchive();
       Collection<Archive<?>> auxiliaryArchives = testDeployment.getAuxiliaryArchives();
@@ -63,35 +74,72 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
             " can not handle archive of type " +  applicationArchive.getClass().getName());
    }
 
-   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
+   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol) 
    {
-      return applicationArchive
+      applicationArchive
                   .addLibraries(
-                        auxiliaryArchives.toArray(new Archive<?>[0]))
-                  .addLibrary(protocol);
-   }
-
-   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
-   {
-         return ShrinkWrap.create(WebArchive.class, "test.war")
-                  .addLibraries(applicationArchive, protocol)
-                  .addLibraries(auxiliaryArchives.toArray(new Archive[0]));
-   }
-
-   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, Archive<?> protocol) 
-   {
-      if(false) // contains web archive
+                        auxiliaryArchives.toArray(new Archive<?>[0]));
+      
+      // Can be null when reusing logic in EAR packaging
+      if(protocol != null)
       {
-         // find web archive and attach our self to it
+         applicationArchive.addLibrary(protocol);
+      }
+      return applicationArchive;
+   }
+
+   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol) 
+   {
+      return handleArchive(
+            ShrinkWrap.create(WebArchive.class, "test.war")
+               .addLibrary(applicationArchive),
+            auxiliaryArchives, 
+            protocol);
+   }
+
+   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol) 
+   {
+      Map<ArchivePath, Node> applicationArchiveWars = applicationArchive.getContent(Filters.include(".*\\.war"));
+      if(applicationArchiveWars.size() == 1)
+      {
+         // TODO: fix, relies on internal SW details, find web archive and attach our self to it, SHRINKWRAP-192         
+         Asset warAsset = applicationArchiveWars.values().iterator().next().getAsset();
+         if (warAsset instanceof ArchiveAsset)
+         {
+            ArchiveAsset warArchiveAsset = (ArchiveAsset) warAsset;
+            handleArchive(
+                  warArchiveAsset.getArchive().as(WebArchive.class), 
+                  new ArrayList<Archive<?>>(), // reuse the War handling, but Auxiliary Archives should be added to the EAR, not the WAR 
+                  protocol);
+         }
+      }
+      else if(applicationArchiveWars.size() > 1)
+      {
+         // TODO: fetch the TestDeployment.getArchiveForEnrichment
+         throw new UnsupportedOperationException("Multiple WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
       }
       else
       {
-         applicationArchive.addModule(
-                  ShrinkWrap.create(WebArchive.class, "test.war")
-                     .addLibrary(protocol))
-               .addLibraries(
-                     auxiliaryArchives.toArray(new Archive<?>[0]));
+         // reuse handle(JavaArchive, ..) logic
+         Archive<?> wrappedWar = handleArchive(protocol, new ArrayList<Archive<?>>(), null);
+         applicationArchive
+               .addModule(wrappedWar);
+         
+         ArchivePath applicationXmlPath = ArchivePaths.create("META-INF/application.xml");
+         if(applicationArchive.contains(applicationXmlPath))
+         {
+            ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
+                  applicationArchive.get(applicationXmlPath).getAsset().openStream());
+            
+            applicationXml.webModule(wrappedWar.getName(), wrappedWar.getName());
+            applicationArchive.setApplicationXML(
+                  new StringAsset(applicationXml.exportAsString()));
+         }
       }
+      
+      applicationArchive.addLibraries(
+            auxiliaryArchives.toArray(new Archive<?>[0]));
+
       return applicationArchive;
    }
 }

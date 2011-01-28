@@ -16,14 +16,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_3;
 
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
-import org.jboss.arquillian.protocol.servlet.ServletProtocolConfiguration;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
+import org.jboss.arquillian.protocol.servlet.BaseServletProtocol;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
-import org.jboss.arquillian.spi.client.protocol.Protocol;
-import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.spi.client.protocol.metadata.HTTPContext;
-import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 
 /**
  * ServletProtocol
@@ -31,45 +25,22 @@ import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletProtocol implements Protocol<ServletProtocolConfiguration>
+public class ServletProtocol extends BaseServletProtocol
 {
    private static final String PROTOCOL_NAME = "Servlet 3.0";
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
-    */
-   public Class<ServletProtocolConfiguration> getProtocolConfigurationClass()
-   {
-      return ServletProtocolConfiguration.class;
-   }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getDescription()
-    */
-   public ProtocolDescription getDescription()
+   @Override
+   protected String getProtcolName()
    {
-      return new ProtocolDescription(PROTOCOL_NAME);
+      return PROTOCOL_NAME;
    }
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
     */
+   @Override
    public DeploymentPackager getPackager()
    {
       return new ServletProtocolDeploymentPackager();
-   }
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getExecutor(org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration, org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData)
-    */
-   public ContainerMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData)
-   {
-      if( metaData.hasContext(HTTPContext.class))
-      {
-         HTTPContext context = metaData.getContext(HTTPContext.class);
-         return new ServletMethodExecutor(context.getBaseURI());
-      }
-      
-      return new ServletMethodExecutor(protocolConfiguration.getBaseURI());
    }
 }

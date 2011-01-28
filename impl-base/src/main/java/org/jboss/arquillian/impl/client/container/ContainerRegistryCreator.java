@@ -72,7 +72,7 @@ public class ContainerRegistryCreator
          {
             if(activeConfiguration.equals(group.getGroupName()))
             {
-               for(ContainerDef container : group.getContainers())
+               for(ContainerDef container : group.getGroupContainers())
                {
                   reg.create(container, serviceLoader);
                }

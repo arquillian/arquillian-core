@@ -49,7 +49,7 @@ public class ProtocolTestCase
    {
       server = new Server(8181);
       Context root = new Context(server, "/arquillian-protocol", Context.SESSIONS);
-      root.addServlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET);
+      root.addServlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING);
       server.start();
    }
    

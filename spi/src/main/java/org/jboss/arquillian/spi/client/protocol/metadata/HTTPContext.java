@@ -16,7 +16,8 @@
  */
 package org.jboss.arquillian.spi.client.protocol.metadata;
 
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * WebContext
@@ -29,13 +30,13 @@ public class HTTPContext
    private String host;
    private int port;
    
-   private String contextRoot;
-
-   public HTTPContext(String host, int port, String contextRoot)
+   private List<Servlet> servlets;
+   
+   public HTTPContext(String host, int port)
    {
       this.host = host;
       this.port = port;
-      this.contextRoot = cleanContextRoot(contextRoot);
+      this.servlets = new ArrayList<Servlet>();
    }
 
    /**
@@ -54,25 +55,31 @@ public class HTTPContext
       return port;
    }
 
+   public HTTPContext add(Servlet servlet)
+   {
+      servlet.setParent(this);
+      this.servlets.add(servlet);
+      return this;
+   }
+   
    /**
-    * @return the contextRoot
+    * @return the servlets
     */
-   public String getContextRoot()
+   public List<Servlet> getServlets()
    {
-      return contextRoot;
+      return servlets;
    }
    
-   public URI getBaseURI()
+   public Servlet getServletByName(String name)
    {
-      return URI.create("http://" + host + ":" + port + contextRoot);
-   }
-   
-   private String cleanContextRoot(String contextRoot)
-   {
-      if(!contextRoot.startsWith("/"))
+      for(Servlet servlet : getServlets())
       {
-         return "/" + contextRoot;
+         if(servlet.getName().equals(name))
+         {
+            return servlet;
+         }
       }
-      return contextRoot;
+      return null;
    }
+   
 }

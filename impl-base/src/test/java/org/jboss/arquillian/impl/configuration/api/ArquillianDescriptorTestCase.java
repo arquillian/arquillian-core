@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl.configuration.api;
 import static org.jboss.arquillian.impl.configuration.api.AssertXPath.assertXPath;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 
 
@@ -151,6 +152,11 @@ public class ArquillianDescriptorTestCase
       
       assertXPath(desc, "/arquillian/group/@qualifier", GROUP_NAME_1, GROUP_NAME_2);
       assertXPath(desc, "/arquillian/group/container/@qualifier", CONTAINER_NAME_1, CONTAINER_NAME_2, CONTAINER_NAME_3);
+      
+      ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).from(desc);
+      Assert.assertEquals(2, descriptor.getGroups().size());
+      
+      Assert.assertEquals(2, descriptor.getGroups().get(0).getGroupContainers().size());
    }
    
    @Test

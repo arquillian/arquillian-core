@@ -17,21 +17,24 @@
 package org.jboss.arquillian.protocol.servlet.v_3;
 
 import java.util.ArrayList;
-
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.arquillian.protocol.servlet.v_3.ServletProtocolDeploymentPackager;
+import org.jboss.arquillian.protocol.servlet.TestUtil;
+import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.ee.application.ApplicationDescriptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -114,35 +117,80 @@ public class ServletProtocolDeploymentPackagerTestCase
    }
 
    @Test
-   @Ignore // TODO: Does not merge with existing archive
-   public void shouldHandleEnterpriseArchiveWithExistingWAR() throws Exception
+   public void shouldHandleEnterpriseArchiveWithApplicationXML() throws Exception
    {
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
-                            .addModule(
-                                  ShrinkWrap.create(WebArchive.class, "test.war")
-                                            .addClass(Test.class)), 
+                     .setApplicationXML(createApplicationDescriptor()), 
                   createAuxiliaryArchives()));
+
+      Assert.assertTrue(
+            "Verify that the auxiliaryArchives are placed in /",
+            archive.contains(ArchivePaths.create("test.war")));
       
       Assert.assertTrue(
-            "Verify that the applicationArchive still contains WebArchive in /",
-            archive.contains(ArchivePaths.create("test.war")));
+            "Verify that the auxiliaryArchives are placed in /lib",
+            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive1.jar")));
 
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
             archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
 
-      Archive<?> applicationArchive = ((ArchiveAsset)archive.get(ArchivePaths.create("test.war")).getAsset()).getArchive(); 
+      String applicationXmlContent = TestUtil.convertToString(archive.get("META-INF/application.xml").getAsset().openStream());
       Assert.assertTrue(
-            "Verify that the auxiliaryArchive protocol is placed in applicationArchive WebArchive",
-            applicationArchive.contains(ArchivePaths.create("/WEB-INF/lib/arquillian-protocol.jar")));
+            "verify that the arquillian-protocol.war was added to the application.xml",
+            applicationXmlContent.contains("test.war"));
+   }
+
+   @Test
+   public void shouldHandleEnterpriseArchiveWithWebArchive() throws Exception
+   {
+      WebArchive applicationWar = ShrinkWrap.create(WebArchive.class, "applicationArchive.war");
+      
+      Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(
+                  ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
+                     .addModule(applicationWar), 
+                  createAuxiliaryArchives()));
+
+      Assert.assertFalse(
+            "Verify that the auxiliaryArchives was not added",
+            archive.contains(ArchivePaths.create("arquillian-protocol.war")));
+      
+      Assert.assertTrue(
+            "Verify that the auxiliaryArchives are placed in /lib",
+            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive1.jar")));
 
       Assert.assertTrue(
-            "Verify that the applicationArchive has not been overwritten",
-            applicationArchive.contains(ArchivePaths.create("/WEB-INF/classes/org/junit/Test.class")));
+            "Verify that the auxiliaryArchives are placed in /lib",
+            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
 
       
+      String webXmlContent = TestUtil.convertToString(applicationWar.get("WEB-INF/lib/arquillian-protocol.jar/META-INF/web-fragment.xml").getAsset().openStream());
+      Assert.assertTrue(
+            "verify that the ServletTestRunner servlet was added to the web.xml of the existing web archive",
+            webXmlContent.contains(ServletTestRunner.class.getName()));
+   }
+
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnUnknownArchiveType() throws Exception
+   {
+      new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(ShrinkWrap.create(ResourceAdapterArchive.class), new ArrayList<Archive<?>>())
+      );
+   }
+   
+   @Test(expected = UnsupportedOperationException.class)
+   public void shouldThrowExceptionOnEnterpriseArchiveWithMultipleWebArchive() throws Exception
+   {
+      new ServletProtocolDeploymentPackager().generateDeployment(
+            new TestDeployment(
+                  ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
+                     .addModule(ShrinkWrap.create(WebArchive.class))
+                     .addModule(ShrinkWrap.create(WebArchive.class)), 
+                  createAuxiliaryArchives()));
    }
 
    private Collection<Archive<?>> createAuxiliaryArchives() 
@@ -152,5 +200,14 @@ public class ServletProtocolDeploymentPackagerTestCase
       archives.add(ShrinkWrap.create(JavaArchive.class, "auxiliaryArchive2.jar"));
       
       return archives;
+   }
+
+   private Asset createApplicationDescriptor()
+   {
+      return new StringAsset(
+            Descriptors.create(ApplicationDescriptor.class)
+               .version("6")
+               .ejbModule("test.jar")
+               .exportAsString());
    }
 }

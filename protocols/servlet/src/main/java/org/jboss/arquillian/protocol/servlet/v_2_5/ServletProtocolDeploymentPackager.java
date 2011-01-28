@@ -16,23 +16,28 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
-import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Filters;
+import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.ee.application.ApplicationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 
 /**
  * ServletProtocolDeploymentPackager
@@ -47,8 +52,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
     */
    public Archive<?> generateDeployment(TestDeployment testDeployment)
    {
-      WebArchive protocol = WebArchive.class.cast(
-            new ProtocolDeploymentAppender().createAuxiliaryArchive());
+      WebArchive protocol = new ProtocolDeploymentAppender().createAuxiliaryArchive();
       
       Archive<?> applicationArchive = testDeployment.getApplicationArchive();
       Collection<Archive<?>> auxiliaryArchives = testDeployment.getAuxiliaryArchives();
@@ -80,8 +84,9 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          WebAppDescriptor applicationWebXml = Descriptors.importAs(WebAppDescriptor.class).from(
                applicationArchive.get(webXmlPath).getAsset().openStream());
          
-         mergeWithDescriptor(applicationWebXml); 
-         applicationArchive.setWebXML(new StringAsset(applicationWebXml.exportAsString()));
+         applicationArchive.setWebXML(
+               new StringAsset(
+                     mergeWithDescriptor(applicationWebXml).exportAsString()));
          applicationArchive.merge(protocol, Filters.exclude(".*web\\.xml.*"));
       }
       else 
@@ -92,45 +97,81 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       return applicationArchive;
    }
    
+   /*
+    * Wrap the applicationArchive as a EnterpriseArchive and pass it to handleArchive(EnterpriseArchive, ...)
+    */
    private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-      return ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
-                        .addModule(applicationArchive)
-                        .addModule(
-                              protocol.setWebXML(
-                                    new StringAsset(getDefaultDescriptor().exportAsString())))
-                        .addLibraries(auxiliaryArchives.toArray(new Archive[0]));
+      return handleArchive(
+            ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
+               .addModule(applicationArchive), 
+            auxiliaryArchives, 
+            protocol);
    }
 
    private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol) 
    {
-      boolean applicationArchiveContainsWars = !applicationArchive.getContent(Filters.include(".*\\.war")).isEmpty();
-      if(applicationArchiveContainsWars)
+      Map<ArchivePath, Node> applicationArchiveWars = applicationArchive.getContent(Filters.include(".*\\.war"));
+      if(applicationArchiveWars.size() == 1)
       {
-         // find web archive and attach our self to it, SHRINKWRAP-192
-         throw new UnsupportedOperationException("Can not merge with a WebArchive inside a EnterpriseArchive");
+         // TODO: fix, relies on internal SW details, find web archive and attach our self to it, SHRINKWRAP-192         
+         Asset warAsset = applicationArchiveWars.values().iterator().next().getAsset();
+         if (warAsset instanceof ArchiveAsset)
+         {
+            ArchiveAsset warArchiveAsset = (ArchiveAsset) warAsset;
+            handleArchive(
+                  warArchiveAsset.getArchive().as(WebArchive.class), 
+                  new ArrayList<Archive<?>>(), // reuse the War handling, but Auxiliary Archives should be added to the EAR, not the WAR 
+                  protocol);
+         }
+      }
+      else if(applicationArchiveWars.size() > 1)
+      {
+         // TODO: fetch the TestDeployment.getArchiveForEnrichment
+         throw new UnsupportedOperationException("Multiple WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
       }
       else
       {
          applicationArchive
                .addModule(
                      protocol.setWebXML(
-                           new StringAsset(getDefaultDescriptor().exportAsString())))
-               .addLibraries(
-                     auxiliaryArchives.toArray(new Archive<?>[0]));
+                           new StringAsset(createNewDescriptor().exportAsString())));
+         
+         ArchivePath applicationXmlPath = ArchivePaths.create("META-INF/application.xml");
+         if(applicationArchive.contains(applicationXmlPath))
+         {
+            ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
+                  applicationArchive.get(applicationXmlPath).getAsset().openStream());
+            
+            applicationXml.webModule(protocol.getName(), protocol.getName());
+            applicationArchive.setApplicationXML(
+                  new StringAsset(applicationXml.exportAsString()));
+         }
       }
+      applicationArchive.addLibraries(
+            auxiliaryArchives.toArray(new Archive<?>[0]));
       return applicationArchive;
+   }
+   
+   private WebAppDescriptor createNewDescriptor()
+   {
+      return mergeWithDescriptor(getDefaultDescriptor());
    }
    
    private WebAppDescriptor getDefaultDescriptor() 
    {
       return Descriptors.create(WebAppDescriptor.class)
-                  .displayName("Arquillian Servlet 2.5 Protocol")
-                  .servlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET);
+                  .version("2.5")
+                  .displayName("Arquillian Servlet 2.5 Protocol");
    }
    
-   private void mergeWithDescriptor(WebAppDescriptor descriptor) 
+   private WebAppDescriptor mergeWithDescriptor(WebAppDescriptor descriptor) 
    {
-      descriptor.servlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET);
+      // use String v. of desc.servlet(..) so we don't force Servlet API on classpath
+      descriptor.servlet(
+            ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME,
+            "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner",  
+            new String[]{ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING});
+      return descriptor;
    }   
 }

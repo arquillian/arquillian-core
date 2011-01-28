@@ -28,9 +28,9 @@ import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
  */
 public class ServletProtocolConfiguration implements ProtocolConfiguration
 {
-   private String host = "localhost";
-   private Integer port = 8080;
-   private String contextRoot = "test";
+   private String host = null;
+   private Integer port = null;
+   private String contextRoot = null;;
    
    /**
     * @return the host
