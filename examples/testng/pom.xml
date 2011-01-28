@@ -434,11 +434,6 @@
 						</configuration>
 					</plugin>
 				</plugins>
-				<testResources>
-					<testResource>
-						<directory>src/test/jboss-resources</directory>
-					</testResource>
-				</testResources>
 			</build>
 		</profile>
 		<profile>
@@ -479,11 +474,6 @@
 						</configuration>
 					</plugin>
 				</plugins>
-				<testResources>
-					<testResource>
-						<directory>src/test/jboss-resources</directory>
-					</testResource>
-				</testResources>
 			</build>
 		</profile>
 		<profile>
@@ -511,11 +501,6 @@
 				</dependency>
 			</dependencies>
 			<build>
-				<testResources>
-					<testResource>
-						<directory>src/test/jboss-resources</directory>
-					</testResource>
-				</testResources>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
