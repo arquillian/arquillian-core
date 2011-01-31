@@ -7,6 +7,7 @@
     <element name="arquillian">
     	<complexType>
 	    	<sequence>
+	    		<element ref="tns:engine" minOccurs="0" maxOccurs="1" />
 	    		<element ref="tns:defaultProtocol" minOccurs="0" maxOccurs="1" />
 	    		<element ref="tns:container" minOccurs="0" maxOccurs="unbounded" />
 	    		<element ref="tns:group" minOccurs="0" maxOccurs="unbounded"/>
@@ -23,6 +24,14 @@
 		</unique>
     </element>
 
+	<element name="engine">
+		<complexType>
+			<sequence minOccurs="0" maxOccurs="unbounded">
+				<element ref="tns:property" />
+			</sequence>		
+    	</complexType>
+	</element>
+	
 	<element name="group">
 		<annotation>
 			<documentation>

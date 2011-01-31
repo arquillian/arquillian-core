@@ -16,17 +16,14 @@
  */
 package org.jboss.arquillian.impl.configuration;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef;
+import org.jboss.arquillian.impl.configuration.api.EngineDef;
 import org.jboss.arquillian.impl.configuration.api.GroupDef;
-import org.jboss.arquillian.impl.configuration.api.ProtocolDef;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
 import org.jboss.shrinkwrap.descriptor.api.Node;
 import org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase;
 import org.jboss.shrinkwrap.descriptor.impl.base.XMLExporter;
@@ -84,6 +81,15 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
          return new DefaultProtocolDefImpl(model, model.getSingle("protocol"));
       }
       return null;
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#engine()
+    */
+   @Override
+   public EngineDef engine()
+   {
+      return new EngineDefImpl(model, model.getOrCreate("engine"));
    }
    
    public ContainerDef container(String name) 

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl.configuration.api;
 
 import static org.jboss.arquillian.impl.configuration.api.AssertXPath.assertXPath;
+
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
 import org.junit.Assert;
@@ -49,6 +50,8 @@ public class ArquillianDescriptorTestCase
    private static final String PROPERTY_NAME_3 = "test3-name";
    private static final String PROPERTY_VALUE_3 = "test3-value";
    
+   private static final Integer PROPERTY_INT_VALUE_1 = 10;
+   
    private String desc;
    
    @After
@@ -63,6 +66,28 @@ public class ArquillianDescriptorTestCase
       desc = create().exportAsString();
    }
 
+   @Test
+   public void shouldBeAbleToSetEngineProperties() throws Exception
+   {
+      // add multiple times to see only one property added
+      desc = create()
+               .engine()
+                  .deploymentExportPath(PROPERTY_VALUE_1)
+                  .deploymentExportPath(PROPERTY_VALUE_1)
+                  .maxDeploymentsBeforeRestart(PROPERTY_INT_VALUE_1)
+                  .maxDeploymentsBeforeRestart(PROPERTY_INT_VALUE_1)
+             .exportAsString(); 
+
+      assertXPath(desc, "/arquillian/engine/property[@name='deploymentExportPath']/text()", PROPERTY_VALUE_1);
+      assertXPath(desc, "/arquillian/engine/property[@name='maxDeploymentsBeforeRestart']/text()", PROPERTY_INT_VALUE_1);
+   
+   
+      ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).from(desc);
+      
+      Assert.assertEquals(PROPERTY_VALUE_1, descriptor.engine().getDeploymentExportPath());
+      Assert.assertEquals(PROPERTY_INT_VALUE_1, descriptor.engine().getMaxDeploymentsBeforeRestart());
+   }
+   
    @Test
    public void shouldBeAbleToAddContainer() throws Exception
    {

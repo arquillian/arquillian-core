@@ -54,7 +54,7 @@ public final class AssertXPath
     * @param expectedValue The Expected values found by expression
     * @throws Exception XML/XPath related parse exceptions
     */
-   public static void assertXPath(String xml, String expression, String... expectedValue)
+   public static void assertXPath(String xml, String expression, Object... expectedValue)
       throws Exception
    {
       Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
@@ -73,7 +73,7 @@ public final class AssertXPath
          Node node = nodes.item(i);
          Assert.assertEquals(
                "XPath content should match expected value",
-               expectedValue[i], 
+               String.valueOf(expectedValue[i]), 
                node.getTextContent());
       }
    }
