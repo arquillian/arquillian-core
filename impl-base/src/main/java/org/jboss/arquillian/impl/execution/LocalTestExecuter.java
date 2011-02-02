@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl.execution;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.arquillian.spi.TestResult;
@@ -29,7 +30,6 @@ import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.core.annotation.TestScoped;
-import org.jboss.arquillian.spi.event.container.execution.LocalExecutionEvent;
 
 /**
  * A Handler for executing the Test Method.<br/>

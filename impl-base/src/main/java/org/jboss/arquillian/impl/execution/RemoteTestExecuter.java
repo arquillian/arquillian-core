@@ -21,6 +21,7 @@ import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.impl.domain.ProtocolRegistry;
+import org.jboss.arquillian.impl.execution.event.RemoteExecutionEvent;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -35,7 +36,6 @@ import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.core.annotation.TestScoped;
-import org.jboss.arquillian.spi.event.container.execution.RemoteExecutionEvent;
 
 /**
  * A Handler for executing the remote Test Method.<br/>

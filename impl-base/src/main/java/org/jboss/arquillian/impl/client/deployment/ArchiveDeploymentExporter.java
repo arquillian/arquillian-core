@@ -19,7 +19,11 @@ package org.jboss.arquillian.impl.client.deployment;
 import java.io.File;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.spi.Configuration;
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.impl.configuration.api.EngineDef;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.jboss.shrinkwrap.api.Archive;
@@ -32,37 +36,48 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-// TODO: implement
 public class ArchiveDeploymentExporter 
 {
-//   private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());
+   private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());
 
+   @Inject
+   private Instance<ArquillianDescriptor> configuration;
+   
    public void callback(@Observes BeforeDeploy event) throws Exception
    {
-//      event.getDeployment().getTestableArchive().as(ZipExporter.class).exportTo(
-  //          new File("target/" + event.getDeployment().getTestableArchive().getName()), true);
-      //      Archive<?> deployment = context.get(Archive.class);
-//      Configuration configuration = context.get(Configuration.class);
-//
-//      if (deployment != null && configuration != null && configuration.getDeploymentExportPath() != null)
-//      {
-//         // TODO: should prepping the export directory be in the configuration builder?
-//         String exportPath = configuration.getDeploymentExportPath();
-//         File exportDir = new File(exportPath);
-//         if (exportDir.isFile())
-//         {
-//            log.warning("Deployment export disabled. Export path points to an existing file: " + exportPath);
-//            return;
-//         }
-//         else if (!exportDir.isDirectory() && !exportDir.mkdirs())
-//         {
-//            log.warning("Deployment export directory could not be created: " + exportPath);
-//            return;
-//         }
-//
-//         deployment.as(ZipExporter.class).exportZip(
-//            new File(exportDir, event.getTestClass().getName() + "_" + deployment.getName()),
-//            true);
-//      }
+      ArquillianDescriptor descriptor = configuration.get();
+      if(descriptor == null)
+      {
+         return;
+      }
+      EngineDef engine = descriptor.engine();
+      String exportPath = engine.getDeploymentExportPath();
+      
+      if(exportPath != null && event.getDeployment().isArchiveDeployment())
+      {
+         File exportDir = new File(exportPath);
+         if (exportDir.isFile())
+         {
+            log.warning("Deployment export disabled. Export path points to an existing file: " + exportPath);
+            return;
+         }
+         else if (!exportDir.isDirectory() && !exportDir.mkdirs())
+         {
+            log.warning("Deployment export directory could not be created: " + exportPath);
+            return;
+         }
+
+         Archive<?> deployment = event.getDeployment().getTestableArchive();
+         
+         deployment.as(ZipExporter.class).exportTo(
+               new File(exportDir, createFileName(event.getDeployment())), 
+               true);  
+      }
+   }
+   
+   private String createFileName(DeploymentDescription deployment)
+   {
+      // TODO: where do we get TestClass name from ? 
+      return deployment.getTarget().getName() + "_" + deployment.getName();
    }
 }

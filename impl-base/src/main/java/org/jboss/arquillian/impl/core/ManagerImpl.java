@@ -18,7 +18,10 @@ package org.jboss.arquillian.impl.core;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 import org.jboss.arquillian.impl.core.context.ApplicationContextImpl;
 import org.jboss.arquillian.impl.core.spi.EventPoint;
@@ -43,7 +46,25 @@ public class ManagerImpl implements Manager
    //-------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
-
+   public static Boolean DEBUG = false;
+   
+   private ThreadLocal<Stack<Object>> eventStack;
+   
+   /*
+    * Hack: 
+    * Events be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling. 
+    * It is up to the exception handler to re-throw the exception if it can't handle it. WWhen the re-throw happens
+    * the higher level event will get the exception and re-fire it on the bus. We need to keep track of which exceptions
+    * has been handled in the call chain so we can re-throw without re-firing on a higher level. 
+    */
+   private ThreadLocal<Set<Class<? extends Throwable>>> handledThrowables = new ThreadLocal<Set<Class<? extends Throwable>>>() {
+      @Override
+      protected Set<Class<? extends Throwable>> initialValue()
+      {
+         return new HashSet<Class<? extends Throwable>>();
+      }
+   }; 
+   
    private List<Context> contexts;
    private List<Extension> extensions;
    
@@ -80,6 +101,11 @@ public class ManagerImpl implements Manager
    public void fire(Object event)
    {
       Validate.notNull(event, "Event must be specified");
+      
+      debug(event, true);
+      // we start fresh pr new event
+      handledThrowables.get().clear();
+      
       List<ObserverMethod> observers = resolveObservers(event.getClass());
       for(ObserverMethod observer : observers)
       {
@@ -89,39 +115,19 @@ public class ManagerImpl implements Manager
          } 
          catch (InvocationException e) 
          {
-            fireException(e.getCause());
+            if(handledThrowables.get().contains(e.getCause().getClass()))
+            {
+               UncheckedThrow.throwUnchecked(e.getCause());
+            }
+            else
+            {
+               fireException(e.getCause());
+            }
          }
       }
+      debug(event, false);
    }
 
-   private void fireException(Throwable event)
-   {
-      List<ObserverMethod> observers = resolveObservers(event.getClass());
-      if(observers.size() == 0) // no one is handling this Exception, throw it out.
-      {
-         UncheckedThrow.throwUnchecked(event);
-      }
-      for(ObserverMethod observer : observers)
-      {
-         try
-         {
-            observer.invoke(event);
-         }
-         catch (Exception e) 
-         {
-            // getCause(InocationTargetException).getCause(RealCause);
-            Throwable toBeFired = e.getCause();
-            // same type of exception being fired as caught, throw to avoid loop
-            if(toBeFired.getClass() == event.getClass())
-            {
-               // this will throw checked exception if any, and will break the declaration of fire(), will throw the original cause
-               UncheckedThrow.throwUnchecked(toBeFired);
-            }
-            fireException(toBeFired);
-         }
-      }
-   }
-   
    @Override
    public <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance) 
    {
@@ -226,12 +232,59 @@ public class ManagerImpl implements Manager
          }
          contexts.clear();
          extensions.clear();
+
+         if(eventStack != null)
+         {
+            eventStack.remove();
+         }
+         
+         handledThrowables.remove();
       }
    }
 
    //-------------------------------------------------------------------------------------||
    // Internal Helper Methods ------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
+
+   private void fireException(Throwable event)
+   {
+      debug(event, true);
+      List<ObserverMethod> observers = resolveObservers(event.getClass());
+      if(observers.size() == 0) // no one is handling this Exception, throw it out.
+      {
+         UncheckedThrow.throwUnchecked(event);
+      }
+      for(int i = 0; i < observers.size(); i++)
+      {
+         ObserverMethod observer = observers.get(i);
+         try
+         {
+            observer.invoke(event);
+         }
+         catch (Exception e) 
+         {
+            // getCause(InocationTargetException).getCause(RealCause);
+            Throwable toBeFired = e.getCause();
+            // same type of exception being fired as caught and is the last observer, throw to avoid loop
+            if(toBeFired.getClass() == event.getClass())
+            {
+               // on throw if this is the last Exception observer
+               if(i == observers.size()-1)
+               {
+                  handledThrowables.get().add(toBeFired.getClass());
+                  // this will throw checked exception if any, and will break the declaration of fire(), will throw the original cause
+                  UncheckedThrow.throwUnchecked(toBeFired);
+               }
+            }
+            else
+            {
+               // a new exception was raised, throw
+               fireException(toBeFired);
+            }
+         }
+      }
+      debug(event, false);
+   }
 
    /**
     * @param extensions
@@ -360,5 +413,41 @@ public class ManagerImpl implements Manager
          }
       }
       return null;
+   }
+   
+   private void debug(Object event, boolean push)
+   {
+      if(DEBUG)
+      {
+         if(eventStack == null)
+         {
+            eventStack = new ThreadLocal<Stack<Object>>() 
+            {
+               @Override
+               protected Stack<Object> initialValue()
+               {
+                  return new Stack<Object>();
+               } 
+            };
+         }
+         if(push)
+         {
+            int size = eventStack.get().size();
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < size; i++)
+            {
+               sb.append("\t");
+            }
+            System.out.println(sb + "-> " + event.getClass().getSimpleName());
+            eventStack.get().push(event);
+         }
+         else
+         {
+            if(!eventStack.get().isEmpty())
+            {
+               eventStack.get().pop();
+            }
+         }
+      }
    }
 }

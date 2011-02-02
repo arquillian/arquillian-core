@@ -21,18 +21,23 @@ import java.io.File;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
-import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.spi.client.test.TargetDescription;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
-import org.junit.Ignore;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  * Verify the behavior of the ArchiveDeploymentExporter 
@@ -40,71 +45,86 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Ignore // not working
 @RunWith(MockitoJUnitRunner.class)
 public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
 {
+   private static final String TARGET_NAME = "test.jar";
+
    private static final String ARCHIVE_NAME = "test.jar";
+
    private static final String EXPORT_PATH = "target/";
-   
+
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
       builder.extension(ArchiveDeploymentExporter.class);
    }
-   
+
    @Mock
    private DeployableContainer<?> deployableContainer;
-   
-   @Mock 
+
+   @Mock
    private DeploymentDescription deployment;
 
-   @Test 
-   public void shouldHandleNoArchiveInContext() throws Exception 
+   @Before
+   public void createDeployment()
    {
-      fire(new BeforeDeploy(deployableContainer, deployment));
-      
-      fileShouldExist(false);
+      Archive<?> archive = ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass());
+
+      deployment = new DeploymentDescription(ARCHIVE_NAME, archive);
+      deployment.setTarget(new TargetDescription(TARGET_NAME));
+      deployment.setTestableArchive(archive);
    }
 
-   @Test 
-   public void shouldHandleNoConfigurationInContext() throws Exception 
+   @Test
+   public void shouldHandleNoConfigurationInContext() throws Exception
    {
       fire(new BeforeDeploy(deployableContainer, deployment));
-      
+
       fileShouldExist(false);
    }
 
    @Test
-   public void shouldNotExportIfDeploymentExportPathNotSet() throws Exception 
+   public void shouldNotExportIfDeploymentExportPathNotSet() throws Exception
    {
-      //context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass()));
-      bind(ApplicationScoped.class, Configuration.class, new Configuration());
-      
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+
       fire(new BeforeDeploy(deployableContainer, deployment));
-      
+
       fileShouldExist(false);
    }
-   
-   @Test
-   public void shouldBeExportedWhenDeploymentExportPathIsSet() throws Exception 
-   {
-      Configuration configuration = new Configuration();
-      configuration.setDeploymentExportPath(EXPORT_PATH);
 
-      bind(ApplicationScoped.class, Configuration.class, configuration);
+   @Test
+   public void shouldNotExportedIfDeploymentIsNotArchive() throws Exception
+   {
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH));
+
+      deployment = new DeploymentDescription(ARCHIVE_NAME, Descriptors.create(WebAppDescriptor.class));
+      deployment.setTarget(new TargetDescription(TARGET_NAME));
       
       fire(new BeforeDeploy(deployableContainer, deployment));
-      
+
+      fileShouldExist(false);
+   }
+
+   @Test
+   public void shouldBeExportedWhenDeploymentExportPathIsSet() throws Exception
+   {
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH));
+
+      fire(new BeforeDeploy(deployableContainer, deployment));
+
       fileShouldExist(true);
    }
 
-   private void fileShouldExist(boolean bol) 
+   private void fileShouldExist(boolean bol)
    {
-      File file = new File(EXPORT_PATH + getClass().getName() + "_" + ARCHIVE_NAME);
-      
+      File file = new File(EXPORT_PATH + TARGET_NAME + "_" + ARCHIVE_NAME);
+
       Assert.assertEquals("File exists", bol, file.exists());
-      
+
       file.delete();
    }
 }

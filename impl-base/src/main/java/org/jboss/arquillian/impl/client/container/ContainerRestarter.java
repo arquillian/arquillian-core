@@ -16,65 +16,65 @@
  */
 package org.jboss.arquillian.impl.client.container;
 
-import org.jboss.arquillian.spi.Configuration;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
+import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
+import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
+import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.container.AfterStart;
-import org.jboss.arquillian.spi.event.container.AfterStop;
-import org.jboss.arquillian.spi.event.container.BeforeStart;
-import org.jboss.arquillian.spi.event.container.BeforeStop;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 
 /**
- * A Handler for restarting the {@link DeployableContainer} for every X deployments.<br/>
+ * A Handler for restarting the containers for every X test class.<br/>
  * <br/>
  *  <b>Fires:</b><br/>
- *   {@link BeforeStop}<br/>
- *   {@link AfterStop}<br/>
- *   {@link BeforeStart}<br/>
- *   {@link AfterStart}<br/>
+ *   {@link StopManagedContainers}<br/>
+ *   {@link StartManagedContainers}<br/>
  * <br/>
  *  <b>Imports:</b><br/>
- *   {@link DeployableContainer}<br/>
+ *   {@link ArquillianDescriptor}<br/>
  *   
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
- * @see DeployableContainer
  */
 public class ContainerRestarter 
 {
    private int deploymentCount = 0;
    
    @Inject
-   private Instance<DeployableContainer<?>> deployableContainer;
+   private Event<ContainerControlEvent> controlEvent;
    
    @Inject
-   private Instance<Configuration> configuration;
+   private Instance<ArquillianDescriptor> configuration;
 
    public void restart(@Observes BeforeClass event) throws Exception
    {
-//      if(shouldRestart())
-//      {
-//         new ContainerStopper().callback(event);
-//         new ContainerStarter().callback(event);
-//      }
+      if(shouldRestart())
+      {
+         controlEvent.fire(new StopManagedContainers());
+         controlEvent.fire(new StartManagedContainers());
+      }
    }
    
-//   private boolean shouldRestart()
-//   {
-//      Configuration configuration = context.get(Configuration.class); 
-//      int maxDeployments = configuration == null ? -1:configuration.getMaxDeploymentsBeforeRestart();
-//      if(maxDeployments > -1) 
-//      {
-//         if((maxDeployments -1 ) == deploymentCount)
-//         {
-//            deploymentCount = 0;
-//            return true;
-//         }
-//      }
-//      deploymentCount++;
-//      return false;
-//   }
+   private boolean shouldRestart()
+   {
+      ArquillianDescriptor descriptor = configuration.get(); 
+      Integer maxDeployments = descriptor.engine().getMaxDeploymentsBeforeRestart();
+      if(maxDeployments == null)
+      {
+         return false;
+      }
+      if(maxDeployments > -1) 
+      {
+         if((maxDeployments -1 ) == deploymentCount)
+         {
+            deploymentCount = 0;
+            return true;
+         }
+      }
+      deploymentCount++;
+      return false;
+   }
 }

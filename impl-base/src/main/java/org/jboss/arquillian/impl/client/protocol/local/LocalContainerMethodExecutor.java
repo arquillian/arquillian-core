@@ -16,13 +16,13 @@
  */
 package org.jboss.arquillian.impl.client.protocol.local;
 
+import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
-import org.jboss.arquillian.spi.event.container.execution.LocalExecutionEvent;
 
 /**
  * LocalContainerMethodExecutor

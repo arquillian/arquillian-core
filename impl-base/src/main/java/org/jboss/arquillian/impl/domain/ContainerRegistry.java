@@ -58,12 +58,6 @@ public class ContainerRegistry
                   definition.getDependencies().toArray(new String[0]));
             URL[] resolvedURLs = MapObject.convert(builder.resolveAsFiles());
 
-//            System.out.println(definition.getName());
-//            for(URL url : resolvedURLs)
-//            {
-//               System.out.println(url);
-//            }
-            
             containerClassLoader = new FilteredURLClassLoader(resolvedURLs, "org.jboss.(arquillian|shrinkwrap)..*");
          }
          else
@@ -84,10 +78,9 @@ public class ContainerRegistry
       }
    }
 
-   private Container addContainer(Container contianer)
+   public Container getContainer(String name)
    {
-      containers.add(contianer);
-      return contianer;
+      return findMatchingContainer(name);
    }
    
    /**
@@ -105,9 +98,15 @@ public class ContainerRegistry
       {
          return findDefaultContainer();
       }
-      return findMatchingContainer(target);
+      return findMatchingContainer(target.getName());
    }
 
+   private Container addContainer(Container contianer)
+   {
+      containers.add(contianer);
+      return contianer;
+   }
+   
    /**
     * @return
     */
@@ -127,11 +126,11 @@ public class ContainerRegistry
       return null;
    }
 
-   private Container findMatchingContainer(TargetDescription target)
+   private Container findMatchingContainer(String name)
    {
       for(Container container: containers)
       {
-         if(container.getName().equals(target.getName()))
+         if(container.getName().equals(name))
          {
             return container;
          }

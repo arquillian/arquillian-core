@@ -21,12 +21,12 @@ import java.util.Collection;
 
 import org.jboss.arquillian.impl.bootstrap.ConfigurationRegistrar;
 import org.jboss.arquillian.impl.bootstrap.ServiceLoaderRegistrar;
-import org.jboss.arquillian.impl.client.container.ContainerCreator;
-import org.jboss.arquillian.impl.client.container.ContainerDeployer;
+import org.jboss.arquillian.impl.client.ContainerAfterController;
+import org.jboss.arquillian.impl.client.ContainerBeforeController;
+import org.jboss.arquillian.impl.client.container.ContainerDeployController;
+import org.jboss.arquillian.impl.client.container.ContainerLifecycleController;
 import org.jboss.arquillian.impl.client.container.ContainerRegistryCreator;
-import org.jboss.arquillian.impl.client.container.ContainerStarter;
-import org.jboss.arquillian.impl.client.container.ContainerStopper;
-import org.jboss.arquillian.impl.client.container.ContainerUndeployer;
+import org.jboss.arquillian.impl.client.container.DeploymentExceptionHandler;
 import org.jboss.arquillian.impl.client.deployment.ArchiveDeploymentExporter;
 import org.jboss.arquillian.impl.client.deployment.DeploymentGenerator;
 import org.jboss.arquillian.impl.client.protocol.ProtocolRegistryCreator;
@@ -60,25 +60,32 @@ public class ArquillianProfile implements Profile
             // core
             ServiceLoaderRegistrar.class,
             ConfigurationRegistrar.class,
+
+            // container core
             ProtocolRegistryCreator.class,
             ContainerRegistryCreator.class,
-
+            DeploymentExceptionHandler.class,
+            
             // container / deploy / test
-            ContainerCreator.class,
-            ContainerStarter.class,
-            DeploymentGenerator.class,
-            ContainerDeployer.class,
-            ContainerUndeployer.class,
+            ContainerBeforeController.class,            
+            
+
             ClientTestEnricher.class,
             ClientTestExecuter.class,
             LocalTestExecuter.class,
             RemoteTestExecuter.class,
-            ContainerStopper.class,
             
-            // utils
-            ArchiveDeploymentExporter.class
+            ContainerAfterController.class,
+            
+            // container utils
+            ArchiveDeploymentExporter.class,
 
             // core
+            
+            // container
+            ContainerLifecycleController.class,
+            ContainerDeployController.class,
+            DeploymentGenerator.class
       );
    }
 

@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.api.Expected;
 import org.jboss.arquillian.api.Protocol;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
@@ -120,6 +121,13 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       {
          deployment.setProtocol(protocol);
       }
+      
+      if(deploymentMethod.isAnnotationPresent(Expected.class))
+      {
+         deployment.setExpectedException(deploymentMethod.getAnnotation(Expected.class).value());
+         deployment.shouldBeTestable(false); // can't test against failing deployments
+      }
+      
       return deployment;
    }
 

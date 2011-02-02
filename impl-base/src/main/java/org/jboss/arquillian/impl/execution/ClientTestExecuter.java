@@ -22,6 +22,8 @@ import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
 import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
+import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
+import org.jboss.arquillian.impl.execution.event.RemoteExecutionEvent;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.test.DeploymentTargetDescription;
@@ -29,8 +31,6 @@ import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.container.execution.RemoteExecutionEvent;
-import org.jboss.arquillian.spi.event.container.execution.LocalExecutionEvent;
 import org.jboss.arquillian.spi.event.suite.Test;
 
 /**
@@ -86,7 +86,6 @@ public class ClientTestExecuter
 
          try
          {
-            // TODO: split up local vs remote execution in two handlers, fire a new set of events LocalExecute RemoteExecute
             deploymentContext.activate(deployment);
             if(scenario.getRunMode() == RunModeType.AS_CLIENT) // TODO: DeploymentScenario should not depend on RunModeType API
             {

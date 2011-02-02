@@ -89,7 +89,7 @@ public class ClientTestEnricher
          {
             deploymentContext.activate(deployment);
 
-            Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
+            Collection<TestEnricher> testEnrichers = serviceLoader.get().all(container.getClassLoader(), TestEnricher.class);
             for(TestEnricher enricher : testEnrichers) 
             {
                injector.get().inject(enricher);

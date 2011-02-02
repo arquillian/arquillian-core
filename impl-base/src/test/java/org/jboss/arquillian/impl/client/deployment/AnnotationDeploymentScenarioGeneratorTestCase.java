@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl.client.deployment;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.api.Expected;
 import org.jboss.arquillian.api.Protocol;
 import org.jboss.arquillian.api.Target;
 import org.jboss.arquillian.spi.TestClass;
@@ -95,7 +96,8 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertEquals(false, deploymentOne.deployOnStartup());
       Assert.assertEquals(false, deploymentOne.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
-
+      Assert.assertNull(deploymentOne.getExpectedException());
+      
       DeploymentDescription deploymentTwo = scenario.getDeployments().get(1);
 
       Assert.assertEquals(
@@ -111,7 +113,24 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertEquals(false, deploymentTwo.deployOnStartup());
       Assert.assertEquals(true, deploymentTwo.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentTwo.getArchive()));
+      Assert.assertNull(deploymentTwo.getExpectedException());
+   }
+   
+   @Test
+   public void shouldReadExpectedAndOverrideDeployment()
+   {
+      DeploymentScenario scenario = new AnnotationDeploymentScenarioGenerator().generate(new TestClass(ExpectedDeploymentExceptionSet.class));
+      
+      Assert.assertNotNull(scenario);
+      Assert.assertEquals(
+            "Verify all deployments were found",
+            1, scenario.getDeployments().size());
+      
+      DeploymentDescription deploymentOne = scenario.getDeployments().get(0);
 
+      Assert.assertEquals(false, deploymentOne.testable());
+      Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
+      Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -170,7 +189,18 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
          return ShrinkWrap.create(JavaArchive.class);
       }
    }
-   
+
+   @SuppressWarnings("unused")
+   private static class ExpectedDeploymentExceptionSet 
+   {
+      @Deployment(name = "second", testable = true) // testable should be overwritten by @Expected
+      @Expected(Exception.class)
+      public static Archive<?> deploymentOne()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+
    private static class DeploymentNotPresent
    {
    }

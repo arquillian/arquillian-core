@@ -120,6 +120,23 @@ public class ContainerRegistryTestCase
             "Verify that the specific registered container is returned",
             name, container.getName());
    }
+   
+   @Test
+   public void shouldBeAbleToGetContainerByName() throws Exception
+   {
+      String name = "some-name";
+
+      ContainerRegistry registry = new ContainerRegistry();
+      registry.create(new ContainerDefImpl().setContainerName("other-name"), serviceLoader);
+      registry.create(new ContainerDefImpl().setContainerName(name), serviceLoader);
+      
+      Container container = registry.getContainer(name);
+
+      Assert.assertEquals(
+            "Verify that the specific registered container is returned",
+            name, container.getName());
+      
+   }
 
    public static class DummyContainerConfiguration implements ContainerConfiguration
    {

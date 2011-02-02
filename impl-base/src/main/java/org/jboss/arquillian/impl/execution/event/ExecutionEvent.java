@@ -14,27 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.execution;
+package org.jboss.arquillian.impl.execution.event;
 
-import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
-import org.jboss.arquillian.spi.core.Event;
-import org.jboss.arquillian.spi.core.annotation.Inject;
-import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.Test;
+import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.event.Event;
 
 /**
- * TestExecutor for running in container.
+ * ExecutionEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerTestExecuter
+public interface ExecutionEvent extends Event
 {
-   @Inject
-   private Event<LocalExecutionEvent> localEvent;
+
+   TestMethodExecutor getExecutor();
    
-   public void execute(@Observes Test event) throws Exception
-   {
-      localEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
-   }
 }

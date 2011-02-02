@@ -41,6 +41,8 @@ public class DeploymentDescription
    private Descriptor descriptor;
    
    private Archive<?> testableArchive;
+   
+   private Class<? extends Exception> expectedException;
 
    public DeploymentDescription(String name, Archive<?> archive)
    {
@@ -173,9 +175,27 @@ public class DeploymentDescription
    /**
     * @param testableArchive the testableArchive to set
     */
-   public void setTestableArchive(Archive<?> testableArchive)
+   public DeploymentDescription setTestableArchive(Archive<?> testableArchive)
    {
       this.testableArchive = testableArchive;
+      return this;
+   }
+
+   /**
+    * @return the expectedException
+    */
+   public Class<? extends Exception> getExpectedException()
+   {
+      return expectedException;
+   }
+   
+   /**
+    * @param expectedException the expectedException to set
+    */
+   public DeploymentDescription setExpectedException(Class<? extends Exception> expectedException)
+   {
+      this.expectedException = expectedException;
+      return this;
    }
    
    //-------------------------------------------------------------------------------------||

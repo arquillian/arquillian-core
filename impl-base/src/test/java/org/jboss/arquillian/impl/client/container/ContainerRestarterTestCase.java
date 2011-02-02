@@ -17,8 +17,13 @@
 package org.jboss.arquillian.impl.client.container;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
+import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
+import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
-import org.junit.Ignore;
+import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
+import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -30,77 +35,46 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerRestarterTestCase extends AbstractManagerTestBase
 {
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-    builder.extension(ContainerDeployer.class);
+      builder.extension(ContainerRestarter.class);
    }
 
    @Test
    public void shouldRestartContainerForEveryX() throws Exception 
    {
-      /*
-      Configuration configuration = new Configuration();
-      configuration.setMaxDeploymentsBeforeRestart(5);
-      
-      ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
-      context.add(Configuration.class, configuration);
-      context.add(DeployableContainer.class, container);
-      context.register(BeforeStart.class, eventHandler);
-      context.register(AfterStart.class, eventHandler);
-      context.register(BeforeStop.class, eventHandler);
-      context.register(AfterStop.class, eventHandler);
-      
-      ContainerRestarter handler = new ContainerRestarter();
+      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+            .engine().maxDeploymentsBeforeRestart(5);
+
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
       
       for(int i = 0; i < 10; i++)
       {
-         handler.callback(context, new SuiteEvent());
+         fire(new BeforeClass(getClass()));
       }
-      
-      // verify that the container was restarted twice
-      Mockito.verify(container, Mockito.times(2)).stop(context);
-      Mockito.verify(container, Mockito.times(2)).start(context);
-      
-      // verify that all the events where fired (2 times restart * 4(2 start + 2 stop))
-      Mockito.verify(eventHandler, Mockito.times(8)).callback(
-            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
-      */
+
+      assertEventFired(StartManagedContainers.class, 2);
+      assertEventFired(StopManagedContainers.class, 2);
    }
    
    @Test
    public void shouldNotForceRestartIfMaxDeploymentsNotSet() throws Exception
    {
-      /*
-      Configuration configuration = new Configuration();
-      configuration.setMaxDeploymentsBeforeRestart(-1);
-      
-      ClassContext context = new ClassContext(new SuiteContext(serviceLoader));
-      context.add(Configuration.class, configuration);
-      context.add(DeployableContainer.class, container);
-      context.register(BeforeStart.class, eventHandler);
-      context.register(AfterStart.class, eventHandler);
-      context.register(BeforeStop.class, eventHandler);
-      context.register(AfterStop.class, eventHandler);
-      
-      ContainerRestarter handler = new ContainerRestarter();
+      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+            .engine();
+
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
       
       for(int i = 0; i < 10; i++)
       {
-         handler.callback(context, new SuiteEvent());
+         fire(new BeforeClass(getClass()));
       }
-      
-      // verify that the container was restarted twice
-      Mockito.verify(container, Mockito.times(0)).stop(context);
-      Mockito.verify(container, Mockito.times(0)).start(context);
-      
-      // verify that all the events where fired (2 times restart * 4(2 start + 2 stop))
-      Mockito.verify(eventHandler, Mockito.times(0)).callback(
-            Mockito.any(SuiteContext.class), Mockito.any(ContainerEvent.class));
-      */
+
+      assertEventFired(StartManagedContainers.class, 0);
+      assertEventFired(StopManagedContainers.class, 0);
    }
 }

@@ -17,7 +17,7 @@
 package org.jboss.arquillian.impl;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,11 +166,6 @@ public abstract class AbstractManagerTestBase
 
       public void register(@Observes Object event)
       {
-         if(event instanceof Throwable)
-         {
-            // we are listening to Object which is not really a good thing, so throw exceptions if found.
-            UncheckedThrow.throwUnchecked((Throwable)event);
-         }
          if(register.get() == null)
          {
             register.set(new EventRegister());
@@ -186,6 +181,12 @@ public abstract class AbstractManagerTestBase
                   .add(TestContext.class, testContext.get().isActive())
                   .add(ContainerContext.class, containerContext.get().isActive())
                   .add(DeploymentContext.class, deploymentContext.get().isActive()));
+
+         if(event instanceof Throwable)
+         {
+            // we are listening to Object which is not really a good thing, so throw exceptions if found.
+            UncheckedThrow.throwUnchecked((Throwable)event);
+         }
       }
    }
  
@@ -202,7 +203,9 @@ public abstract class AbstractManagerTestBase
       {
          if(events.get(type) == null)
          {
-            events.put(type, Arrays.asList(recording));
+            List<EventRecording> recordings = new ArrayList<EventRecording>();
+            recordings.add(recording);
+            events.put(type, recordings);
          }
          else
          {

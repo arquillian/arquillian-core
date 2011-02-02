@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.ThreadContext;
+import org.jboss.arquillian.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.impl.domain.ProtocolDefinition;
@@ -44,7 +45,6 @@ import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ClassScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.container.ClassContainer;
 
@@ -68,7 +68,7 @@ public class DeploymentGenerator
    @Inject
    private Instance<ProtocolRegistry> protocolRegistry;
 
-   public void generateDeployment(@Observes BeforeClass event)
+   public void generateDeployment(@Observes GenerateDeployment event)
    {
       DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
             DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
