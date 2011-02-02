@@ -6,12 +6,12 @@
     
     <element name="arquillian">
     	<complexType>
-	    	<sequence>
+	    	<choice minOccurs="1" maxOccurs="unbounded">
 	    		<element ref="tns:engine" minOccurs="0" maxOccurs="1" />
 	    		<element ref="tns:defaultProtocol" minOccurs="0" maxOccurs="1" />
 	    		<element ref="tns:container" minOccurs="0" maxOccurs="unbounded" />
 	    		<element ref="tns:group" minOccurs="0" maxOccurs="unbounded"/>
-	    	</sequence>
+	    	</choice>
     	</complexType>
 		<unique name="unique-qualifier-container-group">
 			<annotation>
@@ -26,9 +26,9 @@
 
 	<element name="engine">
 		<complexType>
-			<sequence minOccurs="0" maxOccurs="unbounded">
+			<choice minOccurs="0" maxOccurs="unbounded">
 				<element ref="tns:property" />
-			</sequence>		
+			</choice>		
     	</complexType>
 	</element>
 	
@@ -49,11 +49,11 @@
 	
     <element name="container">
 	    <complexType>
-	    	<sequence minOccurs="1" maxOccurs="1">
+	    	<choice minOccurs="1" maxOccurs="unbounded">
 	    		<element ref="tns:configuration" minOccurs="0" maxOccurs="1" />
 	    		<element ref="tns:dependencies" minOccurs="0" maxOccurs="1"  />
 	    		<element ref="tns:protocol" minOccurs="0" maxOccurs="unbounded" />
-	    	</sequence>
+	    	</choice>
 	    	<attribute name="qualifier" type="string" use="optional" />
 	    	<attribute name="default" type="boolean" use="optional" default="false"/>
 	    </complexType>
@@ -61,9 +61,9 @@
 	
 	<element name="defaultProtocol">
 		<complexType>
-			<sequence minOccurs="0" maxOccurs="unbounded">
+			<choice minOccurs="0" maxOccurs="unbounded">
 				<element ref="tns:property" />
-			</sequence>		
+			</choice>		
 			<attribute name="type" type="string" use="required" />
 		</complexType>
 		<unique name="unique-property-within-protocol">
@@ -79,9 +79,9 @@
 	
 	<element name="protocol">
 		<complexType>
-			<sequence minOccurs="1" maxOccurs="unbounded">
+			<choice minOccurs="1" maxOccurs="unbounded">
 				<element ref="tns:property"/>
-			</sequence>		
+			</choice>		
 			<attribute name="type" type="string" use="required" />
 		</complexType>
 		<unique name="unique-property-within-default-protocol">
@@ -97,9 +97,9 @@
 	
 	<element name="configuration">
 		<complexType>
-			<sequence minOccurs="1" maxOccurs="unbounded">
+			<choice minOccurs="1" maxOccurs="unbounded">
 				<element ref="tns:property"/>
-			</sequence>
+			</choice>
 		</complexType>
 		<unique name="unique-property-within-configuration">
 			<annotation>
@@ -114,9 +114,9 @@
 	
 	<element name="dependencies">
 		<complexType>
-			<sequence minOccurs="1" maxOccurs="unbounded">
+			<choice minOccurs="1" maxOccurs="unbounded">
 				<element ref="tns:dependency" />
-			</sequence>
+			</choice>
 		</complexType>
 		<unique name="unique-dependency-within-container">
 			<annotation>
