@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
+import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.osgi.spi.util.BundleInfo;
 import org.jboss.osgi.vfs.AbstractVFS;
 import org.jboss.osgi.vfs.VirtualFile;
@@ -36,7 +37,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  */
 public class OSGiDeploymentPackager implements DeploymentPackager
 {
-   public Archive<?> generateDeployment(TestDeployment testDeployment)
+   public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors)
    {
       Archive<?> bundleArchive = testDeployment.getApplicationArchive();
       if(JavaArchive.class.isInstance(bundleArchive))

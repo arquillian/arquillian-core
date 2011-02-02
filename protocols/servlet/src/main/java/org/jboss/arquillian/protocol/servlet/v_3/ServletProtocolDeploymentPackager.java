@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.jboss.arquillian.protocol.servlet.Processor;
 import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
+import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -48,33 +50,35 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
     */
-   public Archive<?> generateDeployment(TestDeployment testDeployment)
+   public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors)
    {
       JavaArchive protocol = new ProtocolDeploymentAppender().createAuxiliaryArchive();
       
       Archive<?> applicationArchive = testDeployment.getApplicationArchive();
       Collection<Archive<?>> auxiliaryArchives = testDeployment.getAuxiliaryArchives();
       
+      Processor processor = new Processor(testDeployment, processors);
+      
       if(EnterpriseArchive.class.isInstance(applicationArchive))
       {
-         return handleArchive(EnterpriseArchive.class.cast(applicationArchive), auxiliaryArchives, protocol);
+         return handleArchive(EnterpriseArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor);
       } 
 
       if(WebArchive.class.isInstance(applicationArchive))
       {
-         return handleArchive(WebArchive.class.cast(applicationArchive), auxiliaryArchives, protocol);
+         return handleArchive(WebArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor);
       } 
 
       if(JavaArchive.class.isInstance(applicationArchive))
       {
-         return handleArchive(JavaArchive.class.cast(applicationArchive), auxiliaryArchives, protocol);
+         return handleArchive(JavaArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor);
       }
 
       throw new IllegalArgumentException(ServletProtocolDeploymentPackager.class.getName()  + 
             " can not handle archive of type " +  applicationArchive.getClass().getName());
    }
 
-   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol) 
+   private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
    {
       applicationArchive
                   .addLibraries(
@@ -85,19 +89,21 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       {
          applicationArchive.addLibrary(protocol);
       }
+      processor.process(applicationArchive);
       return applicationArchive;
    }
 
-   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol) 
+   private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
    {
       return handleArchive(
             ShrinkWrap.create(WebArchive.class, "test.war")
                .addLibrary(applicationArchive),
             auxiliaryArchives, 
-            protocol);
+            protocol,
+            processor);
    }
 
-   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol) 
+   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
    {
       Map<ArchivePath, Node> applicationArchiveWars = applicationArchive.getContent(Filters.include(".*\\.war"));
       if(applicationArchiveWars.size() == 1)
@@ -110,7 +116,8 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
             handleArchive(
                   warArchiveAsset.getArchive().as(WebArchive.class), 
                   new ArrayList<Archive<?>>(), // reuse the War handling, but Auxiliary Archives should be added to the EAR, not the WAR 
-                  protocol);
+                  protocol,
+                  processor);
          }
       }
       else if(applicationArchiveWars.size() > 1)
@@ -121,7 +128,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       else
       {
          // reuse handle(JavaArchive, ..) logic
-         Archive<?> wrappedWar = handleArchive(protocol, new ArrayList<Archive<?>>(), null);
+         Archive<?> wrappedWar = handleArchive(protocol, new ArrayList<Archive<?>>(), null, processor);
          applicationArchive
                .addModule(wrappedWar);
          

@@ -23,6 +23,7 @@ import java.util.List;
 import org.jboss.arquillian.protocol.servlet.TestUtil;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.spi.TestDeployment;
+import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -51,7 +52,8 @@ public class ServletProtocolDeploymentPackagerTestCase
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
                   ShrinkWrap.create(JavaArchive.class, "applicationArchive.jar"), 
-                  createAuxiliaryArchives()));
+                  createAuxiliaryArchives()),
+            processors());
       
       Assert.assertTrue(
             "Verify that a defined JavaArchive using EE6 JavaArchive protocol is build as WebArchive",
@@ -68,6 +70,10 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "Verify that the applicationArchive is placed in /WEB-INF/lib",
             archive.contains(ArchivePaths.create("/WEB-INF/lib/applicationArchive.jar")));
+
+      Assert.assertTrue(
+            "Verify protocol Processor SPI was called",
+            DummyProcessor.wasCalled);
    }
 
    @Test
@@ -76,7 +82,8 @@ public class ServletProtocolDeploymentPackagerTestCase
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
                   ShrinkWrap.create(WebArchive.class, "applicationArchive.war"), 
-                  createAuxiliaryArchives()));
+                  createAuxiliaryArchives()),
+            processors());
       
       Assert.assertTrue(
             "Verify that a defined WebArchive using EE6 JavaArchive protocol is build as WebArchive",
@@ -93,6 +100,10 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
             archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive2.jar")));
+   
+      Assert.assertTrue(
+            "Verify protocol Processor SPI was called",
+            DummyProcessor.wasCalled);
    }
 
    @Test
@@ -101,7 +112,8 @@ public class ServletProtocolDeploymentPackagerTestCase
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear"), 
-                  createAuxiliaryArchives()));
+                  createAuxiliaryArchives()),
+            processors());
       
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /",
@@ -114,6 +126,10 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
             archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
+
+      Assert.assertTrue(
+            "Verify protocol Processor SPI was called",
+            DummyProcessor.wasCalled);
    }
 
    @Test
@@ -123,7 +139,8 @@ public class ServletProtocolDeploymentPackagerTestCase
             new TestDeployment(
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                      .setApplicationXML(createApplicationDescriptor()), 
-                  createAuxiliaryArchives()));
+                  createAuxiliaryArchives()),
+            processors());
 
       Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /",
@@ -141,6 +158,10 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "verify that the arquillian-protocol.war was added to the application.xml",
             applicationXmlContent.contains("test.war"));
+
+      Assert.assertTrue(
+            "Verify protocol Processor SPI was called",
+            DummyProcessor.wasCalled);
    }
 
    @Test
@@ -152,7 +173,8 @@ public class ServletProtocolDeploymentPackagerTestCase
             new TestDeployment(
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                      .addModule(applicationWar), 
-                  createAuxiliaryArchives()));
+                  createAuxiliaryArchives()),
+            processors());
 
       Assert.assertFalse(
             "Verify that the auxiliaryArchives was not added",
@@ -171,6 +193,10 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "verify that the ServletTestRunner servlet was added to the web.xml of the existing web archive",
             webXmlContent.contains(ServletTestRunner.class.getName()));
+
+      Assert.assertTrue(
+            "Verify protocol Processor SPI was called",
+            DummyProcessor.wasCalled);
    }
 
 
@@ -178,7 +204,8 @@ public class ServletProtocolDeploymentPackagerTestCase
    public void shouldThrowExceptionOnUnknownArchiveType() throws Exception
    {
       new ServletProtocolDeploymentPackager().generateDeployment(
-            new TestDeployment(ShrinkWrap.create(ResourceAdapterArchive.class), new ArrayList<Archive<?>>())
+            new TestDeployment(ShrinkWrap.create(ResourceAdapterArchive.class), new ArrayList<Archive<?>>()),
+            processors()
       );
    }
    
@@ -190,7 +217,8 @@ public class ServletProtocolDeploymentPackagerTestCase
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                      .addModule(ShrinkWrap.create(WebArchive.class))
                      .addModule(ShrinkWrap.create(WebArchive.class)), 
-                  createAuxiliaryArchives()));
+                  createAuxiliaryArchives()),
+            processors());
    }
 
    private Collection<Archive<?>> createAuxiliaryArchives() 
@@ -209,5 +237,28 @@ public class ServletProtocolDeploymentPackagerTestCase
                .version("6")
                .ejbModule("test.jar")
                .exportAsString());
+   }
+
+   private Collection<ProtocolArchiveProcessor> processors()
+   {
+      List<ProtocolArchiveProcessor> pros = new ArrayList<ProtocolArchiveProcessor>();
+      pros.add(new DummyProcessor());
+      return pros;
+   }
+
+   private static class DummyProcessor implements ProtocolArchiveProcessor
+   {
+      public static boolean wasCalled = false;
+      
+      public DummyProcessor()
+      {
+         wasCalled = false;
+      }
+      
+      @Override
+      public void process(TestDeployment testDeployment, Archive<?> protocolArchive)
+      {
+         wasCalled = true;
+      }
    }
 }

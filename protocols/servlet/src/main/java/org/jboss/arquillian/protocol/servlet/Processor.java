@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,29 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.client.protocol.local;
+package org.jboss.arquillian.protocol.servlet;
 
 import java.util.Collection;
 
 import org.jboss.arquillian.spi.TestDeployment;
-import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * LocalDeploymentPackager
+ * Processor
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalDeploymentPackager implements DeploymentPackager
+public class Processor 
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
-    */
-   public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors)
+   private TestDeployment deployment;
+   private Collection<ProtocolArchiveProcessor> processors;
+   
+   public Processor(TestDeployment deployment, Collection<ProtocolArchiveProcessor> processors)
    {
-      return testDeployment.getApplicationArchive();
+      this.deployment = deployment;
+      this.processors = processors;
    }
-
+   
+   public void process(Archive<?> protocol)
+   {
+      for(ProtocolArchiveProcessor processor : processors)
+      {
+         processor.process(deployment, protocol);
+      }
+   }
 }

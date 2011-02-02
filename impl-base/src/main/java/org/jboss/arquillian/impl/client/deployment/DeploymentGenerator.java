@@ -37,6 +37,7 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenarioGenerator;
+import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
@@ -171,10 +172,12 @@ public class DeploymentGenerator
              * ContianerBase implements it. Check the Archive Interface..  
              */
          }
+         ClassLoader classLoader = containerRegistry.get().getContainer(deployment.getTarget()).getClassLoader();
          
          deployment.setTestableArchive(
                packager.generateDeployment(
-                     new TestDeployment(applicationArchive, auxiliaryArchives)));
+                     new TestDeployment(applicationArchive, auxiliaryArchives),
+                     serviceLoader.get().all(classLoader, ProtocolArchiveProcessor.class)));
       }
    }
 
