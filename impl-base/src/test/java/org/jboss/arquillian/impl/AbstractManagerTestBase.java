@@ -59,7 +59,7 @@ public abstract class AbstractManagerTestBase
    private ManagerImpl manager;
       
    @Before
-   public void create() 
+   public final void create() 
    {
       ManagerBuilder builder = ManagerBuilder.from();
       addContexts(builder);
@@ -72,7 +72,7 @@ public abstract class AbstractManagerTestBase
    }
    
    @After
-   public void destory()
+   public final void destory()
    {
       manager.shutdown();
    }
@@ -86,24 +86,24 @@ public abstract class AbstractManagerTestBase
    // Assertions and Helper operations ----------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   public void fire(Object event)
+   public final void fire(Object event)
    {
       manager.fire(event);
    }
    
-   public <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance)
+   public final <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance)
    {
       manager.bind(scope, type, instance);
    }
 
-   public void assertEventFired(Class<?> type)
+   public final void assertEventFired(Class<?> type)
    {
       Assert.assertNotNull(
             "Event " + type.getName() + " should have been fired", 
             manager.resolve(EventRegister.class).getCount(type));
    }
 
-   public void assertEventFired(Class<?> type, Integer count)
+   public final void assertEventFired(Class<?> type, Integer count)
    {
       Assert.assertEquals(
             "Event " + type.getName() + " should have been fired " + count + " times",
@@ -111,7 +111,7 @@ public abstract class AbstractManagerTestBase
             manager.resolve(EventRegister.class).getCount(type));
    }
 
-   public void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext)
+   public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext)
    {
          Assert.assertTrue(
                "Event " + type.getName() + " should have been fired within context " + activeContext.getName(),
