@@ -21,6 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
  * DeploymentTarget
@@ -30,7 +31,7 @@ import java.lang.annotation.Retention;
  */
 @Documented
 @Retention(RUNTIME)
-@java.lang.annotation.Target(ElementType.METHOD)
+@Target(ElementType.METHOD)
 public @interface DeploymentTarget
 {
    String value();
