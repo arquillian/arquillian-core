@@ -24,6 +24,7 @@ import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
+import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.junit.Assert;
@@ -157,7 +158,7 @@ public class ExtensionParseTestCase
    {
       private boolean methodOneWasCalled = false;
 
-      @Inject
+      @Inject @ApplicationScoped
       private InstanceProducer<Object> object;
       
       @SuppressWarnings("unused")

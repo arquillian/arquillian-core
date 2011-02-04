@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.impl.core.spi;
 
+import java.lang.reflect.Method;
+
 
 /**
  * Observer
@@ -23,7 +25,9 @@ package org.jboss.arquillian.impl.core.spi;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ObserverMethod extends Typed
+public interface ObserverMethod extends Typed, Comparable<ObserverMethod>
 {
    void invoke(Object object) throws InvocationException;
+   
+   Method getMethod();
 }

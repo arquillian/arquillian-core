@@ -16,11 +16,13 @@
  */
 package org.jboss.arquillian.impl.core;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.core.spi.InvocationException;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
+import org.jboss.arquillian.spi.core.annotation.Observes;
 
 /**
  * ObjectObserver
@@ -28,7 +30,7 @@ import org.jboss.arquillian.impl.core.spi.ObserverMethod;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ObserverImpl implements ObserverMethod
+public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
 {
    private Object target;
    private Method method;
@@ -61,6 +63,15 @@ public class ObserverImpl implements ObserverMethod
       return method.getParameterTypes()[0];
    }
 
+   /**
+    * @return the method
+    */
+   @Override
+   public Method getMethod()
+   {
+      return method;
+   }
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.api.ObserverMethod#invoke(java.lang.Object)
     */
@@ -81,4 +92,33 @@ public class ObserverImpl implements ObserverMethod
       }
    }
 
+   /* (non-Javadoc)
+    * @see java.lang.Comparable#compareTo(java.lang.Object)
+    */
+   @Override
+   public int compareTo(ObserverMethod o)
+   {
+      if(o == null)
+      {
+         return 1;
+      }
+      Integer a = getPresedence(getMethod());
+      Integer b = getPresedence(o.getMethod());
+      return b.compareTo(a);
+   }
+   
+   private Integer getPresedence(Method method)
+   {
+      for(Annotation[] annotations : method.getParameterAnnotations())
+      {
+         for(Annotation annotation : annotations)
+         {
+            if(annotation.annotationType() == Observes.class)
+            {
+               return ((Observes)annotation).precedence();
+            }
+         }
+      }
+      return 0;
+   }
 }

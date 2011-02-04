@@ -43,6 +43,10 @@ final class Reflections
    public static List<Method> getObserverMethods(Class<?> clazz)
    {
       List<Method> observerMethods = new ArrayList<Method>();
+      if(clazz == null)
+      {
+         return observerMethods;
+      }
       for(Method method : clazz.getMethods())
       {
          if(isObserverMethod(method))
@@ -50,6 +54,7 @@ final class Reflections
             observerMethods.add(method);
          }
       }
+      observerMethods.addAll(getObserverMethods(clazz.getSuperclass()));
       return observerMethods;
    }
 
@@ -60,6 +65,10 @@ final class Reflections
    public static List<Field> getFieldInjectionPoints(Class<?> clazz)
    {
       List<Field> injectionPoints = new ArrayList<Field>();
+      if(clazz == null)
+      {
+         return injectionPoints;
+      }
       for(Field field : clazz.getDeclaredFields())
       {
          if(isInjectionPoint(field))
@@ -67,6 +76,7 @@ final class Reflections
             injectionPoints.add(field);
          }
       }
+      injectionPoints.addAll(getFieldInjectionPoints(clazz.getSuperclass()));
       return injectionPoints;
    }
 
@@ -77,6 +87,10 @@ final class Reflections
    public static List<Field> getEventPoints(Class<?> clazz)
    {
       List<Field> eventPoints = new ArrayList<Field>();
+      if(clazz == null)
+      {
+         return eventPoints;
+      }
       for(Field field : clazz.getDeclaredFields())
       {
          if(isEventPoint(field))
@@ -84,6 +98,7 @@ final class Reflections
             eventPoints.add(field);
          }
       }
+      eventPoints.addAll(getEventPoints(clazz.getSuperclass()));
       return eventPoints;
    }
 
@@ -129,7 +144,26 @@ final class Reflections
     */
    private static boolean isInjectionPoint(Field field)
    {
-      return field.isAnnotationPresent(Inject.class) && (field.getType() == Instance.class || field.getType() == InstanceProducer.class);
+      if(field.isAnnotationPresent(Inject.class))
+      {
+         if(field.getType() == Instance.class)
+         {
+            return true;
+         }
+         if(field.getType() == InstanceProducer.class)
+         {
+            if(Reflections.getScope(field) != null)
+            {
+               return true;
+            }
+            else
+            {
+               // TODO: join extension validation points.
+               throw new RuntimeException("A InjectionPoint of type " + InstanceProducer.class.getName() + " must define a " + Scope.class.getName() + " annotation, bad definition for field: " + field);
+            }
+         }
+      }
+      return false;
    }
 
    /**

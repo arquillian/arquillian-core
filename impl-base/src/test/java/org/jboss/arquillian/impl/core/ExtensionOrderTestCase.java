@@ -31,12 +31,13 @@ import org.junit.Test;
 
 
 /**
- * ExtensionOrderTestCase
+ * Tests the execution order of Observers of same type
+ * 
+ * TODO: this should be implemented looking at Producers and Consumers, but currently a simple precedence is used.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Ignore // Ordering not implemented
 public class ExtensionOrderTestCase
 {
    private static List<String> callOrder = new ArrayList<String>();
@@ -45,7 +46,7 @@ public class ExtensionOrderTestCase
    public void shouldExecuteProducersOnSameEventBeforeConsumers() throws Exception
    {
       Manager manager = ManagerBuilder.from()
-                  .extensions(ConsumerOne.class, ProducerOne.class).create();
+                  .extensions(ConsumerOne.class, ProducerOne.class, ProducerTwo.class).create();
       
       manager.fire("test");
       
@@ -59,7 +60,7 @@ public class ExtensionOrderTestCase
       @Inject @ApplicationScoped
       private InstanceProducer<ValueOne> value;
       
-      public void exec(@Observes String ba) 
+      public void exec(@Observes(precedence = 20) String ba) 
       { 
          callOrder.add(this.getClass().getSimpleName());
          value.set(new ValueOne());
@@ -71,7 +72,7 @@ public class ExtensionOrderTestCase
       @Inject @ApplicationScoped
       private InstanceProducer<ValueTwo> value;
       
-      public void exec(@Observes String ba) 
+      public void exec(@Observes(precedence = 10) String ba) 
       { 
          callOrder.add(this.getClass().getSimpleName());
          value.set(new ValueTwo());

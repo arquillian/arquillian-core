@@ -18,6 +18,7 @@ package org.jboss.arquillian.impl.core;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -359,6 +360,7 @@ public class ManagerImpl implements Manager
             }
          }
       }
+      Collections.sort(observers);
       return observers;
    }
 
