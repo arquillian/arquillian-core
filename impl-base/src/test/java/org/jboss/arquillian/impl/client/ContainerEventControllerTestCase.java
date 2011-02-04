@@ -25,7 +25,10 @@ import org.jboss.arquillian.impl.client.container.event.SetupContainers;
 import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.UnDeployManagedDeployments;
+import org.jboss.arquillian.impl.client.event.ActivateContainerDeploymentContext;
+import org.jboss.arquillian.impl.client.event.DeActivateContainerDeploymentContext;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.spi.event.suite.Before;
@@ -39,12 +42,12 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerBeforeAfterControllerTestCase extends AbstractManagerTestBase
+public class ContainerEventControllerTestCase extends AbstractManagerTestBase
 {
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extensions(ContainerBeforeController.class, ContainerAfterController.class);
+      builder.extensions(ContainerEventController.class);
    }
    
    @Test
@@ -81,6 +84,22 @@ public class ContainerBeforeAfterControllerTestCase extends AbstractManagerTestB
    }
 
    @Test
+   public void shouldActiveDeploymentContext() throws Exception
+   {
+      fire(new Before(this, testMethod()));
+      
+      assertEventFired(ActivateContainerDeploymentContext.class, 1);
+   }
+   
+   @Test
+   public void shouldDeActiveDeploymentContext() throws Exception
+   {
+      fire(new After(this, testMethod()));
+      
+      assertEventFired(DeActivateContainerDeploymentContext.class, 1);
+   }
+
+   @Test
    public void shouldEnrichTestInstance() throws Exception
    {
       fire(new Before(testClass(), testMethod()));
@@ -90,11 +109,11 @@ public class ContainerBeforeAfterControllerTestCase extends AbstractManagerTestB
 
    private Class<?> testClass()
    {
-      return ContainerBeforeAfterControllerTestCase.class;
+      return ContainerEventControllerTestCase.class;
    }
    
    private Method testMethod() throws Exception
    {
-      return ContainerBeforeAfterControllerTestCase.class.getDeclaredMethod("testMethod");
+      return ContainerEventControllerTestCase.class.getDeclaredMethod("testMethod");
    }
 }

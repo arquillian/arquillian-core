@@ -31,6 +31,8 @@ import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Injector;
 import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.InstanceProducer;
+import org.jboss.arquillian.spi.core.annotation.ContainerScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.container.AfterSetup;
@@ -111,10 +113,18 @@ public class ContainerLifecycleController
          @Inject
          private Event<ContainerEvent> event;
 
+         @Inject @ContainerScoped
+         private InstanceProducer<Container> containerProducer;
+
          @SuppressWarnings({"rawtypes", "unchecked"})
          @Override
          public void perform(Container container) throws Exception
          {
+            /*
+             * TODO: should the Container producer some how be automatically registered ?
+             * Or should we just 'know' who is the first one to create the context
+             */
+            containerProducer.set(container);  
             DeployableContainer deployable = container.getDeployableContainer();
             injector.get().inject(deployable);
             

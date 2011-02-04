@@ -16,17 +16,11 @@
  */
 package org.jboss.arquillian.impl.execution;
 
-import org.jboss.arquillian.api.DeploymentTarget;
 import org.jboss.arquillian.api.RunModeType;
-import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
-import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
-import org.jboss.arquillian.impl.domain.Container;
-import org.jboss.arquillian.impl.domain.ContainerRegistry;
+import org.jboss.arquillian.impl.execution.event.ExecutionEvent;
 import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.impl.execution.event.RemoteExecutionEvent;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.test.DeploymentTargetDescription;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
@@ -42,68 +36,22 @@ import org.jboss.arquillian.spi.event.suite.Test;
 public class ClientTestExecuter
 {
    @Inject
-   private Instance<ContainerContext> containerContextProvider;
-
-   @Inject
-   private Instance<DeploymentContext> deploymentContextProvider;
-
-   @Inject
-   private Event<LocalExecutionEvent> localExecutionEvent;
+   private Event<ExecutionEvent> executionEvent;
    
-   @Inject
-   private Event<RemoteExecutionEvent> containerExecutionEvent;
-
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
-
    @Inject
    private Instance<DeploymentScenario> deploymentScenario;
 
    public void execute(@Observes Test event) throws Exception
    {
-      ContainerContext containerContext = containerContextProvider.get();
-      DeploymentContext deploymentContext = deploymentContextProvider.get();
-      
-      // TODO : move as a abstract/SPI on TestMethodExecutor
-      DeploymentTargetDescription target = null;
-      if(event.getTestMethod().isAnnotationPresent(DeploymentTarget.class))
+      DeploymentScenario scenario = deploymentScenario.get();
+      // TODO: DeploymentScenario should not depend on RunModeType API, this should be pr Deployment
+      if(scenario.getRunMode() == RunModeType.AS_CLIENT) 
       {
-         target = new DeploymentTargetDescription(event.getTestMethod().getAnnotation(DeploymentTarget.class).value());
+         executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
       }
       else
       {
-         target = DeploymentTargetDescription.DEFAULT;
-      }
-      
-      DeploymentScenario scenario = deploymentScenario.get();
-      
-      try
-      {
-         DeploymentDescription deployment = scenario.getDeployment(target);
-
-         Container container = containerRegistry.get().getContainer(deployment.getTarget());
-         containerContext.activate(container.getName());
-
-         try
-         {
-            deploymentContext.activate(deployment);
-            if(scenario.getRunMode() == RunModeType.AS_CLIENT) // TODO: DeploymentScenario should not depend on RunModeType API
-            {
-               localExecutionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
-            }
-            else
-            {
-               containerExecutionEvent.fire(new RemoteExecutionEvent(event.getTestMethodExecutor()));
-            }
-         }
-         finally
-         {
-            deploymentContext.deactivate();
-         }
-      }
-      finally 
-      {
-         containerContext.deactivate();
+         executionEvent.fire(new RemoteExecutionEvent(event.getTestMethodExecutor()));
       }
    }
 }

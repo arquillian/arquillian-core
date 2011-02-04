@@ -24,6 +24,8 @@ import org.jboss.arquillian.impl.enricher.ContainerTestEnricher;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
+import org.jboss.arquillian.spi.event.enrichment.AfterEnrichment;
+import org.jboss.arquillian.spi.event.enrichment.BeforeEnrichment;
 import org.jboss.arquillian.spi.event.suite.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +40,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestCaseEnricherTestCase extends AbstractManagerTestBase
+public class ContainerTestEnricherTestCase extends AbstractManagerTestBase
 {
    @Mock
    private ServiceLoader serviceLoader;
@@ -61,5 +63,8 @@ public class TestCaseEnricherTestCase extends AbstractManagerTestBase
       fire(new Before(this, getClass().getMethod("shouldCallAllEnrichers")));
       
       Mockito.verify(enricher, Mockito.times(2)).enrich(this);
+   
+      assertEventFired(BeforeEnrichment.class, 1);
+      assertEventFired(AfterEnrichment.class, 1);
    }
 }

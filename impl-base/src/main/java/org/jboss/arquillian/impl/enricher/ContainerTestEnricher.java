@@ -20,10 +20,14 @@ import java.util.Collection;
 
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Injector;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.event.enrichment.AfterEnrichment;
+import org.jboss.arquillian.spi.event.enrichment.BeforeEnrichment;
+import org.jboss.arquillian.spi.event.enrichment.EnrichmentEvent;
 import org.jboss.arquillian.spi.event.suite.Before;
 
 /**
@@ -40,13 +44,20 @@ public class ContainerTestEnricher
    @Inject
    private Instance<Injector> injector;
 
+   @Inject
+   private Event<EnrichmentEvent> enrichmentEvent;
+
    public void enrich(@Observes Before event) throws Exception
    {
+      enrichmentEvent.fire(new BeforeEnrichment());
+
       Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
       for(TestEnricher enricher : testEnrichers) 
       {
          injector.get().inject(enricher);
          enricher.enrich(event.getTestInstance());
       }
+
+      enrichmentEvent.fire(new AfterEnrichment());
    }
 }

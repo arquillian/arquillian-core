@@ -15,35 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.client;
+package org.jboss.arquillian.impl.client.event;
 
-import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
-import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
-import org.jboss.arquillian.impl.client.container.event.UnDeployManagedDeployments;
-import org.jboss.arquillian.spi.core.Event;
-import org.jboss.arquillian.spi.core.annotation.Inject;
-import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.spi.event.suite.TestLifecycleEvent;
 
 /**
- * ContainerDeployController
+ * ActivateContainerDeploymentContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerAfterController
+public class DeActivateContainerDeploymentContext extends ContextActivationEvent
 {
-   @Inject
-   private Event<ContainerControlEvent> containers;
-   
-   public void execute(@Observes AfterSuite event)
+   public DeActivateContainerDeploymentContext(TestLifecycleEvent testLifecycle)
    {
-      containers.fire(new StopManagedContainers());
-   }
-
-   public void execute(@Observes AfterClass event)
-   {
-      containers.fire(new UnDeployManagedDeployments());
-   }
+      super(testLifecycle);
+   } 
 }

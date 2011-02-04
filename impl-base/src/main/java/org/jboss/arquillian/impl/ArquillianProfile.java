@@ -21,8 +21,8 @@ import java.util.Collection;
 
 import org.jboss.arquillian.impl.bootstrap.ConfigurationRegistrar;
 import org.jboss.arquillian.impl.bootstrap.ServiceLoaderRegistrar;
-import org.jboss.arquillian.impl.client.ContainerAfterController;
-import org.jboss.arquillian.impl.client.ContainerBeforeController;
+import org.jboss.arquillian.impl.client.ContainerDeploymentContextHandler;
+import org.jboss.arquillian.impl.client.ContainerEventController;
 import org.jboss.arquillian.impl.client.container.ContainerDeployController;
 import org.jboss.arquillian.impl.client.container.ContainerLifecycleController;
 import org.jboss.arquillian.impl.client.container.ContainerRegistryCreator;
@@ -67,25 +67,18 @@ public class ArquillianProfile implements Profile
             DeploymentExceptionHandler.class,
             
             // container / deploy / test
-            ContainerBeforeController.class,            
-            
-
+            ContainerEventController.class,            
             ClientTestEnricher.class,
             ClientTestExecuter.class,
+            
+            // container - container specific events
             LocalTestExecuter.class,
             RemoteTestExecuter.class,
-            
-            ContainerAfterController.class,
-            
-            // container utils
-            ArchiveDeploymentExporter.class,
-
-            // core
-            
-            // container
             ContainerLifecycleController.class,
             ContainerDeployController.class,
-            DeploymentGenerator.class
+            ContainerDeploymentContextHandler.class,
+            DeploymentGenerator.class,
+            ArchiveDeploymentExporter.class
       );
    }
 

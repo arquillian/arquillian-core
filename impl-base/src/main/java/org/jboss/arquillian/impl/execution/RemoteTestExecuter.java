@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.impl.execution;
 
-import org.jboss.arquillian.api.DeploymentTarget;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.impl.domain.ProtocolDefinition;
@@ -30,7 +29,6 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.spi.client.test.DeploymentTargetDescription;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.Inject;
@@ -56,13 +54,13 @@ import org.jboss.arquillian.spi.core.annotation.TestScoped;
 public class RemoteTestExecuter
 {
    @Inject
-   private Instance<DeploymentScenario> deploymentScenario;
+   private Instance<DeploymentDescription> deployment;
+
+   @Inject
+   private Instance<Container> container;
 
    @Inject
    private Instance<ProtocolRegistry> protocolRegistry;
-
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
 
    @Inject
    private Instance<ProtocolMetaData> protocolMetadata;
@@ -72,23 +70,9 @@ public class RemoteTestExecuter
 
    public void execute(@Observes RemoteExecutionEvent event) throws Exception
    {
-      // TODO : move as a abstract/SPI on TestMethodExecutor
-      DeploymentTargetDescription target = null;
-      if(event.getExecutor().getMethod().isAnnotationPresent(DeploymentTarget.class))
-      {
-         target = new DeploymentTargetDescription(event.getExecutor().getMethod().getAnnotation(DeploymentTarget.class).value());
-      }
-      else
-      {
-         target = DeploymentTargetDescription.DEFAULT;
-      }
+      Container container = this.container.get();
+      DeploymentDescription deployment = this.deployment.get();
       
-      DeploymentScenario scenario = deploymentScenario.get();
-      
-      DeploymentDescription deployment = scenario.getDeployment(target);
-
-      Container container = containerRegistry.get().getContainer(deployment.getTarget());
-
       ProtocolRegistry protoReg = protocolRegistry.get();
 
       // if no default marked or specific protocol defined in the registry, use the DeployableContainers defaultProtocol.
@@ -109,8 +93,16 @@ public class RemoteTestExecuter
       {
          protocolConfiguration = protocol.createProtocolConfiguration();
       }
-      // TODO: cast to raw type to get away from generic issue.. 
-      ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(protocolConfiguration, protocolMetadata.get());
+      ContainerMethodExecutor executor = getContainerMethodExecutor(protocol, protocolConfiguration);
       testResult.set(executor.invoke(event.getExecutor()));
+   }
+
+   // TODO: cast to raw type to get away from generic issue..
+   @SuppressWarnings({"unchecked", "rawtypes"})
+   public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol,
+         ProtocolConfiguration protocolConfiguration)
+   {
+      ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(protocolConfiguration, protocolMetadata.get());
+      return executor;
    }
 }
