@@ -25,7 +25,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Specifies the RunMode a Test should run in.
+ * Specifies the RunMode a Test/TestMethod should run in.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 @Retention(RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Run
 {
    RunModeType value() default RunModeType.IN_CONTAINER;

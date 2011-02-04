@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.ThreadContext;
 import org.jboss.arquillian.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.impl.domain.Container;
@@ -124,10 +123,7 @@ public class DeploymentGenerator
    private void createTestableDeployments(DeploymentScenario scenario, TestClass testCase)
    {
       ProtocolRegistry protoReg = protocolRegistry.get();
-      if(scenario.getRunMode() == RunModeType.IN_CONTAINER)
-      {
-         buildTestableDeployments(scenario, testCase, protoReg);
-      }
+      buildTestableDeployments(scenario, testCase, protoReg);
    }
 
    private void buildTestableDeployments(DeploymentScenario scenario, TestClass testCase, ProtocolRegistry protoReg)

@@ -53,7 +53,7 @@ public class ProtocolRegistryCreator
    {
       Collection<Protocol> protocols = serviceLoader.get().all(Protocol.class); 
 
-      Protocol defaultProtocol = null;
+      Protocol<?> defaultProtocol = null;
       DefaultProtocolDef defaultProtcolDef = event.getDefaultProtocol();
       if(defaultProtcolDef != null)
       {
@@ -65,7 +65,7 @@ public class ProtocolRegistryCreator
          }
       }
       ProtocolRegistry registry = new ProtocolRegistry();
-      for(Protocol protocol : protocols)
+      for(Protocol<?> protocol : protocols)
       {
          injector.get().inject(protocol); // TODO: should be moved to ServiceRegistry, during Service creation
          if(defaultProtocol != null && protocol.equals(defaultProtocol))

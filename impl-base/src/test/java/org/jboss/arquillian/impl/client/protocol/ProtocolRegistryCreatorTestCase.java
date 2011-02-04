@@ -28,7 +28,6 @@ import org.jboss.arquillian.impl.domain.ProtocolRegistry;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
 import org.junit.Assert;

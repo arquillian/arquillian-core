@@ -16,11 +16,12 @@
  */
 package org.jboss.arquillian.impl.execution;
 
+import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.execution.event.ExecutionEvent;
 import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.impl.execution.event.RemoteExecutionEvent;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
@@ -39,13 +40,31 @@ public class ClientTestExecuter
    private Event<ExecutionEvent> executionEvent;
    
    @Inject
-   private Instance<DeploymentScenario> deploymentScenario;
+   private Instance<DeploymentDescription> deploymentDescription;
 
    public void execute(@Observes Test event) throws Exception
    {
-      DeploymentScenario scenario = deploymentScenario.get();
-      // TODO: DeploymentScenario should not depend on RunModeType API, this should be pr Deployment
-      if(scenario.getRunMode() == RunModeType.AS_CLIENT) 
+      DeploymentDescription deploymentDescription = this.deploymentDescription.get();
+      
+      RunModeType runmode = deploymentDescription.testable() ? RunModeType.IN_CONTAINER:RunModeType.AS_CLIENT;
+      
+      if(event.getTestMethod().isAnnotationPresent(Run.class))
+      {
+         runmode = event.getTestMethod().getAnnotation(Run.class).value();
+      }
+      else if(event.getTestClass().isAnnotationPresent(Run.class))
+      {
+         runmode = event.getTestClass().getAnnotation(Run.class).value();
+      }
+      if(!deploymentDescription.testable() && runmode == RunModeType.IN_CONTAINER)
+      {
+         throw new RuntimeException(
+               "Can not execute " + event.getTestMethod() + 
+               " against deployment " + deploymentDescription + " using runmode " + runmode + ". " +
+               "Deployment is not testable.");
+      }
+         
+      if(runmode == RunModeType.AS_CLIENT) 
       {
          executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
       }

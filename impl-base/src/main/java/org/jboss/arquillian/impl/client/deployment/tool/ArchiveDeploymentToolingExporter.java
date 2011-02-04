@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.jboss.arquillian.impl.Validate;
-import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.jboss.shrinkwrap.api.Archive;

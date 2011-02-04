@@ -23,7 +23,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.client.container.ContainerLifecycleControllerTestCase.DummyContainerConfiguration;
 import org.jboss.arquillian.impl.client.container.event.DeployDeployment;
@@ -100,7 +99,7 @@ public class ContainerDeployControllerTestCase extends AbstractManagerTestBase
 
    private ContainerRegistry registry = new ContainerRegistry();
    
-   private DeploymentScenario scenario = new DeploymentScenario(RunModeType.IN_CONTAINER);
+   private DeploymentScenario scenario = new DeploymentScenario();
 
    @Before
    public void setup() throws Exception

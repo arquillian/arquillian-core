@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.test.DeploymentTargetDescription;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
@@ -39,22 +38,9 @@ public class DeploymentScenario
 {
    private List<DeploymentDescription> deployments;
 
-   private RunModeType runMode;
-   
-   public DeploymentScenario(RunModeType runMode)
+   public DeploymentScenario()
    {
-      Validate.notNull(runMode, "RunMode must be specified");
       this.deployments = new ArrayList<DeploymentDescription>();
-      this.runMode = runMode;
-   }
-   
-   /**
-    * 
-    * @return the runMode
-    */
-   public RunModeType getRunMode()
-   {
-      return runMode;
    }
    
    public DeploymentScenario addDeployment(DeploymentDescription deployment)

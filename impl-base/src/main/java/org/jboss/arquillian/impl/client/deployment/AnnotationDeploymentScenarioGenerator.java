@@ -22,8 +22,6 @@ import java.lang.reflect.Modifier;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Expected;
 import org.jboss.arquillian.api.Protocol;
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
 import org.jboss.arquillian.api.Target;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
@@ -48,12 +46,7 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
     */
    public DeploymentScenario generate(TestClass testClass)
    {
-      RunModeType runMode = RunModeType.IN_CONTAINER;
-      if(testClass.isAnnotationPresent(Run.class))
-      {
-         runMode = testClass.getAnnotation(Run.class).value();
-      }
-      DeploymentScenario scenario = new DeploymentScenario(runMode);
+      DeploymentScenario scenario = new DeploymentScenario();
       Method[] deploymentMethods = testClass.getMethods(Deployment.class);
       validate(deploymentMethods);
       for(Method deploymentMethod: deploymentMethods)

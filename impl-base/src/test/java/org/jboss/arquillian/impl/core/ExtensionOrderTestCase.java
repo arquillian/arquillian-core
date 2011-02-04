@@ -26,7 +26,6 @@ import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
