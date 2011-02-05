@@ -154,7 +154,7 @@ public class ContainerLifecycleController
       });
    }
    
-   public void startContainers(@Observes StopContainer event) throws Exception
+   public void stopContainer(@Observes StopContainer event) throws Exception
    {
       forContainer(event.getContainerName(), new Operation<Container>()
       {
