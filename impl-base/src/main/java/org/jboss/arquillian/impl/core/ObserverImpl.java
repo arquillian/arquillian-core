@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.core.spi.InvocationException;
+import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 
@@ -76,11 +77,17 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
     * @see org.jboss.arquillian.api.ObserverMethod#invoke(java.lang.Object)
     */
    @Override
-   public void invoke(Object event) 
+   public boolean invoke(Manager manager, Object event) 
    {
       try
       {
-         method.invoke(target, event);
+         Object[] arguments = resolveArguments(manager, event);
+         if(containsNull(arguments))
+         {
+            return false;
+         }
+         method.invoke(target, arguments);
+         return true;
       }
       catch (Exception e) 
       {
@@ -88,7 +95,7 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
          {
             throw new InvocationException(((InvocationTargetException)e).getTargetException());
          }
-         throw new InvocationException(e.getCause());
+         throw new InvocationException(e);
       }
    }
 
@@ -120,5 +127,47 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
          }
       }
       return 0;
+   }
+
+   /**
+    * Resolve all Observer method arguments. Unresolved argument types wil be null.
+    * 
+    * @param manager
+    * @param event
+    * @return
+    */
+   private Object[] resolveArguments(Manager manager, Object event)
+   {
+      Class<?>[] argumentTypes = getMethod().getParameterTypes();
+      int numberOfArguments = argumentTypes.length;;
+      
+      // we know that the first Argument is always the Event, and it will be there else this wouldn't be a Observer method
+      Object[] arguments = new Object[numberOfArguments];
+      arguments[0] = event;
+      
+      for(int i = 1; i < numberOfArguments; i++)
+      {
+         Class<?> argumentType = argumentTypes[i];
+         arguments[i] = manager.resolve(argumentType);
+      }
+      return arguments;
+   }
+
+   /**
+    * Check that all arguments were resolved. Do not invoke if not.
+    * 
+    * @param arguments
+    * @return
+    */
+   private boolean containsNull(Object[] arguments)
+   {
+      for(Object argument : arguments)
+      {
+         if(argument == null)
+         {
+            return true;
+         }
+      }
+      return false;
    }
 }

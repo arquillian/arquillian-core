@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.arquillian.impl.core.spi.Manager;
-import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
@@ -80,13 +79,13 @@ public class ExtensionOrderTestCase
 
    public static class ConsumerOne
    {
-      @Inject
-      private Instance<ValueOne> value;
+//      @Inject
+//      private Instance<ValueOne> value;
       
       public void exec(@Observes String ba) 
       { 
          callOrder.add(this.getClass().getSimpleName());
-         System.out.println(value.get());
+         //System.out.println(value.get());
       }
    }
    

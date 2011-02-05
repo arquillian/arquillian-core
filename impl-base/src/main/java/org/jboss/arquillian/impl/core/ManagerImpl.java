@@ -47,7 +47,7 @@ public class ManagerImpl implements Manager
    //-------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
-   public static Boolean DEBUG = false;
+   public static Boolean DEBUG = true;
    
    private ThreadLocal<Stack<Object>> eventStack;
    
@@ -108,25 +108,32 @@ public class ManagerImpl implements Manager
       handledThrowables.get().clear();
       
       List<ObserverMethod> observers = resolveObservers(event.getClass());
-      for(ObserverMethod observer : observers)
+      try
       {
-         try
+         for(ObserverMethod observer : observers)
          {
-            observer.invoke(event);
-         } 
-         catch (InvocationException e) 
-         {
-            if(handledThrowables.get().contains(e.getCause().getClass()))
+            try
             {
-               UncheckedThrow.throwUnchecked(e.getCause());
-            }
-            else
+               debug(observer);
+               observer.invoke(this, event);
+            } 
+            catch (InvocationException e) 
             {
-               fireException(e.getCause());
+               if(handledThrowables.get().contains(e.getCause().getClass()))
+               {
+                  UncheckedThrow.throwUnchecked(e.getCause());
+               }
+               else
+               {
+                  fireException(e.getCause());
+               }
             }
          }
       }
-      debug(event, false);
+      finally
+      {
+         debug(event, false);
+      }
    }
 
    @Override
@@ -250,41 +257,48 @@ public class ManagerImpl implements Manager
    private void fireException(Throwable event)
    {
       debug(event, true);
-      List<ObserverMethod> observers = resolveObservers(event.getClass());
-      if(observers.size() == 0) // no one is handling this Exception, throw it out.
+      try
       {
-         UncheckedThrow.throwUnchecked(event);
-      }
-      for(int i = 0; i < observers.size(); i++)
-      {
-         ObserverMethod observer = observers.get(i);
-         try
+         List<ObserverMethod> observers = resolveObservers(event.getClass());
+         if(observers.size() == 0) // no one is handling this Exception, throw it out.
          {
-            observer.invoke(event);
+            UncheckedThrow.throwUnchecked(event);
          }
-         catch (Exception e) 
+         for(int i = 0; i < observers.size(); i++)
          {
-            // getCause(InocationTargetException).getCause(RealCause);
-            Throwable toBeFired = e.getCause();
-            // same type of exception being fired as caught and is the last observer, throw to avoid loop
-            if(toBeFired.getClass() == event.getClass())
+            ObserverMethod observer = observers.get(i);
+            try
             {
-               // on throw if this is the last Exception observer
-               if(i == observers.size()-1)
+               debug(observer);
+               observer.invoke(this, event);
+            }
+            catch (Exception e) 
+            {
+               // getCause(InocationTargetException).getCause(RealCause);
+               Throwable toBeFired = e.getCause();
+               // same type of exception being fired as caught and is the last observer, throw to avoid loop
+               if(toBeFired.getClass() == event.getClass())
                {
-                  handledThrowables.get().add(toBeFired.getClass());
-                  // this will throw checked exception if any, and will break the declaration of fire(), will throw the original cause
-                  UncheckedThrow.throwUnchecked(toBeFired);
+                  // on throw if this is the last Exception observer
+                  if(i == observers.size()-1)
+                  {
+                     handledThrowables.get().add(toBeFired.getClass());
+                     // this will throw checked exception if any, and will break the declaration of fire(), will throw the original cause
+                     UncheckedThrow.throwUnchecked(toBeFired);
+                  }
+               }
+               else
+               {
+                  // a new exception was raised, throw
+                  fireException(toBeFired);
                }
             }
-            else
-            {
-               // a new exception was raised, throw
-               fireException(toBeFired);
-            }
          }
       }
-      debug(event, false);
+      finally
+      {
+         debug(event, false);
+      }
    }
 
    /**
@@ -417,6 +431,13 @@ public class ManagerImpl implements Manager
       return null;
    }
    
+   private void debug(ObserverMethod method)
+   {
+      if(DEBUG)
+      {
+         System.out.println(calcDebugPrefix() + "\t(O) " +method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
+      }
+   }
    private void debug(Object event, boolean push)
    {
       if(DEBUG)
@@ -434,13 +455,7 @@ public class ManagerImpl implements Manager
          }
          if(push)
          {
-            int size = eventStack.get().size();
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < size; i++)
-            {
-               sb.append("\t");
-            }
-            System.out.println(sb + "-> " + event.getClass().getSimpleName());
+            System.out.println(calcDebugPrefix() + "(E) " + event.getClass().getSimpleName());
             eventStack.get().push(event);
          }
          else
@@ -451,5 +466,16 @@ public class ManagerImpl implements Manager
             }
          }
       }
+   }
+   
+   private String calcDebugPrefix()
+   {
+      int size = eventStack.get().size();
+      StringBuilder sb = new StringBuilder();
+      for(int i = 0; i < size; i++)
+      {
+         sb.append("\t");
+      }
+      return sb.toString();
    }
 }

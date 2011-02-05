@@ -51,7 +51,7 @@ public class ExtensionParseTestCase
       
       for(ObserverMethod observer : extension.getObservers())
       {
-         observer.invoke(new String());
+         observer.invoke(null, new String());
       }
       
       Assert.assertTrue(target.methodOneWasCalled);
@@ -73,7 +73,7 @@ public class ExtensionParseTestCase
       {
          point.set(instance);
       }
-      extension.getObservers().get(0).invoke(new Object());
+      extension.getObservers().get(0).invoke(null, new Object());
       
       Assert.assertTrue(target.methodOneWasCalled);
       Assert.assertNotNull(instance.get());
@@ -96,7 +96,7 @@ public class ExtensionParseTestCase
       {
          point.set(event);
       }
-      extension.getObservers().get(0).invoke(new Object());  
+      extension.getObservers().get(0).invoke(null, new Object());  
       
       Assert.assertTrue(target.methodOneWasCalled);
       Assert.assertEquals(

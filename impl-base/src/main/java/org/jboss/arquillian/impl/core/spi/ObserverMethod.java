@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
  */
 public interface ObserverMethod extends Typed, Comparable<ObserverMethod>
 {
-   void invoke(Object object) throws InvocationException;
+   boolean invoke(Manager manager, Object object) throws InvocationException;
    
    Method getMethod();
 }
