@@ -50,6 +50,8 @@ public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
 {
    private static final String TARGET_NAME = "test.jar";
 
+   private static final String DEPLOYMENT_NAME = "test.jar";
+   
    private static final String ARCHIVE_NAME = "test.jar";
 
    private static final String EXPORT_PATH = "target/";
@@ -71,7 +73,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
    {
       Archive<?> archive = ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass());
 
-      deployment = new DeploymentDescription(ARCHIVE_NAME, archive);
+      deployment = new DeploymentDescription(DEPLOYMENT_NAME, archive);
       deployment.setTarget(new TargetDescription(TARGET_NAME));
       deployment.setTestableArchive(archive);
    }
@@ -100,7 +102,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
       bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
             .deploymentExportPath(EXPORT_PATH));
 
-      deployment = new DeploymentDescription(ARCHIVE_NAME, Descriptors.create(WebAppDescriptor.class));
+      deployment = new DeploymentDescription(DEPLOYMENT_NAME, Descriptors.create(WebAppDescriptor.class));
       deployment.setTarget(new TargetDescription(TARGET_NAME));
       
       fire(new BeforeDeploy(deployableContainer, deployment));
@@ -121,7 +123,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
 
    private void fileShouldExist(boolean bol)
    {
-      File file = new File(EXPORT_PATH + TARGET_NAME + "_" + ARCHIVE_NAME);
+      File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
 
       Assert.assertEquals("File exists", bol, file.exists());
 

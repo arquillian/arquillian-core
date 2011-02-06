@@ -47,7 +47,7 @@ public class ManagerImpl implements Manager
    //-------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
-   public static Boolean DEBUG = true;
+   public static Boolean DEBUG = false;
    
    private ThreadLocal<Stack<Object>> eventStack;
    

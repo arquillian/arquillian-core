@@ -42,9 +42,9 @@ public class ToolingDeploymentFormatterTestCase
    public void shouldBeAbleToExportArchive() throws Exception
    {
       String content = ShrinkWrap.create(WebArchive.class, "test.jar")
-                        .addResource(new File("src/test/resources/arquillian.xml"), ArchivePaths.create("resource.xml"))
-                        .addResource("arquillian.xml", ArchivePaths.create("resource2.xml"))
-                        .addResource(new File("src/test/resources/arquillian.xml").toURI().toURL(), ArchivePaths.create("resource3.xml"))
+                        .addResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
+                        .addResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
+                        .addResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(), ArchivePaths.create("resource3.xml"))
                         .addClass(ToolingDeploymentFormatterTestCase.class)
                         .addServiceProvider(ServiceLoader.class, DynamicServiceLoader.class)
                         .addLibrary(
