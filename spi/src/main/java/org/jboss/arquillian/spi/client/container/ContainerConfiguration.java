@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.spi.client.container;
 
+import org.jboss.arquillian.spi.ConfigurationException;
+
 /**
  * A marker for container configuration implementations.
  *
@@ -24,5 +26,11 @@ package org.jboss.arquillian.spi.client.container;
  */
 public interface ContainerConfiguration
 {
+
+   /**
+    * Validates if current configuration is valid, that is if all required
+    * properties are set and have correct values
+    */
+   void validate() throws ConfigurationException;
    
 }
