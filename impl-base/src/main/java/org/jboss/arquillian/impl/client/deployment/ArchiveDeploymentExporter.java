@@ -67,17 +67,25 @@ public class ArchiveDeploymentExporter
             return;
          }
 
-         Archive<?> deployment = event.getDeployment().getTestableArchive();
+         Archive<?> deployment;
+         if(event.getDeployment().testable())
+         {
+            deployment = event.getDeployment().getTestableArchive();
+         }
+         else
+         {
+            deployment = event.getDeployment().getArchive();
+         }
          
          deployment.as(ZipExporter.class).exportTo(
-               new File(exportDir, createFileName(event.getDeployment())), 
+               new File(exportDir, createFileName(event.getDeployment(), deployment)), 
                true);  
       }
    }
    
-   private String createFileName(DeploymentDescription deployment)
+   private String createFileName(DeploymentDescription deployment, Archive<?> archive)
    {
       // TODO: where do we get TestClass name from ? 
-      return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + deployment.getTestableArchive().getName();
+      return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + archive.getName();
    }
 }
