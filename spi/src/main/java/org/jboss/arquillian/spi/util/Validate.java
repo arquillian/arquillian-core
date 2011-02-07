@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.spi.util;
 
+import java.io.File;
+
+import org.jboss.arquillian.spi.ConfigurationException;
+
 /**
  * Validate
  * 
@@ -73,6 +77,20 @@ public final class Validate
       if(obj == null)
       {
          throw new IllegalStateException(message);
+      }
+   }
+   
+   /**
+    * Checks that string is not null and not empty and it represents a path to a valid directory
+    * @param string The path to check
+    * @param message The exception message
+    * @throws ConfigurationException Thrown if string is empty, null or it does not represent a path the a valid directory
+    */
+   public static void configurationDirectoryExists(final String string, final String message) throws ConfigurationException
+   {
+      if (string == null || string.length() == 0 || new File(string).isDirectory())
+      {
+         throw new ConfigurationException(message);
       }
    }
 }
