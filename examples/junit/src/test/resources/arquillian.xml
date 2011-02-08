@@ -1,13 +1,8 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian-1.0.xsd">
 
-<arquillian xmlns="http://jboss.com/arquillian"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:weldee="urn:arq:org.jboss.arquillian.container.weld.ee.embedded_1_1">
-
-	<weldee:container>
-<!-- Revert until 1.1 Weld is released.. https://jira.jboss.org/browse/ARQ-185
-		<enableConversationScope>true</enableConversationScope>
--->		
-	</weldee:container>	
-
+	<engine>
+		<property name="deploymentExportPath">target/</property>
+	</engine>
 </arquillian>
