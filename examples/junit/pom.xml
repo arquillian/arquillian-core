@@ -304,8 +304,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<includes>
-								<!--  <include>com/acme/cdi/payment/*</include> Expose bug in openwebbeans-->
-								<include>com/acme/cdi/random/*</include>
+								<include>com/acme/cdi/**</include>
 							</includes>
 						</configuration>
 					</plugin>
