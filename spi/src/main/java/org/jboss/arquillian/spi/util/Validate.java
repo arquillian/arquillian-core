@@ -88,9 +88,10 @@ public final class Validate
     */
    public static void configurationDirectoryExists(final String string, final String message) throws ConfigurationException
    {
-      if (string == null || string.length() == 0 || new File(string).isDirectory())
+      if (string == null || string.length() == 0 || new File(string).isDirectory() == false)
       {
          throw new ConfigurationException(message);
       }
-   }
+   }  
+
 }
