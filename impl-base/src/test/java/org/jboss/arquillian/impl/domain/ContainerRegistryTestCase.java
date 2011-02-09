@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl.domain;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.configuration.ContainerDefImpl;
+import org.jboss.arquillian.spi.ConfigurationException;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -141,7 +142,7 @@ public class ContainerRegistryTestCase
    public static class DummyContainerConfiguration implements ContainerConfiguration
    {
       private String property;
-      
+            
       /**
        * @param property the property to set
        */
@@ -156,6 +157,16 @@ public class ContainerRegistryTestCase
       public String getProperty()
       {
          return property;
+      }
+
+      /* (non-Javadoc)
+       * @see org.jboss.arquillian.spi.client.container.ContainerConfiguration#validate()
+       */
+      @Override
+      public void validate() throws ConfigurationException
+      {
+         // TODO Auto-generated method stub
+         
       }
    }
 }

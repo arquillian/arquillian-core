@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.junit.testspi;
 
+import org.jboss.arquillian.spi.ConfigurationException;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 
 /**
@@ -26,4 +27,11 @@ import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
  */
 public class TestContainerConfiguration implements ContainerConfiguration
 {
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.client.container.ContainerConfiguration#validate()
+    */
+   @Override
+   public void validate() throws ConfigurationException
+   {
+   }
 }

@@ -19,7 +19,7 @@ package org.jboss.arquillian.spi.client.container;
 import org.jboss.arquillian.spi.ConfigurationException;
 
 /**
- * A marker for container configuration implementations.
+ * Container configuration that can be validated 
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
  * @version $Revision: $

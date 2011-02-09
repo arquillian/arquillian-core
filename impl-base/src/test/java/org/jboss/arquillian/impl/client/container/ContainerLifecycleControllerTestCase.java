@@ -34,6 +34,7 @@ import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
+import org.jboss.arquillian.spi.ConfigurationException;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -157,6 +158,14 @@ public class ContainerLifecycleControllerTestCase extends AbstractManagerTestBas
 
    public static class DummyContainerConfiguration implements ContainerConfiguration
    {
+
+      /* (non-Javadoc)
+       * @see org.jboss.arquillian.spi.client.container.ContainerConfiguration#validate()
+       */
+      @Override
+      public void validate() throws ConfigurationException
+      {
+      }
       
    }
 }
