@@ -91,6 +91,7 @@ public class Container
    {
       ContainerConfiguration config = deployableContainer.getConfigurationClass().newInstance();
       MapObject.populate(config, containerConfiguration.getContainerProperties());
+      config.validate();
       return config;
    }
    
