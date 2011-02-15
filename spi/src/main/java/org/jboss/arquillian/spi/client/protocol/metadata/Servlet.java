@@ -74,7 +74,7 @@ public class Servlet
 
    public URI getBaseURI()
    {
-      return URI.create("http://" + context.getHost() + ":" + context.getPort() + contextRoot);
+      return URI.create("http://" + context.getHost() + ":" + context.getPort() + contextRoot + "/");
    }
 
    /**

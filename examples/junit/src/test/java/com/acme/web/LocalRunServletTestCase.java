@@ -18,8 +18,10 @@ package com.acme.web;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
+import org.jboss.arquillian.api.ArquillianResource;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,10 +47,19 @@ public class LocalRunServletTestCase
                .addClass(TestServlet.class);
    }
    
+   @ArquillianResource
+   private URI uri;
+   
    @Test
-   public void shouldBeAbleToDeployWebArchive() throws Exception
+   public void shouldResolveURI() throws Exception
    {
-      String body = readAllAndClose(new URL("http://localhost:8080/test/Test").openStream());
+      Assert.assertNotNull(uri);
+   }
+   
+   @Test
+   public void shouldBeAbleToInjectBaseHTTPContext(@ArquillianResource URL httpContext) throws Exception
+   {
+      String body = readAllAndClose(new URL(httpContext, "/test/TestServlet").openStream());
       
       Assert.assertEquals(
             "Verify that the servlet was deployed and returns expected result",
@@ -56,6 +67,17 @@ public class LocalRunServletTestCase
             body);
    }
    
+   @Test
+   public void shouldBeAbleToInjectBaseServletContext(@ArquillianResource(TestServlet.class) URL testServlet) throws Exception
+   {
+      String body = readAllAndClose(testServlet.openStream());
+      
+      Assert.assertEquals(
+            "Verify that the servlet was deployed and returns expected result",
+            "hello",
+            body);
+   }
+
    private String readAllAndClose(InputStream is) throws Exception 
    {
       ByteArrayOutputStream out = new ByteArrayOutputStream();

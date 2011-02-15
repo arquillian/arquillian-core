@@ -16,6 +16,14 @@
  */
 package org.jboss.arquillian.api;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 /**
  * Defines a InjectionPoint for Arquillian Controlled Resources. <br/>
  * e.g: {@link Deployer}
@@ -23,6 +31,16 @@ package org.jboss.arquillian.api;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Inherited
+@Documented
+@Retention(RUNTIME)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ArquillianResource {
 
+   /**
+    * Defines the resource target for this injection. e.g. Servlet.
+    * 
+    * @return The Target Resource Type
+    */
+   Class<?> value() default ArquillianResource.class;
 }

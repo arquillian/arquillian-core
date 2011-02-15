@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.impl.client.deployment;
 
+import org.jboss.arquillian.impl.enricher.resource.ArquillianResourceTestEnricher;
+import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -40,6 +42,7 @@ public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
                               "org.jboss.arquillian.spi",
                               "org.jboss.arquillian.api",
                               "org.jboss.arquillian.impl",
-                              "org.jboss.shrinkwrap");
+                              "org.jboss.shrinkwrap")
+                        .addAsServiceProvider(TestEnricher.class, ArquillianResourceTestEnricher.class);
    }
 }
