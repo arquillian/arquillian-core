@@ -39,8 +39,8 @@
     <version.mockito_all>1.8.3</version.mockito_all>
     <version.osgi>4.2.0</version.osgi>
     <!-- <version.shrinkwrap_shrinkwrap>1.0.0-alpha-11</version.shrinkwrap_shrinkwrap> -->
-    <version.shrinkwrap_shrinkwrap>1.0.0-SNAPSHOT</version.shrinkwrap_shrinkwrap>
-    <version.shrinkwrap_descriptors>1.0.0-alpha-1-SNAPSHOT</version.shrinkwrap_descriptors>
+    <version.shrinkwrap_shrinkwrap>SW140-SNAPSHOT</version.shrinkwrap_shrinkwrap>
+    <version.shrinkwrap_descriptors>0.1.0</version.shrinkwrap_descriptors>
     <version.testng_testng>5.14.6</version.testng_testng>
 	<version.jboss_modules>1.0.0.Beta7-SNAPSHOT</version.jboss_modules>
   </properties>
@@ -248,8 +248,13 @@
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.shrinkwrap</groupId>
-        <artifactId>shrinkwrap-extension-dependencies</artifactId>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+        <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
       <dependency>

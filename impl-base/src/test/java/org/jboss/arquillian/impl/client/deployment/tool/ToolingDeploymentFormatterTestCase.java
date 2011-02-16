@@ -41,17 +41,15 @@ public class ToolingDeploymentFormatterTestCase
    @Test
    public void shouldBeAbleToExportArchive() throws Exception
    {
-      String content = ShrinkWrap.create(WebArchive.class, "test.jar")
-                        .addResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
-                        .addResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
-                        .addResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(), ArchivePaths.create("resource3.xml"))
-                        .addClass(ToolingDeploymentFormatterTestCase.class)
-                        .addServiceProvider(ServiceLoader.class, DynamicServiceLoader.class)
-                        .addLibrary(
-                              ShrinkWrap.create(JavaArchive.class, "test.jar")
-                                 .addClass(ToolingDeploymentFormatter.class)
-                        )
-                        .toString(new ToolingDeploymentFormatter(getClass()));
+      String content = ShrinkWrap
+            .create(WebArchive.class, "test.jar")
+            .addAsResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
+            .addAsResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
+            .addAsResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(),
+                  ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
+            .addAsServiceProvider(ServiceLoader.class, DynamicServiceLoader.class)
+            .addAsLibrary(ShrinkWrap.create(JavaArchive.class, "test.jar").addClass(ToolingDeploymentFormatter.class))
+            .toString(new ToolingDeploymentFormatter(getClass()));
       
       // TODO: do some output Assertions..
       Assert.assertNotNull(content);

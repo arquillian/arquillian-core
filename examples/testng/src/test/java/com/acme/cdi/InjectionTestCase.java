@@ -45,7 +45,7 @@ public class InjectionTestCase extends Arquillian
                .addClasses(
                      GreetingManager.class,
                      GreetingManagerBean.class)
-               .addManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+               .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
    }
    
    @Inject GreetingManager greetingManager;

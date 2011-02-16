@@ -81,13 +81,13 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
    private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
    {
       applicationArchive
-                  .addLibraries(
+                  .addAsLibraries(
                         auxiliaryArchives.toArray(new Archive<?>[0]));
       
       // Can be null when reusing logic in EAR packaging
       if(protocol != null)
       {
-         applicationArchive.addLibrary(protocol);
+         applicationArchive.addAsLibrary(protocol);
       }
       processor.process(applicationArchive);
       return applicationArchive;
@@ -97,7 +97,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
    {
       return handleArchive(
             ShrinkWrap.create(WebArchive.class, "test.war")
-               .addLibrary(applicationArchive),
+               .addAsLibrary(applicationArchive),
             auxiliaryArchives, 
             protocol,
             processor);
@@ -130,7 +130,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          // reuse handle(JavaArchive, ..) logic
          Archive<?> wrappedWar = handleArchive(protocol, new ArrayList<Archive<?>>(), null, processor);
          applicationArchive
-               .addModule(wrappedWar);
+               .addAsModule(wrappedWar);
          
          ArchivePath applicationXmlPath = ArchivePaths.create("META-INF/application.xml");
          if(applicationArchive.contains(applicationXmlPath))
@@ -144,7 +144,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          }
       }
       
-      applicationArchive.addLibraries(
+      applicationArchive.addAsLibraries(
             auxiliaryArchives.toArray(new Archive<?>[0]));
 
       return applicationArchive;

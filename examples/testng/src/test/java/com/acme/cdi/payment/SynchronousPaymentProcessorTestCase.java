@@ -35,7 +35,7 @@ public class SynchronousPaymentProcessorTestCase extends Arquillian {
 				.addPackage(
 						Synchronous.class.getPackage()
 				)
-				.addManifestResource("com/acme/cdi/payment/beans.xml", "beans.xml");
+				.addAsManifestResource("com/acme/cdi/payment/beans.xml", "beans.xml");
 	}
 	
 	@Test(dataProvider = Arquillian.ARQUILLIAN_DATA_PROVIDER)  

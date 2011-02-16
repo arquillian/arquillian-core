@@ -45,7 +45,7 @@ public class ConversationScopeTestCase
    public static JavaArchive createDeployment() {
        return ShrinkWrap.create(JavaArchive.class)
                .addClass(LongRunningBean.class)
-               .addManifestResource(
+               .addAsManifestResource(
                      EmptyAsset.INSTANCE, 
                      ArchivePaths.create("beans.xml"));
    }

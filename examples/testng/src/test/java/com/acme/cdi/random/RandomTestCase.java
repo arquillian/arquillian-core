@@ -41,7 +41,7 @@ public class RandomTestCase extends Arquillian {
 				.addPackage(
 						Random.class.getPackage()
 				)
-				.addManifestResource(
+				.addAsManifestResource(
 						EmptyAsset.INSTANCE,
 						ArchivePaths.create("beans.xml"));
 	}

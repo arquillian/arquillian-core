@@ -42,7 +42,7 @@ public class UserRepositoryTestCase extends Arquillian
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
                .addPackage(
                      User.class.getPackage())
-               .addManifestResource(
+               .addAsManifestResource(
                      "com/acme/jpa/user-test-persistence.xml", 
                      ArchivePaths.create("persistence.xml"));
    }

@@ -47,7 +47,7 @@ public class InjectionTestCase
                .addClasses(
                      GreetingManager.class,
                      GreetingManagerBean.class)
-               .addManifestResource(
+               .addAsManifestResource(
                      EmptyAsset.INSTANCE, 
                      ArchivePaths.create("beans.xml"));
    }

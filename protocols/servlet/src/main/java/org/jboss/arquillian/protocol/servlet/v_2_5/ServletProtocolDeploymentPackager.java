@@ -97,7 +97,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       {
          applicationArchive.merge(protocol);
       }
-      applicationArchive.addLibraries(auxiliaryArchives.toArray(new Archive<?>[0]));
+      applicationArchive.addAsLibraries(auxiliaryArchives.toArray(new Archive<?>[0]));
       
       processor.process(applicationArchive);
       return applicationArchive;
@@ -110,7 +110,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
    {
       return handleArchive(
             ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
-               .addModule(applicationArchive), 
+               .addAsModule(applicationArchive), 
             auxiliaryArchives, 
             protocol,
             processor);
@@ -141,7 +141,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       else
       {
          applicationArchive
-               .addModule(
+               .addAsModule(
                      protocol.setWebXML(
                            new StringAsset(createNewDescriptor().exportAsString())));
          
@@ -158,7 +158,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          
          processor.process(protocol);
       }
-      applicationArchive.addLibraries(
+      applicationArchive.addAsLibraries(
             auxiliaryArchives.toArray(new Archive<?>[0]));
       return applicationArchive;
    }

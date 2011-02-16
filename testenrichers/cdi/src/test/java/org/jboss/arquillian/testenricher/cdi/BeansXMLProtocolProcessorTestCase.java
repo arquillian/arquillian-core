@@ -42,8 +42,7 @@ public class BeansXMLProtocolProcessorTestCase
    @Test
    public void shouldAddBeansXMLWhenFoundInWebArchive() 
    {
-      WebArchive deployment = ShrinkWrap.create(WebArchive.class)
-                              .addWebResource(EmptyAsset.INSTANCE, "beans.xml");
+      WebArchive deployment = ShrinkWrap.create(WebArchive.class).addAsWebResource(EmptyAsset.INSTANCE, "beans.xml");
       
       runAndAssert(deployment, true);
    }
@@ -59,10 +58,8 @@ public class BeansXMLProtocolProcessorTestCase
    @Test
    public void shouldAddBeansXMLWhenFoundInEnterpriseModule()
    {
-      EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class)
-                                       .addModule(
-                                             ShrinkWrap.create(WebArchive.class)
-                                             .addWebResource(EmptyAsset.INSTANCE, "beans.xml"));
+      EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
+            ShrinkWrap.create(WebArchive.class).addAsWebResource(EmptyAsset.INSTANCE, "beans.xml"));
       
       runAndAssert(deployment, true);
    }
@@ -70,9 +67,8 @@ public class BeansXMLProtocolProcessorTestCase
    @Test
    public void shouldNotAddBeansXMLIfNotFoundInEnterpriseModule()
    {
-      EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class)
-                                       .addModule(
-                                             ShrinkWrap.create(WebArchive.class));
+      EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
+            ShrinkWrap.create(WebArchive.class));
       
       runAndAssert(deployment, false);
    }

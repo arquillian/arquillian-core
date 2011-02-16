@@ -33,7 +33,7 @@ public class TranslateTestCase extends Arquillian {
 		return ShrinkWrap.create(JavaArchive.class)
 				.addPackage(
 						TranslateController.class.getPackage())
-				.addManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 	
 	@Inject TranslateController controller;

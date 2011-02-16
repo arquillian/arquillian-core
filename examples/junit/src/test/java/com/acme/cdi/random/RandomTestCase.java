@@ -43,7 +43,7 @@ public class RandomTestCase {
 				.addPackage(
 						Random.class.getPackage()
 				)
-				.addManifestResource(
+				.addAsManifestResource(
 						EmptyAsset.INSTANCE,
 						ArchivePaths.create("beans.xml"));
 	}

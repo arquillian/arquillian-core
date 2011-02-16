@@ -43,7 +43,7 @@ public class SynchronousPaymentProcessorTestCase
 				.addPackage(
 						Synchronous.class.getPackage()
 				)
-				.addManifestResource(new StringAsset(
+				.addAsManifestResource(new StringAsset(
 				         Descriptors.create(BeansDescriptor.class)
 				            .alternativeClass(MockPaymentProcessor.class)
 				            .exportAsString()), 

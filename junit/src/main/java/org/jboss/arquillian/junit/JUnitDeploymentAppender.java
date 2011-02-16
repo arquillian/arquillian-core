@@ -44,7 +44,7 @@ public class JUnitDeploymentAppender implements AuxiliaryArchiveAppender
                               org.junit.Assert.class.getPackage(),
                               org.hamcrest.Matcher.class.getPackage(),
                               Arquillian.class.getPackage())
-                        .addServiceProvider(
+                        .addAsServiceProvider(
                               TestRunner.class, 
                               JUnitTestRunner.class);
       try 

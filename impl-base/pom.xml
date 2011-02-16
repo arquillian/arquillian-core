@@ -58,8 +58,12 @@
          <artifactId>shrinkwrap-spi</artifactId>
       </dependency>
       <dependency>
-        <groupId>org.jboss.shrinkwrap</groupId>
-        <artifactId>shrinkwrap-extension-dependencies</artifactId>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
       </dependency>
 
       <!-- 

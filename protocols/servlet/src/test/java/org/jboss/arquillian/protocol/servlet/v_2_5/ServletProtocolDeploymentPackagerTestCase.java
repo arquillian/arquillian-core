@@ -195,7 +195,7 @@ public class ServletProtocolDeploymentPackagerTestCase
       Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
-                     .addModule(applicationWar), 
+                     .addAsModule(applicationWar), 
                   createAuxiliaryArchives()),
             processors());
 
@@ -237,8 +237,8 @@ public class ServletProtocolDeploymentPackagerTestCase
       new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
                   ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
-                     .addModule(ShrinkWrap.create(WebArchive.class))
-                     .addModule(ShrinkWrap.create(WebArchive.class)), 
+                     .addAsModule(ShrinkWrap.create(WebArchive.class))
+                     .addAsModule(ShrinkWrap.create(WebArchive.class)), 
                   createAuxiliaryArchives()),
             processors());
    }
