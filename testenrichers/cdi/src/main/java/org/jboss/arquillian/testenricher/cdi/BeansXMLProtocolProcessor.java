@@ -54,7 +54,7 @@ public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor
       {
          if(WebArchive.class.isInstance(protocolArchive))
          {
-            WebArchive.class.cast(protocolArchive).addAsWebResource(EmptyAsset.INSTANCE, "beans.xml");
+            WebArchive.class.cast(protocolArchive).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
          }
          else if(JavaArchive.class.isInstance(protocolArchive))
          {

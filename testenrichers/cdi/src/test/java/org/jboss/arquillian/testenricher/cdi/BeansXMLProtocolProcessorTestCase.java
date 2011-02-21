@@ -42,7 +42,7 @@ public class BeansXMLProtocolProcessorTestCase
    @Test
    public void shouldAddBeansXMLWhenFoundInWebArchive() 
    {
-      WebArchive deployment = ShrinkWrap.create(WebArchive.class).addAsWebResource(EmptyAsset.INSTANCE, "beans.xml");
+      WebArchive deployment = ShrinkWrap.create(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
       
       runAndAssert(deployment, true);
    }
@@ -59,7 +59,7 @@ public class BeansXMLProtocolProcessorTestCase
    public void shouldAddBeansXMLWhenFoundInEnterpriseModule()
    {
       EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
-            ShrinkWrap.create(WebArchive.class).addAsWebResource(EmptyAsset.INSTANCE, "beans.xml"));
+            ShrinkWrap.create(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
       
       runAndAssert(deployment, true);
    }
@@ -92,7 +92,7 @@ public class BeansXMLProtocolProcessorTestCase
       new BeansXMLProtocolProcessor().process(
             new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
       
-      
+      System.out.println(protocol.toString(true));
       Assert.assertEquals(
             "Verify beans.xml was " + (!shouldBeFound ? "not ":"") + "found",
             shouldBeFound, protocol.contains("WEB-INF/beans.xml"));
