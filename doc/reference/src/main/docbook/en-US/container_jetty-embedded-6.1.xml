@@ -105,6 +105,12 @@
 						<entry>true</entry>
 						<entry>Activates the Jetty plus configuration to support JNDI resources (requires jetty-plus and jetty-naming artifacts on the classpath).</entry>
 					</row>
+					<row>
+						<entry>configurationClasses</entry>
+						<entry>String</entry>
+						<entry>null</entry>
+						<entry>Specify your own Jetty configuration classes as a comma separated list.</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
