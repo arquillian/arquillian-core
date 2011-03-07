@@ -27,8 +27,8 @@ import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
-import org.jboss.shrinkwrap.dependencies.Dependencies;
-import org.jboss.shrinkwrap.dependencies.DependencyBuilder;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenArtifactsBuilder;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenResolver;
 
 /**
  * ContainerManager
@@ -54,8 +54,9 @@ public class ContainerRegistry
          ClassLoader containerClassLoader;
          if(definition.getDependencies().size() > 0)
          {
-            DependencyBuilder.ArtifactBuilder<?> builder = Dependencies.artifacts(
-                  definition.getDependencies().toArray(new String[0]));
+            final MavenArtifactsBuilder builder = MavenResolver.artifacts(definition.getDependencies().toArray(
+                  new String[0]));
+            
             URL[] resolvedURLs = MapObject.convert(builder.resolveAsFiles());
 
             containerClassLoader = new FilteredURLClassLoader(resolvedURLs, "org.jboss.(arquillian|shrinkwrap)..*");

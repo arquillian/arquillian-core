@@ -249,6 +249,11 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-api</artifactId>
+        <version>${version.shrinkwrap_shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
         <artifactId>shrinkwrap-resolver-api-maven</artifactId>
         <version>${version.shrinkwrap_shrinkwrap}</version>
       </dependency>
