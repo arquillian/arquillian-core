@@ -92,13 +92,8 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
       Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
 
       fire(new IllegalArgumentException());
-      
-      /*
-       *  TODO: we check if it's been called twice because the EventRegistry Observer observes Object and throws any Exceptions.
-       *  So the first time it gets invoked it is because this is thrown, then since it's handled
-       *  it will call next listener which is the DeploymentExceptionHandler.
-       */
-      Mockito.verify(transformer, Mockito.times(2)).transform(Mockito.isA(Exception.class));
+
+      Mockito.verify(transformer, Mockito.times(1)).transform(Mockito.isA(Exception.class));
    }
    
    @Test(expected = DeploymentException.class)

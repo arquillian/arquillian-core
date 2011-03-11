@@ -18,6 +18,7 @@ package org.jboss.arquillian.impl.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import org.jboss.arquillian.impl.core.spi.EventPoint;
 import org.jboss.arquillian.impl.core.spi.InvocationException;
@@ -57,7 +58,7 @@ public class EventPointImpl implements EventPoint
     * @see org.jboss.arquillian.api.Typed#getType()
     */
    @Override
-   public Class<?> getType()
+   public Type getType()
    {
       return (Class<?>) ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
    }

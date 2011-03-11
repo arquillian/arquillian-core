@@ -25,10 +25,10 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.jboss.arquillian.impl.core.context.ApplicationContextImpl;
+import org.jboss.arquillian.impl.core.spi.EventContext;
 import org.jboss.arquillian.impl.core.spi.EventPoint;
 import org.jboss.arquillian.impl.core.spi.Extension;
 import org.jboss.arquillian.impl.core.spi.InjectionPoint;
-import org.jboss.arquillian.impl.core.spi.InvocationException;
 import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
@@ -53,8 +53,8 @@ public class ManagerImpl implements Manager
    
    /*
     * Hack: 
-    * Events be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling. 
-    * It is up to the exception handler to re-throw the exception if it can't handle it. WWhen the re-throw happens
+    * Events can be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling. 
+    * It is up to the exception handler to re-throw the exception if it can't handle it. When the re-throw happens
     * the higher level event will get the exception and re-fire it on the bus. We need to keep track of which exceptions
     * has been handled in the call chain so we can re-throw without re-firing on a higher level. 
     */
@@ -108,26 +108,21 @@ public class ManagerImpl implements Manager
       handledThrowables.get().clear();
       
       List<ObserverMethod> observers = resolveObservers(event.getClass());
+      List<ObserverMethod> interceptorObservers = resolveInterceptorObservers(event.getClass());
+      
       try
       {
-         for(ObserverMethod observer : observers)
+         new EventContextImpl<Object>(this, interceptorObservers, observers, event).proceed();
+      } 
+      catch (Exception e) 
+      {
+         if(handledThrowables.get().contains(e.getClass()))
          {
-            try
-            {
-               debug(observer);
-               observer.invoke(this, event);
-            } 
-            catch (InvocationException e) 
-            {
-               if(handledThrowables.get().contains(e.getCause().getClass()))
-               {
-                  UncheckedThrow.throwUnchecked(e.getCause());
-               }
-               else
-               {
-                  fireException(e.getCause());
-               }
-            }
+            UncheckedThrow.throwUnchecked(e);
+         }
+         else
+         {
+            fireException(e);
          }
       }
       finally
@@ -254,7 +249,7 @@ public class ManagerImpl implements Manager
    // Internal Helper Methods ------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   private void fireException(Throwable event)
+   void fireException(Throwable event)
    {
       debug(event, true);
       try
@@ -368,9 +363,29 @@ public class ManagerImpl implements Manager
       {
          for(ObserverMethod observer : extension.getObservers())
          {
-            if(observer.getType().isAssignableFrom(eventType))
+            if(Reflections.getType(observer.getType()).isAssignableFrom(eventType) && !Reflections.isType(observer.getType(), EventContext.class))
             {
                observers.add(observer);
+            }
+         }
+      }
+      Collections.sort(observers);
+      return observers;
+   }
+
+   private List<ObserverMethod> resolveInterceptorObservers(Class<?> eventType)
+   {
+      List<ObserverMethod> observers = new ArrayList<ObserverMethod>();
+      for(Extension extension : extensions)
+      {
+         for(ObserverMethod observer : extension.getObservers())
+         {
+            if(Reflections.isType(observer.getType(), EventContext.class))
+            {
+               if(Reflections.getType(observer.getType()) == eventType)
+               {
+                  observers.add(observer);
+               }
             }
          }
       }
@@ -404,7 +419,7 @@ public class ManagerImpl implements Manager
    {
       for(InjectionPoint point : extension.getInjectionPoints())
       {
-         point.set(InstanceImpl.of(point.getType(), point.getScope(), this));
+         point.set(InstanceImpl.of(Reflections.getType(point.getType()), point.getScope(), this));
       }
    }
    
@@ -415,7 +430,7 @@ public class ManagerImpl implements Manager
    {
       for(EventPoint point : extension.getEventPoints())
       {
-         point.set(EventImpl.of(point.getType(), this));
+         point.set(EventImpl.of(Reflections.getType(point.getType()), this));
       }
    }
 

@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import org.jboss.arquillian.impl.core.spi.InjectionPoint;
 import org.jboss.arquillian.impl.core.spi.InvocationException;
@@ -60,7 +61,7 @@ public class InjectionPointImpl implements InjectionPoint
     * @see org.jboss.arquillian.api.Typed#getType()
     */
    @Override
-   public Class<?> getType()
+   public Type getType()
    {
       ParameterizedType type = (ParameterizedType) field.getGenericType();
       if(type.getActualTypeArguments()[0] instanceof ParameterizedType)

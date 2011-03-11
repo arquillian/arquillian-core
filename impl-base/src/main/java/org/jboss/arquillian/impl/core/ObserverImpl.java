@@ -19,6 +19,7 @@ package org.jboss.arquillian.impl.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.jboss.arquillian.impl.core.spi.InvocationException;
 import org.jboss.arquillian.impl.core.spi.Manager;
@@ -59,9 +60,9 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
     * @see org.jboss.arquillian.api.Typed#getType()
     */
    @Override
-   public Class<?> getType()
+   public Type getType()
    {
-      return method.getParameterTypes()[0];
+      return method.getGenericParameterTypes()[0];
    }
 
    /**

@@ -20,6 +20,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +126,33 @@ final class Reflections
       }
       return constructor.newInstance();
    }
+
+   public static boolean isType(Type type, Class<?> clazz)
+   {
+      if(type instanceof Class<?>)
+      {
+         return ((Class<?>)type) == clazz;
+      }
+      else if(type instanceof ParameterizedType)
+      {
+         return ((ParameterizedType)type).getRawType() == clazz;
+      }
+      return false;
+   }
    
+   public static Class<?> getType(Type type)
+   {
+      if(type instanceof Class<?>)
+      {
+         return (Class<?>)type;
+      }
+      else if(type instanceof ParameterizedType)
+      {
+         return getType(((ParameterizedType)type).getActualTypeArguments()[0]);
+      }
+      return null;
+   }
+
    //-------------------------------------------------------------------------------------||
    // Internal Helper Methods ------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
