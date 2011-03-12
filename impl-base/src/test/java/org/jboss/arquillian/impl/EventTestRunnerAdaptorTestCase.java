@@ -51,6 +51,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
    @Override
    protected void addExtensions(ManagerBuilder builder) 
    {  
+      builder.extension(TestContextHandler.class);
    }
    
    @Override
@@ -73,56 +74,74 @@ public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
       Mockito.when(testExecutor.getInstance()).thenReturn(testInstance);
       Mockito.when(testExecutor.getMethod()).thenReturn(testMethod);
       
-      // no active contexts 
-      verify(false, false, false, manager);
+      verifyNoActiveContext(manager);
 
       adaptor.beforeSuite();
       assertEventFired(BeforeSuite.class, 1);
       assertEventFiredInContext(BeforeSuite.class, SuiteContext.class);
-      // suite context active
-      verify(true, false, false, manager);
 
+      verifyNoActiveContext(manager);
+      
       adaptor.beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(BeforeClass.class, 1);
+      assertEventFiredInContext(BeforeClass.class, SuiteContext.class);
       assertEventFiredInContext(BeforeClass.class, ClassContext.class);
-      // suite and class context active
-      verify(true, true, false, manager);
+
+      verifyNoActiveContext(manager);
 
       adaptor.before(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(Before.class, 1);
+      assertEventFiredInContext(Before.class, SuiteContext.class);
+      assertEventFiredInContext(Before.class, ClassContext.class);
       assertEventFiredInContext(Before.class, TestContext.class);
-      // suite, class and test context active
-      verify(true, true, true, manager);
 
+      verifyNoActiveContext(manager);
+      
       adaptor.test(testExecutor);
       assertEventFired(org.jboss.arquillian.spi.event.suite.Test.class, 1);
+      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, SuiteContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, ClassContext.class);
       assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, TestContext.class);
-      // suite, class and test context active
-      verify(true, true, true, manager);
+
+      verifyNoActiveContext(manager);
       
       adaptor.after(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(After.class, 1);
+      assertEventFiredInContext(After.class, SuiteContext.class);
+      assertEventFiredInContext(After.class, ClassContext.class);
       assertEventFiredInContext(After.class, TestContext.class);
-      // only suite and class context active
-      verify(true, true, false, manager);
+      
+      verifyNoActiveContext(manager);
 
       adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(AfterClass.class, 1);
+      assertEventFiredInContext(AfterClass.class, SuiteContext.class);
       assertEventFiredInContext(AfterClass.class, ClassContext.class);
-      // only suite context active when done
-      verify(true, false, false, manager);
+
+      verifyNoActiveContext(manager);
 
       adaptor.afterSuite();
       assertEventFired(AfterSuite.class, 1);
       assertEventFiredInContext(AfterSuite.class, SuiteContext.class);
-      // no active contexts when done
-      verify(false, false, false, manager);
+
+      verifyNoActiveContext(manager);
    }
 
+   private void verifyNoActiveContext(Manager manager)
+   {
+      verify(false, false, false, manager);
+   }
+   
    private void verify(boolean suite, boolean clazz, boolean test, Manager manager)
    {
-      Assert.assertEquals(suite, manager.getContext(SuiteContext.class).isActive());
-      Assert.assertEquals(clazz, manager.getContext(ClassContext.class).isActive());
-      Assert.assertEquals(test, manager.getContext(TestContext.class).isActive());
+      Assert.assertEquals(
+            "SuiteContext should" + (!suite ? " not":"") + " be active",
+            suite, manager.getContext(SuiteContext.class).isActive());
+      Assert.assertEquals(
+            "ClassContext should" + (!suite ? " not":"") + " be active",
+            clazz, manager.getContext(ClassContext.class).isActive());
+      Assert.assertEquals(
+            "TestContext should" + (!suite ? " not":"") + " be active",
+            test, manager.getContext(TestContext.class).isActive());
    }
 }

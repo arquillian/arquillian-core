@@ -61,6 +61,9 @@ public class ArquillianProfile implements Profile
             ServiceLoaderRegistrar.class,
             ConfigurationRegistrar.class,
 
+            // test
+            TestContextHandler.class,
+            
             // container core
             ProtocolRegistryCreator.class,
             ContainerRegistryCreator.class,
@@ -94,6 +97,9 @@ public class ArquillianProfile implements Profile
             // core
             ServiceLoaderRegistrar.class,
             
+            // test
+            TestContextHandler.class,
+
             // execute the Test lifecycles, we want to execute After before what we do
             AfterLifecycleEventExecuter.class,
 

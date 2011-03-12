@@ -19,9 +19,6 @@ package org.jboss.arquillian.impl;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.core.spi.Manager;
-import org.jboss.arquillian.impl.core.spi.context.ClassContext;
-import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
-import org.jboss.arquillian.impl.core.spi.context.TestContext;
 import org.jboss.arquillian.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
@@ -53,27 +50,18 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
    public void beforeSuite() throws Exception
    {
-      manager.getContext(SuiteContext.class).activate();
       manager.fire(new BeforeSuite());
    }
 
    public void afterSuite() throws Exception
    {
-      try
-      {
-         manager.fire(new AfterSuite());
-      }
-      finally
-      {
-         manager.getContext(SuiteContext.class).deactivate();
-      }
+      manager.fire(new AfterSuite());
    }
 
    public void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
    {
       Validate.notNull(testClass, "TestClass must be specified");
       
-      manager.getContext(ClassContext.class).activate(testClass);
       manager.fire(new BeforeClass(testClass, executor));
    }
 
@@ -81,14 +69,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       Validate.notNull(testClass, "TestClass must be specified");
       
-      try
-      {
-         manager.fire(new AfterClass(testClass, executor));
-      } 
-      finally
-      {
-         manager.getContext(ClassContext.class).deactivate();
-      }
+      manager.fire(new AfterClass(testClass, executor));
    }
 
    public void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
@@ -96,8 +77,6 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
       
-      manager.getContext(TestContext.class).activate(testInstance);
-
       manager.fire(new Before(testInstance, testMethod, executor));
    }
 
@@ -106,14 +85,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
 
-      try
-      {
-         manager.fire(new After(testInstance, testMethod, executor));
-      }
-      finally
-      {
-         manager.getContext(TestContext.class).deactivate();
-      }
+      manager.fire(new After(testInstance, testMethod, executor));
    }
    
    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
