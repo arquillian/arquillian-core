@@ -91,7 +91,7 @@ public class ContainerRegistryCreator
          } 
          catch (Exception e) 
          {
-            // ugnore
+            // ignore
          }
       }
 

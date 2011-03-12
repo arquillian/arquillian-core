@@ -20,8 +20,10 @@ package org.jboss.arquillian.impl.client;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.api.DeploymentTarget;
-import org.jboss.arquillian.impl.client.event.ActivateContainerDeploymentContext;
-import org.jboss.arquillian.impl.client.event.DeActivateContainerDeploymentContext;
+import org.jboss.arquillian.impl.ThreadContext;
+import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
+import org.jboss.arquillian.impl.client.container.event.DeploymentEvent;
+import org.jboss.arquillian.impl.core.spi.EventContext;
 import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
 import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
@@ -29,10 +31,13 @@ import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.test.DeploymentTargetDescription;
-import org.jboss.arquillian.spi.core.Injector;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
+import org.jboss.arquillian.spi.event.suite.After;
+import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.spi.event.suite.Test;
+import org.jboss.arquillian.spi.event.suite.TestEvent;
 
 /**
  * Activates and DeActivates the Container and Deployment contexts.
@@ -42,6 +47,11 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
  */
 public class ContainerDeploymentContextHandler
 {
+   @Inject 
+   private Instance<ContainerContext> containerContext;
+
+   @Inject 
+   private Instance<DeploymentContext> deploymentContext;
 
    @Inject
    private Instance<ContainerRegistry> containerRegistry;
@@ -49,38 +59,94 @@ public class ContainerDeploymentContextHandler
    @Inject
    private Instance<DeploymentScenario> deploymentScenario;
 
-   @Inject
-   private Instance<Injector> injector;
-
-   public void activate(@Observes ActivateContainerDeploymentContext event)
+   /*
+    * Container Level
+    * 
+    * Activate ContainerContext on all Container Events
+    * 
+    */
+   public void createContainerContext(@Observes EventContext<ContainerControlEvent> context)
    {
-      lookup(event.getTestLifecycle().getTestMethod(), new ResultCallback()
+      ContainerContext containerContext = this.containerContext.get();
+      ContainerControlEvent event = context.getEvent();
+
+      try
       {
-         @Override
-         public void call(Container container, DeploymentDescription deployment)
-         {
-            containerContext.get().activate(container.getName());
-            deploymentContext.get().activate(deployment);
-         }
-      });
+         containerContext.activate(event.getContainerName());
+         ThreadContext.set(event.getContainer().getClassLoader());
+
+         context.proceed();
+      }
+      finally
+      {
+         ThreadContext.reset();
+         containerContext.deactivate();
+      }
    }
    
-   public void deactivate(@Observes DeActivateContainerDeploymentContext event)
+   /*
+    * Deployment Level
+    * 
+    * Activate DeploymentContext on all Deployment Events
+    */
+   public void createDeploymentContext(@Observes EventContext<DeploymentEvent> context)
    {
-      lookup(event.getTestLifecycle().getTestMethod(), new ResultCallback()
+      DeploymentContext deploymentContext = this.deploymentContext.get();
+      try
       {
-         @Override
-         public void call(Container container, DeploymentDescription deployment)
-         {
-            containerContext.get().deactivate();
-            deploymentContext.get().deactivate();
-         }
-      });
+         DeploymentEvent event = context.getEvent();
+         deploymentContext.activate(event.getDeployment());
+
+         context.proceed();
+      }
+      finally
+      {
+         deploymentContext.deactivate();
+      }
    }
+   
+   /*
+    * Test Level
+    * 
+    * Activate Container and Deployment context on Before / Test / After events
+    */
+   public void createBeforeContext(@Observes EventContext<Before> context) 
+   {
+      createContext(context);
+   }
+
+   public void createTestContext(@Observes EventContext<Test> context) 
+   {
+      createContext(context);
+   }
+
+   public void createAfterContext(@Observes EventContext<After> context) 
+   {
+      createContext(context);
+   }
+
+   private void createContext(EventContext<? extends TestEvent> context) 
+   {
+      try
+      {
+         lookup(context.getEvent().getTestMethod(), new Activate());
+         context.proceed();
+      }
+      finally
+      {
+         lookup(context.getEvent().getTestMethod(), new DeActivate());
+      }
+   }
+   
+   /*
+    * Internal Helpers needed to extract @DeploymentTarget from TestMethod. 
+    * 
+    * TODO: This should not rely on direct Reflection, but rather access the metadata through some 
+    * common metadata layer.
+    */
 
    private void lookup(Method method, ResultCallback callback)
    {
-      injector.get().inject(callback);
       DeploymentTargetDescription deploymentTarget = locateDeployment(method);
       
       ContainerRegistry containerRegistry = this.containerRegistry.get();
@@ -93,6 +159,7 @@ public class ContainerDeploymentContextHandler
       callback.call(container, deployment);
    }
    
+   // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
    private DeploymentTargetDescription locateDeployment(Method method)
    {
       DeploymentTargetDescription target = null;
@@ -109,12 +176,26 @@ public class ContainerDeploymentContextHandler
    
    private abstract class ResultCallback
    {
-      @Inject
-      protected Instance<ContainerContext> containerContext;
-
-      @Inject
-      protected Instance<DeploymentContext> deploymentContext;
-
       abstract void call(Container container, DeploymentDescription deployment);
+   }
+   
+   private class Activate extends ResultCallback
+   {
+      @Override
+      void call(Container container, DeploymentDescription deployment)
+      {
+         containerContext.get().activate(container.getName());
+         deploymentContext.get().activate(deployment);
+      }
+   }
+
+   private class DeActivate extends ResultCallback
+   {
+      @Override
+      void call(Container container, DeploymentDescription deployment)
+      {
+         containerContext.get().deactivate();
+         deploymentContext.get().deactivate();
+      }
    }
 }

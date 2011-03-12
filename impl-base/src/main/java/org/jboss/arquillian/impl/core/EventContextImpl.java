@@ -77,7 +77,14 @@ public class EventContextImpl<T> implements EventContext<T>
          } 
          catch (InvocationException e) 
          {
-            UncheckedThrow.throwUnchecked(e.getCause());
+            if(manager.isExceptionHandled(e.getCause()))
+            {
+               UncheckedThrow.throwUnchecked(e.getCause());
+            }
+            else
+            {
+               manager.fireException(e.getCause());
+            }
          }
       }
    }

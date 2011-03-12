@@ -17,6 +17,10 @@
  */
 package org.jboss.arquillian.impl.client;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.when;
+
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
@@ -25,16 +29,33 @@ import org.jboss.arquillian.impl.client.container.event.SetupContainers;
 import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.UnDeployManagedDeployments;
-import org.jboss.arquillian.impl.client.event.ActivateContainerDeploymentContext;
-import org.jboss.arquillian.impl.client.event.DeActivateContainerDeploymentContext;
+import org.jboss.arquillian.impl.configuration.api.ContainerDef;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
+import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
+import org.jboss.arquillian.impl.domain.ContainerRegistry;
+import org.jboss.arquillian.spi.ServiceLoader;
+import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.spi.client.test.TargetDescription;
+import org.jboss.arquillian.spi.core.annotation.ClassScoped;
+import org.jboss.arquillian.spi.core.annotation.SuiteScoped;
 import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.spi.event.suite.Before;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * ContainerBeforeAfterControllerTestCase
@@ -42,14 +63,50 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ContainerEventControllerTestCase extends AbstractManagerTestBase
 {
+   private static final String CONTAINER_1_NAME = "container_1";
+
+   private static final String DEPLOYMENT_1_NAME = "deployment_1";
+
+   @Mock 
+   private ServiceLoader serviceLoader;
+   
+   @Mock
+   private ContainerDef container1;
+
+   @SuppressWarnings("rawtypes")
+   @Mock
+   private DeployableContainer deployableContainer1;
+
+   private ContainerRegistry registry = new ContainerRegistry();
+   
+   private DeploymentScenario scenario = new DeploymentScenario();
+
+   
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extensions(ContainerEventController.class);
+      builder.extensions(ContainerEventController.class, ContainerDeploymentContextHandler.class);
    }
-   
+
+   @Before
+   public void scenario() throws Exception
+   {
+      when(container1.getContainerName()).thenReturn(CONTAINER_1_NAME);
+      when(serviceLoader.onlyOne(isA(ClassLoader.class), eq(DeployableContainer.class))).thenReturn(deployableContainer1);
+      
+      Archive<?> archive = ShrinkWrap.create(JavaArchive.class);
+      
+      scenario.addDeployment(new DeploymentDescription(DEPLOYMENT_1_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
+
+      registry.create(container1, serviceLoader);
+      
+      bind(SuiteScoped.class, ContainerRegistry.class, registry);
+      bind(ClassScoped.class, DeploymentScenario.class, scenario);
+   }
+
    @Test
    public void shouldSetupAndStartContainers() throws Exception
    {
@@ -84,25 +141,52 @@ public class ContainerEventControllerTestCase extends AbstractManagerTestBase
    }
 
    @Test
-   public void shouldActiveDeploymentContext() throws Exception
+   public void shouldInvokeBeforeInContainerDeploymentContext() throws Exception
    {
-      fire(new Before(this, testMethod()));
+      fire(new org.jboss.arquillian.spi.event.suite.Before(this, testMethod()));
       
-      assertEventFired(ActivateContainerDeploymentContext.class, 1);
-   }
-   
-   @Test
-   public void shouldDeActiveDeploymentContext() throws Exception
-   {
-      fire(new After(this, testMethod()));
-      
-      assertEventFired(DeActivateContainerDeploymentContext.class, 1);
+      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Before.class, ContainerContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Before.class, DeploymentContext.class);
    }
 
    @Test
+   public void shouldInvokeTestInContainerDeploymentContext() throws Exception
+   {
+      fire(new org.jboss.arquillian.spi.event.suite.Test(new TestMethodExecutor()
+      {
+         @Override
+         public void invoke(Object... parameters) throws Throwable { }
+         
+         @Override
+         public Method getMethod()
+         {
+            return testMethod();
+         }
+         
+         @Override
+         public Object getInstance()
+         {
+            return ContainerEventControllerTestCase.this;
+         }
+      }));
+      
+      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, ContainerContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, DeploymentContext.class);
+   }
+
+   @Test
+   public void shouldInvokeAfterInContainerDeploymentContext() throws Exception
+   {
+      fire(new After(this, testMethod()));
+      
+      assertEventFiredInContext(After.class, ContainerContext.class);
+      assertEventFiredInContext(After.class, DeploymentContext.class);
+   }
+
+   @Test @Ignore
    public void shouldEnrichTestInstance() throws Exception
    {
-      fire(new Before(testClass(), testMethod()));
+      fire(new org.jboss.arquillian.spi.event.suite.Before(testClass(), testMethod()));
       
       //assertEventFired(Enrich, count)
    }
@@ -112,8 +196,15 @@ public class ContainerEventControllerTestCase extends AbstractManagerTestBase
       return ContainerEventControllerTestCase.class;
    }
    
-   private Method testMethod() throws Exception
+   private Method testMethod()
    {
-      return ContainerEventControllerTestCase.class.getDeclaredMethod("testMethod");
+      try
+      {
+         return ContainerEventControllerTestCase.class.getDeclaredMethod("testMethod");
+      }
+      catch (Exception e) 
+      {
+         throw new RuntimeException(e);
+      }
    }
 }

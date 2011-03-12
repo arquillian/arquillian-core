@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.impl.client.container.ContainerLifecycleControllerTestCase.DummyContainerConfiguration;
 import org.jboss.arquillian.impl.client.container.event.DeployDeployment;
 import org.jboss.arquillian.impl.client.container.event.DeployManagedDeployments;
@@ -136,7 +137,7 @@ public class ContainerDeployControllerTestCase extends AbstractManagerTestBase
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extensions(ContainerDeployController.class);
+      builder.extensions(ContainerDeployController.class, ContainerDeploymentContextHandler.class);
    }
    
    @Test
@@ -209,5 +210,7 @@ public class ContainerDeployControllerTestCase extends AbstractManagerTestBase
       assertEventFired(DeploymentException.class, 1);
       assertEventFiredInContext(DeploymentException.class, ContainerContext.class);
       assertEventFiredInContext(DeploymentException.class, DeploymentContext.class);
+      
+      assertEventFiredTyped(Throwable.class, 1);
    }
 }

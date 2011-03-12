@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.impl.client.container;
 
-import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
+import org.jboss.arquillian.impl.client.container.event.ContainerMultiControlEvent;
 import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
 import org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor;
@@ -44,7 +44,7 @@ public class ContainerRestarter
    private int deploymentCount = 0;
    
    @Inject
-   private Event<ContainerControlEvent> controlEvent;
+   private Event<ContainerMultiControlEvent> controlEvent;
    
    @Inject
    private Instance<ArquillianDescriptor> configuration;

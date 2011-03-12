@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.impl.client.container.event;
 
+import org.jboss.arquillian.impl.domain.Container;
+
 
 /**
  * StartContainer
@@ -24,20 +26,10 @@ package org.jboss.arquillian.impl.client.container.event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class StopContainer implements ContainerControlEvent
+public class StopContainer extends ContainerControlEvent
 {
-   private String containerName;
-   
-   public StopContainer(String containerName)
+   public StopContainer(Container container)
    {
-      this.containerName = containerName;
-   }
-   
-   /**
-    * @return the containerName
-    */
-   public String getContainerName()
-   {
-      return containerName;
+      super(container);
    }
 }

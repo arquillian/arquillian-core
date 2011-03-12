@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.impl.client.container.event.SetupContainer;
 import org.jboss.arquillian.impl.client.container.event.SetupContainers;
 import org.jboss.arquillian.impl.client.container.event.StartContainer;
@@ -93,7 +94,7 @@ public class ContainerLifecycleControllerTestCase extends AbstractManagerTestBas
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extensions(ContainerLifecycleController.class);
+      builder.extensions(ContainerLifecycleController.class, ContainerDeploymentContextHandler.class);
    }
 
    @Test

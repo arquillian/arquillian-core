@@ -17,14 +17,12 @@
  */
 package org.jboss.arquillian.impl.client.container;
 
-import org.jboss.arquillian.impl.ThreadContext;
 import org.jboss.arquillian.impl.client.container.event.SetupContainer;
 import org.jboss.arquillian.impl.client.container.event.SetupContainers;
 import org.jboss.arquillian.impl.client.container.event.StartContainer;
 import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.StopContainer;
 import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
-import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -43,7 +41,6 @@ import org.jboss.arquillian.spi.event.container.BeforeStart;
 import org.jboss.arquillian.spi.event.container.BeforeStop;
 import org.jboss.arquillian.spi.event.container.ContainerEvent;
 
-
 /**
  * ContainerController
  *
@@ -53,9 +50,6 @@ import org.jboss.arquillian.spi.event.container.ContainerEvent;
 public class ContainerLifecycleController
 {
    @Inject 
-   private Instance<ContainerContext> containerContext;
-
-   @Inject 
    private Instance<ContainerRegistry> containerRegistry;
 
    @Inject
@@ -63,13 +57,13 @@ public class ContainerLifecycleController
    
    public void setupContainers(@Observes SetupContainers event) throws Exception
    {
-      forEachContainer(new Operation<String>()
+      forEachContainer(new Operation<Container>()
       {
          @Inject
          private Event<SetupContainer> event;
 
          @Override
-         public void perform(String container)
+         public void perform(Container container)
          {
             event.fire(new SetupContainer(container));
          }
@@ -78,13 +72,13 @@ public class ContainerLifecycleController
 
    public void startContainers(@Observes StartManagedContainers event) throws Exception
    {
-      forEachContainer(new Operation<String>()
+      forEachContainer(new Operation<Container>()
       {
          @Inject
          private Event<StartContainer> event;
 
          @Override
-         public void perform(String container)
+         public void perform(Container container)
          {
             event.fire(new StartContainer(container));
          }
@@ -93,13 +87,13 @@ public class ContainerLifecycleController
 
    public void stopContainers(@Observes StopManagedContainers event) throws Exception
    {
-      forEachContainer(new Operation<String>()
+      forEachContainer(new Operation<Container>()
       {
          @Inject
          private Event<StopContainer> stopContainer;
 
          @Override
-         public void perform(String container)
+         public void perform(Container container)
          {
             stopContainer.fire(new StopContainer(container));
          }
@@ -108,7 +102,7 @@ public class ContainerLifecycleController
    
    public void setupContainer(@Observes SetupContainer event) throws Exception
    {
-      forContainer(event.getContainerName(), new Operation<Container>()
+      forContainer(event.getContainer(), new Operation<Container>()
       {
          @Inject
          private Event<ContainerEvent> event;
@@ -137,7 +131,7 @@ public class ContainerLifecycleController
 
    public void startContainer(@Observes StartContainer event) throws Exception
    {
-      forContainer(event.getContainerName(), new Operation<Container>()
+      forContainer(event.getContainer(), new Operation<Container>()
       {
          @Inject
          private Event<ContainerEvent> event;
@@ -156,7 +150,7 @@ public class ContainerLifecycleController
    
    public void stopContainer(@Observes StopContainer event) throws Exception
    {
-      forContainer(event.getContainerName(), new Operation<Container>()
+      forContainer(event.getContainer(), new Operation<Container>()
       {
          @Inject
          private Event<ContainerEvent> event;
@@ -172,32 +166,20 @@ public class ContainerLifecycleController
          }
       });
    }
-
-   private void forEachContainer(Operation<String> operation) throws Exception
+   
+   private void forEachContainer(Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);
       ContainerRegistry registry = containerRegistry.get();
       for(Container container : registry.getContainers())
       {
-         ThreadContext.set(container.getClassLoader());
-         containerContext.get().activate(container.getName());
-         try
-         {
-            operation.perform(container.getName());
-         }
-         finally
-         {
-            containerContext.get().deactivate();
-            ThreadContext.reset();
-         }
+         operation.perform(container);
       }
    }
 
-   private void forContainer(String containerName, Operation<Container> operation) throws Exception
+   private void forContainer(Container container, Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);
-      ContainerRegistry registry = containerRegistry.get();
-      Container container = registry.getContainer(containerName);
       operation.perform(container);
    }
 

@@ -94,7 +94,13 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
       {
          if(e instanceof InvocationTargetException)
          {
-            throw new InvocationException(((InvocationTargetException)e).getTargetException());
+            Throwable cause = ((InvocationTargetException)e).getTargetException();
+            // Exception already wrapped by another Observer down the chain.
+            if(cause instanceof InvocationException)
+            {
+               throw (InvocationException)cause;
+            }
+            throw new InvocationException(cause);
          }
          throw new InvocationException(e);
       }

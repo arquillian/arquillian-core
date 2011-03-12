@@ -20,14 +20,11 @@ package org.jboss.arquillian.impl.client.container;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.jboss.arquillian.impl.ThreadContext;
-import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
 import org.jboss.arquillian.impl.client.container.event.DeployDeployment;
 import org.jboss.arquillian.impl.client.container.event.DeployManagedDeployments;
+import org.jboss.arquillian.impl.client.container.event.DeploymentEvent;
 import org.jboss.arquillian.impl.client.container.event.UnDeployDeployment;
 import org.jboss.arquillian.impl.client.container.event.UnDeployManagedDeployments;
-import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
-import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -61,12 +58,6 @@ import org.jboss.arquillian.spi.event.container.DeployerEvent;
  */
 public class ContainerDeployController
 {
-   @Inject 
-   private Instance<ContainerContext> containerContext;
-
-   @Inject 
-   private Instance<DeploymentContext> deploymentContext;
-
    @Inject
    private Instance<ContainerRegistry> containerRegistry;
    
@@ -76,32 +67,44 @@ public class ContainerDeployController
    @Inject
    private Instance<Injector> injector;
 
+   /**
+    * Deploy all deployments marked as startup = true.
+    * 
+    * @param event
+    * @throws Exception
+    */
    public void deployManaged(@Observes DeployManagedDeployments event) throws Exception
    {
-      forEachDeployment(new Operation<Container, DeploymentDescription>()
+      forEachManagedDeployment(new Operation<Container, DeploymentDescription>()
       {
          @Inject 
-         private Event<ContainerControlEvent> controllEvent;
+         private Event<DeploymentEvent> event;
          
          @Override
          public void perform(Container container, DeploymentDescription deployment) throws Exception
          {
-            controllEvent.fire(new DeployDeployment(container.getDeployableContainer(), deployment));            
+            event.fire(new DeployDeployment(container, deployment));            
          }
       });
    }
 
+   /**
+    * Undeploy all deployments marked as startup = true. 
+    * 
+    * @param event
+    * @throws Exception
+    */
    public void undeployManaged(@Observes UnDeployManagedDeployments event) throws Exception
    {
-      forEachDeployment(new Operation<Container, DeploymentDescription>()
+      forEachManagedDeployment(new Operation<Container, DeploymentDescription>()
       {
          @Inject 
-         private Event<ContainerControlEvent> controllEvent;
+         private Event<DeploymentEvent> event;
          
          @Override
          public void perform(Container container, DeploymentDescription deployment) throws Exception
          {
-            controllEvent.fire(new UnDeployDeployment(container.getDeployableContainer(), deployment));            
+            event.fire(new UnDeployDeployment(container, deployment));            
          }
       });
    }
@@ -124,6 +127,11 @@ public class ContainerDeployController
          {
             DeployableContainer<?> deployableContainer = event.getDeployableContainer();
             DeploymentDescription deployment = event.getDeployment();
+
+            /*
+             * TODO: should the DeploymentDescription producer some how be automatically registered ?
+             * Or should we just 'know' who is the first one to create the context
+             */
             deploymentDescription.set(deployment);
             
             deployEvent.fire(new BeforeDeploy(deployableContainer, deployment));
@@ -186,13 +194,9 @@ public class ContainerDeployController
       });
    }
    
-   private void forEachDeployment(Operation<Container, DeploymentDescription> operation) throws Exception
+   private void forEachManagedDeployment(Operation<Container, DeploymentDescription> operation) throws Exception
    {
       injector.get().inject(operation);
-      
-      ContainerContext containerContext = this.containerContext.get();
-      DeploymentContext deploymentContext = this.deploymentContext.get();
-
       ContainerRegistry containerRegistry = this.containerRegistry.get();
       DeploymentScenario deploymentScenario = this.deploymentScenario.get();
       
@@ -207,28 +211,9 @@ public class ContainerDeployController
          // Container should exists, handled by up front validation
          Container container = containerRegistry.getContainer(target);
          
-         ThreadContext.set(container.getClassLoader());
-         try
+         for(DeploymentDescription deployment : startUpDeployments)
          {
-            containerContext.activate(container.getName());
-            for(DeploymentDescription deployment : startUpDeployments)
-            {
-               try
-               {
-                  deploymentContext.activate(deployment);
-               
-                  operation.perform(container, deployment);
-               }
-               finally
-               {
-                  deploymentContext.deactivate();
-               }
-            }
-         } 
-         finally 
-         {
-            containerContext.deactivate();
-            ThreadContext.reset();
+            operation.perform(container, deployment);
          }
       }
    }

@@ -17,23 +17,18 @@
  */
 package org.jboss.arquillian.impl.client;
 
-import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
+import org.jboss.arquillian.impl.client.container.event.ContainerMultiControlEvent;
 import org.jboss.arquillian.impl.client.container.event.DeployManagedDeployments;
 import org.jboss.arquillian.impl.client.container.event.SetupContainers;
 import org.jboss.arquillian.impl.client.container.event.StartManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.StopManagedContainers;
 import org.jboss.arquillian.impl.client.container.event.UnDeployManagedDeployments;
 import org.jboss.arquillian.impl.client.deployment.event.GenerateDeployment;
-import org.jboss.arquillian.impl.client.event.ActivateContainerDeploymentContext;
-import org.jboss.arquillian.impl.client.event.ContextActivationEvent;
-import org.jboss.arquillian.impl.client.event.DeActivateContainerDeploymentContext;
 import org.jboss.arquillian.spi.core.Event;
 import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.spi.event.suite.Before;
 import org.jboss.arquillian.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 
@@ -46,13 +41,10 @@ import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 public class ContainerEventController
 {
    @Inject
-   private Event<ContainerControlEvent> container;
+   private Event<ContainerMultiControlEvent> container;
    
    @Inject
    private Event<GenerateDeployment> deployment;
-   
-   @Inject
-   private Event<ContextActivationEvent> context;
 
    /*
     * Suite Level
@@ -80,18 +72,5 @@ public class ContainerEventController
    public void execute(@Observes AfterClass event)
    {
       container.fire(new UnDeployManagedDeployments());
-   }
-   
-   /*
-    * Test Level
-    */
-   public void execute(@Observes(precedence = 10) Before event)
-   {
-      context.fire(new ActivateContainerDeploymentContext(event));
-   }
-
-   public void execute(@Observes(precedence = -10) After event)
-   {
-      context.fire(new DeActivateContainerDeploymentContext(event));
    }
 }

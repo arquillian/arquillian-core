@@ -23,7 +23,7 @@ package org.jboss.arquillian.impl.client.container.event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerMultiControlEvent extends ContainerControlEvent
+public interface ContainerMultiControlEvent
 {
 
 }

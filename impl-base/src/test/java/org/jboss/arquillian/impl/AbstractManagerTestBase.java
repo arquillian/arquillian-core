@@ -106,9 +106,17 @@ public abstract class AbstractManagerTestBase
    public final void assertEventFired(Class<?> type, Integer count)
    {
       Assert.assertEquals(
-            "Event " + type.getName() + " should have been fired " + count + " times",
+            "The event of exact type " + type.getName() + " should have been fired",
             count,
             manager.resolve(EventRegister.class).getCount(type));
+   }
+
+   public final void assertEventFiredTyped(Class<?> type, Integer count)
+   {
+      Assert.assertEquals(
+            "The event of assiganble type to " + type.getName() + " should have been fired",
+            count,
+            manager.resolve(EventRegister.class).getCountTyped(type));
    }
 
    public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext)
@@ -213,6 +221,31 @@ public abstract class AbstractManagerTestBase
          }
       }
       
+      /**
+       * Get the count of a assignable count.
+       * 
+       * @param type The assignable event type
+       * @return Number of times fired
+       */
+      public Integer getCountTyped(Class<?> type)
+      {
+         int count = 0;
+         for(Map.Entry<Class<?>, List<EventRecording>> recordingEntry : events.entrySet())
+         {
+            if(type.isAssignableFrom(recordingEntry.getKey())) 
+            {
+               count += recordingEntry.getValue().size();
+            }
+         }
+         return count;
+      }
+      
+      /**
+       * Get the count of a specific type.
+       * 
+       * @param type The exact event type
+       * @return Number of times fired
+       */
       public Integer getCount(Class<?> type)
       {
          return events.containsKey(type) ? events.get(type).size():0;

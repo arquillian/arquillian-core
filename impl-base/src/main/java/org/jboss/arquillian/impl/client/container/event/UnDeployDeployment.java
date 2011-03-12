@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.impl.client.container.event;
 
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 
 /**
@@ -26,30 +26,10 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class UnDeployDeployment implements ContainerControlEvent
+public class UnDeployDeployment extends DeploymentEvent
 {
-   private DeployableContainer<?> deployableContainer;
-   private DeploymentDescription deployment;
-   
-   public UnDeployDeployment(DeployableContainer<?> deployableContainer, DeploymentDescription deployment)
+   public UnDeployDeployment(Container container, DeploymentDescription deployment)
    {
-      this.deployableContainer = deployableContainer;
-      this.deployment = deployment;
-   }
-
-   /**
-    * @return the deployableContainer
-    */
-   public DeployableContainer<?> getDeployableContainer()
-   {
-      return deployableContainer;
-   }
-   
-   /**
-    * @return the deployment
-    */
-   public DeploymentDescription getDeployment()
-   {
-      return deployment;
+      super(container, deployment);
    }
 }

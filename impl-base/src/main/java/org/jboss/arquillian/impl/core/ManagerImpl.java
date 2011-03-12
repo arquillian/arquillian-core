@@ -29,6 +29,7 @@ import org.jboss.arquillian.impl.core.spi.EventContext;
 import org.jboss.arquillian.impl.core.spi.EventPoint;
 import org.jboss.arquillian.impl.core.spi.Extension;
 import org.jboss.arquillian.impl.core.spi.InjectionPoint;
+import org.jboss.arquillian.impl.core.spi.InvocationException;
 import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
@@ -116,13 +117,18 @@ public class ManagerImpl implements Manager
       } 
       catch (Exception e) 
       {
-         if(handledThrowables.get().contains(e.getClass()))
+         Throwable fireException = e;
+         if(fireException instanceof InvocationException)
          {
-            UncheckedThrow.throwUnchecked(e);
+            fireException = fireException.getCause();
+         }
+         if(handledThrowables.get().contains(fireException.getClass()))
+         {
+            UncheckedThrow.throwUnchecked(fireException);
          }
          else
          {
-            fireException(e);
+            fireException(fireException);
          }
       }
       finally
@@ -249,6 +255,11 @@ public class ManagerImpl implements Manager
    // Internal Helper Methods ------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
+   boolean isExceptionHandled(Throwable e)
+   {
+      return handledThrowables.get().contains(e.getClass());
+   }
+   
    void fireException(Throwable event)
    {
       debug(event, true);
@@ -382,7 +393,7 @@ public class ManagerImpl implements Manager
          {
             if(Reflections.isType(observer.getType(), EventContext.class))
             {
-               if(Reflections.getType(observer.getType()) == eventType)
+               if(Reflections.getType(observer.getType()).isAssignableFrom(eventType))
                {
                   observers.add(observer);
                }

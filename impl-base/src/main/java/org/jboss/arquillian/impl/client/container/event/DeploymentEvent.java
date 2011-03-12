@@ -15,20 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.client.event;
+package org.jboss.arquillian.impl.client.container.event;
 
-import org.jboss.arquillian.spi.event.suite.TestLifecycleEvent;
+import org.jboss.arquillian.impl.domain.Container;
+import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 
 /**
- * ActivateContainerDeploymentContext
+ * DeploymentEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeActivateContainerDeploymentContext extends ContextActivationEvent
+public abstract class DeploymentEvent extends ContainerControlEvent
 {
-   public DeActivateContainerDeploymentContext(TestLifecycleEvent testLifecycle)
+   private DeploymentDescription deployment;
+
+   public DeploymentEvent(Container container, DeploymentDescription deployment)
    {
-      super(testLifecycle);
-   } 
+      super(container);
+      this.deployment = deployment;
+   }
+
+   /**
+    * @return
+    */
+   public DeployableContainer<?> getDeployableContainer()
+   {
+      return getContainer().getDeployableContainer();
+   }
+   
+   /**
+    * @return
+    */
+   public DeploymentDescription getDeployment()
+   {
+      return deployment;
+   }
 }

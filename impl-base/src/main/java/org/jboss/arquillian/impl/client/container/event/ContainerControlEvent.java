@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.impl.client.container.event;
 
+import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.spi.event.Event;
 
 /**
@@ -25,7 +26,28 @@ import org.jboss.arquillian.spi.event.Event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerControlEvent extends Event
+public abstract class ContainerControlEvent implements Event
 {
+   private Container container;
 
+   public ContainerControlEvent(Container container)
+   {
+      this.container = container;
+   }
+
+   /**
+    * @return the container
+    */
+   public Container getContainer()
+   {
+      return container;
+   }
+   
+   /**
+    * @return
+    */
+   public String getContainerName()
+   {
+      return getContainer().getName();
+   }
 }
