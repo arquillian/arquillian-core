@@ -31,6 +31,7 @@ import org.jboss.arquillian.impl.core.spi.Extension;
 import org.jboss.arquillian.impl.core.spi.InjectionPoint;
 import org.jboss.arquillian.impl.core.spi.InvocationException;
 import org.jboss.arquillian.impl.core.spi.Manager;
+import org.jboss.arquillian.impl.core.spi.NonManagedObserver;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.impl.core.spi.context.Context;
@@ -102,6 +103,15 @@ public class ManagerImpl implements Manager
    @Override
    public void fire(Object event)
    {
+      fire(event, null);
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.core.spi.Manager#fire(java.lang.Object, org.jboss.arquillian.impl.core.spi.NonManagedObserver)
+    */
+   @Override
+   public <T> void fire(T event, NonManagedObserver<T> nonManagedObserver)
+   {
       Validate.notNull(event, "Event must be specified");
       
       debug(event, true);
@@ -113,7 +123,7 @@ public class ManagerImpl implements Manager
       
       try
       {
-         new EventContextImpl<Object>(this, interceptorObservers, observers, event).proceed();
+         new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event).proceed();
       } 
       catch (Exception e) 
       {

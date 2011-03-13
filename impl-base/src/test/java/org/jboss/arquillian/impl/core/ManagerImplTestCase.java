@@ -20,6 +20,8 @@ import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.core.ManagerImpl;
 import org.jboss.arquillian.impl.core.context.ClassContextImpl;
 import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
+import org.jboss.arquillian.impl.core.spi.NonManagedObserver;
+import org.jboss.arquillian.impl.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.jboss.arquillian.spi.core.Instance;
@@ -122,6 +124,24 @@ public class ManagerImplTestCase
       Assert.assertNull(manager.getExtension(SuiteContextImpl.class));
    }
 
+   @Test
+   public void shouldCallNonManagedObserver() throws Exception
+   {
+      final String testEvent = "test";
+      
+      TestNonManagedObserver observer = new TestNonManagedObserver();
+      
+      ManagerImpl manager = ManagerBuilder.from().create();
+      manager.fire(testEvent, observer);
+      
+      Assert.assertNotNull(
+            "NonManagedObserver should have been called", 
+            TestNonManagedObserver.firedEvent);
+      Assert.assertEquals(
+            "NonManagedObserver should have received fired event",
+            TestNonManagedObserver.firedEvent, testEvent);
+   }
+   
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnBindWithNoFoundScopedContext() throws Exception
    {
@@ -152,6 +172,24 @@ public class ManagerImplTestCase
          Assert.assertNotNull("Verify InjectionPoint is not null", value);
          Assert.assertNotNull("Verify InjectionPoint value is not null", value.get());
          wasCalled = true;
+      }
+   }
+   
+   private static class TestNonManagedObserver implements NonManagedObserver<String>
+   {
+      private static String firedEvent = null;
+      
+      @Inject
+      private Instance<ApplicationContext> applicationContext;
+      
+      @Override
+      public void fired(String event)
+      {
+         firedEvent = event;
+         if(applicationContext == null)
+         {
+            throw new IllegalStateException("ApplicationContext should have been injected, but was null");
+         }
       }
    }
 }

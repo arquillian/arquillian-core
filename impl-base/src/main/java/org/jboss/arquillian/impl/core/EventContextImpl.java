@@ -17,10 +17,12 @@
  */
 package org.jboss.arquillian.impl.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.arquillian.impl.core.spi.EventContext;
 import org.jboss.arquillian.impl.core.spi.InvocationException;
+import org.jboss.arquillian.impl.core.spi.NonManagedObserver;
 import org.jboss.arquillian.impl.core.spi.ObserverMethod;
 
 /**
@@ -34,15 +36,32 @@ public class EventContextImpl<T> implements EventContext<T>
    private ManagerImpl manager;
    private List<ObserverMethod> interceptors;
    private List<ObserverMethod> observers;
+   private NonManagedObserver<T> nonManagedObserver;
+   
    private T event;
    
    private int currentInterceptor = 0;
    
-   public EventContextImpl(ManagerImpl manager, List<ObserverMethod> interceptors, List<ObserverMethod> observers, T event)
+   /**
+    * Create a new EventContext that will process all interceptors, observers and the non managed observer for a given event.
+    * 
+    * @param manager The manager instance to operate on
+    * @param interceptors List of interceptor observers, @Observers of EventContext<T>
+    * @param observers List of Observers, @Observes T
+    * @param nonManagedObserver a NonManagedObserver of type T
+    * @param event The event
+    * @throws IllegalArgumentException if Manager is null
+    * @throws IllegalArgumentException if Event is null 
+    */
+   public EventContextImpl(ManagerImpl manager, List<ObserverMethod> interceptors, List<ObserverMethod> observers, NonManagedObserver<T> nonManagedObserver, T event)
    {
+      Validate.notNull(manager, "Manager must be specified");
+      Validate.notNull(event, "Event must be specified");
+      
       this.manager = manager;
-      this.interceptors = interceptors;
-      this.observers = observers;
+      this.interceptors = interceptors == null ? new ArrayList<ObserverMethod>():interceptors;
+      this.observers = observers == null ? new ArrayList<ObserverMethod>():observers;
+      this.nonManagedObserver = nonManagedObserver;
       this.event = event;
    }
 
@@ -59,6 +78,7 @@ public class EventContextImpl<T> implements EventContext<T>
       if(currentInterceptor == interceptors.size())
       {
          invokeObservers();
+         invokeNonManagedObserver();
       }
       else
       {
@@ -86,6 +106,15 @@ public class EventContextImpl<T> implements EventContext<T>
                manager.fireException(e.getCause());
             }
          }
+      }
+   }
+   
+   private void invokeNonManagedObserver()
+   {
+      if(this.nonManagedObserver != null)
+      {
+         manager.inject(nonManagedObserver);
+         nonManagedObserver.fired(getEvent());
       }
    }
 }

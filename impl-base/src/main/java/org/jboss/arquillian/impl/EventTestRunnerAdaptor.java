@@ -17,12 +17,17 @@
 package org.jboss.arquillian.impl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.arquillian.impl.core.spi.Manager;
+import org.jboss.arquillian.impl.core.spi.NonManagedObserver;
 import org.jboss.arquillian.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.event.suite.After;
 import org.jboss.arquillian.spi.event.suite.AfterClass;
 import org.jboss.arquillian.spi.event.suite.AfterSuite;
@@ -91,9 +96,20 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
    {
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
-      
-      manager.fire(new Test(testMethodExecutor));
-      return manager.resolve(TestResult.class);
+
+      final List<TestResult> result = new ArrayList<TestResult>();
+      manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>()
+      {
+         @Inject
+         private Instance<TestResult> testResult;
+         
+         @Override
+         public void fired(Test event)
+         {
+            result.add(testResult.get());
+         }
+      });
+      return result.get(0);
    }
    
    public void shutdown()
