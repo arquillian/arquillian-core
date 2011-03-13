@@ -39,10 +39,13 @@ import org.junit.Test;
  */
 public class ExceptionHandlingTestCase
 {
+   {
+      ManagerImpl.DEBUG = false;
+   }
+   
    @Test
    public void shouldOnlyFireSameExceptionOnce() throws Exception
    {
-      ManagerImpl.DEBUG = true;
       ManagerImpl manager = ManagerBuilder.from()
          .context(SuiteContextImpl.class)
          .extensions(TestEventFire.class, TestExceptionThrower.class, TestExceptionHandler.class)

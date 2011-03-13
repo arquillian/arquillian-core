@@ -23,6 +23,7 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.DeploymentTarget;
+import org.jboss.arquillian.impl.core.ManagerImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
@@ -44,6 +45,9 @@ import org.junit.runner.RunWith;
  */
 public class JUnitIntegrationTestCase
 {
+   {
+      ManagerImpl.DEBUG = false;
+   }
    public static Map<String, Integer> containerCallbacks = new HashMap<String, Integer>();
    static 
    {

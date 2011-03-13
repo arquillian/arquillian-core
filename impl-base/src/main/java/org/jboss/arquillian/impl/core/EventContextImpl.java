@@ -83,6 +83,7 @@ public class EventContextImpl<T> implements EventContext<T>
       else
       {
          ObserverMethod interceptor = interceptors.get(currentInterceptor++);
+         manager.debug(interceptor, true);
          interceptor.invoke(manager, this);
       }
    }
@@ -93,17 +94,19 @@ public class EventContextImpl<T> implements EventContext<T>
       {
          try
          {
+            manager.debug(observer, false);
             observer.invoke(manager, event);
          } 
          catch (InvocationException e) 
          {
-            if(manager.isExceptionHandled(e.getCause()))
+            Throwable cause = e.getCause();
+            if(manager.isExceptionHandled(cause))
             {
-               UncheckedThrow.throwUnchecked(e.getCause());
+               UncheckedThrow.throwUnchecked(cause);
             }
             else
             {
-               manager.fireException(e.getCause());
+               manager.fireException(cause);
             }
          }
       }

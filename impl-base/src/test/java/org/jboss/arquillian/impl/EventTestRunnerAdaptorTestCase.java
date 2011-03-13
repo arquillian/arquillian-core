@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.core.ManagerImpl;
 import org.jboss.arquillian.impl.core.spi.Manager;
 import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
@@ -48,6 +49,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class EventTestRunnerAdaptorTestCase extends AbstractManagerTestBase
 {
+   {
+      ManagerImpl.DEBUG = false;
+   }
    @Override
    protected void addExtensions(ManagerBuilder builder) 
    {  

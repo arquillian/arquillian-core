@@ -70,7 +70,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ContainerDeployControllerTestCase extends AbstractManagerTestBase
 {
    {
-      ManagerImpl.DEBUG = true;
+      ManagerImpl.DEBUG = false;
    }
    
    private static final String CONTAINER_1_NAME = "container_1";

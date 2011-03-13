@@ -285,7 +285,7 @@ public class ManagerImpl implements Manager
             ObserverMethod observer = observers.get(i);
             try
             {
-               debug(observer);
+               debug(observer, false);
                observer.invoke(this, event);
             }
             catch (Exception e) 
@@ -467,13 +467,14 @@ public class ManagerImpl implements Manager
       return null;
    }
    
-   private void debug(ObserverMethod method)
+   void debug(ObserverMethod method, boolean interceptor)
    {
       if(DEBUG)
       {
-         System.out.println(calcDebugPrefix() + "\t(O) " +method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
+         System.out.println(calcDebugPrefix() + "(" + (interceptor ? "I":"O") + ") " +method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
       }
    }
+
    private void debug(Object event, boolean push)
    {
       if(DEBUG)

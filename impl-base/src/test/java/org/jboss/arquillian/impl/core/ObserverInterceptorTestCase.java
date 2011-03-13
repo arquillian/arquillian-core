@@ -34,6 +34,10 @@ import org.junit.Test;
  */
 public class ObserverInterceptorTestCase extends AbstractManagerTestBase
 {
+   {
+      ManagerImpl.DEBUG = false;
+   }
+   
    public static List<String> callStack = new ArrayList<String>();
    
    @Override
