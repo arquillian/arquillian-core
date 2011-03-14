@@ -21,6 +21,8 @@ import java.util.Collection;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Expected;
+import org.jboss.arquillian.impl.client.container.event.DeployDeployment;
+import org.jboss.arquillian.impl.core.spi.EventContext;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.DeploymentException;
 import org.jboss.arquillian.spi.client.container.DeploymentExceptionTransformer;
@@ -37,29 +39,64 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
  */
 public class DeploymentExceptionHandler
 {
-   @Inject
-   private Instance<DeploymentDescription> deployment;
-
    @Inject 
    private Instance<ServiceLoader> serviceLoader;
    
-   public void handle(@Observes Exception exception) throws Exception
+   public void verifyExpectedExceptionDuringDeploy(@Observes EventContext<DeployDeployment> context) throws Exception
    {
-      DeploymentDescription deployment = this.deployment.get(); 
-      if(deployment != null && deployment.getExpectedException() != null)
+      DeploymentDescription deployment = context.getEvent().getDeployment(); 
+      boolean deploymentExceptionThrown = true;
+      try
       {
-         if(!containsType(
-               transform(exception), 
-               deployment.getExpectedException()))
+         context.proceed();
+         if(deployment.getExpectedException() != null)
          {
-            throw exception;
+            deploymentExceptionThrown = false;
+            throw new RuntimeException(
+                  "Expected exception of type " + deployment.getExpectedException().getName() + " during deployment of " + 
+                  deployment.getName() + ", but no exception was thrown.");
          }
       }
-      else
+      catch (Exception e) 
       {
-         throw exception;
+         // if exception is not thrown from the deployment, rethrow it (we threw it).
+         if(!deploymentExceptionThrown)
+         {
+            throw e;
+         }
+         if(deployment.getExpectedException() != null)
+         {
+            if(!containsType(
+                  transform(e), 
+                  deployment.getExpectedException()))
+            {
+               throw e;
+            }
+         }
+         else
+         {
+            throw e;
+         }
       }
    }
+   
+/*
+   public void verifyExpectedExceptionDuringUnDeploy(@Observes EventContext<UnDeployDeployment> context) throws Exception
+   {
+      DeploymentDescription deployment = context.getEvent().getDeployment(); 
+      try
+      {
+         context.proceed();
+      }
+      catch (Exception e) 
+      {
+         if(deployment.getExpectedException() == null)
+         {
+               throw e;
+         }
+      }
+   }
+*/
    
    private boolean containsType(Throwable exception, Class<? extends Exception> expectedType)
    {

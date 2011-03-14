@@ -20,7 +20,9 @@ package org.jboss.arquillian.impl.client.container;
 import java.util.Arrays;
 
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
+import org.jboss.arquillian.impl.client.container.event.DeployDeployment;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
+import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.DeploymentException;
 import org.jboss.arquillian.spi.client.container.DeploymentExceptionTransformer;
@@ -28,6 +30,7 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
 import org.jboss.arquillian.spi.core.annotation.Inject;
+import org.jboss.arquillian.spi.core.annotation.Observes;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
@@ -56,10 +59,13 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
    @Mock
    private DeploymentExceptionTransformer transformer;
 
+   @Mock
+   private Container container;
+
    @Override
    protected void addExtensions(ManagerBuilder builder)
    {
-      builder.extension(DeploymentExceptionHandler.class);
+      builder.extensions(DeploymentExceptionHandler.class, TestExceptionDeployThrower.class);
    }
    
    @Before
@@ -71,62 +77,83 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
    @Test
    public void shouldSwallowExceptionIfExpected() throws Exception
    {
-      bind(
-            ApplicationScoped.class, 
-            DeploymentDescription.class, 
+      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
+      fire(new DeployDeployment(
+            container, 
             new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(NullPointerException.class));
-      
-      fire(new DeploymentException("Could not handle ba", new NullPointerException()));
+               .setExpectedException(NullPointerException.class)));
    }
 
    @Test
    public void shouldCallDeploymentTransformers() throws Exception
    {
-      bind(
-            ApplicationScoped.class, 
-            DeploymentDescription.class, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class));
-
+      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new IllegalArgumentException()); 
       Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
 
-      fire(new IllegalArgumentException());
+      fire(new DeployDeployment(
+            container, 
+            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+            .setExpectedException(IllegalArgumentException.class)));
       
-      /*
-       *  TODO: we check if it's been called twice because the EventRegistry Observer observes Object and throws any Exceptions.
-       *  So the first time it gets invoked it is because this is thrown, then since it's handled
-       *  it will call next listener which is the DeploymentExceptionHandler.
-       */
-      Mockito.verify(transformer, Mockito.times(2)).transform(Mockito.isA(Exception.class));
+      Mockito.verify(transformer, Mockito.times(1)).transform(Mockito.isA(Exception.class));
    }
-   
+
+   @Test
+   public void shouldTransformException() throws Exception
+   {
+      TestExceptionDeployThrower.shouldThrow = new IllegalStateException();
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(new IllegalArgumentException());
+
+      fire(new DeployDeployment(
+            container, 
+            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+               .setExpectedException(IllegalArgumentException.class)));
+   }
+
    @Test(expected = DeploymentException.class)
    public void shouldRethrowExceptionIfWrongExpectedType() throws Exception
    {
-      bind(
-            ApplicationScoped.class, 
-            DeploymentDescription.class, 
+      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+
+      fire(new DeployDeployment(
+            container, 
             new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class));
-      
-      fire(new DeploymentException("Could not handle ba", new NullPointerException()));
-   }
+               .setExpectedException(IllegalArgumentException.class)));
+      }
 
    @Test(expected = DeploymentException.class)
    public void shouldRethrowExceptionIfExpectedNotSet() throws Exception
    {
-      bind(
-            ApplicationScoped.class, 
-            DeploymentDescription.class, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class)));
-      
-      fire(new DeploymentException("Could not handle ba", new NullPointerException()));
+      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
+
+      fire(new DeployDeployment(
+            container, 
+            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))));
    }
 
-   @Test(expected = NullPointerException.class)
-   public void shouldRethrowExceptionIfNotNoDeploymentFound() throws Exception
+   @Test(expected = RuntimeException.class)
+   public void shouldThrowExceptionIfExpectedButNoExceptionThrown() throws Exception
    {
-      fire(new NullPointerException());
+      TestExceptionDeployThrower.shouldThrow = null;
+
+      fire(new DeployDeployment(
+            container, 
+            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+               .setExpectedException(IllegalArgumentException.class)));
+   }
+
+   public static class TestExceptionDeployThrower 
+   {
+      public static Throwable shouldThrow = null;
+      
+      public void throwException(@Observes DeployDeployment event) throws Throwable
+      {
+         if(shouldThrow != null)
+         {
+            throw shouldThrow;
+         }
+      }
    }
 }

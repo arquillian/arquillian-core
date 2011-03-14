@@ -176,6 +176,7 @@ public class ContainerDeployController
                }
                catch (Exception e) 
                {
+                  // TODO: Evaluate, should this be moved to DeploymentExceptionHandler?
                   // silently ignore UnDeploy exceptions if a expected exception during deploy(it is probably not deployed) 
                   if(deployment.getExpectedException() == null)
                   {
