@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -98,7 +99,8 @@ public class EJBInjectionEnricher implements TestEnricher
          {
             if(field.get(testCase) == null) // only try to lookup fields that are not already set
             {
-               Object ejb = lookupEJB(field.getType());
+               EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
+               Object ejb = lookupEJB(field.getType(), fieldAnnotation.mappedName());
                field.set(testCase, ejb);
             }
          }
@@ -117,7 +119,16 @@ public class EJBInjectionEnricher implements TestEnricher
             {
                throw new RuntimeException("@EJB only allowed on 'set' methods");
             }
-            Object ejb = lookupEJB(method.getParameterTypes()[0]);
+            EJB parameterAnnotation = null; //method.getParameterAnnotations()[0]
+            for (Annotation annotation : method.getParameterAnnotations()[0])
+            {
+               if (EJB.class.isAssignableFrom(annotation.annotationType()))
+               {
+                  parameterAnnotation = (EJB) annotation;
+               }
+            }
+            String mappedName = parameterAnnotation == null ? null : parameterAnnotation.mappedName();
+            Object ejb = lookupEJB(method.getParameterTypes()[0], mappedName);
             method.invoke(testCase, ejb);
          }
          
@@ -128,11 +139,13 @@ public class EJBInjectionEnricher implements TestEnricher
       }
    }
    
-   protected Object lookupEJB(Class<?> fieldType) throws Exception 
+   protected Object lookupEJB(Class<?> fieldType, String mappedName) throws Exception 
    {
       // TODO: figure out test context ? 
       InitialContext initcontext = createContext();
       
+      // TODO: These names are not spec compliant; fieldType needs to be a bean type here,
+      //       but usually is just an interface of a bean.  These seldom work.
       String[] jndiNames = {
             "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
             "java:global/test.ear/test/" + fieldType.getSimpleName(),
@@ -146,6 +159,11 @@ public class EJBInjectionEnricher implements TestEnricher
             fieldType.getSimpleName() + "Bean/remote",
             fieldType.getSimpleName() + "/no-interface"
       };
+      if ((mappedName != null) && (!mappedName.equals("")))
+      {
+         // Use only the mapped name to lookup this EJB
+         jndiNames = new String[]{ mappedName };
+      }
       
       for(String jndiName : jndiNames)
       {
