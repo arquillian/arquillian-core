@@ -48,7 +48,7 @@ public class ContainerRestarterTestCase extends AbstractManagerTestBase
    public void shouldRestartContainerForEveryX() throws Exception 
    {
       ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
-            .engine().maxDeploymentsBeforeRestart(5);
+            .engine().maxTestClassesBeforeRestart(5);
 
       bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
       

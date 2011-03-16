@@ -76,18 +76,18 @@ public class ArquillianDescriptorTestCase
                .engine()
                   .deploymentExportPath(PROPERTY_VALUE_1)
                   .deploymentExportPath(PROPERTY_VALUE_1)
-                  .maxDeploymentsBeforeRestart(PROPERTY_INT_VALUE_1)
-                  .maxDeploymentsBeforeRestart(PROPERTY_INT_VALUE_1)
+                  .maxTestClassesBeforeRestart(PROPERTY_INT_VALUE_1)
+                  .maxTestClassesBeforeRestart(PROPERTY_INT_VALUE_1)
              .exportAsString(); 
 
       assertXPath(desc, "/arquillian/engine/property[@name='deploymentExportPath']/text()", PROPERTY_VALUE_1);
-      assertXPath(desc, "/arquillian/engine/property[@name='maxDeploymentsBeforeRestart']/text()", PROPERTY_INT_VALUE_1);
+      assertXPath(desc, "/arquillian/engine/property[@name='maxTestClassesBeforeRestart']/text()", PROPERTY_INT_VALUE_1);
    
    
       ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).from(desc);
       
       Assert.assertEquals(PROPERTY_VALUE_1, descriptor.engine().getDeploymentExportPath());
-      Assert.assertEquals(PROPERTY_INT_VALUE_1, descriptor.engine().getMaxDeploymentsBeforeRestart());
+      Assert.assertEquals(PROPERTY_INT_VALUE_1, descriptor.engine().getMaxTestClassesBeforeRestart());
    }
    
    @Test

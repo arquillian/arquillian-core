@@ -41,7 +41,7 @@ import org.jboss.arquillian.spi.event.suite.BeforeClass;
  */
 public class ContainerRestarter 
 {
-   private int deploymentCount = 0;
+   private int testClassesCount = 0;
    
    @Inject
    private Event<ContainerMultiControlEvent> controlEvent;
@@ -61,20 +61,20 @@ public class ContainerRestarter
    private boolean shouldRestart()
    {
       ArquillianDescriptor descriptor = configuration.get(); 
-      Integer maxDeployments = descriptor.engine().getMaxDeploymentsBeforeRestart();
-      if(maxDeployments == null)
+      Integer maxTestClasses = descriptor.engine().getMaxTestClassesBeforeRestart();
+      if(maxTestClasses == null)
       {
          return false;
       }
-      if(maxDeployments > -1) 
+      if(maxTestClasses > -1) 
       {
-         if((maxDeployments -1 ) == deploymentCount)
+         if((maxTestClasses -1 ) == testClassesCount)
          {
-            deploymentCount = 0;
+            testClassesCount = 0;
             return true;
          }
       }
-      deploymentCount++;
+      testClassesCount++;
       return false;
    }
 }

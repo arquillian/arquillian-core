@@ -30,7 +30,7 @@ public interface EngineDef extends ArquillianDescriptor
    
    String getDeploymentExportPath();
    
-   EngineDef maxDeploymentsBeforeRestart(Integer max);
+   EngineDef maxTestClassesBeforeRestart(Integer max);
    
-   Integer getMaxDeploymentsBeforeRestart();
+   Integer getMaxTestClassesBeforeRestart();
 }

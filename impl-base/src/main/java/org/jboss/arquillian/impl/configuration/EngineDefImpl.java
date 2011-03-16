@@ -31,7 +31,7 @@ import org.jboss.shrinkwrap.descriptor.api.query.Query;
 public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
 {
    private static final Query exportPath = Queries.from("property@name=deploymentExportPath");
-   private static final Query maxDeployments = Queries.from("property@name=maxDeploymentsBeforeRestart");
+   private static final Query maxTestClasses = Queries.from("property@name=maxTestClassesBeforeRestart");
    
    private Node engine;
    
@@ -61,22 +61,22 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
    }
 
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#maxDeploymentsBeforeRestart(int)
+    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#maxTestClassesBeforeRestart(java.lang.Integer)
     */
    @Override
-   public EngineDef maxDeploymentsBeforeRestart(Integer max)
+   public EngineDef maxTestClassesBeforeRestart(Integer max)
    {
-      engine.getOrCreate(maxDeployments).text(max);
+      engine.getOrCreate(maxTestClasses).text(max);
       return this;
    }
    
    /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getMaxDeploymentsBeforeRestart()
+    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getMaxTestClassesBeforeRestart()
     */
    @Override
-   public Integer getMaxDeploymentsBeforeRestart()
+   public Integer getMaxTestClassesBeforeRestart()
    {
-      return getTextIfExistsAsInteger(maxDeployments);
+      return getTextIfExistsAsInteger(maxTestClasses);
    }
    
    private Integer getTextIfExistsAsInteger(Query query)
