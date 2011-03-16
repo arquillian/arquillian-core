@@ -102,8 +102,10 @@ public class ExceptionProxy implements Serializable {
 	}
 
 	public ArquillianProxyException createProxyException(String reason) {
-		return new ArquillianProxyException(message, className, reason,
+		ArquillianProxyException exception = new ArquillianProxyException(message, className, reason,
 				getCause());
+		exception.setStackTrace(trace);
+		return exception;
 	}
 
 	/**
