@@ -51,7 +51,9 @@ public class ArchiveDeploymentExporter
          return;
       }
       EngineDef engine = descriptor.engine();
-      String exportPath = engine.getDeploymentExportPath();
+
+      String systemExport = System.getProperty("arquillian.deploymentExportPath");
+      String exportPath = (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath():systemExport;
       
       if(exportPath != null && event.getDeployment().isArchiveDeployment())
       {

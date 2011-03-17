@@ -48,6 +48,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
 {
+   /**
+    * 
+    */
+   private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_PATH = "arquillian.deploymentExportPath";
+
    private static final String TARGET_NAME = "test.jar";
 
    private static final String DEPLOYMENT_NAME = "test.jar";
@@ -87,6 +92,24 @@ public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
    }
 
    @Test
+   public void shouldExportIfExportPathSystemPropertyIsSet() throws Exception
+   {
+      System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
+      try
+      {
+         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+         
+         fire(new BeforeDeploy(deployableContainer, deployment));
+   
+         fileShouldExist(true);
+      }
+      finally
+      {
+         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, "");
+      }
+   }
+
+   @Test
    public void shouldNotExportIfDeploymentExportPathNotSet() throws Exception
    {
       bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
@@ -109,7 +132,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractManagerTestBase
 
       fileShouldExist(false);
    }
-
+   
    @Test
    public void shouldBeExportedWhenDeploymentExportPathIsSet() throws Exception
    {
