@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,21 +20,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Specifies the RunMode a Test/TestMethod should run in.
+ * Defines that this @Test method will operate within the context of the deployment. 
+ * 
+ * It will have access to the meta data provided by the @Deployment and the Container where it is deployed. 
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Inherited
 @Documented
 @Retention(RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Run
+@Target(ElementType.METHOD)
+public @interface OperateOnDeployment
 {
-   RunModeType value() default RunModeType.IN_CONTAINER;
+   String value();
 }

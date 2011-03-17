@@ -46,7 +46,7 @@ public interface Protocol<T extends ProtocolConfiguration>
     * <br/>
     * 
     * @return The protocol name
-    * @see org.jboss.arquillian.api.Protocol
+    * @see org.jboss.arquillian.api.OverProtocol
     */
    ProtocolDescription getDescription();
    

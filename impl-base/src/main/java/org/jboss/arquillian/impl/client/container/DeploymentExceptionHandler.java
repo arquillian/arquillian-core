@@ -20,7 +20,7 @@ package org.jboss.arquillian.impl.client.container;
 import java.util.Collection;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Expected;
+import org.jboss.arquillian.api.ShouldThrowException;
 import org.jboss.arquillian.impl.client.container.event.DeployDeployment;
 import org.jboss.arquillian.impl.core.spi.EventContext;
 import org.jboss.arquillian.spi.ServiceLoader;
@@ -32,7 +32,7 @@ import org.jboss.arquillian.spi.core.annotation.Inject;
 import org.jboss.arquillian.spi.core.annotation.Observes;
 
 /**
- * A exception handler that attempt to Veto a Exception during deployment if {@link Expected} is defined for the {@link Deployment}. 
+ * A exception handler that attempt to Veto a Exception during deployment if {@link ShouldThrowException} is defined for the {@link Deployment}. 
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

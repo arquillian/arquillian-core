@@ -23,10 +23,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.net.URL;
+
+import javax.naming.InitialContext;
 
 /**
  * Defines a InjectionPoint for Arquillian Controlled Resources. <br/>
- * e.g: {@link Deployer}
+ * e.g: {@link Deployer}, {@link URL}, {@link InitialContext}
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

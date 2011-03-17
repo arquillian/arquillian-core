@@ -127,7 +127,7 @@ public class ContainerDeployControllerTestCase extends AbstractManagerTestBase
       scenario.addDeployment(
             new DeploymentDescription(DEPLOYMENT_3_NAME, archive)
                .setTarget(new TargetDescription(CONTAINER_2_NAME))
-               .shouldDeployOnStartup(false));
+               .shouldBeManaged(false));
       
       bind(SuiteScoped.class, ContainerRegistry.class, registry);
       bind(ClassScoped.class, DeploymentScenario.class, scenario);

@@ -21,20 +21,22 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 /**
- * Defines that @Deployment should cause exception of type value(). <br/>
- * 
- *  Adding this annotation will force @Deployment to be testable = false which will force {@link RunModeType#AS_CLIENT}
+ * Used to target a deployment to a specific Container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Expected
+@java.lang.annotation.Target(ElementType.METHOD)
+public @interface TargetsContainer 
 {
-   Class<? extends Exception> value();
+   /**
+    * The name of the target.
+    * 
+    * @return The target name.
+    */
+   String value();
 }

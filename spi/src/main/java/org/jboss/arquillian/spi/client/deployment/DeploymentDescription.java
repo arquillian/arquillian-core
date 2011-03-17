@@ -31,7 +31,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 public class DeploymentDescription
 {
    private String name;
-   private boolean startup = true;
+   private boolean managed = true;
    private int order = 0;
    private boolean testable = true;
    
@@ -128,18 +128,18 @@ public class DeploymentDescription
       return protocol;
    }
 
-   public DeploymentDescription shouldDeployOnStartup(boolean startup)
+   public DeploymentDescription shouldBeManaged(boolean startup)
    {
-      this.startup = startup;
+      this.managed = startup;
       return this;
    }
    
    /**
     * @return the startup
     */
-   public boolean deployOnStartup()
+   public boolean managed()
    {
-      return startup;
+      return managed;
    }
 
    /**

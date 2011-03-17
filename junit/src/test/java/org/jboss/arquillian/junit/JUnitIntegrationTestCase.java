@@ -22,7 +22,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.DeploymentTarget;
+import org.jboss.arquillian.api.OperateOnDeployment;
 import org.jboss.arquillian.impl.core.ManagerImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -166,7 +166,7 @@ public class JUnitIntegrationTestCase
          wasCalled("after");
       }
 
-      @Test @DeploymentTarget("test")
+      @Test @OperateOnDeployment("test")
       public void shouldBeInvoked() throws Exception 
       {
          wasCalled("shouldBeInvoked");

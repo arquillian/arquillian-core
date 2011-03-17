@@ -20,9 +20,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Expected;
-import org.jboss.arquillian.api.Protocol;
-import org.jboss.arquillian.api.Target;
+import org.jboss.arquillian.api.ShouldThrowException;
+import org.jboss.arquillian.api.OverProtocol;
+import org.jboss.arquillian.api.TargetsContainer;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
@@ -103,7 +103,7 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       {
          deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
       }
-      deployment.shouldDeployOnStartup(deploymentAnnotation.startup());
+      deployment.shouldBeManaged(deploymentAnnotation.managed());
       deployment.setOrder(deploymentAnnotation.order());
       deployment.shouldBeTestable(deploymentAnnotation.testable());
       if(target != null)
@@ -115,9 +115,9 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
          deployment.setProtocol(protocol);
       }
       
-      if(deploymentMethod.isAnnotationPresent(Expected.class))
+      if(deploymentMethod.isAnnotationPresent(ShouldThrowException.class))
       {
-         deployment.setExpectedException(deploymentMethod.getAnnotation(Expected.class).value());
+         deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
          deployment.shouldBeTestable(false); // can't test against failing deployments
       }
       
@@ -130,9 +130,9 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
     */
    private TargetDescription generateTarget(Method deploymentMethod)
    {
-      if(deploymentMethod.isAnnotationPresent(Target.class))
+      if(deploymentMethod.isAnnotationPresent(TargetsContainer.class))
       {
-         return new TargetDescription(deploymentMethod.getAnnotation(Target.class).value());
+         return new TargetDescription(deploymentMethod.getAnnotation(TargetsContainer.class).value());
       }
       return TargetDescription.DEFAULT;
    }
@@ -143,9 +143,9 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
     */
    private ProtocolDescription generateProtocol(Method deploymentMethod)
    {
-      if(deploymentMethod.isAnnotationPresent(Protocol.class))
+      if(deploymentMethod.isAnnotationPresent(OverProtocol.class))
       {
-         return new ProtocolDescription(deploymentMethod.getAnnotation(Protocol.class).value());
+         return new ProtocolDescription(deploymentMethod.getAnnotation(OverProtocol.class).value());
       }
       return ProtocolDescription.DEFAULT;
    }

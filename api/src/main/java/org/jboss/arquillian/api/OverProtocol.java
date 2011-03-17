@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,24 +16,28 @@
  */
 package org.jboss.arquillian.api;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 /**
- * Describes the different RunModes a Single test can run in. 
+ * Defines how Arquillian should communicate with the @{@link Deployment} when executing it in container.
  *
- * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public enum RunModeType
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.METHOD)
+public @interface OverProtocol 
 {
    /**
-    * In AS_CLIENT mode the @Deployment is processed and deployed to the Container, 
-    * but the test is not executed inside the container.  
+    * A String reference to the protocol
+    * 
+    * @return
     */
-   AS_CLIENT,
-   
-   /**
-    * In IN_CONTAINER mode the @Deployment is processed and deployed to the container along side the test
-    * case and the test case is executed inside the container. <br/>
-    * This is the default mode when none specified. 
-    */
-   IN_CONTAINER
+   String value();
 }

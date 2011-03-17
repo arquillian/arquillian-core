@@ -23,8 +23,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+
 /**
- * Deployment
+ * Defines that this method returns a deployment definition, either a {@link Archive} or a {@link Descriptor}.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -35,17 +38,18 @@ import java.lang.annotation.Target;
 public @interface Deployment 
 {
    /**
-    * Name the deployment so you can reference it using the Deployer API
+    * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or target is using @OperateOnDeployment
+    * 
     * @return The name of this Deployment
     */
    String name() default "NO-NAME";
    
    /**
-    * Describes whether or not this deployment should be deployed during Test startup.
+    * Describes whether or not this deployment should be deployed by Arquillian.
     * 
     * @return
     */
-   boolean startup() default true;
+   boolean managed() default true;
    
    /**
     * If multiple deployments are specified against the same target and defined as startup, this control the order of which they

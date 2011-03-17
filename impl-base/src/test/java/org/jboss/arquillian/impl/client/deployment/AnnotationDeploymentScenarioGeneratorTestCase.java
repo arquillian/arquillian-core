@@ -19,9 +19,9 @@ package org.jboss.arquillian.impl.client.deployment;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Expected;
-import org.jboss.arquillian.api.Protocol;
-import org.jboss.arquillian.api.Target;
+import org.jboss.arquillian.api.ShouldThrowException;
+import org.jboss.arquillian.api.OverProtocol;
+import org.jboss.arquillian.api.TargetsContainer;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
@@ -65,7 +65,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
                deployment.getProtocol());
          
          Assert.assertEquals(-1, deployment.getOrder());
-         Assert.assertEquals(true, deployment.deployOnStartup());
+         Assert.assertEquals(true, deployment.managed());
          Assert.assertTrue(JavaArchive.class.isInstance(deployment.getArchive()));
       }
    }
@@ -93,7 +93,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
             deploymentOne.getProtocol());
       
       Assert.assertEquals(1, deploymentOne.getOrder());
-      Assert.assertEquals(false, deploymentOne.deployOnStartup());
+      Assert.assertEquals(false, deploymentOne.managed());
       Assert.assertEquals(false, deploymentOne.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
       Assert.assertNull(deploymentOne.getExpectedException());
@@ -110,7 +110,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
             deploymentTwo.getProtocol());
       
       Assert.assertEquals(2, deploymentTwo.getOrder());
-      Assert.assertEquals(false, deploymentTwo.deployOnStartup());
+      Assert.assertEquals(false, deploymentTwo.managed());
       Assert.assertEquals(true, deploymentTwo.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentTwo.getArchive()));
       Assert.assertNull(deploymentTwo.getExpectedException());
@@ -173,17 +173,17 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    @SuppressWarnings("unused")
    private static class MultiDeploymentsSet 
    {
-      @Protocol("protocol-first")
-      @Target("target-first")
-      @Deployment(name = "first", order = 1, startup = false, testable = false)
+      @OverProtocol("protocol-first")
+      @TargetsContainer("target-first")
+      @Deployment(name = "first", order = 1, managed = false, testable = false)
       public static Archive<?> deploymentOne()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
 
-      @Protocol("protocol-second")
-      @Target("target-second")
-      @Deployment(name = "second", order = 2, startup = false)
+      @OverProtocol("protocol-second")
+      @TargetsContainer("target-second")
+      @Deployment(name = "second", order = 2, managed = false)
       public static Archive<?> deploymentTwo()
       {
          return ShrinkWrap.create(JavaArchive.class);
@@ -194,7 +194,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    private static class ExpectedDeploymentExceptionSet 
    {
       @Deployment(name = "second", testable = true) // testable should be overwritten by @Expected
-      @Expected(Exception.class)
+      @ShouldThrowException(Exception.class)
       public static Archive<?> deploymentOne()
       {
          return ShrinkWrap.create(JavaArchive.class);

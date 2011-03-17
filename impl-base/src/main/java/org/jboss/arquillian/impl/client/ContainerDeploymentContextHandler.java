@@ -19,7 +19,7 @@ package org.jboss.arquillian.impl.client;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.api.DeploymentTarget;
+import org.jboss.arquillian.api.OperateOnDeployment;
 import org.jboss.arquillian.impl.ThreadContext;
 import org.jboss.arquillian.impl.client.container.event.ContainerControlEvent;
 import org.jboss.arquillian.impl.client.container.event.DeploymentEvent;
@@ -163,9 +163,9 @@ public class ContainerDeploymentContextHandler
    private DeploymentTargetDescription locateDeployment(Method method)
    {
       DeploymentTargetDescription target = null;
-      if(method.isAnnotationPresent(DeploymentTarget.class))
+      if(method.isAnnotationPresent(OperateOnDeployment.class))
       {
-         target = new DeploymentTargetDescription(method.getAnnotation(DeploymentTarget.class).value());
+         target = new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
       }
       else
       {

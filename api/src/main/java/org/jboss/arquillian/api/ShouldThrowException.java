@@ -24,7 +24,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * DeploymentTarget
+ * Defines that @{@link Deployment} should cause exception of type value(). <br/>
+ * 
+ *  Adding this annotation will force @{@link Deployment} to be testable = false which will force @{@link RunAsClient}
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -32,7 +34,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface DeploymentTarget
+public @interface ShouldThrowException
 {
-   String value();
+   Class<? extends Exception> value();
 }

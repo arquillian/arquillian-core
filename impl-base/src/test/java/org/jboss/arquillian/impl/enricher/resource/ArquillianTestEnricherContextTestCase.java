@@ -78,7 +78,7 @@ public class ArquillianTestEnricherContextTestCase extends AbstractManagerTestBa
       URLServletContextClass test = new URLServletContextClass();
       enricher.enrich(test);
       
-      Assert.assertEquals("http://TEST:8080/test", test.url.toExternalForm());
+      Assert.assertEquals("http://TEST:8080/test/", test.url.toExternalForm());
    }
    
    public class URLBaseContextClass 

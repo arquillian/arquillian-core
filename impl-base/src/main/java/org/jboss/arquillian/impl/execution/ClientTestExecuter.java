@@ -16,8 +16,7 @@
  */
 package org.jboss.arquillian.impl.execution;
 
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.api.RunAsClient;
 import org.jboss.arquillian.impl.execution.event.ExecutionEvent;
 import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.impl.execution.event.RemoteExecutionEvent;
@@ -46,25 +45,18 @@ public class ClientTestExecuter
    {
       DeploymentDescription deploymentDescription = this.deploymentDescription.get();
       
-      RunModeType runmode = deploymentDescription.testable() ? RunModeType.IN_CONTAINER:RunModeType.AS_CLIENT;
+      boolean runAsClient =  deploymentDescription.testable() ? false:true;
       
-      if(event.getTestMethod().isAnnotationPresent(Run.class))
+      if(event.getTestMethod().isAnnotationPresent(RunAsClient.class))
       {
-         runmode = event.getTestMethod().getAnnotation(Run.class).value();
+         runAsClient = true;
       }
-      else if(event.getTestClass().isAnnotationPresent(Run.class))
+      else if(event.getTestClass().isAnnotationPresent(RunAsClient.class))
       {
-         runmode = event.getTestClass().getAnnotation(Run.class).value();
-      }
-      if(!deploymentDescription.testable() && runmode == RunModeType.IN_CONTAINER)
-      {
-         throw new RuntimeException(
-               "Can not execute " + event.getTestMethod() + 
-               " against deployment " + deploymentDescription + " using runmode " + runmode + ". " +
-               "Deployment is not testable.");
+         runAsClient = true;
       }
          
-      if(runmode == RunModeType.AS_CLIENT) 
+      if(runAsClient) 
       {
          executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
       }

@@ -128,7 +128,7 @@ public class DeploymentScenario
       List<DeploymentDescription> startupDeployments = new ArrayList<DeploymentDescription>();
       for(DeploymentDescription deployment : deployments)
       {
-         if(deployment.deployOnStartup() && target.equals(deployment.getTarget()))
+         if(deployment.managed() && target.equals(deployment.getTarget()))
          {
             startupDeployments.add(deployment);
          }

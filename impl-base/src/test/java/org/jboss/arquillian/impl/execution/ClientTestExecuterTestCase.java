@@ -22,8 +22,7 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
+import org.jboss.arquillian.api.RunAsClient;
 import org.jboss.arquillian.impl.AbstractManagerTestBase;
 import org.jboss.arquillian.impl.core.ManagerBuilder;
 import org.jboss.arquillian.impl.execution.event.LocalExecutionEvent;
@@ -102,32 +101,6 @@ public class ClientTestExecuterTestCase extends AbstractManagerTestBase
       assertEventFired(LocalExecutionEvent.class, 1);
    }
 
-   @Test
-   public void shouldExecuteRemoteIfDeploymentIsTestableAndMethodRunModeInContainerWithClassAsClient() throws Exception
-   {
-      when(deployment.testable()).thenReturn(true);
-      
-      fire(test("methodLevelRunModeInContainer", new ClassLevelRunModeAsClient()));
-      
-      assertEventFired(RemoteExecutionEvent.class, 1);
-   }
-   
-   @Test(expected = RuntimeException.class)
-   public void shouldThrowExceptionIfDeploymentIsNotTestableAndClassRunModeInContainer() throws Exception
-   {
-      when(deployment.testable()).thenReturn(false);
-      
-      fire(test("methodLevelRunModeDefault", new ClassLevelRunModeInContainer()));
-   }
-
-   @Test(expected = RuntimeException.class)
-   public void shouldThrowExceptionIfDeploymentIsNotTestableAndMethodRunModeInContainer() throws Exception
-   {
-      when(deployment.testable()).thenReturn(false);
-      
-      fire(test("methodLevelRunModeInContainer", new ClassLevelRunModeDefault()));
-   }
-
    private org.jboss.arquillian.spi.event.suite.Test test(String testMethodName, Object obj) throws Exception
    {
       TestMethodExecutor executor = mock(TestMethodExecutor.class);
@@ -146,20 +119,16 @@ public class ClientTestExecuterTestCase extends AbstractManagerTestBase
    
    private static class ClassLevelRunModeDefault { }
 
-   @Run(RunModeType.IN_CONTAINER)
-   private static class ClassLevelRunModeInContainer { }
-   
-   @Run(RunModeType.AS_CLIENT)
+   @RunAsClient
    private static class ClassLevelRunModeAsClient { }
    
    @SuppressWarnings("unused")
    private void methodLevelRunModeDefault() {}
 
    @SuppressWarnings("unused")
-   @Run(RunModeType.IN_CONTAINER)
    private void methodLevelRunModeInContainer() {}
 
    @SuppressWarnings("unused")
-   @Run(RunModeType.AS_CLIENT)
+   @RunAsClient
    private void methodLevelRunModeAsClient() {}
 }

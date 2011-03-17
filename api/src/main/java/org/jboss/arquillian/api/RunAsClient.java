@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,24 +20,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines how Arquillian should communicate with the {@link Deployment} when executing it {@link RunModeType#IN_CONTAINER}.
+ * In RunAsClient mode the @{@link Deployment} is processed and deployed to the Container, 
+ * but the @Test is not executed inside the container.
  *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Inherited
 @Documented
 @Retention(RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Protocol 
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface RunAsClient
 {
-   /**
-    * A String reference to the protocol
-    * 
-    * @return
-    */
-   String value();
 }
