@@ -2,16 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.glassfish-remote-3">
+<section id="container.glassfish-embedded-31">
 
-	<title>GlassFish 3 - Remote</title>
+	<title>GlassFish 3.1 - Embedded</title>
 
-	<para id="container.glassfish-remote-3.description">
-      A DeployableContainer implementation that connects to a remote GlassFish
-      3 instance and deploys the test archive using <ulink src="jcp.org/en/jsr/detail?id=88">JSR-88</ulink>.
+	<para id="container.glassfish-embedded-31.description">
+		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
+		GlassFish 3.1 instance. 
+		This implementation has lifecycle support, so the container will be started and stopped as part of
+		the test run. 
 	</para>
 
-	<table id="container.glassfish-remote-3.injection" frame="all">
+	<table id="container.glassfish-embedded-31.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -55,32 +57,25 @@
 						</mediaobject>
 					</entry>
 					<entry></entry>
-					<entry>
-						<mediaobject>
-							<imageobject>
-								<imagedata fileref="images/fact_good.png" format="PNG"
-									align="center" scalefit="0" />
-							</imageobject>
-						</mediaobject>
-               </entry>
+					<entry></entry>
 				</row>
 			</tbody>
 		</tgroup>
 	</table>
 
-	<section id="container.glassfish-remote-3.configuration">
+	<section id="container.glassfish-embedded-31.configuration">
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.container.glassfish.remote_3
+			Default Protocol: <link linkend="protocol.servlet-3">Servlet 3.0</link>
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
 			<tgroup cols="4">
-				<colspec colnum="1" colname="name" colwidth="3*" />
+				<colspec colnum="1" colname="name" colwidth="2*" />
 				<colspec colnum="2" colname="type" colwidth="1*" />
-				<colspec colnum="3" colname="default" colwidth="4*" />
-				<colspec colnum="4" colname="description" colwidth="2*" />
+				<colspec colnum="3" colname="default" colwidth="3*" />
+				<colspec colnum="4" colname="description" colwidth="4*" />
 				<thead>
 					<row>
 						<entry>Name</entry>
@@ -91,46 +86,40 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry>deploymentUri</entry>
-						<entry>String</entry>
-						<entry>deployer:Sun:AppServer::localhost:4848</entry>
-						<entry>The administrative port and host the JSR-88 client should connect to.</entry>
+						<entry>bindHttpPort</entry>
+						<entry>int</entry>
+						<entry>8181</entry>
+						<entry>The HTTP port the server should bind to.</entry>
 					</row>
 					<row>
-						<entry>deploymentFactoryClass</entry>
-						<entry>String</entry>
-						<entry>org.glassfish.deployapi.SunDeploymentFactory</entry>
-						<entry>The JSR-88 implementation factory class.</entry>
-					</row>
-					<row>
-						<entry>deploymentUsername</entry>
+						<entry>instanceRoot</entry>
 						<entry>String</entry>
 						<entry></entry>
-						<entry>The admin username for performing JSR-88 deployments.</entry>
+						<entry>The instanceRoot to use for booting the server. If it does not exist, a default structure will be created.</entry>
 					</row>
 					<row>
-						<entry>deploymentPassword</entry>
+						<entry>installRoot</entry>
 						<entry>String</entry>
 						<entry></entry>
-						<entry>The admin password for performing JSR-88 deployments.</entry>
+						<entry>The installRoot to use for booting the server. If it does not exist, a default structure will be created.</entry>
 					</row>
 					<row>
-						<entry>deploymentTimeoutSeconds</entry>
-						<entry>int</entry>
-						<entry>5</entry>
-						<entry>The number of seconds to wait for the deployment to complete.</entry>
-					</row>
-					<row>
-						<entry>remoteServerHttpPort</entry>
-						<entry>int</entry>
-						<entry>8080</entry>
-						<entry>The HTTP port of the remote server.</entry>
-					</row>
-					<row>
-						<entry>remoteServerAddress</entry>
+						<entry>configurationXml</entry>
 						<entry>String</entry>
-						<entry>localhost</entry>
-						<entry>The host of the remote server.</entry>
+						<entry></entry>
+						<entry>The relative or absolute path to the domain.xml file that will be used to configure the instance. If absent, the default domain.xml configuration will be used.</entry>
+					</row>
+					<row>
+						<entry>configurationReadOnly</entry>
+						<entry>boolean</entry>
+						<entry>false</entry>
+						<entry>If true deployment changes are not written to the configuration and persisted.</entry>
+					</row>
+					<row>
+						<entry>sunResourcesXml</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>The relative or absolute path to the sun-resources.xml file that will be used to add resources to the instance using the add-resources asadmin command.</entry>
 					</row>
 				</tbody>
 			</tgroup>
@@ -139,19 +128,17 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>glassfish-remote-3</id>
+	<id>glassfish-embedded-3.1</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-glassfish-remote-3</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-         <scope>test</scope>
+			<artifactId>arquillian-glassfish-embedded-3</artifactId>
+			<version>1.0.0.Alpha5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.deployment</groupId>
-			<artifactId>deployment-client</artifactId>
-			<version>3.0.1-b19</version>
-         <scope>test</scope>
+			<groupId>org.glassfish.extras</groupId>
+			<artifactId>glassfish-embedded-all</artifactId>
+			<version>3.1</version>
 		</dependency>
 	</dependencies>
 </profile>]]></programlisting>

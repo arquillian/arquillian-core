@@ -2,18 +2,18 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.glassfish-embedded-3">
+<section id="container.weld-se-embedded-11">
 
-	<title>GlassFish 3.0 - Embedded</title>
+	<title>Weld SE 1.1 - Embedded</title>
 
-	<para id="container.glassfish-embedded-3.description">
+	<para id="container.weld-se-embedded-11.description">
 		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
-		GlassFish 3.0 instance. 
+		Weld(CDI reference implementation) SE edition. No EE APIs are available.
 		This implementation has lifecycle support, so the container will be started and stopped as part of
-		the test run. 
+		the test run.   
 	</para>
 
-	<table id="container.glassfish-embedded-3.injection" frame="all">
+	<table id="container.weld-se-embedded-11.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -36,7 +36,7 @@
 						<mediaobject>
 							<imageobject>
 								<imagedata fileref="images/fact_good.png" format="PNG"
-									align="center" scalefit="0"/>
+									align="center" scalefit="0" />
 							</imageobject>
 						</mediaobject>
 					</entry>
@@ -62,19 +62,23 @@
 			</tbody>
 		</tgroup>
 	</table>
+	
+	<warning>
+		Local EJBs only, which get treated as managed beans. Transactions, security and EJB context injection are not applied.
+	</warning>
 
-	<section id="container.glassfish-embedded-3.configuration">
+	<section id="container.weld-se-embedded-11.configuration">
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.container.glassfish.embedded_3
+			Default Protocol: <link linkend="protocol.local">Local</link>
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
 			<tgroup cols="4">
-				<colspec colnum="1" colname="name" colwidth="2*" />
+				<colspec colnum="1" colname="name" colwidth="3*" />
 				<colspec colnum="2" colname="type" colwidth="1*" />
-				<colspec colnum="3" colname="default" colwidth="3*" />
+				<colspec colnum="3" colname="default" colwidth="2*" />
 				<colspec colnum="4" colname="description" colwidth="4*" />
 				<thead>
 					<row>
@@ -86,34 +90,10 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry>bindHttpPort</entry>
-						<entry>int</entry>
-						<entry>8181</entry>
-						<entry>The HTTP port the server should bind to.</entry>
-					</row>
-					<row>
-						<entry>instanceRoot</entry>
-						<entry>String</entry>
-						<entry>target/glassfish_(RANDOM)</entry>
-						<entry>The instanceRoot to use for booting the server. If it does not exist, a default structure will be created.</entry>
-					</row>
-					<row>
-						<entry>domainXml</entry>
-						<entry>String</entry>
 						<entry></entry>
-						<entry>The relative or absolute path to the domain.xml file that will be used to configure the instance. If absent, the default domain.xml configuration will be used.</entry>
-					</row>
-					<row>
-						<entry>sunResourcesXml</entry>
-						<entry>String</entry>
 						<entry></entry>
-						<entry>The relative or absolute path to the sun-resources.xml file that will be used to add resources to the instance using the add-resources asadmin command.</entry>
-					</row>
-					<row>
-						<entry>autoDelete</entry>
-						<entry>boolean</entry>
-						<entry>true</entry>
-						<entry>Should the deployments be deleted on shutdown.</entry>
+						<entry></entry>
+						<entry></entry>
 					</row>
 				</tbody>
 			</tgroup>
@@ -122,19 +102,36 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>glassfish-embedded-3</id>
+	<id>weld-se-embedded-11</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-glassfish-embedded-3</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<artifactId>arquillian-weld-se-embedded-1</artifactId>
+			<version>1.0.0.Alpha5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.extras</groupId>
-			<artifactId>glassfish-embedded-all</artifactId>
-			<version>3.0.1-b02</version>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.weld</groupId>
+				<artifactId>weld-core-bom</artifactId>
+				<version>1.1.0.Final</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </profile>]]></programlisting>
-
 </section>

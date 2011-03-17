@@ -18,6 +18,10 @@
       <firstname>Andrew</firstname>
       <surname>Rubinger</surname>
    </author>
+   <author>
+   		<firstname>Karel</firstname>
+   		<surname>Piwko</surname>
+   </author>
 
    <!--
 vim:et:ts=3:sw=3:tw=120

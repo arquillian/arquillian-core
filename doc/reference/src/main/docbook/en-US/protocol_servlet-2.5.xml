@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="protocol.servlet-25">
+
+	<title>Servlet 2.5</title>
+
+	<para id="protocol.servlet-25.description">
+		The Servlet 2.5 Protocol implementation is used by most EE5 compliant containers. It will attempt to add a war to the deployment.
+	</para>
+
+	
+	<table id="protocol.servlet-25.packaging" frame="all">
+	   <title>Packaging rules</title>
+	   <tgroup cols="3">
+	      <colspec colnum="1" colname="name" colwidth="2*"/>
+	      <colspec colnum="2" colname="output" colwidth="2*"/>
+	      <colspec colnum="3" colname="artifactId" colwidth="6*"/>
+	      <thead>
+	         <row>
+	            <entry>@Deployment</entry>
+	            <entry>Output</entry>
+	            <entry>Action</entry>
+	         </row>
+	      </thead>
+	      <tbody>
+	         <row>
+	           <entry>JavaArchive</entry>
+	           <entry>EnterpriseArchive</entry>
+	           <entry>Create a new <literal>EnterpriseArchive</literal>, add <literal>@Deployment</literal> and <literal>ServletProtocol</literal> as module, the other <literal>Auxiliary Archives</literal> as libraries.</entry>
+	         </row>
+	         <row>
+	           <entry>WebArchive</entry>
+	           <entry>WebArchive</entry>
+	           <entry>
+				If a web.xml is found, a Servlet will be added, else a web.xml will be added. The Servlet <literal>WebArchive</literal> will be merged with the Deployment and the <literal>Auxiliary Archives</literal> added as libraries.
+	           </entry>
+	         </row>
+	         <row>
+	           <entry>EnterpriseArchive</entry>
+	           <entry>EnterpriseArchive</entry>
+	           <entry>Same as <literal>JavaArchive</literal>, but using the <literal>@Deployment</literal> defined <literal>EnterpriseArchive</literal> instead of creating a new.</entry>
+	         </row>
+	      </tbody>
+	   </tgroup>
+	</table>
+
+	<section id="protocol.servlet-25.configuration">
+		<title>Configuration</title>
+
+		<table frame="all">
+			<title>Protocol Configuration Options</title>
+			<tgroup cols="4">
+				<colspec colnum="1" colname="name" colwidth="3*" />
+				<colspec colnum="2" colname="type" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="1*" />
+				<colspec colnum="4" colname="description" colwidth="5*" />
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>host</entry>
+						<entry>String</entry>
+						<entry>none</entry>
+						<entry>Used to override the Deployments default hostname.</entry>
+					</row>
+					<row>
+						<entry>port</entry>
+						<entry>String</entry>
+						<entry>none</entry>
+						<entry>Used to override the Deployments default http port.</entry>
+					</row>
+					<row>
+						<entry>contextRoot</entry>
+						<entry>int</entry>
+						<entry>none</entry>
+						<entry>Used to override the Deployments default contextRoot.</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+</section>

@@ -49,6 +49,45 @@
 		</tgroup>
 	</table>
 
+	<section id="container.openejb-embedded-31.configuration">
+		<title>Configuration</title>
+
+		<para>
+			Default Protocol: <link linkend="protocol.local">Local</link> 
+		</para>
+		<table frame="all">
+			<title>Container Configuration Options</title>
+			<tgroup cols="4">
+				<colspec colnum="1" colname="name" colwidth="2*" />
+				<colspec colnum="2" colname="type" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="3*" />
+				<colspec colnum="4" colname="description" colwidth="4*" />
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>openEjbXml</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>Specify the OpenEJB XML configuration file.</entry>
+					</row>
+					<row>
+						<entry>jndiProperties</entry>
+						<entry>String</entry>
+						<entry></entry>
+						<entry>Specify the OpenEJB properties configuration file.</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
 	<id>openejb-embedded-3.1</id>
@@ -56,7 +95,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-openejb-3.1</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0.Alpha5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.openejb</groupId>

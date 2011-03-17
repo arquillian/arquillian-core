@@ -113,7 +113,7 @@
       <para>
          Arquillian delegates to an SPI (service provider interface) to handle starting and stopping the server and
          deploying and undeploying archives. In this case, the SPI is the interface
-         <literal>org.jboss.arquillian.spi.DeployableContainer</literal>. If you recall from the getting started
+         <literal>org.jboss.arquillian.spi.client.DeployableContainer</literal>. If you recall from the getting started
          section, we included an Arquillian library according to the target container we wanted to use. That library
          contains an implementation of this interface, thus controlling how Arquillian handles deployment. If you wanted to
          introduce support for another container in Arquillian, you would simply provide an implementation of this
@@ -215,17 +215,15 @@ for each method annotated with @Test in the @Artifact that is not otherwise disa
 			You need to check that you object serialization or networking work for instance. 
 		</para>
 		<para>			
-			This is why Arquillian comes with two run modes, <literal>IN_CONTAINER</literal> and <literal>AS_CLIENT</literal>.
-			<literal>IN_CONTAINER</literal> is to test your application internals and <literal>AS_CLIENT</literal> is to test 
+			This is why Arquillian comes with two run modes, <literal>in container</literal> and <literal>as client</literal>.
+			<literal>in container</literal> is to test your application internals and <literal>as client</literal> is to test 
 			how your application is used by clients. Lets dive a bit deeper into the differences between the run modes and 
 			see how they effect your test execution and packaging.			
 		</para>
 
 		<section>
 			<title>Mode: in-container</title>
-			<programlisting role="JAVA">@RunWith(Arquillian.class)
-@Run(IN_CONTAINER)
-public class MyTestCase</programlisting>			
+			<programlisting role="JAVA">@Deployment(testable = true)</programlisting>			
 			<para>
 				As we mentioned above, we need to repackage your <literal>@Deployment</literal>, adding some Arquillian support 
 				classes, to run in-container. This gives us the ability to communicate with the test, enrich the test and run the 
@@ -233,97 +231,13 @@ public class MyTestCase</programlisting>
 			</para>
 
 			<para>
-				Here is an overview of the expected output of the packaging process when you provide a <literal>@Deployment</literal>.			
+				See the <link linkend="protocol.reference">Complete Protocol Reference</link> for an overview of the expected output of the packaging process when you provide a <literal>@Deployment</literal>.			
 			</para>			
-			<table frame="all">
-			   <title>Servlet Protocol 2.5 rules</title>
-			   <tgroup cols="3">
-			      <colspec colnum="1" colname="name" colwidth="2*"/>
-			      <colspec colnum="2" colname="output" colwidth="2*"/>
-			      <colspec colnum="3" colname="artifactId" colwidth="6*"/>
-			      <thead>
-			         <row>
-			            <entry>@Deployment</entry>
-			            <entry>Output</entry>
-			            <entry>Action</entry>
-			         </row>
-			      </thead>
-			      <tbody>
-			         <row>
-			           <entry>JavaArchive</entry>
-			           <entry>EnterpriseArchive</entry>
-			           <entry>Create a new <literal>EnterpriseArchive</literal>, add <literal>@Deployment</literal> and <literal>ServletProtocol</literal> as module, the other <literal>Auxiliary Archives</literal> as libraries.</entry>
-			         </row>
-			         <row>
-			           <entry>WebArchive</entry>
-			           <entry>Exception</entry>
-			           <entry>
-		           			Can not merge two <literal>WebArchives</literal> and both packaged in a <literal>EnterpriseArchive</literal> will result in isolation issues.
-		           			<footnote>
-		           				<para>In the current release Arquillian does not try to merge descriptor files, like web.xml, nor can you 
-		           				avoid it trying to package the <literal>@Deployment</literal>. This will change in future releases.</para>
-		           			</footnote>
-			           </entry>
-			         </row>
-			         <row>
-			           <entry>EnterpriseArchive</entry>
-			           <entry>EnterpriseArchive</entry>
-			           <entry>Same as <literal>JavaArchive</literal>, but using the <literal>@Deployment</literal> defined <literal>EnterpriseArchive</literal> instead of creating a new.</entry>
-			         </row>
-			      </tbody>
-			   </tgroup>
-			</table>
-			<table frame="all">
-			   <title>Servlet Protocol 3.0 rules</title>
-			   <tgroup cols="3">
-			      <colspec colnum="1" colname="name" colwidth="2*"/>
-			      <colspec colnum="2" colname="output" colwidth="2*"/>
-			      <colspec colnum="3" colname="artifactId" colwidth="6*"/>
-			      <thead>
-			         <row>
-			            <entry>@Deployment</entry>
-			            <entry>Output</entry>
-			            <entry>Action</entry>
-			         </row>
-			      </thead>
-			      <tbody>
-			         <row>
-			           <entry>JavaArchive</entry>
-			           <entry>WebArchive</entry>
-			           <entry>Creates a new <literal>WebArchive</literal>, adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
-			         </row>
-			         <row>
-			           <entry>WebArchive</entry>
-			           <entry>WebArchive</entry>
-			           <entry>Adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
-			         </row>
-			         <row>
-			           <entry>EnterpriseArchive</entry>
-			           <entry>EnterpriseArchive</entry>
-			           <entry>Creates a new <literal>WebArchive</literal>, adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
-			         </row>
-			      </tbody>
-			   </tgroup>
-			</table>
-			<note>
-				<para>
-					In Alpha4 Arquillian only has one type of protocol implementation for communicating with remote servers, the servlet protocol.
-					So the reason for the big difference in packaging between EE 5 and EE 6 containers is mainly due to the support of 
-					Web Fragments in the EE 6 specification. Web Fragments lets Arquillian add it self to the <literal>@Deployment</literal> 
-					without drastically changing it, but it also means it has to be a <literal>WebArchive</literal> in the deployment. 
-				</para>
-				<para>
-					In the next release you will be able to control the packaging your self and we will also look into 
-					other protocol implementations like jmx and remote ejb. 
-				</para>
-			</note>			
 		</section>		
 
 		<section>
 			<title>Mode: as-client</title>
-			<programlisting role="JAVA">@RunWith(Arquillian.class)
-@Run(AS_CLIENT)
-public class MyTestCase</programlisting>			
+			<programlisting role="JAVA">@Deployment(testable = false)</programlisting>			
 			<para>
 				Now this mode is the easy part. As apposed to in-container mode which repackages and overrides the test 
 				execution, the as-client mode does as little as possible. It does not repackage your <literal>@Deployment</literal>
@@ -332,12 +246,11 @@ public class MyTestCase</programlisting>
 				does is to control the lifecycle of your <literal>@Deployment</literal>.  
 			</para>
 
-			<para>Here is an example calling a Servlet using the <literal>AS_CLIENT</literal> mode.</para>
+			<para>Here is an example calling a Servlet using the <literal>as client</literal> mode.</para>
 			<programlisting role="JAVA">@RunWith(Arquillian.class)
-@Run(AS_CLIENT)
 public class LocalRunServletTestCase
 {
-   @Deployment
+   @Deployment(testable = false)
    public static WebArchive createDeployment() 
    {
       return ShrinkWrap.create("test.war", WebArchive.class)
@@ -345,9 +258,10 @@ public class LocalRunServletTestCase
    }
    
    @Test
-   public void shouldBeAbleToCallServlet() throws Exception
+   public void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception
    {
-      String body = readAllAndClose(new URL("http://localhost:8080/test/Test").openStream());
+   	  // http://localhost:8080/test/
+      String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
       
       Assert.assertEquals(
             "Verify that the servlet was deployed and returns the expected result",
@@ -355,6 +269,31 @@ public class LocalRunServletTestCase
             body);
    }
 }</programlisting>
+		</section>		
+
+		<section>
+			<title>Mode: mixed</title>
+			<programlisting role="JAVA">@Deployment(testable = true)
+public static WebArchive create() 
+{
+}
+
+@Test // runs in container
+public void shouldBeAbleToRunOnClientSide() throws Exception 
+{
+}
+
+@Test @RunAsClient // runs as client
+public void shouldBeAbleToRunOnClientSide() throws Exception 
+{
+}</programlisting>
+			<para>
+				It is also possible to mix the two run modes within the same test class. If you have defined the <literal>Deployment</literal>
+				to be testable, you can specify the <literal>@Test</literal> method to use run mode <literal>as client</literal> by using 
+				the <literal>@RunAsClient</literal> annotation. This will allow two method	within the same test class to run in different modes. 
+				This can be useful if you in a run <literal>as client</literal> mode want to execute against a remote endpoint in your application, 
+				for then in the next test method assert on server side state the remote endpoint migh thave created.
+			</para>
 		</section>		
 
 		<tip>

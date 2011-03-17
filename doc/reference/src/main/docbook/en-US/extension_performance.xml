@@ -26,8 +26,8 @@ public class WorkHardCdiTestCase
    public static JavaArchive createDeployment() {
        return ShrinkWrap.create(JavaArchive.class ,"test.jar")
                .addPackage( WorkHard.class.getPackage())
-               .addManifestResource(
-                       new ByteArrayAsset("<beans/>".getBytes()),
+               .addAsManifestResource(
+                       EmptyAsset.INSTANCE,
                        ArchivePaths.create("beans.xml"));
    }
    

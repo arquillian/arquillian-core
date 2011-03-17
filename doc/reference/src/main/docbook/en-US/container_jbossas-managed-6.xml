@@ -67,7 +67,7 @@
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.container.jbossas.managed_6
+			Default Protocol: <link linkend="protocol.servlet-3">Servlet 3.0</link> 
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
@@ -104,6 +104,12 @@
 						<entry>Used by Servlet Protocol to connect to the server.</entry>
 					</row>
 					<row>
+						<entry>rmiPort</entry>
+						<entry>int</entry>
+						<entry>1099</entry>
+						<entry>Used by the ServerManager to communicate with the server.</entry>
+					</row>
+					<row>
 						<entry>jbossHome</entry>
 						<entry>String</entry>
 						<entry>$JBOSS_HOME</entry>
@@ -121,6 +127,24 @@
 						<entry>-Xmx512m -XX:MaxPermSize=128m</entry>
 						<entry>JVM arguments used to start the server.</entry>
 					</row>
+					<row>
+						<entry>useRmiPortForAliveCheck</entry>
+						<entry>boolean</entry>
+						<entry>false</entry>
+						<entry>If the ServerManager should use the RMI port when checking if the server is up.</entry>
+					</row>
+					<row>
+						<entry>startupTimeoutInSeconds</entry>
+						<entry>int</entry>
+						<entry>120</entry>
+						<entry>Time to way before throwing Exception on server startup.</entry>
+					</row>
+					<row>
+						<entry>shutdownTimeoutInSeconds</entry>
+						<entry>int</entry>
+						<entry>45</entry>
+						<entry>Time to way before throwing Exception on server shutdown.</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
@@ -133,7 +157,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-jbossas-managed-6</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0.Alpha5</version>
 		</dependency>
         <dependency>
             <groupId>org.jboss.jbossas</groupId>
@@ -143,7 +167,7 @@
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-client</artifactId>
-			<version>6.0.0.20100721-M4</version>
+			<version>6.0.0.Final</version>
 			<type>pom</type>
 		</dependency>
 	</dependencies>

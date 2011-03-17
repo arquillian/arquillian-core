@@ -53,7 +53,7 @@
 		<title>Configuration</title>
 
 		<para>
-			Namespace: urn:arq:org.jboss.arquillian.container.jbossas.managed_5_1
+			Default Protocol: <link linkend="protocol.servlet-25">Servlet 2.5</link>
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
@@ -87,7 +87,13 @@
 						<entry>httpPort</entry>
 						<entry>int</entry>
 						<entry>8080</entry>
-						<entry>Used by Servlet Protocol to connect to the server.</entry>
+						<entry>Used by the ServerManager to communicate with the server.</entry>
+					</row>
+					<row>
+						<entry>rmiPort</entry>
+						<entry>int</entry>
+						<entry>1099</entry>
+						<entry>Used by the ServerManager to communicate with the server.</entry>
 					</row>
 					<row>
 						<entry>jbossHome</entry>
@@ -107,6 +113,24 @@
 						<entry>-Xmx512m -XX:MaxPermSize=128m</entry>
 						<entry>JVM arguments used to start the server.</entry>
 					</row>
+					<row>
+						<entry>useRmiPortForAliveCheck</entry>
+						<entry>boolean</entry>
+						<entry>false</entry>
+						<entry>If the ServerManager should use the RMI port when checking if the server is up.</entry>
+					</row>
+					<row>
+						<entry>startupTimeoutInSeconds</entry>
+						<entry>int</entry>
+						<entry>120</entry>
+						<entry>Time to way before throwing Exception on server startup.</entry>
+					</row>
+					<row>
+						<entry>shutdownTimeoutInSeconds</entry>
+						<entry>int</entry>
+						<entry>45</entry>
+						<entry>Time to way before throwing Exception on server shutdown.</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
@@ -119,7 +143,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-jbossas-managed-5.1</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0.Alpha5</version>
 		</dependency>
         <dependency>
             <groupId>org.jboss.jbossas</groupId>

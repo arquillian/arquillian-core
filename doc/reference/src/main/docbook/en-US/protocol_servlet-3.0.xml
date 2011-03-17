@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
+
+<section id="protocol.servlet-3">
+
+	<title>Servlet 3.0</title>
+
+	<para id="protocol.servlet-3.description">
+		The Servlet 3.0 Protocol implementation is used by most EE6 compliant containers. It will attempt to add a web-fragment to the deployment.
+	</para>
+
+	
+	<table id="protocol.servlet-3.packaging" frame="all">
+	   <title>Packaging rules</title>
+	   <tgroup cols="3">
+	      <colspec colnum="1" colname="name" colwidth="2*"/>
+	      <colspec colnum="2" colname="output" colwidth="2*"/>
+	      <colspec colnum="3" colname="artifactId" colwidth="6*"/>
+	      <thead>
+	         <row>
+	            <entry>@Deployment</entry>
+	            <entry>Output</entry>
+	            <entry>Action</entry>
+	         </row>
+	      </thead>
+	      <tbody>
+	         <row>
+	           <entry>JavaArchive</entry>
+	           <entry>WebArchive</entry>
+	           <entry>Creates a new <literal>WebArchive</literal>, adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
+	         </row>
+	         <row>
+	           <entry>WebArchive</entry>
+	           <entry>WebArchive</entry>
+	           <entry>Adds <literal>@Deployment</literal> and <literal>Auxiliary Archives</literal> as libraries.</entry>
+	         </row>
+	         <row>
+	           <entry>EnterpriseArchive</entry>
+	           <entry>EnterpriseArchive</entry>
+	           <entry>
+	           	If a single <literal>WebArchive</literal> is found, the same as for <literal>WebArchive</literal> is done. 
+	           	If no <literal>WebArchives</literal> are found a new one is creates, adds <literal>@Deployment</literal> 
+	           	and <literal>Auxiliary Archives</literal> as libraries. If multiple <literal>WebArchives</literal> are found, a exception is thrown.
+	           </entry>
+	         </row>
+	      </tbody>
+	   </tgroup>
+	</table>
+
+	<section id="protocol.servlet-3.configuration">
+		<title>Configuration</title>
+
+		<table frame="all">
+			<title>Protocol Configuration Options</title>
+			<tgroup cols="4">
+				<colspec colnum="1" colname="name" colwidth="3*" />
+				<colspec colnum="2" colname="type" colwidth="1*" />
+				<colspec colnum="3" colname="default" colwidth="1*" />
+				<colspec colnum="4" colname="description" colwidth="5*" />
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>host</entry>
+						<entry>String</entry>
+						<entry>none</entry>
+						<entry>Used to override the Deployments default hostname.</entry>
+					</row>
+					<row>
+						<entry>port</entry>
+						<entry>String</entry>
+						<entry>none</entry>
+						<entry>Used to override the Deployments default http port.</entry>
+					</row>
+					<row>
+						<entry>contextRoot</entry>
+						<entry>int</entry>
+						<entry>none</entry>
+						<entry>Used to override the Deployments default contextRoot.</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+</section>

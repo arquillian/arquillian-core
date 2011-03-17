@@ -161,7 +161,7 @@ buildDir = 'target/gradle-build'
 
 libraryVersions = [
    junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.20100721-M4', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
+   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
 ]
 
 ...]]></programlisting>
@@ -210,7 +210,7 @@ buildDir = 'target/gradle-build'
 
 libraryVersions = [
    junit: '4.8.1', arquillian: '1.0.0.Alpha3', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.20100721-M4', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
+   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
 ]
 
 repositories {
@@ -354,7 +354,7 @@ buildDir = 'target/gradle-build'
 
 libraryVersions = [
    junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.20100721-M4', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
+   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
 ]
 
 repositories {
@@ -481,7 +481,7 @@ buildDir = 'target/gradle-build'
 
 libraryVersions = [
    junit: '4.8.1', arquillian: '1.0.0.Alpha3', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.20100721-M4', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
+   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
 ]
 
 repositories {
@@ -557,7 +557,7 @@ buildDir = 'target/gradle-build'
 
 libraryVersions = [
    junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.20100721-M4', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
+   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
 ]
 
 apply from: profile + '-profile.gradle'

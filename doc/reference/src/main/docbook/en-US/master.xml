@@ -16,12 +16,12 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="enrichment.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="execution.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="debugging.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="extend.xml" />
-   
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_reference.xml" />
-   
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="extension_reference.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="build_integration.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="advanced.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="extend.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="extension_reference.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_reference.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="protocol_reference.xml" />
    
    <!--
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="scenarios.xml" />

@@ -2,18 +2,16 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" []>
 
-<section id="container.weld-se-embedded-1">
+<section id="container.glassfish-remote-31">
 
-	<title>Weld SE 1.0 - Embedded</title>
+	<title>GlassFish 3.1 - Remote</title>
 
-	<para id="container.weld-se-embedded-1.description">
-		A DeployableContainer implementation that can run and connect to a embedded(same JVM) 
-		Weld(CDI reference implementation) SE edition. No EE APIs are available.
-		This implementation has lifecycle support, so the container will be started and stopped as part of
-		the test run.   
+	<para id="container.glassfish-remote-31.description">
+      A DeployableContainer implementation that connects to a remote GlassFish 3.1 
+      instance and deploys the test archive using the admin REST api.
 	</para>
 
-	<table id="container.weld-se-embedded-1.injection" frame="all">
+	<table id="container.glassfish-remote-31.injection" frame="all">
 		<title>Container Injection Support Matrix</title>
 		<tgroup cols="5">
 			<colspec colnum="1" colname="ejb" colwidth="1*" />
@@ -36,7 +34,7 @@
 						<mediaobject>
 							<imageobject>
 								<imagedata fileref="images/fact_good.png" format="PNG"
-									align="center" scalefit="0" />
+									align="center" scalefit="0"/>
 							</imageobject>
 						</mediaobject>
 					</entry>
@@ -57,29 +55,32 @@
 						</mediaobject>
 					</entry>
 					<entry></entry>
-					<entry></entry>
+					<entry>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/fact_good.png" format="PNG"
+									align="center" scalefit="0" />
+							</imageobject>
+						</mediaobject>
+               </entry>
 				</row>
 			</tbody>
 		</tgroup>
 	</table>
-	
-	<warning>
-		Local EJBs only, which get treated as managed beans. Transactions, security and EJB context injection are not applied.
-	</warning>
 
-	<section id="container.weld-se-embedded-1.configuration">
+	<section id="container.glassfish-remote-31.configuration">
 		<title>Configuration</title>
 
 		<para>
-			Default Protocol: <link linkend="protocol.local">Local</link>
+			Default Protocol: <link linkend="protocol.servlet-3">Servlet 3.0</link> 
 		</para>
 		<table frame="all">
 			<title>Container Configuration Options</title>
 			<tgroup cols="4">
 				<colspec colnum="1" colname="name" colwidth="3*" />
 				<colspec colnum="2" colname="type" colwidth="1*" />
-				<colspec colnum="3" colname="default" colwidth="2*" />
-				<colspec colnum="4" colname="description" colwidth="4*" />
+				<colspec colnum="3" colname="default" colwidth="4*" />
+				<colspec colnum="4" colname="description" colwidth="2*" />
 				<thead>
 					<row>
 						<entry>Name</entry>
@@ -90,10 +91,34 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry></entry>
-						<entry></entry>
-						<entry></entry>
-						<entry></entry>
+						<entry>remoteServerAdminPort</entry>
+						<entry>int</entry>
+						<entry>4848</entry>
+						<entry>The administrative port the client should connect to.</entry>
+					</row>
+					<row>
+						<entry>remoteServerAddress</entry>
+						<entry>String</entry>
+						<entry>localhost</entry>
+						<entry>The administrative address the client should connect to.</entry>
+					</row>
+					<row>
+						<entry>remoteServerAdminHttps</entry>
+						<entry>boolean</entry>
+						<entry>false</entry>
+						<entry>Use SSL for communicating with the admin server.</entry>
+					</row>
+					<row>
+						<entry>remoteServerHttps</entry>
+						<entry>boolean</entry>
+						<entry>false</entry>
+						<entry>Use SSL to communicate with application.</entry>
+					</row>
+					<row>
+						<entry>remoteServerHttpPort</entry>
+						<entry>int</entry>
+						<entry>8080</entry>
+						<entry>The HTTP port of the remote server.</entry>
 					</row>
 				</tbody>
 			</tgroup>
@@ -102,36 +127,15 @@
 
 	<para>Example of Maven profile setup</para>
 	<programlisting role="XML"><![CDATA[<profile>
-	<id>weld-se-embedded-1</id>
+	<id>glassfish-remote-3.1</id>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-weld-se-embedded-1</artifactId>
+			<artifactId>arquillian-glassfish-remote-3</artifactId>
 			<version>1.0.0.Alpha5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
+         <scope>test</scope>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jboss.weld</groupId>
-				<artifactId>weld-core-bom</artifactId>
-				<version>1.0.1-SP1</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </profile>]]></programlisting>
+
 </section>

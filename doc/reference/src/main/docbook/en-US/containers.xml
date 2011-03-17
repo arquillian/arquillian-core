@@ -149,19 +149,19 @@
                  <entry>arquillian-jbossas-managed-5.1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-remote-6">JBoss AS 6.0 M4</link></entry>
+                 <entry><link linkend="container.jbossas-remote-6">JBoss AS 6.0</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-remote-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-managed-6">JBoss AS 6.0 M4</link></entry>
+                 <entry><link linkend="container.jbossas-managed-6">JBoss AS 6.0</link></entry>
                  <entry>managed</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-managed-6</entry>
                </row>
                <row>
-                 <entry><link linkend="container.jbossas-embedded-6">JBoss AS 6.0 M4</link></entry>
+                 <entry><link linkend="container.jbossas-embedded-6">JBoss AS 6.0</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
                  <entry>arquillian-jbossas-embedded-6</entry>
@@ -173,16 +173,16 @@
                  <entry>arquillian-reloaded-embedded-1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.glassfish-embedded-3">GlassFish 3.0</link></entry>
+                 <entry><link linkend="container.glassfish-embedded-31">GlassFish 3.1</link></entry>
                  <entry>remote</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-glassfish-remote-3</entry>
+                 <entry>arquillian-glassfish-remote-3.1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.glassfish-embedded-3">GlassFish 3.0</link></entry>
+                 <entry><link linkend="container.glassfish-embedded-31">GlassFish 3.1</link></entry>
                  <entry>embedded</entry>
                  <entry>Java EE 6</entry>
-                 <entry>arquillian-glassfish-embedded-3</entry>
+                 <entry>arquillian-glassfish-embedded-3.1</entry>
                </row>
                <row>
                  <entry><link linkend="container.tomcat-embedded-6">Tomcat 6.0</link></entry>
@@ -209,25 +209,33 @@
                  <entry>arquillian-weld-se-embedded-1</entry>
                </row>
                <row>
+                 <entry><link linkend="container.weld-se-embedded-11">Weld SE 1.1</link></entry>
+                 <entry>embedded</entry>
+                 <entry>CDI</entry>
+                 <entry>arquillian-weld-se-embedded-1.1</entry>
+               </row>
+               <row>
                  <entry><link linkend="container.weld-ee-embedded-11">Weld EE 1.1</link></entry>
                  <entry>embedded</entry>
                  <entry>CDI</entry>
                  <entry>arquillian-weld-ee-embedded-1.1</entry>
                </row>
+<!-- 
                <row>
                  <entry><link linkend="container.ironjacamar-embedded-1">IronJacamar 1.0</link></entry>
                  <entry>embedded</entry>
                  <entry>JCA 1.6</entry>
                  <entry>org.jboss.ironjacamar:ironjacamar-embedded-arquillian</entry>
                </row>
-               <row>
-                 <entry><link linkend="container.openwebbeans-embedded">Apache OpenWebBeans 1.0</link></entry>
+ -->
+                <row>
+                 <entry><link linkend="container.openwebbeans-embedded-1">Apache OpenWebBeans 1.0</link></entry>
                  <entry>embedded</entry>
                  <entry>CDI</entry>
                  <entry>arquillian-openwebbeans-embedded-1</entry>
                </row>
                <row>
-                 <entry><link linkend="container.openejb-embedded">Apache OpenEJB 3.1</link></entry>
+                 <entry><link linkend="container.openejb-embedded-31">Apache OpenEJB 3.1</link></entry>
                  <entry>embedded</entry>
                  <entry>EJB 3.0</entry>
                  <entry>arquillian-openejb-embedded-3.1</entry>
@@ -257,38 +265,34 @@
 			<literal>test.example.com</literal> and <literal>hudson.example.com</literal>. <literal>test.example.com</literal> 
 			is the JBoss instance we use for our integration tests and <literal>hudson.example.com</literal> is our continuous integration server 
 			that we want to run our integration suite from. By default, Arquillian will use localhost, so we need to tell it to use 
-			<literal>test.example.com</literal> to run the tests. 
+			<literal>test.example.com</literal> to run the tests. The JBoss AS container by default use the Servlet protocol, so we have to override the
+			default configuration. 
 		</para>
 		
 		<programlisting role="XML"><![CDATA[<?xml version="1.0"?>
 	
 <arquillian xmlns="http://jboss.com/arquillian"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:jboss="urn:arq:org.jboss.arquillian.container.jbossas.remote_6">
+		xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
- <engine>
-   <deploymentExportPath>/tmp</deploymentExportPath>
- </engine>
-	
- <jboss:container>
-   <jboss:remoteServerAddress>test.example.com</jboss:remoteServerAddress>
-   <jboss:remoteServerHttpPort>8181</jboss:remoteServerHttpPort>
-   <jboss:localDeploymentBindAddress>
-    hudson.example.com
-   </jboss:localDeploymentBindAddress>
-   <jboss:localDeploymentBindPort>7000</jboss:localDeploymentBindPort>
- </jboss:container>	
-
+ <container qualifier="jbossas" default="true">
+	 <configuration>
+	 	<property name="providerUrl">jnp://test.example.com:1099</property>
+	 </configuration>
+	 <protocol type="Servlet 3.0">
+	 	<configuration>
+	 		<property name="host">test.example.com</property>
+	 		<property name="port">8181</property>
+	 	</configuration>
+	 </protocol>
+ </container>
 </arquillian>]]></programlisting>
 		
 		<para>
-			That should do it! "Each type of container has it's own XML namespace for configuration - here we use the JBoss AS 6.0 
-			Remote container. Each container has different configuration options. Next step is to create a 
-			<literal>container</literal> element in that namespace and add the options you want to configure inside. 
-			In this example we're saying that the server we want to test against can be found on
-			address <literal>test.example.com</literal> using port 8181, and the remote server can communicate back to us 
-			on address <literal>hudson.example.com</literal> on port 7000. Some containers expect to be given a URL from which 
-			they can retrieve the application to be deployed. For these containers, Arquillian will start a local HTTP server. 
+			That should do it! Here we use the JBoss AS 6.0 Remote container which default use the Servlet 3.0 protocol implementation.
+			We override the default Servlet configuration to say that the http requests for this container can be executed over <literal>test.example.com:8181</literal>, 
+			but we also need to configure the container so it knows where to deploy our archives. We could for example have configured the Servlet protocol to 
+			communicate with a Apache server in front of the JBoss AS Server if we wanted to. Each container has different configuration options.  
 		</para>
 		
 		<tip>
@@ -296,10 +300,6 @@
 			see <xref linkend="container.reference"/>
 		</tip>
 		
-		<warning>
-			Some containers require a jndi.properties file on classpath with the containers standard
-			JNDI properties for the initial connection.
-		</warning>
 	</section>
 <!--
 vim:et:ts=3:sw=3:tw=120

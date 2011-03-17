@@ -29,7 +29,7 @@
       </para>
 
       <programlisting role="XML"><![CDATA[<properties>
-   <arquillian.version>1.0.0-SNAPSHOT</arquillian.version>
+   <arquillian.version>1.0.0.Alpha5</arquillian.version>
 </properties>]]></programlisting>
 
       <para>
@@ -164,7 +164,7 @@
 public static JavaArchive createTestArchive() {
    return ShrinkWrap.create(JavaArchive.class, "test.jar")
       .addClasses(TemperatureConverter.class)
-      .addManifestResource(
+      .addAsManifestResource(
             new ByteArrayAsset("<beans/>".getBytes()), 
             ArchivePaths.create("beans.xml"));
 }]]></programlisting>
@@ -194,7 +194,7 @@ public class TemperatureConverterTest {
    public static JavaArchive createTestArchive() {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(TemperatureConverter.class)
-         .addManifestResource(
+         .addAsManifestResource(
             EmptyAsset.INSTANCE, 
             ArchivePaths.create("beans.xml")); 
    }
@@ -226,7 +226,7 @@ public class TemperatureConverterTest {
    public static JavaArchive createTestArchive() {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(TemperatureConverter.class)
-         .addManifestResource(
+         .addAsManifestResource(
             EmptyAsset.INSTANCE,, 
             ArchivePaths.create("beans.xml")); 
    }
@@ -298,7 +298,7 @@ java.naming.provider.url=jnp://localhost:1099]]></programlisting>
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-client</artifactId>
-			<version>6.0.0.20100721-M4</version>
+			<version>6.0.0.Final</version>
 			<type>pom</type>
 		</dependency>
       </dependencies>

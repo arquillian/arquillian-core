@@ -95,7 +95,7 @@ unqualified interface name + "/no-interface"</programlisting>
 public static JavaArchive createTestArchive() {
    return ShrinkWrap.create("test.jar", JavaArchive.class)
       .addClass(NameOfClassUnderTest.class)
-      .addManifestResource(new ByteArrayAsset(new byte[0]), Paths.create("beans.xml"))]]></programlisting>
+      .addAsManifestResource(new ByteArrayAsset(new byte[0]), Paths.create("beans.xml"))]]></programlisting>
 
       <para>
          In an application that takes full advantage of CDI, you can likely get by only using injections defined with

@@ -14,7 +14,7 @@
    
    <programlisting><![CDATA[git clone git://github.com/arquillian/arquillian.git arquillian
 cd arquillian
-git checkout 1.0.0-SNAPSHOT]]></programlisting>
+git checkout 1.0.0.Alpha5]]></programlisting>
 	
 	If you want to try the JUnit examples do:
    <programlisting><![CDATA[cd examples/junit]]></programlisting>
@@ -35,7 +35,7 @@ git checkout 1.0.0-SNAPSHOT]]></programlisting>
       use <literal>$JBOSS_HOME</literal> to refer to this location throughout the tutorial.
    </para>
    
-   <programlisting><![CDATA[$ unzip jboss-6.0.0.20100721-M4.zip && mv jboss-6.0.0.20100721-M4 $JBOSS_HOME && $JBOSS_HOME/bin/run.sh]]></programlisting>
+   <programlisting><![CDATA[$ unzip jboss-6.0.0.Final.zip && mv jboss-6.0.0.Final $JBOSS_HOME && $JBOSS_HOME/bin/run.sh]]></programlisting>
 
    <para>
       Now, we tell Maven to run the tests, for both JUnit and TestNG:
@@ -185,7 +185,7 @@ public class InjectionTestCase
    public static JavaArchive createTestArchive() {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(GreetingManager.class, GreetingManagerBean.class)
-         .addManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
+         .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
    }
 
    @Inject GreetingManager greetingManager;
@@ -259,7 +259,7 @@ public class InjectionTestCase
    public static JavaArchive createTestArchive() {
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
          .addClasses(User.class, UserRepository.class, UserRepositoryBean.class)
-         .addManifestResource(
+         .addAsManifestResource(
 			"test-persistence.xml", 
 			ArchivePaths.create("persistence.xml"));
    }

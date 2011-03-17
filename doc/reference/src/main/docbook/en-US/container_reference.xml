@@ -12,16 +12,17 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-managed-6.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jbossas-embedded-6.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_reloaded-embedded-1.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-embedded-3.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-remote-3.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-embedded-3.1.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_glassfish-remote-3.1.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_tomcat-embedded-6.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jetty-embedded-6.1.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_jetty-embedded-7.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_weld-se-embedded-1.xml" />
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_weld-se-embedded-1.1.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_weld-ee-embedded-1.1.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_ironjacamar-embedded-1.xml" />
+   <!-- <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_ironjacamar-embedded-1.xml" /> -->
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openwebbeans-embedded-1.xml" />
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_openejb-embedded-3.1.xml" />
-   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_osgi-embedded-4.2.xml" />
+   <!-- <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="container_osgi-embedded-4.2.xml" /> -->
  
 </chapter>
