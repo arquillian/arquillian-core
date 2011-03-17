@@ -41,7 +41,8 @@ import org.jboss.arquillian.spi.core.annotation.Observes;
  */
 public class ContainerRegistryCreator
 {
-   private static final String ARQUILLIAN_LAUNCH_FILE = "arquillian.launch";
+   private static final String ARQUILLIAN_LAUNCH_PROPERTY = "arquillian.launch";
+   private static final String ARQUILLIAN_LAUNCH_DEFAULT = "arquillian.launch";
 
    private Logger log = Logger.getLogger(ContainerRegistryCreator.class.getName());
    
@@ -103,10 +104,15 @@ public class ContainerRegistryCreator
    {
       try
       {
+         if(System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY) != null)
+         {
+            return System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
+         }
+         
          return readActivatedValue(
                new BufferedReader(
                      new InputStreamReader(
-                           Thread.currentThread().getContextClassLoader().getResourceAsStream(ARQUILLIAN_LAUNCH_FILE))));
+                           Thread.currentThread().getContextClassLoader().getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT))));
          
       }
       catch (Exception e) 
