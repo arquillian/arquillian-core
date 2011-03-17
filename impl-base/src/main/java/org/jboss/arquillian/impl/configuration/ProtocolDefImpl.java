@@ -32,9 +32,9 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
 {
    private Node protocol;
    
-   public ProtocolDefImpl(Node model, Node container, Node protocol)
+   public ProtocolDefImpl(String descirptorName, Node model, Node container, Node protocol)
    {
-      super(model, container);
+      super(descirptorName, model, container);
       this.protocol = protocol;
    }
    

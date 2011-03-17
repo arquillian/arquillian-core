@@ -40,6 +40,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerRegistryTestCase
 {
+   private static final String ARQUILLIAN_XML = "arquillian.xml";
+
    @Mock
    private ServiceLoader serviceLoader;
 
@@ -59,7 +61,7 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerDefImpl().setContainerName(name), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
       
       Container container = registry.getContainer(TargetDescription.DEFAULT);
       
@@ -74,8 +76,8 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerDefImpl().setContainerName("some-other-name"), serviceLoader);
-      registry.create(new ContainerDefImpl().setContainerName(name).setDefault(), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("some-other-name"), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name).setDefault(), serviceLoader);
       
       Container container = registry.getContainer(TargetDescription.DEFAULT);
       
@@ -91,7 +93,7 @@ public class ContainerRegistryTestCase
       String prop = "prop-value";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerDefImpl().setContainerName(name)
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
                            .property("property", prop), serviceLoader);
       
       Container container = registry.getContainer(new TargetDescription(name));
@@ -112,8 +114,8 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerDefImpl().setContainerName("other-name"), serviceLoader);
-      registry.create(new ContainerDefImpl().setContainerName(name), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
       
       Container container = registry.getContainer(new TargetDescription(name));
       
@@ -128,8 +130,8 @@ public class ContainerRegistryTestCase
       String name = "some-name";
 
       ContainerRegistry registry = new ContainerRegistry();
-      registry.create(new ContainerDefImpl().setContainerName("other-name"), serviceLoader);
-      registry.create(new ContainerDefImpl().setContainerName(name), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
       
       Container container = registry.getContainer(name);
 

@@ -36,20 +36,20 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    private Node container;
    
    // test only
-   public ContainerDefImpl()
+   public ContainerDefImpl(String descirptorName)
    {
-      this(new Node("arquillian"));
+      this(descirptorName, new Node("arquillian"));
    }
 
    // test only
-   public ContainerDefImpl(Node model)
+   public ContainerDefImpl(String descirptorName, Node model)
    {
-      this(model, model.create("container"));
+      this(descirptorName, model, model.create("container"));
    }
    
-   public ContainerDefImpl(Node model, Node container)
+   public ContainerDefImpl(String descirptorName, Node model, Node container)
    {
-      super(model);
+      super(descirptorName, model);
       this.container = container;
    }
    
@@ -110,7 +110,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    @Override
    public ProtocolDef protocol(String type)
    {
-      return new ProtocolDefImpl(getRootNode(), container, container.create("protocol")).setType(type);
+      return new ProtocolDefImpl(getDescriptorName(), getRootNode(), container, container.create("protocol")).setType(type);
    }
    
    /* (non-Javadoc)
@@ -151,7 +151,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
       List<ProtocolDef> protocols = new ArrayList<ProtocolDef>();
       for(Node proto : container.get("protocol"))
       {
-         protocols.add(new ProtocolDefImpl(getRootNode(), container, proto));
+         protocols.add(new ProtocolDefImpl(getDescriptorName(), getRootNode(), container, proto));
       }
       return protocols;
    }

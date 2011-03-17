@@ -39,7 +39,7 @@
     <version.mockito_all>1.8.3</version.mockito_all>
     <version.osgi>4.2.0</version.osgi>
     <version.shrinkwrap_shrinkwrap>1.0.0-alpha-12</version.shrinkwrap_shrinkwrap>
-    <version.shrinkwrap_descriptors>0.1.0</version.shrinkwrap_descriptors>
+    <version.shrinkwrap_descriptors>0.1.3</version.shrinkwrap_descriptors>
     <version.testng_testng>5.14.6</version.testng_testng>
   </properties>
 

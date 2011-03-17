@@ -32,9 +32,9 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
 {
    private Node protocol;
 
-   public DefaultProtocolDefImpl(Node model, Node protocol)
+   public DefaultProtocolDefImpl(String descirptorName, Node model, Node protocol)
    {
-      super(model);
+      super(descirptorName, model);
       this.protocol = protocol;
    }
 

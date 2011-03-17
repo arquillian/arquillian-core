@@ -33,9 +33,9 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
 {
    private Node group;
    
-   public GroupContainerDefImpl(Node model, Node group, Node container)
+   public GroupContainerDefImpl(String descirptorName, Node model, Node group, Node container)
    {
-      super(model, container);
+      super(descirptorName, model, container);
       this.group = group;
    }
    
@@ -68,7 +68,7 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
    @Override
    public ContainerDef container(String name)
    {
-      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getRootNode(), group, group.create("container"));
+      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.create("container"));
       contianer.setContainerName(name);
       return contianer; 
    }
@@ -82,7 +82,7 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
       List<ContainerDef> containers = new ArrayList<ContainerDef>();
       for(Node container : group.get("container"))
       {
-         containers.add(new GroupContainerDefImpl(getRootNode(), group, container));
+         containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
       }
       return containers;
    }

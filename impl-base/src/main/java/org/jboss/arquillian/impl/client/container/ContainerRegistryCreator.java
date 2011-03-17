@@ -86,7 +86,7 @@ public class ContainerRegistryCreator
             DeployableContainer<?> deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
             if(deployableContainer != null)
             {
-               reg.create(new ContainerDefImpl().setContainerName("default"), serviceLoader);
+               reg.create(new ContainerDefImpl("arquillian.xml").setContainerName("default"), serviceLoader);
             }
          } 
          catch (Exception e) 

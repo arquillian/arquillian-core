@@ -35,9 +35,9 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
    
    private Node engine;
    
-   public EngineDefImpl(Node model, Node engine)
+   public EngineDefImpl(String descirptorName, Node model, Node engine)
    {
-      super(model);
+      super(descirptorName, model);
       this.engine = engine;
    }
    

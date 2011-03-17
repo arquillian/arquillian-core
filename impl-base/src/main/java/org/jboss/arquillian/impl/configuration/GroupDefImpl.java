@@ -33,9 +33,9 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
 {
    private Node group;
    
-   public GroupDefImpl(Node model, Node group)
+   public GroupDefImpl(String descirptorName, Node model, Node group)
    {
-      super(model);
+      super(descirptorName, model);
       this.group = group;
    }
    
@@ -68,7 +68,7 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
    @Override
    public ContainerDef container(String name)
    {
-      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getRootNode(), group, group.create("container"));
+      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.create("container"));
       contianer.setContainerName(name);
       return contianer;
    }
@@ -82,7 +82,7 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
       List<ContainerDef> containers = new ArrayList<ContainerDef>();
       for(Node container : group.get("container"))
       {
-         containers.add(new GroupContainerDefImpl(getRootNode(), group, container));
+         containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
       }
       return containers;
    }

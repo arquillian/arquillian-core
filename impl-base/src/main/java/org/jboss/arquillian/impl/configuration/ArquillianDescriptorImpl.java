@@ -48,13 +48,14 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    // Constructor ------------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   public ArquillianDescriptorImpl()
+   public ArquillianDescriptorImpl(String descirptorName)
    {
-      this(new Node("arquillian"));
+      this(descirptorName, new Node("arquillian"));
    }
    
-   public ArquillianDescriptorImpl(Node model)
+   public ArquillianDescriptorImpl(String descirptorName, Node model)
    {
+      super(descirptorName);
       this.model = model;
    }
 
@@ -68,7 +69,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    @Override
    public DefaultProtocolDef defaultProtocol(String type)
    {
-      return new DefaultProtocolDefImpl(model, model.getOrCreate("protocol")).setType(type);
+      return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getOrCreate("protocol")).setType(type);
    }
    
    /* (non-Javadoc)
@@ -79,7 +80,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    {
       if(model.getSingle("protocol") != null)
       {
-         return new DefaultProtocolDefImpl(model, model.getSingle("protocol"));
+         return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getSingle("protocol"));
       }
       return null;
    }
@@ -90,12 +91,12 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    @Override
    public EngineDef engine()
    {
-      return new EngineDefImpl(model, model.getOrCreate("engine"));
+      return new EngineDefImpl(getDescriptorName(), model, model.getOrCreate("engine"));
    }
    
    public ContainerDef container(String name) 
    {
-      return new ContainerDefImpl(model, model.create("container")).setContainerName(name);
+      return new ContainerDefImpl(getDescriptorName(), model, model.create("container")).setContainerName(name);
    }
 
    /* (non-Javadoc)
@@ -104,13 +105,13 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    @Override
    public GroupDef group(String name)
    {
-      return new GroupDefImpl(model, model.create("group")).setGroupName(name);
+      return new GroupDefImpl(getDescriptorName(), model, model.create("group")).setGroupName(name);
    }
    
    @Override
    public ExtensionDef extension(String name)
    {
-      return new ExtensionDefImpl(model, model.create("extension")).setExtensionName(name);
+      return new ExtensionDefImpl(getDescriptorName(), model, model.create("extension")).setExtensionName(name);
    }
 
    /* (non-Javadoc)
@@ -122,7 +123,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
       List<ContainerDef> containers = new ArrayList<ContainerDef>();
       for(Node container : model.get("container"))
       {
-         containers.add(new ContainerDefImpl(model, container));
+         containers.add(new ContainerDefImpl(getDescriptorName(), model, container));
       }
       return containers;
    }
@@ -136,7 +137,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
       List<GroupDef> groups = new ArrayList<GroupDef>();
       for(Node group : model.get("group"))
       {
-         groups.add(new GroupDefImpl(model, group));
+         groups.add(new GroupDefImpl(getDescriptorName(), model, group));
       }
       return groups;
    }
@@ -147,7 +148,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
       List<ExtensionDef> extensions = new ArrayList<ExtensionDef>();
       for(Node extension: model.get("extension"))
       {
-         extensions.add(new ExtensionDefImpl(model, extension));
+         extensions.add(new ExtensionDefImpl(getDescriptorName(), model, extension));
       }
       return extensions;
    }
