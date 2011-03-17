@@ -98,14 +98,15 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       if(Archive.class.isAssignableFrom(deploymentMethod.getReturnType()))
       {
          deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
+         deployment.shouldBeTestable(deploymentAnnotation.testable());
       }
       else if(Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType()))
       {
          deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
+         //deployment.shouldBeTestable(false);
       }
       deployment.shouldBeManaged(deploymentAnnotation.managed());
       deployment.setOrder(deploymentAnnotation.order());
-      deployment.shouldBeTestable(deploymentAnnotation.testable());
       if(target != null)
       {
          deployment.setTarget(target);
