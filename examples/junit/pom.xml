@@ -24,7 +24,7 @@
       	<!-- Versioning -->
 		<version.weld_core>1.0.1-SP4</version.weld_core>
 		<version.weld_core_11>1.1.0.Final</version.weld_core_11>
-		<version.org.apache.openejb_openejb.core>3.1.2</version.org.apache.openejb_openejb.core>
+		<version.org.apache.openejb_openejb.core>3.1.4</version.org.apache.openejb_openejb.core>
 		<version.openwebbeans>1.0.0</version.openwebbeans>
 		<version.jboss_60>6.0.0.Final</version.jboss_60>
 		<version.jboss_51>5.1.0.GA</version.jboss_51>
