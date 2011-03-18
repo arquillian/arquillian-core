@@ -103,7 +103,7 @@ public void testRunningInDep2() {}</programlisting>
                 <property name="unpackArchive">true</property>
             </configuration>
             <dependencies>
-            	<dependency>org.jboss.arquillian.container:arquillian-tomcat-embedded-6:1.0.0.Alpha5</dependency>
+            	<dependency>org.jboss.arquillian.container:arquillian-tomcat-embedded-6:1.0.0-SNAPSHOT</dependency>
             	<dependency>org.apache.tomcat:catalina:6.0.29</dependency>
             	<dependency>org.apache.tomcat:coyote:6.0.29</dependency>
             	<dependency>org.apache.tomcat:jasper:6.0.29</dependency>
@@ -117,7 +117,7 @@ public void testRunningInDep2() {}</programlisting>
                 <property name="unpackArchive">true</property>
             </configuration>
             <dependencies>
-            	<dependency>org.jboss.arquillian.container:arquillian-tomcat-embedded-6:1.0.0.Alpha5</dependency>
+            	<dependency>org.jboss.arquillian.container:arquillian-tomcat-embedded-6:1.0.0-SNAPSHOT</dependency>
             	<dependency>org.apache.tomcat:catalina:6.0.29</dependency>
             	<dependency>org.apache.tomcat:coyote:6.0.29</dependency>
             	<dependency>org.apache.tomcat:jasper:6.0.29</dependency>

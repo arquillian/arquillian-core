@@ -14,7 +14,7 @@
    
    <programlisting><![CDATA[git clone git://github.com/arquillian/arquillian.git arquillian
 cd arquillian
-git checkout 1.0.0.Alpha5]]></programlisting>
+git checkout 1.0.0-SNAPSHOT]]></programlisting>
 	
 	If you want to try the JUnit examples do:
    <programlisting><![CDATA[cd examples/junit]]></programlisting>

@@ -132,7 +132,7 @@
 		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-glassfish-remote-3</artifactId>
-			<version>1.0.0.Alpha5</version>
+			<version>1.0.0-SNAPSHOT</version>
          <scope>test</scope>
 		</dependency>
 	</dependencies>

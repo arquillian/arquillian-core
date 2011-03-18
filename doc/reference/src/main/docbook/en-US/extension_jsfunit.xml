@@ -75,7 +75,7 @@ public class JSFUnitTestCase
 	<programlisting role="XML"><![CDATA[<dependency>
    <groupId>org.jboss.arquillian.framework</groupId>
    <artifactId>arquillian-framework-jsfunit</artifactId>
-   <version>1.0.0.Alpha5</version>
+   <version>1.0.0-SNAPSHOT</version>
    <scope>test</scope>
 </dependency>
 <dependency>

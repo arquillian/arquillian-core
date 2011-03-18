@@ -16,7 +16,7 @@
   <!-- Artifact Configuration -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-build</artifactId>
-  <version>1.0.0.Alpha5</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>Arquillian Build</name>
   <description>Arquillian Build Configuration</description>
   <packaging>pom</packaging>
