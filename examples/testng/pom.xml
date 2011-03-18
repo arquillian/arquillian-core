@@ -30,7 +30,7 @@
 		<version.jboss_60>6.0.0.Final</version.jboss_60>
 		<version.jboss_51>5.1.0.GA</version.jboss_51>
 		<version.jboss_50>5.0.1.GA</version.jboss_50>
-		<version.glassfish_31>3.1-b41</version.glassfish_31>
+		<version.glassfish_31>3.1</version.glassfish_31>
 
 
 	</properties>
