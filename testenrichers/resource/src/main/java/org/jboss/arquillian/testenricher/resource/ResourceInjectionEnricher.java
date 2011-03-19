@@ -17,13 +17,16 @@
 package org.jboss.arquillian.testenricher.resource;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
+import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.arquillian.spi.TestEnricher;
 
@@ -84,7 +87,7 @@ public class ResourceInjectionEnricher implements TestEnricher
             Object currentValue = field.get(testCase);
             if(shouldInject(field, currentValue))
             {
-               Object resource = lookup(getResourceName(field));
+               Object resource = resolveResource(field);
                field.set(testCase, resource);
             }
          }
@@ -103,7 +106,7 @@ public class ResourceInjectionEnricher implements TestEnricher
             {
                throw new RuntimeException("@Resource only allowed on 'set' methods");
             }
-            Object resource = lookup(getResourceName(method.getAnnotation(Resource.class)));
+            Object resource = resolveResource(method);
             method.invoke(testCase, resource);
          }
       } 
@@ -111,6 +114,27 @@ public class ResourceInjectionEnricher implements TestEnricher
       {
          throw new RuntimeException("Could not inject members", e);
       }
+   }
+
+   /**
+    * Looks up the JNDI resource for any given annotated element.
+    * @param element any annotated element (field, method, etc.)
+    * @return the located resource
+    * @throws Exception
+    */
+   protected Object resolveResource(AnnotatedElement element) throws Exception
+   {
+      Object resolvedResource = null;
+      // This implementation is based on previous behavior in injectClass()
+      if (Field.class.isAssignableFrom(element.getClass()))
+      {
+         resolvedResource = lookup(getResourceName((Field) element));
+      }
+      else if (Method.class.isAssignableFrom(element.getClass()))
+      {
+         resolvedResource = lookup(getResourceName(element.getAnnotation(Resource.class)));
+      }
+      return resolvedResource;
    }
 
    private boolean shouldInject(Field field, Object currentValue)
@@ -155,10 +179,21 @@ public class ResourceInjectionEnricher implements TestEnricher
    protected Object lookup(String jndiName) throws Exception 
    {
       // TODO: figure out test context ? 
-      InitialContext context = new InitialContext();
+      Context context = getContainerContext();
       return context.lookup(jndiName);
    }
    
+   /**
+    * Obtains the appropriate context for the test.  Can be overriden by
+    * enrichers for each container to provide the correct context.
+    * @return the test context
+    * @throws NamingException
+    */
+   protected Context getContainerContext() throws NamingException
+   {
+      return new InitialContext();
+   }
+
    protected String getResourceName(Field field)
    {
       Resource resource = field.getAnnotation(Resource.class);
