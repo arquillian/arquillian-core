@@ -22,9 +22,14 @@ import javax.ejb.EJB;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.ProviderType;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.SchemaGenerationModeType;
+import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -42,9 +47,16 @@ public class UserRepositoryTestCase extends Arquillian
       return ShrinkWrap.create(JavaArchive.class, "test.jar")
                .addPackage(
                      User.class.getPackage())
-               .addAsManifestResource(
-                     "com/acme/jpa/user-test-persistence.xml", 
-                     ArchivePaths.create("persistence.xml"));
+               .addAsManifestResource(new StringAsset(
+                     Descriptors.create(PersistenceDescriptor.class)
+                        .persistenceUnit("Domain")
+                           .provider(ProviderType.HIBERNATE)
+                           .transactionType(TransactionType.JTA)
+                           .classes(User.class)
+                           .excludeUnlistedClasses()
+                           .jtaDataSource("java:/DefaultDS")
+                           .schemaGenerationMode(SchemaGenerationModeType.CREATE_DROP)
+                        .exportAsString()), "persistence.xml");
    }
    
    private static final String FIRST_NAME = "first-name";
