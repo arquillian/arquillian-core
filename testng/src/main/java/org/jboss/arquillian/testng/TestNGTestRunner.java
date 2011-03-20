@@ -45,14 +45,16 @@ public class TestNGTestRunner implements TestRunner
       DeployableTestBuilder.setProfile(ContainerProfile.CONTAINER);
       TestListener resultListener = new TestListener();
       
-      TestNG runner = new TestNG(true);
+      TestNG runner = new TestNG(false);
       runner.setVerbose(0);
+      
       runner.addListener(resultListener);
       runner.addListener(new RemoveDependsOnTransformer());
       runner.setXmlSuites(
             Arrays.asList(createSuite(testClass, methodName)));
       
       runner.run();
+      
 
       DeployableTestBuilder.clearProfile();
       return resultListener.getTestResult(); 
