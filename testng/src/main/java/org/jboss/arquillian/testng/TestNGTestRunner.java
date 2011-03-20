@@ -48,6 +48,7 @@ public class TestNGTestRunner implements TestRunner
       TestNG runner = new TestNG(true);
       runner.setVerbose(0);
       runner.addListener(resultListener);
+      runner.addListener(new RemoveDependsOnTransformer());
       runner.setXmlSuites(
             Arrays.asList(createSuite(testClass, methodName)));
       

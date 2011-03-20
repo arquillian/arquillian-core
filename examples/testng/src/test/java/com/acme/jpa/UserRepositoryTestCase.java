@@ -53,13 +53,13 @@ public class UserRepositoryTestCase extends Arquillian
    @EJB
    private UserRepository userRepository;
    
-   @Test(enabled = false) // https://jira.jboss.org/jira/browse/ARQ-55
+   @Test
    public void shouldBeAbleToStoreUser() throws Exception 
    {
       userRepository.store(new User(FIRST_NAME, LAST_NAME));
    }
    
-   @Test(dependsOnMethods = "shouldBeAbleToStoreUser", enabled = false) // https://jira.jboss.org/jira/browse/ARQ-55
+   @Test(dependsOnMethods = "shouldBeAbleToStoreUser")
    public void shouldBeAbleToFindUser() throws Exception 
    {
       List<User> users  = userRepository.getByFirstName(FIRST_NAME);
