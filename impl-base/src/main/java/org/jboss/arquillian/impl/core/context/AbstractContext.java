@@ -17,6 +17,7 @@
 package org.jboss.arquillian.impl.core.context;
 
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -36,7 +37,14 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    
    private ConcurrentHashMap<T, ObjectStore> stores;
    
-   private ThreadLocal<ObjectStore> activeStore = new ThreadLocal<ObjectStore>();
+   private ThreadLocal<Stack<ObjectStore>> activeStore = new ThreadLocal<Stack<ObjectStore>>() {
+
+      @Override
+      protected Stack<ObjectStore> initialValue()
+      {
+         return new Stack<ObjectStore>();
+      }
+   };
    
    public AbstractContext()
    {
@@ -47,14 +55,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    public void activate(T id) 
    {
       Validate.notNull(id, "ID must be specified");
-      if(!isActive())
-      {
-         activeStore.set(createObjectStore(id));
-      }
-      else
-      {
-         log.info("Trying to activate context, but allready active: " + super.getClass().getSimpleName() + " " + id);
-      }
+      activeStore.get().push(createObjectStore(id));
    }
    
    @Override
@@ -62,18 +63,26 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    {
       if(isActive())
       {
-         activeStore.set(null);
+         activeStore.get().pop();
       }
       else
       {
          log.info("Trying to deactivate context, but none active: " + super.getClass().getSimpleName());
       }
    }
+   
+   public void deactivateAll()
+   {
+      if(isActive())
+      {
+         activeStore.get().clear();
+      }
+   }
 
    @Override
    public boolean isActive()
    {
-      return activeStore.get() != null;
+      return !activeStore.get().isEmpty();
    }
    
    @Override
@@ -91,7 +100,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    {
       if(isActive())
       {
-         return activeStore.get();
+         return activeStore.get().peek();
       }
       throw new RuntimeException("Context is not active: " + super.getClass().getSimpleName());
    }
@@ -106,8 +115,9 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
       {
          if(isActive())
          {
-            deactivate();
+            deactivateAll();
          }
+         activeStore.remove();
          for(Map.Entry<T, ObjectStore> entry: stores.entrySet())
          {
             entry.getValue().clear();

@@ -20,7 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.jboss.arquillian.impl.core.ObjectStore;
-import org.jboss.arquillian.impl.core.context.SuiteContextImpl;
+import org.jboss.arquillian.impl.core.spi.context.ClassContext;
 import org.jboss.arquillian.impl.core.spi.context.SuiteContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -111,6 +111,40 @@ public class ContextActivationTestCase
       {
          context.deactivate();
          context.destroy();
+      }
+   }
+   
+   @Test
+   public void shouldBeAbleToStackContextOfSameType()
+   {
+      final ClassContext context = new ClassContextImpl();      
+      
+      try
+      {
+         context.activate(String.class);
+         context.getObjectStore().add(String.class, "test");
+         
+         try
+         {
+            context.activate(Integer.class);
+            Assert.assertNull(
+                  "Should not be able to read from previously stacked context", 
+                  context.getObjectStore().get(String.class));
+            
+         }
+         finally
+         {
+            context.deactivate();
+         }
+         
+         Assert.assertTrue(
+               "Outer Context should still be active", 
+               context.isActive());
+      } 
+      finally 
+      {
+         context.deactivate();
+         context.clearAll();
       }
    }
 }
