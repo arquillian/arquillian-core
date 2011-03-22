@@ -23,6 +23,7 @@ import org.jboss.arquillian.impl.bootstrap.ConfigurationRegistrar;
 import org.jboss.arquillian.impl.bootstrap.ServiceLoaderRegistrar;
 import org.jboss.arquillian.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.impl.client.ContainerEventController;
+import org.jboss.arquillian.impl.client.container.ClientDeployerCreator;
 import org.jboss.arquillian.impl.client.container.ContainerDeployController;
 import org.jboss.arquillian.impl.client.container.ContainerLifecycleController;
 import org.jboss.arquillian.impl.client.container.ContainerRegistryCreator;
@@ -67,9 +68,10 @@ public class ArquillianProfile implements Profile
             // container core
             ProtocolRegistryCreator.class,
             ContainerRegistryCreator.class,
-            DeploymentExceptionHandler.class,
+            ClientDeployerCreator.class,
             
             // container / deploy / test
+            DeploymentExceptionHandler.class,
             ContainerEventController.class,            
             ClientTestEnricher.class,
             ClientTestExecuter.class,

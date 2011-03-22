@@ -43,19 +43,22 @@ public class ClientTestExecuter
 
    public void execute(@Observes Test event) throws Exception
    {
+      boolean runAsClient = true;
+      
       DeploymentDescription deploymentDescription = this.deploymentDescription.get();
-      
-      boolean runAsClient =  deploymentDescription.testable() ? false:true;
-      
-      if(event.getTestMethod().isAnnotationPresent(RunAsClient.class))
+      if(deploymentDescription != null)
       {
-         runAsClient = true;
-      }
-      else if(event.getTestClass().isAnnotationPresent(RunAsClient.class))
-      {
-         runAsClient = true;
-      }
+         runAsClient =  deploymentDescription.testable() ? false:true;
          
+         if(event.getTestMethod().isAnnotationPresent(RunAsClient.class))
+         {
+            runAsClient = true;
+         }
+         else if(event.getTestClass().isAnnotationPresent(RunAsClient.class))
+         {
+            runAsClient = true;
+         }
+      }
       if(runAsClient) 
       {
          executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
