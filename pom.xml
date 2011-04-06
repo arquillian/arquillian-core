@@ -62,10 +62,6 @@
         <module>testenrichers</module> 
         <module>protocols</module>
         
-        <module>containers</module>
-    
-        <module>extensions</module>
-        <module>frameworks</module>
         <module>examples</module>
     
         <module>doc/reference</module>
