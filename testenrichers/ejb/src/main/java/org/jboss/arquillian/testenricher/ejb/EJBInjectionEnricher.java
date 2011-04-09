@@ -157,7 +157,9 @@ public class EJBInjectionEnricher implements TestEnricher
             "test/" + fieldType.getSimpleName() + "/no-interface",
             fieldType.getSimpleName() + "Bean/local",
             fieldType.getSimpleName() + "Bean/remote",
-            fieldType.getSimpleName() + "/no-interface"
+            fieldType.getSimpleName() + "/no-interface",
+            // WebSphere Application Server Local EJB default binding
+            "ejblocal:" + fieldType.getCanonicalName()
       };
       if ((mappedName != null) && (!mappedName.equals("")))
       {
