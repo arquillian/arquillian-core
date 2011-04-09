@@ -131,9 +131,10 @@ public class ServletTestRunner extends HttpServlet
    {
       try 
       {
+         // Set HttpServletResponse status BEFORE getting the output stream
+         response.setStatus(HttpServletResponse.SC_OK);
          ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
          oos.writeObject(object);
-         response.setStatus(HttpServletResponse.SC_OK);
          oos.flush();
          oos.close();
       } 
