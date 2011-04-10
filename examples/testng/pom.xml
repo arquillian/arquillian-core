@@ -429,7 +429,7 @@
 							<includes>
 								<include>com/acme/ejb/*</include>
 								<include>com/acme/jms/*</include>
-								<include>com/acme/resources/*</include>
+								<include>com/acme/resource/*</include>
 							</includes>
 						</configuration>
 					</plugin>
@@ -469,7 +469,7 @@
 							<includes>
 								<include>com/acme/ejb/*</include>
 								<include>com/acme/jms/*</include>
-								<include>com/acme/resources/*</include>
+								<include>com/acme/resource/*</include>
 							</includes>
 						</configuration>
 					</plugin>
