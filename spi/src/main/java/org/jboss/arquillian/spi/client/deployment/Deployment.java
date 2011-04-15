@@ -15,41 +15,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.impl.client.container.event;
+package org.jboss.arquillian.spi.client.deployment;
 
-import org.jboss.arquillian.impl.domain.Container;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
+import org.jboss.arquillian.spi.util.Validate;
 
 /**
- * DeploymentEvent
+ * Deployment
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class DeploymentEvent extends ContainerControlEvent
+public class Deployment
 {
-   private Deployment deployment;
+   private boolean deployed = false;
+   private Throwable deploymentError = null;
 
-   public DeploymentEvent(Container container, Deployment deployment)
+   private DeploymentDescription description;
+   
+   public Deployment(DeploymentDescription description)
    {
-      super(container);
-      this.deployment = deployment;
-   }
-
-   /**
-    * @return
-    */
-   public DeployableContainer<?> getDeployableContainer()
-   {
-      return getContainer().getDeployableContainer();
+      Validate.notNull(description, "Description must be specified");
+      this.description = description;
    }
    
    /**
-    * @return
+    * @return the description
     */
-   public Deployment getDeployment()
+   public DeploymentDescription getDescription()
    {
-      return deployment;
+      return description;
+   }
+   
+   public boolean isDeployed()
+   {
+      return deployed;
+   }
+   
+   public boolean hasDeploymentError()
+   {
+      return deploymentError != null;
+   }
+   
+   public void deployedWithError(Throwable deploymentError)
+   {
+      this.deployed = true;
+      this.deploymentError = deploymentError;
+   }
+   
+   public void deployed()
+   {
+      this.deployed = true;
    }
 }

@@ -28,6 +28,7 @@ import org.jboss.arquillian.impl.client.container.event.UnDeployManagedDeploymen
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
@@ -75,13 +76,13 @@ public class ContainerDeployController
     */
    public void deployManaged(@Observes DeployManagedDeployments event) throws Exception
    {
-      forEachManagedDeployment(new Operation<Container, DeploymentDescription>()
+      forEachManagedDeployment(new Operation<Container, Deployment>()
       {
          @Inject 
          private Event<DeploymentEvent> event;
          
          @Override
-         public void perform(Container container, DeploymentDescription deployment) throws Exception
+         public void perform(Container container, Deployment deployment) throws Exception
          {
             event.fire(new DeployDeployment(container, deployment));            
          }
@@ -96,13 +97,13 @@ public class ContainerDeployController
     */
    public void undeployManaged(@Observes UnDeployManagedDeployments event) throws Exception
    {
-      forEachManagedDeployment(new Operation<Container, DeploymentDescription>()
+      forEachManagedDeployment(new Operation<Container, Deployment>()
       {
          @Inject 
          private Event<DeploymentEvent> event;
          
          @Override
-         public void perform(Container container, DeploymentDescription deployment) throws Exception
+         public void perform(Container container, Deployment deployment) throws Exception
          {
             event.fire(new UnDeployDeployment(container, deployment));            
          }
@@ -117,7 +118,10 @@ public class ContainerDeployController
          private Event<DeployerEvent> deployEvent;
          
          @Inject @DeploymentScoped
-         private InstanceProducer<DeploymentDescription> deploymentDescription;
+         private InstanceProducer<DeploymentDescription> deploymentDescriptionProducer;
+
+         @Inject @DeploymentScoped
+         private InstanceProducer<Deployment> deploymentProducer;
          
          @Inject @DeploymentScoped
          private InstanceProducer<ProtocolMetaData> protocolMetadata;
@@ -126,27 +130,29 @@ public class ContainerDeployController
          public Void call() throws Exception
          {
             DeployableContainer<?> deployableContainer = event.getDeployableContainer();
-            DeploymentDescription deployment = event.getDeployment();
-
+            Deployment deployment = event.getDeployment();
+            DeploymentDescription deploymentDescription = deployment.getDescription();
+            
             /*
              * TODO: should the DeploymentDescription producer some how be automatically registered ?
              * Or should we just 'know' who is the first one to create the context
              */
-            deploymentDescription.set(deployment);
+            deploymentDescriptionProducer.set(deploymentDescription);
+            deploymentProducer.set(deployment);
             
-            deployEvent.fire(new BeforeDeploy(deployableContainer, deployment));
+            deployEvent.fire(new BeforeDeploy(deployableContainer, deploymentDescription));
 
-            if(deployment.isArchiveDeployment())
+            if(deploymentDescription.isArchiveDeployment())
             {
                protocolMetadata.set(deployableContainer.deploy(
-                     deployment.getTestableArchive() != null ? deployment.getTestableArchive():deployment.getArchive()));
+                     deploymentDescription.getTestableArchive() != null ? deploymentDescription.getTestableArchive():deploymentDescription.getArchive()));
             }
             else
             {
-               deployableContainer.deploy(deployment.getDescriptor());
+               deployableContainer.deploy(deploymentDescription.getDescriptor());
             }
             
-            deployEvent.fire(new AfterDeploy(deployableContainer, deployment));
+            deployEvent.fire(new AfterDeploy(deployableContainer, deploymentDescription));
             return null;
          }
       });
@@ -163,22 +169,21 @@ public class ContainerDeployController
          public Void call() throws Exception
          {
             DeployableContainer<?> deployableContainer = event.getDeployableContainer();
-            DeploymentDescription deployment = event.getDeployment();
+            Deployment deployment = event.getDeployment();
+            DeploymentDescription description = deployment.getDescription();
             
-            deployEvent.fire(new BeforeUnDeploy(deployableContainer, deployment));
+            deployEvent.fire(new BeforeUnDeploy(deployableContainer, description));
 
-            if(deployment.isArchiveDeployment())
+            if(deployment.getDescription().isArchiveDeployment())
             {
                try
                {
                   deployableContainer.undeploy(
-                        deployment.getTestableArchive() != null ? deployment.getTestableArchive():deployment.getArchive());
+                        description.getTestableArchive() != null ? description.getTestableArchive():description.getArchive());
                }
                catch (Exception e) 
                {
-                  // TODO: Evaluate, should this be moved to DeploymentExceptionHandler?
-                  // silently ignore UnDeploy exceptions if a expected exception during deploy(it is probably not deployed) 
-                  if(deployment.getExpectedException() == null)
+                  if(!deployment.hasDeploymentError())
                   {
                      throw e;
                   }
@@ -186,16 +191,16 @@ public class ContainerDeployController
             }
             else
             {
-               deployableContainer.undeploy(deployment.getDescriptor());
+               deployableContainer.undeploy(description.getDescriptor());
             }
             
-            deployEvent.fire(new AfterUnDeploy(deployableContainer, deployment));
+            deployEvent.fire(new AfterUnDeploy(deployableContainer, description));
             return null;
          }
       });
    }
    
-   private void forEachManagedDeployment(Operation<Container, DeploymentDescription> operation) throws Exception
+   private void forEachManagedDeployment(Operation<Container, Deployment> operation) throws Exception
    {
       injector.get().inject(operation);
       ContainerRegistry containerRegistry = this.containerRegistry.get();
@@ -203,7 +208,7 @@ public class ContainerDeployController
       
       for(TargetDescription target : deploymentScenario.getTargets())
       {
-         List<DeploymentDescription> startUpDeployments = deploymentScenario.getStartupDeploymentsFor(target);
+         List<Deployment> startUpDeployments = deploymentScenario.getStartupDeploymentsFor(target);
          if(startUpDeployments.size() == 0)
          {
             continue; // nothing to do, move on 
@@ -212,7 +217,7 @@ public class ContainerDeployController
          // Container should exists, handled by up front validation
          Container container = containerRegistry.getContainer(target);
          
-         for(DeploymentDescription deployment : startUpDeployments)
+         for(Deployment deployment : startUpDeployments)
          {
             operation.perform(container, deployment);
          }

@@ -26,6 +26,7 @@ import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.client.container.DeploymentException;
 import org.jboss.arquillian.spi.client.container.DeploymentExceptionTransformer;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;
@@ -80,8 +81,8 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
       TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
       fire(new DeployDeployment(
             container, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(NullPointerException.class)));
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+               .setExpectedException(NullPointerException.class))));
    }
 
    @Test
@@ -92,8 +93,8 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
 
       fire(new DeployDeployment(
             container, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-            .setExpectedException(IllegalArgumentException.class)));
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+            .setExpectedException(IllegalArgumentException.class))));
       
       Mockito.verify(transformer, Mockito.times(1)).transform(Mockito.isA(Exception.class));
    }
@@ -107,8 +108,8 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
 
       fire(new DeployDeployment(
             container, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class)));
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+               .setExpectedException(IllegalArgumentException.class))));
    }
 
    @Test(expected = DeploymentException.class)
@@ -119,8 +120,8 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
 
       fire(new DeployDeployment(
             container, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class)));
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+               .setExpectedException(IllegalArgumentException.class))));
       }
 
    @Test(expected = DeploymentException.class)
@@ -130,7 +131,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
 
       fire(new DeployDeployment(
             container, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))));
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class)))));
    }
 
    @Test(expected = RuntimeException.class)
@@ -140,8 +141,8 @@ public class DeploymentExceptionHandlerTestCase extends AbstractManagerTestBase
 
       fire(new DeployDeployment(
             container, 
-            new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class)));
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+               .setExpectedException(IllegalArgumentException.class))));
    }
 
    public static class TestExceptionDeployThrower 

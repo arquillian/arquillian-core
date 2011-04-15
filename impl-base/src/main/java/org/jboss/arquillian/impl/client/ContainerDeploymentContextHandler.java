@@ -28,7 +28,7 @@ import org.jboss.arquillian.impl.core.spi.context.ContainerContext;
 import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
 import org.jboss.arquillian.impl.domain.Container;
 import org.jboss.arquillian.impl.domain.ContainerRegistry;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.test.DeploymentTargetDescription;
 import org.jboss.arquillian.spi.core.Instance;
@@ -152,9 +152,9 @@ public class ContainerDeploymentContextHandler
       ContainerRegistry containerRegistry = this.containerRegistry.get();
       DeploymentScenario deploymentScenario = this.deploymentScenario.get();
       
-      DeploymentDescription deployment = deploymentScenario.getDeployment(deploymentTarget);
+      Deployment deployment = deploymentScenario.getDeployment(deploymentTarget);
       
-      Container container = containerRegistry.getContainer(deployment.getTarget());
+      Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
       
       callback.call(container, deployment);
    }
@@ -176,13 +176,13 @@ public class ContainerDeploymentContextHandler
    
    private abstract class ResultCallback
    {
-      abstract void call(Container container, DeploymentDescription deployment);
+      abstract void call(Container container, Deployment deployment);
    }
    
    private class Activate extends ResultCallback
    {
       @Override
-      void call(Container container, DeploymentDescription deployment)
+      void call(Container container, Deployment deployment)
       {
          containerContext.get().activate(container.getName());
          deploymentContext.get().activate(deployment);
@@ -192,7 +192,7 @@ public class ContainerDeploymentContextHandler
    private class DeActivate extends ResultCallback
    {
       @Override
-      void call(Container container, DeploymentDescription deployment)
+      void call(Container container, Deployment deployment)
       {
          containerContext.get().deactivate();
          deploymentContext.get().deactivate();

@@ -44,7 +44,7 @@ public class DeploymentExceptionHandler
    
    public void verifyExpectedExceptionDuringDeploy(@Observes EventContext<DeployDeployment> context) throws Exception
    {
-      DeploymentDescription deployment = context.getEvent().getDeployment(); 
+      DeploymentDescription deployment = context.getEvent().getDeployment().getDescription(); 
       boolean deploymentExceptionThrown = true;
       try
       {

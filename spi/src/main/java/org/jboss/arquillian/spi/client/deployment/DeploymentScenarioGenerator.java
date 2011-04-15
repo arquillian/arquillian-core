@@ -16,10 +16,12 @@
  */
 package org.jboss.arquillian.spi.client.deployment;
 
+import java.util.List;
+
 import org.jboss.arquillian.spi.TestClass;
 
 /**
- * Extension point for building a {@link DeploymentScenario} from a {@link TestClass}
+ * Extension point for extracting {@link DeploymentDescription}'s from a {@link TestClass}
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -30,7 +32,7 @@ public interface DeploymentScenarioGenerator
     * Extract all meta data related to a {@link TestClass}.
     *  
     * @param testClass Data to extract meta data based on.
-    * @return The given {@link TestClass}s {@link DeploymentScenario}
+    * @return The given {@link TestClass}s {@link DeploymentDescription}s
     */
-   DeploymentScenario generate(TestClass testClass);
+   List<DeploymentDescription> generate(TestClass testClass);
 }

@@ -18,7 +18,7 @@
 package org.jboss.arquillian.impl.client.container.event;
 
 import org.jboss.arquillian.impl.domain.Container;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
 
 /**
  * DeployToContainer
@@ -28,7 +28,7 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
  */
 public class UnDeployDeployment extends DeploymentEvent
 {
-   public UnDeployDeployment(Container container, DeploymentDescription deployment)
+   public UnDeployDeployment(Container container, Deployment deployment)
    {
       super(container, deployment);
    }

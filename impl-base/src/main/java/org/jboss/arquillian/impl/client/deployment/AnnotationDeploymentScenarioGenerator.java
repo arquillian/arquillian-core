@@ -18,10 +18,12 @@ package org.jboss.arquillian.impl.client.deployment;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.ShouldThrowException;
 import org.jboss.arquillian.api.OverProtocol;
+import org.jboss.arquillian.api.ShouldThrowException;
 import org.jboss.arquillian.api.TargetsContainer;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
@@ -44,18 +46,18 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
     */
-   public DeploymentScenario generate(TestClass testClass)
+   public List<DeploymentDescription> generate(TestClass testClass)
    {
-      DeploymentScenario scenario = new DeploymentScenario();
+      List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
       Method[] deploymentMethods = testClass.getMethods(Deployment.class);
       validate(deploymentMethods);
       for(Method deploymentMethod: deploymentMethods)
       {
          validate(deploymentMethod);
-         scenario.addDeployment(generateDeployment(deploymentMethod));
+         deployments.add(generateDeployment(deploymentMethod));
       }
       
-      return scenario;
+      return deployments;
    }
 
    private void validate(Method[] deploymentMethods)

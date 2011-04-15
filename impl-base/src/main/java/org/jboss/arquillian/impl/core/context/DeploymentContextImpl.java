@@ -19,7 +19,7 @@ package org.jboss.arquillian.impl.core.context;
 import java.lang.annotation.Annotation;
 
 import org.jboss.arquillian.impl.core.spi.context.DeploymentContext;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.core.annotation.DeploymentScoped;
 
 /**
@@ -28,7 +28,7 @@ import org.jboss.arquillian.spi.core.annotation.DeploymentScoped;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentContextImpl extends AbstractContext<DeploymentDescription> implements DeploymentContext
+public class DeploymentContextImpl extends AbstractContext<Deployment> implements DeploymentContext
 {
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.Context#getScope()

@@ -32,6 +32,7 @@ import org.jboss.arquillian.spi.TestDeployment;
 import org.jboss.arquillian.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveProcessor;
+import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
@@ -73,7 +74,13 @@ public class DeploymentGenerator
       DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
             DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
       
-      DeploymentScenario scenario = generator.generate(event.getTestClass());
+      DeploymentScenario scenario = new DeploymentScenario();
+      
+      for(DeploymentDescription deployment : generator.generate(event.getTestClass())) 
+      {
+         scenario.addDeployment(deployment);
+      }
+
       validate(scenario);
       createTestableDeployments(scenario, event.getTestClass());
       
@@ -128,26 +135,27 @@ public class DeploymentGenerator
 
    private void buildTestableDeployments(DeploymentScenario scenario, TestClass testCase, ProtocolRegistry protoReg)
    {
-      for(DeploymentDescription deployment : scenario.getDeployments())
+      for(Deployment deployment : scenario.getDeployments())
       {
-         if(!deployment.testable() || !deployment.isArchiveDeployment())
+         DeploymentDescription description = deployment.getDescription();
+         if(!description.testable() || !description.isArchiveDeployment())
          {
             continue;
          }
          // TODO: could be optimalized to only be loaded pr Container
-         List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(deployment);
+         List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(description);
          
-         ProtocolDefinition protocolDefinition = protoReg.getProtocol(deployment.getProtocol());
+         ProtocolDefinition protocolDefinition = protoReg.getProtocol(description.getProtocol());
          if(protocolDefinition == null)
          {
             protocolDefinition = protoReg.getProtocol(
-                  containerRegistry.get().getContainer(deployment.getTarget()).getDeployableContainer().getDefaultProtocol());
+                  containerRegistry.get().getContainer(description.getTarget()).getDeployableContainer().getDefaultProtocol());
          }
          Protocol<?> protocol = protocolDefinition.getProtocol();
          DeploymentPackager packager = protocol.getPackager();
 
-         Archive<?> applicationArchive = deployment.getArchive();
-         applyApplicationProcessors(deployment.getArchive(), testCase);
+         Archive<?> applicationArchive = description.getArchive();
+         applyApplicationProcessors(description.getArchive(), testCase);
          applyAuxiliaryProcessors(auxiliaryArchives);
 
          try
@@ -168,9 +176,9 @@ public class DeploymentGenerator
              * ContianerBase implements it. Check the Archive Interface..  
              */
          }
-         ClassLoader classLoader = containerRegistry.get().getContainer(deployment.getTarget()).getClassLoader();
+         ClassLoader classLoader = containerRegistry.get().getContainer(description.getTarget()).getClassLoader();
          
-         deployment.setTestableArchive(
+         description.setTestableArchive(
                packager.generateDeployment(
                      new TestDeployment(applicationArchive, auxiliaryArchives),
                      serviceLoader.get().all(classLoader, ProtocolArchiveProcessor.class)));

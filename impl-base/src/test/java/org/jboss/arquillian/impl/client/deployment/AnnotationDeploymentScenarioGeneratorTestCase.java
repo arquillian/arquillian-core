@@ -16,11 +16,13 @@
  */
 package org.jboss.arquillian.impl.client.deployment;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.ShouldThrowException;
 import org.jboss.arquillian.api.OverProtocol;
+import org.jboss.arquillian.api.ShouldThrowException;
 import org.jboss.arquillian.api.TargetsContainer;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
@@ -45,14 +47,14 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    @Test
    public void shouldHandleMultipleDeploymentsAllDefault() throws Exception
    {
-      DeploymentScenario scenario = new AnnotationDeploymentScenarioGenerator().generate(new TestClass(MultiDeploymentsDefault.class));
+      List<DeploymentDescription> scenario = generate(MultiDeploymentsDefault.class);
       
       Assert.assertNotNull(scenario);
       Assert.assertEquals(
             "Verify all deployments were found",
-            2, scenario.getDeployments().size());
+            2, scenario.size());
       
-      for(DeploymentDescription deployment : scenario.getDeployments())
+      for(DeploymentDescription deployment : scenario)
       {
          Assert.assertEquals(
                "Verify deployment has default target",
@@ -73,14 +75,14 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    @Test
    public void shouldHandleMultipleDeploymentsAllSet() throws Exception
    {
-      DeploymentScenario scenario = new AnnotationDeploymentScenarioGenerator().generate(new TestClass(MultiDeploymentsSet.class));
+      List<DeploymentDescription> scenario = generate(MultiDeploymentsSet.class);
       
       Assert.assertNotNull(scenario);
       Assert.assertEquals(
             "Verify all deployments were found",
-            2, scenario.getDeployments().size());
+            2, scenario.size());
       
-      DeploymentDescription deploymentOne = scenario.getDeployments().get(0);
+      DeploymentDescription deploymentOne = scenario.get(0);
 
       Assert.assertEquals(
             "Verify deployment has specified target",
@@ -98,7 +100,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
       Assert.assertNull(deploymentOne.getExpectedException());
       
-      DeploymentDescription deploymentTwo = scenario.getDeployments().get(1);
+      DeploymentDescription deploymentTwo = scenario.get(1);
 
       Assert.assertEquals(
             "Verify deployment has specified target",
@@ -119,14 +121,14 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    @Test
    public void shouldReadExpectedAndOverrideDeployment()
    {
-      DeploymentScenario scenario = new AnnotationDeploymentScenarioGenerator().generate(new TestClass(ExpectedDeploymentExceptionSet.class));
+      List<DeploymentDescription> scenario = generate(ExpectedDeploymentExceptionSet.class);
       
       Assert.assertNotNull(scenario);
       Assert.assertEquals(
             "Verify all deployments were found",
-            1, scenario.getDeployments().size());
+            1, scenario.size());
       
-      DeploymentDescription deploymentOne = scenario.getDeployments().get(0);
+      DeploymentDescription deploymentOne = scenario.get(0);
 
       Assert.assertEquals(false, deploymentOne.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
@@ -223,6 +225,11 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
+   }
+   
+   private List<DeploymentDescription> generate(Class<?> testClass)
+   {
+      return new AnnotationDeploymentScenarioGenerator().generate(new TestClass(testClass));
    }
 }
 
