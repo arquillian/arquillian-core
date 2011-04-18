@@ -40,6 +40,7 @@ import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.test.TargetDescription;
+import org.jboss.arquillian.spi.core.Injector;
 import org.jboss.arquillian.spi.core.Instance;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ClassScoped;
@@ -67,11 +68,16 @@ public class DeploymentGenerator
    
    @Inject
    private Instance<ProtocolRegistry> protocolRegistry;
+   
+   @Inject
+   private Instance<Injector> injector;
 
    public void generateDeployment(@Observes GenerateDeployment event)
    {
       DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
             DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
+      
+      generator = injector.get().inject(generator);
       
       DeploymentScenario scenario = generator.generate(event.getTestClass());
       validate(scenario);
