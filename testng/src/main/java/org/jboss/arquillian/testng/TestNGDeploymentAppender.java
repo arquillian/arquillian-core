@@ -45,7 +45,8 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
                      // exclude com.sun.javadoc.Doclet loading, not in OpenJDK
                      Filters.exclude("/org/testng/junit/.*|/org/testng/eclipse/.*"), 
                      TestNG.class.getPackage(),
-                     Package.getPackage("org.jboss.arquillian.testng"))
+                     Package.getPackage("org.jboss.arquillian.testng"),
+                     Package.getPackage("bsh"))
                .addAsServiceProvider(
                      TestRunner.class, 
                      TestNGTestRunner.class);
