@@ -1,0 +1,3 @@
+implClass=org.jboss.arquillian.config.descriptor.impl.ArquillianDescriptorImpl
+importerClass=org.jboss.shrinkwrap.descriptor.impl.base.XMLImporter
+defaultName=arquillian.xml

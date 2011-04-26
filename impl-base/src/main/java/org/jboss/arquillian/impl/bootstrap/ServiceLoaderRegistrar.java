@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.impl.bootstrap;
 
-import org.jboss.arquillian.impl.DynamicServiceLoader;
+import org.jboss.arquillian.core.impl.loadable.DynamicServiceLoader;
 import org.jboss.arquillian.spi.ServiceLoader;
 import org.jboss.arquillian.spi.core.InstanceProducer;
 import org.jboss.arquillian.spi.core.annotation.ApplicationScoped;

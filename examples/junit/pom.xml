@@ -610,8 +610,8 @@
    <dependencies>
 
       <dependency>
-         <groupId>org.jboss.arquillian</groupId>
-         <artifactId>arquillian-junit</artifactId>
+         <groupId>org.jboss.arquillian.junit</groupId>
+         <artifactId>arquillian-junit-container</artifactId>
          <version>${project.version}</version>
       </dependency>
 
@@ -644,11 +644,6 @@
          <groupId>javax.mail</groupId> 
          <artifactId>mail</artifactId> 
          <version>1.4.1</version> 
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.osgi</groupId>
-        <artifactId>jboss-osgi-spi</artifactId>
          <scope>test</scope>
       </dependency>
       

@@ -18,6 +18,7 @@ package org.jboss.arquillian.impl;
 
 import java.util.Collection;
 
+import org.jboss.arquillian.core.impl.loadable.DynamicServiceLoader;
 import org.junit.Assert;
 import org.junit.Test;
 

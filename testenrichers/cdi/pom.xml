@@ -35,10 +35,16 @@
 
 		<!-- org.jboss.arquillian -->
 		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-spi</artifactId>
+			<groupId>org.jboss.arquillian.test</groupId>
+			<artifactId>arquillian-test-spi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>javax.enterprise</groupId>

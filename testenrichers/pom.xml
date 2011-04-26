@@ -1,51 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  vi:ts=2:sw=2:expandtab:
--->
+<!-- vi:ts=2:sw=2:expandtab: -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <!-- Parent -->
-  <parent>
-    <groupId>org.jboss.arquillian</groupId>
-    <artifactId>arquillian-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-  <!-- Model Information -->
-  <modelVersion>4.0.0</modelVersion>
+    <!-- Model Information -->
+    <modelVersion>4.0.0</modelVersion>
 
-  <!-- Artifact Information  -->
-  <groupId>org.jboss.arquillian.testenricher</groupId>
-  <artifactId>arquillian-testenricher-parent</artifactId>
-  <packaging>pom</packaging>
-  <name>Arquillian TestEnricher Aggregator</name>
-  <url>http://www.jboss.org</url>
-  <description>Arquillian TestEnricher Aggregator</description>
+    <!-- Artifact Information -->
+    <groupId>org.jboss.arquillian.testenricher</groupId>
+    <artifactId>arquillian-testenricher-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Arquillian TestEnricher Aggregator</name>
+    <url>http://www.jboss.org</url>
+    <description>Arquillian TestEnricher Aggregator</description>
 
-  <!--  Profiles -->
-  <profiles>
-  
-    <!-- Build all Arquillian modules -->
-    <profile>
-      <id>all</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
+    <modules>
         <module>cdi</module>
         <module>ejb</module>
-        <module>osgi</module>
         <module>resource</module>
-      </modules>
-    </profile>
-
-    <!-- Build Arquillian OSGi modules -->
-    <profile>
-      <id>osgi</id>
-      <modules>
-        <module>osgi</module>
-      </modules>
-    </profile>
-  </profiles>
+    </modules>
 </project>

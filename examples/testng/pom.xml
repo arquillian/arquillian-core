@@ -603,8 +603,8 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-testng</artifactId>
+			<groupId>org.jboss.arquillian.testng</groupId>
+			<artifactId>arquillian-testng-container</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
