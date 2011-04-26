@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.testenricher.osgi;
+package org.jboss.arquillian.protocol.jmx;
 
-import org.osgi.framework.BundleContext;
+import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
 
 /**
- * BundleContextHolder
- * 
+ * JMXProtocolConfiguration
+ *
  * @author thomas.diesler@jboss.com
- * @version $Revision: $
+ * @since 21-Apr-2011
  */
-public interface BundleContextHolder
+public class JMXProtocolConfiguration implements ProtocolConfiguration
 {
-   /** The ObjectName for this service: jboss.arquillian:service=bundle-context */
-   String OBJECT_NAME = "jboss.arquillian:service=bundle-context";
-   
-   BundleContext getBundleContext();
 }
