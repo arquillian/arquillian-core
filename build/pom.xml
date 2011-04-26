@@ -31,13 +31,10 @@
     <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
     <version.javaee_api>6.0</version.javaee_api>
     <version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
-    <version.jboss_logging>2.1.0.GA</version.jboss_logging>
-    <version.jboss_osgi_spi>1.0.10</version.jboss_osgi_spi>
-    <version.jboss_osgi_vfs>1.0.0</version.jboss_osgi_vfs>
+    <version.jboss_logging>3.0.0.Beta4</version.jboss_logging>
     <version.jetty_jetty>6.1.9</version.jetty_jetty>
     <version.junit_junit>4.8.1</version.junit_junit>
     <version.mockito_all>1.8.3</version.mockito_all>
-    <version.osgi>4.2.0</version.osgi>
     <version.shrinkwrap_shrinkwrap>1.0.0-alpha-12</version.shrinkwrap_shrinkwrap>
     <version.shrinkwrap_descriptors>0.1.4</version.shrinkwrap_descriptors>
     <version.testng_testng>5.14.6</version.testng_testng>
@@ -207,28 +204,8 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging-spi</artifactId>
+        <artifactId>jboss-logging</artifactId>
         <version>${version.jboss_logging}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging-log4j</artifactId>
-        <version>${version.jboss_logging}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.osgi</groupId>
-        <artifactId>jboss-osgi-spi</artifactId>
-        <version>${version.jboss_osgi_spi}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.osgi.vfs</groupId>
-        <artifactId>jboss-osgi-vfs</artifactId>
-        <version>${version.jboss_osgi_vfs}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.osgi.vfs</groupId>
-        <artifactId>jboss-osgi-vfs30</artifactId>
-        <version>${version.jboss_osgi_vfs}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
@@ -300,16 +277,6 @@
         <groupId>javax</groupId>
         <artifactId>javaee-api</artifactId>
         <version>${version.javaee_api}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <version>${version.osgi}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.compendium</artifactId>
-        <version>${version.osgi}</version>
       </dependency>
 
       <dependency>
