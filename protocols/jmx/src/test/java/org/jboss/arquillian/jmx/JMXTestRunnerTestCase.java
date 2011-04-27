@@ -50,7 +50,7 @@ public class JMXTestRunnerTestCase
       try
       {
          JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
-         TestResult result = testRunner.runTestMethodLocal(DummyTestCase.class.getName(), "testMethod");
+         TestResult result = testRunner.runTestMethodRemote(DummyTestCase.class.getName(), "testMethod");
          
          assertNotNull("TestResult not null", result);
          assertNotNull("Status not null", result.getStatus());

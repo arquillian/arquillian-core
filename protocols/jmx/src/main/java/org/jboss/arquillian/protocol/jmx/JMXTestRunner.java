@@ -36,7 +36,6 @@ import org.jboss.logging.Logger;
  * An MBean to run test methods in container.
  *
  * @author thomas.diesler@jboss.com
- * @version $Revision: $
  */
 public class JMXTestRunner implements JMXTestRunnerMBean
 {
@@ -86,12 +85,12 @@ public class JMXTestRunner implements JMXTestRunnerMBean
       }
    }
 
-   public TestResult runTestMethodLocal(String className, String methodName)
+   public TestResult runTestMethodRemote(String className, String methodName)
    {
       return runTestMethodInternal(className, methodName);
    }
 
-   public InputStream runTestMethodRemote(String className, String methodName)
+   public InputStream runTestMethodEmbedded(String className, String methodName)
    {
       TestResult result = runTestMethodInternal(className, methodName);
 

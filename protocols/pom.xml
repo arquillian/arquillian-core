@@ -35,18 +35,6 @@
       <modules>
         <module>servlet</module>
         <module>jmx</module>
-        <module>jmx-osgi</module>
-        <module>jmx-osgi-bundle</module>
-      </modules>
-    </profile>
-
-    <!-- Build Arquillian OSGi modules -->
-    <profile>
-      <id>osgi</id>
-      <modules>
-        <module>jmx</module>
-        <module>jmx-osgi</module>
-        <module>jmx-osgi-bundle</module>
       </modules>
     </profile>
   </profiles>

@@ -24,8 +24,6 @@ containers/jetty-embedded-6.1/target
 containers/jsr88-remote-1.2/target
 containers/openejb-embedded-3.1/target
 containers/openwebbeans-embedded-1/target
-containers/osgi-embedded-4.2/.classpath
-containers/osgi-embedded-4.2/target
 containers/reloaded-embedded-1/target
 containers/tomcat-embedded-6/target
 containers/weld-ee-embedded-1.1/target
@@ -59,8 +57,6 @@ packagers/javaee/.settings
 packagers/javaee/target
 protocols/jmx/.classpath
 protocols/jmx/target
-protocols/jmx-osgi-bundle/.classpath
-protocols/jmx-osgi/.classpath
 protocols/local/.classpath
 protocols/local/target
 protocols/servlet-2.5/target
@@ -74,8 +70,6 @@ testenrichers/cdi/.classpath
 testenrichers/cdi/target
 testenrichers/ejb/.classpath
 testenrichers/ejb/target
-testenrichers/osgi/.classpath
-testenrichers/osgi/target
 testenrichers/resource/.classpath
 testenrichers/resource/target
 testng/target
