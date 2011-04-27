@@ -17,11 +17,17 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import javax.management.MBeanServerConnection;
+
+import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.core.Instance;
+import org.jboss.arquillian.spi.core.annotation.ContainerScoped;
+import org.jboss.arquillian.spi.core.annotation.Inject;
 
 /**
  * AbstractJMXProtocol
@@ -31,6 +37,15 @@ import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
  */
 public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfiguration>
 {
+   @Inject
+   @ContainerScoped
+   private Instance<MBeanServerConnection> mbeanServerInst;
+
+   @Override
+   public abstract DeploymentPackager getPackager();
+
+   public abstract String getProtocolName();
+
    @Override
    public Class<JMXProtocolConfiguration> getProtocolConfigurationClass()
    {
@@ -44,13 +59,10 @@ public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfigu
    }
 
    @Override
-   public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData)
+   public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData)
    {
-      return new JMXMethodExecutor();
+      MBeanServerConnection mbeanServer = mbeanServerInst.get();
+      ExecutionType executionType = config.getExecutionType();
+      return new JMXMethodExecutor(mbeanServer, executionType);
    }
-
-   @Override
-   public abstract DeploymentPackager getPackager();
-
-   public abstract String getProtocolName();
 }

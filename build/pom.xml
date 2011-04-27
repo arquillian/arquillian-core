@@ -32,6 +32,7 @@
     <version.javaee_api>6.0</version.javaee_api>
     <version.jboss_embedded>1.0.0-alpha-1</version.jboss_embedded>
     <version.jboss_logging>3.0.0.Beta4</version.jboss_logging>
+    <version.jboss_logmanager>1.2.0.CR8</version.jboss_logmanager>
     <version.jetty_jetty>6.1.9</version.jetty_jetty>
     <version.junit_junit>4.8.1</version.junit_junit>
     <version.mockito_all>1.8.3</version.mockito_all>
@@ -206,6 +207,11 @@
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
         <version>${version.jboss_logging}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jboss.logmanager</groupId>
+          <artifactId>jboss-logmanager</artifactId>
+          <version>${version.jboss_logmanager}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.shrinkwrap</groupId>
