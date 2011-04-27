@@ -25,6 +25,7 @@
 
   <modules>
     <module>api</module>
+	<module>spi</module>
     <module>impl-base</module>
   </modules>
 </project>
