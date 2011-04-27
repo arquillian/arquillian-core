@@ -38,7 +38,7 @@ public interface JMXTestRunnerMBean
     * @param methodName the test method name
     * @return the input stream to read the {@link TestResult} from
     */
-   InputStream runTestMethodRemote(String className, String methodName);
+   InputStream runTestMethodEmbedded(String className, String methodName);
    
    /**
     * Runs a test method on the given test class
@@ -47,5 +47,5 @@ public interface JMXTestRunnerMBean
     * @param methodName the test method name
     * @return the {@link TestResult} 
     */
-   TestResult runTestMethodLocal(String className, String methodName);
+   TestResult runTestMethodRemote(String className, String methodName);
 }

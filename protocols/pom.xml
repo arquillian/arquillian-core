@@ -23,5 +23,6 @@
 
     <modules>
         <module>servlet</module>
+	<module>jmx</module>
     </modules>
 </project>
