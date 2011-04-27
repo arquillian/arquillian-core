@@ -25,5 +25,8 @@
         <module>cdi</module>
         <module>ejb</module>
         <module>resource</module>
+	
+	<!-- Producers -->
+	<module>initialcontext</module>
     </modules>
 </project>

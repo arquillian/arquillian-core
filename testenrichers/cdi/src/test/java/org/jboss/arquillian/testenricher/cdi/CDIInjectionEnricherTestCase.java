@@ -18,8 +18,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.testenricher.cdi.beans.Cat;
 import org.jboss.arquillian.testenricher.cdi.beans.CatService;
 import org.jboss.arquillian.testenricher.cdi.beans.Dog;
@@ -37,6 +35,7 @@ import org.jboss.weld.context.api.helpers.ConcurrentHashMapBeanStore;
 import org.jboss.weld.ejb.spi.EjbDescriptor;
 import org.jboss.weld.manager.api.WeldManager;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,11 +59,13 @@ public class CDIInjectionEnricherTestCase
 
       manager = bootstrap.getManager(deployment.getBeanDeploymentArchives().iterator().next());
 
-      enricher = new CDIInjectionEnricher() 
-      {
-         protected BeanManager lookupBeanManager()
+      final BeanManager expose = manager;
+      enricher = new CDIInjectionEnricher() {
+         
+         @Override
+         public BeanManager getBeanManager() 
          {
-            return manager;
+            return expose;
          }
       };
    }

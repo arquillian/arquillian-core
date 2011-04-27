@@ -22,9 +22,11 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.naming.InitialContext;
+import javax.naming.Context;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -37,15 +39,16 @@ public class EJBInjectionEnricher implements TestEnricher
 {
    
    private static final String ANNOTATION_NAME = "javax.ejb.EJB";
-   private static final String ANNOTATION_FIELD_BEAN_INTERFACE = "beanInterface";
-   private static final String ANNOTATION_FIELD_MAPPED_NAME = "mappedName";
+
+   @Inject
+   private Instance<Context> contextInst;
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
    public void enrich(Object testCase)
    {
-      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
+      if(SecurityActions.isClassPresent(ANNOTATION_NAME) && contextInst.get() != null) 
       {
          injectClass(testCase);
       }
@@ -142,7 +145,7 @@ public class EJBInjectionEnricher implements TestEnricher
    protected Object lookupEJB(Class<?> fieldType, String mappedName) throws Exception 
    {
       // TODO: figure out test context ? 
-      InitialContext initcontext = createContext();
+      Context initcontext = createContext();
       
       // TODO: These names are not spec compliant; fieldType needs to be a bean type here,
       //       but usually is just an interface of a bean.  These seldom work.
@@ -179,9 +182,9 @@ public class EJBInjectionEnricher implements TestEnricher
       throw new NamingException("No EJB found in JNDI, tried the following names: " + joinJndiNames(jndiNames));
    }
    
-   protected InitialContext createContext() throws Exception
+   protected Context createContext() throws Exception
    {
-      return new InitialContext();
+      return contextInst.get();
    }
    
    // Simple helper for printing the jndi names

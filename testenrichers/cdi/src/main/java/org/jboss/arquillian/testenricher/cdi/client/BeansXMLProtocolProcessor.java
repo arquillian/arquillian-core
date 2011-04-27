@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.testenricher.cdi;
+package org.jboss.arquillian.testenricher.cdi.client;
 
 import java.util.Map;
 

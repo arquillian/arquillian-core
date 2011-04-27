@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.spi.TestDeployment;
+import org.jboss.arquillian.testenricher.cdi.client.BeansXMLProtocolProcessor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;

@@ -22,8 +22,9 @@ import java.util.logging.Logger;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
-import javax.naming.InitialContext;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -34,12 +35,21 @@ import org.jboss.arquillian.spi.TestEnricher;
  */
 public class CDIInjectionEnricher implements TestEnricher 
 {
-   private static final String STANDARD_BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
-   private static final String SERVLET_BEAN_MANAGER_JNDI_NAME = "java:comp/env/BeanManager";
-   private static final String JBOSSAS_BEAN_MANAGER_JNDI_NAME = "java:global/test/arquillian-protocol/BeanManager";
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
 
    private static final Logger log = Logger.getLogger(CDIInjectionEnricher.class.getName());
+   
+   @Inject
+   private Instance<BeanManager> beanManagerInst;
+   
+
+   /**
+    * @return the beanManagerInst
+    */
+   public BeanManager getBeanManager()
+   {
+      return beanManagerInst.get();
+   }
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
@@ -60,7 +70,7 @@ public class CDIInjectionEnricher implements TestEnricher
      Object[] values = new Object[method.getParameterTypes().length];
      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
      {
-        BeanManager beanManager = lookupBeanManager();
+        BeanManager beanManager = getBeanManager();
         if(beanManager == null) 
         {
              return values;
@@ -87,15 +97,15 @@ public class CDIInjectionEnricher implements TestEnricher
    {
       try 
       {
-         BeanManager beanManager = lookupBeanManager();
+         BeanManager beanManager = getBeanManager();
          if(beanManager != null) {
             injectNonContextualInstance(beanManager, testCase);            
          }
          else
          {
             // Better would be to raise an exception if @Inject is present in class and BeanManager cannot be found
-            log.info("BeanManager cannot be located at " + STANDARD_BEAN_MANAGER_JNDI_NAME + ". " +
-            		"Either you are using an archive with no beans.xml, or the BeanManager has not been bound to that location in JNDI.");
+            log.info("BeanManager cannot be located in context " +
+            		"Either you are using an archive with no beans.xml, or the BeanManager has not been produced.");
          }
       }
       catch (Exception e) 
@@ -111,31 +121,5 @@ public class CDIInjectionEnricher implements TestEnricher
       InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(
             manager.createAnnotatedType(instance.getClass()));
       injectionTarget.inject(instance, creationalContext);
-   }
-
-   protected BeanManager lookupBeanManager() 
-   {
-      try 
-      {
-         return (BeanManager) new InitialContext().lookup(STANDARD_BEAN_MANAGER_JNDI_NAME);
-      }
-      catch (Exception e) 
-      {
-         try
-         {
-            return (BeanManager) new InitialContext().lookup(SERVLET_BEAN_MANAGER_JNDI_NAME);
-         }
-         catch (Exception se) {}
-
-         // TODO: hack until BeanManager binding fixed in JBoss AS
-         try 
-         {
-            return (BeanManager) new InitialContext().lookup(JBOSSAS_BEAN_MANAGER_JNDI_NAME);
-         } 
-         catch (Exception je)
-         {
-            return null;
-         }
-      }
    }
 }

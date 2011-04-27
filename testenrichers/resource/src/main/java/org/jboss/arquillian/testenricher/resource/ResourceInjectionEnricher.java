@@ -25,9 +25,10 @@ import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.spi.TestEnricher;
 
 /**
@@ -47,13 +48,15 @@ public class ResourceInjectionEnricher implements TestEnricher
    
    private static final Logger log = Logger.getLogger(ResourceInjectionEnricher.class.getName());
    
+   @Inject
+   private Instance<Context> contextInst;
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
    public void enrich(Object testCase)
    {
-      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
+      if(SecurityActions.isClassPresent(ANNOTATION_NAME) && contextInst.get() != null) 
       {
          injectClass(testCase);
       }
@@ -191,7 +194,7 @@ public class ResourceInjectionEnricher implements TestEnricher
     */
    protected Context getContainerContext() throws NamingException
    {
-      return new InitialContext();
+      return contextInst.get();
    }
 
    protected String getResourceName(Field field)
