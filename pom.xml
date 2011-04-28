@@ -55,6 +55,21 @@
         <module>examples</module>
 
         <module>bom</module>
-        <!-- <module>doc/reference</module> -->
     </modules>
+    
+    <!-- Profiles -->
+    <profiles>
+      <!-- Build all Arquillian modules -->
+      <profile>
+        <id>all</id>
+        <activation>
+          <property>
+            <name>all</name>
+          </property>
+        </activation>
+        <modules>
+          <module>doc/reference</module>
+        </modules>
+      </profile>
+    </profiles>
 </project>
