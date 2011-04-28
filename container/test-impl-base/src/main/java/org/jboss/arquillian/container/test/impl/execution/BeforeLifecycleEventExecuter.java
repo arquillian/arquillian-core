@@ -30,12 +30,12 @@ import org.jboss.arquillian.spi.event.suite.LifecycleEvent;
  */
 public class BeforeLifecycleEventExecuter
 {
-   public void on(@Observes BeforeClass event) throws Throwable
+   public void on(@Observes(precedence = -100) BeforeClass event) throws Throwable
    {
       execute(event);
    }
 
-   public void on(@Observes Before event) throws Throwable
+   public void on(@Observes(precedence = -100) Before event) throws Throwable
    {
       execute(event);
    }
