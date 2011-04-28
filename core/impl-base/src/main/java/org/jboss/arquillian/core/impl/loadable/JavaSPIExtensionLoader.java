@@ -26,6 +26,8 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.jboss.arquillian.core.spi.ExtensionLoader;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.core.spi.Validate;
 
 /**
@@ -34,7 +36,7 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JavaSPIServiceLoader
+public class JavaSPIExtensionLoader implements ExtensionLoader
 {
    //-------------------------------------------------------------------------------------||
    // Class Members ----------------------------------------------------------------------||
@@ -43,7 +45,17 @@ public class JavaSPIServiceLoader
    private static final String SERVICES = "META-INF/services";
    
    //-------------------------------------------------------------------------------------||
-   // Required Implementations - ServiceLoader -------------------------------------------||
+   // Required Implementations - ExtensionLoader -----------------------------------------||
+   //-------------------------------------------------------------------------------------||
+
+   @Override
+   public Collection<LoadableExtension> load()
+   {
+      return all(JavaSPIExtensionLoader.class.getClassLoader(), LoadableExtension.class);
+   }
+   
+   //-------------------------------------------------------------------------------------||
+   // General JDK SPI Loader -------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
    public <T> Collection<T> all(ClassLoader classLoader, Class<T> serviceClass)

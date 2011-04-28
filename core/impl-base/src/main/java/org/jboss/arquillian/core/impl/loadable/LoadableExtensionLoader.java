@@ -27,6 +27,7 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.ExtensionLoader;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.core.spi.LoadableExtension.ExtensionBuilder;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -51,23 +52,25 @@ public class LoadableExtensionLoader
    @Inject @ApplicationScoped
    private InstanceProducer<ServiceLoader> serviceLoaderProducer;
  
-   private JavaSPIServiceLoader serviceLoader;
+   private JavaSPIExtensionLoader serviceLoader;
    
    public LoadableExtensionLoader()
    {
-      this(new JavaSPIServiceLoader());
+      this(new JavaSPIExtensionLoader());
    }
    
-   LoadableExtensionLoader(JavaSPIServiceLoader serviceLoader)
+   LoadableExtensionLoader(JavaSPIExtensionLoader serviceLoader)
    {
       this.serviceLoader = serviceLoader;
    }
 
    public void load(@Observes final ManagerProcessing event)
    {
+      ExtensionLoader extensionLoader = locateExtensionLoader();
+      
       final ServiceRegistry registry = new ServiceRegistry(injector.get());
       
-      Collection<LoadableExtension> extensions = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), LoadableExtension.class);
+      Collection<LoadableExtension> extensions = extensionLoader.load();
 
       for(LoadableExtension extension : extensions)
       {
@@ -100,5 +103,34 @@ public class LoadableExtensionLoader
          });
       }
       serviceLoaderProducer.set(registry.getServiceLoader());
+   }
+   
+   /**
+    * Some environments need to handle their own ExtensionLoading and can't rely on Java's META-INF/services approach. 
+    * 
+    * @return configured ExtensionLoader if found or defaults to JavaSPIServiceLoader
+    */
+   private ExtensionLoader locateExtensionLoader()
+   {
+      Collection<ExtensionLoader> loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);
+      if(loaders.size() > 1)
+      {
+         throw new RuntimeException("Multiple ExtensionLoader's found on classpath: " + toString(loaders));
+      }
+      if(loaders.size() == 1)
+      {
+         return loaders.iterator().next();
+      }
+      return serviceLoader;
+   }
+   
+   private String toString(Collection<ExtensionLoader> loaders)
+   {
+      StringBuilder sb = new StringBuilder();
+      for(ExtensionLoader loader : loaders)
+      {
+         sb.append(loader.getClass().getName()).append(", ");
+      }
+      return sb.toString();
    }
 }
