@@ -42,7 +42,7 @@
     <modules>
         <module>build</module>
         <module>core</module>
-	<module>config</module>
+        <module>config</module>
         <module>test</module>
         <module>container</module>
 
@@ -54,6 +54,7 @@
 
         <module>examples</module>
 
-<!--        <module>doc/reference</module> -->
+        <module>bom</module>
+        <!-- <module>doc/reference</module> -->
     </modules>
 </project>
