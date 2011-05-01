@@ -63,6 +63,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency> <!--  Tooling Export depend on SW internals  -->
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
         <!-- Internal Test -->
         
         <dependency>

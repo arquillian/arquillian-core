@@ -64,7 +64,7 @@
       <dependency>
          <groupId>org.jboss.shrinkwrap</groupId>
          <artifactId>shrinkwrap-impl-base</artifactId>
-         <scope>compile</scope> <!-- original test scope, but until SHRINKWRAP-192 is released we rely on impl details -->
+         <scope>test</scope>
       </dependency>
 
       

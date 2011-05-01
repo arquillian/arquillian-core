@@ -94,7 +94,34 @@ public class DeploymentScenario
       {
          return deployments.get(0);
       }
+      else if (deployments.size() > 1)
+      {
+         // if there are only one Archive deployment, default to it
+         if(getArchiveDeploymentCount() == 1)
+         {
+            for(Deployment deployment : deployments)
+            {
+               if(deployment.getDescription().isArchiveDeployment())
+               {
+                  return deployment;
+               }
+            }
+         }
+      }
       return null;
+   }
+   
+   private int getArchiveDeploymentCount()
+   {
+      int count = 0;
+      for(Deployment deployment : deployments)
+      {
+         if(deployment.getDescription().isArchiveDeployment())
+         {
+            count++;
+         }
+      }
+      return count;
    }
 
    /**
