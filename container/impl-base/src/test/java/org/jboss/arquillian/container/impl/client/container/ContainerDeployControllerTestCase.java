@@ -19,6 +19,7 @@ package org.jboss.arquillian.container.impl.client.container;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,7 +29,6 @@ import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
-import org.jboss.arquillian.container.impl.client.container.ContainerDeployController;
 import org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase.DummyContainerConfiguration;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
@@ -44,6 +44,7 @@ import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.container.DeploymentException;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.spi.client.deployment.DeploymentTargetDescription;
 import org.jboss.arquillian.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.spi.event.container.AfterDeploy;
@@ -53,9 +54,13 @@ import org.jboss.arquillian.spi.event.container.BeforeUnDeploy;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -76,6 +81,7 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
    private static final String DEPLOYMENT_1_NAME = "deployment_1";
    private static final String DEPLOYMENT_2_NAME = "deployment_2";
    private static final String DEPLOYMENT_3_NAME = "deployment_3_manual";
+   private static final String DEPLOYMENT_4_NAME = "deployment_4_descriptor";
 
    @Mock 
    private ServiceLoader serviceLoader;
@@ -110,22 +116,34 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
       when(container1.getContainerName()).thenReturn(CONTAINER_1_NAME);
       when(container2.getContainerName()).thenReturn(CONTAINER_2_NAME);
       
-      Archive<?> archive = ShrinkWrap.create(JavaArchive.class);
-      
-      scenario.addDeployment(new DeploymentDescription(DEPLOYMENT_1_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
+      scenario.addDeployment(
+            new DeploymentDescription(DEPLOYMENT_1_NAME, ShrinkWrap.create(JavaArchive.class))
+               .setTarget(new TargetDescription(CONTAINER_1_NAME))
+               .shouldBeTestable(false)
+               .setOrder(2));
       
       // should use testable archive
       scenario.addDeployment(
-            new DeploymentDescription(DEPLOYMENT_2_NAME, archive)
+            new DeploymentDescription(DEPLOYMENT_2_NAME, ShrinkWrap.create(JavaArchive.class))
                .setTarget(new TargetDescription(CONTAINER_2_NAME))
-               .setTestableArchive(archive));
+               .setOrder(1)
+               .shouldBeTestable(true)
+               .setTestableArchive(ShrinkWrap.create(JavaArchive.class)));
       
       // should not be deployed during Managed deployments
       scenario.addDeployment(
-            new DeploymentDescription(DEPLOYMENT_3_NAME, archive)
+            new DeploymentDescription(DEPLOYMENT_3_NAME, ShrinkWrap.create(JavaArchive.class))
                .setTarget(new TargetDescription(CONTAINER_2_NAME))
+               .setOrder(3)
+               .shouldBeTestable(false)
                .shouldBeManaged(false));
       
+      scenario.addDeployment(
+            new DeploymentDescription(DEPLOYMENT_4_NAME, Descriptors.create(BeansDescriptor.class))
+               .setTarget(new TargetDescription(CONTAINER_1_NAME))
+               .setOrder(4)
+               .shouldBeManaged(true));
+
       bind(ApplicationScoped.class, ContainerRegistry.class, registry);
       bind(ApplicationScoped.class, DeploymentScenario.class, scenario);
       
@@ -146,20 +164,31 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
 
       fire(new DeployManagedDeployments());
       
-      assertEventFired(DeployDeployment.class, 2);
+      assertEventFired(DeployDeployment.class, 3);
       assertEventFiredInContext(DeployDeployment.class, ContainerContext.class);
       assertEventFiredInContext(DeployDeployment.class, DeploymentContext.class);
       
-      assertEventFired(BeforeDeploy.class, 2);
+      assertEventFired(BeforeDeploy.class, 3);
       assertEventFiredInContext(BeforeDeploy.class, ContainerContext.class);
       assertEventFiredInContext(BeforeDeploy.class, DeploymentContext.class);
 
-      assertEventFired(AfterDeploy.class, 2);
+      assertEventFired(AfterDeploy.class, 3);
       assertEventFiredInContext(AfterDeploy.class, ContainerContext.class);
       assertEventFiredInContext(AfterDeploy.class, DeploymentContext.class);
 
       verify(deployableContainer1, times(1)).deploy(isA(Archive.class));
+      verify(deployableContainer1, times(1)).deploy(isA(Descriptor.class));
       verify(deployableContainer2, times(1)).deploy(isA(Archive.class));
+
+      InOrder ordered = inOrder(deployableContainer1, deployableContainer2);
+      ordered.verify(deployableContainer2, times(1)).deploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_2_NAME)).getDescription().getTestableArchive());
+      
+      ordered.verify(deployableContainer1, times(1)).deploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_1_NAME)).getDescription().getArchive());
+      
+      ordered.verify(deployableContainer1, times(1)).deploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_4_NAME)).getDescription().getDescriptor());
    }
 
    @Test
@@ -168,22 +197,41 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
 
+      // setup Managed deployment as Deployed. it should be part of undeploy.
+      scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_3_NAME)).deployed();
+      
       fire(new UnDeployManagedDeployments());
       
-      assertEventFired(UnDeployDeployment.class, 2);
+      assertEventFired(UnDeployDeployment.class, 4);
       assertEventFiredInContext(UnDeployDeployment.class, ContainerContext.class);
       assertEventFiredInContext(UnDeployDeployment.class, DeploymentContext.class);
 
-      assertEventFired(BeforeUnDeploy.class, 2);
+      assertEventFired(BeforeUnDeploy.class, 4);
       assertEventFiredInContext(BeforeUnDeploy.class, ContainerContext.class);
       assertEventFiredInContext(BeforeUnDeploy.class, DeploymentContext.class);
 
-      assertEventFired(AfterUnDeploy.class, 2);
+      assertEventFired(AfterUnDeploy.class, 4);
       assertEventFiredInContext(AfterUnDeploy.class, ContainerContext.class);
       assertEventFiredInContext(AfterUnDeploy.class, DeploymentContext.class);
 
       verify(deployableContainer1, times(1)).undeploy(isA(Archive.class));
-      verify(deployableContainer2, times(1)).undeploy(isA(Archive.class));
+      verify(deployableContainer1, times(1)).undeploy(isA(Descriptor.class));
+      verify(deployableContainer2, times(2)).undeploy(isA(Archive.class));
+      
+
+      InOrder ordered = inOrder(deployableContainer1, deployableContainer2);
+      ordered.verify(deployableContainer1, times(1)).undeploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_4_NAME)).getDescription().getDescriptor());
+
+      ordered.verify(deployableContainer2, times(1)).undeploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_3_NAME)).getDescription().getArchive());
+
+      ordered.verify(deployableContainer1, times(1)).undeploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_1_NAME)).getDescription().getArchive());
+
+      ordered.verify(deployableContainer2, times(1)).undeploy(
+            scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_2_NAME)).getDescription().getTestableArchive());
+
    }
    
    @Test

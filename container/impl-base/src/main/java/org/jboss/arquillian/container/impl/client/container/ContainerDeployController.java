@@ -38,7 +38,6 @@ import org.jboss.arquillian.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.spi.client.deployment.Deployment;
 import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.spi.event.container.AfterDeploy;
 import org.jboss.arquillian.spi.event.container.AfterUnDeploy;
@@ -69,7 +68,7 @@ public class ContainerDeployController
    private Instance<Injector> injector;
 
    /**
-    * Deploy all deployments marked as startup = true.
+    * Deploy all deployments marked as managed = true.
     * 
     * @param event
     * @throws Exception
@@ -90,14 +89,14 @@ public class ContainerDeployController
    }
 
    /**
-    * Undeploy all deployments marked as startup = true. 
+    * Undeploy all deployments marked as managed, and all manually deployed. 
     * 
     * @param event
     * @throws Exception
     */
    public void undeployManaged(@Observes UnDeployManagedDeployments event) throws Exception
    {
-      forEachManagedDeployment(new Operation<Container, Deployment>()
+      forEachDeployedDeployment(new Operation<Container, Deployment>()
       {
          @Inject 
          private Event<DeploymentEvent> event;
@@ -168,6 +167,7 @@ public class ContainerDeployController
          @Override
          public Void call() throws Exception
          {
+            System.out.println("undeply: " + event.getContainer().getName() + " -> " + event.getDeployment().getDescription().getName());
             DeployableContainer<?> deployableContainer = event.getDeployableContainer();
             Deployment deployment = event.getDeployment();
             DeploymentDescription description = deployment.getDescription();
@@ -202,25 +202,24 @@ public class ContainerDeployController
    
    private void forEachManagedDeployment(Operation<Container, Deployment> operation) throws Exception
    {
+      DeploymentScenario scenario = this.deploymentScenario.get();
+      forEachDeployment(scenario.managedDeploymentsInDeployOrder(), operation);
+   }
+
+   private void forEachDeployedDeployment(Operation<Container, Deployment> operation) throws Exception
+   {
+      DeploymentScenario scenario = this.deploymentScenario.get();
+      forEachDeployment(scenario.deployedDeploymentsInUnDeployOrder(), operation);
+   }
+
+   private void forEachDeployment(List<Deployment> deployments, Operation<Container, Deployment> operation) throws Exception
+   {
       injector.get().inject(operation);
       ContainerRegistry containerRegistry = this.containerRegistry.get();
-      DeploymentScenario deploymentScenario = this.deploymentScenario.get();
-      
-      for(TargetDescription target : deploymentScenario.getTargets())
+      for(Deployment deployment: deployments)
       {
-         List<Deployment> startUpDeployments = deploymentScenario.getStartupDeploymentsFor(target);
-         if(startUpDeployments.size() == 0)
-         {
-            continue; // nothing to do, move on 
-         }
-         
-         // Container should exists, handled by up front validation
-         Container container = containerRegistry.getContainer(target);
-         
-         for(Deployment deployment : startUpDeployments)
-         {
-            operation.perform(container, deployment);
-         }
+         Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
+         operation.perform(container, deployment);
       }
    }
    

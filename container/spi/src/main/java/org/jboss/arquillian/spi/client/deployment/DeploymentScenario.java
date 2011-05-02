@@ -39,30 +39,30 @@ public class DeploymentScenario
    {
       this.deployments = new ArrayList<Deployment>();
    }
-   
+
    public DeploymentScenario addDeployment(DeploymentDescription deployment)
    {
       Validate.notNull(deployment, "Deployment must be specified");
       this.deployments.add(new Deployment(deployment));
       return this;
    }
-   
-   public Set<TargetDescription> getTargets()
+
+   public Set<TargetDescription> targets()
    {
       Set<TargetDescription> targets = new HashSet<TargetDescription>();
-      
-      for(Deployment dep : deployments)
+
+      for (Deployment dep : deployments)
       {
          targets.add(dep.getDescription().getTarget());
       }
       return targets;
    }
-   
-   public Set<ProtocolDescription> getProtocols()
+
+   public Set<ProtocolDescription> protocols()
    {
       Set<ProtocolDescription> protocols = new HashSet<ProtocolDescription>();
-      
-      for(Deployment dep : deployments)
+
+      for (Deployment dep : deployments)
       {
          protocols.add(dep.getDescription().getProtocol());
       }
@@ -75,33 +75,33 @@ public class DeploymentScenario
     * @param target The name of the {@link DeploymentDescription}
     * @return Defined Deployment or null if not found.
     */
-   public Deployment getDeployment(DeploymentTargetDescription target)
+   public Deployment deployment(DeploymentTargetDescription target)
    {
       Validate.notNull(target, "Target must be specified");
-      if(DeploymentTargetDescription.DEFAULT.equals(target))
+      if (DeploymentTargetDescription.DEFAULT.equals(target))
       {
          return findDefaultDeployment();
       }
       return findMatchingDeployment(target);
    }
-   
+
    /**
     * @return
     */
    private Deployment findDefaultDeployment()
    {
-      if(deployments.size() == 1)
+      if (deployments.size() == 1)
       {
          return deployments.get(0);
       }
       else if (deployments.size() > 1)
       {
          // if there are only one Archive deployment, default to it
-         if(getArchiveDeploymentCount() == 1)
+         if (archiveDeploymentCount() == 1)
          {
-            for(Deployment deployment : deployments)
+            for (Deployment deployment : deployments)
             {
-               if(deployment.getDescription().isArchiveDeployment())
+               if (deployment.getDescription().isArchiveDeployment())
                {
                   return deployment;
                }
@@ -110,13 +110,13 @@ public class DeploymentScenario
       }
       return null;
    }
-   
-   private int getArchiveDeploymentCount()
+
+   private int archiveDeploymentCount()
    {
       int count = 0;
-      for(Deployment deployment : deployments)
+      for (Deployment deployment : deployments)
       {
-         if(deployment.getDescription().isArchiveDeployment())
+         if (deployment.getDescription().isArchiveDeployment())
          {
             count++;
          }
@@ -130,14 +130,58 @@ public class DeploymentScenario
     */
    private Deployment findMatchingDeployment(DeploymentTargetDescription target)
    {
-      for(Deployment deployment : deployments)
+      for (Deployment deployment : deployments)
       {
-         if(deployment.getDescription().getName().equals(target.getName()))
+         if (deployment.getDescription().getName().equals(target.getName()))
          {
             return deployment;
          }
       }
       return null;
+   }
+
+   public List<Deployment> managedDeploymentsInDeployOrder()
+   {
+      List<Deployment> managedDeployment = new ArrayList<Deployment>();
+      for (Deployment deployment : deployments)
+      {
+         DeploymentDescription desc = deployment.getDescription();
+         if (desc.managed())
+         {
+            managedDeployment.add(deployment);
+         }
+      }
+      Collections.sort(managedDeployment, new Comparator<Deployment>()
+      {
+         public int compare(Deployment o1, Deployment o2)
+         {
+            return new Integer(o1.getDescription().getOrder()).compareTo(o2.getDescription().getOrder());
+         }
+      });
+
+      return Collections.unmodifiableList(managedDeployment);
+   }
+
+   public List<Deployment> deployedDeploymentsInUnDeployOrder()
+   {
+      List<Deployment> managedDeployment = new ArrayList<Deployment>();
+      for (Deployment deployment : deployments)
+      {
+         DeploymentDescription desc = deployment.getDescription();
+         if (desc.managed() || deployment.isDeployed())
+         {
+            managedDeployment.add(deployment);
+         }
+      }
+      Collections.sort(managedDeployment, new Comparator<Deployment>()
+      {
+         public int compare(Deployment o1, Deployment o2)
+         {
+            return new Integer(o2.getDescription().getOrder()).compareTo(o1.getDescription().getOrder());
+         }
+      });
+
+      return Collections.unmodifiableList(managedDeployment);
    }
 
    /**
@@ -146,14 +190,14 @@ public class DeploymentScenario
     * @param target The Target to filter on
     * @return A List of found {@link DeploymentDescription}. Will return a empty list if none are found.
     */
-   public List<Deployment> getStartupDeploymentsFor(TargetDescription target)
+   public List<Deployment> startupDeploymentsFor(TargetDescription target)
    {
       Validate.notNull(target, "Target must be specified");
       List<Deployment> startupDeployments = new ArrayList<Deployment>();
-      for(Deployment deployment : deployments)
+      for (Deployment deployment : deployments)
       {
          DeploymentDescription desc = deployment.getDescription();
-         if(desc.managed() && target.equals(desc.getTarget()))
+         if (desc.managed() && target.equals(desc.getTarget()))
          {
             startupDeployments.add(deployment);
          }
@@ -166,16 +210,16 @@ public class DeploymentScenario
             return new Integer(o1.getDescription().getOrder()).compareTo(o2.getDescription().getOrder());
          }
       });
-      
+
       return Collections.unmodifiableList(startupDeployments);
    }
-   
-   public List<Deployment> getDeploymentsInError()
+
+   public List<Deployment> deploymentsInError()
    {
       List<Deployment> result = new ArrayList<Deployment>();
-      for(Deployment dep : this.deployments)
+      for (Deployment dep : this.deployments)
       {
-         if(dep.hasDeploymentError())
+         if (dep.hasDeploymentError())
          {
             result.add(dep);
          }
@@ -183,23 +227,23 @@ public class DeploymentScenario
       return result;
    }
 
-   public List<Deployment> getDeployedDeployments()
+   public List<Deployment> deployedDeployments()
    {
       List<Deployment> result = new ArrayList<Deployment>();
-      for(Deployment dep : this.deployments)
+      for (Deployment dep : this.deployments)
       {
-         if(dep.isDeployed())
+         if (dep.isDeployed())
          {
             result.add(dep);
          }
       }
       return result;
    }
-   
+
    /**
     * @return the deployments
     */
-   public List<Deployment> getDeployments()
+   public List<Deployment> deployments()
    {
       return Collections.unmodifiableList(deployments);
    }

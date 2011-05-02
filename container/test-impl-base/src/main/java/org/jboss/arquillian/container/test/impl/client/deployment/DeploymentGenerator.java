@@ -93,7 +93,7 @@ public class DeploymentGenerator
    protected void validate(DeploymentScenario scenario)
    {
       ContainerRegistry conReg = containerRegistry.get();
-      for(TargetDescription target : scenario.getTargets())
+      for(TargetDescription target : scenario.targets())
       {
          Container container = conReg.getContainer(target);
          if(container == null)
@@ -104,7 +104,7 @@ public class DeploymentGenerator
       }
       
      ProtocolRegistry proReg = protocolRegistry.get();
-     for(ProtocolDescription proDesc : scenario.getProtocols())
+     for(ProtocolDescription proDesc : scenario.protocols())
      {
         if(ProtocolDescription.DEFAULT.equals(proDesc))
         {
@@ -134,7 +134,7 @@ public class DeploymentGenerator
 
    private void buildTestableDeployments(DeploymentScenario scenario, TestClass testCase, ProtocolRegistry protoReg)
    {
-      for(Deployment deployment : scenario.getDeployments())
+      for(Deployment deployment : scenario.deployments())
       {
          DeploymentDescription description = deployment.getDescription();
          if(!description.testable() || !description.isArchiveDeployment())

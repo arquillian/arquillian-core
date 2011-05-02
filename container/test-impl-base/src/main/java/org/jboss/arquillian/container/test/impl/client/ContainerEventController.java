@@ -149,7 +149,7 @@ public class ContainerEventController
       ContainerRegistry containerRegistry = this.containerRegistry.get();
       DeploymentScenario deploymentScenario = this.deploymentScenario.get();
       
-      Deployment deployment = deploymentScenario.getDeployment(deploymentTarget);
+      Deployment deployment = deploymentScenario.deployment(deploymentTarget);
       
       Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
       

@@ -51,7 +51,7 @@ public class DeploymentScenarioTestCase
       DeploymentScenario scenario = new DeploymentScenario();
       scenario.addDeployment(deployment);
       
-      DeploymentDescription defaultDeployment = scenario.getDeployment(DeploymentTargetDescription.DEFAULT).getDescription();
+      DeploymentDescription defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
       
       Assert.assertEquals(deployment, defaultDeployment);
    }
@@ -65,7 +65,7 @@ public class DeploymentScenarioTestCase
       DeploymentScenario scenario = new DeploymentScenario();
       scenario.addDeployment(deployment);
       
-      DeploymentDescription defaultDeployment = scenario.getDeployment(DeploymentTargetDescription.DEFAULT).getDescription();
+      DeploymentDescription defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
       
       Assert.assertEquals(deployment, defaultDeployment);
    }
@@ -82,7 +82,7 @@ public class DeploymentScenarioTestCase
             .setTarget(TargetDescription.DEFAULT));
 
 
-      DeploymentDescription defaultDeployment = scenario.getDeployment(DeploymentTargetDescription.DEFAULT).getDescription();
+      DeploymentDescription defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
       
       Assert.assertEquals("A", defaultDeployment.getName());
    }
@@ -98,7 +98,7 @@ public class DeploymentScenarioTestCase
             new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class))
             .setTarget(TargetDescription.DEFAULT));
       
-      Deployment defaultDeployment = scenario.getDeployment(DeploymentTargetDescription.DEFAULT);
+      Deployment defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT);
       
       Assert.assertNull(defaultDeployment);
    }
@@ -114,7 +114,7 @@ public class DeploymentScenarioTestCase
             new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
             .setTarget(TargetDescription.DEFAULT));
       
-      Deployment defaultDeployment = scenario.getDeployment(DeploymentTargetDescription.DEFAULT);
+      Deployment defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT);
       
       Assert.assertNull(defaultDeployment);
    }
@@ -131,7 +131,7 @@ public class DeploymentScenarioTestCase
             .setTarget(TargetDescription.DEFAULT));
 
 
-      DeploymentDescription deployment = scenario.getDeployment(new DeploymentTargetDescription("B")).getDescription();
+      DeploymentDescription deployment = scenario.deployment(new DeploymentTargetDescription("B")).getDescription();
       
       Assert.assertEquals("B", deployment.getName());
    }
@@ -148,7 +148,7 @@ public class DeploymentScenarioTestCase
             .setTarget(TargetDescription.DEFAULT));
 
 
-      Deployment deployment = scenario.getDeployment(new DeploymentTargetDescription("C"));
+      Deployment deployment = scenario.deployment(new DeploymentTargetDescription("C"));
       
       Assert.assertNull(deployment);
       

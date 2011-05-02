@@ -56,7 +56,7 @@ public class ClientDeployer implements Deployer
       DeploymentScenario scenario = deploymentScenario.get();
       ContainerRegistry registry = containerRegistry.get();
       
-      Deployment deployment = scenario.getDeployment(new DeploymentTargetDescription(name));
+      Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
       if(deployment == null)
       {
          throw new IllegalArgumentException("No deployment in context found with name " + name);
@@ -76,7 +76,7 @@ public class ClientDeployer implements Deployer
       DeploymentScenario scenario = deploymentScenario.get();
       ContainerRegistry registry = containerRegistry.get();
       
-      Deployment deployment = scenario.getDeployment(new DeploymentTargetDescription(name));
+      Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
       if(deployment == null)
       {
          throw new IllegalArgumentException("No deployment in context found with name " + name);
