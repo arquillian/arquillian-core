@@ -66,8 +66,9 @@ public class ServiceRegistryLoader implements ServiceLoader
          injector.inject(serviceImpl);
          serviceImpls.add(serviceImpl);
       }
-      Collection<T> previouslyRegistrered = (Collection<T>)serviceInstanceRegistry.putIfAbsent(serviceClass, (Collection<Object>)serviceImpls);
-      return previouslyRegistrered != null ? previouslyRegistrered:serviceImpls;
+      //Collection<T> previouslyRegistrered = (Collection<T>)serviceInstanceRegistry.putIfAbsent(serviceClass, (Collection<Object>)serviceImpls);
+      //return previouslyRegistrered != null ? previouslyRegistrered:serviceImpls;
+      return serviceImpls;
    }
 
    /* (non-Javadoc)
