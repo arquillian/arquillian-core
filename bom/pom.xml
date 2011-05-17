@@ -15,9 +15,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact Information -->
-    <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-bom</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Arquillian BOM</name>
     <url>http://www.jboss.org</url>
@@ -25,6 +23,8 @@
 
     <properties>
         <version.arquillian>${project.version}</version.arquillian>
+        <version.shrinkwrap_shrinkwrap>1.0.0-alpha-12</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_descriptors>0.1.4</version.shrinkwrap_descriptors>
     </properties>
 
     <dependencyManagement>
@@ -181,6 +181,47 @@
                 <artifactId>arquillian-testenricher-initialcontext</artifactId>
                 <version>${version.arquillian}</version>
             </dependency>
+            
+            <!-- ShrinkWrap -->
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-api</artifactId>
+                <version>${version.shrinkwrap_shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-spi</artifactId>
+                <version>${version.shrinkwrap_shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-impl-base</artifactId>
+                <version>${version.shrinkwrap_shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-api</artifactId>
+                <version>${version.shrinkwrap_shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+                <version>${version.shrinkwrap_shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+                <version>${version.shrinkwrap_shrinkwrap}</version>
+            </dependency>
+
+            <!-- ShrinkWrap Descriptors -->
+
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+                <artifactId>shrinkwrap-descriptors-api</artifactId>
+                <version>${version.shrinkwrap_descriptors}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

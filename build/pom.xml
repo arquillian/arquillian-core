@@ -249,36 +249,6 @@
                 <version>${version.shrinkwrap_shrinkwrap}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-extension-glassfish</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-extension-vdf</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-extension-vfs3</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-extension-tomcat-6</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-extension-jetty-6</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-extension-jetty-7</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.shrinkwrap.descriptors</groupId>
                 <artifactId>shrinkwrap-descriptors-api</artifactId>
                 <version>${version.shrinkwrap_descriptors}</version>
