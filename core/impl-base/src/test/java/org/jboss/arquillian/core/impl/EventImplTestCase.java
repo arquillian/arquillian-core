@@ -18,6 +18,7 @@ package org.jboss.arquillian.core.impl;
 
 
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,11 +40,12 @@ public class EventImplTestCase
       
       EventImpl<Object> event = EventImpl.of(Object.class, manager);
       
-      Object testObject = new Object();
+      Object testObject = new TestCommand();
       event.fire(testObject);
       
       TestObserver observer = manager.getExtension(TestObserver.class);
       Assert.assertTrue(observer.wasCalled);
+      Assert.assertTrue(observer.observerWasCalled);
       Assert.assertEquals(
             "Verify same object was observed", 
             testObject, observer.getObject());
@@ -52,6 +54,7 @@ public class EventImplTestCase
    private static class TestObserver 
    {
       private boolean wasCalled = false;
+      private boolean observerWasCalled = false;
       private Object object;
       
       @SuppressWarnings("unused")
@@ -62,9 +65,26 @@ public class EventImplTestCase
          wasCalled = true;
       }
       
+      @SuppressWarnings("unused")
+      public void shouldObserve(@Observes EventContext<Command<?>> event)
+      {
+         observerWasCalled = true;
+         event.proceed();
+      }
+
       public Object getObject()
       {
          return object;
       }
+   }
+   
+   private interface Command<T> 
+   {
+      
+   }
+   
+   private class TestCommand implements Command<String>
+   {
+      
    }
 }

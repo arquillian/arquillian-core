@@ -17,14 +17,20 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.spi.command.CommandCallback;
 
 /**
  * ServletMethodExecutor
@@ -35,15 +41,22 @@ import org.jboss.arquillian.spi.TestResult;
 public class ServletMethodExecutor implements ContainerMethodExecutor
 {
    public static final String ARQUILLIAN_SERVLET_NAME = "ArquillianServletRunner";
+
    public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
-   
+
    private URI baseURI;
+   private CommandCallback callback;
    
-   public ServletMethodExecutor(URI baseURI)
+   public ServletMethodExecutor(URI baseURI, final CommandCallback callback)
    {
+      if (callback == null)
+      {
+         throw new IllegalArgumentException("Callback must be specified");
+      }
       this.baseURI = baseURI;
+      this.callback = callback;
    }
-   
+
    /**
     * @return the baseURI
     */
@@ -51,89 +64,181 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
    {
       return baseURI;
    }
-   
-   public TestResult invoke(TestMethodExecutor testMethodExecutor) 
+
+   public TestResult invoke(final TestMethodExecutor testMethodExecutor)
    {
-      if(testMethodExecutor == null) 
+      if (testMethodExecutor == null)
       {
          throw new IllegalArgumentException("TestMethodExecutor must be specified");
       }
-      
+
       Class<?> testClass = testMethodExecutor.getInstance().getClass();
-      String url = baseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING +   
-                        "?outputMode=serializedObject&className=" + testClass.getName() + 
-                        "&methodName=" + testMethodExecutor.getMethod().getName();
-      
-      try 
+      final String url = baseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+            + testMethodExecutor.getMethod().getName();
+
+      final String eventUrl = baseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+            + testMethodExecutor.getMethod().getName() + "&cmd=event";
+
+      Timer eventTimer = null;
+      try
       {
-         return execute(url);
-      } 
-      catch (Exception e) 
+         eventTimer = new Timer();
+         eventTimer.schedule(new TimerTask()
+         {
+            @Override
+            public void run()
+            {
+               try
+               {
+                  Object o = execute(eventUrl, Object.class, null);
+                  if (o != null)
+                  {
+                     if (o instanceof Command)
+                     {
+                        Command<?> command = (Command<?>) o;
+                        callback.fired(command);
+                        execute(eventUrl, Object.class, command);
+                     }
+                     else
+                     {
+                        throw new RuntimeException("Recived a non " + Command.class.getName()
+                              + " object on event channel");
+                     }
+                  }
+               }
+               catch (Exception e)
+               {
+                  e.printStackTrace();
+               }
+            }
+         }, 0, 100);
+
+         return executeWithRetry(url, TestResult.class);
+      }
+      catch (Exception e)
       {
-         throw new IllegalStateException("Error launching test " + testClass.getName() + " " + testMethodExecutor.getMethod(), e);
+         throw new IllegalStateException("Error launching test " + testClass.getName() + " "
+               + testMethodExecutor.getMethod(), e);
+      }
+      finally
+      {
+         if (eventTimer != null)
+         {
+            eventTimer.cancel();
+         }
       }
    }
 
-   private TestResult execute(String url) throws Exception 
+   private <T> T executeWithRetry(String url, Class<T> type) throws Exception
    {
       long timeoutTime = System.currentTimeMillis() + 1000;
       boolean interrupted = false;
       while (timeoutTime > System.currentTimeMillis())
       {
-         URLConnection connection = new URL(url).openConnection();
-         if (!(connection instanceof HttpURLConnection))
+         T o = execute(url, type, null);
+         if (o != null)
          {
-            throw new IllegalStateException("Not an http connection! " + connection);
+            return o;
          }
-         HttpURLConnection httpConnection = (HttpURLConnection) connection;
-         httpConnection.setUseCaches(false);
-         httpConnection.setDefaultUseCaches(false);
          try
          {
-            httpConnection.connect();
-            if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
-            {
-               ObjectInputStream ois = new ObjectInputStream(httpConnection.getInputStream());
-               Object o;
-               try
-               {
-                  o = ois.readObject();
-               }
-               finally 
-               {
-                  ois.close();   
-               }
-               
-               if (!(o instanceof TestResult))
-               {
-                  throw new IllegalStateException("Error reading test results - expected a TestResult but got " + o);
-               }
-               return (TestResult) o;
-            }
-            else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND)
-            {
-               throw new IllegalStateException(
-                     "Error launching test at " + url + ". " +
-                     "Got " + httpConnection.getResponseCode() + " ("+ httpConnection.getResponseMessage() + ")");
-            }
-            try
-            {
-               Thread.sleep(200);
-            }
-            catch (InterruptedException e)
-            {
-               interrupted = true;
-            }
+            Thread.sleep(200);
          }
-         finally
+         catch (InterruptedException e)
          {
-            httpConnection.disconnect();
+            interrupted = true;
          }
       }
       if (interrupted)
       {
          Thread.currentThread().interrupt();
       }
-      throw new IllegalStateException("Error launching test at " + url + ". Kept on getting 404s.");
+      throw new IllegalStateException("Error launching request at " + url + ". No result returned");
+   }
+
+   private <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception 
+   {
+      URLConnection connection = new URL(url).openConnection();
+      if (!(connection instanceof HttpURLConnection))
+      {
+         throw new IllegalStateException("Not an http connection! " + connection);
+      }
+      HttpURLConnection httpConnection = (HttpURLConnection) connection;
+      httpConnection.setUseCaches(false);
+      httpConnection.setDefaultUseCaches(false);
+      httpConnection.setDoInput(true);
+      try
+      {
+         
+         if(requestObject != null)
+         {
+            httpConnection.setRequestMethod("POST");
+            httpConnection.setDoOutput(true);
+            httpConnection.setRequestProperty("Content-Type", "application/octet-stream");
+         }
+         
+         if(requestObject != null)
+         {
+            ObjectOutputStream ous = new ObjectOutputStream(httpConnection.getOutputStream());
+            try
+            {
+               ous.writeObject(requestObject);
+            }
+            catch (Exception e) 
+            {
+               throw new RuntimeException("Error sending request Object, " + requestObject, e);
+            }
+            finally
+            {
+               ous.flush();
+               ous.close();
+            }
+         }
+
+         try
+         {
+            httpConnection.getResponseCode();
+         }
+         catch (ConnectException e) 
+         {
+            return null; // Could not connect
+         }
+         if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
+         {
+            ObjectInputStream ois = new ObjectInputStream(httpConnection.getInputStream());
+            Object o;
+            try
+            {
+               o = ois.readObject();
+            }
+            finally 
+            {
+               ois.close();   
+            }
+            
+            if (!returnType.isInstance(o))
+            {
+               throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got " + o);
+            }
+            return returnType.cast(o);
+         }
+         else if(httpConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT)
+         {
+            return null;
+         }
+         else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND)
+         {
+            throw new IllegalStateException(
+                  "Error launching test at " + url + ". " +
+                  "Got " + httpConnection.getResponseCode() + " ("+ httpConnection.getResponseMessage() + ")");
+         }
+      }
+      finally
+      {
+         httpConnection.disconnect();
+      }
+      return null;
    }
 }

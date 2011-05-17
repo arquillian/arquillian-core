@@ -15,44 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.core.spi.annotation;
+package org.jboss.arquillian.jmx.test;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.spi.command.CommandCallback;
 
 /**
- * MetaData about a Extension. Used to set name, dependencies and optional excludes if other dep found.  
+ * TestRemoteCommandCallback
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Inherited
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Extension 
+public class TestCommandCallback implements CommandCallback
 {
-   /**
-    * @return The Extension name
-    */
-   String name();
-
-   /**
-    * This works in combination with xxx Don't load if they are not loaded.
-    * 
-    * @return A Array of Extension Names
-    */
-   String[] requires() default "";
-
-   /**
-    * This does not work in combination with xxx, don't load if they are found.
-    * 
-    * @return A Array of Extension Names
-    */
-   String[] exclude() default "";
+   public static Object result;
+   
+   @SuppressWarnings({"rawtypes", "unchecked"})
+   @Override
+   public void fired(Command event)
+   {
+      event.setResult(result);
+   }
 }

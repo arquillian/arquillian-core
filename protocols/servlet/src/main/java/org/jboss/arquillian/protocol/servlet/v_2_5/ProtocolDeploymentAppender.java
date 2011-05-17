@@ -16,8 +16,10 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
+import org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -53,6 +55,8 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
                                     "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner", 
                                     ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING)
                               .exportAsString()
-                     ));
+                     ))
+                     // addAsServiceProvider is mapped to /META-INF for WebArchives, we need it in /WEB_INF/classes/META-INF
+                     .addAsWebInfResource(new StringAsset(ServletRemoteExtension.class.getName()), "META-INF/" + LoadableExtension.class.getName());
    }
 }

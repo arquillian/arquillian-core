@@ -35,12 +35,12 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    
    private ConcurrentHashMap<T, ObjectStore> stores;
    
-   private ThreadLocal<Stack<ObjectStore>> activeStore = new ThreadLocal<Stack<ObjectStore>>() {
+   private ThreadLocal<Stack<StoreHolder<T>>> activeStore = new ThreadLocal<Stack<StoreHolder<T>>>() {
 
       @Override
-      protected Stack<ObjectStore> initialValue()
+      protected Stack<StoreHolder<T>> initialValue()
       {
-         return new Stack<ObjectStore>();
+         return new Stack<StoreHolder<T>>();
       }
    };
    
@@ -50,10 +50,20 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    }
    
    @Override
+   public T getActiveId()
+   {
+      if(isActive())
+      {
+         return activeStore.get().peek().getId();
+      }
+      return null;
+   }
+   
+   @Override
    public void activate(T id) 
    {
       Validate.notNull(id, "ID must be specified");
-      activeStore.get().push(createObjectStore(id));
+      activeStore.get().push(new StoreHolder<T>(id, createObjectStore(id)));
    }
    
    @Override
@@ -98,7 +108,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    {
       if(isActive())
       {
-         return activeStore.get().peek();
+         return activeStore.get().peek().getStore();
       }
       throw new RuntimeException("Context is not active: " + super.getClass().getSimpleName());
    }
@@ -141,5 +151,33 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
          return previousStore;
       }
       return store;
+   }
+   
+   private class StoreHolder<X> 
+   {
+      private X id;
+      private ObjectStore store;
+      
+      public StoreHolder(X id, ObjectStore store)
+      {
+         this.id = id;
+         this.store = store;
+      }
+      
+      /**
+       * @return the id
+       */
+      public X getId()
+      {
+         return id;
+      }
+      
+      /**
+       * @return the store
+       */
+      public ObjectStore getStore()
+      {
+         return store;
+      }
    }
 }

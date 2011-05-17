@@ -28,6 +28,7 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.command.CommandCallback;
 
 /**
  * AbstractJMXProtocol
@@ -58,10 +59,10 @@ public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfigu
    }
 
    @Override
-   public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData)
+   public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData, CommandCallback callback)
    {
       MBeanServerConnection mbeanServer = mbeanServerInst.get();
       ExecutionType executionType = config.getExecutionType();
-      return new JMXMethodExecutor(mbeanServer, executionType);
+      return new JMXMethodExecutor(mbeanServer, executionType, callback);
    }
 }

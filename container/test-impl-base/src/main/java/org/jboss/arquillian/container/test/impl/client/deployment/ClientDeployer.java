@@ -15,7 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.impl.client.container;
+package org.jboss.arquillian.container.test.impl.client.deployment;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import org.jboss.arquillian.api.Deployer;
 import org.jboss.arquillian.container.spi.Container;
@@ -27,8 +30,11 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.spi.client.deployment.Deployment;
+import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.deployment.DeploymentTargetDescription;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 /**
  * ClientDeployer
@@ -54,7 +60,15 @@ public class ClientDeployer implements Deployer
    public void deploy(String name)
    {
       DeploymentScenario scenario = deploymentScenario.get();
+      if(scenario == null)
+      {
+         throw new IllegalArgumentException("No deployment scenario in context");
+      }
       ContainerRegistry registry = containerRegistry.get();
+      if(registry == null)
+      {
+         throw new IllegalArgumentException("No container registry in context");
+      }
       
       Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
       if(deployment == null)
@@ -74,7 +88,15 @@ public class ClientDeployer implements Deployer
    public void undeploy(String name)
    {
       DeploymentScenario scenario = deploymentScenario.get();
+      if(scenario == null)
+      {
+         throw new IllegalArgumentException("No deployment scenario in context");
+      }
       ContainerRegistry registry = containerRegistry.get();
+      if(registry == null)
+      {
+         throw new IllegalArgumentException("No container registry in context");
+      }
       
       Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
       if(deployment == null)
@@ -84,6 +106,32 @@ public class ClientDeployer implements Deployer
       Container container = registry.getContainer(deployment.getDescription().getTarget());
       
       event.fire(new UnDeployDeployment(container, deployment));
+   }
+
+   @Override
+   public InputStream getDeployment(String name)
+   {
+      DeploymentScenario scenario = deploymentScenario.get();
+      if(scenario == null)
+      {
+         throw new IllegalArgumentException("No deployment scenario in context");
+      }
+      Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
+      if(deployment == null)
+      {
+         throw new IllegalArgumentException("No deployment in context found with name " + name);
+      }
+
+      DeploymentDescription description = deployment.getDescription();
+      if(description.isArchiveDeployment())
+      {
+         Archive<?> archive = description.testable() ? description.getTestableArchive():description.getArchive();
+         return archive.as(ZipExporter.class).exportAsInputStream();
+      }
+      else
+      {
+         return new ByteArrayInputStream(description.getDescriptor().exportAsString().getBytes());
+      }
    }
 
 }

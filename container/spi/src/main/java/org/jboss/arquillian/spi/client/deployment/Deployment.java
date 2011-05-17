@@ -65,4 +65,9 @@ public class Deployment
    {
       this.deployed = true;
    }
+
+   public void undeployed()
+   {
+      this.deployed = false;
+   }
 }

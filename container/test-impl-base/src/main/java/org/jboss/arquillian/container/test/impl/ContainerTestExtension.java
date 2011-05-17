@@ -18,8 +18,11 @@
 package org.jboss.arquillian.container.test.impl;
 
 import org.jboss.arquillian.container.test.impl.client.ContainerEventController;
+import org.jboss.arquillian.container.test.impl.client.LocalCommandService;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
+import org.jboss.arquillian.container.test.impl.client.deployment.ClientDeployerCreator;
 import org.jboss.arquillian.container.test.impl.client.deployment.DeploymentGenerator;
+import org.jboss.arquillian.container.test.impl.client.deployment.command.DeploymentCommandObserver;
 import org.jboss.arquillian.container.test.impl.client.deployment.tool.ArchiveDeploymentToolingExporter;
 import org.jboss.arquillian.container.test.impl.client.protocol.ProtocolRegistryCreator;
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
@@ -29,10 +32,10 @@ import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.core.spi.annotation.Extension;
 import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
+import org.jboss.arquillian.spi.command.CommandService;
 import org.jboss.arquillian.test.impl.TestInstanceEnricher;
 
 /**
@@ -41,7 +44,6 @@ import org.jboss.arquillian.test.impl.TestInstanceEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Extension(name = "arquillian.container.test")
 public class ContainerTestExtension implements LoadableExtension
 {
    @Override
@@ -49,7 +51,8 @@ public class ContainerTestExtension implements LoadableExtension
    {
       builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
              .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
-             .service(Protocol.class, LocalProtocol.class);
+             .service(Protocol.class, LocalProtocol.class)
+             .service(CommandService.class, LocalCommandService.class);
       
       builder.observer(ContainerEventController.class)
              .observer(ContainerRestarter.class)
@@ -57,9 +60,11 @@ public class ContainerTestExtension implements LoadableExtension
              .observer(ArchiveDeploymentToolingExporter.class)
              .observer(ProtocolRegistryCreator.class)
              .observer(TestInstanceEnricher.class)
+             .observer(ClientDeployerCreator.class)
              .observer(ClientTestExecuter.class)
              .observer(LocalTestExecuter.class)
-             .observer(RemoteTestExecuter.class);
+             .observer(RemoteTestExecuter.class)
+             .observer(DeploymentCommandObserver.class);
    }
 
 }

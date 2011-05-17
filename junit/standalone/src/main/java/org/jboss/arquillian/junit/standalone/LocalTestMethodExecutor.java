@@ -20,7 +20,6 @@ package org.jboss.arquillian.junit.standalone;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -40,9 +39,6 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
  */
 public class LocalTestMethodExecutor
 {
-   @Inject
-   private Instance<Injector> injector;
-
    @Inject 
    private Instance<ServiceLoader> serviceLoader;
    
@@ -88,7 +84,6 @@ public class LocalTestMethodExecutor
       }
       for (TestEnricher enricher : enrichers)
       {
-         injector.get().inject(enricher);
          mergeValues(values, enricher.resolve(method));
       }
       return values;

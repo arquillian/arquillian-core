@@ -15,23 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit.container;
+package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 
 /**
- * JUnitExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitContainerExtension implements LoadableExtension
+public class GetDeploymentCommand extends AbstractCommand<byte[]>
 {
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(AuxiliaryArchiveAppender.class, JUnitDeploymentAppender.class);
-   }
+   private static final long serialVersionUID = 1L;
 
+   private String deploymentName;
+   
+   public GetDeploymentCommand(String deploymentName)
+   {
+      this.deploymentName = deploymentName;
+   }
+   
+   /**
+    * @return the deploymentName
+    */
+   public String getDeploymentName()
+   {
+      return deploymentName;
+   }
 }

@@ -120,7 +120,6 @@ public class ContainerLifecycleController
              */
             containerProducer.set(container);  
             DeployableContainer deployable = container.getDeployableContainer();
-            injector.get().inject(deployable);
             
             event.fire(new BeforeSetup(deployable));
             deployable.setup(container.createDeployableConfiguration());

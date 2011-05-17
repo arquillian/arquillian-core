@@ -21,10 +21,12 @@ import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
+import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.client.container.DeployableContainer;
@@ -33,7 +35,12 @@ import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.spi.command.CommandCallback;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
+import org.jboss.arquillian.test.spi.context.ClassContext;
+import org.jboss.arquillian.test.spi.context.SuiteContext;
+import org.jboss.arquillian.test.spi.context.TestContext;
 
 /**
  * A Handler for executing the remote Test Method.<br/>
@@ -65,8 +72,24 @@ public class RemoteTestExecuter
    @Inject
    private Instance<ProtocolMetaData> protocolMetadata;
 
+   @Inject
+   private Event<Object> remoteEvent;
+
    @Inject @TestScoped
    private InstanceProducer<TestResult> testResult;
+
+   @Inject
+   private Instance<ApplicationContext> applicationContextInst;
+
+   @Inject
+   private Instance<SuiteContext> suiteContextInst;
+
+   @Inject
+   private Instance<ClassContext> classContextInst;
+   
+   @Inject
+   private Instance<TestContext> testContextInst;
+
 
    public void execute(@Observes RemoteExecutionEvent event) throws Exception
    {
@@ -99,10 +122,41 @@ public class RemoteTestExecuter
 
    // TODO: cast to raw type to get away from generic issue..
    @SuppressWarnings({"unchecked", "rawtypes"})
-   public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol,
-         ProtocolConfiguration protocolConfiguration)
+   public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol, ProtocolConfiguration protocolConfiguration)
    {
-      ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(protocolConfiguration, protocolMetadata.get());
+      final ApplicationContext applicationContext = applicationContextInst.get();
+      final SuiteContext suiteContext = suiteContextInst.get();
+      
+      final ClassContext classContext = classContextInst.get();
+      final Class<?> classContextId = classContext.getActiveId();
+      
+      final TestContext testContext = testContextInst.get();
+      final Object testContextId = testContext.getActiveId();
+      
+      ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(
+            protocolConfiguration, 
+            protocolMetadata.get(), new CommandCallback()
+            {
+               @Override
+               public void fired(Command<?> event)
+               {
+                  applicationContext.activate();
+                  suiteContext.activate();
+                  classContext.activate(classContextId);
+                  testContext.activate(testContextId);
+                  try
+                  {
+                     remoteEvent.fire(event);
+                  }
+                  finally
+                  {
+                     testContext.deactivate();
+                     classContext.deactivate();
+                     suiteContext.deactivate();
+                     applicationContext.deactivate();
+                  }
+               }
+            });
       return executor;
    }
 }

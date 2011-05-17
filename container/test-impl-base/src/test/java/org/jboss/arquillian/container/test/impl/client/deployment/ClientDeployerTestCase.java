@@ -15,18 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.impl.client.container;
+package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.util.List;
 
 import org.jboss.arquillian.api.Deployer;
-import org.jboss.arquillian.container.impl.client.container.ClientDeployerCreator;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.event.DeployDeployment;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployDeployment;
-import org.jboss.arquillian.container.test.AbstractContainerTestBase;
+import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -49,7 +48,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ClientDeployerTestCase extends AbstractContainerTestBase
+public class ClientDeployerTestCase extends AbstractContainerTestTestBase
 {
    @Override
    protected void addExtensions(List<Class<?>> extensions)

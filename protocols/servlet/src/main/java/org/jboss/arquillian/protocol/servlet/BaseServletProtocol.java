@@ -20,6 +20,7 @@ package org.jboss.arquillian.protocol.servlet;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
 import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.command.CommandCallback;
 
 
 /**
@@ -52,13 +53,14 @@ public abstract class BaseServletProtocol implements Protocol<ServletProtocolCon
     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getExecutor(org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration, org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData)
     */
    @Override
-   public ServletMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData)
+   public ServletMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback)
    {
       return new ServletMethodExecutor(
             ServletUtil.determineBaseURI(
                   protocolConfiguration, 
                   metaData, 
-                  ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME));
+                  ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME), 
+            callback);
    }
    
    protected abstract String getProtcolName();

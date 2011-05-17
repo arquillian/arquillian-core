@@ -43,7 +43,7 @@ import org.jboss.arquillian.core.spi.event.ManagerProcessing;
 public class LoadableExtensionLoader
 {
    private static Logger log = Logger.getLogger(LoadableExtensionLoader.class.getName());
-   private static Level level = Level.FINE;
+   private static Level level = Level.FINER;
    
    
    @Inject

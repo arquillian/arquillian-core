@@ -19,6 +19,7 @@ package org.jboss.arquillian.protocol.servlet;
 
 import junit.framework.Assert;
 
+import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
 import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.protocol.metadata.HTTPContext;
@@ -60,7 +61,8 @@ public class BaseServletProtocolTestCase
             new ProtocolMetaData()
                .addContext(
                      new HTTPContext("127.0.0.1", 8080)
-                        .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))));
+                        .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))),
+            new TestCommandCallback());
       
       Assert.assertEquals("http://127.0.0.1:8080/test", executor.getBaseURI().toString());
    }
@@ -79,7 +81,8 @@ public class BaseServletProtocolTestCase
             new ProtocolMetaData()
                .addContext(
                      new HTTPContext("127.0.0.1", 8080)
-                        .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))));
+                        .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))),
+            new TestCommandCallback());
       
       Assert.assertEquals("http://10.10.10.1:90/test", executor.getBaseURI().toString());
    }

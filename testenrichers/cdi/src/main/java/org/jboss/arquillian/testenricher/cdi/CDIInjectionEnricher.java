@@ -33,15 +33,14 @@ import org.jboss.arquillian.spi.TestEnricher;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class CDIInjectionEnricher implements TestEnricher 
+public class CDIInjectionEnricher implements TestEnricher
 {
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
 
    private static final Logger log = Logger.getLogger(CDIInjectionEnricher.class.getName());
-   
+
    @Inject
    private Instance<BeanManager> beanManagerInst;
-   
 
    /**
     * @return the beanManagerInst
@@ -50,76 +49,82 @@ public class CDIInjectionEnricher implements TestEnricher
    {
       return beanManagerInst.get();
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
     */
    public void enrich(Object testCase)
    {
-      if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
+      if (SecurityActions.isClassPresent(ANNOTATION_NAME))
       {
          injectClass(testCase);
       }
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Method method) 
+   public Object[] resolve(Method method)
    {
-     Object[] values = new Object[method.getParameterTypes().length];
-     if(SecurityActions.isClassPresent(ANNOTATION_NAME)) 
-     {
-        BeanManager beanManager = getBeanManager();
-        if(beanManager == null) 
-        {
-             return values;
-        }
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        for(int i = 0; i < parameterTypes.length; i++)
-        {
-           values[i] = getInstanceByType(beanManager, i, method);
-        }
-     }
-     return values;
+      Object[] values = new Object[method.getParameterTypes().length];
+      if (SecurityActions.isClassPresent(ANNOTATION_NAME))
+      {
+         BeanManager beanManager = getBeanManager();
+         if (beanManager == null)
+         {
+            return values;
+         }
+         Class<?>[] parameterTypes = method.getParameterTypes();
+         for (int i = 0; i < parameterTypes.length; i++)
+         {
+            try
+            {
+               values[i] = getInstanceByType(beanManager, i, method);
+            }
+            catch (Exception e)
+            {
+               // no-op, move on
+            }
+         }
+      }
+      return values;
    }
-   
+
    @SuppressWarnings("unchecked")
    private <T> T getInstanceByType(BeanManager manager, final int position, final Method method)
    {
       CreationalContext<?> cc = manager.createCreationalContext(null);
-      return (T)manager.getInjectableReference(
-            new MethodParameterInjectionPoint<T>(method, position, manager), 
-            cc);
+      return (T) manager.getInjectableReference(new MethodParameterInjectionPoint<T>(method, position, manager), cc);
    }
-   
-   protected void injectClass(Object testCase) 
+
+   protected void injectClass(Object testCase)
    {
-      try 
+      try
       {
          BeanManager beanManager = getBeanManager();
-         if(beanManager != null) {
-            injectNonContextualInstance(beanManager, testCase);            
+         if (beanManager != null)
+         {
+            injectNonContextualInstance(beanManager, testCase);
          }
          else
          {
             // Better would be to raise an exception if @Inject is present in class and BeanManager cannot be found
-            log.info("BeanManager cannot be located in context " +
-            		"Either you are using an archive with no beans.xml, or the BeanManager has not been produced.");
+            log.info("BeanManager cannot be located in context "
+                  + "Either you are using an archive with no beans.xml, or the BeanManager has not been produced.");
          }
       }
-      catch (Exception e) 
+      catch (Exception e)
       {
          throw new RuntimeException("Could not inject members", e);
       }
    }
-   
+
    @SuppressWarnings("unchecked")
    protected void injectNonContextualInstance(BeanManager manager, Object instance)
    {
-      CreationalContext<Object> creationalContext =  manager.createCreationalContext(null);
-      InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(
-            manager.createAnnotatedType(instance.getClass()));
+      CreationalContext<Object> creationalContext = manager.createCreationalContext(null);
+      InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(manager
+            .createAnnotatedType(instance.getClass()));
       injectionTarget.inject(instance, creationalContext);
    }
 }

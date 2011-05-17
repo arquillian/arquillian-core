@@ -15,23 +15,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit.container;
+package org.jboss.arquillian.jmx.test;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
+import java.io.Serializable;
+
+import org.jboss.arquillian.spi.command.Command;
 
 /**
- * JUnitExtension
+ * TestRemoteCommand
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitContainerExtension implements LoadableExtension
+public class TestCommand implements Command<String>, Serializable
 {
+   private static final long serialVersionUID = 1L;
+
+   private String result;
+   private Throwable throwable;
+   
    @Override
-   public void register(ExtensionBuilder builder)
+   public String getResult()
    {
-      builder.service(AuxiliaryArchiveAppender.class, JUnitDeploymentAppender.class);
+      return result;
    }
 
+   @Override
+   public void setResult(String result)
+   {
+      this.result = result;
+   }
+
+   @Override
+   public Throwable getThrowable()
+   {
+      return throwable;
+   }
+
+   @Override
+   public void setThrowable(Throwable throwable)
+   {
+      this.throwable = throwable;
+   }
 }

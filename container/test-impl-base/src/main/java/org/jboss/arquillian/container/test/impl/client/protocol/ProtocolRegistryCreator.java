@@ -22,7 +22,6 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
-import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -40,9 +39,6 @@ import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
  */
 public class ProtocolRegistryCreator
 {
-   @Inject
-   private Instance<Injector> injector;
-   
    @Inject 
    private Instance<ServiceLoader> serviceLoader;
    

@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet;
+package org.jboss.arquillian.jmx.test;
 
+import org.jboss.arquillian.protocol.jmx.JMXCommandService;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestRunner;
+import org.jboss.arquillian.spi.command.Command;
 
 /**
  * MockTestRunner
@@ -30,6 +32,9 @@ import org.jboss.arquillian.spi.TestRunner;
 public class MockTestRunner implements TestRunner
 {
    public static TestResult wantedResults;
+
+   public static Command<?> command;
+   public static Object commandResult;
    
    public static void add(TestResult wantedTestResult) 
    {
@@ -38,6 +43,18 @@ public class MockTestRunner implements TestRunner
    
    public TestResult execute(Class<?> testClass, String methodName)
    {
+      if(command != null)
+      {
+         commandResult = new JMXCommandService().execute(command);
+      }
+      
       return wantedResults;
+   }
+
+   public static void clear()
+   {
+      wantedResults = null;
+      command = null;
+      commandResult = null;
    }
 }

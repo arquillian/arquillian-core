@@ -19,6 +19,7 @@ package org.jboss.arquillian.spi.client.protocol;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.spi.command.CommandCallback;
 
 /**
  * Interface that defines a Arquillian Protocol.
@@ -61,7 +62,8 @@ public interface Protocol<T extends ProtocolConfiguration>
    /**
     * @param protocolConfiguration
     * @param metaData
+    * @param callback A Callback for each event received from the remote container.
     * @return
     */
-   ContainerMethodExecutor getExecutor(T protocolConfiguration, ProtocolMetaData metaData);
+   ContainerMethodExecutor getExecutor(T protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback);
 }

@@ -15,23 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit.container;
+package org.jboss.arquillian.container.test.impl.client.deployment;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.spi.event.suite.BeforeSuite;
 
 /**
- * JUnitExtension
+ * ClientDeployerRegister
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitContainerExtension implements LoadableExtension
+public class ContainerDeployerCreator
 {
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(AuxiliaryArchiveAppender.class, JUnitDeploymentAppender.class);
-   }
+   @Inject @ApplicationScoped
+   private InstanceProducer<Deployer> deployer;
+   
+   @Inject 
+   private Instance<Injector> injector;
 
+   public void createClientSideDeployer(@Observes BeforeSuite event)
+   {
+      deployer.set(injector.get().inject(new ContainerDeployer()));
+   }
 }

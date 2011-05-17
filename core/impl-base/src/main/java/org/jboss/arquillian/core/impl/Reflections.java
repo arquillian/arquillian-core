@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,6 +150,25 @@ final class Reflections
       else if(type instanceof ParameterizedType)
       {
          return getType(((ParameterizedType)type).getActualTypeArguments()[0]);
+      }
+      else if(type instanceof WildcardType)
+      {
+         for(Type wildType : ((WildcardType)type).getUpperBounds())
+         {
+            Type upperType = getType(wildType);
+            if(upperType != null)
+            {
+               return getType(upperType);
+            }
+         }
+         for(Type wildType : ((WildcardType)type).getLowerBounds())
+         {
+            Type lowerType = getType(wildType);
+            if(lowerType != null)
+            {
+               return getType(lowerType);
+            }
+         }
       }
       return null;
    }

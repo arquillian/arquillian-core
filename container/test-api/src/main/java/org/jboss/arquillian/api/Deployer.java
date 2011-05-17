@@ -14,23 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.core.spi.context;
+package org.jboss.arquillian.api;
 
+import java.io.InputStream;
 
 /**
- * IdBoundContext
+ * A interface that describes how you can deploy a named Deployment during test execution.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface IdBoundContext<T> extends Context
+public interface Deployer
 {
-   T getActiveId();
+   /**
+    * Deploy a named deployment.
+    * 
+    * @param name The name of the deployment
+    */
+   public void deploy(String name);
    
-   void activate(T id);
-
-   void destroy(T id);
-
-   void deactivate();
-
+   /**
+    * Get the Deployment content.
+    * 
+    * @param name The name of the Deployment as defined by Deployment
+    * @return a Zipped Stream of the Archive
+    */
+   public InputStream getDeployment(String name);
+   
+   /**
+    * UnDeploy a named deployment.
+    * 
+    * @param name The name of the deployment
+    */
+   public void undeploy(String name);
 }

@@ -16,8 +16,9 @@
  */
 package org.jboss.arquillian.jmx;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.management.MBeanServer;
@@ -25,10 +26,17 @@ import javax.management.MBeanServerFactory;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
+import org.jboss.arquillian.jmx.test.MockTestRunner;
+import org.jboss.arquillian.jmx.test.TestCommand;
+import org.jboss.arquillian.jmx.test.TestCommandCallback;
+import org.jboss.arquillian.protocol.jmx.JMXMethodExecutor;
+import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration;
 import org.jboss.arquillian.protocol.jmx.JMXTestRunner;
 import org.jboss.arquillian.protocol.jmx.JMXTestRunnerMBean;
+import org.jboss.arquillian.spi.TestMethodExecutor;
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.junit.Assert;
 import org.junit.Test;
 
 
@@ -63,6 +71,55 @@ public class JMXTestRunnerTestCase
       }
    }
 
+   @Test
+   public void shouldBeAbleToSendReceiveCommands() throws Throwable
+   {
+      TestCommandCallback.result = "Success";
+      MockTestRunner.add(new TestResult(Status.PASSED));
+      MockTestRunner.command = new TestCommand();
+      
+      MBeanServer mbeanServer = getMBeanServer();
+      JMXTestRunner jmxTestRunner = new JMXTestRunner(null);
+      jmxTestRunner.setExposedTestRunnerForTest(new MockTestRunner());
+      ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
+      
+      try
+      {
+         JMXProtocolConfiguration config = new JMXProtocolConfiguration();
+         JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, config.getExecutionType(), new TestCommandCallback());
+         
+         TestResult result = executor.invoke(new TestMethodExecutor()
+         {
+            @Override
+            public void invoke(Object... parameters) throws Throwable { }
+            
+            @Override
+            public Method getMethod() { return testMethod(); }
+            
+            @Override
+            public Object getInstance()
+            {
+               return JMXTestRunnerTestCase.this;
+            }
+         });
+          
+         assertNotNull("TestResult not null", result);
+         assertNotNull("Status not null", result.getStatus());
+         if (result.getStatus() == Status.FAILED)
+            throw result.getThrowable();
+         
+         Assert.assertEquals(
+               "Should have returned command",
+               TestCommandCallback.result,
+               MockTestRunner.commandResult);
+
+      }
+      finally
+      {
+         mbeanServer.unregisterMBean(oname);
+      }
+   }
+
    private MBeanServer getMBeanServer()
    {
       ArrayList<MBeanServer> mbeanServers = MBeanServerFactory.findMBeanServer(null);
@@ -73,5 +130,17 @@ public class JMXTestRunnerTestCase
    private <T> T getMBeanProxy(MBeanServer mbeanServer, ObjectName name, Class<T> interf)
    {
       return (T)MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
+   }
+   
+   private Method testMethod()
+   {
+      try
+      {
+         return DummyTestCase.class.getMethod("testMethod");
+      }
+      catch (Exception e) 
+      {
+         throw new RuntimeException("Could not lookup testMethod, check " + DummyTestCase.class, e);
+      }
    }
 }

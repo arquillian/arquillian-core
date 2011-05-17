@@ -29,13 +29,11 @@ package org.jboss.arquillian.spi;
  */
 public interface ContainerMethodExecutor
 {
-   
    /**
     * Invoke a test method deployed in the container.
     * 
-    * @param testMethodExecutor
+    * @param testMethodExecutor 
     * @return
     */
    TestResult invoke(TestMethodExecutor testMethodExecutor);
-   
 }

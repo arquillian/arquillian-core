@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.impl;
 
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
-import org.jboss.arquillian.container.impl.client.container.ClientDeployerCreator;
 import org.jboss.arquillian.container.impl.client.container.ContainerDeployController;
 import org.jboss.arquillian.container.impl.client.container.ContainerLifecycleController;
 import org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreator;
@@ -48,7 +47,6 @@ public class ContainerExtension implements LoadableExtension
              .observer(ContainerDeployController.class)
              .observer(ContainerRegistryCreator.class)       
              .observer(ArchiveDeploymentExporter.class)
-             .observer(ClientDeployerCreator.class)
              .observer(DeploymentExceptionHandler.class);
    }
 

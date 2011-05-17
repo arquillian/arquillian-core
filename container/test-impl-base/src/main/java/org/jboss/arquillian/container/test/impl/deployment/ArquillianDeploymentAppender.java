@@ -40,7 +40,12 @@ public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
                               "org.jboss.arquillian.spi",
                               "org.jboss.arquillian.api",
                               "org.jboss.arquillian.core",
-                              "org.jboss.arquillian.container",
+                              //"org.jboss.arquillian.container.api",
+                              "org.jboss.arquillian.container.impl",
+                              "org.jboss.arquillian.container.spi",
+                              "org.jboss.arquillian.container.test.api",
+                              //"org.jboss.arquillian.container.test.spi",
+                              "org.jboss.arquillian.container.test.impl",
                               "org.jboss.arquillian.config",
                               "org.jboss.arquillian.test",
                               "org.jboss.shrinkwrap")

@@ -18,7 +18,9 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.protocol.servlet.runner.ServletCommandService;
 import org.jboss.arquillian.spi.client.protocol.Protocol;
+import org.jboss.arquillian.spi.command.CommandService;
 
 /**
  * ServletExtension
@@ -32,7 +34,8 @@ public class ServletExtension implements LoadableExtension
    public void register(ExtensionBuilder builder)
    {
       builder.service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol.class)
-             .service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_3.ServletProtocol.class);
+             .service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_3.ServletProtocol.class)
+             .service(CommandService.class, ServletCommandService.class);
+            
    }
-
 }

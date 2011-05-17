@@ -16,9 +16,12 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,8 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestRunner;
 import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.spi.TestRunner;
+import org.jboss.arquillian.spi.command.Command;
 import org.jboss.arquillian.spi.util.TestRunners;
 
 /**
@@ -49,14 +53,47 @@ public class ServletTestRunner extends HttpServlet
    public static final String PARA_METHOD_NAME = "methodName";
    public static final String PARA_CLASS_NAME = "className";
    public static final String PARA_OUTPUT_MODE = "outputMode";
+   public static final String PARA_CMD_NAME = "cmd";
    
    public static final String OUTPUT_MODE_SERIALIZED = "serializedObject";
    public static final String OUTPUT_MODE_HTML = "html";
    
+   public static final String CMD_NAME_TEST = "test";
+   public static final String CMD_NAME_EVENT = "event";
+
+   static ConcurrentHashMap<String, Command<?>> events;
+   static ThreadLocal<String> currentCall;
+
+   @Override
+   public void init() throws ServletException
+   {
+      events = new ConcurrentHashMap<String, Command<?>>();
+      currentCall = new ThreadLocal<String>();
+   }
+   
+   @Override
+   public void destroy()
+   {
+      events.clear();
+      currentCall.remove();
+   }
+
+   @Override
+   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+   {
+      execute(request, response);
+   }
+   
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
    {
+      execute(request, response);
+   }
+   
+   protected void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+   {
       String outputMode = OUTPUT_MODE_HTML;
+      String cmd = CMD_NAME_TEST;
       try 
       {
          String className = null;
@@ -76,41 +113,25 @@ public class ServletTestRunner extends HttpServlet
          {
             throw new IllegalArgumentException(PARA_METHOD_NAME + " must be specified");
          }
-         
-         Class<?> testClass = SecurityActions.getThreadContextClassLoader().loadClass(className);
-         
-         TestRunner runner = TestRunners.getTestRunner();
-         
-         TestResult testResult = runner.execute(testClass, methodName);
-
-         if(OUTPUT_MODE_SERIALIZED.equalsIgnoreCase(outputMode)) 
+   
+         if(request.getParameter(PARA_CMD_NAME) != null)
          {
-            writeObject(testResult, response);
-         } 
-         else 
+            cmd = request.getParameter(PARA_CMD_NAME);
+         }
+   
+         currentCall.set(className + methodName);
+         
+         if(CMD_NAME_TEST.equals(cmd))
          {
-            // TODO: implement a html view of the result
-            response.setContentType("text/html");
-            response.setStatus(HttpServletResponse.SC_OK);
-            PrintWriter writer = response.getWriter();
-            writer.write("<html>\n");
-            writer.write("<head><title>TCK Report</title></head>\n");
-            writer.write("<body>\n");
-            writer.write("<h2>Configuration</h2>\n");
-            writer.write("<table>\n");
-            writer.write("<tr>\n");
-            writer.write("<td><b>Method</b></td><td><b>Status</b></td>\n");
-            writer.write("</tr>\n");
-            
-            writer.write("</table>\n");
-            writer.write("<h2>Tests</h2>\n");
-            writer.write("<table>\n");
-            writer.write("<tr>\n");
-            writer.write("<td><b>Method</b></td><td><b>Status</b></td>\n");
-            writer.write("</tr>\n");
-
-            writer.write("</table>\n");
-            writer.write("</body>\n");
+            executeTest(response, outputMode, className, methodName);
+         }
+         else if(CMD_NAME_EVENT.equals(cmd))
+         {
+            executeEvent(request, response, className, methodName);
+         }
+         else
+         {
+            throw new RuntimeException("Unknown value for parameter" + PARA_CMD_NAME + ": " + cmd);
          }
 
       } 
@@ -125,8 +146,80 @@ public class ServletTestRunner extends HttpServlet
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());  
          }
       }
+      finally
+      {
+         currentCall.remove();
+      }
+   }
+
+   public void executeTest(HttpServletResponse response, String outputMode, String className, String methodName)
+         throws ClassNotFoundException, IOException
+   {
+      Class<?> testClass = SecurityActions.getThreadContextClassLoader().loadClass(className);
+      TestRunner runner = TestRunners.getTestRunner();
+      TestResult testResult = runner.execute(testClass, methodName);
+      if(OUTPUT_MODE_SERIALIZED.equalsIgnoreCase(outputMode)) 
+      {
+         writeObject(testResult, response);
+      } 
+      else 
+      {
+         // TODO: implement a html view of the result
+         response.setContentType("text/html");
+         response.setStatus(HttpServletResponse.SC_OK);
+         PrintWriter writer = response.getWriter();
+         writer.write("<html>\n");
+         writer.write("<head><title>TCK Report</title></head>\n");
+         writer.write("<body>\n");
+         writer.write("<h2>Configuration</h2>\n");
+         writer.write("<table>\n");
+         writer.write("<tr>\n");
+         writer.write("<td><b>Method</b></td><td><b>Status</b></td>\n");
+         writer.write("</tr>\n");
+         
+         writer.write("</table>\n");
+         writer.write("<h2>Tests</h2>\n");
+         writer.write("<table>\n");
+         writer.write("<tr>\n");
+         writer.write("<td><b>Method</b></td><td><b>Status</b></td>\n");
+         writer.write("</tr>\n");
+
+         writer.write("</table>\n");
+         writer.write("</body>\n");
+      }
    }
    
+   public void executeEvent(HttpServletRequest request, HttpServletResponse response, String className, String methodName)
+      throws ClassNotFoundException, IOException
+   {
+      String eventKey = className+methodName;
+      
+      if(request.getContentLength() > 0)
+      {
+         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+         ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(request.getInputStream()));
+         Command<?> result = (Command<?>)input.readObject();
+         
+         events.put(eventKey, result);
+      }
+      else
+      {
+         if(events.containsKey(eventKey) && events.get(eventKey).getResult() == null)
+         {
+            response.setStatus(HttpServletResponse.SC_OK);
+            ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
+            output.writeObject(events.get(eventKey));
+            output.flush();
+            output.close();
+            events.remove(eventKey);
+         }
+         else
+         {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+         }
+      }
+   }
+
    private void writeObject(Object object, HttpServletResponse response) 
    {
       try 

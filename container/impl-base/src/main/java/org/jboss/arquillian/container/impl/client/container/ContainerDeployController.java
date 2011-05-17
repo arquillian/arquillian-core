@@ -141,14 +141,23 @@ public class ContainerDeployController
             
             deployEvent.fire(new BeforeDeploy(deployableContainer, deploymentDescription));
 
-            if(deploymentDescription.isArchiveDeployment())
+            try
             {
-               protocolMetadata.set(deployableContainer.deploy(
-                     deploymentDescription.getTestableArchive() != null ? deploymentDescription.getTestableArchive():deploymentDescription.getArchive()));
+               if(deploymentDescription.isArchiveDeployment())
+               {
+                  protocolMetadata.set(deployableContainer.deploy(
+                        deploymentDescription.getTestableArchive() != null ? deploymentDescription.getTestableArchive():deploymentDescription.getArchive()));
+               }
+               else
+               {
+                  deployableContainer.deploy(deploymentDescription.getDescriptor());
+               }
+               deployment.deployed();
             }
-            else
+            catch (Exception e) 
             {
-               deployableContainer.deploy(deploymentDescription.getDescriptor());
+               deployment.deployedWithError(e);
+               throw e;
             }
             
             deployEvent.fire(new AfterDeploy(deployableContainer, deploymentDescription));
@@ -167,31 +176,38 @@ public class ContainerDeployController
          @Override
          public Void call() throws Exception
          {
-            System.out.println("undeply: " + event.getContainer().getName() + " -> " + event.getDeployment().getDescription().getName());
             DeployableContainer<?> deployableContainer = event.getDeployableContainer();
             Deployment deployment = event.getDeployment();
             DeploymentDescription description = deployment.getDescription();
             
             deployEvent.fire(new BeforeUnDeploy(deployableContainer, description));
 
-            if(deployment.getDescription().isArchiveDeployment())
+            try
             {
-               try
+               
+               if(deployment.getDescription().isArchiveDeployment())
                {
-                  deployableContainer.undeploy(
-                        description.getTestableArchive() != null ? description.getTestableArchive():description.getArchive());
-               }
-               catch (Exception e) 
-               {
-                  if(!deployment.hasDeploymentError())
+                  try
                   {
-                     throw e;
+                     deployableContainer.undeploy(
+                           description.getTestableArchive() != null ? description.getTestableArchive():description.getArchive());
+                  }
+                  catch (Exception e) 
+                  {
+                     if(!deployment.hasDeploymentError())
+                     {
+                        throw e;
+                     }
                   }
                }
+               else
+               {
+                  deployableContainer.undeploy(description.getDescriptor());
+               }
             }
-            else
+            finally
             {
-               deployableContainer.undeploy(description.getDescriptor());
+               deployment.undeployed();
             }
             
             deployEvent.fire(new AfterUnDeploy(deployableContainer, description));

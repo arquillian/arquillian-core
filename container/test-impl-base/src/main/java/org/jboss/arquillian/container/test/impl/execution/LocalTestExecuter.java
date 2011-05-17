@@ -46,9 +46,6 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
  */
 public class LocalTestExecuter 
 {
-   @Inject
-   private Instance<Injector> injector;
-
    @Inject 
    private Instance<ServiceLoader> serviceLoader;
    
@@ -94,7 +91,6 @@ public class LocalTestExecuter
       }
       for (TestEnricher enricher : enrichers)
       {
-         injector.get().inject(enricher);
          mergeValues(values, enricher.resolve(method));
       }
       return values;

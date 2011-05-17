@@ -21,14 +21,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
 import javax.management.ObjectName;
 
 import org.jboss.arquillian.spi.TestResult;
 import org.jboss.arquillian.spi.TestResult.Status;
 import org.jboss.arquillian.spi.TestRunner;
+import org.jboss.arquillian.spi.command.Command;
 import org.jboss.arquillian.spi.util.TestRunners;
 import org.jboss.logging.Logger;
 
@@ -37,11 +42,23 @@ import org.jboss.logging.Logger;
  *
  * @author thomas.diesler@jboss.com
  */
-public class JMXTestRunner implements JMXTestRunnerMBean
+public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean 
 {
    // Provide logging
    private static Logger log = Logger.getLogger(JMXTestRunner.class);
+  
+   // package shared MBeanServer with JMXCommandService
+   static MBeanServer localMBeanServer; 
+   
+   private ConcurrentHashMap<String, Command<?>> events;
+   private ThreadLocal<String> currentCall;
 
+   // Notification Sequence number
+   private AtomicInteger integer = new AtomicInteger();
+
+   // opens for setting TestRunner to use, used for testing
+   private TestRunner exposedTestRunnerForTest;
+   
    private TestClassLoader testClassLoader;
    
    public interface TestClassLoader
@@ -65,6 +82,8 @@ public class JMXTestRunner implements JMXTestRunnerMBean
             }
          };
       }
+      events = new ConcurrentHashMap<String, Command<?>>();
+      currentCall = new ThreadLocal<String>();
    }
 
    public ObjectName registerMBean(MBeanServer mbeanServer) throws JMException
@@ -72,6 +91,7 @@ public class JMXTestRunner implements JMXTestRunnerMBean
       ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
       mbeanServer.registerMBean(this, oname);
       log.debug("JMXTestRunner registered: " + oname);
+      localMBeanServer = mbeanServer;
       return oname;
    }
 
@@ -83,15 +103,18 @@ public class JMXTestRunner implements JMXTestRunnerMBean
          mbeanServer.unregisterMBean(oname);
          log.debug("JMXTestRunner unregistered: " + oname);
       }
+      localMBeanServer = null;
    }
 
    public TestResult runTestMethodRemote(String className, String methodName)
    {
+      currentCall.set(className+methodName);
       return runTestMethodInternal(className, methodName);
    }
 
    public InputStream runTestMethodEmbedded(String className, String methodName)
    {
+      currentCall.set(className+methodName);
       TestResult result = runTestMethodInternal(className, methodName);
 
       // Marshall the TestResult
@@ -114,7 +137,11 @@ public class JMXTestRunner implements JMXTestRunnerMBean
    {
       try
       {
-         TestRunner runner = TestRunners.getTestRunner(JMXTestRunner.class.getClassLoader());
+         TestRunner runner = exposedTestRunnerForTest;
+         if(runner == null)
+         {
+            runner = TestRunners.getTestRunner(JMXTestRunner.class.getClassLoader());
+         }
          Class<?> testClass = testClassLoader.loadTestClass(className);
          
          TestResult testResult = runner.execute(testClass, methodName);
@@ -124,5 +151,30 @@ public class JMXTestRunner implements JMXTestRunnerMBean
       {
          return new TestResult(Status.FAILED, th);
       }
+   }
+
+   public void setExposedTestRunnerForTest(TestRunner exposedTestRunnerForTest)
+   {
+      this.exposedTestRunnerForTest = exposedTestRunnerForTest;
+   }
+
+   @Override
+   public void send(Command<?> command)
+   {
+      Notification notification = new Notification("arquillian-command", this, integer.incrementAndGet(), currentCall.get());
+      notification.setUserData(Serializer.toByteArray(command));
+      sendNotification(notification);
+   }
+   
+   @Override
+   public Command<?> receive()
+   {
+      return events.get(currentCall.get());
+   }
+
+   @Override
+   public void push(String eventId, byte[] command)
+   {
+      events.put(eventId, Serializer.toObject(Command.class, command));
    }
 }

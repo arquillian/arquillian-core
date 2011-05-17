@@ -107,8 +107,34 @@ public class DeploymentScenario
                }
             }
          }
+         if(managedDeploymentCount() == 1)
+         {
+            for (Deployment deployment : deployments)
+            {
+               if (deployment.getDescription().managed())
+               {
+                  return deployment;
+               }
+            }
+         }
       }
       return null;
+   }
+
+   /**
+    * @return
+    */
+   private int managedDeploymentCount()
+   {
+      int count = 0;
+      for (Deployment deployment : deployments)
+      {
+         if (deployment.getDescription().managed())
+         {
+            count++;
+         }
+      }
+      return count;
    }
 
    private int archiveDeploymentCount()

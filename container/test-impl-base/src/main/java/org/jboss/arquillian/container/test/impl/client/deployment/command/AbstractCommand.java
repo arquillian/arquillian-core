@@ -15,33 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.impl.client.container;
+package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
-import org.jboss.arquillian.api.Deployer;
-import org.jboss.arquillian.container.spi.event.SetupContainers;
-import org.jboss.arquillian.core.api.Injector;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
-import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.api.annotation.Observes;
+import java.io.Serializable;
+
+import org.jboss.arquillian.spi.command.Command;
 
 /**
- * ClientDeployerRegister
+ * AbstractCommand
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClientDeployerCreator
+public abstract class AbstractCommand<T> implements Command<T>, Serializable
 {
-   @Inject @ApplicationScoped
-   private InstanceProducer<Deployer> deployer;
-   
-   @Inject 
-   private Instance<Injector> injector;
+   private static final long serialVersionUID = 1L;
 
-   public void createClientSideDeployer(@Observes SetupContainers event)
+   private T result;
+   private Throwable throwable;
+   
+   public void setResult(T result) 
    {
-      deployer.set(injector.get().inject(new ClientDeployer()));
+      this.result = result;
+   }
+
+   @Override
+   public T getResult()
+   {
+      return result;
+   }
+
+   @Override
+   public void setThrowable(Throwable throwable)
+   {
+      this.throwable = throwable;
+   }
+   
+   /**
+    * @return the throwable
+    */
+   @Override
+   public Throwable getThrowable()
+   {
+      return throwable;
    }
 }

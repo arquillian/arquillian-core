@@ -15,23 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit.container;
+package org.jboss.arquillian.container.test.impl.client;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.core.api.Event;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.spi.command.CommandService;
 
 /**
- * JUnitExtension
+ * LocalCommandService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitContainerExtension implements LoadableExtension
+public class LocalCommandService implements CommandService
 {
+   @Inject
+   private Event<Object> commandEvent;
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.spi.command.CommandService#execute(org.jboss.arquillian.spi.command.Command)
+    */
    @Override
-   public void register(ExtensionBuilder builder)
+   public <T> T execute(Command<T> command)
    {
-      builder.service(AuxiliaryArchiveAppender.class, JUnitDeploymentAppender.class);
+      commandEvent.fire(command);
+      return command.getResult();
    }
 
 }
