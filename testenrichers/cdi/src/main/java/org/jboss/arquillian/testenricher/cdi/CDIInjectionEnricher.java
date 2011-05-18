@@ -83,7 +83,7 @@ public class CDIInjectionEnricher implements TestEnricher
             }
             catch (Exception e)
             {
-               // no-op, move on
+               log.info("CDIEnricher tried to lookup method parameter of type " + parameterTypes[i] + " but caught exception: " + e.getMessage());
             }
          }
       }
