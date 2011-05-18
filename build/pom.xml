@@ -167,8 +167,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <version>2.1</version>
                 <configuration>
-                    <tagBase>https://svn.jboss.org/repos/common/arquillian/tags</tagBase>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
 
