@@ -19,8 +19,9 @@ package org.jboss.arquillian.container.test.impl.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 
 /**
  * A registry holding all found {@link Protocol}s.

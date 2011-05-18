@@ -23,8 +23,8 @@ import org.jboss.arquillian.container.test.impl.execution.AfterLifecycleEventExe
 import org.jboss.arquillian.container.test.impl.execution.BeforeLifecycleEventExecuter;
 import org.jboss.arquillian.container.test.impl.execution.ContainerTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
-import org.jboss.arquillian.spi.TestEnricher;
 import org.jboss.arquillian.test.impl.TestExtension;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * ContainerTestExtension

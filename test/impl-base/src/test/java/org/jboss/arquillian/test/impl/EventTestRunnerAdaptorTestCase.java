@@ -22,17 +22,17 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.core.spi.Manager;
-import org.jboss.arquillian.spi.LifecycleMethodExecutor;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.spi.event.suite.Before;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -100,10 +100,10 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
       verifyNoActiveContext(manager);
       
       adaptor.test(testExecutor);
-      assertEventFired(org.jboss.arquillian.spi.event.suite.Test.class, 1);
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, SuiteContext.class);
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, ClassContext.class);
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, TestContext.class);
+      assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 1);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, SuiteContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ClassContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, TestContext.class);
 
       verifyNoActiveContext(manager);
       

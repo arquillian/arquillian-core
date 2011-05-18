@@ -24,7 +24,7 @@ import java.net.URL;
 
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
-import org.jboss.arquillian.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.junit.After;
 import org.junit.Before;
 import org.mortbay.jetty.Server;

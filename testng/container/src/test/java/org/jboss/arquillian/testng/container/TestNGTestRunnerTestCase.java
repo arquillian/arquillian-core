@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.testng.container;
 
-import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.testng.container.TestNGTestRunner;
 import org.junit.Assert;
 import org.junit.Test;

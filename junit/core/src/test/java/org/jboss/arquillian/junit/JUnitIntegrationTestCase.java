@@ -28,11 +28,11 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.jboss.arquillian.spi.LifecycleMethodExecutor;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.arquillian.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

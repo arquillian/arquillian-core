@@ -27,6 +27,10 @@ import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.event.DeployManagedDeployments;
@@ -37,18 +41,14 @@ import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
 import org.jboss.arquillian.container.test.impl.client.ContainerEventController;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.deployment.TargetDescription;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -149,16 +149,16 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    @Test
    public void shouldInvokeBeforeInContainerDeploymentContext() throws Exception
    {
-      fire(new org.jboss.arquillian.spi.event.suite.Before(this, testMethod()));
+      fire(new org.jboss.arquillian.test.spi.event.suite.Before(this, testMethod()));
       
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Before.class, ContainerContext.class);
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Before.class, DeploymentContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, ContainerContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, DeploymentContext.class);
    }
 
    @Test
    public void shouldInvokeTestInContainerDeploymentContext() throws Exception
    {
-      fire(new org.jboss.arquillian.spi.event.suite.Test(new TestMethodExecutor()
+      fire(new org.jboss.arquillian.test.spi.event.suite.Test(new TestMethodExecutor()
       {
          @Override
          public void invoke(Object... parameters) throws Throwable { }
@@ -176,8 +176,8 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
          }
       }));
       
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, ContainerContext.class);
-      assertEventFiredInContext(org.jboss.arquillian.spi.event.suite.Test.class, DeploymentContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ContainerContext.class);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, DeploymentContext.class);
    }
 
    @Test
@@ -192,7 +192,7 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    @Test @Ignore
    public void shouldEnrichTestInstance() throws Exception
    {
-      fire(new org.jboss.arquillian.spi.event.suite.Before(testClass(), testMethod()));
+      fire(new org.jboss.arquillian.test.spi.event.suite.Before(testClass(), testMethod()));
       
       //assertEventFired(Enrich, count)
    }

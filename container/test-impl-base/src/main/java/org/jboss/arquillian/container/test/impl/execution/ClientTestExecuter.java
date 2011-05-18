@@ -16,7 +16,8 @@
  */
 package org.jboss.arquillian.container.test.impl.execution;
 
-import org.jboss.arquillian.api.RunAsClient;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.impl.execution.event.ExecutionEvent;
 import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
@@ -24,8 +25,7 @@ import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.event.suite.Test;
 
 /**
  * TestExecuter for running on the client side. Can switch between Local and Remote test execution.

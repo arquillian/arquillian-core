@@ -19,19 +19,19 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.util.List;
 
-import org.jboss.arquillian.api.Deployer;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.event.DeployDeployment;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployDeployment;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.deployment.TargetDescription;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;

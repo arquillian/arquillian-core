@@ -20,8 +20,8 @@ import java.io.InputStream;
 
 import javax.management.NotificationBroadcaster;
 
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * An MBean to run test methods in container.

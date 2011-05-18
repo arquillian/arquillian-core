@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
-import org.jboss.arquillian.spi.command.Command;
-import org.jboss.arquillian.spi.command.CommandService;
+import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 
 /**
  * ServletRemoteEventService

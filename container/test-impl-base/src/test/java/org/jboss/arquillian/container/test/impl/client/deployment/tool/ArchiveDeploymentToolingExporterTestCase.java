@@ -19,11 +19,11 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 import java.io.File;
 import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.container.test.impl.client.deployment.tool.ArchiveDeploymentToolingExporter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -19,7 +19,7 @@ package org.jboss.arquillian.junit.container;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.container.JUnitTestRunner;
-import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -17,10 +17,10 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
+import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.protocol.servlet.runner.ServletCommandService;
-import org.jboss.arquillian.spi.client.protocol.Protocol;
-import org.jboss.arquillian.spi.command.CommandService;
 
 /**
  * ServletExtension

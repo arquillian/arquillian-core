@@ -23,12 +23,12 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporter;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.client.deployment.TargetDescription;
-import org.jboss.arquillian.spi.event.container.BeforeDeploy;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

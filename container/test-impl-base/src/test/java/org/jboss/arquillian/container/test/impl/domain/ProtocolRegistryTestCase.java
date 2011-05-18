@@ -20,11 +20,11 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
-import org.jboss.arquillian.spi.client.protocol.Protocol;
-import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
-import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

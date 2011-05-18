@@ -18,10 +18,10 @@ package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.spi.LifecycleMethodExecutor;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;

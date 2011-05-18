@@ -17,14 +17,14 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
-import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 
 /**
  * ClientDeployerRegister

@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
 import org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;

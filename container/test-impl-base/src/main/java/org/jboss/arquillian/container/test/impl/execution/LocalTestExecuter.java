@@ -26,9 +26,9 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
 
 /**

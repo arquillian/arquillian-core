@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.command.CommandService;
 
 /**
  * JMXExtension

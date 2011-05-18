@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.container.spi.context;
 
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.spi.context.IdBoundContext;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
 
 /**
  * ContainerContext

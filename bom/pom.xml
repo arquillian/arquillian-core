@@ -83,11 +83,6 @@
             <!-- Container -->
             <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-container-api</artifactId>
-                <version>${version.arquillian}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-container-spi</artifactId>
                 <version>${version.arquillian}</version>
             </dependency>

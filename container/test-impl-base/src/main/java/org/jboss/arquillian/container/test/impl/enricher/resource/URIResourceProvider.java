@@ -20,7 +20,7 @@ package org.jboss.arquillian.container.test.impl.enricher.resource;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.jboss.arquillian.api.ArquillianResource;
+import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**
  * URIResourceProvider

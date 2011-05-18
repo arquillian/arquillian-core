@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.protocol.servlet.test;
 
+import org.jboss.arquillian.container.test.spi.TestRunner;
+import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.protocol.servlet.runner.ServletCommandService;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestRunner;
-import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * MockTestRunner

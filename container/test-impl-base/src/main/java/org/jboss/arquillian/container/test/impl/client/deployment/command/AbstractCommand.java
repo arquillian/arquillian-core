@@ -19,7 +19,7 @@ package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
 import java.io.Serializable;
 
-import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.Command;
 
 /**
  * AbstractCommand

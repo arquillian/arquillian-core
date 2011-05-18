@@ -17,9 +17,9 @@
  */
 package org.jboss.arquillian.testenricher.resource.client;
 
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
 
 /**

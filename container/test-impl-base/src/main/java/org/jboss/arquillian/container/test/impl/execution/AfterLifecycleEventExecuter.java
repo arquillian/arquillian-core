@@ -17,9 +17,9 @@
 package org.jboss.arquillian.container.test.impl.execution;
 
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.LifecycleEvent;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.LifecycleEvent;
 
 /**
  * Observer that executes the After phases on the test case.

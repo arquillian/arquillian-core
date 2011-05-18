@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.testenricher.initialcontext.client;
 
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.testenricher.initialcontext.InitialContextProducer;
 import org.jboss.arquillian.testenricher.initialcontext.container.InitialContextRemoteExtension;
 import org.jboss.shrinkwrap.api.Archive;

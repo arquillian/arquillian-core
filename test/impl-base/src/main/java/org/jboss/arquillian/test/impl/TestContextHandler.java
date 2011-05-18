@@ -21,12 +21,12 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.spi.event.suite.ClassEvent;
-import org.jboss.arquillian.spi.event.suite.SuiteEvent;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
+import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
  * TestContextHandler

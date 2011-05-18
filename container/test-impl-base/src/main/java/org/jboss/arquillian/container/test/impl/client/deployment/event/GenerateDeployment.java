@@ -18,7 +18,7 @@
 package org.jboss.arquillian.container.test.impl.client.deployment.event;
 
 import org.jboss.arquillian.core.spi.event.Event;
-import org.jboss.arquillian.spi.TestClass;
+import org.jboss.arquillian.test.spi.TestClass;
 
 /**
  * GenerateDeployment

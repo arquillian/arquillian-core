@@ -17,10 +17,10 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
-import org.jboss.arquillian.spi.client.protocol.Protocol;
-import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.spi.command.CommandCallback;
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 
 /**

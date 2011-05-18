@@ -26,11 +26,11 @@ import java.net.URLConnection;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.command.Command;
-import org.jboss.arquillian.spi.command.CommandCallback;
+import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
+import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.CommandCallback;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * ServletMethodExecutor

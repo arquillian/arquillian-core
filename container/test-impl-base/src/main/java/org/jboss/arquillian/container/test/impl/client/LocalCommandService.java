@@ -17,10 +17,10 @@
  */
 package org.jboss.arquillian.container.test.impl.client;
 
+import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.spi.command.Command;
-import org.jboss.arquillian.spi.command.CommandService;
 
 /**
  * LocalCommandService

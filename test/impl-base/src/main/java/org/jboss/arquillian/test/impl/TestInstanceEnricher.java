@@ -23,11 +23,11 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.event.enrichment.AfterEnrichment;
-import org.jboss.arquillian.spi.event.enrichment.BeforeEnrichment;
-import org.jboss.arquillian.spi.event.enrichment.EnrichmentEvent;
-import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.event.enrichment.AfterEnrichment;
+import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
+import org.jboss.arquillian.test.spi.event.enrichment.EnrichmentEvent;
+import org.jboss.arquillian.test.spi.event.suite.Before;
 
 /**
  * A Handler for enriching the Test instance.<br/>

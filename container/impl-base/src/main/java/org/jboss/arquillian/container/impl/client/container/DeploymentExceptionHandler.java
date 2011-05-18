@@ -19,16 +19,16 @@ package org.jboss.arquillian.container.impl.client.container;
 
 import java.util.Collection;
 
+import org.jboss.arquillian.container.spi.client.container.DeploymentException;
+import org.jboss.arquillian.container.spi.client.container.DeploymentExceptionTransformer;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.event.DeployDeployment;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.client.container.DeploymentException;
-import org.jboss.arquillian.spi.client.container.DeploymentExceptionTransformer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
 
 /**
  * A exception handler that attempt to Veto a Exception during deployment if {@link ShouldThrowException} is defined for the {@link Deployment}. 

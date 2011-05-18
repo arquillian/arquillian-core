@@ -19,11 +19,11 @@ package org.jboss.arquillian.container.test.impl.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.impl.MapObject;
+import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.spi.client.protocol.Protocol;
-import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
-import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
 
 
 /**

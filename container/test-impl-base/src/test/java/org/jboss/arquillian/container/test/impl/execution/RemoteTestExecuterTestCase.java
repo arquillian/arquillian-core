@@ -23,11 +23,11 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
+import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
-import org.jboss.arquillian.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -78,7 +78,7 @@ public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase
             getTestMethod("shouldInvokeContainerMethodExecutor"));
 
       bind(ClassScoped.class, ContainerMethodExecutor.class, executor);
-      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
+      org.jboss.arquillian.test.spi.event.suite.Test event = new org.jboss.arquillian.test.spi.event.suite.Test(testExecutor);
       fire(event);
 
       Mockito.verify(executor).invoke(testExecutor);
@@ -95,7 +95,7 @@ public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase
 
       bind(ClassScoped.class, ContainerMethodExecutor.class, executor);
       
-      org.jboss.arquillian.spi.event.suite.Test event = new org.jboss.arquillian.spi.event.suite.Test(testExecutor);
+      org.jboss.arquillian.test.spi.event.suite.Test event = new org.jboss.arquillian.test.spi.event.suite.Test(testExecutor);
       fire(event);
       
       Assert.assertEquals(

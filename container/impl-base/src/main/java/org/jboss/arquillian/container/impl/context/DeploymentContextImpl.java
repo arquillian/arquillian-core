@@ -18,12 +18,12 @@ package org.jboss.arquillian.container.impl.context;
 
 import java.lang.annotation.Annotation;
 
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
 
 /**
  * ContainerContext

@@ -26,8 +26,8 @@ import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEv
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

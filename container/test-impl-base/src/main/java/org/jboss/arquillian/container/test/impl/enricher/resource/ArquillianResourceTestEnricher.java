@@ -28,12 +28,12 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import org.jboss.arquillian.api.ArquillianResource;
-import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * ArquillianTestEnricher

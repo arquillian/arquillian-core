@@ -18,7 +18,7 @@
 package org.jboss.arquillian.container.spi.event;
 
 import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 
 /**
  * DeployToContainer

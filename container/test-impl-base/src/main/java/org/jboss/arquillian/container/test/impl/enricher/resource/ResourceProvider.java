@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
-import org.jboss.arquillian.api.ArquillianResource;
+import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**
  * ResourceProvider

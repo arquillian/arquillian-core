@@ -38,7 +38,7 @@ public class JUnitDeploymentAppenderTestCase
       
       Assert.assertTrue(
             "Should have added Extension",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.spi.TestRunner")));
+            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
       
       Assert.assertTrue(
             "Should have added TestRunner Impl",

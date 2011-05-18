@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.jmx.test;
 
+import org.jboss.arquillian.container.test.spi.TestRunner;
+import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.protocol.jmx.JMXCommandService;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestRunner;
-import org.jboss.arquillian.spi.command.Command;
+import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * MockTestRunner

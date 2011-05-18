@@ -22,28 +22,28 @@ import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
 import org.jboss.arquillian.container.spi.event.DeployDeployment;
 import org.jboss.arquillian.container.spi.event.DeployManagedDeployments;
 import org.jboss.arquillian.container.spi.event.DeploymentEvent;
 import org.jboss.arquillian.container.spi.event.UnDeployDeployment;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
+import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
+import org.jboss.arquillian.container.spi.event.container.AfterUnDeploy;
+import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
+import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
+import org.jboss.arquillian.container.spi.event.container.DeployerEvent;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.spi.event.container.AfterDeploy;
-import org.jboss.arquillian.spi.event.container.AfterUnDeploy;
-import org.jboss.arquillian.spi.event.container.BeforeDeploy;
-import org.jboss.arquillian.spi.event.container.BeforeUnDeploy;
-import org.jboss.arquillian.spi.event.container.DeployerEvent;
 
 /**
  * Controller for handling all Deployment related operations. <br/>

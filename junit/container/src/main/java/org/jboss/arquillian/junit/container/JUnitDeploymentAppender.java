@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.junit.container;
 
+import org.jboss.arquillian.container.test.spi.TestRunner;
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.spi.TestRunner;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
-import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 
 /**
  * JMXProtocolConfiguration

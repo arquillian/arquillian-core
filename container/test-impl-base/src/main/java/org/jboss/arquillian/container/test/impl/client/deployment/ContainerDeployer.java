@@ -20,14 +20,14 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.DeployDeploymentCommand;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.GetDeploymentCommand;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.UnDeployDeploymentCommand;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.command.CommandService;
 
 /**
  * ContainerDeployer

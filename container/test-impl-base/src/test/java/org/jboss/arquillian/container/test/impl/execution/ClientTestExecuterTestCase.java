@@ -23,14 +23,14 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.jboss.arquillian.api.RunAsClient;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
-import org.jboss.arquillian.spi.TestMethodExecutor;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -106,13 +106,13 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
       assertEventFired(LocalExecutionEvent.class, 1);
    }
 
-   private org.jboss.arquillian.spi.event.suite.Test test(String testMethodName, Object obj) throws Exception
+   private org.jboss.arquillian.test.spi.event.suite.Test test(String testMethodName, Object obj) throws Exception
    {
       TestMethodExecutor executor = mock(TestMethodExecutor.class);
       when(executor.getInstance()).thenReturn(obj);
       when(executor.getMethod()).thenReturn(method(testMethodName));
 
-      return new org.jboss.arquillian.spi.event.suite.Test(
+      return new org.jboss.arquillian.test.spi.event.suite.Test(
             executor
       );
    }

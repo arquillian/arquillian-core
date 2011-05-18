@@ -19,13 +19,13 @@ package org.jboss.arquillian.container.impl;
 import junit.framework.Assert;
 
 import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
+import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.ConfigurationException;
-import org.jboss.arquillian.spi.client.container.ContainerConfiguration;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.client.deployment.TargetDescription;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

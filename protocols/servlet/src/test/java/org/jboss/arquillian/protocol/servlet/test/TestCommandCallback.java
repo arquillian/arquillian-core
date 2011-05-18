@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.test;
 
-import org.jboss.arquillian.spi.command.Command;
-import org.jboss.arquillian.spi.command.CommandCallback;
+import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 /**
  * TestRemoteCommandCallback

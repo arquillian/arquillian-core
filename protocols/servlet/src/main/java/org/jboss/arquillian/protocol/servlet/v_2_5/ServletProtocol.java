@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.protocol.servlet.BaseServletProtocol;
-import org.jboss.arquillian.spi.client.deployment.DeploymentPackager;
 
 /**
  * ServletProtocol

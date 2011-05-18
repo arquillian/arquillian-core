@@ -17,7 +17,6 @@
 package org.jboss.arquillian.test.spi;
 
 import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.jboss.arquillian.spi.TestRunnerAdaptor;
 
 /**
  * DeployableTestBuilder

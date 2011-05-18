@@ -24,7 +24,7 @@ import org.jboss.arquillian.container.spi.event.StopManagedContainers;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Test;
 import org.junit.runner.RunWith;

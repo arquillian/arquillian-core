@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestRunner;
+import org.jboss.arquillian.container.test.spi.TestRunner;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.testng.TestNG;
 import org.testng.internal.AnnotationTypeEnum;
 import org.testng.xml.XmlClass;

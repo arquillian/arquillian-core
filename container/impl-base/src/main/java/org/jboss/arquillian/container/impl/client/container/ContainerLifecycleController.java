@@ -19,6 +19,7 @@ package org.jboss.arquillian.container.impl.client.container;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
@@ -26,20 +27,19 @@ import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.container.spi.event.StartManagedContainers;
 import org.jboss.arquillian.container.spi.event.StopContainer;
 import org.jboss.arquillian.container.spi.event.StopManagedContainers;
+import org.jboss.arquillian.container.spi.event.container.AfterSetup;
+import org.jboss.arquillian.container.spi.event.container.AfterStart;
+import org.jboss.arquillian.container.spi.event.container.AfterStop;
+import org.jboss.arquillian.container.spi.event.container.BeforeSetup;
+import org.jboss.arquillian.container.spi.event.container.BeforeStart;
+import org.jboss.arquillian.container.spi.event.container.BeforeStop;
+import org.jboss.arquillian.container.spi.event.container.ContainerEvent;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.spi.event.container.AfterSetup;
-import org.jboss.arquillian.spi.event.container.AfterStart;
-import org.jboss.arquillian.spi.event.container.AfterStop;
-import org.jboss.arquillian.spi.event.container.BeforeSetup;
-import org.jboss.arquillian.spi.event.container.BeforeStart;
-import org.jboss.arquillian.spi.event.container.BeforeStop;
-import org.jboss.arquillian.spi.event.container.ContainerEvent;
 
 /**
  * ContainerController

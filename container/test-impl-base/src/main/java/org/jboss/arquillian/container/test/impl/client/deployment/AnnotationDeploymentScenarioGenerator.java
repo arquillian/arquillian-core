@@ -21,16 +21,16 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.OverProtocol;
-import org.jboss.arquillian.api.ShouldThrowException;
-import org.jboss.arquillian.api.TargetsContainer;
-import org.jboss.arquillian.spi.TestClass;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenarioGenerator;
-import org.jboss.arquillian.spi.client.deployment.TargetDescription;
-import org.jboss.arquillian.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OverProtocol;
+import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
+import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 

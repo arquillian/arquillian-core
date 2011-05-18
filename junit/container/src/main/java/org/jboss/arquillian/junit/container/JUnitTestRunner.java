@@ -19,10 +19,10 @@ package org.jboss.arquillian.junit.container;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
-import org.jboss.arquillian.spi.TestRunner;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;

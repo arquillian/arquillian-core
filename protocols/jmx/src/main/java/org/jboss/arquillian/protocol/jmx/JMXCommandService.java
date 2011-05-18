@@ -20,8 +20,8 @@ package org.jboss.arquillian.protocol.jmx;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.jboss.arquillian.spi.command.Command;
-import org.jboss.arquillian.spi.command.CommandService;
+import org.jboss.arquillian.container.test.spi.command.Command;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 
 /**
  * JMXCommandService

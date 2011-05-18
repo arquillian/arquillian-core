@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 
 /**
  * OperationResult

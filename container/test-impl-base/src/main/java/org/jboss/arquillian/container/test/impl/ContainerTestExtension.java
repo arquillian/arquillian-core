@@ -31,12 +31,12 @@ import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianReso
 import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.spi.client.protocol.Protocol;
-import org.jboss.arquillian.spi.command.CommandService;
 import org.jboss.arquillian.test.impl.TestInstanceEnricher;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * ContainerTestExtension

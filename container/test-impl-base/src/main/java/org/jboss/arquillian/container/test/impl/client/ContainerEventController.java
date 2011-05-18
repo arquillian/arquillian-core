@@ -19,9 +19,11 @@ package org.jboss.arquillian.container.test.impl.client;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.api.OperateOnDeployment;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentTargetDescription;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.event.ContainerMultiControlEvent;
@@ -30,23 +32,21 @@ import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.StartManagedContainers;
 import org.jboss.arquillian.container.spi.event.StopManagedContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.spi.client.deployment.Deployment;
-import org.jboss.arquillian.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.spi.client.deployment.DeploymentTargetDescription;
-import org.jboss.arquillian.spi.event.suite.After;
-import org.jboss.arquillian.spi.event.suite.AfterClass;
-import org.jboss.arquillian.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.spi.event.suite.Before;
-import org.jboss.arquillian.spi.event.suite.BeforeClass;
-import org.jboss.arquillian.spi.event.suite.BeforeSuite;
-import org.jboss.arquillian.spi.event.suite.Test;
-import org.jboss.arquillian.spi.event.suite.TestEvent;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
  * Event dispatcher between Test lifecyle events and Container control events.

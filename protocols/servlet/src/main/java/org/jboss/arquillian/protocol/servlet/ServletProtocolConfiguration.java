@@ -18,7 +18,7 @@ package org.jboss.arquillian.protocol.servlet;
 
 import java.net.URI;
 
-import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 
 /**
  * ServletProtocolConfiguration

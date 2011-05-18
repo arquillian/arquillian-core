@@ -25,7 +25,7 @@
 
   <modules>
     <!-- Core Container -->
-    <module>api</module>
+<!--    <module>api</module> -->
     <module>spi</module>
     <module>impl-base</module>
 

@@ -27,7 +27,7 @@ import javax.naming.NamingException;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * Enricher that provide EJB class and setter method injection. 

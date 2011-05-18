@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.container.test.impl.client.protocol.local;
 
-import org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 
 /**
  * LocalProtocolConfiguration

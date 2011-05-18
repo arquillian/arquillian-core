@@ -21,8 +21,8 @@ import java.net.URL;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
-import org.jboss.arquillian.spi.TestResult;
-import org.jboss.arquillian.spi.TestResult.Status;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Assert;
 import org.junit.Test;
 

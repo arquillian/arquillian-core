@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
-import org.jboss.arquillian.api.Deployer;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;

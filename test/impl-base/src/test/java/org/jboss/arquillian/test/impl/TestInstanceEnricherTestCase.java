@@ -20,11 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.spi.TestEnricher;
-import org.jboss.arquillian.spi.event.enrichment.AfterEnrichment;
-import org.jboss.arquillian.spi.event.enrichment.BeforeEnrichment;
-import org.jboss.arquillian.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.test.spi.event.enrichment.AfterEnrichment;
+import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
+import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;

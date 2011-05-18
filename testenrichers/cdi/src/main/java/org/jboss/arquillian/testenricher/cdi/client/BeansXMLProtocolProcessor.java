@@ -19,8 +19,8 @@ package org.jboss.arquillian.testenricher.cdi.client;
 
 import java.util.Map;
 
-import org.jboss.arquillian.spi.TestDeployment;
-import org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor;
+import org.jboss.arquillian.container.test.spi.TestDeployment;
+import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filters;

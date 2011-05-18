@@ -23,12 +23,12 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.arquillian.api.Deployer;
+import org.jboss.arquillian.container.test.api.Deployer;
+import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.spi.command.Command;
 
 /**
  * DeployDeploymentObserver
