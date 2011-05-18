@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import static org.jboss.arquillian.protocol.servlet.ServletUtil.APPLICATION_XML_PATH;
+import static org.jboss.arquillian.protocol.servlet.ServletUtil.WEB_XML_PATH;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -27,7 +30,6 @@ import org.jboss.arquillian.protocol.servlet.Processor;
 import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -49,6 +51,7 @@ import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
  */
 public class ServletProtocolDeploymentPackager implements DeploymentPackager
 {
+   
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
     */
@@ -82,12 +85,13 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
 
    private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, WebArchive protocol, Processor processor) 
    {
-      ArchivePath webXmlPath = ArchivePaths.create("WEB-INF/web.xml");
-      if(applicationArchive.contains(webXmlPath))
+      if(applicationArchive.contains(WEB_XML_PATH))
       {
          WebAppDescriptor applicationWebXml = Descriptors.importAs(WebAppDescriptor.class).from(
-               applicationArchive.get(webXmlPath).getAsset().openStream());
+               applicationArchive.get(WEB_XML_PATH).getAsset().openStream());
          
+         // SHRINKWRAP-187, to eager on not allowing overrides, delete it first
+         applicationArchive.delete(WEB_XML_PATH);
          applicationArchive.setWebXML(
                new StringAsset(
                      mergeWithDescriptor(applicationWebXml).exportAsString()));
@@ -140,18 +144,23 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       }
       else
       {
+         // SHRINKWRAP-187, to eager on not allowing overrides, delete it first
+         protocol.delete(WEB_XML_PATH);
          applicationArchive
                .addAsModule(
                      protocol.setWebXML(
                            new StringAsset(createNewDescriptor().exportAsString())));
          
-         ArchivePath applicationXmlPath = ArchivePaths.create("META-INF/application.xml");
-         if(applicationArchive.contains(applicationXmlPath))
+         
+         if(applicationArchive.contains(APPLICATION_XML_PATH))
          {
             ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
-                  applicationArchive.get(applicationXmlPath).getAsset().openStream());
+                  applicationArchive.get(APPLICATION_XML_PATH).getAsset().openStream());
             
             applicationXml.webModule(protocol.getName(), protocol.getName());
+            
+            // SHRINKWRAP-187, to eager on not allowing overrides, delete it first
+            applicationArchive.delete(APPLICATION_XML_PATH);
             applicationArchive.setApplicationXML(
                   new StringAsset(applicationXml.exportAsString()));
          }

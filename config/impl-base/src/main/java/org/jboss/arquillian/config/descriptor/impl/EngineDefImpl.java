@@ -18,9 +18,9 @@
 package org.jboss.arquillian.config.descriptor.impl;
 
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
-import org.jboss.shrinkwrap.descriptor.api.Node;
 import org.jboss.shrinkwrap.descriptor.api.query.Queries;
 import org.jboss.shrinkwrap.descriptor.api.query.Query;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * EngineDefImpl

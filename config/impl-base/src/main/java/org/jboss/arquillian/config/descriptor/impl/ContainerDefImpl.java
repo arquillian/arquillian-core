@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
-import org.jboss.shrinkwrap.descriptor.api.Node;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * ContainerDefImpl

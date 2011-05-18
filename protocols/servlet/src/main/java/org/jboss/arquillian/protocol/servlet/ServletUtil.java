@@ -22,6 +22,8 @@ import java.net.URI;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 
 /**
  * ServletUtil
@@ -31,6 +33,9 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
  */
 public final class ServletUtil
 {
+   public static final ArchivePath WEB_XML_PATH = ArchivePaths.create("WEB-INF/web.xml");
+   public static final ArchivePath APPLICATION_XML_PATH = ArchivePaths.create("META-INF/application.xml");   
+   
    private ServletUtil() {}
    
    public static URI determineBaseURI(ServletProtocolConfiguration config, ProtocolMetaData metaData, String servletName)

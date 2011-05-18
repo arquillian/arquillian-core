@@ -25,10 +25,10 @@ import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
-import org.jboss.shrinkwrap.descriptor.api.Node;
 import org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase;
 import org.jboss.shrinkwrap.descriptor.impl.base.XMLExporter;
 import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * ArquillianDescriptor

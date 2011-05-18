@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_3;
 
+import static org.jboss.arquillian.protocol.servlet.ServletUtil.APPLICATION_XML_PATH;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -26,7 +28,6 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchive
 import org.jboss.arquillian.protocol.servlet.Processor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -132,13 +133,15 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          applicationArchive
                .addAsModule(wrappedWar);
          
-         ArchivePath applicationXmlPath = ArchivePaths.create("META-INF/application.xml");
-         if(applicationArchive.contains(applicationXmlPath))
+         if(applicationArchive.contains(APPLICATION_XML_PATH))
          {
             ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
-                  applicationArchive.get(applicationXmlPath).getAsset().openStream());
+                  applicationArchive.get(APPLICATION_XML_PATH).getAsset().openStream());
             
             applicationXml.webModule(wrappedWar.getName(), wrappedWar.getName());
+            
+            // SHRINKWRAP-187, to eager on not allowing overrides, delete it first
+            applicationArchive.delete(APPLICATION_XML_PATH);
             applicationArchive.setApplicationXML(
                   new StringAsset(applicationXml.exportAsString()));
          }

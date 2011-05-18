@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
-import org.jboss.shrinkwrap.descriptor.api.Node;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * ExtensionDefImpl

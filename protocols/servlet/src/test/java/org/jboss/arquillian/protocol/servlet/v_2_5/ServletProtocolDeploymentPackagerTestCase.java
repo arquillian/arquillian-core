@@ -29,6 +29,7 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -118,7 +119,7 @@ public class ServletProtocolDeploymentPackagerTestCase
             "verify that the ServletTestRunner was added to the archive",
             archive.contains("/WEB-INF/classes/org/jboss/arquillian/protocol/servlet/runner/ServletTestRunner.class"));
 
-
+      System.out.println(archive.toString(Formatters.VERBOSE));
       String webXmlContent = TestUtil.convertToString(archive.get("WEB-INF/web.xml").getAsset().openStream());
       Assert.assertTrue(
             "verify that the ServletTestRunner servlet was added to the web.xml",

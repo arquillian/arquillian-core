@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
-import org.jboss.shrinkwrap.descriptor.api.Node;
+import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 /**
  * ProtocolDefImpl

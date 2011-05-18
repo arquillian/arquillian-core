@@ -23,8 +23,8 @@
 
     <properties>
         <version.arquillian>${project.version}</version.arquillian>
-        <version.shrinkwrap_shrinkwrap>1.0.0-alpha-12</version.shrinkwrap_shrinkwrap>
-        <version.shrinkwrap_descriptors>0.1.4</version.shrinkwrap_descriptors>
+        <version.shrinkwrap_shrinkwrap>1.0.0-beta-2</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
     </properties>
 
     <dependencyManagement>
@@ -214,6 +214,11 @@
             <dependency>
                 <groupId>org.jboss.shrinkwrap.descriptors</groupId>
                 <artifactId>shrinkwrap-descriptors-api</artifactId>
+                <version>${version.shrinkwrap_descriptors}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+                <artifactId>shrinkwrap-descriptors-impl</artifactId>
                 <version>${version.shrinkwrap_descriptors}</version>
             </dependency>
 
