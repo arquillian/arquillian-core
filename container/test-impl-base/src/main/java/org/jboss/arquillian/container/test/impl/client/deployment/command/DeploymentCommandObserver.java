@@ -43,7 +43,8 @@ public class DeploymentCommandObserver
    @Inject
    private Instance<Deployer> deployerInst;
    
-   public void onException(@Observes EventContext<Command<?>> event)
+   @SuppressWarnings("rawtypes") // Generics not supported fully by core
+   public void onException(@Observes EventContext<Command> event)
    {
       try
       {

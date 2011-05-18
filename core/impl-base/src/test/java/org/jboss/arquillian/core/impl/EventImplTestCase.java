@@ -66,7 +66,7 @@ public class EventImplTestCase
       }
       
       @SuppressWarnings("unused")
-      public void shouldObserve(@Observes EventContext<Command<?>> event)
+      public void shouldObserve(@Observes EventContext<Command> event)
       {
          observerWasCalled = true;
          event.proceed();
