@@ -1,0 +1,7 @@
+dependencies {
+   compile project(':core:api')
+   compile project(':core:spi')
+   compile project(':config:api')
+
+   compile libraries.shrinkwrap_descriptors_impl
+}

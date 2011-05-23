@@ -1,0 +1,5 @@
+dependencies {
+   compile project(':test:spi')
+   compile project(':container:test-spi')
+
+}

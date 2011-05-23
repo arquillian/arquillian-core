@@ -1,0 +1,83 @@
+description: 'JUnit Implementation for the Arquillian Project'
+
+dependencies { 
+   compile project(':test:spi')
+
+   provided libraries.junit
+
+   testCompile project(':core:impl-base')
+   testCompile project(':test:impl-base')
+   testCompile libraries.mockito
+}
+
+test {
+   excludes = ['**/JUnitIntegrationTestCase$ArquillianClass1.class']
+}
+
+/* future v.
+testWith 'junit:junit' {
+   versionrange '4.0', '4.7'
+}
+*/
+
+testWith 'junit:junit', usingVersion('junit:junit', /* >= */ '4.0')
+
+// create a new test tasks for each version changing the runtime classpath 
+def void testWith(String artifactName, String... versions) {
+   versions.each { version ->
+      
+      def String testConfigName = 'testDeps_' + version
+      def String testTaskName = 'test_' + version
+      def String artifact = artifactName + ':' + version
+      
+      configurations.add(testConfigName) {
+         description = 'Integration Test Classpath for ' + artifact
+         extendsFrom configurations.getByName('testRuntime'), configurations.getByName('testCompile')
+      }
+      
+      dependencies.add(testConfigName, artifact) { dep ->
+         dep.setForce(true)
+      }
+   
+      tasks.add(testTaskName, Test).configure  {
+         dependsOn(test)
+         description = 'Runs the unit tests using ' + artifact
+         group = 'verification'
+         excludes = test.excludes
+         includes = test.includes
+         ignoreFailures = true
+         logging.captureStandardOutput(LogLevel.INFO)
+         testReportDir = file(project.testReportDir.getPath() + '_' + version); // report/tests_version
+         testResultsDir = file(project.testResultsDir.getPath() + '_' + version); // test-results_version
+         classpath = configurations.getByName(testConfigName) + sourceSets.main.classes + sourceSets.test.classes
+      }
+
+      tasks.check.dependsOn tasks.getByName(testTaskName)
+   }
+}
+
+// fetch all versions in maven repo for given artifact starting with minVersion
+def String[] usingVersion(String artifact, String minVersion) {
+   String url = 'http://repo1.maven.org/maven2/' + artifact.replaceAll(':', '/') + '/maven-metadata.xml'
+   
+   def List<String> versions = new ArrayList<String>()
+   def GradleVersion min = GradleVersion.version(minVersion)
+   
+   HttpURLConnection connection
+   try {
+      connection = new URL(url).openConnection()
+      connection.requestMethod = "GET"
+      
+      def metadata = new XmlSlurper().parse(connection.inputStream)
+      metadata.versioning.versions.version.each { version ->
+         def String foundVersion = version.text()
+         if(GradleVersion.version(foundVersion).compareTo(min) >= 0)
+         {
+            versions += foundVersion
+         }
+      }
+   } finally {
+      connection?.disconnect()
+   }
+   return versions.toArray(new String[0])
+}

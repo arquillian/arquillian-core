@@ -1,0 +1,11 @@
+dependencies {
+   compile project(':test:spi')
+   compile project(':container:test-spi')
+   
+   provided libraries.shrinkwrap_impl // should be test, but until SHRINKWRAP-192 is released 
+   provided libraries.cdi_api 
+   
+   testCompile libraries.weld
+   testRuntime libraries.slf4j_simple
+   testRuntime libraries.el_api
+}

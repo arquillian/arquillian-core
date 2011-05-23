@@ -1,0 +1,10 @@
+dependencies {
+   compile project(':core:spi')
+   compile project(':container:test-spi')
+   compile libraries.shrinkwrap_api
+   compile libraries.shrinkwrap_impl // original test scope, but until SHRINKWRAP-192 is released we rely on impl details 
+   
+   provided libraries.servlet_api
+   
+   testCompile libraries.jetty
+}

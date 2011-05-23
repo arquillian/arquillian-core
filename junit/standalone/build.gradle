@@ -1,0 +1,7 @@
+dependencies {
+   compile project(':junit:core')
+   compile project(':core:impl-base')
+   compile project(':test:impl-base')
+
+   provided libraries.junit
+}

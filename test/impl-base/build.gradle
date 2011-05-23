@@ -1,0 +1,7 @@
+dependencies {
+   compile( project(':test:api'), project(':test:spi') )
+   compile( libraries.shrinkwrap_api )
+   
+   testCompile( project(':core:impl-base') )
+   testCompile( libraries.mockito )
+}

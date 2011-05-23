@@ -1,0 +1,15 @@
+dependencies {
+   compile project(':testng:core')
+   compile project(':test:api')
+   compile project(':test:spi')
+   compile project(':container:test-api')
+   compile project(':container:test-spi')
+   compile project(':core:impl-base')
+   compile project(':test:impl-base')
+   compile project(':container:impl-base')
+   compile project(':container:test-impl-base')
+   compile libraries.shrinkwrap_impl
+   
+   provided libraries.testng
+   
+}

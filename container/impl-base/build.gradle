@@ -1,0 +1,18 @@
+dependencies {
+   compile project(':core:api')
+   compile project(':core:spi')
+   compile project(':config:api')
+   compile project(':config:impl-base') // ILLEGAL DEPENDENCY, fix with new Config module
+   compile project(':container:spi')
+
+   compile libraries.shrinkwrap_descriptors_api
+   compile libraries.shrinkwrap_api
+   compile libraries.shrinkwrap_resolver_api
+   compile libraries.shrinkwrap_resolver_maven_api
+
+   testCompile project(':core:impl-base')
+   testCompile libraries.mockito
+   
+   testRuntime libraries.shrinkwrap_resolver_maven_impl
+   testRuntime libraries.shrinkwrap_impl
+}

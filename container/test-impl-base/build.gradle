@@ -1,0 +1,14 @@
+dependencies {
+   compile project(':test:api')
+   compile project(':test:impl-base') // Needed to extend TestExtension and include
+   compile project(':container:spi')
+   compile project(':container:test-api')
+   compile project(':container:test-spi')
+
+   compile libraries.shrinkwrap_impl
+
+   testCompile project(':core:impl-base')
+   testCompile project(':container:impl-base')
+
+   testCompile libraries.mockito
+}

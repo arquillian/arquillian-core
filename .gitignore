@@ -4,6 +4,8 @@
 target/
 test-output/
 transaction.log
+build
+.gradle
 api/.classpath
 api/.project
 api/.settings

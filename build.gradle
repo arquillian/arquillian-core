@@ -1,0 +1,180 @@
+apply plugin: 'eclipse'
+
+allprojects {
+   repositories {
+      mavenCentral()
+      mavenLocal()
+      mavenRepo name: 'jboss-nexus', urls: "http://repository.jboss.org/nexus/content/groups/public/"
+      mavenRepo name: "jboss-snapshots", urls: "http://snapshots.jboss.org/maven2/"
+   }
+}
+
+buildscript {
+   repositories {
+      mavenLocal()
+      mavenRepo name: 'jboss-nexus', urls: "http://repository.jboss.org/nexus/content/groups/public/"
+      mavenRepo name: "jboss-snapshots", urls: "http://snapshots.jboss.org/maven2/"
+   }
+}
+
+shrinkwrapVersion               = '1.0.0-beta-2'
+shrinkwrapDescriptorVersion     = '1.0.0-beta-1'
+
+libraries = [
+   // Testing
+   junit:                                       'junit:junit:4.8.2',
+   testng:                                      'org.testng:testng:5.14.6',
+   
+   // ShrinkWrap
+   shrinkwrap_api: 				                'org.jboss.shrinkwrap:shrinkwrap-api:' + shrinkwrapVersion,
+   shrinkwrap_impl:                             'org.jboss.shrinkwrap:shrinkwrap-impl-base:' + shrinkwrapVersion,
+   shrinkwrap_resolver_api:                     'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api:' + shrinkwrapVersion,
+   shrinkwrap_resolver_maven_api:               'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:' + shrinkwrapVersion,
+   shrinkwrap_resolver_maven_impl:              'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:' + shrinkwrapVersion,
+   shrinkwrap_descriptors_api:	                'org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api:' + shrinkwrapDescriptorVersion,
+   shrinkwrap_descriptors_impl:                 'org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl:' + shrinkwrapDescriptorVersion,
+   
+   // Misc Test Compile/Runtime
+   mockito:                                     'org.mockito:mockito-all:1.8.3',
+   jetty:                                       'org.mortbay.jetty:jetty-embedded:6.1.9',
+   slf4j_simple:                                 'org.slf4j:slf4j-simple:1.5.10',
+   
+   // JBoss
+   jboss_logging:                               'org.jboss.logging:jboss-logging:3.0.0.Beta4',
+   jboss_logmanager:                            'org.jboss.logmanager:jboss-logmanager:1.2.0.CR8',
+   
+   weld:                                        'org.jboss.weld:weld-core:1.1.0.Beta1',
+
+   // EE APIs
+   servlet_api:                                 'jboss.web:servlet-api:3.0.0.alpha-25',
+   ejb_api:                                     'javax.ejb:ejb-api:3.0',
+   cdi_api:                                     'javax.enterprise:cdi-api:1.0',
+   el_api:                                      'javax.el:el-api:2.2'
+   
+]
+
+
+
+def javaProjects() {
+   subprojects.findAll { project -> new File(project.projectDir, 'src/main/java').exists() }
+}
+def javaProjectsWithTest() {
+   subprojects.findAll { project -> new File(project.projectDir, 'src/test/java').exists() }
+}
+
+configure(javaProjects()) { project ->
+    apply plugin: 'java'
+    apply plugin: 'maven'
+ 
+    configurations {
+       provided {
+          description = 'Non-exported compile-time dependencies.'
+       }
+       testCompile.extendsFrom provided
+    }
+    
+    sourceSets.main { compileClasspath += configurations.provided }
+ 
+    defaultTasks 'build'
+    buildDir = "target"
+ 
+    targetCompatibility = 1.5
+    sourceCompatibility = 1.5
+    version = '1.0.0.CR1-SNAPSHOT'
+ 
+    manifest.mainAttributes(
+          provider: 'gradle',
+          'Implementation-Url': 'http://arquillian.org',
+          'Implementation-Version': version,
+          'Implementation-Vendor': 'arquillian.org',
+          'Implementation-Vendor-Id': 'org.jboss.arquillian'
+          )
+
+    def generatedGroupId = project.parent.name.endsWith("s") ? project.parent.name.substring(0, project.parent.name.length()-1):project.parent.name 
+    def generatedArtifactId = generatedGroupId + '-' + project.name
+    
+    group = 'org.jboss.arquillian.' + generatedGroupId
+    
+    // elements used to customize the generated POM used during upload
+    def pomConfig = {
+       //groupId 'org.jboss.arquillian.' + generatedGroupId
+       artifactId 'arquillian-' + generatedArtifactId 
+       url 'http://arquillian.org'
+       organization {
+          name 'JBoss Community'
+          url 'http://arquillian.org'
+       }
+       issueManagement {
+          system 'jira'
+          url 'http://jira.jboss.org/jira/browse/ARQ'
+       }
+       scm {
+          url "http://github.com/arquillian/arquillian-core"
+          connection "scm:git:http://github.com/arquillian/arquillian-core.git"
+          developerConnection "scm:git:git@github.com:arquillian/arquillian-core.git"
+       }
+       licenses {
+          license {
+             name 'Apache License, Version 2.0'
+             url 'http://www.apache.org/licenses/LICENSE-2.0'
+             distribution 'repo'
+          }
+       }
+       developers {
+       }
+    }
+ 
+    basePomConfig = pomConfig
+ 
+    configure(install.repositories.mavenInstaller) {
+       pom.project pomConfig
+    }
+    
+    uploadArchives {
+       /*
+        repositories.mavenDeployer {
+        name = 'jbossDeployer'
+        configuration = configurations.deployerJars
+        pom.project pomConfig
+        repository(id: "jboss-releases-repository", url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/")
+        snapshotRepository(id: "jboss-snapshots-repository", url: "https://repository.jboss.org/nexus/content/repositories/snapshots")
+        }
+        */
+       repositories {
+          flatDir(dirs: file('repos'))
+       }
+    }
+ 
+    task sourcesJar(type: Jar, dependsOn: compileJava) {
+       from sourceSets.main.allSource
+       classifier = 'sources'
+    }
+ 
+ 
+    artifacts {
+       archives sourcesJar
+    }
+    configure(install.repositories.mavenInstaller) { pom.project pomConfig }
+ 
+    uploadArchives.dependsOn sourcesJar
+}
+
+configure(javaProjectsWithTest()) {
+   dependencies {
+      testCompile libraries.junit
+   }
+
+   task testsJar(type: Jar, dependsOn: compileTestJava) {
+      from sourceSets.test.allSource
+      classifier = 'tests'
+   }
+
+   artifacts {
+      archives testsJar
+   }
+   uploadArchives.dependsOn testsJar
+}
+
+dependsOnChildren()
+
+task wrapper(type: Wrapper) { gradleVersion = '1.0-milestone-3' }

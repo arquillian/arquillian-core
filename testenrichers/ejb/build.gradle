@@ -1,0 +1,6 @@
+dependencies {
+   compile project(':test:spi')
+   compile project(':container:test-spi')
+
+   provided libraries.ejb_api
+}

@@ -1,0 +1,5 @@
+dependencies {
+   compile project(':testng:core')
+   compile project(':core:impl-base')
+   compile project(':test:impl-base')
+}

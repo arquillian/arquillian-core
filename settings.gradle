@@ -1,0 +1,42 @@
+include "core:api"
+include "core:spi"
+include "core:impl-base"
+include "config:api"
+include "config:spi"
+include "config:impl-base"
+include "test:api"
+include "test:spi"
+include "test:impl-base"
+include "container:spi"
+include "container:impl-base"
+include "container:test-api"
+include "container:test-spi"
+include "container:test-impl-base"
+include "junit:core"
+include "junit:container"
+include "junit:standalone"
+include "testng:core"
+include "testng:container"
+include "testng:standalone"
+include "protocols:jmx"
+include "protocols:servlet"
+include "testenrichers:ejb"
+include "testenrichers:resource"
+include "testenrichers:cdi"
+include "testenrichers:initialcontext"
+
+def String[] modules = [
+   'core:api'
+]
+
+/*
+modules.each { module ->
+   project = project(file(module.replaceAll(':', '/')))
+
+   def generatedGroupId = project.parent.name.endsWith("s") ? project.parent.name.substring(0, project.parent.name.length()-1):project.parent.name
+   def generatedArtifactId = generatedGroupId + '-' + project.name
+
+   project.name = generatedArtifactId; 
+   println 'Found: ' + project
+}
+*/
