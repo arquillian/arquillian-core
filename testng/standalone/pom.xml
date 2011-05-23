@@ -30,8 +30,8 @@
 
         <!-- org.jboss.arquillian -->
         <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-core</artifactId>
+            <groupId>org.jboss.arquillian.testng</groupId>
+            <artifactId>arquillian-testng-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

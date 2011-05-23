@@ -38,7 +38,7 @@ public class TestNGDeploymentAppenderTestCase
 
       Assert.assertTrue(
             "Should have added TestRunner SPI",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.core.spi.LoadableExtension")));
+            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
       
       Assert.assertTrue(
             "Should have added TestRunner Impl",
