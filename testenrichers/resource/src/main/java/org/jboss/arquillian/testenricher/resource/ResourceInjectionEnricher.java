@@ -42,7 +42,7 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  */
 public class ResourceInjectionEnricher implements TestEnricher
 {
-   private static final String RESOURCE_LOOKUP_PREFIX = "java:/comp/env";
+   private static final String RESOURCE_LOOKUP_PREFIX = "java:comp/env";
    private static final String ANNOTATION_NAME = "javax.annotation.Resource";
    
    
