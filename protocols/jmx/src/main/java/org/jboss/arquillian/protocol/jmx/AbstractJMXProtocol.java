@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
-import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 import org.jboss.arquillian.core.api.Instance;
@@ -31,38 +30,33 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 
 /**
- * AbstractJMXProtocol
- *
+ * JMXProtocol
+ * 
  * @author thomas.diesler@jboss.com
  * @since 21-Apr-2011
  */
-public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfiguration>
-{
-   @Inject @ContainerScoped
-   private Instance<MBeanServerConnection> mbeanServerInst;
+public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfiguration> {
+    
+   @Inject
+    @ContainerScoped
+    private Instance<MBeanServerConnection> mbeanServerInst;
 
-   @Override
-   public abstract DeploymentPackager getPackager();
+    public abstract String getProtocolName();
 
-   public abstract String getProtocolName();
+    @Override
+    public Class<JMXProtocolConfiguration> getProtocolConfigurationClass() {
+        return JMXProtocolConfiguration.class;
+    }
 
-   @Override
-   public Class<JMXProtocolConfiguration> getProtocolConfigurationClass()
-   {
-      return JMXProtocolConfiguration.class;
-   }
+    @Override
+    public ProtocolDescription getDescription() {
+        return new ProtocolDescription(getProtocolName());
+    }
 
-   @Override
-   public ProtocolDescription getDescription()
-   {
-      return new ProtocolDescription(getProtocolName());
-   }
-
-   @Override
-   public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData, CommandCallback callback)
-   {
-      MBeanServerConnection mbeanServer = mbeanServerInst.get();
-      ExecutionType executionType = config.getExecutionType();
-      return new JMXMethodExecutor(mbeanServer, executionType, callback);
-   }
+    @Override
+    public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData, CommandCallback callback) {
+        MBeanServerConnection mbeanServer = mbeanServerInst.get();
+        ExecutionType executionType = config.getExecutionType();
+        return new JMXMethodExecutor(mbeanServer, executionType, callback);
+    }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.jmx.test;
+package org.jboss.arquillian.protocol.jmx;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
@@ -25,36 +25,31 @@ import org.jboss.arquillian.test.spi.TestResult;
  * MockTestRunner
  * 
  * TestRunner that will return what you want for testing
- *
+ * 
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class MockTestRunner implements TestRunner
-{
-   public static TestResult wantedResults;
+public class MockTestRunner implements TestRunner {
+    public static TestResult wantedResults;
 
-   public static Command<?> command;
-   public static Object commandResult;
-   
-   public static void add(TestResult wantedTestResult) 
-   {
-      wantedResults = wantedTestResult;
-   }
-   
-   public TestResult execute(Class<?> testClass, String methodName)
-   {
-      if(command != null)
-      {
-         commandResult = new JMXCommandService().execute(command);
-      }
-      
-      return wantedResults;
-   }
+    public static Command<?> command;
+    public static Object commandResult;
 
-   public static void clear()
-   {
-      wantedResults = null;
-      command = null;
-      commandResult = null;
-   }
+    public static void add(TestResult wantedTestResult) {
+        wantedResults = wantedTestResult;
+    }
+
+    public TestResult execute(Class<?> testClass, String methodName) {
+        if (command != null) {
+            commandResult = new JMXCommandService().execute(command);
+        }
+
+        return wantedResults;
+    }
+
+    public static void clear() {
+        wantedResults = null;
+        command = null;
+        commandResult = null;
+    }
 }

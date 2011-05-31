@@ -32,121 +32,95 @@ import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
+import org.jboss.logging.Logger;
 
 /**
  * JMXMethodExecutor
  *
  * @author thomas.diesler@jboss.com
  */
-public class JMXMethodExecutor implements ContainerMethodExecutor
-{
-   private final MBeanServerConnection mbeanServer;
-   private final ExecutionType executionType;
-   private final CommandCallback callback;
+public class JMXMethodExecutor implements ContainerMethodExecutor {
 
-   public JMXMethodExecutor(MBeanServerConnection mbeanServer, ExecutionType executionType, CommandCallback callbac)
-   {
-      this.mbeanServer = mbeanServer;
-      this.executionType = executionType;
-      this.callback = callbac;
-   }
+    // Provide logging
+    private static Logger log = Logger.getLogger(JMXMethodExecutor.class);
 
-   public TestResult invoke(TestMethodExecutor testMethodExecutor)
-   {
-      if (testMethodExecutor == null)
-         throw new IllegalArgumentException("TestMethodExecutor null");
+    private final MBeanServerConnection mbeanServer;
+    private final ExecutionType executionType;
+    private final CommandCallback callback;
 
-      String testClass = testMethodExecutor.getInstance().getClass().getName();
-      String testMethod = testMethodExecutor.getMethod().getName();
+    public JMXMethodExecutor(MBeanServerConnection mbeanServer, ExecutionType executionType, CommandCallback callbac) {
+        this.mbeanServer = mbeanServer;
+        this.executionType = executionType;
+        this.callback = callbac;
+    }
 
-      NotificationListener commandListener = null;
-      ObjectName objectName = null; 
-      TestResult result = null;
-      try
-      {
-         objectName = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
-         commandListener = new CallbackNotificationListener(objectName);
-         mbeanServer.addNotificationListener(objectName, commandListener, null, null);
+    public TestResult invoke(TestMethodExecutor testMethodExecutor) {
+        if (testMethodExecutor == null)
+            throw new IllegalArgumentException("TestMethodExecutor null");
 
-         //JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
-         if (executionType == ExecutionType.REMOTE)
-         {
-            //result = testRunner.runTestMethodRemote(testClass, testMethod);
-            result = (TestResult)mbeanServer.invoke(
-                  objectName, 
-                  "runTestMethodRemote", 
-                  new Object[] {testClass, testMethod}, 
-                  new String[] {String.class.getName(), String.class.getName()});
-         }
-         else
-         {
-            //InputStream resultStream = testRunner.runTestMethodEmbedded(testClass, testMethod);
-            InputStream resultStream = (InputStream)mbeanServer.invoke(
-                  objectName, 
-                  "runTestMethodEmbedded", 
-                  new Object[] {testClass, testMethod}, 
-                  new String[] {String.class.getName(), String.class.getName()});
+        String testClass = testMethodExecutor.getInstance().getClass().getName();
+        String testMethod = testMethodExecutor.getMethod().getName();
+        String testCanonicalName = testClass + "." + testMethod;
 
-            ObjectInputStream ois = new ObjectInputStream(resultStream);
-            result = (TestResult)ois.readObject();
-         }
-      }
-      catch (final Throwable e)
-      {
-         result = new TestResult(Status.FAILED);
-         result.setThrowable(e);
-      }
-      finally
-      {
-         result.setEnd(System.currentTimeMillis());
-         if(objectName != null && commandListener != null)
-         {
-            try
-            {
-               mbeanServer.removeNotificationListener(objectName, commandListener);
+        NotificationListener commandListener = null;
+        ObjectName objectName = null;
+        TestResult result = null;
+        try {
+            objectName = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+            commandListener = new CallbackNotificationListener(objectName);
+            mbeanServer.addNotificationListener(objectName, commandListener, null, null);
+
+            JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
+            log.debugf("Invoke %s: %s", executionType, testCanonicalName);
+            if (executionType == ExecutionType.REMOTE) {
+                result = testRunner.runTestMethodRemote(testClass, testMethod);
+            } else {
+                InputStream resultStream = testRunner.runTestMethodEmbedded(testClass, testMethod);
+                ObjectInputStream ois = new ObjectInputStream(resultStream);
+                result = (TestResult) ois.readObject();
             }
-            catch (Exception e) 
-            {
-               e.printStackTrace();
+        } catch (final Throwable th) {
+            result = new TestResult(Status.FAILED);
+            result.setThrowable(th);
+        } finally {
+            result.setEnd(System.currentTimeMillis());
+            if (objectName != null && commandListener != null) {
+                try {
+                    mbeanServer.removeNotificationListener(objectName, commandListener);
+                } catch (Throwable th) {
+                    log.errorf(th, "Cannot remove notification listener");
+                }
             }
-         }
-      }
-      return result;
-   }
+        }
+        log.debugf("Result: %s", result);
+        if (result.getStatus() == Status.FAILED)
+            log.errorf(result.getThrowable(), "Failed: %s", testCanonicalName);
+        return result;
+    }
 
-   private <T> T getMBeanProxy(ObjectName name, Class<T> interf)
-   {
-      return (T)MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
-   }
-   
-   private class CallbackNotificationListener implements NotificationListener
-   {
-      private ObjectName serviceName;
-      
-      public CallbackNotificationListener(ObjectName serviceName)
-      {
-         this.serviceName = serviceName;
-      }
-      
-      @Override
-      public void handleNotification(Notification notification, Object handback)
-      {
-         String eventMessage = notification.getMessage();
-         Command<?> command = Serializer.toObject(Command.class, (byte[])notification.getUserData()); 
-         callback.fired(command);
-         
-         try
-         {
-            mbeanServer.invoke(
-                  serviceName, 
-                  "push", 
-                  new Object[] {eventMessage, Serializer.toByteArray(command)}, 
-                  new String[] {String.class.getName(), byte[].class.getName()});
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException("Could not return command result for command " + command, e);
-         }
-      }      
-   }
+    private <T> T getMBeanProxy(ObjectName name, Class<T> interf) {
+        return (T) MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
+    }
+
+    private class CallbackNotificationListener implements NotificationListener {
+        private ObjectName serviceName;
+
+        public CallbackNotificationListener(ObjectName serviceName) {
+            this.serviceName = serviceName;
+        }
+
+        @Override
+        public void handleNotification(Notification notification, Object handback) {
+            String eventMessage = notification.getMessage();
+            Command<?> command = Serializer.toObject(Command.class, (byte[]) notification.getUserData());
+            callback.fired(command);
+
+            try {
+                mbeanServer.invoke(serviceName, "push", new Object[] { eventMessage, Serializer.toByteArray(command) }, new String[] { String.class.getName(),
+                        byte[].class.getName() });
+            } catch (Exception e) {
+                throw new RuntimeException("Could not return command result for command " + command, e);
+            }
+        }
+    }
 }

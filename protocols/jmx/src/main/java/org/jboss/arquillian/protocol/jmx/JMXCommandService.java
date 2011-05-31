@@ -25,47 +25,37 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
 
 /**
  * JMXCommandService
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JMXCommandService implements CommandService
-{
-   private static long TIMEOUT = 10000;
+public class JMXCommandService implements CommandService {
+    private static long TIMEOUT = 10000;
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public <T> T execute(Command<T> command)
-   {
-      MBeanServer server = JMXTestRunner.localMBeanServer;
-      try
-      {
-         ObjectName runner = new ObjectName(JMXTestRunner.OBJECT_NAME);
-         server.invoke(runner, "send", new Object[]{command}, new String[]{Command.class.getName()});
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T execute(Command<T> command) {
+        MBeanServer server = JMXTestRunner.localMBeanServer;
+        try {
+            ObjectName runner = new ObjectName(JMXTestRunner.OBJECT_NAME);
+            server.invoke(runner, "send", new Object[] { command }, new String[] { Command.class.getName() });
 
-         long timeoutTime = System.currentTimeMillis() + TIMEOUT;
-         while (timeoutTime > System.currentTimeMillis())
-         {
-            Command<?> newCommand = (Command<?>)server.invoke(runner, "receive", new Object[]{}, new String[]{});
-            if(newCommand != null && newCommand.getResult() != null)
-            {
-               return (T)newCommand.getResult();
+            long timeoutTime = System.currentTimeMillis() + TIMEOUT;
+            while (timeoutTime > System.currentTimeMillis()) {
+                Command<?> newCommand = (Command<?>) server.invoke(runner, "receive", new Object[] {}, new String[] {});
+                if (newCommand != null && newCommand.getResult() != null) {
+                    return (T) newCommand.getResult();
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
-            try
-            {
-               Thread.sleep(100);
-            }
-            catch (Exception e) 
-            {
-               throw new RuntimeException(e);
-            }
-         }
-         throw new RuntimeException("No command response within timeout of " + TIMEOUT + " ms.");
-      }
-      catch (Exception e) 
-      {
-         throw new RuntimeException("Could not communicate with client side", e);
-      }
-   }
+            throw new RuntimeException("No command response within timeout of " + TIMEOUT + " ms.");
+        } catch (Exception e) {
+            throw new RuntimeException("Could not communicate with client side", e);
+        }
+    }
 
 }
