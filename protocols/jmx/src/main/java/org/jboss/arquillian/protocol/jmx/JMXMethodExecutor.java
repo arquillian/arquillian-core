@@ -68,25 +68,14 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
          commandListener = new CallbackNotificationListener(objectName);
          mbeanServer.addNotificationListener(objectName, commandListener, null, null);
 
-         //JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
+         JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
          if (executionType == ExecutionType.REMOTE)
          {
-            //result = testRunner.runTestMethodRemote(testClass, testMethod);
-            result = (TestResult)mbeanServer.invoke(
-                  objectName, 
-                  "runTestMethodRemote", 
-                  new Object[] {testClass, testMethod}, 
-                  new String[] {String.class.getName(), String.class.getName()});
+            result = testRunner.runTestMethodRemote(testClass, testMethod);
          }
          else
          {
-            //InputStream resultStream = testRunner.runTestMethodEmbedded(testClass, testMethod);
-            InputStream resultStream = (InputStream)mbeanServer.invoke(
-                  objectName, 
-                  "runTestMethodEmbedded", 
-                  new Object[] {testClass, testMethod}, 
-                  new String[] {String.class.getName(), String.class.getName()});
-
+            InputStream resultStream = testRunner.runTestMethodEmbedded(testClass, testMethod);
             ObjectInputStream ois = new ObjectInputStream(resultStream);
             result = (TestResult)ois.readObject();
          }

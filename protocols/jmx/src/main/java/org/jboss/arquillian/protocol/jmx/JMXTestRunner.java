@@ -63,7 +63,8 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    
    public interface TestClassLoader
    {
-      Class<?> loadTestClass(String className) throws ClassNotFoundException;
+       Class<?> loadTestClass(String className) throws ClassNotFoundException;
+       ClassLoader getServiceClassLoader();
    }
    
    public JMXTestRunner(TestClassLoader classLoader)
@@ -79,6 +80,12 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
             {
                ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
                return classLoader.loadClass(className);
+            }
+
+            @Override
+            public ClassLoader getServiceClassLoader() {
+                ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
+                return classLoader;
             }
          };
       }
@@ -140,7 +147,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
          TestRunner runner = exposedTestRunnerForTest;
          if(runner == null)
          {
-            runner = TestRunners.getTestRunner(JMXTestRunner.class.getClassLoader());
+            runner = TestRunners.getTestRunner(testClassLoader.getServiceClassLoader());
          }
          Class<?> testClass = testClassLoader.loadTestClass(className);
          
