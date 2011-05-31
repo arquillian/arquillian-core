@@ -19,7 +19,6 @@ package org.jboss.arquillian.junit;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -29,6 +28,7 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -37,7 +37,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * Arquillian
+ * Main Arquillian JUnit runner
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -53,6 +53,11 @@ public class Arquillian extends BlockJUnit4ClassRunner
     */
    // Cleaned up in JUnitTestRunner
    public static ThreadLocal<Throwable> caughtTestException = new ThreadLocal<Throwable>();
+   
+   /*
+    * Keep track of previous BeforeSuite initialization exceptions 
+    */
+   public static ThreadLocal<Throwable> caughtInitializationException = new ThreadLocal<Throwable>();
 
    /*
     * @HACK
@@ -62,79 +67,100 @@ public class Arquillian extends BlockJUnit4ClassRunner
     * A instance of all TestCases are created before the first one is started, so we keep track of which one 
     * was the last one created. The last one created is the only one allowed to call AfterSuite.
     */
-   private static ThreadLocal<Arquillian> lastCreatedRunner = new ThreadLocal<Arquillian>();
+   private static ThreadLocal<Integer> lastCreatedRunner = new ThreadLocal<Integer>() 
+   {
+      @Override
+      protected Integer initialValue()
+      {
+         return new Integer(0);
+      }
+   };
 
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
    
    public Arquillian(Class<?> klass) throws InitializationError
    {
-      this(klass, null);
+      super(klass);
+      lastCreatedRunner.set(lastCreatedRunner.get()+1);
    }
    
-   public Arquillian(Class<?> klass, TestRunnerAdaptor externalAdaptor) throws InitializationError
+   @Override
+   public void run(final RunNotifier notifier)
    {
-      super(klass);
-      try
+      // first time we're being initialized
+      if(deployableTest.get() == null)   
       {
-         // first time we're being initialized
-         if(deployableTest.get() == null)   
+         // no, initialization has been attempted before and failed, refuse to do anything else
+         if(caughtInitializationException.get() != null)  
          {
-            // no, initialization has been attempted before, refuse to do anything else
-            if(lastCreatedRunner.get() != null)  
-            {
-                throw new RuntimeException("Arquillian has previously been attempted initialized, but failed. See previous exceptions for cause.");
-            }
-            TestRunnerAdaptor adaptor = externalAdaptor;
-            if(adaptor == null)
-            {
-               adaptor = TestRunnerAdaptorBuilder.build();
-            }
-
+            // failed on suite level, ignore children
+            //notifier.fireTestIgnored(getDescription());
+            notifier.fireTestFailure(
+                  new Failure(getDescription(), 
+                        new RuntimeException(
+                              "Arquillian has previously been attempted initialized, but failed. See cause for previous exception", 
+                              caughtInitializationException.get())));
+         }
+         else
+         {
+            TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
             try 
             {
                // don't set it if beforeSuite fails
                adaptor.beforeSuite();
                deployableTest.set(adaptor);
             } 
-            catch (Exception e) 
+            catch (Exception e)  
             {
-               throw new InitializationError(Arrays.asList((Throwable)e));
+               // caught exception during BeforeSuite, mark this as failed
+               caughtInitializationException.set(e);
+               notifier.fireTestFailure(new Failure(getDescription(), e));
             }
          }
       }
-      finally 
+      // initialization ok, run children
+      if(deployableTest.get() != null)  
       {
-         lastCreatedRunner.set(this);
-      }
-   }
-   
-   @Override
-   public void run(RunNotifier notifier)
-   {
-      notifier.addListener(new RunListener() 
-      {
-         @Override
-         public void testRunFinished(Result result) throws Exception
+         notifier.addListener(new RunListener() 
          {
-            try  
+            @Override
+            public void testRunFinished(Result result) throws Exception
             {
-               if(deployableTest.get() != null && lastCreatedRunner.get() == Arquillian.this) 
-               {
-                  deployableTest.get().afterSuite();
-                  deployableTest.get().shutdown();
-                  lastCreatedRunner.set(null);
-                  lastCreatedRunner.remove();
-                  deployableTest.set(null);
-                  deployableTest.remove();
-               }
-            } 
-            catch (Exception e) 
-            {
-               throw new RuntimeException("Could not run @AfterSuite", e);
+               lastCreatedRunner.set(lastCreatedRunner.get()-1);
+               shutdown();
             }
-         }
-      });
-      super.run(notifier);
+            
+            private void shutdown() 
+            {
+               try  
+               {
+                  if(deployableTest.get() != null && lastCreatedRunner.get() == 0) 
+                  {
+                     try
+                     {
+                        deployableTest.get().afterSuite();
+                        deployableTest.get().shutdown();
+                     }
+                     finally 
+                     {
+                        lastCreatedRunner.set(null);
+                        lastCreatedRunner.remove();
+                        deployableTest.set(null);
+                        deployableTest.remove();
+                        
+                        caughtInitializationException.set(null);
+                        caughtInitializationException.remove();
+                     }
+                  }
+               } 
+               catch (Exception e) 
+               {
+                  throw new RuntimeException("Could not run @AfterSuite", e);
+               }
+            }
+         });
+         super.run(notifier);
+      }
    }
 
    /**
@@ -158,8 +184,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
     * They can then optionally be executed if we get expected callback.
     * 
     */
-   
-   
+      
    @Override
    protected Statement withBeforeClasses(final Statement originalStatement)
    {
@@ -257,8 +282,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                {
                   try
                   {
-                     //Object parameterValues = TestEnrichers.enrich(deployableTest.get().getActiveContext(), getMethod());
-                     method.invokeExplosively(test, parameters); //, (Object[])parameterValues);
+                     method.invokeExplosively(test, parameters); 
                   } 
                   catch (Throwable e) 
                   {
