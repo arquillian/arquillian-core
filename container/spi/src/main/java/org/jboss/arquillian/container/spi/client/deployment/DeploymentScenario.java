@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.shrinkwrap.api.Archive;
 
 /**
  *  
@@ -43,6 +44,8 @@ public class DeploymentScenario
    public DeploymentScenario addDeployment(DeploymentDescription deployment)
    {
       Validate.notNull(deployment, "Deployment must be specified");
+      validateNotSameNameAndTypeOfDeployment(deployment);
+
       this.deployments.add(new Deployment(deployment));
       return this;
    }
@@ -50,7 +53,6 @@ public class DeploymentScenario
    public Set<TargetDescription> targets()
    {
       Set<TargetDescription> targets = new HashSet<TargetDescription>();
-
       for (Deployment dep : deployments)
       {
          targets.add(dep.getDescription().getTarget());
@@ -61,7 +63,6 @@ public class DeploymentScenario
    public Set<ProtocolDescription> protocols()
    {
       Set<ProtocolDescription> protocols = new HashSet<ProtocolDescription>();
-
       for (Deployment dep : deployments)
       {
          protocols.add(dep.getDescription().getProtocol());
@@ -83,87 +84,6 @@ public class DeploymentScenario
          return findDefaultDeployment();
       }
       return findMatchingDeployment(target);
-   }
-
-   /**
-    * @return
-    */
-   private Deployment findDefaultDeployment()
-   {
-      if (deployments.size() == 1)
-      {
-         return deployments.get(0);
-      }
-      else if (deployments.size() > 1)
-      {
-         // if there are only one Archive deployment, default to it
-         if (archiveDeploymentCount() == 1)
-         {
-            for (Deployment deployment : deployments)
-            {
-               if (deployment.getDescription().isArchiveDeployment())
-               {
-                  return deployment;
-               }
-            }
-         }
-         if(managedDeploymentCount() == 1)
-         {
-            for (Deployment deployment : deployments)
-            {
-               if (deployment.getDescription().managed())
-               {
-                  return deployment;
-               }
-            }
-         }
-      }
-      return null;
-   }
-
-   /**
-    * @return
-    */
-   private int managedDeploymentCount()
-   {
-      int count = 0;
-      for (Deployment deployment : deployments)
-      {
-         if (deployment.getDescription().managed())
-         {
-            count++;
-         }
-      }
-      return count;
-   }
-
-   private int archiveDeploymentCount()
-   {
-      int count = 0;
-      for (Deployment deployment : deployments)
-      {
-         if (deployment.getDescription().isArchiveDeployment())
-         {
-            count++;
-         }
-      }
-      return count;
-   }
-
-   /**
-    * @param target
-    * @return
-    */
-   private Deployment findMatchingDeployment(DeploymentTargetDescription target)
-   {
-      for (Deployment deployment : deployments)
-      {
-         if (deployment.getDescription().getName().equals(target.getName()))
-         {
-            return deployment;
-         }
-      }
-      return null;
    }
 
    public List<Deployment> managedDeploymentsInDeployOrder()
@@ -272,5 +192,160 @@ public class DeploymentScenario
    public List<Deployment> deployments()
    {
       return Collections.unmodifiableList(deployments);
+   }
+
+   /**
+    * @return
+    */
+   private Deployment findDefaultDeployment()
+   {
+      if (deployments.size() == 1)
+      {
+         return deployments.get(0);
+      }
+      else if (deployments.size() > 1)
+      {
+         // if there are only one Archive deployment, default to it
+         List<Deployment> archiveDeployments = archiveDeployments(deployments);
+         if (archiveDeployments.size() == 1)
+         {
+            return archiveDeployments.get(0);
+         }
+
+         // if there is only one managed deployment, default to it
+         List<Deployment> managedDeployments = managedDeployments(deployments);
+         if(managedDeployments.size() == 1)
+         {
+            return managedDeployments.get(0);
+         }
+
+         // if there are only one DEFAULT deployment, default to it, else default to the  DEFAULT Archive
+         List<Deployment> defaultDeployments = defaultDeployments(deployments);
+         if(defaultDeployments.size() == 1)
+         {
+            return defaultDeployments.get(0);
+         }
+         else if(defaultDeployments.size() > 1)
+         {
+            List<Deployment> defaultArchiveDeployments = archiveDeployments(defaultDeployments);
+            return defaultArchiveDeployments.get(0);
+         }
+      }
+      return null;
+   }
+
+   /**
+    * Filters the List of Deployments and returns the ones that are Managed deployments.
+    *
+    * @param deployments List to filter
+    * @return Filtered list
+    */
+   private List<Deployment> managedDeployments(List<Deployment> deployments)
+   {
+      List<Deployment> managed = new ArrayList<Deployment>();
+      for (Deployment deployment : deployments)
+      {
+         if (deployment.getDescription().managed())
+         {
+            managed.add(deployment);
+         }
+      }
+      return managed;
+   }
+
+   /**
+    * Filters the List of Deployments and returns the ones that are DEFAULT deployments.
+    *
+    * @param deployments List to filter
+    * @return Filtered list
+    */
+   private List<Deployment> defaultDeployments(List<Deployment> deployments)
+   {
+      List<Deployment> defaults = new ArrayList<Deployment>();
+      for (Deployment deployment : deployments)
+      {
+         if (deployment.getDescription().getName().equals(DeploymentTargetDescription.DEFAULT.getName()))
+         {
+            defaults.add(deployment);
+         }
+      }
+      return defaults;
+   }
+
+   /**
+    * Filters the List of Deployments and returns the ones that are Archive deployments.
+    *
+    * @param deployments List to filter
+    * @return Filtered list
+    */
+   private List<Deployment> archiveDeployments(List<Deployment> deployments)
+   {
+      List<Deployment> archives = new ArrayList<Deployment>();
+      for (Deployment deployment : deployments)
+      {
+         if (deployment.getDescription().isArchiveDeployment())
+         {
+            archives.add(deployment);
+         }
+      }
+      return archives;
+   }
+
+   /**
+    * Validation, names except DEFAULT should be unique. See constructor
+    *
+    * @param target
+    * @return
+    */
+   private Deployment findMatchingDeployment(DeploymentTargetDescription target)
+   {
+      List<Deployment> matching = findMatchingDeployments(target);
+      if(matching.size() == 0)
+      {
+         return null;
+      }
+      if(matching.size() == 1)
+      {
+         return matching.get(0);
+      }
+
+      // if multiple Deployment of different Type, we get the Archive Deployment
+      return archiveDeployments(matching).get(0);
+   }
+
+   private List<Deployment> findMatchingDeployments(DeploymentTargetDescription target) 
+   {
+      List<Deployment> matching = new ArrayList<Deployment>();
+      for(Deployment deployment : deployments)
+      {
+         if(deployment.getDescription().getName().equals(target.getName()))
+         {
+            matching.add(deployment);
+         }
+      }
+      return matching;
+   }
+
+   /**
+    * Validate that a deployment of same type is not already added
+    *
+    * @param deployment
+    *
+    */
+   private void validateNotSameNameAndTypeOfDeployment(DeploymentDescription deployment)
+   {
+      for (Deployment existing : deployments)
+      {
+         if(existing.getDescription().getName().equals(deployment.getName()))
+         {
+            if(
+                  (existing.getDescription().isArchiveDeployment() && deployment.isArchiveDeployment()) ||
+                  (existing.getDescription().isDescriptorDeployment() && deployment.isDescriptorDeployment()))
+            {
+               throw new IllegalArgumentException("Can not add multiple " + 
+                           Archive.class.getName() + " deployments with the same name: " + deployment.getName());
+            }
+         }
+      }
    }
 }

@@ -38,19 +38,21 @@ import org.junit.Test;
  */
 public class DeploymentScenarioTestCase
 {
+   private final static String DEFAULT_NAME = DeploymentTargetDescription.DEFAULT.getName();
 
    /**
     * Defaulting rules for Deployment in a scenario
     * 
     * - A single Archive is default
     * - A Archive and a Descriptor, Archive is default
+    * - Only allow equal names of deployments if they are of different Types
     * 
     */
 
    @Test
    public void shouldDefaultToSingleArchive()
    {
-      DeploymentDescription deployment = new DeploymentDescription("_DEFAULT_", ShrinkWrap.create(JavaArchive.class));
+      DeploymentDescription deployment = new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class));
       deployment.setTarget(TargetDescription.DEFAULT);
       
       DeploymentScenario scenario = new DeploymentScenario();
@@ -64,7 +66,7 @@ public class DeploymentScenarioTestCase
    @Test
    public void shouldDefaultToSingleDescriptor()
    {
-      DeploymentDescription deployment = new DeploymentDescription("_DEFAULT_", Descriptors.create(BeansDescriptor.class));
+      DeploymentDescription deployment = new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class));
       deployment.setTarget(TargetDescription.DEFAULT);
       
       DeploymentScenario scenario = new DeploymentScenario();
@@ -76,7 +78,7 @@ public class DeploymentScenarioTestCase
    }
 
    @Test
-   public void shouldDefaultToSingleArchiveWithDescriptor()
+   public void shouldDefaultToArchiveWhenDescriptorIsPresent()
    {
       DeploymentScenario scenario = new DeploymentScenario();
       scenario.addDeployment(
@@ -107,7 +109,27 @@ public class DeploymentScenarioTestCase
       
       Assert.assertNull(defaultDeployment);
    }
-   
+
+   @Test
+   public void shouldDefaultToDefaultWithMultipleDeployments()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+
+      Deployment defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT);
+      Assert.assertNotNull(defaultDeployment);
+      Assert.assertEquals(DEFAULT_NAME, defaultDeployment.getDescription().getName());
+      Assert.assertTrue(defaultDeployment.getDescription().isArchiveDeployment());
+   }
+
    @Test
    public void shouldNotDefaultWhenMultipleDescriptors()
    {
@@ -156,6 +178,65 @@ public class DeploymentScenarioTestCase
       Deployment deployment = scenario.deployment(new DeploymentTargetDescription("C"));
       
       Assert.assertNull(deployment);
-      
+   }
+
+   @Test
+   public void shouldAllowMultipleDeploymentWithSameNameOfDifferentType()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
+            .setTarget(TargetDescription.DEFAULT));
+
+      Deployment deployment = scenario.deployment(new DeploymentTargetDescription("A"));
+
+      // will default to Archive
+      Assert.assertEquals("A", deployment.getDescription().getName());
+      Assert.assertTrue(deployment.getDescription().isArchiveDeployment());
+   }
+
+   @Test // checks same as shouldAllowMultipleDeploymentWithSameNameOfDifferentType but added in different order
+   public void shouldAllowMultipleDeploymentWithSameNameOfDifferentTypeOrderIrrelevant()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+
+      Deployment deployment = scenario.deployment(new DeploymentTargetDescription("A"));
+
+      // will default to Archive
+      Assert.assertEquals("A", deployment.getDescription().getName());
+      Assert.assertTrue(deployment.getDescription().isArchiveDeployment());
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldNotAllowMultipleArchiveDeploymentsWithSameName()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldNotAllowMultipleDescriptorDeploymentsWithSameName()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
+            .setTarget(TargetDescription.DEFAULT));
    }
 }

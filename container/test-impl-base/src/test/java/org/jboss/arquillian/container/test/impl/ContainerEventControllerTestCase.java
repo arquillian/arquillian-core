@@ -38,6 +38,7 @@ import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.StartManagedContainers;
 import org.jboss.arquillian.container.spi.event.StopManagedContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.impl.client.ContainerEventController;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -74,7 +75,7 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
 
    @Mock 
    private ServiceLoader serviceLoader;
-   
+
    @Mock
    private ContainerDef container1;
 
@@ -83,10 +84,9 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    private DeployableContainer deployableContainer1;
 
    private ContainerRegistry registry = new LocalContainerRegistry();
-   
+
    private DeploymentScenario scenario = new DeploymentScenario();
 
-   
    /* (non-Javadoc)
     * @see org.jboss.arquillian.core.test.AbstractManagerTestBase#addExtensions(java.util.List)
     */
@@ -96,19 +96,19 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
       extensions.add(ContainerEventController.class);
       extensions.add(ContainerDeploymentContextHandler.class);
    }
-   
+
    @Before
    public void scenario() throws Exception
    {
       when(container1.getContainerName()).thenReturn(CONTAINER_1_NAME);
       when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer1);
-      
+
       Archive<?> archive = ShrinkWrap.create(JavaArchive.class);
-      
+
       scenario.addDeployment(new DeploymentDescription(DEPLOYMENT_1_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
 
       registry.create(container1, serviceLoader);
-      
+
       bind(SuiteScoped.class, ContainerRegistry.class, registry);
       bind(ClassScoped.class, DeploymentScenario.class, scenario);
    }
@@ -117,16 +117,16 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    public void shouldSetupAndStartContainers() throws Exception
    {
       fire(new BeforeSuite());
-      
+
       assertEventFired(SetupContainers.class, 1);
       assertEventFired(StartManagedContainers.class, 1);
    }
-   
+
    @Test
    public void shouldStopContainers() throws Exception
    {
       fire(new AfterSuite());
-      
+
       assertEventFired(StopManagedContainers.class, 1);
    }
 
@@ -134,15 +134,15 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    public void shouldDeployManagedDeployments() throws Exception
    {
       fire(new BeforeClass(testClass()));
-      
+
       assertEventFired(DeployManagedDeployments.class, 1);
    }
-   
+
    @Test
    public void shouldUnDeployManagedDeployments() throws Exception
    {
       fire(new AfterClass(testClass()));
-      
+
       assertEventFired(UnDeployManagedDeployments.class, 1);
    }
 
@@ -150,7 +150,7 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    public void shouldInvokeBeforeInContainerDeploymentContext() throws Exception
    {
       fire(new org.jboss.arquillian.test.spi.event.suite.Before(this, testMethod()));
-      
+
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, ContainerContext.class);
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, DeploymentContext.class);
    }
@@ -162,22 +162,71 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
       {
          @Override
          public void invoke(Object... parameters) throws Throwable { }
-         
+
          @Override
          public Method getMethod()
          {
             return testMethod();
          }
-         
+
          @Override
          public Object getInstance()
          {
             return ContainerEventControllerTestCase.this;
          }
       }));
-      
+
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ContainerContext.class);
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, DeploymentContext.class);
+   }
+
+   @Test
+   public void shouldNotInvokeTestInContainerDeploymentContextIfNoDeploymentFound() throws Exception
+   {
+      // override previous bound DeploymentScenario with a empty set
+      bind(ClassScoped.class, DeploymentScenario.class, new DeploymentScenario());
+      fire(new org.jboss.arquillian.test.spi.event.suite.Test(new TestMethodExecutor()
+      {
+         @Override
+         public void invoke(Object... parameters) throws Throwable { }
+
+         @Override
+         public Method getMethod()
+         {
+            return testMethod();
+         }
+
+         @Override
+         public Object getInstance()
+         {
+            return ContainerEventControllerTestCase.this;
+         }
+      }));
+
+      assertEventNotFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ContainerContext.class);
+      assertEventNotFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, DeploymentContext.class);
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfTryingToOperateOnANonExistingContext() throws Exception
+   {
+      fire(new org.jboss.arquillian.test.spi.event.suite.Test(new TestMethodExecutor()
+      {
+         @Override
+         public void invoke(Object... parameters) throws Throwable { }
+
+         @Override
+         public Method getMethod()
+         {
+            return nonExistingOperatesOnDeploymentMethod();
+         }
+
+         @Override
+         public Object getInstance()
+         {
+            return ContainerEventControllerTestCase.this;
+         }
+      }));
    }
 
    @Test
@@ -201,14 +250,27 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    {
       return ContainerEventControllerTestCase.class;
    }
-   
+
    private Method testMethod()
    {
       try
       {
          return ContainerEventControllerTestCase.class.getDeclaredMethod("testMethod");
       }
-      catch (Exception e) 
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   @OperateOnDeployment("NON_EXISTING_DEPLOYMENT")
+   private Method nonExistingOperatesOnDeploymentMethod()
+   {
+      try
+      {
+         return ContainerEventControllerTestCase.class.getDeclaredMethod("nonExistingOperatesOnDeploymentMethod");
+      }
+      catch (Exception e)
       {
          throw new RuntimeException(e);
       }

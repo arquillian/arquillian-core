@@ -136,7 +136,7 @@ public class ContainerEventController
    }
    
    /*
-    * Internal Helpers needed to extract @DeploymentTarget from TestMethod. 
+    * Internal Helpers needed to extract @OperatesOnDeployment from TestMethod.
     * 
     * TODO: This should not rely on direct Reflection, but rather access the metadata through some 
     * common metadata layer.
@@ -150,6 +150,14 @@ public class ContainerEventController
       DeploymentScenario deploymentScenario = this.deploymentScenario.get();
       
       Deployment deployment = deploymentScenario.deployment(deploymentTarget);
+      if(deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT)
+      {
+         // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
+         throw new IllegalStateException(
+               "No deployment found in " + DeploymentScenario.class.getSimpleName() + " for defined target: " + deploymentTarget.getName() + ". " + 
+               "Please verify that the @" + OperateOnDeployment.class.getSimpleName() + " annotation on method " + method.getName() + " match a defined " +
+               "@" + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + ".name");
+      }
       if(deployment != null)
       {
          Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());

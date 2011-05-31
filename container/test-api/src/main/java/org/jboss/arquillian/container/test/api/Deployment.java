@@ -39,7 +39,7 @@ public @interface Deployment
     * 
     * @return The name of this Deployment
     */
-   String name() default "NO-NAME";
+   String name() default "_DEFAULT_";
    
    /**
     * Describes whether or not this deployment should be deployed by Arquillian.

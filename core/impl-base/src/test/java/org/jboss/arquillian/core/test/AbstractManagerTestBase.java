@@ -131,8 +131,19 @@ public abstract class AbstractManagerTestBase
 
    public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext)
    {
-         Assert.assertTrue(
-               "Event " + type.getName() + " should have been fired within context " + activeContext.getName(),
+      assertEventInContext(type, activeContext, true);
+   }
+
+   public final void assertEventNotFiredInContext(Class<?> type, Class<? extends Context> activeContext)
+   {
+      assertEventInContext(type, activeContext, false);
+   }
+
+   private final void assertEventInContext(Class<?> type, Class<? extends Context> activeContext, Boolean active)
+   {
+         Assert.assertEquals(
+               "Event " + type.getName() + " should" + (active ? " ":" not") + " have been fired within context " + activeContext.getName(),
+               active,
                manager.resolve(EventRegister.class).wasActive(type, activeContext));
    }
 
