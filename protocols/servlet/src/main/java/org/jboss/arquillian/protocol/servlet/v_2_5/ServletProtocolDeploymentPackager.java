@@ -33,7 +33,6 @@ import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -41,7 +40,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.spec.ee.application.ApplicationDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.servlet.web.WebAppDescriptor;
-import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 
 /**
  * ServletProtocolDeploymentPackager
@@ -125,16 +123,18 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       Map<ArchivePath, Node> applicationArchiveWars = applicationArchive.getContent(Filters.include(".*\\.war"));
       if(applicationArchiveWars.size() == 1)
       {
-         // TODO: fix, relies on internal SW details, find web archive and attach our self to it, SHRINKWRAP-192         
-         Asset warAsset = applicationArchiveWars.values().iterator().next().getAsset();
-         if (warAsset instanceof ArchiveAsset)
+         ArchivePath warPath = applicationArchiveWars.keySet().iterator().next();
+         try
          {
-            ArchiveAsset warArchiveAsset = (ArchiveAsset) warAsset;
             handleArchive(
-                  warArchiveAsset.getArchive().as(WebArchive.class), 
+                  applicationArchive.getAsType(WebArchive.class, warPath), 
                   new ArrayList<Archive<?>>(), // reuse the War handling, but Auxiliary Archives should be added to the EAR, not the WAR 
                   protocol,
                   processor);
+         }
+         catch (IllegalArgumentException e) 
+         {
+            throw new IllegalArgumentException("Can not manipulate war's that are not of type " + WebArchive.class, e);
          }
       }
       else if(applicationArchiveWars.size() > 1)

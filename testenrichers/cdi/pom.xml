@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>
-            <scope>provided</scope> <!-- should be test, but until SHRINKWRAP-192 is released -->
+            <scope>test</scope>
         </dependency>
 
         <dependency>

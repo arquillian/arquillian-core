@@ -24,11 +24,11 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchive
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filters;
+import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
 
 /**
  * A {@link ProtocolArchiveProcessor} that will add beans.xml to the protocol unit if one is defined in the test deployment.
@@ -72,16 +72,18 @@ public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor
       Map<ArchivePath, Node> nested = archive.getContent(Filters.include("/.*\\.(jar|war)"));
       if(!nested.isEmpty())
       {
-         for(Node node : nested.values())
+         for(ArchivePath path : nested.keySet())
          {
-            if(node.getAsset() instanceof ArchiveAsset )
+            try
             {
-               boolean containsBeansXML = containsBeansXML(
-                     ((ArchiveAsset)node.getAsset()).getArchive());
-               if(containsBeansXML)
+               if(containsBeansXML(archive.getAsType(GenericArchive.class, path))) 
                {
                   return true;
                }
+            }
+            catch (IllegalArgumentException e) 
+            {
+               // no-op, Nested archive is not a ShrinkWrap archive. 
             }
          }
       }
