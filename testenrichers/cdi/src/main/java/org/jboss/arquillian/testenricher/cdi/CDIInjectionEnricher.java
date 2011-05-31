@@ -24,8 +24,10 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 
 /**
  * Enricher that provide JSR-299 CDI class and method argument injection.
@@ -42,12 +44,28 @@ public class CDIInjectionEnricher implements TestEnricher
    @Inject
    private Instance<BeanManager> beanManagerInst;
 
+   @SuppressWarnings("rawtypes")
+   @Inject @TestScoped // keep it raw, core does not like generics to much
+   private InstanceProducer<CreationalContext> creationalContextProducer;
+   
    /**
     * @return the beanManagerInst
     */
    public BeanManager getBeanManager()
    {
       return beanManagerInst.get();
+   }
+
+   @SuppressWarnings("unchecked")
+   public CreationalContext<Object> getCreationalContext()
+   {
+      CreationalContext<Object> cc = creationalContextProducer.get();
+      if(cc == null)
+      {
+         cc = getBeanManager().createCreationalContext(null);
+         creationalContextProducer.set(cc);
+      }
+      return cc;
    }
 
    /* (non-Javadoc)
@@ -93,7 +111,7 @@ public class CDIInjectionEnricher implements TestEnricher
    @SuppressWarnings("unchecked")
    private <T> T getInstanceByType(BeanManager manager, final int position, final Method method)
    {
-      CreationalContext<?> cc = manager.createCreationalContext(null);
+      CreationalContext<?> cc = getCreationalContext();
       return (T) manager.getInjectableReference(new MethodParameterInjectionPoint<T>(method, position, manager), cc);
    }
 
@@ -122,7 +140,7 @@ public class CDIInjectionEnricher implements TestEnricher
    @SuppressWarnings("unchecked")
    protected void injectNonContextualInstance(BeanManager manager, Object instance)
    {
-      CreationalContext<Object> creationalContext = manager.createCreationalContext(null);
+      CreationalContext<Object> creationalContext = getCreationalContext();
       InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(manager
             .createAnnotatedType(instance.getClass()));
       injectionTarget.inject(instance, creationalContext);

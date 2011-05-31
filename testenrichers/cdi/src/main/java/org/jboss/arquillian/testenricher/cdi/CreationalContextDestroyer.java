@@ -15,30 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.testenricher.cdi.container;
+package org.jboss.arquillian.testenricher.cdi;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.testenricher.cdi.CDIInjectionEnricher;
-import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
+import javax.enterprise.context.spi.CreationalContext;
+
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.test.spi.event.suite.After;
 
 /**
- * CDIEnricherRemoteExtension
+ * CreationalContextDestroyer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class CDIEnricherRemoteExtension implements LoadableExtension
+public class CreationalContextDestroyer
 {
-   @Override
-   public void register(ExtensionBuilder builder)
+   @SuppressWarnings("rawtypes")
+   @Inject
+   private Instance<CreationalContext> creationalContext;
+   
+   public void destory(@Observes EventContext<After> event)
    {
-      // only load if BeanManager is on ClassPath
-      if(Validate.classExists("javax.enterprise.inject.spi.BeanManager"))
+      try
       {
-         builder.service(TestEnricher.class, CDIInjectionEnricher.class);
-         builder.observer(BeanManagerProducer.class)
-                .observer(CreationalContextDestroyer.class);
+         event.proceed();
+      }
+      finally
+      {
+         CreationalContext<Object> cc = creationalContext.get();
+         if(cc != null)
+         {
+            cc.release();
+         }
       }
    }
 }

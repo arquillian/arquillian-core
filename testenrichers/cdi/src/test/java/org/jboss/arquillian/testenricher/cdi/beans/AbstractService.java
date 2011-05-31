@@ -15,30 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.testenricher.cdi.container;
+package org.jboss.arquillian.testenricher.cdi.beans;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.testenricher.cdi.CDIInjectionEnricher;
-import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
+import javax.annotation.PreDestroy;
 
 /**
- * CDIEnricherRemoteExtension
+ * AbstractService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class CDIEnricherRemoteExtension implements LoadableExtension
+public class AbstractService<T> implements Service<T>
 {
-   @Override
-   public void register(ExtensionBuilder builder)
+   private boolean released = false;
+
+   @PreDestroy
+   public void release()
    {
-      // only load if BeanManager is on ClassPath
-      if(Validate.classExists("javax.enterprise.inject.spi.BeanManager"))
-      {
-         builder.service(TestEnricher.class, CDIInjectionEnricher.class);
-         builder.observer(BeanManagerProducer.class)
-                .observer(CreationalContextDestroyer.class);
-      }
+      this.released = true;
+   }
+
+   public boolean wasReleased()
+   {
+      return released;
    }
 }

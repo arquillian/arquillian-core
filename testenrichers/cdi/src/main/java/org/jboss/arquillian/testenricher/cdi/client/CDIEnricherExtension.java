@@ -22,6 +22,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchive
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.testenricher.cdi.CDIInjectionEnricher;
+import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
 
 /**
  * CDIEnricherExtension
@@ -36,11 +37,12 @@ public class CDIEnricherExtension implements LoadableExtension
    {
       builder.service(AuxiliaryArchiveAppender.class, CDIEnricherArchiveAppender.class)
              .service(ProtocolArchiveProcessor.class, BeansXMLProtocolProcessor.class);
-
+      
       // only load if BeanManager is on ClassPath
       if(Validate.classExists("javax.enterprise.inject.spi.BeanManager"))
       {
-         builder.service(TestEnricher.class, CDIInjectionEnricher.class);         
+         builder.service(TestEnricher.class, CDIInjectionEnricher.class);
+         builder.observer(CreationalContextDestroyer.class);
       }
    }
 

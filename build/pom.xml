@@ -29,12 +29,10 @@
 
         <!-- Versioning -->
         <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
-        <version.javaee_api>6.0</version.javaee_api>
         <version.jboss_logging>2.1.0.GA</version.jboss_logging>
         <version.jetty_jetty>6.1.9</version.jetty_jetty>
         <version.junit_junit>4.8.1</version.junit_junit>
         <version.mockito_all>1.8.3</version.mockito_all>
-        <version.osgi>4.2.0</version.osgi>
         <version.shrinkwrap_shrinkwrap>1.0.0-beta-2</version.shrinkwrap_shrinkwrap>
         <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
         <version.testng_testng>5.14.6</version.testng_testng>
@@ -256,12 +254,6 @@
                 <groupId>org.jboss.shrinkwrap.descriptors</groupId>
                 <artifactId>shrinkwrap-descriptors-impl</artifactId>
                 <version>${version.shrinkwrap_descriptors}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>${version.javaee_api}</version>
             </dependency>
 
             <dependency>

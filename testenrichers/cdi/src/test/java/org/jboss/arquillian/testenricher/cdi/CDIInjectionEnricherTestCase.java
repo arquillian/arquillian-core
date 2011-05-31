@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
@@ -18,6 +19,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 
+import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
+import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.jboss.arquillian.testenricher.cdi.beans.Cat;
 import org.jboss.arquillian.testenricher.cdi.beans.CatService;
 import org.jboss.arquillian.testenricher.cdi.beans.Dog;
@@ -31,7 +35,6 @@ import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.bootstrap.spi.Metadata;
-import org.jboss.weld.context.api.helpers.ConcurrentHashMapBeanStore;
 import org.jboss.weld.ejb.spi.EjbDescriptor;
 import org.jboss.weld.manager.api.WeldManager;
 import org.junit.After;
@@ -40,18 +43,27 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class CDIInjectionEnricherTestCase
+public class CDIInjectionEnricherTestCase extends AbstractTestTestBase
 {
    private WeldBootstrap bootstrap;
    private WeldManager manager;
    private CDIInjectionEnricher enricher;
+ 
+   @org.jboss.arquillian.core.api.annotation.Inject 
+   private org.jboss.arquillian.core.api.Instance<Injector> injector;
+   
+   @Override
+   protected void addExtensions(List<Class<?>> extensions)
+   {
+      extensions.add(CreationalContextDestroyer.class);
+   }
    
    @Before
    public void setup() throws Exception 
    {
       Deployment deployment = createDeployment(Service.class, Cat.class, CatService.class, Dog.class, DogService.class);
       bootstrap = new WeldBootstrap();
-      bootstrap.startContainer(Environments.SE, deployment, new ConcurrentHashMapBeanStore())
+      bootstrap.startContainer(Environments.SE, deployment)
                   .startInitialization()
                   .deployBeans()
                   .validateBeans()
@@ -59,15 +71,10 @@ public class CDIInjectionEnricherTestCase
 
       manager = bootstrap.getManager(deployment.getBeanDeploymentArchives().iterator().next());
 
-      final BeanManager expose = manager;
-      enricher = new CDIInjectionEnricher() {
-         
-         @Override
-         public BeanManager getBeanManager() 
-         {
-            return expose;
-         }
-      };
+      bind(TestScoped.class,  BeanManager.class, manager);
+      
+      enricher = new CDIInjectionEnricher();
+      injector.get().inject(enricher);
    }
    
    @After
@@ -107,6 +114,16 @@ public class CDIInjectionEnricherTestCase
    }
 
    @Test
+   public void shouldReleaseCreationalContext() throws Exception
+   {
+      TestClass testClass = new TestClass();
+      enricher.injectClass(testClass);
+
+      fire(new org.jboss.arquillian.test.spi.event.suite.After(this, TestClass.class.getMethod("validateReleased")));
+      testClass.validateReleased();
+   }
+   
+   @Test
    public void shouldInjectMethodArgumentsInstance() throws Exception
    {
       Method testMethod = TestClass.class.getMethod("testInstance", Instance.class, Instance.class);
@@ -125,27 +142,33 @@ public class CDIInjectionEnricherTestCase
       @Inject
       Service<Cat> catService;
       
+      public void validateReleased()
+      {
+         Assert.assertTrue("@PreDestory has been called", dogService.wasReleased());
+         Assert.assertTrue("@PreDestory has been called", catService.wasReleased());
+      }
+      
       public void testMethod(Service<Dog> dogService, Service<Cat> catService)
       {
          Assert.assertNotNull(catService);
          Assert.assertNotNull(dogService);
          
-         Assert.assertEquals(CatService.class, catService.getClass());
-         Assert.assertEquals(DogService.class, dogService.getClass());
+         Assert.assertEquals("Injected object should be of type", CatService.class, catService.getClass());
+         Assert.assertEquals("Injected object should be of type", DogService.class, dogService.getClass());
       }
       
       @SuppressWarnings("unused") // used only via reflection
       public void testEvent(Event<Dog> dogEvent, Event<Cat> catEvent)
       {
-         Assert.assertNotNull(dogEvent);
-         Assert.assertNotNull(catEvent);
+         Assert.assertNotNull("Generic Event should be injected as MethodArgument", dogEvent);
+         Assert.assertNotNull("Generic Event should be injected as MethodArgument", catEvent);
       }
 
       @SuppressWarnings("unused") // used only via reflection
       public void testInstance(Instance<Dog> dogEvent, Instance<Cat> catEvent)
       {
-         Assert.assertNotNull(dogEvent);
-         Assert.assertNotNull(catEvent);
+         Assert.assertNotNull("Generic Instance should be injected as MethodArgument", dogEvent);
+         Assert.assertNotNull("Generic Instance should be injected as MethodArgument", catEvent);
       }
    }
    
