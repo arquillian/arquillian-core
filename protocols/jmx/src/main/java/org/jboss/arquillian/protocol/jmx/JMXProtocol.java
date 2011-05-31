@@ -31,20 +31,26 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 
 /**
- * AbstractJMXProtocol
+ * JMXProtocol
  *
  * @author thomas.diesler@jboss.com
  * @since 21-Apr-2011
  */
-public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfiguration>
+public class JMXProtocol implements Protocol<JMXProtocolConfiguration>
 {
    @Inject @ContainerScoped
    private Instance<MBeanServerConnection> mbeanServerInst;
 
    @Override
-   public abstract DeploymentPackager getPackager();
+   public DeploymentPackager getPackager() 
+   {
+       return new JMXDeploymentPackager();
+   }
 
-   public abstract String getProtocolName();
+   public String getProtocolName() 
+   {
+       return "jmx";
+   }
 
    @Override
    public Class<JMXProtocolConfiguration> getProtocolConfigurationClass()
