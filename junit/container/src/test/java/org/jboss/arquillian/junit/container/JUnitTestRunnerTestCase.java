@@ -17,8 +17,7 @@
 package org.jboss.arquillian.junit.container;
 
 
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.container.JUnitTestRunner;
+import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +39,7 @@ public class JUnitTestRunnerTestCase
    public void shouldReturnExceptionOnPassedTest() throws Exception 
    {
       // Simulate setting the Exception like Arquillian would. This is a JUnit hack to avoid JUnit Swallowing the Exception.
-      Arquillian.caughtTestException.set(new IllegalArgumentException());
+      State.caughtTestException(new IllegalArgumentException());
       JUnitTestRunner runner = new JUnitTestRunner();
       TestResult result = runner.execute(JUnitTestRunnerTestCase.class, "shouldProvideExpectedExceptionToRunner");
       

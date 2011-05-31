@@ -16,11 +16,8 @@
  */
 package org.jboss.arquillian.junit;
 
-import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * A set of privileged actions that are not to leak out

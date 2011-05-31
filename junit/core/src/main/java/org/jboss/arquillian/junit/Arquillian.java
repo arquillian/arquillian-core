@@ -44,54 +44,20 @@ import org.junit.runners.model.Statement;
  */
 public class Arquillian extends BlockJUnit4ClassRunner
 {
-   /*
-    * @HACK
-    * JUnit Hack:
-    * In JUnit a Exception is thrown and verified/swallowed if @Test(expected) is set. We need to transfer this
-    * Exception back to the client so the client side can throw it again. This to avoid a incontainer working but failing
-    * on client side due to no Exception thrown. 
-    */
-   // Cleaned up in JUnitTestRunner
-   public static ThreadLocal<Throwable> caughtTestException = new ThreadLocal<Throwable>();
-   
-   /*
-    * Keep track of previous BeforeSuite initialization exceptions 
-    */
-   public static ThreadLocal<Throwable> caughtInitializationException = new ThreadLocal<Throwable>();
-
-   /*
-    * @HACK
-    * Eclipse hack:
-    * When running multiple TestCases, Eclipse will create a new runner for each of them.
-    * This results in that AfterSuite is call pr TestCase, but BeforeSuite only on the first created instance.
-    * A instance of all TestCases are created before the first one is started, so we keep track of which one 
-    * was the last one created. The last one created is the only one allowed to call AfterSuite.
-    */
-   private static ThreadLocal<Integer> lastCreatedRunner = new ThreadLocal<Integer>() 
-   {
-      @Override
-      protected Integer initialValue()
-      {
-         return new Integer(0);
-      }
-   };
-
-   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
-   
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
-      lastCreatedRunner.set(lastCreatedRunner.get()+1);
+      State.runnerStarted();
    }
    
    @Override
    public void run(final RunNotifier notifier)
    {
       // first time we're being initialized
-      if(deployableTest.get() == null)   
+      if(!State.hasTestAdaptor())   
       {
          // no, initialization has been attempted before and failed, refuse to do anything else
-         if(caughtInitializationException.get() != null)  
+         if(State.hasInitializationException())  
          {
             // failed on suite level, ignore children
             //notifier.fireTestIgnored(getDescription());
@@ -99,7 +65,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   new Failure(getDescription(), 
                         new RuntimeException(
                               "Arquillian has previously been attempted initialized, but failed. See cause for previous exception", 
-                              caughtInitializationException.get())));
+                              State.getInitializationException())));
          }
          else
          {
@@ -108,25 +74,25 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                // don't set it if beforeSuite fails
                adaptor.beforeSuite();
-               deployableTest.set(adaptor);
+               State.testAdaptor(adaptor);
             } 
             catch (Exception e)  
             {
                // caught exception during BeforeSuite, mark this as failed
-               caughtInitializationException.set(e);
+               State.caughtInitializationException(e);
                notifier.fireTestFailure(new Failure(getDescription(), e));
             }
          }
       }
       // initialization ok, run children
-      if(deployableTest.get() != null)  
+      if(State.hasTestAdaptor())  
       {
          notifier.addListener(new RunListener() 
          {
             @Override
             public void testRunFinished(Result result) throws Exception
             {
-               lastCreatedRunner.set(lastCreatedRunner.get()-1);
+               State.runnerFinished();
                shutdown();
             }
             
@@ -134,22 +100,17 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                try  
                {
-                  if(deployableTest.get() != null && lastCreatedRunner.get() == 0) 
+                  if(State.hasTestAdaptor() && State.isLastRunner()) 
                   {
                      try
                      {
-                        deployableTest.get().afterSuite();
-                        deployableTest.get().shutdown();
+                        TestRunnerAdaptor adaptor = State.getTestAdaptor();
+                        adaptor.afterSuite();
+                        adaptor.shutdown();
                      }
                      finally 
                      {
-                        lastCreatedRunner.set(null);
-                        lastCreatedRunner.remove();
-                        deployableTest.set(null);
-                        deployableTest.remove();
-                        
-                        caughtInitializationException.set(null);
-                        caughtInitializationException.remove();
+                        State.clean();
                      }
                   }
                } 
@@ -194,7 +155,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            deployableTest.get().beforeClass(
+            State.getTestAdaptor().beforeClass(
                   Arquillian.this.getTestClass().getJavaClass(), 
                   new StatementLifecycleExecutor(onlyBefores));
             originalStatement.evaluate();
@@ -216,7 +177,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                originalStatement,
                new Statement() { @Override public void evaluate() throws Throwable 
                {
-                  deployableTest.get().afterClass(
+                  State.getTestAdaptor().afterClass(
                         Arquillian.this.getTestClass().getJavaClass(), 
                         new StatementLifecycleExecutor(onlyAfters));
                }}
@@ -234,7 +195,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            deployableTest.get().before(
+            State.getTestAdaptor().before(
                   target, 
                   method.getMethod(), 
                   new StatementLifecycleExecutor(onlyBefores));
@@ -257,7 +218,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                originalStatement, 
                new Statement() { @Override public void evaluate() throws Throwable
                {
-                  deployableTest.get().after(
+                  State.getTestAdaptor().after(
                         target, 
                         method.getMethod(), 
                         new StatementLifecycleExecutor(onlyAfters));
@@ -275,7 +236,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            TestResult result = deployableTest.get().test(new TestMethodExecutor()
+            TestResult result = State.getTestAdaptor().test(new TestMethodExecutor()
             {
                @Override
                public void invoke(Object... parameters) throws Throwable
@@ -287,7 +248,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   catch (Throwable e) 
                   {
                      // Force a way to return the thrown Exception from the Container the client. 
-                     caughtTestException.set(e);
+                     State.caughtTestException(e);
                      throw e;
                   }
                }

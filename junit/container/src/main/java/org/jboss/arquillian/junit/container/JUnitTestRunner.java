@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
-import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Test;
@@ -101,8 +101,8 @@ public class JUnitTestRunner implements TestRunner
          Test test = description.getAnnotation(Test.class);
          if (test != null && test.expected() != Test.None.class)
          {
-            exception = Arquillian.caughtTestException.get();
-            Arquillian.caughtTestException.set(null);
+            exception = State.getTestException();
+            State.caughtTestException(null);
          }
       }
    }
