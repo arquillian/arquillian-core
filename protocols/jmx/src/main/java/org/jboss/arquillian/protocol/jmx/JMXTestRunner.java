@@ -42,14 +42,14 @@ import org.jboss.logging.Logger;
  *
  * @author thomas.diesler@jboss.com
  */
-public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean 
+public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean
 {
    // Provide logging
    private static Logger log = Logger.getLogger(JMXTestRunner.class);
-  
+
    // package shared MBeanServer with JMXCommandService
-   static MBeanServer localMBeanServer; 
-   
+   static MBeanServer localMBeanServer;
+
    private ConcurrentHashMap<String, Command<?>> events;
    private ThreadLocal<String> currentCall;
 
@@ -58,19 +58,18 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
 
    // opens for setting TestRunner to use, used for testing
    private TestRunner exposedTestRunnerForTest;
-   
+
    private TestClassLoader testClassLoader;
-   
+
    public interface TestClassLoader
    {
        Class<?> loadTestClass(String className) throws ClassNotFoundException;
-       ClassLoader getServiceClassLoader();
    }
-   
+
    public JMXTestRunner(TestClassLoader classLoader)
    {
       this.testClassLoader = classLoader;
-      
+
       // Initialize the default TestClassLoader
       if (testClassLoader == null)
       {
@@ -80,12 +79,6 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
             {
                ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
                return classLoader.loadClass(className);
-            }
-
-            @Override
-            public ClassLoader getServiceClassLoader() {
-                ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
-                return classLoader;
             }
          };
       }
@@ -147,10 +140,10 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
          TestRunner runner = exposedTestRunnerForTest;
          if(runner == null)
          {
-            runner = TestRunners.getTestRunner(testClassLoader.getServiceClassLoader());
+            runner = TestRunners.getTestRunner(getClass().getClassLoader());
          }
          Class<?> testClass = testClassLoader.loadTestClass(className);
-         
+
          TestResult testResult = runner.execute(testClass, methodName);
          return testResult;
       }
@@ -172,7 +165,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       notification.setUserData(Serializer.toByteArray(command));
       sendNotification(notification);
    }
-   
+
    @Override
    public Command<?> receive()
    {
