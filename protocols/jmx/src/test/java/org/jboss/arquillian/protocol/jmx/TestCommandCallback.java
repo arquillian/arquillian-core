@@ -15,25 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.jmx.test;
+package org.jboss.arquillian.protocol.jmx;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 /**
  * TestRemoteCommandCallback
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommandCallback implements CommandCallback
-{
-   public static Object result;
-   
-   @SuppressWarnings({"rawtypes", "unchecked"})
-   @Override
-   public void fired(Command event)
-   {
-      event.setResult(result);
-   }
+public class TestCommandCallback implements CommandCallback {
+    public static Object result;
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public void fired(Command event) {
+        event.setResult(result);
+    }
 }

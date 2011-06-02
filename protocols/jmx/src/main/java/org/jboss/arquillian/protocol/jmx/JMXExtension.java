@@ -22,16 +22,14 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
  * JMXExtension
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JMXExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(CommandService.class, JMXCommandService.class);
-   }
+public class JMXExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(CommandService.class, JMXCommandService.class);
+    }
 
 }

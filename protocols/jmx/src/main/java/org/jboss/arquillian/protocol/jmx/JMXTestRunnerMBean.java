@@ -29,48 +29,47 @@ import org.jboss.arquillian.test.spi.TestResult;
  * @author thomas.diesler@jboss.com
  * @version $Revision: $
  */
-public interface JMXTestRunnerMBean extends NotificationBroadcaster
-{
-   /** The ObjectName for this service: jboss.arquillian:service=jmx-test-runner */
-   String OBJECT_NAME = "jboss.arquillian:service=jmx-test-runner";
-   
-   /**
-    * Runs a test method on the given test class
-    *
-    * @param className the test class name
-    * @param methodName the test method name
-    * @return the input stream to read the {@link TestResult} from
-    */
-   InputStream runTestMethodEmbedded(String className, String methodName);
-   
-   /**
-    * Runs a test method on the given test class
-    *
-    * @param className the test class name
-    * @param methodName the test method name
-    * @return the {@link TestResult} 
-    */
-   TestResult runTestMethodRemote(String className, String methodName);
-   
-   /**
-    * Broadcast {@link Command} commands to any listeners
-    * 
-    * @param command Command object containing the request
-    */
-   void send(Command<?> command);
+public interface JMXTestRunnerMBean extends NotificationBroadcaster {
+    /** The ObjectName for this service: jboss.arquillian:service=jmx-test-runner */
+    String OBJECT_NAME = "jboss.arquillian:service=jmx-test-runner";
 
-   /**
-    * Receive {@link Command} results
-    * 
-    * @return command Command object containing the result, null if none received (yet)
-    */
-   Command<?> receive();
+    /**
+     * Runs a test method on the given test class
+     * 
+     * @param className the test class name
+     * @param methodName the test method name
+     * @return the input stream to read the {@link TestResult} from
+     */
+    InputStream runTestMethodEmbedded(String className, String methodName);
 
-   /**
-    * Client side to push a {@link Command} result back to container.
-    * 
-    * @param eventId used to correlate the result 
-    * @param command Command object containing the result, serialized
-    */
-   void push(String eventId, byte[] command);
+    /**
+     * Runs a test method on the given test class
+     * 
+     * @param className the test class name
+     * @param methodName the test method name
+     * @return the {@link TestResult}
+     */
+    TestResult runTestMethodRemote(String className, String methodName);
+
+    /**
+     * Broadcast {@link Command} commands to any listeners
+     * 
+     * @param command Command object containing the request
+     */
+    void send(Command<?> command);
+
+    /**
+     * Receive {@link Command} results
+     * 
+     * @return command Command object containing the result, null if none received (yet)
+     */
+    Command<?> receive();
+
+    /**
+     * Client side to push a {@link Command} result back to container.
+     * 
+     * @param eventId used to correlate the result
+     * @param command Command object containing the result, serialized
+     */
+    void push(String eventId, byte[] command);
 }

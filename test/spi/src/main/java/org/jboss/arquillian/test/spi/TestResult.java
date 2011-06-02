@@ -169,6 +169,7 @@ public final class TestResult implements Serializable {
 
     @Override
     public String toString() {
-        return "TestResult[status=" + status + ",time=" + (end - start) + "ms]";
+        long time = (end > 0 ? end - start : System.currentTimeMillis() - start);
+        return "TestResult[status=" + status + ",time=" + time + "ms]";
     }
 }

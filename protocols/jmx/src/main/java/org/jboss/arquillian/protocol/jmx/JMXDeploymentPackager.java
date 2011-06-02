@@ -25,15 +25,13 @@ import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * Packager for the JMX protocol.
- *
+ * 
  * @author thomas.diesler@jboss.com
  * @since 31-May-2011
  */
-public class JMXDeploymentPackager implements DeploymentPackager
-{
-   public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors)
-   {
-      Archive<?> appArchive = testDeployment.getApplicationArchive();
-      return appArchive;
-   }
+public class JMXDeploymentPackager implements DeploymentPackager {
+    public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors) {
+        Archive<?> appArchive = testDeployment.getApplicationArchive();
+        return appArchive;
+    }
 }

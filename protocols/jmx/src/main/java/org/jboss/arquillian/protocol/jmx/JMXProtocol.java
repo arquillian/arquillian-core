@@ -32,43 +32,38 @@ import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 
 /**
  * JMXProtocol
- *
+ * 
  * @author thomas.diesler@jboss.com
  * @since 21-Apr-2011
  */
-public class JMXProtocol implements Protocol<JMXProtocolConfiguration>
-{
-   @Inject @ContainerScoped
-   private Instance<MBeanServerConnection> mbeanServerInst;
+public class JMXProtocol implements Protocol<JMXProtocolConfiguration> {
+    @Inject
+    @ContainerScoped
+    private Instance<MBeanServerConnection> mbeanServerInst;
 
-   @Override
-   public DeploymentPackager getPackager() 
-   {
-       return new JMXDeploymentPackager();
-   }
+    @Override
+    public DeploymentPackager getPackager() {
+        return new JMXDeploymentPackager();
+    }
 
-   public String getProtocolName() 
-   {
-       return "jmx";
-   }
+    public String getProtocolName() {
+        return "jmx";
+    }
 
-   @Override
-   public Class<JMXProtocolConfiguration> getProtocolConfigurationClass()
-   {
-      return JMXProtocolConfiguration.class;
-   }
+    @Override
+    public Class<JMXProtocolConfiguration> getProtocolConfigurationClass() {
+        return JMXProtocolConfiguration.class;
+    }
 
-   @Override
-   public ProtocolDescription getDescription()
-   {
-      return new ProtocolDescription(getProtocolName());
-   }
+    @Override
+    public ProtocolDescription getDescription() {
+        return new ProtocolDescription(getProtocolName());
+    }
 
-   @Override
-   public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData, CommandCallback callback)
-   {
-      MBeanServerConnection mbeanServer = mbeanServerInst.get();
-      ExecutionType executionType = config.getExecutionType();
-      return new JMXMethodExecutor(mbeanServer, executionType, callback);
-   }
+    @Override
+    public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData, CommandCallback callback) {
+        MBeanServerConnection mbeanServer = mbeanServerInst.get();
+        ExecutionType executionType = config.getExecutionType();
+        return new JMXMethodExecutor(mbeanServer, executionType, callback);
+    }
 }

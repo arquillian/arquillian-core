@@ -83,7 +83,7 @@ public class CDIInjectionEnricher implements TestEnricher
             }
             catch (Exception e)
             {
-               log.info("CDIEnricher tried to lookup method parameter of type " + parameterTypes[i] + " but caught exception: " + e.getMessage());
+               log.fine("CDIEnricher tried to lookup method parameter of type " + parameterTypes[i] + " but caught exception: " + e.getMessage());
             }
          }
       }
@@ -109,8 +109,7 @@ public class CDIInjectionEnricher implements TestEnricher
          else
          {
             // Better would be to raise an exception if @Inject is present in class and BeanManager cannot be found
-            log.info("BeanManager cannot be located in context "
-                  + "Either you are using an archive with no beans.xml, or the BeanManager has not been produced.");
+            log.fine("BeanManager cannot be located in context. Either you are using an archive with no beans.xml or the BeanManager has not been produced.");
          }
       }
       catch (Exception e)
