@@ -32,7 +32,7 @@ import org.junit.runner.notification.RunListener;
 
 /**
  * JUnitTestRunner
- * 
+ *
  * A Implementation of the Arquillian TestRunner SPI for JUnit.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
@@ -41,8 +41,8 @@ import org.junit.runner.notification.RunListener;
  */
 public class JUnitTestRunner implements TestRunner
 {
-   /** 
-    * Overwrite to provide additional run listeners. 
+   /**
+    * Overwrite to provide additional run listeners.
     */
    protected List<RunListener> getRunListeners()
    {
@@ -51,39 +51,38 @@ public class JUnitTestRunner implements TestRunner
 
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      JUnitCore runner = new JUnitCore();
-
+      TestResult testResult = new TestResult(Status.PASSED);
       ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();
-      runner.addListener(exceptionHolder);
-
-      for (RunListener listener : getRunListeners())
-         runner.addListener(listener);
-
-      Result result = runner.run(Request.method(testClass, methodName));
-
-      return convertToTestResult(result, exceptionHolder.getException());
-   }
-
-   /**
-    * Convert a JUnit Result object to Arquillian TestResult
-    * 
-    * @param result JUnit Test Run Result
-    * @return The TestResult representation of the JUnit Result
-    */
-   private TestResult convertToTestResult(Result result, Throwable expectedException)
-   {
-      Status status = Status.PASSED;
-      Throwable throwable = expectedException;
-      if (result.getFailureCount() > 0)
+      try
       {
-         status = Status.FAILED;
-         throwable = result.getFailures().get(0).getException();
+          JUnitCore runner = new JUnitCore();
+
+          runner.addListener(exceptionHolder);
+
+          for (RunListener listener : getRunListeners())
+             runner.addListener(listener);
+
+          Result result = runner.run(Request.method(testClass, methodName));
+          if (result.getFailureCount() > 0)
+          {
+             testResult.setStatus(Status.FAILED);
+             testResult.setThrowable(result.getFailures().get(0).getException());
+          }
+          if (result.getIgnoreCount() > 0)
+          {
+              testResult.setStatus(Status.SKIPPED);
+          }
       }
-      if (result.getIgnoreCount() > 0)
+      catch (Throwable th) {
+          testResult.setStatus(Status.FAILED);
+          testResult.setThrowable(th);
+      }
+      finally
       {
-         status = Status.SKIPPED;
+          testResult.setThrowable(exceptionHolder.getException());
+          testResult.setEnd(System.currentTimeMillis());
       }
-      return new TestResult(status, throwable);
+      return testResult;
    }
 
    private class ExpectedExceptionHolder extends RunListener
