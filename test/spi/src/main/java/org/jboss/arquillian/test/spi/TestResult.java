@@ -21,19 +21,19 @@ import java.io.Serializable;
 /**
  * A test result which may be serialized for communicate between client and
  * server
- * 
+ *
  * @author Pete Muir
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * 
+ *
  */
 public final class TestResult implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The test status
-	 * 
+	 *
 	 * @author Pete Muir
-	 * 
+	 *
 	 */
 	public enum Status {
 		/**
@@ -70,7 +70,7 @@ public final class TestResult implements Serializable {
 	 * Create a new TestResult.<br/>
 	 * <br/>
 	 * Start time is set to Current Milliseconds.
-	 * 
+	 *
 	 * @param status
 	 *            The result status.
 	 */
@@ -82,14 +82,14 @@ public final class TestResult implements Serializable {
 	 * Create a new TestResult.<br/>
 	 * <br/>
 	 * Start time is set to Current Milliseconds.
-	 * 
+	 *
 	 * @param status
 	 *            The result status.
 	 * @param throwable
 	 *            thrown exception if any
 	 */
 	public TestResult(Status status, Throwable throwable) {
-		this.status = status;		
+		this.status = status;
 		setThrowable(throwable);
 
 		this.start = System.currentTimeMillis();
@@ -113,20 +113,20 @@ public final class TestResult implements Serializable {
 	public Throwable getThrowable() {
 		if (throwable == null) {
 			if (exceptionProxy != null) {
-				throwable = exceptionProxy.createException();	
-			}			
+				throwable = exceptionProxy.createException();
+			}
 		}
 		return throwable;
 	}
 
 	public void setThrowable(Throwable throwable) {
-		this.throwable = throwable;		
+		this.throwable = throwable;
 		this.exceptionProxy = ExceptionProxy.createForException(throwable);
 	}
 
 	/**
 	 * Set the start time of the test.
-	 * 
+	 *
 	 * @param start
 	 *            Start time in milliseconds
 	 */
@@ -136,7 +136,7 @@ public final class TestResult implements Serializable {
 
 	/**
 	 * Get the start time.
-	 * 
+	 *
 	 * @return Start time in milliseconds
 	 */
 	public long getStart() {
@@ -145,7 +145,7 @@ public final class TestResult implements Serializable {
 
 	/**
 	 * Set the end time of the test.
-	 * 
+	 *
 	 * @param End
 	 *            time in milliseconds
 	 */
@@ -155,7 +155,7 @@ public final class TestResult implements Serializable {
 
 	/**
 	 * Get the end time.
-	 * 
+	 *
 	 * @return End time in milliseconds
 	 */
 	public long getEnd() {
@@ -163,7 +163,12 @@ public final class TestResult implements Serializable {
 	}
 
 	public ExceptionProxy getExceptionProxy() {
-		
+
 		return exceptionProxy;
-	}	
+	}
+
+    @Override
+    public String toString() {
+        return "TestResult[status=" + status + ",time=" + (end - start) + "ms]";
+    }
 }
