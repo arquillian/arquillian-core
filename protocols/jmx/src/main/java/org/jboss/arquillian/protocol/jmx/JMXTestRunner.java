@@ -55,7 +55,8 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
 
     // Notification Sequence number
     private AtomicInteger integer = new AtomicInteger();
-    // opens for setting TestRunner to use, used for testing
+
+    // TestRunner to used for testing
     private TestRunner mockTestRunner;
 
     private TestClassLoader testClassLoader;
@@ -164,7 +165,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
         events.put(eventId, Serializer.toObject(Command.class, command));
     }
 
-    void setExposedTestRunnerForTest(MockTestRunner mockTestRunner) {
+    void setExposedTestRunnerForTest(TestRunner mockTestRunner) {
         this.mockTestRunner = mockTestRunner;
     }
 }
