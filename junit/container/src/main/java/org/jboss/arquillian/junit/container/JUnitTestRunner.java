@@ -63,6 +63,8 @@ public class JUnitTestRunner implements TestRunner
              runner.addListener(listener);
 
           Result result = runner.run(Request.method(testClass, methodName));
+          testResult.setThrowable(exceptionHolder.getException());
+
           if (result.getFailureCount() > 0)
           {
              testResult.setStatus(Status.FAILED);
@@ -79,7 +81,6 @@ public class JUnitTestRunner implements TestRunner
       }
       finally
       {
-          testResult.setThrowable(exceptionHolder.getException());
           testResult.setEnd(System.currentTimeMillis());
       }
       return testResult;
