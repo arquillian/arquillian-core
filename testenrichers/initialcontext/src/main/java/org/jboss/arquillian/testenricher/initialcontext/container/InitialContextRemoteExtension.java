@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.testenricher.initialcontext.container;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.testenricher.initialcontext.InitialContextProducer;
 
 /**
@@ -26,7 +26,7 @@ import org.jboss.arquillian.testenricher.initialcontext.InitialContextProducer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextRemoteExtension implements LoadableExtension
+public class InitialContextRemoteExtension implements RemoteLoadableExtension
 {
    @Override
    public void register(ExtensionBuilder builder)

@@ -23,6 +23,7 @@ import org.jboss.arquillian.container.test.impl.execution.AfterLifecycleEventExe
 import org.jboss.arquillian.container.test.impl.execution.BeforeLifecycleEventExecuter;
 import org.jboss.arquillian.container.test.impl.execution.ContainerTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.impl.TestExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
@@ -32,7 +33,7 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerTestRemoteExtension extends TestExtension
+public class ContainerTestRemoteExtension extends TestExtension implements RemoteLoadableExtension
 {
    @Override
    public void register(ExtensionBuilder builder)

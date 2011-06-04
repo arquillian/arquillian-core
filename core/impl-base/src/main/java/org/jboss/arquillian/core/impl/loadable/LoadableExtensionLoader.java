@@ -112,7 +112,8 @@ public class LoadableExtensionLoader
     */
    private ExtensionLoader locateExtensionLoader()
    {
-      Collection<ExtensionLoader> loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);
+      //Collection<ExtensionLoader> loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);
+      Collection<ExtensionLoader> loaders = serviceLoader.all(SecurityActions.getThreadContextClassLoader(), ExtensionLoader.class);
       if(loaders.size() > 1)
       {
          throw new RuntimeException("Multiple ExtensionLoader's found on classpath: " + toString(loaders));

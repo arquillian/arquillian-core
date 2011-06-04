@@ -17,8 +17,10 @@
 package org.jboss.arquillian.container.test.impl.deployment;
 
 import org.jboss.arquillian.container.test.impl.ContainerTestRemoteExtension;
+import org.jboss.arquillian.container.test.impl.RemoteExtensionLoader;
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.core.spi.ExtensionLoader;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -47,6 +49,7 @@ public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
                               "org.jboss.arquillian.config",
                               "org.jboss.arquillian.test",
                               "org.jboss.shrinkwrap")
-                        .addAsServiceProvider(LoadableExtension.class, ContainerTestRemoteExtension.class);
+                        .addAsServiceProvider(RemoteLoadableExtension.class, ContainerTestRemoteExtension.class)
+                        .addAsServiceProvider(ExtensionLoader.class, RemoteExtensionLoader.class);
    }
 }

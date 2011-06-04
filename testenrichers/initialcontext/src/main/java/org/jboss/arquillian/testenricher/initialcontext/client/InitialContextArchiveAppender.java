@@ -17,13 +17,13 @@
  */
 package org.jboss.arquillian.testenricher.initialcontext.client;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.testenricher.initialcontext.InitialContextProducer;
 import org.jboss.arquillian.testenricher.initialcontext.container.InitialContextRemoteExtension;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
  * InitialContextArchiveAppender
@@ -40,6 +40,6 @@ public class InitialContextArchiveAppender implements AuxiliaryArchiveAppender
                   .addClasses(
                         InitialContextRemoteExtension.class, 
                         InitialContextProducer.class)
-                  .addAsServiceProvider(LoadableExtension.class, InitialContextRemoteExtension.class);
+                  .addAsServiceProvider(RemoteLoadableExtension.class, InitialContextRemoteExtension.class);
    }
 }

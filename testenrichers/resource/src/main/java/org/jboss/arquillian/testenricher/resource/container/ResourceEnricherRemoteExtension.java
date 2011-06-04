@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.testenricher.resource.container;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
 
@@ -27,7 +27,7 @@ import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ResourceEnricherRemoteExtension implements LoadableExtension
+public class ResourceEnricherRemoteExtension implements RemoteLoadableExtension
 {
    @Override
    public void register(ExtensionBuilder builder)

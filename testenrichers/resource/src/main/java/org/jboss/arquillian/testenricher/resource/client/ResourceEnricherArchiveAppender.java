@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.testenricher.resource.client;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
 import org.jboss.arquillian.testenricher.resource.container.ResourceEnricherRemoteExtension;
 import org.jboss.shrinkwrap.api.Archive;
@@ -39,7 +39,7 @@ public class ResourceEnricherArchiveAppender implements AuxiliaryArchiveAppender
       return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-resource.jar")
                      .addPackage(ResourceInjectionEnricher.class.getPackage())
                      .addClass(ResourceEnricherRemoteExtension.class)
-                     .addAsServiceProvider(LoadableExtension.class, ResourceEnricherRemoteExtension.class);
+                     .addAsServiceProvider(RemoteLoadableExtension.class, ResourceEnricherRemoteExtension.class);
    }
 
 }

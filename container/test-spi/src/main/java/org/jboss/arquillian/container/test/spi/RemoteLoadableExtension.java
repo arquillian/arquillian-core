@@ -15,28 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.testenricher.ejb.container;
+package org.jboss.arquillian.container.test.spi;
 
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.testenricher.ejb.EJBInjectionEnricher;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * EJBEnricherRemoteExtension
+ * RemoteLoadableExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EJBEnricherRemoteExtension implements RemoteLoadableExtension
+public interface RemoteLoadableExtension extends LoadableExtension
 {
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      // only load if EJB is on ClassPath
-      if(Validate.classExists("javax.ejb.EJB"))
-      {
-         builder.service(TestEnricher.class, EJBInjectionEnricher.class);         
-      }
-   }
 
 }

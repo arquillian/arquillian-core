@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.testenricher.cdi.container;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.testenricher.cdi.CDIInjectionEnricher;
 import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
@@ -28,7 +28,7 @@ import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class CDIEnricherRemoteExtension implements LoadableExtension
+public class CDIEnricherRemoteExtension implements RemoteLoadableExtension
 {
    @Override
    public void register(ExtensionBuilder builder)
