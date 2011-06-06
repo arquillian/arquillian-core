@@ -68,9 +68,7 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
    @Override
    public ContainerDef container(String name)
    {
-      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.create("container"));
-      contianer.setContainerName(name);
-      return contianer;
+      return new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.getOrCreate("container@qualifier=" + name));
    }
 
    /* (non-Javadoc)

@@ -18,11 +18,22 @@ package org.jboss.arquillian.config.descriptor.impl;
 
 import static org.jboss.arquillian.config.descriptor.impl.AssertXPath.assertXPath;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 
 /**
@@ -62,7 +73,7 @@ public class ArquillianDescriptorTestCase
    {
       System.out.println(desc);
    }
-   
+
    @Test
    public void shouldBeAbleToGenerateEmpty() throws Exception
    {
@@ -85,11 +96,26 @@ public class ArquillianDescriptorTestCase
       assertXPath(desc, "/arquillian/engine/property[@name='maxTestClassesBeforeRestart']/text()", PROPERTY_INT_VALUE_1);
    
    
-      ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).from(desc);
+      ArquillianDescriptor descriptor = create(desc);
       
       Assert.assertEquals(PROPERTY_VALUE_1, descriptor.engine().getDeploymentExportPath());
       Assert.assertEquals(PROPERTY_INT_VALUE_1, descriptor.engine().getMaxTestClassesBeforeRestart());
    }
+   
+   @Test
+   public void shouldReturnNullOnEnginePropertiesIfNotSet() throws Exception
+   {
+      // add multiple times to see only one property added
+      desc = create()
+               .engine()
+             .exportAsString(); 
+
+      ArquillianDescriptor descriptor = create(desc);
+      
+      Assert.assertNull(descriptor.engine().getDeploymentExportPath());
+      Assert.assertNull(descriptor.engine().getMaxTestClassesBeforeRestart());
+   }
+
    
    @Test
    public void shouldBeAbleToAddContainer() throws Exception
@@ -100,6 +126,29 @@ public class ArquillianDescriptorTestCase
       
       assertXPath(desc, "/arquillian/container/@qualifier", CONTAINER_NAME_1, CONTAINER_NAME_2);
       assertXPath(desc, "/arquillian/container[1]/@default", "true");
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(2, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
+      Assert.assertTrue(descriptor.getContainers().get(0).isDefault());
+      Assert.assertEquals(CONTAINER_NAME_2, descriptor.getContainers().get(1).getContainerName());
+   }
+
+   @Test
+   public void shouldBeAbleToAddContainerAndOverwrite() throws Exception
+   {
+      desc = create()
+            .container(CONTAINER_NAME_1).setDefault()
+            .container(CONTAINER_NAME_1).setContainerName(CONTAINER_NAME_2)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/container/@qualifier", CONTAINER_NAME_2);
+      assertXPath(desc, "/arquillian/container/@default", "true");
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_2, descriptor.getContainers().get(0).getContainerName());
+      Assert.assertTrue(descriptor.getContainers().get(0).isDefault());
    }
 
    @Test
@@ -110,9 +159,44 @@ public class ArquillianDescriptorTestCase
                .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
             .exportAsString();
       
-      assertXPath(desc, "/arquillian/protocol/@type", PROTOCOL_TYPE_1);
-      assertXPath(desc, "/arquillian/protocol/configuration/property/@name", PROPERTY_NAME_1);
-      assertXPath(desc, "/arquillian/protocol/configuration/property/text()", PROPERTY_VALUE_1);
+      assertXPath(desc, "/arquillian/defaultProtocol/@type", PROTOCOL_TYPE_1);
+      assertXPath(desc, "/arquillian/defaultProtocol/property/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/defaultProtocol/property/text()", PROPERTY_VALUE_1);
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertNotNull(descriptor.getDefaultProtocol());
+      Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getDefaultProtocol().getType());
+      Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getDefaultProtocol().getProperties().get(PROPERTY_NAME_1));
+   }
+
+   @Test
+   public void shouldReturnNullDefaultProtocolIfNotAdded() throws Exception
+   {
+      desc = create()
+         .exportAsString();
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertNull(descriptor.getDefaultProtocol());
+   }
+
+   @Test
+   public void shouldBeAbleToAddDefaultProtocolAndOverwriteProperty() throws Exception
+   {
+      desc = create()
+            .defaultProtocol(PROTOCOL_TYPE_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_2)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/defaultProtocol/@type", PROTOCOL_TYPE_1);
+      assertXPath(desc, "/arquillian/defaultProtocol/property/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/defaultProtocol/property/text()", PROPERTY_VALUE_2);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertNotNull(descriptor.getDefaultProtocol());
+      Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getDefaultProtocol().getType());
+      Assert.assertEquals(1, descriptor.getDefaultProtocol().getProperties().size());
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getDefaultProtocol().getProperties().get(PROPERTY_NAME_1));
    }
 
    @Test
@@ -124,6 +208,30 @@ public class ArquillianDescriptorTestCase
             .dependency(DEPENDENCY_2).exportAsString();
       
       assertXPath(desc, "/arquillian/container/dependencies/dependency", DEPENDENCY_1, DEPENDENCY_2);
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
+      
+      Assert.assertEquals(DEPENDENCY_1, descriptor.getContainers().get(0).getDependencies().get(0));
+      Assert.assertEquals(DEPENDENCY_2, descriptor.getContainers().get(0).getDependencies().get(1));
+   }
+
+   @Test
+   public void shouldBeAbleToAddContainerWithDependenciesAndOverwrite() throws Exception
+   {
+      desc = create()
+            .container(CONTAINER_NAME_1)
+            .dependency(DEPENDENCY_1)
+            .dependency(DEPENDENCY_1).exportAsString();
+      
+      assertXPath(desc, "/arquillian/container/dependencies/dependency", DEPENDENCY_1);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
+      Assert.assertEquals(1, descriptor.getContainers().get(0).getDependencies().size());
+      Assert.assertEquals(DEPENDENCY_1, descriptor.getContainers().get(0).getDependencies().get(0));
    }
 
    @Test
@@ -139,14 +247,47 @@ public class ArquillianDescriptorTestCase
       
       assertXPath(desc, "/arquillian/container/@qualifier", CONTAINER_NAME_1);
       assertXPath(desc, "/arquillian/container/protocol[1]/@type", PROTOCOL_TYPE_1);
-      assertXPath(desc, "/arquillian/container/protocol[1]/configuration/property/@name", PROPERTY_NAME_1);
-      assertXPath(desc, "/arquillian/container/protocol[1]/configuration/property/text()", PROPERTY_VALUE_1);
+      assertXPath(desc, "/arquillian/container/protocol[1]/property/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/container/protocol[1]/property/text()", PROPERTY_VALUE_1);
 
       assertXPath(desc, "/arquillian/container/protocol[2]/@type", PROTOCOL_TYPE_2);
-      assertXPath(desc, "/arquillian/container/protocol[2]/configuration/property/@name", PROPERTY_NAME_2);
-      assertXPath(desc, "/arquillian/container/protocol[2]/configuration/property/text()", PROPERTY_VALUE_2);
+      assertXPath(desc, "/arquillian/container/protocol[2]/property/@name", PROPERTY_NAME_2);
+      assertXPath(desc, "/arquillian/container/protocol[2]/property/text()", PROPERTY_VALUE_2);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
+      
+      Assert.assertEquals(2, descriptor.getContainers().get(0).getProtocols().size());
+      Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getContainers().get(0).getProtocols().get(0).getType());
+      Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
+      Assert.assertEquals(PROTOCOL_TYPE_2, descriptor.getContainers().get(0).getProtocols().get(1).getType());
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(0).getProtocols().get(1).getProtocolProperties().get(PROPERTY_NAME_2));
    }
    
+   @Test
+   public void shouldBeAbleToAddContainerAndOverwriteProtocol() throws Exception
+   {
+      desc = create()
+            .container(CONTAINER_NAME_1)
+               .protocol(PROTOCOL_TYPE_1)
+                  .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+               .protocol(PROTOCOL_TYPE_1)
+                  .property(PROPERTY_NAME_1, PROPERTY_VALUE_2)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/container/@qualifier", CONTAINER_NAME_1);
+      assertXPath(desc, "/arquillian/container/protocol/@type", PROTOCOL_TYPE_1);
+      assertXPath(desc, "/arquillian/container/protocol/property/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/container/protocol/property/text()", PROPERTY_VALUE_2);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getContainers().size());
+      Assert.assertEquals(1, descriptor.getContainers().get(0).getProtocols().size());
+      Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getContainers().get(0).getProtocols().get(0).getType());
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
+   }
+
    @Test
    public void shouldBeAbleToAddContainerWithConfiguration() throws Exception
    {
@@ -165,8 +306,35 @@ public class ArquillianDescriptorTestCase
       assertXPath(desc, "/arquillian/container[2]/@qualifier", CONTAINER_NAME_2);
       assertXPath(desc, "/arquillian/container[2]/configuration/property/@name", PROPERTY_NAME_2);
       assertXPath(desc, "/arquillian/container[2]/configuration/property/text()", PROPERTY_VALUE_2);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(2, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
+      Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
+      Assert.assertEquals(CONTAINER_NAME_2, descriptor.getContainers().get(1).getContainerName());
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_2));
    }
    
+   @Test
+   public void shouldBeAbleToAddContainerWithConfigurationAndOverwriteProperty() throws Exception
+   {
+      desc = create()
+            .container(CONTAINER_NAME_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_2)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/container[1]/@qualifier", CONTAINER_NAME_1);
+      
+      assertXPath(desc, "/arquillian/container[1]/configuration/property/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/container[1]/configuration/property/text()", PROPERTY_VALUE_2);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
+      Assert.assertEquals(1, descriptor.getContainers().get(0).getContainerProperties().size());
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
+   }
    
    @Test
    public void shouldBeAbleToAddGroupWithContainer() throws Exception
@@ -181,12 +349,35 @@ public class ArquillianDescriptorTestCase
       assertXPath(desc, "/arquillian/group/@qualifier", GROUP_NAME_1, GROUP_NAME_2);
       assertXPath(desc, "/arquillian/group/container/@qualifier", CONTAINER_NAME_1, CONTAINER_NAME_2, CONTAINER_NAME_3);
       
-      ArquillianDescriptor descriptor = Descriptors.importAs(ArquillianDescriptor.class).from(desc);
+      ArquillianDescriptor descriptor = create(desc);
       Assert.assertEquals(2, descriptor.getGroups().size());
-      
       Assert.assertEquals(2, descriptor.getGroups().get(0).getGroupContainers().size());
+      Assert.assertEquals(1, descriptor.getGroups().get(1).getGroupContainers().size());
+      Assert.assertEquals(GROUP_NAME_1, descriptor.getGroups().get(0).getGroupName());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getGroups().get(0).getGroupContainers().get(0).getContainerName());
+      Assert.assertEquals(CONTAINER_NAME_2, descriptor.getGroups().get(0).getGroupContainers().get(1).getContainerName());
+      Assert.assertEquals(GROUP_NAME_2, descriptor.getGroups().get(1).getGroupName());
+      Assert.assertEquals(CONTAINER_NAME_3, descriptor.getGroups().get(1).getGroupContainers().get(0).getContainerName());
    }
    
+   @Test
+   public void shouldBeAbleToAddGroupWithContainerAndOverwriteContainer() throws Exception
+   {
+      desc = create()
+            .group(GROUP_NAME_1)
+               .container(CONTAINER_NAME_1)
+               .container(CONTAINER_NAME_1)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/group/@qualifier", GROUP_NAME_1);
+      assertXPath(desc, "/arquillian/group/container/@qualifier", CONTAINER_NAME_1);
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getGroups().size());
+      Assert.assertEquals(1, descriptor.getGroups().get(0).getGroupContainers().size());
+      Assert.assertEquals(CONTAINER_NAME_1, descriptor.getGroups().get(0).getGroupContainers().get(0).getContainerName());
+   }
+
    @Test
    public void shouldBeAbleToAddExtension() throws Exception
    {
@@ -198,15 +389,65 @@ public class ArquillianDescriptorTestCase
                .property(PROPERTY_NAME_3, PROPERTY_VALUE_3).exportAsString();
       
       assertXPath(desc, "/arquillian/extension/@qualifier", EXTENSION_NAME_1, EXTENSION_NAME_2);
-      assertXPath(desc, "/arquillian/extension[1]/configuration/property[1]/@name", PROPERTY_NAME_1);
-      assertXPath(desc, "/arquillian/extension[1]/configuration/property[1]/text()", PROPERTY_VALUE_1);
-      assertXPath(desc, "/arquillian/extension[1]/configuration/property[2]/@name", PROPERTY_NAME_2);
-      assertXPath(desc, "/arquillian/extension[1]/configuration/property[2]/text()", PROPERTY_VALUE_2);
+      assertXPath(desc, "/arquillian/extension[1]/property[1]/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/extension[1]/property[1]/text()", PROPERTY_VALUE_1);
+      assertXPath(desc, "/arquillian/extension[1]/property[2]/@name", PROPERTY_NAME_2);
+      assertXPath(desc, "/arquillian/extension[1]/property[2]/text()", PROPERTY_VALUE_2);
       
-      assertXPath(desc, "/arquillian/extension[2]/configuration/property/@name", PROPERTY_NAME_3);
-      assertXPath(desc, "/arquillian/extension[2]/configuration/property/text()", PROPERTY_VALUE_3);        
+      assertXPath(desc, "/arquillian/extension[2]/property/@name", PROPERTY_NAME_3);
+      assertXPath(desc, "/arquillian/extension[2]/property/text()", PROPERTY_VALUE_3);
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(2, descriptor.getExtensions().size());
+      Assert.assertEquals(EXTENSION_NAME_1, descriptor.getExtensions().get(0).getExtensionName());
+      Assert.assertEquals(2, descriptor.getExtensions().get(0).getExtensionProperties().size());
+      Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_2));
+
+      Assert.assertEquals(EXTENSION_NAME_2, descriptor.getExtensions().get(1).getExtensionName());
+      Assert.assertEquals(1, descriptor.getExtensions().get(1).getExtensionProperties().size());
+      Assert.assertEquals(PROPERTY_VALUE_3, descriptor.getExtensions().get(1).getExtensionProperties().get(PROPERTY_NAME_3));
    }
    
+   @Test
+   public void shouldBeAbleToRenameExtension() throws Exception
+   {
+      desc = create()
+            .extension(EXTENSION_NAME_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+            .extension(EXTENSION_NAME_1)
+               .setExtensionName(EXTENSION_NAME_2)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/extension/@qualifier", EXTENSION_NAME_2);
+      
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getExtensions().size());
+      Assert.assertEquals(EXTENSION_NAME_2, descriptor.getExtensions().get(0).getExtensionName());
+      Assert.assertEquals(1, descriptor.getExtensions().get(0).getExtensionProperties().size());
+      Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+   }
+
+   @Test
+   public void shouldBeAbleToAddExtensionAndOverwriteProperty() throws Exception
+   {
+      desc = create()
+            .extension(EXTENSION_NAME_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+               .property(PROPERTY_NAME_1, PROPERTY_VALUE_2)
+            .exportAsString();
+      
+      assertXPath(desc, "/arquillian/extension/@qualifier", EXTENSION_NAME_1);
+      assertXPath(desc, "/arquillian/extension/property/@name", PROPERTY_NAME_1);
+      assertXPath(desc, "/arquillian/extension/property/text()", PROPERTY_VALUE_2);
+
+      ArquillianDescriptor descriptor = create(desc);
+      Assert.assertEquals(1, descriptor.getExtensions().size());
+      Assert.assertEquals(EXTENSION_NAME_1, descriptor.getExtensions().get(0).getExtensionName());
+      Assert.assertEquals(1, descriptor.getExtensions().get(0).getExtensionProperties().size());
+      Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+   }
+
    @Test
    public void shouldBeAbleToAddEverything() throws Exception
    {
@@ -228,11 +469,10 @@ public class ArquillianDescriptorTestCase
                .container(CONTAINER_NAME_3)
                   .protocol(PROTOCOL_TYPE_3)
                      .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
-               .container(CONTAINER_NAME_4)
+            .container(CONTAINER_NAME_4)
             .extension(EXTENSION_NAME_1) 
                .property(PROPERTY_NAME_1, PROPERTY_VALUE_2)
             .exportAsString();
-            
    }
 
    //-------------------------------------------------------------------------------------||
@@ -242,5 +482,56 @@ public class ArquillianDescriptorTestCase
    private ArquillianDescriptor create()
    {
       return Descriptors.create(ArquillianDescriptor.class);
+   }
+
+   private ArquillianDescriptor create(String xml) throws Exception
+   {
+      validateXML(desc);
+      
+      return Descriptors.importAs(ArquillianDescriptor.class).from(xml);
+   }
+
+   private void validateXML(String xml) throws Exception
+   {
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance(); 
+      dbf.setValidating(true); 
+      dbf.setNamespaceAware(true);
+      dbf.setAttribute( 
+          "http://java.sun.com/xml/jaxp/properties/schemaLanguage", 
+          "http://www.w3.org/2001/XMLSchema"); 
+      DocumentBuilder db = dbf.newDocumentBuilder(); 
+      db.setErrorHandler(new ErrorHandler()
+      {
+         @Override
+         public void warning(SAXParseException exception) throws SAXException
+         {
+            throw exception;
+         }
+         
+         @Override
+         public void fatalError(SAXParseException exception) throws SAXException
+         {
+            throw exception;
+         }
+         
+         @Override
+         public void error(SAXParseException exception) throws SAXException
+         {
+            throw exception;
+         }
+      });
+      db.setEntityResolver(new EntityResolver()
+      {
+         @Override
+         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+         {
+            if("http://jboss.org/schema/arquillian/arquillian_1_0.xsd".equals(systemId))
+            {
+               return new InputSource(this.getClass().getClassLoader().getResourceAsStream("arquillian_1_0.xsd"));
+            }
+            return null;
+         }
+      }); 
+      db.parse(new ByteArrayInputStream(xml.getBytes()));
    }
 }

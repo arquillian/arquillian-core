@@ -50,7 +50,10 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
 
    public ArquillianDescriptorImpl(String descirptorName)
    {
-      this(descirptorName, new Node("arquillian"));
+      this(descirptorName, new Node("arquillian")
+         .attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+         .attribute("xmlns", "http://jboss.org/schema/arquillian")
+         .attribute("xsi:schemaLocation", "http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"));
    }
    
    public ArquillianDescriptorImpl(String descirptorName, Node model)
@@ -69,7 +72,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    @Override
    public DefaultProtocolDef defaultProtocol(String type)
    {
-      return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getOrCreate("protocol")).setType(type);
+      return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getOrCreate("defaultProtocol")).setType(type);
    }
    
    /* (non-Javadoc)
@@ -78,9 +81,9 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    @Override
    public DefaultProtocolDef getDefaultProtocol()
    {
-      if(model.getSingle("protocol") != null)
+      if(model.getSingle("defaultProtocol") != null)
       {
-         return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getSingle("protocol"));
+         return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getSingle("defaultProtocol"));
       }
       return null;
    }
@@ -96,7 +99,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    
    public ContainerDef container(String name) 
    {
-      return new ContainerDefImpl(getDescriptorName(), model, model.create("container")).setContainerName(name);
+      return new ContainerDefImpl(getDescriptorName(), model, model.getOrCreate("container@qualifier=" + name));
    }
 
    /* (non-Javadoc)
@@ -105,13 +108,13 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    @Override
    public GroupDef group(String name)
    {
-      return new GroupDefImpl(getDescriptorName(), model, model.create("group")).setGroupName(name);
+      return new GroupDefImpl(getDescriptorName(), model, model.getOrCreate("group@qualifier=" + name));
    }
    
    @Override
    public ExtensionDef extension(String name)
    {
-      return new ExtensionDefImpl(getDescriptorName(), model, model.create("extension")).setExtensionName(name);
+      return new ExtensionDefImpl(getDescriptorName(), model, model.getOrCreate("extension@qualifier=" + name));
    }
 
    /* (non-Javadoc)

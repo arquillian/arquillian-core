@@ -6,14 +6,18 @@
     
     <element name="arquillian">
     	<complexType>
-	    	<choice minOccurs="1" maxOccurs="unbounded">
-	    		<element ref="tns:engine" minOccurs="0" maxOccurs="1" />
-	    		<element ref="tns:defaultProtocol" minOccurs="0" maxOccurs="1" />
-	    		<element ref="tns:container" minOccurs="0" maxOccurs="unbounded" />
-	    		<element ref="tns:group" minOccurs="0" maxOccurs="unbounded"/>
-	    	</choice>
+            <sequence>
+                <element ref="tns:defaultProtocol" minOccurs="0" maxOccurs="1" />
+                <element ref="tns:engine" minOccurs="0" maxOccurs="1" />
+                <choice minOccurs="1" maxOccurs="unbounded">
+                    <element ref="tns:container" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="tns:group" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="tns:extension" minOccurs="0" maxOccurs="unbounded"/>
+                </choice>
+            </sequence>
     	</complexType>
-		<unique name="unique-qualifier-container-group">
+
+		<unique name="unique-qualifier-between-container-and-group">
 			<annotation>
 				<documentation>
 					@qualifier must be unique between containers and groups. Used to select which to run.
@@ -22,6 +26,15 @@
 			<selector xpath="tns:container|tns:group" />
 			<field xpath="@qualifier" />
 		</unique>
+        <unique name="unique-qualifier-between-extensions">
+            <annotation>
+                <documentation>
+                    @qualifier must be unique between extensions. Used to select which to run.
+                </documentation>
+            </annotation>
+            <selector xpath="tns:extension" />
+            <field xpath="@qualifier" />
+        </unique>
     </element>
 
 	<element name="engine">
@@ -30,6 +43,15 @@
 				<element ref="tns:property" />
 			</choice>		
     	</complexType>
+        <unique name="unique-property-within-engine">
+            <annotation>
+                <documentation>
+                    Property must be unique.
+                </documentation>
+            </annotation>
+            <selector xpath="tns:property" />
+            <field xpath="@name" />
+        </unique>
 	</element>
 	
 	<element name="group">
@@ -45,6 +67,15 @@
 	    	</choice>
 	    	<attribute name="qualifier" type="string" use="required" />
 	    </complexType>
+        <unique name="unique-qualifier-of-containers-within-group">
+            <annotation>
+                <documentation>
+                    @qualifier must be unique between all containers in a group. Used to select which to target.
+                </documentation>
+            </annotation>
+            <selector xpath="tns:container" />
+            <field xpath="@qualifier" />
+        </unique>
 	</element>
 	
     <element name="container">
@@ -54,11 +85,38 @@
 	    		<element ref="tns:dependencies" minOccurs="0" maxOccurs="1"  />
 	    		<element ref="tns:protocol" minOccurs="0" maxOccurs="unbounded" />
 	    	</choice>
-	    	<attribute name="qualifier" type="string" use="optional" />
+	    	<attribute name="qualifier" type="string" use="required" />
 	    	<attribute name="default" type="boolean" use="optional" default="false"/>
 	    </complexType>
+        <unique name="unique-protocol-within-container">
+            <annotation>
+                <documentation>
+                    @type must be unique between all protocols in a container.
+                </documentation>
+            </annotation>
+            <selector xpath="tns:protocol" />
+            <field xpath="@type" />
+        </unique>
 	</element>
 	
+    <element name="extension">
+		<complexType>
+			<choice minOccurs="1" maxOccurs="unbounded">
+				<element ref="tns:property"/>
+			</choice>		
+			<attribute name="qualifier" type="string" use="required" />
+		</complexType>
+		<unique name="unique-property-within-extension">
+			<annotation>
+				<documentation>
+					Property must be unique.
+				</documentation>
+			</annotation>
+			<selector xpath="tns:property" />
+			<field xpath="@name" />
+		</unique>
+    </element>
+
 	<element name="defaultProtocol">
 		<complexType>
 			<choice minOccurs="0" maxOccurs="unbounded">
@@ -98,7 +156,7 @@
 	<element name="configuration">
 		<complexType>
 			<choice minOccurs="1" maxOccurs="unbounded">
-				<element ref="tns:property"/>
+				<element ref="tns:property" minOccurs="1" maxOccurs="unbounded"/>
 			</choice>
 		</complexType>
 		<unique name="unique-property-within-configuration">

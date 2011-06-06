@@ -68,7 +68,7 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
    @Override
    public ContainerDef container(String name)
    {
-      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.create("container"));
+      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.getOrCreate("container@qualifier=" + name));
       contianer.setContainerName(name);
       return contianer; 
    }

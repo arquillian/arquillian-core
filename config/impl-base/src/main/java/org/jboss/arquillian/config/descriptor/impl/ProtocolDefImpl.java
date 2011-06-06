@@ -17,6 +17,7 @@
 package org.jboss.arquillian.config.descriptor.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
@@ -67,7 +68,7 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
    @Override
    public ProtocolDef property(String name, String value)
    {
-      protocol.getOrCreate("configuration").create("property").attribute("name", name).text(value);
+      protocol.getOrCreate("property@name=" + name).attribute("name", name).text(value);
       return this;
    }
    
@@ -77,15 +78,12 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
    @Override
    public Map<String, String> getProtocolProperties()
    {
-      Node props = protocol.getSingle("configuration");
+      List<Node> props = protocol.get("property");
       Map<String, String> properties = new HashMap<String, String>();
       
-      if(props != null)
+      for(Node prop: props)
       {
-         for(Node prop: props.get("property"))
-         {
-            properties.put(prop.attribute("name"), prop.text());
-         }
+         properties.put(prop.attribute("name"), prop.text());
       }
       return properties;
    }

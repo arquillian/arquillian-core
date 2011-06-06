@@ -17,6 +17,7 @@
 package org.jboss.arquillian.config.descriptor.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
@@ -67,21 +68,18 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
    @Override
    public DefaultProtocolDef property(String name, String value)
    {
-      protocol.getOrCreate("configuration").create("property").attribute("name", name).text(value);
+      protocol.getOrCreate("property@name=" + name).text(value);
       return this;
    }
    
    public Map<String, String> getProperties()
    {
-      Node props = protocol.getSingle("configuration");
+      List<Node> props = protocol.get("property");
       Map<String, String> properties = new HashMap<String, String>();
       
-      if(props != null)
+      for(Node prop: props)
       {
-         for(Node prop: props.get("property"))
-         {
-            properties.put(prop.attribute("name"), prop.text());
-         }
+         properties.put(prop.attribute("name"), prop.text());
       }
       return properties;
    }

@@ -17,6 +17,7 @@
 package org.jboss.arquillian.config.descriptor.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
@@ -60,7 +61,7 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
    @Override
    public ExtensionDef property(String name, String value)
    {
-      extension.getOrCreate("configuration").create("property").attribute("name", name).text(value);
+      extension.getOrCreate("property@name=" + name).attribute("name", name).text(value);
       return this;
    }
 
@@ -72,16 +73,12 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
    @Override
    public Map<String, String> getExtensionProperties()
    {
-
-      Node props = extension.getSingle("configuration");
+      List<Node> props = extension.get("property");
       Map<String, String> properties = new HashMap<String, String>();
 
-      if (props != null)
+      for (Node prop : props)
       {
-         for (Node prop : props.get("property"))
-         {
-            properties.put(prop.attribute("name"), prop.text());
-         }
+         properties.put(prop.attribute("name"), prop.text());
       }
       return properties;
    }

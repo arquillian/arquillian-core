@@ -100,7 +100,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    @Override
    public ContainerDef dependency(String artifactId)
    {
-      container.getOrCreate("dependencies").create("dependency").text(artifactId);
+      container.getOrCreate("dependencies").getOrCreate("dependency=" + artifactId);
       return this;
    }
    
@@ -110,7 +110,11 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    @Override
    public ProtocolDef protocol(String type)
    {
-      return new ProtocolDefImpl(getDescriptorName(), getRootNode(), container, container.create("protocol")).setType(type);
+      return new ProtocolDefImpl(
+            getDescriptorName(), 
+            getRootNode(), 
+            container, 
+            container.getOrCreate("protocol@type=" + type));
    }
    
    /* (non-Javadoc)
@@ -119,7 +123,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    @Override
    public ContainerDef property(String name, String value)
    {
-      container.getOrCreate("configuration").create("property").attribute("name", name).text(value);
+      container.getOrCreate("configuration").getOrCreate("property@name=" + name).text(value);
       return this;
    }
  
