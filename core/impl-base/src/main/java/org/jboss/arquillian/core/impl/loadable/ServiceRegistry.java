@@ -29,16 +29,19 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * ServiceRegistry
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author Davide D'Alto
  * @version $Revision: $
  */
 public class ServiceRegistry
 {
    private Injector injector;
    private Map<Class<?>, Set<Class<?>>> registry;
+   private Map<Class<?>, Set<Class<?>>> vetoed;
    
    public ServiceRegistry(Injector injector)
    {
       this.registry = new HashMap<Class<?>, Set<Class<?>>>();
+      this.vetoed = new HashMap<Class<?>, Set<Class<?>>>();
       this.injector = injector;
    }
    
@@ -46,6 +49,9 @@ public class ServiceRegistry
    {
       synchronized (registry)
       {
+         if(isImplementationVetoed(service, serviceImpl))
+            return;
+         
          Set<Class<?>> registeredImpls = registry.get(service);
          if(registeredImpls == null)
          {
@@ -53,6 +59,35 @@ public class ServiceRegistry
          }
          registeredImpls.add(serviceImpl);   
          registry.put(service, registeredImpls);
+      }
+   }
+
+   public <T> void removeService(Class<T> service, Class<? extends T> serviceImpl)
+   {
+      synchronized (registry)
+      {
+         Set<Class<?>> registeredImpls = registry.get(service);
+         if(registeredImpls == null)
+            return;
+
+         registeredImpls.remove(serviceImpl);   
+      }
+   }
+   
+   public <T> void overrideService(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl)
+   {
+      synchronized (registry)
+      {
+         Set<Class<?>> vetoedImpls = vetoed.get(service);
+         if(vetoedImpls == null)
+         {
+            vetoedImpls = new HashSet<Class<?>>();
+            vetoed.put(service, vetoedImpls);
+         }
+         vetoedImpls.add(oldServiceImpl);
+         
+         removeService(service, oldServiceImpl);
+         addService(service, newServiceImpl);
       }
    }
    
@@ -70,6 +105,12 @@ public class ServiceRegistry
       }
       
       return typedImpls;
+   }
+
+   private <T> boolean isImplementationVetoed(Class<?> service, Class<? extends T> serviceImpl)
+   {
+      Set<Class<?>> vetoedImpls = vetoed.get(service);
+      return vetoedImpls != null && vetoedImpls.contains(serviceImpl);
    }
    
    public void clear()
