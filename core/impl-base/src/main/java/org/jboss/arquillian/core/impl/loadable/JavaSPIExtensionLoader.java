@@ -76,7 +76,9 @@ public class JavaSPIExtensionLoader implements ExtensionLoader
    {
       String serviceFile = SERVICES + "/" + serviceClass.getName();
 
-      LinkedHashSet<Class<? extends T>> providers = new LinkedHashSet<Class<? extends T>>();
+      LinkedHashSet<Class<? extends T>> providers = new LinkedHashSet<Class<? extends T>>();      
+      LinkedHashSet<Class<? extends T>> vetoedProviders = new LinkedHashSet<Class<? extends T>>();      
+      
       try
       {
          Enumeration<URL> enumeration = loader.getResources(serviceFile);
@@ -92,21 +94,29 @@ public class JavaSPIExtensionLoader implements ExtensionLoader
                String line = reader.readLine();
                while (null != line)
                {
-                  final int comment = line.indexOf('#');
-                  if (comment > -1)
-                  {
-                     line = line.substring(0, comment);
-                  }
-   
-                  line = line.trim();
+                  line = skipCommentAndTrim(line);
    
                   if (line.length() > 0)
                   {
                      try
                      {
-                        providers.add(
-                              loader.loadClass(line)
-                                 .asSubclass(serviceClass));
+                        boolean mustBeVetoed = line.startsWith("!");
+                        if (mustBeVetoed)
+                        {
+                           line = line.substring(1);
+                        }
+                        
+                        Class<? extends T> provider = loader.loadClass(line).asSubclass(serviceClass);
+                    
+                        if (mustBeVetoed) {
+                           vetoedProviders.add(provider);
+                        }
+                        
+                        if (vetoedProviders.contains(provider)) {
+                           providers.remove(provider);
+                        } else {
+                           providers.add(provider);
+                        }
                      }
                      catch (ClassCastException e)
                      {
@@ -131,6 +141,18 @@ public class JavaSPIExtensionLoader implements ExtensionLoader
          throw new RuntimeException("Could not load services for " + serviceClass.getName(), e);
       }
       return providers;
+   }
+
+   private String skipCommentAndTrim(String line)
+   {
+      final int comment = line.indexOf('#');
+      if (comment > -1)
+      {
+         line = line.substring(0, comment);
+      }
+  
+      line = line.trim();
+      return line;
    }
    
    /**

@@ -84,6 +84,14 @@ public class LoadableExtensionLoader
                registry.addService(service, impl);
                return this;
             }
+
+            @Override
+            public <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl)
+            {
+               log.log(level, "\toverride: {0} overrides {1} for {2}", new Object[]{newServiceImpl, oldServiceImpl, service});
+               registry.overrideService(service, oldServiceImpl, newServiceImpl);
+               return this;
+            }
             
             @Override
             public ExtensionBuilder observer(Class<?> handler)

@@ -34,6 +34,8 @@ public interface LoadableExtension
    {
       <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl);
       
+      <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl);
+      
       ExtensionBuilder observer(Class<?> handler);
       
       ExtensionBuilder context(Class<? extends Context> context);
