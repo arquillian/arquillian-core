@@ -39,7 +39,7 @@ public class CDIEnricherArchiveAppender implements AuxiliaryArchiveAppender
    @Override
    public Archive<?> createAuxiliaryArchive()
    {
-      return ShrinkWrap.create(JavaArchive.class, "arquillian-testnericher-cdi.jar")
+      return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-cdi.jar")
                   .addPackages(false, 
                         CDIInjectionEnricher.class.getPackage(),
                         CDIEnricherRemoteExtension.class.getPackage())
