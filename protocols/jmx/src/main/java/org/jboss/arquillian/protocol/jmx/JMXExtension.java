@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
-import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
  * JMXExtension
@@ -26,7 +26,7 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JMXExtension implements LoadableExtension
+public class JMXExtension implements RemoteLoadableExtension
 {
    @Override
    public void register(ExtensionBuilder builder)
