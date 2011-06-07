@@ -59,7 +59,12 @@ public class RemoteExtensionLoader implements ExtensionLoader
    public Collection<LoadableExtension> load()
    {
       List<LoadableExtension> extensions = new ArrayList<LoadableExtension>();
-      for(RemoteLoadableExtension extension : all(SecurityActions.getThreadContextClassLoader(), RemoteLoadableExtension.class))
+      Collection<RemoteLoadableExtension> loaded = all(SecurityActions.getThreadContextClassLoader(), RemoteLoadableExtension.class);
+      if(loaded.size() == 0)
+      {
+         loaded = all(RemoteExtensionLoader.class.getClassLoader(), RemoteLoadableExtension.class);
+      }
+      for(RemoteLoadableExtension extension : loaded)
       {
          extensions.add(extension);
       }
