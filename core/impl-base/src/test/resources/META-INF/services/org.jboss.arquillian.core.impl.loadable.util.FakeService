@@ -1,0 +1,4 @@
+!org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded #dfhjbgsdkjfbgk
+org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded
+org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded
+       #org.jbosd
