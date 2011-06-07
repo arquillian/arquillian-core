@@ -34,9 +34,9 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  */
 public class ServiceRegistry
 {
-   private Injector injector;
-   private Map<Class<?>, Set<Class<?>>> registry;
-   private Map<Class<?>, Set<Class<?>>> vetoed;
+   private final Injector injector;
+   private final Map<Class<?>, Set<Class<?>>> registry;
+   private final Map<Class<?>, Set<Class<?>>> vetoed;
    
    public ServiceRegistry(Injector injector)
    {
