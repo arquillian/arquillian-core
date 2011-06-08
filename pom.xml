@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-build</artifactId>
-        <version>1.0.0.Beta2-SNAPSHOT</version>
+        <version>1.0.0.Beta2</version>
         <relativePath>build/pom.xml</relativePath>
     </parent>
 
@@ -32,7 +32,7 @@
     <!-- Artifact Information -->
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-parent</artifactId>
-    <version>1.0.0.Beta2-SNAPSHOT</version>
+    <version>1.0.0.Beta2</version>
     <packaging>pom</packaging>
     <name>Arquillian Aggregator</name>
     <url>http://www.jboss.org</url>
