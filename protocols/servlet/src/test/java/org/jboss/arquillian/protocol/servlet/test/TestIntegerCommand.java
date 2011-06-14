@@ -17,30 +17,44 @@
  */
 package org.jboss.arquillian.protocol.servlet.test;
 
+import java.io.Serializable;
+
 import org.jboss.arquillian.container.test.spi.command.Command;
-import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 /**
- * TestRemoteCommandCallback
+ * TestRemoteCommand
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommandCallback implements CommandCallback
+public class TestIntegerCommand implements Command<Integer>, Serializable
 {
-   private Object[] results;
-   
-   private int invocationCount = 0;
+   private static final long serialVersionUID = 1L;
 
-   public TestCommandCallback(Object... object)
-   {
-      results = object;
-   }
+   private Integer result;
+   private Throwable throwable;
    
-   @SuppressWarnings({"rawtypes", "unchecked"})
    @Override
-   public void fired(Command event)
+   public Integer getResult()
    {
-      event.setResult(results[invocationCount++]);
+      return result;
+   }
+
+   @Override
+   public void setResult(Integer result)
+   {
+      this.result = result;
+   }
+
+   @Override
+   public Throwable getThrowable()
+   {
+      return throwable;
+   }
+
+   @Override
+   public void setThrowable(Throwable throwable)
+   {
+      this.throwable = throwable;
    }
 }

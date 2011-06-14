@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.jmx;
+package org.jboss.arquillian.protocol.jmx.test;
 
 import java.io.Serializable;
 
@@ -23,33 +23,38 @@ import org.jboss.arquillian.container.test.spi.command.Command;
 
 /**
  * TestRemoteCommand
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommand implements Command<String>, Serializable {
-    private static final long serialVersionUID = 1L;
+public class TestIntegerCommand implements Command<Integer>, Serializable
+{
+   private static final long serialVersionUID = 1L;
 
-    private String result;
-    private Throwable throwable;
+   private Integer result;
+   private Throwable throwable;
+   
+   @Override
+   public Integer getResult()
+   {
+      return result;
+   }
 
-    @Override
-    public String getResult() {
-        return result;
-    }
+   @Override
+   public void setResult(Integer result)
+   {
+      this.result = result;
+   }
 
-    @Override
-    public void setResult(String result) {
-        this.result = result;
-    }
+   @Override
+   public Throwable getThrowable()
+   {
+      return throwable;
+   }
 
-    @Override
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    @Override
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
+   @Override
+   public void setThrowable(Throwable throwable)
+   {
+      this.throwable = throwable;
+   }
 }

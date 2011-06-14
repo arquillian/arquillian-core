@@ -26,10 +26,11 @@ import javax.management.MBeanServerFactory;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
-import org.jboss.arquillian.protocol.jmx.JMXMethodExecutor;
-import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration;
-import org.jboss.arquillian.protocol.jmx.JMXTestRunner;
-import org.jboss.arquillian.protocol.jmx.JMXTestRunnerMBean;
+import org.jboss.arquillian.protocol.jmx.test.JMXTestTestRunner;
+import org.jboss.arquillian.protocol.jmx.test.MockTestRunner;
+import org.jboss.arquillian.protocol.jmx.test.TestCommandCallback;
+import org.jboss.arquillian.protocol.jmx.test.TestIntegerCommand;
+import org.jboss.arquillian.protocol.jmx.test.TestStringCommand;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -63,46 +64,57 @@ public class JMXTestRunnerTestCase {
     }
 
     @Test
-    public void shouldBeAbleToSendReceiveCommands() throws Throwable {
-        TestCommandCallback.result = "Success";
-        MockTestRunner.add(new TestResult(Status.PASSED));
-        MockTestRunner.command = new TestCommand();
+    public void shouldBeAbleToSendReceiveCommands() throws Throwable
+    {
+       Object[] results = new Object[]{"Success", 100};
+       MockTestRunner.add(new TestResult(Status.PASSED));
+       MockTestRunner.add(new TestStringCommand());
+       MockTestRunner.add(new TestIntegerCommand());
+       
+       MBeanServer mbeanServer = getMBeanServer();
+       JMXTestRunner jmxTestRunner = new JMXTestTestRunner(null);
 
-        MBeanServer mbeanServer = getMBeanServer();
-        JMXTestRunner jmxTestRunner = new JMXTestRunner(null);
-        jmxTestRunner.setExposedTestRunnerForTest(new MockTestRunner());
-        ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
-
-        try {
-            JMXProtocolConfiguration config = new JMXProtocolConfiguration();
-            JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, config.getExecutionType(), new TestCommandCallback());
-
-            TestResult result = executor.invoke(new TestMethodExecutor() {
-                @Override
-                public void invoke(Object... parameters) throws Throwable {
-                }
-
-                @Override
-                public Method getMethod() {
-                    return testMethod();
-                }
-
-                @Override
-                public Object getInstance() {
-                    return JMXTestRunnerTestCase.this;
-                }
-            });
-
-            assertNotNull("TestResult not null", result);
-            assertNotNull("Status not null", result.getStatus());
-            if (result.getStatus() == Status.FAILED)
-                throw result.getThrowable();
-
-            Assert.assertEquals("Should have returned command", TestCommandCallback.result, MockTestRunner.commandResult);
-
-        } finally {
-            mbeanServer.unregisterMBean(oname);
-        }
+       jmxTestRunner.setExposedTestRunnerForTest(new MockTestRunner());
+       ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
+       
+       try
+       {
+          JMXProtocolConfiguration config = new JMXProtocolConfiguration();
+          JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, config.getExecutionType(), new TestCommandCallback(results));
+          
+          TestResult result = executor.invoke(new TestMethodExecutor()
+          {
+             @Override
+             public void invoke(Object... parameters) throws Throwable { }
+             
+             @Override
+             public Method getMethod() { return testMethod(); }
+             
+             @Override
+             public Object getInstance()
+             {
+                return JMXTestRunnerTestCase.this;
+             }
+          });
+           
+          assertNotNull("TestResult not null", result);
+          assertNotNull("Status not null", result.getStatus());
+          if (result.getStatus() == Status.FAILED)
+             throw result.getThrowable();
+          
+          
+          for(int i = 0 ; i < results.length; i++)
+          {
+             Assert.assertEquals(
+                   "Should have returned command",
+                   results[i],
+                   MockTestRunner.commandResults.get(i));
+          }
+       }
+       finally
+       {
+          mbeanServer.unregisterMBean(oname);
+       }
     }
 
     private MBeanServer getMBeanServer() {

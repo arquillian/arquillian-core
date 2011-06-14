@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.protocol.servlet.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.protocol.servlet.runner.ServletCommandService;
@@ -33,8 +36,13 @@ public class MockTestRunner implements TestRunner
 {
    public static TestResult wantedResults;
 
-   public static Command<?> command;
-   public static Object commandResult;
+   public static List<Command<?>> commands = new ArrayList<Command<?>>();
+   public static List<Object> commandResults = new ArrayList<Object>();
+   
+   public static void add(Command<?> command)
+   {
+      commands.add(command);
+   }
    
    public static void add(TestResult wantedTestResult) 
    {
@@ -43,9 +51,9 @@ public class MockTestRunner implements TestRunner
    
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      if(command != null)
+      for(Command<?> command : commands)
       {
-         commandResult = new ServletCommandService().execute(command);
+         commandResults.add(new ServletCommandService().execute(command));
       }
       
       return wantedResults;
@@ -54,7 +62,7 @@ public class MockTestRunner implements TestRunner
    public static void clear()
    {
       wantedResults = null;
-      command = null;
-      commandResult = null;
+      commands.clear();
+      commandResults.clear();
    }
 }

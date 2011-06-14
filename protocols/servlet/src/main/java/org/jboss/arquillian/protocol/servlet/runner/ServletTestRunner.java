@@ -208,10 +208,9 @@ public class ServletTestRunner extends HttpServlet
          {
             response.setStatus(HttpServletResponse.SC_OK);
             ObjectOutputStream output = new ObjectOutputStream(response.getOutputStream());
-            output.writeObject(events.get(eventKey));
+            output.writeObject(events.remove(eventKey));
             output.flush();
             output.close();
-            events.remove(eventKey);
          }
          else
          {

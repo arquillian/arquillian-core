@@ -42,130 +42,169 @@ import org.jboss.logging.Logger;
  *
  * @author thomas.diesler@jboss.com
  */
-public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean {
+public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean
+{
+   // Provide logging
+   private static Logger log = Logger.getLogger(JMXTestRunner.class);
 
-    // Provide logging
-    private static Logger log = Logger.getLogger(JMXTestRunner.class);
+   // package shared MBeanServer with JMXCommandService
+   static MBeanServer localMBeanServer;
 
-    // package shared MBeanServer with JMXCommandService
-    static MBeanServer localMBeanServer;
+   private ConcurrentHashMap<String, Command<?>> events;
 
-    private ConcurrentHashMap<String, Command<?>> events;
-    private ThreadLocal<String> currentCall;
+   private ThreadLocal<String> currentCall;
 
-    // Notification Sequence number
-    private AtomicInteger integer = new AtomicInteger();
+   // Notification Sequence number
+   private AtomicInteger integer = new AtomicInteger();
 
-    // TestRunner to used for testing
-    private TestRunner mockTestRunner;
+   // TestRunner to used for testing
+   private TestRunner mockTestRunner;
 
-    private TestClassLoader testClassLoader;
+   private TestClassLoader testClassLoader;
 
-    public interface TestClassLoader {
-        Class<?> loadTestClass(String className) throws ClassNotFoundException;
-    }
+   public interface TestClassLoader
+   {
+      Class<?> loadTestClass(String className) throws ClassNotFoundException;
+   }
 
-    public JMXTestRunner(TestClassLoader classLoader) {
-        this.testClassLoader = classLoader;
+   public JMXTestRunner(TestClassLoader classLoader)
+   {
+      this.testClassLoader = classLoader;
 
-        // Initialize the default TestClassLoader
-        if (testClassLoader == null) {
-            testClassLoader = new TestClassLoader() {
-                public Class<?> loadTestClass(String className) throws ClassNotFoundException {
-                    ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
-                    return classLoader.loadClass(className);
-                }
-            };
-        }
-        events = new ConcurrentHashMap<String, Command<?>>();
-        currentCall = new ThreadLocal<String>();
-    }
-
-    public ObjectName registerMBean(MBeanServer mbeanServer) throws JMException {
-        ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
-        mbeanServer.registerMBean(this, oname);
-        log.debug("JMXTestRunner registered: " + oname);
-        localMBeanServer = mbeanServer;
-        return oname;
-    }
-
-    public void unregisterMBean(MBeanServer mbeanServer) throws JMException {
-        ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
-        if (mbeanServer.isRegistered(oname)) {
-            mbeanServer.unregisterMBean(oname);
-            log.debug("JMXTestRunner unregistered: " + oname);
-        }
-        localMBeanServer = null;
-    }
-
-    public TestResult runTestMethodRemote(String className, String methodName) {
-        currentCall.set(className + methodName);
-        TestResult result = runTestMethodInternal(className, methodName);
-        return result;
-    }
-
-    public InputStream runTestMethodEmbedded(String className, String methodName) {
-        currentCall.set(className + methodName);
-        TestResult result = runTestMethodInternal(className, methodName);
-
-        // Marshall the TestResult
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(result);
-            oos.close();
-
-            return new ByteArrayInputStream(baos.toByteArray());
-        } catch (IOException ex) {
-            throw new IllegalStateException("Cannot marshall response", ex);
-        }
-    }
-
-    private TestResult runTestMethodInternal(String className, String methodName) {
-        TestResult result = new TestResult();
-        try {
-            TestRunner runner = mockTestRunner;
-            if (runner == null) {
-                runner = TestRunners.getTestRunner(getClass().getClassLoader());
+      // Initialize the default TestClassLoader
+      if (testClassLoader == null)
+      {
+         testClassLoader = new TestClassLoader()
+         {
+            public Class<?> loadTestClass(String className) throws ClassNotFoundException
+            {
+               ClassLoader classLoader = JMXTestRunner.class.getClassLoader();
+               return classLoader.loadClass(className);
             }
+         };
+      }
+      events = new ConcurrentHashMap<String, Command<?>>();
+      currentCall = new ThreadLocal<String>();
+   }
 
-            log.debugf("Load test class: %s", className);
-            Class<?> testClass = testClassLoader.loadTestClass(className);
-            log.debugf("Test class loaded from: %s", testClass.getClassLoader());
+   public ObjectName registerMBean(MBeanServer mbeanServer) throws JMException
+   {
+      ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+      mbeanServer.registerMBean(this, oname);
+      log.debug("JMXTestRunner registered: " + oname);
+      localMBeanServer = mbeanServer;
+      return oname;
+   }
 
-            log.debugf("Execute: %s.%s", testClass, methodName);
-            result = runner.execute(testClass, methodName);
-        } catch (Throwable th) {
-            result.setStatus(Status.FAILED);
-            result.setEnd(System.currentTimeMillis());
-            result.setThrowable(th);
-        }
-        finally {
-            log.debugf("Result: %s", result);
-            if (result.getStatus() == Status.FAILED)
-                log.errorf(result.getThrowable(), "Failed: %s.%s", className, methodName);
-        }
-        return result;
-    }
+   public void unregisterMBean(MBeanServer mbeanServer) throws JMException
+   {
+      ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+      if (mbeanServer.isRegistered(oname))
+      {
+         mbeanServer.unregisterMBean(oname);
+         log.debug("JMXTestRunner unregistered: " + oname);
+      }
+      localMBeanServer = null;
+   }
 
-    @Override
-    public void send(Command<?> command) {
-        Notification notification = new Notification("arquillian-command", this, integer.incrementAndGet(), currentCall.get());
-        notification.setUserData(Serializer.toByteArray(command));
-        sendNotification(notification);
-    }
+   public TestResult runTestMethodRemote(String className, String methodName)
+   {
+      return runTestMethodInternal(className, methodName);
+   }
 
-    @Override
-    public Command<?> receive() {
-        return events.get(currentCall.get());
-    }
+   public InputStream runTestMethodEmbedded(String className, String methodName)
+   {
+      TestResult result = runTestMethodInternal(className, methodName);
 
-    @Override
-    public void push(String eventId, byte[] command) {
-        events.put(eventId, Serializer.toObject(Command.class, command));
-    }
+      // Marshall the TestResult
+      try
+      {
+         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+         ObjectOutputStream oos = new ObjectOutputStream(baos);
+         oos.writeObject(result);
+         oos.close();
 
-    void setExposedTestRunnerForTest(TestRunner mockTestRunner) {
-        this.mockTestRunner = mockTestRunner;
-    }
+         return new ByteArrayInputStream(baos.toByteArray());
+      }
+      catch (IOException ex)
+      {
+         throw new IllegalStateException("Cannot marshall response", ex);
+      }
+   }
+
+   private TestResult runTestMethodInternal(String className, String methodName)
+   {
+      currentCall.set(className + methodName);
+      TestResult result = new TestResult();
+      try
+      {
+         TestRunner runner = mockTestRunner;
+         if (runner == null)
+         {
+            runner = TestRunners.getTestRunner(getClass().getClassLoader());
+         }
+
+         log.debugf("Load test class: %s", className);
+         Class<?> testClass = testClassLoader.loadTestClass(className);
+         log.debugf("Test class loaded from: %s", testClass.getClassLoader());
+
+         log.debugf("Execute: %s.%s", testClass, methodName);
+         result = runner.execute(testClass, methodName);
+      }
+      catch (Throwable th)
+      {
+         result.setStatus(Status.FAILED);
+         result.setEnd(System.currentTimeMillis());
+         result.setThrowable(th);
+      }
+      finally
+      {
+         log.debugf("Result: %s", result);
+         if (result.getStatus() == Status.FAILED)
+            log.errorf(result.getThrowable(), "Failed: %s.%s", className, methodName);
+      }
+      return result;
+   }
+
+   @Override
+   public void send(Command<?> command)
+   {
+      Notification notification = new Notification("arquillian-command", this, integer.incrementAndGet(),
+            currentCall.get());
+      notification.setUserData(Serializer.toByteArray(command));
+      sendNotification(notification);
+   }
+
+   @Override
+   public Command<?> receive()
+   {
+      return events.remove(currentCall.get());
+   }
+
+   @Override
+   public void push(String eventId, byte[] command)
+   {
+      events.put(eventId, Serializer.toObject(Command.class, command));
+   }
+
+   /*
+    * Internal Helpers for Test
+    */
+   /**
+    * @return the currentCall
+    */
+   protected String getCurrentCall()
+   {
+      return currentCall.get();
+   }
+
+   protected void setCurrentCall(String current)
+   {
+      currentCall.set(current);
+   }
+   
+   void setExposedTestRunnerForTest(TestRunner mockTestRunner)
+   {
+      this.mockTestRunner = mockTestRunner;
+   }
 }

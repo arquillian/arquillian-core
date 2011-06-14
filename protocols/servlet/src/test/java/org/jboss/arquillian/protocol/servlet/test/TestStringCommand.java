@@ -15,23 +15,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.jmx;
+package org.jboss.arquillian.protocol.servlet.test;
+
+import java.io.Serializable;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
-import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 /**
- * TestRemoteCommandCallback
- * 
+ * TestRemoteCommand
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommandCallback implements CommandCallback {
-    public static Object result;
+public class TestStringCommand implements Command<String>, Serializable
+{
+   private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public void fired(Command event) {
-        event.setResult(result);
-    }
+   private String result;
+   private Throwable throwable;
+   
+   @Override
+   public String getResult()
+   {
+      return result;
+   }
+
+   @Override
+   public void setResult(String result)
+   {
+      this.result = result;
+   }
+
+   @Override
+   public Throwable getThrowable()
+   {
+      return throwable;
+   }
+
+   @Override
+   public void setThrowable(Throwable throwable)
+   {
+      this.throwable = throwable;
+   }
 }

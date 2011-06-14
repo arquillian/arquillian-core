@@ -18,8 +18,9 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
-import org.jboss.arquillian.protocol.servlet.test.TestCommand;
 import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
+import org.jboss.arquillian.protocol.servlet.test.TestIntegerCommand;
+import org.jboss.arquillian.protocol.servlet.test.TestStringCommand;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Assert;
@@ -36,11 +37,13 @@ public class ServletCommandServiceTestCase extends AbstractServerBase
    @Test
    public void shouldBeAbleToTransfereCommand() throws Exception
    {
-      TestCommandCallback.result = "Weee";
-      MockTestRunner.add(new TestResult(Status.PASSED, null));
-      MockTestRunner.command = new TestCommand();
+      Object[] results = new Object[] {"Wee", 100};
       
-      ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL(), new TestCommandCallback());
+      MockTestRunner.add(new TestResult(Status.PASSED, null));
+      MockTestRunner.add(new TestStringCommand());
+      MockTestRunner.add(new TestIntegerCommand());
+      
+      ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL(), new TestCommandCallback(results));
       TestResult result = executor.invoke(new MockTestExecutor());
 
       Assert.assertEquals(
@@ -54,8 +57,13 @@ public class ServletCommandServiceTestCase extends AbstractServerBase
 
       Assert.assertEquals(
             "Should have returned command",
-            TestCommandCallback.result,
-            MockTestRunner.commandResult);
+            results[0],
+            MockTestRunner.commandResults.get(0));
+
+      Assert.assertEquals(
+            "Should have returned command",
+            results[1],
+            MockTestRunner.commandResults.get(1));
    }
 
 }

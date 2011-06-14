@@ -15,32 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet.test;
+package org.jboss.arquillian.protocol.jmx.test;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
-import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 /**
- * TestRemoteCommandCallback
+ * ARQ-469
+ * Override send on original JMXTestRunner so we can simulate multi threaded behavior when running in container. 
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommandCallback implements CommandCallback
+public class JMXTestTestRunner extends org.jboss.arquillian.protocol.jmx.JMXTestRunner
 {
-   private Object[] results;
-   
-   private int invocationCount = 0;
-
-   public TestCommandCallback(Object... object)
+   public JMXTestTestRunner(TestClassLoader classLoader)
    {
-      results = object;
+      super(classLoader);
    }
-   
-   @SuppressWarnings({"rawtypes", "unchecked"})
+
    @Override
-   public void fired(Command event)
+   public void send(final Command<?> command)
    {
-      event.setResult(results[invocationCount++]);
+      final String currentCall = getCurrentCall();
+      new Thread(new Runnable() {
+         @Override
+         public void run()
+         {
+            JMXTestTestRunner.this.setCurrentCall(currentCall);
+            JMXTestTestRunner.super.send(command);
+         }
+      }).start();
    }
 }

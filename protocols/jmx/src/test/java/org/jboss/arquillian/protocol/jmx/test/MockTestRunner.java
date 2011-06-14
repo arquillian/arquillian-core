@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.jmx;
+package org.jboss.arquillian.protocol.jmx.test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
@@ -29,27 +32,38 @@ import org.jboss.arquillian.test.spi.TestResult;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class MockTestRunner implements TestRunner {
-    public static TestResult wantedResults;
+public class MockTestRunner implements TestRunner
+{
+   public static TestResult wantedResults;
 
-    public static Command<?> command;
-    public static Object commandResult;
+   public static List<Command<?>> commands = new ArrayList<Command<?>>();
 
-    public static void add(TestResult wantedTestResult) {
-        wantedResults = wantedTestResult;
-    }
+   public static List<Object> commandResults = new ArrayList<Object>();
 
-    public TestResult execute(Class<?> testClass, String methodName) {
-        if (command != null) {
-            commandResult = new JMXCommandService().execute(command);
-        }
+   public static void add(Command<?> command)
+   {
+      commands.add(command);
+   }
 
-        return wantedResults;
-    }
+   public static void add(TestResult wantedTestResult)
+   {
+      wantedResults = wantedTestResult;
+   }
 
-    public static void clear() {
-        wantedResults = null;
-        command = null;
-        commandResult = null;
-    }
+   public TestResult execute(Class<?> testClass, String methodName)
+   {
+      for (Command<?> command : commands)
+      {
+         commandResults.add(new JMXCommandService().execute(command));
+      }
+
+      return wantedResults;
+   }
+
+   public static void clear()
+   {
+      wantedResults = null;
+      commands.clear();
+      commandResults.clear();
+   }
 }

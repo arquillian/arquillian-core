@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet.test;
+package org.jboss.arquillian.protocol.jmx.test;
 
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommand implements Command<String>, Serializable
+public class TestStringCommand implements Command<String>, Serializable
 {
    private static final long serialVersionUID = 1L;
 
