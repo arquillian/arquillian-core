@@ -34,7 +34,7 @@
         <version.jetty_jetty>6.1.9</version.jetty_jetty>
         <version.junit_junit>4.8.1</version.junit_junit>
         <version.mockito_all>1.8.3</version.mockito_all>
-        <version.shrinkwrap_shrinkwrap>1.0.0-beta-2</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_shrinkwrap>1.0.0-beta-3</version.shrinkwrap_shrinkwrap>
         <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
         <version.testng_testng>5.14.6</version.testng_testng>
     </properties>

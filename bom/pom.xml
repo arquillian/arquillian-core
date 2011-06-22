@@ -21,7 +21,7 @@
     <description>Arquillian Bill Of Material</description>
 
     <properties>
-        <version.shrinkwrap_shrinkwrap>1.0.0-beta-2</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_shrinkwrap>1.0.0-beta-3</version.shrinkwrap_shrinkwrap>
         <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
     </properties>
 
