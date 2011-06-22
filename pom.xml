@@ -27,6 +27,8 @@
 
         <!-- jboss-parent override -->
         <version.release.plugin>2.1</version.release.plugin>
+        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.compiler.source>1.5</maven.compiler.source>
 
 
         <!-- External Deps -->
