@@ -1,33 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-build</artifactId>
-        <version>1.0.0.CR1-SNAPSHOT</version>
-        <relativePath>build/pom.xml</relativePath>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>6-beta-2</version>
+        <relativePath />
     </parent>
 
     <!-- Model Information -->
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- Plugin Configuration -->
-    <build>
-        <plugins>
-            <!-- Deploy -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <!-- Don't include this aggregator in the deployment -->
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
 
     <!-- Artifact Information -->
     <groupId>org.jboss.arquillian</groupId>
@@ -37,6 +22,38 @@
     <name>Arquillian Aggregator</name>
     <url>http://www.jboss.org</url>
     <description>Arquillian Aggregator</description>
+
+    <properties>
+
+        <!-- jboss-parent override -->
+        <version.release.plugin>2.1</version.release.plugin>
+
+
+        <!-- External Deps -->
+        <version.shrinkwrap_shrinkwrap>1.0.0-beta-3</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
+
+    </properties>
+
+    <!-- Issues -->
+    <issueManagement>
+        <system>jira</system>
+        <url>http://jira.jboss.com/jira/browse/ARQ</url>
+    </issueManagement>
+
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://git@github.com:arquillian/arquillian-core.git</connection>
+        <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-core.git</developerConnection>
+        <url>git://github.com/arquillian/arquillian-core.git</url>
+    </scm>
 
     <modules>
         <module>build</module>
@@ -56,4 +73,80 @@
         <module>bom</module>
         <!-- <module>doc/reference</module> -->
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <trimStackTrace>false</trimStackTrace>
+                    <printSummary>true</printSummary>
+                    <includes>
+                        <include>**/*TestCase.java</include>
+                        <include>**/*TestSuite.java</include>
+                    </includes>
+                    <useFile>true</useFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <configuration>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <pushChanges>false</pushChanges>
+                            <localCheckout>true</localCheckout>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <doclet>org.jboss.apiviz.APIviz</doclet>
+                            <docletArtifact>
+                                <groupId>org.jboss.apiviz</groupId>
+                                <artifactId>apiviz</artifactId>
+                                <version>1.3.1.GA</version>
+                            </docletArtifact>
+                            <useStandardDocletOptions>true</useStandardDocletOptions>
+                            <charset>UTF-8</charset>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <breakiterator>true</breakiterator>
+                            <version>true</version>
+                            <author>true</author>
+                            <keywords>true</keywords>
+                            <additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam>
+                            <stylesheetfile>${project.parent.parent.basedir}/javadoc/stylesheet.css</stylesheetfile>
+                            <javadocDirectory>${project.parent.parent.basedir}/javadoc</javadocDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

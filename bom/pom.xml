@@ -5,9 +5,9 @@
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-build</artifactId>
+        <artifactId>arquillian-parent</artifactId>
         <version>1.0.0.CR1-SNAPSHOT</version>
-        <relativePath>../build/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- Model Information -->
@@ -19,11 +19,6 @@
     <name>Arquillian BOM</name>
     <url>http://www.jboss.org</url>
     <description>Arquillian Bill Of Material</description>
-
-    <properties>
-        <version.shrinkwrap_shrinkwrap>1.0.0-beta-3</version.shrinkwrap_shrinkwrap>
-        <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
