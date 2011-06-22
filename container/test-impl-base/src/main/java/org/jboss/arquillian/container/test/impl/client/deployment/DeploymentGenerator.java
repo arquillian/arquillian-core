@@ -27,6 +27,7 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
@@ -99,7 +100,10 @@ public class DeploymentGenerator
          if(container == null)
          {
             throw new ValidationException(
-                  DeploymentScenario.class.getSimpleName() + " contains targets not maching any defined Container in the registry. " + target.getName());
+                  DeploymentScenario.class.getSimpleName() + " contains targets not maching any defined Container in the registry. " + target.getName() + 
+                  ". Possible causes are: No Deployable Container found on ClassPath or " + 
+                  "your have defined a @" + org.jboss.arquillian.container.test.api.Deployment.class.getName() + " with a @" + TargetsContainer.class.getName() + 
+                  " value that does not maching any found/configured Containers (see arquillian.xml container@qualifier) ");
          }
       }
       
