@@ -39,7 +39,7 @@ public class CDIInjectionEnricher implements TestEnricher
 {
    private static final String ANNOTATION_NAME = "javax.inject.Inject";
 
-   private static final Logger log = Logger.getLogger(CDIInjectionEnricher.class.getName());
+   private static final Logger log = Logger.getLogger(TestEnricher.class.getName());
 
    @Inject
    private Instance<BeanManager> beanManagerInst;

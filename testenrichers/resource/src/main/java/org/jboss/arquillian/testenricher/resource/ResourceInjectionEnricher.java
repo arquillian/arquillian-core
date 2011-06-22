@@ -46,7 +46,7 @@ public class ResourceInjectionEnricher implements TestEnricher
    private static final String ANNOTATION_NAME = "javax.annotation.Resource";
    
    
-   private static final Logger log = Logger.getLogger(ResourceInjectionEnricher.class.getName());
+   private static final Logger log = Logger.getLogger(TestEnricher.class.getName());
    
    @Inject
    private Instance<Context> contextInst;
@@ -90,8 +90,15 @@ public class ResourceInjectionEnricher implements TestEnricher
             Object currentValue = field.get(testCase);
             if(shouldInject(field, currentValue))
             {
-               Object resource = resolveResource(field);
-               field.set(testCase, resource);
+               try
+               {
+                  Object resource = resolveResource(field);
+                  field.set(testCase, resource);
+               }
+               catch (Exception e) 
+               {
+                  log.fine("Could not lookup for " + field + ", other Enrichers might, move on. Exception: " + e.getMessage());
+               }
             }
          }
          

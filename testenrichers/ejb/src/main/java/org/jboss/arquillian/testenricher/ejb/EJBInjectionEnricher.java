@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.naming.Context;
@@ -37,9 +38,10 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  */
 public class EJBInjectionEnricher implements TestEnricher
 {
-   
    private static final String ANNOTATION_NAME = "javax.ejb.EJB";
 
+   private static final Logger log = Logger.getLogger(TestEnricher.class.getName());
+   
    @Inject
    private Instance<Context> contextInst;
    
@@ -103,8 +105,15 @@ public class EJBInjectionEnricher implements TestEnricher
             if(field.get(testCase) == null) // only try to lookup fields that are not already set
             {
                EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
-               Object ejb = lookupEJB(field.getType(), fieldAnnotation.mappedName());
-               field.set(testCase, ejb);
+               try
+               {
+                  Object ejb = lookupEJB(field.getType(), fieldAnnotation.mappedName());
+                  field.set(testCase, ejb);
+               }
+               catch (Exception e) 
+               {
+                  log.fine("Could not lookup " + fieldAnnotation + ", other Enrichers might, move on. Exception: " + e.getMessage());
+               }
             }
          }
          
