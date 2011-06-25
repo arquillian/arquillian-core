@@ -16,7 +16,15 @@
  */
 package org.jboss.arquillian.test.spi;
 
-import java.io.Serializable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.lang.reflect.Constructor;
 
 /**
@@ -43,7 +51,7 @@ import java.lang.reflect.Constructor;
  * @author <a href="mailto:contact@andygibson.net">Andy Gibson</a>
  * 
  */
-public class ExceptionProxy implements Serializable
+public class ExceptionProxy implements Externalizable
 {
 
    private static final long serialVersionUID = 2321010311438950147L;
@@ -57,20 +65,18 @@ public class ExceptionProxy implements Serializable
    private ExceptionProxy causeProxy;
 
    private Throwable cause;
+   
+   private Throwable original;
 
+   public ExceptionProxy() {}
+   
    public ExceptionProxy(Throwable throwable)
    {
       this.className = throwable.getClass().getName();
       this.message = throwable.getMessage();
       this.trace = throwable.getStackTrace();
       this.causeProxy = ExceptionProxy.createForException(throwable.getCause());
-   }
-
-   @Override
-   public String toString()
-   {
-      return super.toString() + String.format("[class=%s, message=%s],cause = %s", className, message, causeProxy);
-
+      this.original = throwable;
    }
 
    /**
@@ -95,18 +101,12 @@ public class ExceptionProxy implements Serializable
       {
          return null;
       }
-
-      Class<?> clazz = null;
-      try
+      if(original != null)
       {
-         clazz = Class.forName(className);
-      }
-      catch (ClassNotFoundException e)
-      {
-         return createProxyException("Exception class not found on client");
+         return original;
       }
 
-      Throwable throwable = constructExceptionForClass(clazz);
+      Throwable throwable = createProxyException("Original exception not deserilizable, ClassNotFoundException"); //constructExceptionForClass(clazz);
       throwable.setStackTrace(trace);
       return throwable;
    }
@@ -147,36 +147,42 @@ public class ExceptionProxy implements Serializable
    private Object buildObjectFromClassConstructors(Class<?> clazz)
    {
       // try the (String,Throwable) constructor first
-      Object object = buildExceptionFromConstructor(clazz, new Class<?>[]
-      {String.class, Throwable.class}, new Object[]
-      {message, getCause()});
+      Object object = buildExceptionFromConstructor(clazz, new Class<?>[] {String.class, Throwable.class}, new Object[] {message, getCause()});
       if (object != null)
       {
          return object;
       }
 
-      // try the (String,Exception) constructor first
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]
-      {String.class, Exception.class}, new Object[]
-      {message, getCause()});
+      // try the (String,Exception) constructor
+      object = buildExceptionFromConstructor(clazz, new Class<?>[] {String.class, Exception.class}, new Object[] {message, getCause()});
       if (object != null)
       {
          return object;
       }
 
-      // try the (String) constructor next
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]
-      {Object.class}, new Object[]
-      {message});
+      // try the (Throwable) constructor
+      object = buildExceptionFromConstructor(clazz, new Class<?>[]{Throwable.class}, new Object[] {getCause()});
       if (object != null)
       {
          return object;
       }
 
-      // try the (String) constructor next
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]
-      {String.class}, new Object[]
-      {message});
+      // try the (Exception) constructor
+      object = buildExceptionFromConstructor(clazz, new Class<?>[]{Exception.class}, new Object[] {getCause()});
+      if (object != null)
+      {
+         return object;
+      }
+
+      // try the (Object) constructor
+      object = buildExceptionFromConstructor(clazz, new Class<?>[]{Object.class}, new Object[] {message});
+      if (object != null)
+      {
+         return object;
+      }
+
+      // try the (String, Object) constructor
+      object = buildExceptionFromConstructor(clazz, new Class<?>[]{String.class}, new Object[] {message});
       if (object != null)
       {
          return object;
@@ -198,8 +204,7 @@ public class ExceptionProxy implements Serializable
     *            Parameter values to pass to the constructor if found.
     * @return The object instance created using the constructor
     */
-   private <T> T buildExceptionFromConstructor(Class<T> clazz,
-			Class<?>[] signature, Object[] params) {
+   private <T> T buildExceptionFromConstructor(Class<T> clazz, Class<?>[] signature, Object[] params) {
 		Constructor<?> constructor = null;
 		// try the message,cause constructor first
         Class<?> nextSource = clazz;
@@ -268,5 +273,98 @@ public class ExceptionProxy implements Serializable
          }
       }
       return cause;
+   }
+
+   /**
+    * Custom Serialization logic.
+    * 
+    * If possible, we try to keep the original Exception form the Container side. 
+    * 
+    * If we can't load the Exception on the client side, return a ArquillianProxyException that keeps the original stack trace etc.
+    * 
+    * We can't use in.readObject() on the Throwable cause, because if a ClassNotFoundException is thrown, the stream is marked with the exception
+    * and that stream is the same stream that is deserializing us, so we will fail outside of our control. Store the Throwable cause as a 
+    * serialized byte array instead, so we can deserialize it outside of our own stream. 
+    */
+   @Override
+   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+   {
+      className = (String)in.readObject();
+      message = (String)in.readObject();
+      trace = (StackTraceElement[])in.readObject();
+      causeProxy = (ExceptionProxy)in.readObject();
+
+      /*
+       * Attempt to deserialize the original Exception. It might fail due to ClassNotFoundExceptions, ignore and move on 
+       */
+      byte[] originalExceptionData = (byte[])in.readObject();
+      if(originalExceptionData != null && originalExceptionData.length > 0)
+      {
+         try
+         {
+            ByteArrayInputStream originalIn = new ByteArrayInputStream(originalExceptionData);
+            ObjectInputStream input = new ObjectInputStream(originalIn) ;
+            /*// need to active for testing
+            {
+               
+               @Override
+               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+               {
+                  return Class.forName(desc.getName(), false, Thread.currentThread().getContextClassLoader());
+               }
+            };
+            */
+            original = (Throwable)input.readObject();
+            try
+            {
+               // reset the cause, so we can de-serialize them individual
+               SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
+            }
+            catch (Exception e) 
+            {
+               // move on, try to serialize anyway
+            }
+         }
+         catch (ClassNotFoundException e) 
+         {
+            // ignore, could not load class on client side, move on and create a fake 'proxy' later
+         }
+      }
+   }
+   
+   @Override
+   public void writeExternal(ObjectOutput out) throws IOException
+   {
+      out.writeObject(className);
+      out.writeObject(message);
+      out.writeObject(trace);
+      out.writeObject(causeProxy);
+      
+      byte[] originalBytes = new byte[0];
+      if(original != null)
+      {
+         try
+         {
+            // reset the cause, so we can serialize the exception chain individual
+            SecurityActions.setFieldValue(Throwable.class, original, "cause", null);
+         }
+         catch (Exception e) 
+         {
+            // move on, try to serialize anyway
+         }
+         
+         ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
+         ObjectOutputStream output = new ObjectOutputStream(originalOut);
+         output.writeObject(original);
+         output.flush();
+         originalBytes = originalOut.toByteArray();
+      }
+      out.writeObject(originalBytes);
+   }
+   
+   @Override
+   public String toString()
+   {
+      return super.toString() + String.format("[class=%s, message=%s],cause = %s", className, message, causeProxy);
    }
 }

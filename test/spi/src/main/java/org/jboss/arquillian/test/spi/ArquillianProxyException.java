@@ -26,9 +26,9 @@ package org.jboss.arquillian.test.spi;
  */
 public class ArquillianProxyException extends RuntimeException {
 
-	private static final long serialVersionUID = -4703822636139101499L;
+   private static final long serialVersionUID = 1L;
 
-	public ArquillianProxyException() {
+   public ArquillianProxyException() {
 		super();
 	}
 

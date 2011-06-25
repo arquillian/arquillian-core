@@ -17,6 +17,7 @@
 package org.jboss.arquillian.test.spi;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -180,6 +181,57 @@ final class SecurityActions
          // Reconstruct so we get some useful information
          throw new ClassCastException("Incorrect expected type, " + expectedType.getName() + ", defined for "
                + obj.getClass().getName());
+      }
+   }
+   
+   /**
+    * Set a single Field value 
+    * 
+    * @param target The object to set it on
+    * @param fieldName The field name
+    * @param value The new value
+    */
+   public static void setFieldValue(final Class<?> source, final Object target, final String fieldName, final Object value) throws NoSuchFieldException
+   {
+      try
+      {
+         AccessController.doPrivileged(new PrivilegedExceptionAction<Void>()
+         {
+            @Override
+            public Void run() throws Exception
+            {
+               Field field = source.getDeclaredField(fieldName);
+               if(!field.isAccessible())
+               {
+                  field.setAccessible(true);
+               }
+               field.set(target, value);
+               return null;
+            }
+         });
+      }
+      // Unwrap
+      catch (final PrivilegedActionException pae)
+      {
+         final Throwable t = pae.getCause();
+         // Rethrow
+         if (t instanceof NoSuchFieldException)
+         {
+            throw (NoSuchFieldException) t;
+         }
+         else
+         {
+            // No other checked Exception thrown by Class.getConstructor
+            try
+            {
+               throw (RuntimeException) t;
+            }
+            // Just in case we've really messed up
+            catch (final ClassCastException cce)
+            {
+               throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
+            }
+         }
       }
    }
 
