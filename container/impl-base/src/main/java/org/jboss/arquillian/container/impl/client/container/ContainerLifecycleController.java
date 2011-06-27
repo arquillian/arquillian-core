@@ -19,25 +19,17 @@ package org.jboss.arquillian.container.impl.client.container;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
-import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
+import org.jboss.arquillian.container.spi.event.KillContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.StartContainer;
-import org.jboss.arquillian.container.spi.event.StartManagedContainers;
+import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopContainer;
-import org.jboss.arquillian.container.spi.event.StopManagedContainers;
-import org.jboss.arquillian.container.spi.event.container.AfterSetup;
-import org.jboss.arquillian.container.spi.event.container.AfterStart;
-import org.jboss.arquillian.container.spi.event.container.AfterStop;
-import org.jboss.arquillian.container.spi.event.container.BeforeSetup;
-import org.jboss.arquillian.container.spi.event.container.BeforeStart;
-import org.jboss.arquillian.container.spi.event.container.BeforeStop;
-import org.jboss.arquillian.container.spi.event.container.ContainerEvent;
+import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopManualContainers;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
@@ -70,9 +62,9 @@ public class ContainerLifecycleController
       });
    }
 
-   public void startContainers(@Observes StartManagedContainers event) throws Exception
+   public void startSuiteContainers(@Observes StartSuiteContainers event) throws Exception
    {
-      forEachContainer(new Operation<Container>()
+      forEachSuiteContainer(new Operation<Container>()
       {
          @Inject
          private Event<StartContainer> event;
@@ -85,9 +77,9 @@ public class ContainerLifecycleController
       });
    }
 
-   public void stopContainers(@Observes StopManagedContainers event) throws Exception
+   public void stopSuiteContainers(@Observes StopSuiteContainers event) throws Exception
    {
-      forEachContainer(new Operation<Container>()
+      forEachSuiteContainer(new Operation<Container>()
       {
          @Inject
          private Event<StopContainer> stopContainer;
@@ -100,30 +92,29 @@ public class ContainerLifecycleController
       });
    }
    
+   public void stopManualContainers(@Observes StopManualContainers event) throws Exception
+   {
+      forEachManualContainer(new Operation<Container>()
+      {
+         @Inject
+         private Event<StopContainer> stopContainer;
+         
+         @Override
+         public void perform(Container container)
+         {
+            stopContainer.fire(new StopContainer(container));
+         }
+      });
+   }
+   
    public void setupContainer(@Observes SetupContainer event) throws Exception
    {
       forContainer(event.getContainer(), new Operation<Container>()
       {
-         @Inject
-         private Event<ContainerEvent> event;
-
-         @Inject @ContainerScoped
-         private InstanceProducer<Container> containerProducer;
-
-         @SuppressWarnings({"rawtypes", "unchecked"})
          @Override
          public void perform(Container container) throws Exception
          {
-            /*
-             * TODO: should the Container producer some how be automatically registered ?
-             * Or should we just 'know' who is the first one to create the context
-             */
-            containerProducer.set(container);  
-            DeployableContainer deployable = container.getDeployableContainer();
-            
-            event.fire(new BeforeSetup(deployable));
-            deployable.setup(container.createDeployableConfiguration());
-            event.fire(new AfterSetup(deployable));
+            container.setup();
          }
       });
    }
@@ -132,17 +123,13 @@ public class ContainerLifecycleController
    {
       forContainer(event.getContainer(), new Operation<Container>()
       {
-         @Inject
-         private Event<ContainerEvent> event;
-         
          @Override
          public void perform(Container container) throws Exception
          {
-            DeployableContainer<?> deployable = container.getDeployableContainer();
-            
-            event.fire(new BeforeStart(deployable));
-            deployable.start();
-            event.fire(new AfterStart(deployable));
+            if (!container.getState().equals(Container.State.STARTED)) 
+            {
+               container.start();
+            }
          }
       });
    }
@@ -151,17 +138,28 @@ public class ContainerLifecycleController
    {
       forContainer(event.getContainer(), new Operation<Container>()
       {
-         @Inject
-         private Event<ContainerEvent> event;
-
          @Override
          public void perform(Container container) throws Exception
          {
-            DeployableContainer<?> deployable = container.getDeployableContainer();
-            
-            event.fire(new BeforeStop(deployable));
-            deployable.stop();
-            event.fire(new AfterStop(deployable));
+            if (container.getState().equals(Container.State.STARTED)) 
+            {
+               container.stop();
+            }
+         }
+      });
+   }
+   
+   public void killContainer(@Observes KillContainer event) throws Exception
+   {
+      forContainer(event.getContainer(), new Operation<Container>()
+      {
+         @Override
+         public void perform(Container container) throws Exception
+         {
+            if (container.getState().equals(Container.State.STARTED)) 
+            {
+               container.kill();
+            }
          }
       });
    }
@@ -179,7 +177,33 @@ public class ContainerLifecycleController
          operation.perform(container);
       }
    }
-
+   
+   private void forEachSuiteContainer(Operation<Container> operation) throws Exception
+   {
+      injector.get().inject(operation);
+      ContainerRegistry registry = containerRegistry.get();
+      for(Container container : registry.getContainers())
+      {
+         if ("suite".equals(container.getContainerConfiguration().getMode())) 
+         {
+            operation.perform(container);
+         }
+      }
+   }
+   
+   private void forEachManualContainer(Operation<Container> operation) throws Exception
+   {
+      injector.get().inject(operation);
+      ContainerRegistry registry = containerRegistry.get();
+      for(Container container : registry.getContainers())
+      {
+         if ("manual".equals(container.getContainerConfiguration().getMode())) 
+         {
+            operation.perform(container);
+         }
+      }
+   }
+   
    private void forContainer(Container container, Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);

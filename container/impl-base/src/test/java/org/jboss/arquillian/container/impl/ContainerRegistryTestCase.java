@@ -25,6 +25,10 @@ import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.test.AbstractContainerTestBase;
+import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,10 +44,13 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ContainerRegistryTestCase
+public class ContainerRegistryTestCase extends AbstractContainerTestBase
 {
    private static final String ARQUILLIAN_XML = "arquillian.xml";
-
+   
+   @Inject
+   private Instance<Injector> injector;
+   
    @Mock
    private ServiceLoader serviceLoader;
 
@@ -62,7 +69,7 @@ public class ContainerRegistryTestCase
    {
       String name = "some-name";
       
-      ContainerRegistry registry = new LocalContainerRegistry();
+      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
       
       Container container = registry.getContainer(TargetDescription.DEFAULT);
@@ -77,7 +84,7 @@ public class ContainerRegistryTestCase
    {
       String name = "some-name";
       
-      ContainerRegistry registry = new LocalContainerRegistry();
+      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("some-other-name"), serviceLoader);
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name).setDefault(), serviceLoader);
       
@@ -94,7 +101,7 @@ public class ContainerRegistryTestCase
       String name = "some-name";
       String prop = "prop-value";
       
-      ContainerRegistry registry = new LocalContainerRegistry();
+      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
                            .property("property", prop), serviceLoader);
       
@@ -115,7 +122,7 @@ public class ContainerRegistryTestCase
    {
       String name = "some-name";
       
-      ContainerRegistry registry = new LocalContainerRegistry();
+      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
       
@@ -131,7 +138,7 @@ public class ContainerRegistryTestCase
    {
       String name = "some-name";
 
-      ContainerRegistry registry = new LocalContainerRegistry();
+      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
       

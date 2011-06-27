@@ -25,6 +25,7 @@ import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
 
@@ -37,10 +38,13 @@ import org.jboss.arquillian.core.spi.Validate;
 public class LocalContainerRegistry implements ContainerRegistry
 {
    private List<Container> containers;
+   
+   private Injector injector;
 
-   public LocalContainerRegistry()
+   public LocalContainerRegistry(Injector injector)
    {
       this.containers = new ArrayList<Container>();
+      this.injector = injector;
    }
    
    /* (non-Javadoc)
@@ -70,10 +74,11 @@ public class LocalContainerRegistry implements ContainerRegistry
 //         }
 //            
          return addContainer(
-               new ContainerImpl(
-                     definition.getContainerName(), 
-                     loader.onlyOne(DeployableContainer.class),
-                     definition));
+               //before a Container is added to a collection of containers, inject into its injection point
+               injector.inject(new ContainerImpl(
+                               definition.getContainerName(), 
+                               loader.onlyOne(DeployableContainer.class),
+                               definition)));
       }
       catch (Exception e) 
       {

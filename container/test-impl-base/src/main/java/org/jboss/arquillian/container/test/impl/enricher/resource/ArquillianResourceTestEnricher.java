@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -51,6 +52,7 @@ public class ArquillianResourceTestEnricher implements TestEnricher
       providers.put(InitialContext.class, new InitialContextProvider());
       providers.put(Context.class, new InitialContextProvider());
       providers.put(Deployer.class, new DeployerProvider());
+      providers.put(ContainerController.class, new ContainerControllerProvider());
    }
    
    @Inject

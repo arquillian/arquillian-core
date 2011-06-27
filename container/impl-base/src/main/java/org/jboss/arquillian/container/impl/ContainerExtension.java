@@ -25,6 +25,7 @@ import org.jboss.arquillian.container.impl.client.container.DeploymentExceptionH
 import org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporter;
 import org.jboss.arquillian.container.impl.context.ContainerContextImpl;
 import org.jboss.arquillian.container.impl.context.DeploymentContextImpl;
+import org.jboss.arquillian.container.spi.ServerKillProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**

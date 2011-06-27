@@ -88,6 +88,15 @@
 	    	</choice>
 	    	<attribute name="qualifier" type="string" use="required" />
 	    	<attribute name="default" type="boolean" use="optional" default="false"/>
+	    	<attribute name="mode" use="optional" default="suite">
+	            <simpleType>
+	                <restriction base="string">
+	                    <enumeration value="suite"/>
+	                    <enumeration value="class"/>
+	                    <enumeration value="manual"/>
+	                </restriction>
+	            </simpleType>
+	        </attribute>
 	    </complexType>
         <unique name="unique-protocol-within-container">
             <annotation>
@@ -99,7 +108,7 @@
             <field xpath="@type" />
         </unique>
 	</element>
-	
+        
     <element name="extension">
 		<complexType>
 			<choice minOccurs="1" maxOccurs="unbounded">

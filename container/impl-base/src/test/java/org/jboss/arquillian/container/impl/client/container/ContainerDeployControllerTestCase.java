@@ -30,6 +30,7 @@ import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase.DummyContainerConfiguration;
+import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -49,7 +50,10 @@ import org.jboss.arquillian.container.spi.event.container.AfterUnDeploy;
 import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.container.spi.event.container.BeforeUnDeploy;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
+import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -82,7 +86,10 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
    private static final String DEPLOYMENT_2_NAME = "deployment_2";
    private static final String DEPLOYMENT_3_NAME = "deployment_3_manual";
    private static final String DEPLOYMENT_4_NAME = "deployment_4_descriptor";
-
+   
+   @Inject
+   private Instance<Injector> injector;
+   
    @Mock 
    private ServiceLoader serviceLoader;
    
@@ -101,7 +108,7 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
    @Mock
    private ProtocolMetaData protocolMetaData;
 
-   private ContainerRegistry registry = new LocalContainerRegistry();
+   private ContainerRegistry registry;
    
    private DeploymentScenario scenario = new DeploymentScenario();
 
@@ -143,7 +150,9 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
                .setTarget(new TargetDescription(CONTAINER_1_NAME))
                .setOrder(4)
                .shouldBeManaged(true));
-
+      
+      registry = new LocalContainerRegistry(injector.get());
+      
       bind(ApplicationScoped.class, ContainerRegistry.class, registry);
       bind(ApplicationScoped.class, DeploymentScenario.class, scenario);
       
@@ -196,9 +205,14 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
    {
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
-
-      // setup Managed deployment as Deployed. it should be part of undeploy.
+      registry.getContainer(CONTAINER_1_NAME).setState(State.STARTED);
+      registry.getContainer(CONTAINER_2_NAME).setState(State.STARTED);
+      
+      // setup all deployment as deployed so that we can observe UnDeployDeployment events
+      scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_1_NAME)).deployed();
+      scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_2_NAME)).deployed();
       scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_3_NAME)).deployed();
+      scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_4_NAME)).deployed();
       
       fire(new UnDeployManagedDeployments());
       

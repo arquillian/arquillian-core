@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
+import org.jboss.arquillian.container.test.impl.client.container.ContainerContainerControllerCreator;
 import org.jboss.arquillian.container.test.impl.client.deployment.ContainerDeployerCreator;
 import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.container.test.impl.execution.AfterLifecycleEventExecuter;
@@ -45,6 +46,7 @@ public class ContainerTestRemoteExtension extends TestExtension implements Remot
       builder.observer(AfterLifecycleEventExecuter.class)
              .observer(ContainerTestExecuter.class)
              .observer(ContainerDeployerCreator.class)
+             .observer(ContainerContainerControllerCreator.class)
              .observer(LocalTestExecuter.class)
              .observer(BeforeLifecycleEventExecuter.class);
    }

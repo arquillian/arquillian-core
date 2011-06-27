@@ -28,7 +28,7 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
  */
 public class ServletCommandService implements CommandService
 {
-   private static long TIMEOUT = 10000;
+   private static long TIMEOUT = 30000;
    
    @SuppressWarnings("unchecked")
    public <T> T execute(Command<T> command)

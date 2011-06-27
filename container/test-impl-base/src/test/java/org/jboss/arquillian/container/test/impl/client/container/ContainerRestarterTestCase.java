@@ -19,8 +19,8 @@ package org.jboss.arquillian.container.test.impl.client.container;
 import java.util.List;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.arquillian.container.spi.event.StartManagedContainers;
-import org.jboss.arquillian.container.spi.event.StopManagedContainers;
+import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -59,8 +59,8 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase
          fire(new BeforeClass(getClass()));
       }
 
-      assertEventFired(StartManagedContainers.class, 2);
-      assertEventFired(StopManagedContainers.class, 2);
+      assertEventFired(StartSuiteContainers.class, 2);
+      assertEventFired(StopSuiteContainers.class, 2);
    }
    
    @Test
@@ -76,7 +76,7 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase
          fire(new BeforeClass(getClass()));
       }
 
-      assertEventFired(StartManagedContainers.class, 0);
-      assertEventFired(StopManagedContainers.class, 0);
+      assertEventFired(StartSuiteContainers.class, 0);
+      assertEventFired(StopSuiteContainers.class, 0);
    }
 }

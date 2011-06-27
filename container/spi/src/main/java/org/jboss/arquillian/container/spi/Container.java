@@ -21,6 +21,7 @@ import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 
 /**
@@ -55,5 +56,24 @@ public interface Container
    boolean hasProtocolConfiguration(ProtocolDescription description);
 
    ProtocolDef getProtocolConfiguration(ProtocolDescription description);
+   
+   void setup() throws Exception;
+   
+   void start() throws LifecycleException;
+   
+   void stop() throws LifecycleException;
+   
+   void kill() throws Exception;
+   
+   State getState();
+   
+   Throwable getFailureCause();
+   
+   void setState(State state);
+   
+   public enum State 
+   {  
+      SETUP, SETUP_FAILED, STARTED, STARTED_FAILED, STOPPED, STOPPED_FAILED, KILLED, KILLED_FAILED;
+   }
 
 }

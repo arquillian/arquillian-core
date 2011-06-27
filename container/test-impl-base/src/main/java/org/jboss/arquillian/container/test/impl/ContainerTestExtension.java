@@ -19,7 +19,9 @@ package org.jboss.arquillian.container.test.impl;
 
 import org.jboss.arquillian.container.test.impl.client.ContainerEventController;
 import org.jboss.arquillian.container.test.impl.client.LocalCommandService;
+import org.jboss.arquillian.container.test.impl.client.container.ClientContainerControllerCreator;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
+import org.jboss.arquillian.container.test.impl.client.container.command.ContainerCommandObserver;
 import org.jboss.arquillian.container.test.impl.client.deployment.ClientDeployerCreator;
 import org.jboss.arquillian.container.test.impl.client.deployment.DeploymentGenerator;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.DeploymentCommandObserver;
@@ -75,12 +77,14 @@ public class ContainerTestExtension implements LoadableExtension
              .observer(DeploymentGenerator.class)
              .observer(ArchiveDeploymentToolingExporter.class)
              .observer(ProtocolRegistryCreator.class)
+             .observer(ClientContainerControllerCreator.class)
              .observer(ClientDeployerCreator.class)
              .observer(ClientBeforeAfterLifecycleEventExecuter.class)
              .observer(ClientTestExecuter.class)
              .observer(LocalTestExecuter.class)
              .observer(RemoteTestExecuter.class)
-             .observer(DeploymentCommandObserver.class);
+             .observer(DeploymentCommandObserver.class)
+             .observer(ContainerCommandObserver.class);
    }
 
 }

@@ -28,6 +28,7 @@ import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -51,12 +52,15 @@ public class ContainerRegistryCreator
    @Inject @ApplicationScoped
    private InstanceProducer<ContainerRegistry> registry;
    
+   @Inject 
+   private Instance<Injector> injector;
+   
    @Inject
    private Instance<ServiceLoader> loader;
 
    public void createRegistry(@Observes ArquillianDescriptor event)
    {
-      LocalContainerRegistry reg = new LocalContainerRegistry();
+      LocalContainerRegistry reg = new LocalContainerRegistry(injector.get());
       ServiceLoader serviceLoader = loader.get();
 
       validateConfiguration(event);

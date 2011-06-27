@@ -18,8 +18,8 @@ package org.jboss.arquillian.container.test.impl.client.container;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.event.ContainerMultiControlEvent;
-import org.jboss.arquillian.container.spi.event.StartManagedContainers;
-import org.jboss.arquillian.container.spi.event.StopManagedContainers;
+import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -30,8 +30,8 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * A Handler for restarting the containers for every X test class.<br/>
  * <br/>
  *  <b>Fires:</b><br/>
- *   {@link StopManagedContainers}<br/>
- *   {@link StartManagedContainers}<br/>
+ *   {@link StopSuiteContainers}<br/>
+ *   {@link StartSuiteContainers}<br/>
  * <br/>
  *  <b>Imports:</b><br/>
  *   {@link ArquillianDescriptor}<br/>
@@ -53,8 +53,8 @@ public class ContainerRestarter
    {
       if(shouldRestart())
       {
-         controlEvent.fire(new StopManagedContainers());
-         controlEvent.fire(new StartManagedContainers());
+         controlEvent.fire(new StopSuiteContainers());
+         controlEvent.fire(new StartSuiteContainers());
       }
    }
    

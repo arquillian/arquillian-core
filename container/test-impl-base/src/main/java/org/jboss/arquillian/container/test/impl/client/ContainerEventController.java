@@ -29,8 +29,9 @@ import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.event.ContainerMultiControlEvent;
 import org.jboss.arquillian.container.spi.event.DeployManagedDeployments;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
-import org.jboss.arquillian.container.spi.event.StartManagedContainers;
-import org.jboss.arquillian.container.spi.event.StopManagedContainers;
+import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopManualContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
@@ -80,12 +81,12 @@ public class ContainerEventController
    public void execute(@Observes BeforeSuite event)
    {
       container.fire(new SetupContainers());
-      container.fire(new StartManagedContainers());
+      container.fire(new StartSuiteContainers());
    }
 
    public void execute(@Observes AfterSuite event)
    {
-      container.fire(new StopManagedContainers());
+      container.fire(new StopSuiteContainers());
    }
 
    /*
@@ -99,7 +100,14 @@ public class ContainerEventController
 
    public void execute(@Observes AfterClass event)
    {
-      container.fire(new UnDeployManagedDeployments());
+      try
+      {
+         container.fire(new UnDeployManagedDeployments());
+      }
+      finally
+      {
+         container.fire(new StopManualContainers());
+      }
    }
    
    /*

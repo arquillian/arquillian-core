@@ -61,7 +61,7 @@ public class DeploymentCommandObserver
       try
       {
          deployerInst.get().deploy(event.getDeploymentName());
-         event.setResult("SUCESS");
+         event.setResult("SUCCESS");
       }
       catch (Exception e) 
       {
@@ -75,7 +75,7 @@ public class DeploymentCommandObserver
       try
       {
          deployerInst.get().undeploy(event.getDeploymentName());
-         event.setResult("SUCESS");
+         event.setResult("SUCCESS");
       }
       catch (Exception e) 
       {

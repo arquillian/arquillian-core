@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.jboss.arquillian.container.spi.Container;
+import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -76,7 +77,18 @@ public class ClientDeployer implements Deployer
          throw new IllegalArgumentException("No deployment in context found with name " + name);
       }
       
+      if (deployment.getDescription().managed())
+      {
+         throw new IllegalArgumentException("Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
+      }
+      
       Container container = registry.getContainer(deployment.getDescription().getTarget());
+      
+      if (!container.getState().equals(State.STARTED))
+      {
+         throw new IllegalArgumentException("Deployment with name " + name + " could not be deployed. Container " + 
+            container.getName() + " must be started first.");
+      }
       
       event.fire(new DeployDeployment(container, deployment));
    }
@@ -103,7 +115,19 @@ public class ClientDeployer implements Deployer
       {
          throw new IllegalArgumentException("No deployment in context found with name " + name);
       }
+      
+      if (deployment.getDescription().managed())
+      {
+         throw new IllegalArgumentException("Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
+      }
+      
       Container container = registry.getContainer(deployment.getDescription().getTarget());
+      
+      if (!container.getState().equals(State.STARTED))
+      {
+         throw new IllegalArgumentException("Deployment with name " + name + " could not be undeployed. Container " + 
+            container.getName() + " must be still running.");
+      }
       
       event.fire(new UnDeployDeployment(container, deployment));
    }

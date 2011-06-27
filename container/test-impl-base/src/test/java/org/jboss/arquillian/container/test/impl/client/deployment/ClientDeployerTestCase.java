@@ -20,6 +20,7 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.Container;
+import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
@@ -69,10 +70,16 @@ public class ClientDeployerTestCase extends AbstractContainerTestTestBase
    {
       ContainerRegistry reg = Mockito.mock(ContainerRegistry.class);
       Container container = Mockito.mock(Container.class);
+      Mockito.when(container.getState()).thenReturn(State.STARTED);
       Mockito.when(container.getName()).thenReturn("_DEFAULT_");
+      Container containerStopped = Mockito.mock(Container.class);
+      Mockito.when(containerStopped.getState()).thenReturn(State.STOPPED);
+      Mockito.when(containerStopped.getName()).thenReturn("_CONTAINER_STOPPED_");
       
       Mockito.when(reg.getContainer("_DEFAULT_")).thenReturn(container);
+      Mockito.when(reg.getContainer("_CONTAINER_STOPPED_")).thenReturn(containerStopped);
       Mockito.when(reg.getContainer(new TargetDescription("_DEFAULT_"))).thenReturn(container);
+      Mockito.when(reg.getContainer(new TargetDescription("_CONTAINER_STOPPED_"))).thenReturn(containerStopped);
       
       bind(ApplicationScoped.class, DeploymentScenario.class, new DeploymentScenario());
       bind(ApplicationScoped.class, ContainerRegistry.class, reg);
@@ -84,6 +91,8 @@ public class ClientDeployerTestCase extends AbstractContainerTestTestBase
    public void shouldFireDeploymentEventOnDeploy() throws Exception
    {
       DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+      description.shouldBeManaged(false);
+      description.setTarget(new TargetDescription("_DEFAULT_"));
       scenario.get().addDeployment(description);
       
       deployer.get().deploy(DEPLOYMENT_NAME);
@@ -95,6 +104,8 @@ public class ClientDeployerTestCase extends AbstractContainerTestTestBase
    public void shouldFireUnDeploymentEventOnUnDeploy() throws Exception
    {
       DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+      description.shouldBeManaged(false);
+      description.setTarget(new TargetDescription("_DEFAULT_"));
       scenario.get().addDeployment(description);
       
       deployer.get().undeploy(DEPLOYMENT_NAME);
@@ -107,10 +118,30 @@ public class ClientDeployerTestCase extends AbstractContainerTestTestBase
    {
       deployer.get().deploy("UNKNOWN_DEPLOYMENT");
    }
-
+   
    @Test(expected = IllegalArgumentException.class)
    public void shouldThrowExceptionOnUnDeployWhenNotFound() throws Exception
    {
       deployer.get().undeploy("UNKNOWN_DEPLOYMENT");
+   }
+   
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnDeployWhenContainerNotStarted() throws Exception
+   {
+      DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+      description.setTarget(new TargetDescription("_CONTAINER_STOPPED_"));
+      scenario.get().addDeployment(description);
+      
+      deployer.get().deploy(DEPLOYMENT_NAME);
+   }
+   
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnUnDeployWhenContainerNotRunning() throws Exception
+   {
+      DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+      description.setTarget(new TargetDescription("_CONTAINER_STOPPED_"));
+      scenario.get().addDeployment(description);
+      
+      deployer.get().undeploy(DEPLOYMENT_NAME);
    }
 }

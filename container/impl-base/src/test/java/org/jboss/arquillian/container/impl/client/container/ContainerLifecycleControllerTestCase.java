@@ -30,6 +30,7 @@ import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.container.impl.client.container.ContainerLifecycleController;
 import org.jboss.arquillian.container.spi.ConfigurationException;
+import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -37,9 +38,9 @@ import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.StartContainer;
-import org.jboss.arquillian.container.spi.event.StartManagedContainers;
+import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopContainer;
-import org.jboss.arquillian.container.spi.event.StopManagedContainers;
+import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.container.AfterSetup;
 import org.jboss.arquillian.container.spi.event.container.AfterStart;
 import org.jboss.arquillian.container.spi.event.container.AfterStop;
@@ -47,7 +48,10 @@ import org.jboss.arquillian.container.spi.event.container.BeforeSetup;
 import org.jboss.arquillian.container.spi.event.container.BeforeStart;
 import org.jboss.arquillian.container.spi.event.container.BeforeStop;
 import org.jboss.arquillian.container.test.AbstractContainerTestBase;
+import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +73,10 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
    private static final String CONTAINER_1_NAME = "container_1";
    private static final String CONTAINER_2_NAME = "container_2";
    
-   private ContainerRegistry registry = new LocalContainerRegistry();
+   @Inject
+   private Instance<Injector> injector;
+   
+   private ContainerRegistry registry;
    
    @Mock 
    private ServiceLoader serviceLoader;
@@ -90,6 +97,10 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
       when(container1.getContainerName()).thenReturn(CONTAINER_1_NAME);
       when(container2.getContainerName()).thenReturn(CONTAINER_2_NAME);
+      when(container1.getMode()).thenReturn("suite");
+      when(container2.getMode()).thenReturn("suite");
+      
+      registry = new LocalContainerRegistry(injector.get());
       
       bind(ApplicationScoped.class, ContainerRegistry.class, registry);
    }
@@ -127,7 +138,7 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
       
-      fire(new StartManagedContainers());
+      fire(new StartSuiteContainers());
       
       assertEventFiredInContext(StartContainer.class, ContainerContext.class);
       assertEventFired(StartContainer.class, 2);
@@ -147,7 +158,12 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
       
-      fire(new StopManagedContainers());
+      //we need to manually set this since we don't actually start them
+      for (Container c : registry.getContainers()) {
+         c.setState(Container.State.STARTED);
+      }
+      
+      fire(new StopSuiteContainers());
       
       assertEventFiredInContext(StopContainer.class, ContainerContext.class);
       assertEventFired(StopContainer.class, 2);

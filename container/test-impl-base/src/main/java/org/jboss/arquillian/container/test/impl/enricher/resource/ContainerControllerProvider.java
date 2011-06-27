@@ -15,16 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.spi.event;
+package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import org.jboss.arquillian.container.test.api.ContainerController;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**
- * StartContainer
+ * ContainerControllerProvider
  *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class StartManagedContainers implements ContainerMultiControlEvent
+public class ContainerControllerProvider implements ResourceProvider
 {
-
+   @Inject
+   private Instance<ContainerController> controller;
+   
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.testenricher.arquillian.ResourceProvider#lookup(org.jboss.arquillian.api.ArquillianResource)
+    */
+   @Override
+   public Object lookup(ArquillianResource resource)
+   {
+      return controller.get();
+   }
 }

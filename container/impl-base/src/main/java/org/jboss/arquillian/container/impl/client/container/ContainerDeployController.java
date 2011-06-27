@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.container.spi.Container;
+import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -83,7 +84,12 @@ public class ContainerDeployController
          @Override
          public void perform(Container container, Deployment deployment) throws Exception
          {
-            event.fire(new DeployDeployment(container, deployment));            
+            //when a container is manually controlled, the deployment is deployed automatically
+            //once the container is manually started, not now
+            if (! "manual".equals(container.getContainerConfiguration().getMode()))
+            {
+               event.fire(new DeployDeployment(container, deployment));
+            }
          }
       });
    }
@@ -104,7 +110,10 @@ public class ContainerDeployController
          @Override
          public void perform(Container container, Deployment deployment) throws Exception
          {
-            event.fire(new UnDeployDeployment(container, deployment));            
+            if (container.getState().equals(Container.State.STARTED) && deployment.isDeployed()) 
+            {
+               event.fire(new UnDeployDeployment(container, deployment));
+            }
          }
       });
    }
