@@ -16,8 +16,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_3;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
 import org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -46,6 +46,6 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
                      .addAsManifestResource(
                            "org/jboss/arquillian/protocol/servlet/v_3/web-fragment.xml",
                            "web-fragment.xml")
-                     .addAsServiceProvider(LoadableExtension.class, ServletRemoteExtension.class);
+                     .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
    }
 }

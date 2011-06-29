@@ -17,8 +17,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
-import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
  * ServletRemoteExtension
@@ -26,12 +26,11 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletRemoteExtension implements LoadableExtension
+public class ServletRemoteExtension implements RemoteLoadableExtension
 {
    @Override
    public void register(ExtensionBuilder builder)
    {
       builder.service(CommandService.class, ServletCommandService.class);
-            
    }
 }

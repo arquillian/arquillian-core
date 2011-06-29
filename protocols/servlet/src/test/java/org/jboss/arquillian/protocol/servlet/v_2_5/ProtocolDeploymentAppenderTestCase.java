@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_2_5;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.protocol.servlet.v_2_5.ProtocolDeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -41,6 +42,11 @@ public class ProtocolDeploymentAppenderTestCase
             archive.contains(ArchivePaths.create("WEB-INF/web.xml"))
       );
       
+      Assert.assertTrue(
+            "Should have added " + RemoteLoadableExtension.class.getName(),
+            archive.contains(ArchivePaths.create("WEB-INF/META-INF/services/" + RemoteLoadableExtension.class.getName()))
+      );
+
       System.out.println(archive.toString(true));
    }
 }
