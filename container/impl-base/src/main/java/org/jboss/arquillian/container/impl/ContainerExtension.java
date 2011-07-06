@@ -45,7 +45,6 @@ public class ContainerExtension implements LoadableExtension
              .observer(ContainerDeploymentContextHandler.class)
              .observer(ContainerLifecycleController.class)
              .observer(ContainerDeployController.class)
-             .observer(ContainerRegistryCreator.class)       
              .observer(ArchiveDeploymentExporter.class)
              .observer(DeploymentExceptionHandler.class);
    }

@@ -315,15 +315,27 @@ public class ManagerImpl implements Manager
       fire(new ManagerProcessing()
       {
          @Override
-         public ManagerProcessing observer(Class<?> handler)
+         public ManagerProcessing observer(Class<?> observer)
          {
-            extensions.add(handler);
+            if(extensions.contains(observer))
+            {
+               throw new IllegalArgumentException(
+                     "Attempted to register the same Observer: " + observer.getName() 
+                     + " multiple times, please check classpath for conflicting jar versions");
+            }
+            extensions.add(observer);
             return this;
          }
          
          @Override
          public ManagerProcessing context(Class<? extends Context> context)
          {
+            if(contexts.contains(context))
+            {
+               throw new IllegalArgumentException(
+                     "Attempted to register the same " + Context.class.getSimpleName() + " : " + context.getName() 
+                     + " multiple times, please check classpath for conflicting jar versions");
+            }
             contexts.add(context);
             return this;
          }

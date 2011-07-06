@@ -1,1 +1,2 @@
+!org.jboss.arquillian.test.impl.TestExtension
 org.jboss.arquillian.container.test.impl.ContainerTestExtension

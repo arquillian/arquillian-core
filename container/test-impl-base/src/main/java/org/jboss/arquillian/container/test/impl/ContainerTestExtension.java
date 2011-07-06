@@ -35,11 +35,16 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.impl.TestInstanceEnricher;
+import org.jboss.arquillian.test.impl.TestContextHandler;
+import org.jboss.arquillian.test.impl.context.ClassContextImpl;
+import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
+import org.jboss.arquillian.test.impl.context.TestContextImpl;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * ContainerTestExtension
+ * 
+ * This Extension Overrides the original TestExtension. Needed to change the behavior of TestEnricher to be RunMode aware
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -49,6 +54,16 @@ public class ContainerTestExtension implements LoadableExtension
    @Override
    public void register(ExtensionBuilder builder)
    {
+      // Start -> Copied from TestExtension
+      builder.context(SuiteContextImpl.class)
+             .context(ClassContextImpl.class)
+             .context(TestContextImpl.class);
+
+      builder.observer(TestContextHandler.class)
+             .observer(ClientTestInstanceEnricher.class);
+
+      // End -> Copied from TestExtension
+      
       builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
              .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
              .service(Protocol.class, LocalProtocol.class)
@@ -59,7 +74,6 @@ public class ContainerTestExtension implements LoadableExtension
              .observer(DeploymentGenerator.class)
              .observer(ArchiveDeploymentToolingExporter.class)
              .observer(ProtocolRegistryCreator.class)
-             .observer(TestInstanceEnricher.class)
              .observer(ClientDeployerCreator.class)
              .observer(ClientTestExecuter.class)
              .observer(LocalTestExecuter.class)

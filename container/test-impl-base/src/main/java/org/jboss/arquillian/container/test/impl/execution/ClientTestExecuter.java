@@ -17,7 +17,7 @@
 package org.jboss.arquillian.container.test.impl.execution;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.container.test.impl.execution.event.ExecutionEvent;
 import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
@@ -43,22 +43,11 @@ public class ClientTestExecuter
 
    public void execute(@Observes Test event) throws Exception
    {
-      boolean runAsClient = true;
-      
-      DeploymentDescription deploymentDescription = this.deploymentDescription.get();
-      if(deploymentDescription != null)
-      {
-         runAsClient =  deploymentDescription.testable() ? false:true;
-         
-         if(event.getTestMethod().isAnnotationPresent(RunAsClient.class))
-         {
-            runAsClient = true;
-         }
-         else if(event.getTestClass().isAnnotationPresent(RunAsClient.class))
-         {
-            runAsClient = true;
-         }
-      }
+      boolean runAsClient = RunModeUtils.isRunAsClient(
+            this.deploymentDescription.get(), 
+            event.getTestClass().getJavaClass(), 
+            event.getTestMethod());
+
       if(runAsClient) 
       {
          executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
