@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
+import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -24,7 +25,7 @@ import org.jboss.arquillian.test.impl.TestInstanceEnricher;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 
 /**
- * RunModeAwareTestEnricher
+ * ClientTestInstanceEnricher, a TestInstanceEnricher that is aware of RunModes.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -34,6 +35,9 @@ public class ClientTestInstanceEnricher extends TestInstanceEnricher
    @Inject
    private Instance<DeploymentDescription> deploymentDescription;
 
+   @Inject
+   private Instance<Container> container;
+
    @Override
    public void enrich(Before event) throws Exception
    {
@@ -42,7 +46,7 @@ public class ClientTestInstanceEnricher extends TestInstanceEnricher
             event.getTestClass().getJavaClass(), 
             event.getTestMethod());
       
-      if(runAsClient)
+      if(runAsClient || RunModeUtils.isLocalContainer(container.get()))
       {
          super.enrich(event);
       }
