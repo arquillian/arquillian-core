@@ -19,8 +19,10 @@ package org.jboss.arquillian.container.test.impl;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
 
 /**
  * RunModeUtils
@@ -59,5 +61,29 @@ public final class RunModeUtils
          }
       }
       return runAsClient;
+   }
+
+   /**
+    * Check if this Container DEFAULTs to the Local protocol. 
+    * 
+    * Hack to get around ARQ-391
+    * 
+    * @param container
+    * @return true if DeployableContianer.getDefaultProtocol == Local
+    */
+   public static boolean isLocalContainer(Container container)
+   {
+      if(
+            container == null || 
+            container.getDeployableContainer() == null || 
+            container.getDeployableContainer().getDefaultProtocol() == null)
+      {
+         return false;
+      }
+      if(LocalProtocol.NAME.equals(container.getDeployableContainer().getDefaultProtocol().getName()))
+      {
+         return true;
+      }
+      return false;
    }
 }

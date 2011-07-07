@@ -28,6 +28,7 @@ import org.jboss.arquillian.container.test.impl.client.protocol.ProtocolRegistry
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
 import org.jboss.arquillian.container.test.impl.deployment.ArquillianDeploymentAppender;
 import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
+import org.jboss.arquillian.container.test.impl.execution.ClientBeforeAfterLifecycleEventExecuter;
 import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
@@ -75,6 +76,7 @@ public class ContainerTestExtension implements LoadableExtension
              .observer(ArchiveDeploymentToolingExporter.class)
              .observer(ProtocolRegistryCreator.class)
              .observer(ClientDeployerCreator.class)
+             .observer(ClientBeforeAfterLifecycleEventExecuter.class)
              .observer(ClientTestExecuter.class)
              .observer(LocalTestExecuter.class)
              .observer(RemoteTestExecuter.class)
