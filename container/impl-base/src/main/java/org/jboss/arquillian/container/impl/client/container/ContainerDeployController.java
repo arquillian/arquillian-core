@@ -219,12 +219,20 @@ public class ContainerDeployController
    private void forEachManagedDeployment(Operation<Container, Deployment> operation) throws Exception
    {
       DeploymentScenario scenario = this.deploymentScenario.get();
+      if(scenario == null)
+      {
+         return;
+      }
       forEachDeployment(scenario.managedDeploymentsInDeployOrder(), operation);
    }
 
    private void forEachDeployedDeployment(Operation<Container, Deployment> operation) throws Exception
    {
       DeploymentScenario scenario = this.deploymentScenario.get();
+      if(scenario == null)
+      {
+         return;
+      }
       forEachDeployment(scenario.deployedDeploymentsInUnDeployOrder(), operation);
    }
 
@@ -232,6 +240,10 @@ public class ContainerDeployController
    {
       injector.get().inject(operation);
       ContainerRegistry containerRegistry = this.containerRegistry.get();
+      if(containerRegistry == null)
+      {
+         return;
+      }
       for(Deployment deployment: deployments)
       {
          Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());

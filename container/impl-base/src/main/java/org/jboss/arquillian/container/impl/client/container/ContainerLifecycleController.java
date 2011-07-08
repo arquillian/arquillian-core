@@ -170,6 +170,10 @@ public class ContainerLifecycleController
    {
       injector.get().inject(operation);
       ContainerRegistry registry = containerRegistry.get();
+      if(registry == null)
+      {
+         return;
+      }
       for(Container container : registry.getContainers())
       {
          operation.perform(container);

@@ -83,7 +83,7 @@ public class DeploymentGenerator
 
       validate(scenario);
       createTestableDeployments(scenario, event.getTestClass());
-      
+
       deployment.set(scenario);
    }
 

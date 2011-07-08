@@ -50,7 +50,7 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
    {
       List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
       Method[] deploymentMethods = testClass.getMethods(Deployment.class);
-      validate(deploymentMethods);
+
       for(Method deploymentMethod: deploymentMethods)
       {
          validate(deploymentMethod);
@@ -60,14 +60,6 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       return deployments;
    }
 
-   private void validate(Method[] deploymentMethods)
-   {
-      if(deploymentMethods == null || deploymentMethods.length == 0)
-      {
-         throw new IllegalArgumentException("No methods annotated with " + Deployment.class.getName() + " found");
-      }
-   }
-   
    private void validate(Method deploymentMethod)
    {
       if(!Modifier.isStatic(deploymentMethod.getModifiers()))

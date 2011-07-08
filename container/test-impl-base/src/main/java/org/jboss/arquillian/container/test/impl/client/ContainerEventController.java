@@ -150,10 +150,11 @@ public class ContainerEventController
       DeploymentScenario deploymentScenario = this.deploymentScenario.get();
       
       Deployment deployment = deploymentScenario.deployment(deploymentTarget);
-      
-      Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
-      
-      callback.call(container, deployment);
+      if(deployment != null)
+      {
+         Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
+         callback.call(container, deployment);
+      }
    }
    
    // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods

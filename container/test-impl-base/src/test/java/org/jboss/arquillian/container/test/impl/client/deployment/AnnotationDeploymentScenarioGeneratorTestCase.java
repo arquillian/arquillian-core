@@ -135,11 +135,13 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnDeploymentNotPresent() throws Exception
+   public void shouldAllowNoDeploymentPresent() throws Exception
    {
-      new AnnotationDeploymentScenarioGenerator().generate(
+      List<DeploymentDescription> descriptors = new AnnotationDeploymentScenarioGenerator().generate(
             new TestClass(DeploymentNotPresent.class));
+      
+      Assert.assertNotNull(descriptors);
+      Assert.assertEquals(0, descriptors.size());
    }
 
    @Test(expected = IllegalArgumentException.class)
