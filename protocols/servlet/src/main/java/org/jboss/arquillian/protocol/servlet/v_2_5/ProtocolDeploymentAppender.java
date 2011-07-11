@@ -56,7 +56,6 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
                                     ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING)
                               .exportAsString()
                      ))
-                     // addAsServiceProvider is mapped to /META-INF for WebArchives, we need it in /WEB_INF/classes/META-INF
-                     .addAsWebInfResource(new StringAsset(ServletRemoteExtension.class.getName()), "META-INF/services/" + RemoteLoadableExtension.class.getName());
+                     .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
    }
 }

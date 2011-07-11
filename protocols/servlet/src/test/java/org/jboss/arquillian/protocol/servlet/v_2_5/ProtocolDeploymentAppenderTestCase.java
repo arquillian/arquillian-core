@@ -44,7 +44,7 @@ public class ProtocolDeploymentAppenderTestCase
       
       Assert.assertTrue(
             "Should have added " + RemoteLoadableExtension.class.getName(),
-            archive.contains(ArchivePaths.create("WEB-INF/META-INF/services/" + RemoteLoadableExtension.class.getName()))
+            archive.contains(ArchivePaths.create("WEB-INF/classes/META-INF/services/" + RemoteLoadableExtension.class.getName()))
       );
 
       System.out.println(archive.toString(true));
