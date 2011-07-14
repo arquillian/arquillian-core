@@ -100,10 +100,10 @@ public class DeploymentGenerator
          if(container == null)
          {
             throw new ValidationException(
-                  DeploymentScenario.class.getSimpleName() + " contains targets not maching any defined Container in the registry. " + target.getName() + 
-                  ". Possible causes are: No Deployable Container found on ClassPath or " + 
+                  DeploymentScenario.class.getSimpleName() + " contains targets not matching any defined Container in the registry. " + target.getName() + 
+                  ". Possible causes are: No Deployable Container found on Classpath or " + 
                   "your have defined a @" + org.jboss.arquillian.container.test.api.Deployment.class.getName() + " with a @" + TargetsContainer.class.getName() + 
-                  " value that does not maching any found/configured Containers (see arquillian.xml container@qualifier) ");
+                  " value that does not match any found/configured Containers (see arquillian.xml container@qualifier) ");
          }
       }
       
