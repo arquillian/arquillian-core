@@ -45,10 +45,10 @@
             <artifactId>arquillian-core-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-impl</artifactId>
+            <artifactId>shrinkwrap-descriptors-spi</artifactId>
         </dependency>
 
         <dependency>
