@@ -59,7 +59,7 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
    @Override
    public String getType()
    {
-      return protocol.attribute("type");
+      return protocol.getAttribute("type");
    }
    
    /* (non-Javadoc)
@@ -79,7 +79,7 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
       
       for(Node prop: props)
       {
-         properties.put(prop.attribute("name"), prop.text());
+         properties.put(prop.getAttribute("name"), prop.getText());
       }
       return properties;
    }

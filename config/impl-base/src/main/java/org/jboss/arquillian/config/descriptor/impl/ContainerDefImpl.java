@@ -44,7 +44,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    // test only
    public ContainerDefImpl(String descirptorName, Node model)
    {
-      this(descirptorName, model, model.create("container"));
+      this(descirptorName, model, model.createChild("container"));
    }
    
    public ContainerDefImpl(String descirptorName, Node model, Node container)
@@ -72,7 +72,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    @Override
    public String getContainerName()
    {
-      return container.attribute("qualifier");
+      return container.getAttribute("qualifier");
    }
    
    /* (non-Javadoc)
@@ -91,7 +91,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    @Override
    public boolean isDefault()
    {
-      return Boolean.parseBoolean(container.attribute("default"));
+      return Boolean.parseBoolean(container.getAttribute("default"));
    }
    
    /* (non-Javadoc)
@@ -140,7 +140,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
       {
          for(Node prop: props.get("property"))
          {
-            properties.put(prop.attribute("name"), prop.text());
+            properties.put(prop.getAttribute("name"), prop.getText());
          }
       }
       return properties;
@@ -171,7 +171,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
       {
          for(Node dep : container.getSingle("dependencies").get("dependency"))
          {
-            dependencies.add(dep.text());
+            dependencies.add(dep.getText());
          }
       }
       return dependencies;

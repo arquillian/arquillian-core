@@ -25,10 +25,10 @@ import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
-import org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase;
-import org.jboss.shrinkwrap.descriptor.impl.base.XMLExporter;
 import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
 import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase;
+import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
 
 /**
  * ArquillianDescriptor
@@ -169,12 +169,13 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
       return model;
    }
    
-   /* (non-Javadoc)
-    * @see org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase#getExporter()
+   /**
+    * {@inheritDoc}
+    * @see org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase#getExporter()
     */
    @Override
    protected DescriptorExporter getExporter()
    {
-      return new XMLExporter();
+      return new XmlDomExporter();
    }
 }

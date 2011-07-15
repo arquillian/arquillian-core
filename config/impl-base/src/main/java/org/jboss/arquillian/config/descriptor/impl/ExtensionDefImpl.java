@@ -42,7 +42,7 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
    // test only
    public ExtensionDefImpl(String descirptorName, Node model)
    {
-      this(descirptorName, model, model.create("extension"));
+      this(descirptorName, model, model.createChild("extension"));
    }
 
    public ExtensionDefImpl(String descirptorName, Node model, Node extension)
@@ -78,7 +78,7 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
 
       for (Node prop : props)
       {
-         properties.put(prop.attribute("name"), prop.text());
+         properties.put(prop.getAttribute("name"), prop.getText());
       }
       return properties;
    }
@@ -93,7 +93,7 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
    @Override
    public String getExtensionName()
    {
-      return extension.attribute("qualifier");
+      return extension.getAttribute("qualifier");
    }
    
    /* (non-Javadoc)

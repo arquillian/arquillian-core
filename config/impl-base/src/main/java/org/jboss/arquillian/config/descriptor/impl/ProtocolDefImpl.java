@@ -33,9 +33,9 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
 {
    private Node protocol;
    
-   public ProtocolDefImpl(String descirptorName, Node model, Node container, Node protocol)
+   public ProtocolDefImpl(String descriptorName, Node model, Node container, Node protocol)
    {
-      super(descirptorName, model, container);
+      super(descriptorName, model, container);
       this.protocol = protocol;
    }
    
@@ -49,7 +49,7 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
    @Override
    public String getType()
    {
-      return protocol.attribute("type");
+      return protocol.getAttribute("type");
    }
    
    /* (non-Javadoc)
@@ -83,7 +83,7 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
       
       for(Node prop: props)
       {
-         properties.put(prop.attribute("name"), prop.text());
+         properties.put(prop.getAttribute("name"), prop.getText());
       }
       return properties;
    }

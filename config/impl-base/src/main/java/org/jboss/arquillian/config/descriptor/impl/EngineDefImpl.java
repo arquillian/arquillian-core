@@ -18,9 +18,9 @@
 package org.jboss.arquillian.config.descriptor.impl;
 
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
-import org.jboss.shrinkwrap.descriptor.api.query.Queries;
-import org.jboss.shrinkwrap.descriptor.api.query.Query;
 import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.query.Pattern;
+import org.jboss.shrinkwrap.descriptor.spi.query.Patterns;
 
 /**
  * EngineDefImpl
@@ -30,14 +30,14 @@ import org.jboss.shrinkwrap.descriptor.spi.Node;
  */
 public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
 {
-   private static final Query exportPath = Queries.from("property@name=deploymentExportPath");
-   private static final Query maxTestClasses = Queries.from("property@name=maxTestClassesBeforeRestart");
+   private static final Pattern[] exportPath = Patterns.from("property@name=deploymentExportPath");
+   private static final Pattern[] maxTestClasses = Patterns.from("property@name=maxTestClassesBeforeRestart");
    
    private Node engine;
    
-   public EngineDefImpl(String descirptorName, Node model, Node engine)
+   public EngineDefImpl(String descriptorName, Node model, Node engine)
    {
-      super(descirptorName, model);
+      super(descriptorName, model);
       this.engine = engine;
    }
    
@@ -79,9 +79,9 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
       return getTextIfExistsAsInteger(maxTestClasses);
    }
    
-   private Integer getTextIfExistsAsInteger(Query query)
+   private Integer getTextIfExistsAsInteger(Pattern... pattern)
    {
-      String text = getTextIfExists(query);
+      String text = getTextIfExists(pattern);
       if(text != null)
       {
          return Integer.parseInt(text);
@@ -89,12 +89,12 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
       return null;
    }
 
-   private String getTextIfExists(Query query)
+   private String getTextIfExists(Pattern... pattern)
    {
-      Node propery = engine.getSingle(query);
+      Node propery = engine.getSingle(pattern);
       if(propery != null)
       {
-         return propery.text();
+         return propery.getText();
       }
       return null;
    }

@@ -59,7 +59,7 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
    @Override
    public String getGroupName()
    {
-      return group.attribute("qualifier");
+      return group.getAttribute("qualifier");
    }
    
    /* (non-Javadoc)

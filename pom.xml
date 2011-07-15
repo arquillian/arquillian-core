@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -32,7 +33,7 @@
 
         <!-- External Deps -->
         <version.shrinkwrap_shrinkwrap>1.0.0-beta-5</version.shrinkwrap_shrinkwrap>
-        <version.shrinkwrap_descriptors>1.0.0-beta-1</version.shrinkwrap_descriptors>
+        <version.shrinkwrap_descriptors>1.1.0-alpha-2</version.shrinkwrap_descriptors>
 
     </properties>
 
@@ -133,7 +134,8 @@
                             <version>true</version>
                             <author>true</author>
                             <keywords>true</keywords>
-                            <additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam>
+                            <additionalparam>-sourceclasspath
+                                ${project.build.outputDirectory}</additionalparam>
                             <stylesheetfile>${project.parent.parent.basedir}/javadoc/stylesheet.css</stylesheetfile>
                             <javadocDirectory>${project.parent.parent.basedir}/javadoc</javadocDirectory>
                         </configuration>
