@@ -1,0 +1,3 @@
+implClass=org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.application.ApplicationDescriptorImpl
+importerClass=org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomImporter
+defaultName=application.xml
