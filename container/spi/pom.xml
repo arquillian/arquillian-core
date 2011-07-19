@@ -59,6 +59,11 @@
          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
          <artifactId>shrinkwrap-descriptors-api</artifactId>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+         <artifactId>shrinkwrap-descriptors-impl</artifactId>
+         <scope>test</scope> <!-- ARQ-514, this is OK for testing -->
+      </dependency>
 
       <dependency>
          <groupId>org.jboss.shrinkwrap</groupId>

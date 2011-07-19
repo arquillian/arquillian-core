@@ -76,6 +76,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-impl</artifactId>
+            <scope>test</scope> <!-- ARQ-514, OK in test scope -->
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
