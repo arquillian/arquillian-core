@@ -21,10 +21,6 @@
  */
 package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web;
 
-import java.util.List;
-import java.util.Map;
-
-import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.SecurityRole;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -34,55 +30,6 @@ public interface WebAppDescriptorReader
 {
    String getVersion();
 
-   String getModuleName();
-
-   String getDescription();
-
    String getDisplayName();
 
-   boolean isDistributable();
-
-   boolean isMetadataComplete();
-
-   String getContextParam(String name);
-
-   Map<String, String> getContextParams();
-
-   List<String> getFaceletsDefaultSuffixes();
-
-   List<String> getFacesDefaultSuffixes();
-   
-   List<String> getFaceletsViewMappings();
-
-   FacesProjectStage getFacesProjectStage();
-
-   FacesStateSavingMethod getFacesStateSavingMethod();
-
-   List<String> getFacesConfigFiles();
-
-   List<FilterDef> getFilters();
-
-   List<FilterMappingDef> getFilterMappings();
-
-   List<String> getListeners();
-
-   List<ServletDef> getServlets();
-
-   List<ServletMappingDef> getServletMappings();
-
-   boolean hasFacesServlet();
-
-   List<String> getWelcomeFiles();
-
-   int getSessionTimeout();
-
-   List<TrackingModeType> getSessionTrackingModes();
-
-   List<ErrorPage> getErrorPages();
-
-   List<LoginConfig> getLoginConfigs();
-
-   List<SecurityConstraintDef> getSecurityConstraints();
-
-   List<SecurityRole> getSecurityRoles();
 }

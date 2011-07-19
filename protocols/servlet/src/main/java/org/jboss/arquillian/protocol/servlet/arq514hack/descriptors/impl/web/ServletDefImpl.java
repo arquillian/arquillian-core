@@ -21,7 +21,6 @@
  */
 package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.web;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,21 +148,6 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef
    {
       String tex = servlet.textValue("load-on-startup");
       return tex == null ? null : Integer.valueOf(tex);
-   }
-
-   @Override
-   public List<ServletMappingDef> getMappings()
-   {
-      List<ServletMappingDef> result = new ArrayList<ServletMappingDef>();
-      List<ServletMappingDef> mappings = getServletMappings();
-      for (ServletMappingDef mapping : mappings)
-      {
-         if (Strings.areEqualTrimmed(this.getName(), mapping.getServletName()))
-         {
-            result.add(mapping);
-         }
-      }
-      return result;
    }
 
    public Node getNode()
