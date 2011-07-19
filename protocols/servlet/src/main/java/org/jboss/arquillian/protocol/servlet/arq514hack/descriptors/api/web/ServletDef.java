@@ -21,7 +21,6 @@
  */
 package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,5 +54,4 @@ public interface ServletDef extends WebAppDescriptor
 
    int getLoadOnStartup();
 
-   List<ServletMappingDef> getMappings();
 }
