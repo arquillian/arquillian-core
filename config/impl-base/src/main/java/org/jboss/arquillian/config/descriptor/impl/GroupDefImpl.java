@@ -59,7 +59,7 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
    @Override
    public String getGroupName()
    {
-      return group.attribute("qualifier");
+      return group.getAttribute("qualifier");
    }
    
    /* (non-Javadoc)

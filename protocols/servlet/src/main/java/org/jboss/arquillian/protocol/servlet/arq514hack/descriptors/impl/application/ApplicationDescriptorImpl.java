@@ -109,7 +109,7 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public ApplicationDescriptor ejbModule(String uri)
    {
-      model.create("module").create("ejb").text(uri);
+      model.createChild("module").createChild("ejb").text(uri);
       return this;
    }
 
@@ -121,7 +121,7 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public ApplicationDescriptor javaModule(String uri)
    {
-      model.create("module").create("java").text(uri);
+      model.createChild("module").createChild("java").text(uri);
       return this;
    }
 
@@ -134,7 +134,7 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public ApplicationDescriptor connectorModule(String uri)
    {
-      model.create("module").create("connector").text(uri);
+      model.createChild("module").createChild("connector").text(uri);
       return this;
    }
 
@@ -147,9 +147,9 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public ApplicationDescriptor webModule(String uri, String contextRoot)
    {
-      Node web = model.create("module").create("web");
-      web.create("web-uri").text(uri);
-      web.create("context-root").text(contextRoot);
+      Node web = model.createChild("module").createChild("web");
+      web.createChild("web-uri").text(uri);
+      web.createChild("context-root").text(contextRoot);
       return this;
    }
 
@@ -185,14 +185,14 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public ApplicationDescriptor securityRole(String roleName, String description)
    {
-      Node security = model.create("security-role");
+      Node security = model.createChild("security-role");
       if (roleName != null)
       {
-         security.create("role-name").text(roleName);
+         security.createChild("role-name").text(roleName);
       }
       if (description != null)
       {
-         security.create("description").text(description);
+         security.createChild("description").text(description);
       }
       return this;
    }
@@ -216,25 +216,25 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public String getVersion()
    {
-      return model.attributes().get("version");
+      return model.getAttribute("version");
    }
 
    @Override
    public String getDisplayName()
    {
-      return model.attributes().get("display-name");
+      return model.getAttribute("display-name");
    }
 
    @Override
    public String getDescription()
    {
-      return model.attributes().get("description");
+      return model.getAttribute("description");
    }
 
    @Override
    public String getLibraryDirectory()
    {
-      return model.attributes().get("library-directory");
+      return model.getAttribute("library-directory");
    }
 
    @Override
@@ -245,8 +245,8 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
       List<Node> webModules = model.get("module/web");
       for (Node module : webModules)
       {
-         String webUri = module.textValue("web-uri");
-         String contextRoot = module.textValue("context-root");
+         String webUri = module.getTextValueForPatternName("web-uri");
+         String contextRoot = module.getTextValueForPatternName("context-root");
 
          if (webUri != null || contextRoot != null)
          {
@@ -259,19 +259,19 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    @Override
    public List<String> getEjbModules()
    {
-      return model.textValues("module/ejb");
+      return model.getTextValuesForPatternName("module/ejb");
    }
 
    @Override
    public List<String> getJavaModules()
    {
-      return model.textValues("module/java");
+      return model.getTextValuesForPatternName("module/java");
    }
 
    @Override
    public List<String> getConnectorModules()
    {
-      return model.textValues("module/connector");
+      return model.getTextValuesForPatternName("module/connector");
    }
 
    @Override
@@ -282,8 +282,8 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
       List<Node> securityRoles = model.get("security-role");
       for (Node module : securityRoles)
       {
-         String name = module.textValue("role-name");
-         String desc = module.textValue("description");
+         String name = module.getTextValueForPatternName("role-name");
+         String desc = module.getTextValueForPatternName("description");
 
          if (name != null || desc != null)
          {

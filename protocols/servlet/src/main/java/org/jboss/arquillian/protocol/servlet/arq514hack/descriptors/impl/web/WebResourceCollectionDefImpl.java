@@ -38,7 +38,7 @@ public class WebResourceCollectionDefImpl extends SecurityConstraintDefImpl impl
    {
       for (String p : urlPatterns)
       {
-         webResourceCollection.create("url-pattern").text(p);
+         webResourceCollection.createChild("url-pattern").text(p);
       }
       return this;
    }
@@ -56,11 +56,11 @@ public class WebResourceCollectionDefImpl extends SecurityConstraintDefImpl impl
       {
          if (omissions)
          {
-            webResourceCollection.create("http-method-omission").text(m.name());
+            webResourceCollection.createChild("http-method-omission").text(m.name());
          }
          else
          {
-            webResourceCollection.create("http-method").text(m.name());
+            webResourceCollection.createChild("http-method").text(m.name());
          }
       }
       return this;

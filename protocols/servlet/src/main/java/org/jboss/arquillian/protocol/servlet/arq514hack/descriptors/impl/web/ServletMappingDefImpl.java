@@ -43,7 +43,7 @@ public class ServletMappingDefImpl extends ServletDefImpl implements ServletMapp
    @Override
    public String getServletName()
    {
-      return mapping.textValue("servlet-name");
+      return mapping.getTextValueForPatternName("servlet-name");
    }
 
    @Override
@@ -56,13 +56,13 @@ public class ServletMappingDefImpl extends ServletDefImpl implements ServletMapp
    @Override
    public List<String> getUrlPatterns()
    {
-      return mapping.textValues("url-pattern");
+      return mapping.getTextValuesForPatternName("url-pattern");
    }
 
    @Override
    public ServletMappingDef urlPattern(String urlPattern)
    {
-      mapping.create("url-pattern").text(urlPattern);
+      mapping.createChild("url-pattern").text(urlPattern);
       return this;
    }
 

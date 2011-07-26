@@ -39,9 +39,9 @@ public class InitParamDefImpl extends WebAppDescriptorImpl implements InitParamD
    @Override
    public InitParamDef initParam(String name, Object value)
    {
-      Node init = child.create("init-param");
-      init.create("param-name").text(name);
-      init.create("param-value").text(String.valueOf(value));
+      Node init = child.createChild("init-param");
+      init.createChild("param-name").text(name);
+      init.createChild("param-value").text(String.valueOf(value));
       return this;
    }
 }

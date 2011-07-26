@@ -76,7 +76,7 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef
    @Override
    public ServletMappingDef mapping()
    {
-      Node mappingNode = getRootNode().create("servlet-mapping");
+      Node mappingNode = getRootNode().createChild("servlet-mapping");
       ServletMappingDef mapping = new ServletMappingDefImpl(getDescriptorName(), getRootNode(), servlet, mappingNode);
       mapping.servletName(getName());
       return mapping;
@@ -100,7 +100,7 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef
    {
       if (servlet.getSingle("servlet-class") != null)
       {
-         return servlet.getSingle("servlet-class").text();
+         return servlet.getSingle("servlet-class").getText();
       }
       return null;
    }
@@ -108,7 +108,7 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef
    @Override
    public String getName()
    {
-      return servlet.textValue("servlet-name");
+      return servlet.getTextValueForPatternName("servlet-name");
    }
 
    @Override
@@ -132,7 +132,7 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef
       List<Node> params = servlet.get("init-param");
       for (Node node : params)
       {
-         result.put(node.textValue("param-name"), node.textValue("param-value"));
+         result.put(node.getTextValueForPatternName("param-name"), node.getTextValueForPatternName("param-value"));
       }
       return result;
    }
@@ -140,13 +140,13 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef
    @Override
    public boolean isAsyncSupported()
    {
-      return Strings.isTrue(servlet.textValue("async-supported"));
+      return Strings.isTrue(servlet.getTextValueForPatternName("async-supported"));
    }
 
    @Override
    public int getLoadOnStartup() throws NumberFormatException
    {
-      String tex = servlet.textValue("load-on-startup");
+      String tex = servlet.getTextValueForPatternName("load-on-startup");
       return tex == null ? null : Integer.valueOf(tex);
    }
 

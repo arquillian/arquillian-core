@@ -118,9 +118,9 @@ public class WebAppDescriptorImpl extends NodeProviderImplBase implements WebApp
    @Override
    public ServletDef servlet(String name, String clazz, String[] urlPatterns)
    {
-      Node servletNode = model.create("servlet");
-      servletNode.create("servlet-name").text(name);
-      servletNode.create("servlet-class").text(clazz);
+      Node servletNode = model.createChild("servlet");
+      servletNode.createChild("servlet-name").text(name);
+      servletNode.createChild("servlet-class").text(clazz);
       ServletDef servlet = new ServletDefImpl(getDescriptorName(), model, servletNode);
 
       servlet.mapping().urlPatterns(urlPatterns);
@@ -168,12 +168,12 @@ public class WebAppDescriptorImpl extends NodeProviderImplBase implements WebApp
    @Override
    public String getVersion()
    {
-      return model.attributes().get("version");
+      return model.getAttribute("version");
    }
 
    @Override
    public String getDisplayName()
    {
-      return model.attributes().get("display-name");
+      return model.getAttribute("display-name");
    }
 }

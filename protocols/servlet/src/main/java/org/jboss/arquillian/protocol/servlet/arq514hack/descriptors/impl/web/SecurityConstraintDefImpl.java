@@ -44,10 +44,10 @@ public class SecurityConstraintDefImpl extends WebAppDescriptorImpl implements S
    @Override
    public WebResourceCollectionDef webResourceCollection(String name)
    {
-      Node resource = securityConstraint.create("web-resource-collection");
+      Node resource = securityConstraint.createChild("web-resource-collection");
       if(name != null)
       {
-         resource.create("web-resource-name").text(name);
+         resource.createChild("web-resource-name").text(name);
       }
       
       return new WebResourceCollectionDefImpl(getDisplayName(), getRootNode(), securityConstraint, resource);
@@ -74,7 +74,7 @@ public class SecurityConstraintDefImpl extends WebAppDescriptorImpl implements S
    {
       for(String name : roleNames)
       {
-         securityConstraint.getOrCreate("auth-constraint").create("role-name").text(name);   
+         securityConstraint.getOrCreate("auth-constraint").createChild("role-name").text(name);   
       }
       return this;
    }
