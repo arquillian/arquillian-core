@@ -16,12 +16,17 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.DeploymentName;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -67,6 +72,24 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
          Assert.assertEquals(-1, deployment.getOrder());
          Assert.assertEquals(true, deployment.managed());
          Assert.assertTrue(JavaArchive.class.isInstance(deployment.getArchive()));
+      }
+   }
+   
+   @Test
+   public void shouldHandleDeploymentsWithDeploymentName() throws Exception
+   {
+      List<DeploymentDescription> scenario = generate(DeploymentsWithDeploymentName.class);
+
+      Assert.assertNotNull(scenario);
+      Assert.assertEquals("Verify all deployments were found",
+            1, scenario.size());
+
+      for (DeploymentDescription deployment : scenario)
+      {
+         Assert.assertEquals(
+               "Should be able to assign a name using annotations",
+               MyExtraDeployment.NAME,
+               deployment.getName());
       }
    }
    
@@ -170,6 +193,25 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
+   }
+
+   @SuppressWarnings("unused")
+   private static class DeploymentsWithDeploymentName
+   {
+      @Deployment
+      @MyExtraDeployment
+      public static Archive<?> deployment()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+
+   }
+
+   @DeploymentName(MyExtraDeployment.NAME)
+   @Retention(RetentionPolicy.RUNTIME)
+   @Target(ElementType.METHOD)
+   private static @interface MyExtraDeployment {
+      static final String NAME = "DEPLOYMENT_NAME";
    }
 
    @SuppressWarnings("unused")
