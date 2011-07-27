@@ -37,37 +37,26 @@ public class ServiceRegistryLoader implements ServiceLoader
 {
    private Injector injector;
    private ServiceRegistry registry;
-   private ConcurrentMap<Class<?>, Collection<Object>> serviceInstanceRegistry;
    
    public ServiceRegistryLoader(Injector injector, ServiceRegistry registry)
    {
       this.injector = injector;
       this.registry = registry;
-      this.serviceInstanceRegistry = new ConcurrentHashMap<Class<?>, Collection<Object>>();
    }
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.core.spi.ServiceLoader#all(java.lang.Class)
     */
-   @SuppressWarnings("unchecked")
    @Override
    public <T> Collection<T> all(Class<T> serviceClass)
    {
-      if(serviceInstanceRegistry.containsKey(serviceClass))
-      {
-         return (Collection<T>)serviceInstanceRegistry.get(serviceClass);
-      }
-      
       List<T> serviceImpls = new ArrayList<T>();
       Set<Class<? extends T>> serviceImplClasses = registry.getServiceImpls(serviceClass);
       for(Class<? extends T> serviceImplClass : serviceImplClasses)
       {
          T serviceImpl = createServiceInstance(serviceImplClass);
-         injector.inject(serviceImpl);
          serviceImpls.add(serviceImpl);
       }
-      //Collection<T> previouslyRegistrered = (Collection<T>)serviceInstanceRegistry.putIfAbsent(serviceClass, (Collection<Object>)serviceImpls);
-      //return previouslyRegistrered != null ? previouslyRegistrered:serviceImpls;
       return serviceImpls;
    }
 
@@ -84,7 +73,7 @@ public class ServiceRegistryLoader implements ServiceLoader
       }
       if(all.size() > 1)
       {
-         throw new RuntimeException("Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
+         throw new IllegalStateException("Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
       }
       return null;
    }
@@ -113,10 +102,13 @@ public class ServiceRegistryLoader implements ServiceLoader
 
    private <T> T createServiceInstance(Class<T> service)
    {
-      return SecurityActions.newInstance(
+      T serviceInst = SecurityActions.newInstance(
             service, 
             new Class<?>[]{}, 
             new Object[]{});
+      
+      injector.inject(serviceInst);
+      return serviceInst;
    }
    
    private <T> String toClassString(Collection<T> providers)
