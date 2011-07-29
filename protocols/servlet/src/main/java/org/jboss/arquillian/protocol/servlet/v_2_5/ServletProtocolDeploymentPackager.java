@@ -27,7 +27,6 @@ import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.protocol.servlet.Processor;
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.ApplicationDescriptor;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebAppDescriptor;
 import org.jboss.shrinkwrap.api.Archive;
@@ -92,7 +91,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          applicationArchive.delete(WEB_XML_PATH);
          applicationArchive.setWebXML(
                new StringAsset(
-                     mergeWithDescriptor(applicationWebXml).exportAsString()));
+                     WebUtils.mergeWithDescriptor(applicationWebXml).exportAsString()));
          applicationArchive.merge(protocol, Filters.exclude(".*web\\.xml.*"));
       }
       else 
@@ -149,7 +148,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
          applicationArchive
                .addAsModule(
                      protocol.setWebXML(
-                           new StringAsset(createNewDescriptor().exportAsString())));
+                           new StringAsset(WebUtils.createNewDescriptor().exportAsString())));
          
          
          if(applicationArchive.contains(APPLICATION_XML_PATH))
@@ -172,25 +171,4 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       return applicationArchive;
    }
    
-   private WebAppDescriptor createNewDescriptor()
-   {
-      return mergeWithDescriptor(getDefaultDescriptor());
-   }
-   
-   private WebAppDescriptor getDefaultDescriptor() 
-   {
-      return Descriptors.create(WebAppDescriptor.class)
-                  .version("2.5")
-                  .displayName("Arquillian Servlet 2.5 Protocol");
-   }
-   
-   private WebAppDescriptor mergeWithDescriptor(WebAppDescriptor descriptor) 
-   {
-      // use String v. of desc.servlet(..) so we don't force Servlet API on classpath
-      descriptor.servlet(
-            ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME,
-            "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner",  
-            new String[]{ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING});
-      return descriptor;
-   }   
 }

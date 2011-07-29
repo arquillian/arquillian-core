@@ -18,14 +18,11 @@ package org.jboss.arquillian.protocol.servlet.v_2_5;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
-import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebAppDescriptor;
 import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
 import org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 /**
  * ProtocolDeploymentAppender
@@ -48,13 +45,7 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
       return ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
                      .addPackage(SecurityActions.class.getPackage())
                      .setWebXML(new StringAsset(
-                           Descriptors.create(WebAppDescriptor.class)
-                              .version("2.5")
-                              .displayName("Arquillian")
-                              .servlet(
-                                    "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner", 
-                                    ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING)
-                              .exportAsString()
+                           WebUtils.createNewDescriptor().exportAsString()
                      ))
                      .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
    }

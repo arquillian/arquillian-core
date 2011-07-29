@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
+import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
 import org.jboss.arquillian.protocol.servlet.TestUtil;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.ApplicationDescriptor;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebAppDescriptor;
@@ -77,6 +78,7 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "Verify protocol Processor SPI was called",
             DummyProcessor.wasCalled);
+
    }
 
    @Test
@@ -98,6 +100,10 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "verify that the ServletTestRunner servlet was added to the web.xml",
             webXmlContent.contains(ServletTestRunner.class.getName()));
+
+      Assert.assertTrue(
+            "verify that the ServletTestRunner servlet was added to the web.xml with correct name",
+            webXmlContent.contains("servlet-name>" + ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME));
 
       Assert.assertTrue(
             "Verify protocol Processor SPI was called",
@@ -124,7 +130,11 @@ public class ServletProtocolDeploymentPackagerTestCase
       Assert.assertTrue(
             "verify that the ServletTestRunner servlet was added to the web.xml",
             webXmlContent.contains(ServletTestRunner.class.getName()));
-   
+
+      Assert.assertTrue(
+            "verify that the ServletTestRunner servlet was added to the web.xml with correct name",
+            webXmlContent.contains("servlet-name>" + ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME));
+
       Assert.assertTrue(
             "Verify protocol Processor SPI was called",
             DummyProcessor.wasCalled);
