@@ -50,4 +50,10 @@ public class RMIContext
    {
       return null;
    }
+
+   @Override
+   public String toString()
+   {
+      return "RMIContext [ip=" + ip + ", port=" + port + "]";
+   }
 }

@@ -118,7 +118,7 @@ public class DeploymentGenerator
         if(protocol == null)
         {
            throw new ValidationException(
-                 DeploymentScenario.class.getSimpleName() + " contains protcols not maching any defined Protocol in the registry. " + proDesc.getName());
+                 DeploymentScenario.class.getSimpleName() + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
         }
      }
    }

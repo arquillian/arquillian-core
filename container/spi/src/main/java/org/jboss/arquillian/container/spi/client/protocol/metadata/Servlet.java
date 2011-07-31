@@ -88,6 +88,6 @@ public class Servlet
    @Override
    public String toString()
    {
-      return "Servlet [contextRoot=" + contextRoot + ", name=" + name + "]";
+      return "Servlet [name=" + name + ", contextRoot=" + contextRoot + "]";
    }
 }

@@ -58,4 +58,23 @@ public class ProtocolMetaData
       contexts.add(obj);
       return this;
    }
+
+   @Override
+   public String toString()
+   {
+      return "ProtocolMetaData [contexts=" + toString(contexts) + "]";
+   }
+   
+   private String toString(List<Object> contexts) 
+   {
+      StringBuilder sb = new StringBuilder();
+      if(contexts != null)
+      {
+         for(Object obj : contexts)
+         {
+            sb.append('\n').append(obj);
+         }
+      }
+      return sb.toString();
+   }
 }

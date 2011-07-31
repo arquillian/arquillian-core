@@ -16,11 +16,6 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -107,29 +102,10 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       localMBeanServer = null;
    }
 
-   public TestResult runTestMethodRemote(String className, String methodName)
-   {
-      return runTestMethodInternal(className, methodName);
-   }
-
-   public InputStream runTestMethodEmbedded(String className, String methodName)
+   public byte[] runTestMethod(String className, String methodName)
    {
       TestResult result = runTestMethodInternal(className, methodName);
-
-      // Marshall the TestResult
-      try
-      {
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         ObjectOutputStream oos = new ObjectOutputStream(baos);
-         oos.writeObject(result);
-         oos.close();
-
-         return new ByteArrayInputStream(baos.toByteArray());
-      }
-      catch (IOException ex)
-      {
-         throw new IllegalStateException("Cannot marshall response", ex);
-      }
+      return Serializer.toByteArray(result);
    }
 
    private TestResult runTestMethodInternal(String className, String methodName)

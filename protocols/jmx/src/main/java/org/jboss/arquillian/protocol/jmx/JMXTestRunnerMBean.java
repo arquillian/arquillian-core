@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
-import java.io.InputStream;
-
 import javax.management.NotificationBroadcaster;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
@@ -35,22 +33,13 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
 
     /**
      * Runs a test method on the given test class
-     * 
+     *
      * @param className the test class name
      * @param methodName the test method name
-     * @return the input stream to read the {@link TestResult} from
+     * @return a serialized {@link TestResult}
      */
-    InputStream runTestMethodEmbedded(String className, String methodName);
-
-    /**
-     * Runs a test method on the given test class
-     * 
-     * @param className the test class name
-     * @param methodName the test method name
-     * @return the {@link TestResult}
-     */
-    TestResult runTestMethodRemote(String className, String methodName);
-
+    public byte[] runTestMethod(String className, String methodName);
+    
     /**
      * Broadcast {@link Command} commands to any listeners
      * 

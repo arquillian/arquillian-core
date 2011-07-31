@@ -19,6 +19,7 @@ package org.jboss.arquillian.protocol.jmx;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -52,4 +53,21 @@ final class Serializer {
         }
     }
 
+    public static <T> T toObject(Class<T> type, InputStream input) {
+       try {
+           ObjectInputStream outObj = new ObjectInputStream(input);
+           Object object = outObj.readObject();
+
+           return type.cast(object);
+       } catch (Exception e) {
+           throw new RuntimeException("Could not deserialize object", e);
+       }
+       finally {
+          try {
+             input.close();
+          } catch (Exception e) {
+             e.printStackTrace();
+          }
+       }
+   }
 }

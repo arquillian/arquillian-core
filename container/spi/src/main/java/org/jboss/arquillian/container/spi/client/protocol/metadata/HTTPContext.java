@@ -81,5 +81,23 @@ public class HTTPContext
       }
       return null;
    }
-   
+
+   @Override
+   public String toString()
+   {
+      return "HTTPContext [host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
+   }
+
+   private String toString(List<Servlet> servlets) 
+   {
+      StringBuilder sb = new StringBuilder();
+      if(servlets != null)
+      {
+         for(Object obj : servlets)
+         {
+            sb.append('\n').append(obj);
+         }
+      }
+      return sb.toString();
+   }
 }

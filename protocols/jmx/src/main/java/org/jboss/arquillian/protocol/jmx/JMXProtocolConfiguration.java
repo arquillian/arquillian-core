@@ -26,17 +26,4 @@ import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfigura
  * @version $Revision: $
  */
 public class JMXProtocolConfiguration implements ProtocolConfiguration {
-    public enum ExecutionType {
-        EMBEDDED, REMOTE
-    }
-
-    private ExecutionType executionType = ExecutionType.EMBEDDED;
-
-    public ExecutionType getExecutionType() {
-        return executionType;
-    }
-
-    public void setExecutionType(String type) {
-        this.executionType = ExecutionType.valueOf(type.toUpperCase());
-    }
 }

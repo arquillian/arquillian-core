@@ -20,14 +20,11 @@ package org.jboss.arquillian.protocol.jmx;
 import javax.management.MBeanServerConnection;
 
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.JMXContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 
 /**
  * JMXProtocol
@@ -37,10 +34,6 @@ import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
  */
 public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfiguration> {
     
-   @Inject
-    @ContainerScoped
-    private Instance<MBeanServerConnection> mbeanServerInst;
-
     public abstract String getProtocolName();
 
     @Override
@@ -55,8 +48,17 @@ public abstract class AbstractJMXProtocol implements Protocol<JMXProtocolConfigu
 
     @Override
     public ContainerMethodExecutor getExecutor(JMXProtocolConfiguration config, ProtocolMetaData metaData, CommandCallback callback) {
-        MBeanServerConnection mbeanServer = mbeanServerInst.get();
-        ExecutionType executionType = config.getExecutionType();
-        return new JMXMethodExecutor(mbeanServer, executionType, callback);
+        if(metaData.hasContext(JMXContext.class))
+        {
+           MBeanServerConnection mbeanServer = metaData.getContext(JMXContext.class).getConnection();
+           return new JMXMethodExecutor(mbeanServer, callback);
+        }
+        else
+        {
+           throw new IllegalStateException(
+                 "No " + JMXContext.class.getName() + " was found in " + ProtocolMetaData.class.getName() +
+                 ". The JMX Protocol can not be used without a connection, " +
+                 "please verify your protocol configuration or contact the DeployableContainer developer");
+        }
     }
 }

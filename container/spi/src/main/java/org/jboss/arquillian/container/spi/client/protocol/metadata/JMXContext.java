@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi.client.protocol.metadata;
 import java.io.IOException;
 
 import javax.management.MBeanServerConnection;
-import javax.management.MBeanServerFactory;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
@@ -83,5 +82,11 @@ public class JMXContext
       {
          throw new RuntimeException("Could not create JMXServiceURL:" + this, e);
       }
+   }
+
+   @Override
+   public String toString()
+   {
+      return "JMXContext [host=" + host + ", port=" + port + ", connection=" + connection + "]";
    }
 }

@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.Notification;
@@ -28,7 +25,6 @@ import javax.management.ObjectName;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
-import org.jboss.arquillian.protocol.jmx.JMXProtocolConfiguration.ExecutionType;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -45,12 +41,10 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
     private static Logger log = Logger.getLogger(JMXMethodExecutor.class);
 
     private final MBeanServerConnection mbeanServer;
-    private final ExecutionType executionType;
     private final CommandCallback callback;
 
-    public JMXMethodExecutor(MBeanServerConnection mbeanServer, ExecutionType executionType, CommandCallback callbac) {
+    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callbac) {
         this.mbeanServer = mbeanServer;
-        this.executionType = executionType;
         this.callback = callbac;
     }
 
@@ -71,14 +65,9 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
             mbeanServer.addNotificationListener(objectName, commandListener, null, null);
 
             JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
-            log.debugf("Invoke %s: %s", executionType, testCanonicalName);
-            if (executionType == ExecutionType.REMOTE) {
-                result = testRunner.runTestMethodRemote(testClass, testMethod);
-            } else {
-                InputStream resultStream = testRunner.runTestMethodEmbedded(testClass, testMethod);
-                ObjectInputStream ois = new ObjectInputStream(resultStream);
-                result = (TestResult) ois.readObject();
-            }
+            log.debugf("Invoke %s", testCanonicalName);
+            result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod));
+
         } catch (final Throwable th) {
             result = new TestResult(Status.FAILED);
             result.setThrowable(th);

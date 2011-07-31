@@ -52,7 +52,7 @@ public class JMXTestRunnerTestCase {
 
         try {
             JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
-            TestResult result = testRunner.runTestMethodRemote(DummyTestCase.class.getName(), "testMethod");
+            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod"));
 
             assertNotNull("TestResult not null", result);
             assertNotNull("Status not null", result.getStatus());
@@ -79,8 +79,7 @@ public class JMXTestRunnerTestCase {
        
        try
        {
-          JMXProtocolConfiguration config = new JMXProtocolConfiguration();
-          JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, config.getExecutionType(), new TestCommandCallback(results));
+          JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, new TestCommandCallback(results));
           
           TestResult result = executor.invoke(new TestMethodExecutor()
           {
