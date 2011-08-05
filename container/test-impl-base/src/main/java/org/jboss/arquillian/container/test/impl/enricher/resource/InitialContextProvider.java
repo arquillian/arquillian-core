@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
-import javax.naming.InitialContext;
+import javax.naming.Context;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -32,7 +32,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 public class InitialContextProvider implements ResourceProvider
 {
    @Inject
-   private Instance<InitialContext> initialContext;
+   private Instance<Context> initialContext;
    
    /* (non-Javadoc)
     * @see org.jboss.arquillian.testenricher.arquillian.ResourceProvider#lookup(org.jboss.arquillian.api.ArquillianResource)

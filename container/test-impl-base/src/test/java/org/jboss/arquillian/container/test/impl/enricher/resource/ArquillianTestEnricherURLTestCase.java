@@ -17,11 +17,13 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import java.net.URL;
 
 import junit.framework.Assert;
 
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Injector;
@@ -43,45 +45,45 @@ public class ArquillianTestEnricherURLTestCase extends AbstractContainerTestTest
 {
    @Inject
    private Instance<Injector> injector;
-
+   
    @Test
    public void shouldBeAbleToInjectBaseContext() throws Exception
    {
-      InitialContext context = new InitialContext();
-      bind(ApplicationScoped.class, InitialContext.class, context);
+      bind(ApplicationScoped.class, ProtocolMetaData.class, new ProtocolMetaData().addContext(new HTTPContext("TEST", 8080)));
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
 
-      ContextClass test = new ContextClass();
+      URLBaseContextClass test = new URLBaseContextClass();
       enricher.enrich(test);
       
-      Assert.assertEquals(context, test.context);
+      Assert.assertEquals("http://TEST:8080", test.url.toExternalForm());
    }
    
    @Test
    public void shouldBeAbleToInjectServlet() throws Exception
    {
-      InitialContext context = new InitialContext();
-      bind(ApplicationScoped.class, InitialContext.class, context);
+      bind(ApplicationScoped.class, ProtocolMetaData.class, 
+            new ProtocolMetaData().addContext(new HTTPContext("TEST", 8080)
+            .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test"))));
       
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
 
-      InitialContextClass test = new InitialContextClass();
+      URLServletContextClass test = new URLServletContextClass();
       enricher.enrich(test);
       
-      Assert.assertEquals(context, test.context);
+      Assert.assertEquals("http://TEST:8080/test/", test.url.toExternalForm());
    }
    
-   public class ContextClass 
+   public class URLBaseContextClass 
    {
       @ArquillianResource
-      public Context context;
+      public URL url;
    }
 
-   public class InitialContextClass 
+   public class URLServletContextClass 
    {
-      @ArquillianResource
-      public InitialContext context;
+      @ArquillianResource(URLServletContextClass.class)
+      public URL url;
    }
 }
