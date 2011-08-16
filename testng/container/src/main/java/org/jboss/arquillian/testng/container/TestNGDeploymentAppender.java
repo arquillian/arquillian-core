@@ -25,8 +25,6 @@ import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-import com.google.inject.Inject;
-
 /**
  * TestNGDeploymentAppender
  *
@@ -55,7 +53,7 @@ public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
       optionalPackages(
             archive, 
             Filters.exclude(".*/InterceptorStackCallback\\$InterceptedMethodInvocation.*"), 
-            Inject.class.getPackage().getName());
+            "com.google.inject");
          
       /* Attempt to add com.beust, internal TestNG package 5.14 > */
       optionalPackages(
