@@ -17,26 +17,33 @@
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * WebContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:ian@ianbrandt.com">Ian Brandt</a>
  * @version $Revision: $
  */
 public class HTTPContext
 {
-   private String host;
-   private int port;
-   
-   private List<Servlet> servlets;
-   
+   private final String host;
+   private final int port;
+
+   private final Set<Servlet> servlets;
+
    public HTTPContext(String host, int port)
    {
+      if (host == null) {
+         throw new IllegalArgumentException("host must not be null");
+      }
+
       this.host = host;
       this.port = port;
-      this.servlets = new ArrayList<Servlet>();
+      this.servlets = new HashSet<Servlet>();
    }
 
    /**
@@ -61,15 +68,15 @@ public class HTTPContext
       this.servlets.add(servlet);
       return this;
    }
-   
+
    /**
     * @return the servlets
     */
    public List<Servlet> getServlets()
    {
-      return servlets;
+      return new ArrayList<Servlet>(servlets);
    }
-   
+
    public Servlet getServletByName(String name)
    {
       for(Servlet servlet : getServlets())
@@ -88,7 +95,7 @@ public class HTTPContext
       return "HTTPContext [host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
    }
 
-   private String toString(List<Servlet> servlets) 
+   private String toString(Set<Servlet> servlets)
    {
       StringBuilder sb = new StringBuilder();
       if(servlets != null)

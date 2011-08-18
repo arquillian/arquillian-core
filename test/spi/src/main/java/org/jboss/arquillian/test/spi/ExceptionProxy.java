@@ -24,7 +24,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.lang.reflect.Constructor;
 
 /**
@@ -46,10 +45,10 @@ import java.lang.reflect.Constructor;
  * <li>If the exception class doesn't exist, another exception is raised instead
  * </li>
  * </ul>
- * 
- * 
+ *
+ *
  * @author <a href="mailto:contact@andygibson.net">Andy Gibson</a>
- * 
+ *
  */
 public class ExceptionProxy implements Externalizable
 {
@@ -65,11 +64,11 @@ public class ExceptionProxy implements Externalizable
    private ExceptionProxy causeProxy;
 
    private Throwable cause;
-   
+
    private Throwable original;
 
    public ExceptionProxy() {}
-   
+
    public ExceptionProxy(Throwable throwable)
    {
       this.className = throwable.getClass().getName();
@@ -81,7 +80,7 @@ public class ExceptionProxy implements Externalizable
 
    /**
     * Indicates whether this proxy wraps an exception
-    * 
+    *
     * @return Flag indicating an exception is wrapped.
     */
    public boolean hasException()
@@ -92,7 +91,7 @@ public class ExceptionProxy implements Externalizable
    /**
     * Constructs an instance of the proxied exception based on the class name,
     * message, stack trace and if applicable, the cause.
-    * 
+    *
     * @return The constructed {@link Throwable} instance
     */
    public Throwable createException()
@@ -123,7 +122,7 @@ public class ExceptionProxy implements Externalizable
     * is found. If the constructor subclasses {@link Throwable} it is returned.
     * If a Class instance is not constructed ot is not a {@link Throwable} then
     * another exception is returned indicating this.
-    * 
+    *
     * @param clazz
     *            Class to construct
     * @return Instance of the Throwable class.
@@ -195,7 +194,7 @@ public class ExceptionProxy implements Externalizable
     * Attempt to build an exception of the given class type using the
     * constructor signature and parameters passed in. If no constructor matches
     * or the constructor throws an exception, then null is returned.
-    * 
+    *
     * @param clazz
     *            Class to construct
     * @param signature
@@ -208,17 +207,17 @@ public class ExceptionProxy implements Externalizable
 		Constructor<?> constructor = null;
 		// try the message,cause constructor first
         Class<?> nextSource = clazz;
-//        while (nextSource != Object.class && constructor == null) 
+//        while (nextSource != Object.class && constructor == null)
 //        {
-      		try 
+      		try
       		{
       			constructor = nextSource.getDeclaredConstructor(signature);
-      		} 
-      		catch (SecurityException e) 
+      		}
+      		catch (SecurityException e)
       		{
       			// we'll try the next signature
-      		} 
-      		catch (NoSuchMethodException e) 
+      		}
+      		catch (NoSuchMethodException e)
       		{
       			// we'll try the next signature
       		}
@@ -243,7 +242,7 @@ public class ExceptionProxy implements Externalizable
     * Static method to create an exception proxy for the passed in
     * {@link Throwable} class. If null is passed in, null is returned as the
     * exception proxy
-    * 
+    *
     * @param throwable
     *            Exception to proxy
     * @return An ExceptionProxy representing the exception passed in
@@ -259,7 +258,7 @@ public class ExceptionProxy implements Externalizable
 
    /**
     * Returns the cause of the exception represented by this proxy
-    * 
+    *
     * @return The cause of this exception
     */
    public Throwable getCause()
@@ -277,14 +276,14 @@ public class ExceptionProxy implements Externalizable
 
    /**
     * Custom Serialization logic.
-    * 
-    * If possible, we try to keep the original Exception form the Container side. 
-    * 
+    *
+    * If possible, we try to keep the original Exception form the Container side.
+    *
     * If we can't load the Exception on the client side, return a ArquillianProxyException that keeps the original stack trace etc.
-    * 
+    *
     * We can't use in.readObject() on the Throwable cause, because if a ClassNotFoundException is thrown, the stream is marked with the exception
-    * and that stream is the same stream that is deserializing us, so we will fail outside of our control. Store the Throwable cause as a 
-    * serialized byte array instead, so we can deserialize it outside of our own stream. 
+    * and that stream is the same stream that is deserializing us, so we will fail outside of our control. Store the Throwable cause as a
+    * serialized byte array instead, so we can deserialize it outside of our own stream.
     */
    @Override
    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
@@ -295,7 +294,7 @@ public class ExceptionProxy implements Externalizable
       causeProxy = (ExceptionProxy)in.readObject();
 
       /*
-       * Attempt to deserialize the original Exception. It might fail due to ClassNotFoundExceptions, ignore and move on 
+       * Attempt to deserialize the original Exception. It might fail due to ClassNotFoundExceptions, ignore and move on
        */
       byte[] originalExceptionData = (byte[])in.readObject();
       if(originalExceptionData != null && originalExceptionData.length > 0)
@@ -306,7 +305,7 @@ public class ExceptionProxy implements Externalizable
             ObjectInputStream input = new ObjectInputStream(originalIn) ;
             /*// need to active for testing
             {
-               
+
                @Override
                protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
                {
@@ -320,18 +319,18 @@ public class ExceptionProxy implements Externalizable
                // reset the cause, so we can de-serialize them individual
                SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                // move on, try to serialize anyway
             }
          }
-         catch (ClassNotFoundException e) 
+         catch (ClassNotFoundException e)
          {
             // ignore, could not load class on client side, move on and create a fake 'proxy' later
          }
       }
    }
-   
+
    @Override
    public void writeExternal(ObjectOutput out) throws IOException
    {
@@ -339,7 +338,7 @@ public class ExceptionProxy implements Externalizable
       out.writeObject(message);
       out.writeObject(trace);
       out.writeObject(causeProxy);
-      
+
       byte[] originalBytes = new byte[0];
       if(original != null)
       {
@@ -348,11 +347,11 @@ public class ExceptionProxy implements Externalizable
             // reset the cause, so we can serialize the exception chain individual
             SecurityActions.setFieldValue(Throwable.class, original, "cause", null);
          }
-         catch (Exception e) 
+         catch (Exception e)
          {
             // move on, try to serialize anyway
          }
-         
+
          ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
          ObjectOutputStream output = new ObjectOutputStream(originalOut);
          output.writeObject(original);
@@ -361,7 +360,7 @@ public class ExceptionProxy implements Externalizable
       }
       out.writeObject(originalBytes);
    }
-   
+
    @Override
    public String toString()
    {

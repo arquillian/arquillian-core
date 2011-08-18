@@ -10,7 +10,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -37,7 +35,7 @@ public class ServiceRegistryLoader implements ServiceLoader
 {
    private Injector injector;
    private ServiceRegistry registry;
-   
+
    public ServiceRegistryLoader(Injector injector, ServiceRegistry registry)
    {
       this.injector = injector;
@@ -87,11 +85,11 @@ public class ServiceRegistryLoader implements ServiceLoader
    {
       T one = null;
       try
-      { 
+      {
          one = onlyOne(serviceClass);
       }
       catch (Exception e) { }
-      
+
       if(one == null)
       {
          one = createServiceInstance(defaultServiceClass);
@@ -103,14 +101,14 @@ public class ServiceRegistryLoader implements ServiceLoader
    private <T> T createServiceInstance(Class<T> service)
    {
       T serviceInst = SecurityActions.newInstance(
-            service, 
-            new Class<?>[]{}, 
+            service,
+            new Class<?>[]{},
             new Object[]{});
-      
+
       injector.inject(serviceInst);
       return serviceInst;
    }
-   
+
    private <T> String toClassString(Collection<T> providers)
    {
       StringBuilder sb = new StringBuilder();
