@@ -88,19 +88,30 @@ public class Servlet
       return contextRoot;
    }
 
+   /**
+    * Get the URI to the Servlet's context.
+    *
+    * @return the base URI, e.g. "http://localhost:8888/"
+    */
    public URI getBaseURI()
    {
-      return URI.create(HTTP_SCHEME + host + ":" + port + contextRoot + "/");
+      return URI.create(getBaseURIAsString());
    }
 
    /**
-    * @return BaseURI + name
+    * Get the URI to the Servlet.
+    *
+    * @return the base URI, e.g. "http://localhost:8888/Test"
     */
    public URI getFullURI()
    {
-      return URI.create(HTTP_SCHEME + host + ":" + port + contextRoot + "/" + name);
+      return URI.create(getBaseURIAsString() + name);
    }
 
+   private String getBaseURIAsString()
+   {
+      return HTTP_SCHEME + host + ":" + port + contextRoot + "/";
+   }
 
    /**
     * @throws IllegalStateException if host is null

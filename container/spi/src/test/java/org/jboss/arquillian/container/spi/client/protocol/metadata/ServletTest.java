@@ -28,11 +28,10 @@ public class ServletTest
 
    private static final String TEST_CONTEXT_ROOT = "/test";
 
-   private static final String TEST_CONTEXT_ROOT_BASE_URI = Servlet.HTTP_SCHEME + HTTPContextTest.TEST_HOST + ":"
-         + HTTPContextTest.TEST_PORT + TEST_CONTEXT_ROOT + "/";
-
    private static final String ROOT_CONTEXT_ROOT_BASE_URI = Servlet.HTTP_SCHEME + HTTPContextTest.TEST_HOST + ":"
-   + HTTPContextTest.TEST_PORT + "/";
+         + HTTPContextTest.TEST_PORT + "/";
+
+   private static final String TEST_CONTEXT_ROOT_BASE_URI = ROOT_CONTEXT_ROOT_BASE_URI + TEST_CONTEXT_ROOT + "/";
 
    private static final HTTPContext TEST_HTTP_CONTEXT = new HTTPContext(HTTPContextTest.TEST_HOST,
          HTTPContextTest.TEST_PORT);
@@ -82,7 +81,7 @@ public class ServletTest
       assertEquals(ROOT_CONTEXT_ROOT_BASE_URI, actualBaseUri);
    }
 
-   @Test(expected=IllegalStateException.class)
+   @Test(expected = IllegalStateException.class)
    public void testEqualsObjectForNullHost()
    {
       servlet.equals(null);
