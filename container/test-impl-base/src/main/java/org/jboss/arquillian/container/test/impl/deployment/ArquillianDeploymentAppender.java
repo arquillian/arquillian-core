@@ -48,7 +48,8 @@ public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
                               "org.jboss.arquillian.container.test.impl",
                               "org.jboss.arquillian.config",
                               "org.jboss.arquillian.test",
-                              "org.jboss.shrinkwrap.api")
+                              "org.jboss.shrinkwrap.api",
+                              "org.jboss.shrinkwrap.descriptor.api")
                         .addAsServiceProvider(RemoteLoadableExtension.class, ContainerTestRemoteExtension.class)
                         .addAsServiceProvider(ExtensionLoader.class, RemoteExtensionLoader.class);
    }
