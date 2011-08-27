@@ -25,10 +25,8 @@ import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
-import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
-import org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase;
-import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptorImplBase;
 
 /**
  * ArquillianDescriptor
@@ -36,7 +34,7 @@ import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArquillianDescriptorImpl extends NodeProviderImplBase implements ArquillianDescriptor
+public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements ArquillianDescriptor
 {
    //-------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
@@ -160,22 +158,13 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    // Required Implementations - SchemaDescriptorProvider --------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.shrinkwrap.descriptor.spi.NodeProvider#getRootNode()
+   /**
+    * {@inheritDoc}
+    * @see org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor#getRootNode()
     */
    @Override
    public Node getRootNode()
    {
       return model;
-   }
-   
-   /**
-    * {@inheritDoc}
-    * @see org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase#getExporter()
-    */
-   @Override
-   protected DescriptorExporter getExporter()
-   {
-      return new XmlDomExporter();
    }
 }

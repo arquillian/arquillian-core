@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
 /**
  * ExtensionDefImpl
