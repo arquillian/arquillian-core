@@ -17,7 +17,7 @@
 package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.web;
 
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.InitParamDef;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
 /**
  * @author Dan Allen

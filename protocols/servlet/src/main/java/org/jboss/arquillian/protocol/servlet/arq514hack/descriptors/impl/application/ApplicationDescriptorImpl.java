@@ -17,10 +17,8 @@
 package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.application;
 
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.ApplicationDescriptor;
-import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
-import org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase;
-import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptorImplBase;
 
 /**
  * ApplicationDescriptorImpl
@@ -28,7 +26,7 @@ import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ApplicationDescriptorImpl extends NodeProviderImplBase implements ApplicationDescriptor
+public class ApplicationDescriptorImpl extends NodeDescriptorImplBase implements ApplicationDescriptor
 {
    // -------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
@@ -200,11 +198,5 @@ public class ApplicationDescriptorImpl extends NodeProviderImplBase implements A
    public Node getRootNode()
    {
       return model;
-   }
-
-   @Override
-   protected DescriptorExporter getExporter()
-   {
-      return new XmlDomExporter();
    }
 }

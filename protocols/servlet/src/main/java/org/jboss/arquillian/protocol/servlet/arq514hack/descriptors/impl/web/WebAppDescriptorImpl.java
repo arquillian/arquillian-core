@@ -18,10 +18,9 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.web;
 
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.ServletDef;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebAppDescriptor;
-import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
-import org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase;
-import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
+import org.jboss.shrinkwrap.descriptor.api.DescriptorExporter;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptorImplBase;
 
 /**
  * @author Dan Allen
@@ -29,7 +28,7 @@ import org.jboss.shrinkwrap.descriptor.spi.xml.dom.XmlDomExporter;
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class WebAppDescriptorImpl extends NodeProviderImplBase implements WebAppDescriptor
+public class WebAppDescriptorImpl extends NodeDescriptorImplBase implements WebAppDescriptor
 {
    // -------------------------------------------------------------------------------------||
    // Class Members ----------------------------------------------------------------------||
@@ -113,17 +112,6 @@ public class WebAppDescriptorImpl extends NodeProviderImplBase implements WebApp
    public Node getRootNode()
    {
       return model;
-   }
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.shrinkwrap.descriptor.impl.base.NodeProviderImplBase#getExporter()
-    */
-   @Override
-   protected DescriptorExporter getExporter()
-   {
-      return new XmlDomExporter();
    }
 
    // -------------------------------------------------------------------------------------||
