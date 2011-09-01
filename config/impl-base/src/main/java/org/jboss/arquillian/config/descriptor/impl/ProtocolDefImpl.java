@@ -88,4 +88,12 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
       return properties;
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return protocol.toString(true);
+   }
 }

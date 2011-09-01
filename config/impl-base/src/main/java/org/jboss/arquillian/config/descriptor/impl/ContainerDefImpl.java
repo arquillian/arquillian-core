@@ -176,4 +176,13 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
       }
       return dependencies;
    }
+
+   /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return container.toString(true);
+   }
 }

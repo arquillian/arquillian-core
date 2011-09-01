@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.impl.client.container;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
@@ -42,8 +43,8 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  */
 public class ContainerRegistryCreator
 {
-   private static final String ARQUILLIAN_LAUNCH_PROPERTY = "arquillian.launch";
-   private static final String ARQUILLIAN_LAUNCH_DEFAULT = "arquillian.launch";
+   static final String ARQUILLIAN_LAUNCH_PROPERTY = "arquillian.launch";
+   static final String ARQUILLIAN_LAUNCH_DEFAULT = "arquillian.launch";
 
    private Logger log = Logger.getLogger(ContainerRegistryCreator.class.getName());
    
@@ -58,6 +59,8 @@ public class ContainerRegistryCreator
       LocalContainerRegistry reg = new LocalContainerRegistry();
       ServiceLoader serviceLoader = loader.get();
 
+      validateConfiguration(event);
+
       String activeConfiguration = getActivatedConfiguration();
       for(ContainerDef container : event.getContainers())
       {
@@ -68,20 +71,19 @@ public class ContainerRegistryCreator
             reg.create(container, serviceLoader);            
          }
       }
-      if(activeConfiguration != null)
+      for(GroupDef group : event.getGroups())
       {
-         for(GroupDef group : event.getGroups())
+         if(
+               (activeConfiguration != null && activeConfiguration.equals(group.getGroupName())) ||
+               (activeConfiguration == null && group.isGroupDefault()))
          {
-            if(activeConfiguration.equals(group.getGroupName()))
+            for(ContainerDef container : group.getGroupContainers())
             {
-               for(ContainerDef container : group.getGroupContainers())
-               {
-                  reg.create(container, serviceLoader);
-               }
+               reg.create(container, serviceLoader);
             }
          }
       }
-      else if(reg.getContainers().size() == 0)
+      if(activeConfiguration == null && reg.getContainers().size() == 0)
       {
          try
          {
@@ -101,20 +103,70 @@ public class ContainerRegistryCreator
       registry.set(reg);
    }
    
+   /**
+    * Validate that the Configuration given is sane
+    *
+    * @param desc The read Descriptor
+    */
+   private void validateConfiguration(ArquillianDescriptor desc)
+   {
+      Object defaultConfig = null;
+
+      // verify only one container is marked as default
+      for(ContainerDef container : desc.getContainers())
+      {
+         if(container.isDefault())
+         {
+            if(defaultConfig != null)
+            {
+               throw new IllegalStateException("Multiple Containers defined as default, only one is allowed:\n" + defaultConfig + ":" + container);
+            }
+            defaultConfig = container;
+         }
+      }
+      // verify only one container or group is marked as default
+      for(GroupDef group : desc.getGroups())
+      {
+         if(group.isGroupDefault())
+         {
+            if(defaultConfig != null)
+            {
+               throw new IllegalStateException("Multiple Containers/Groups defined as default, only one is allowed:\n" + defaultConfig + ":" + group);
+            }
+            defaultConfig = group;
+         }
+
+         ContainerDef defaultInGroup = null;
+         // verify only one container in group is marked as default
+         for(ContainerDef container: group.getGroupContainers())
+         {
+            if(container.isDefault())
+            {
+               if(defaultInGroup != null)
+               {
+                  throw new IllegalStateException("Multiple Containers within Group defined as default, only one is allowed:\n" + group);
+               }
+               defaultInGroup = container;
+            }
+         }
+      }
+   }
+
    private String getActivatedConfiguration() 
    {
       try
       {
-         if(System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY) != null)
+         if(exists(System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY)))
          {
             return System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
          }
          
-         return readActivatedValue(
-               new BufferedReader(
-                     new InputStreamReader(
-                           Thread.currentThread().getContextClassLoader().getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT))));
-         
+         InputStream arquillianLaunchStream = Thread.currentThread().getContextClassLoader()
+                                                   .getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT);
+         if(arquillianLaunchStream != null)
+         {
+            return readActivatedValue(new BufferedReader(new InputStreamReader(arquillianLaunchStream)));
+         }
       }
       catch (Exception e) 
       {
@@ -126,9 +178,9 @@ public class ContainerRegistryCreator
    private String readActivatedValue(BufferedReader reader)
       throws Exception
    {
-      String value;
       try
       {
+         String value;
          while( (value = reader.readLine()) != null)
          {
             if(value.startsWith("#"))
@@ -143,5 +195,14 @@ public class ContainerRegistryCreator
          reader.close();
       }
       return null;
+   }
+
+   private boolean exists(String value)
+   {
+      if(value == null || value.trim().length() == 0)
+      {
+         return false;
+      }
+      return true;
    }
 }

@@ -106,4 +106,13 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
       return this;    
    }
 
+   /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return extension.toString();
+   }
+
 }

@@ -29,7 +29,11 @@ public interface GroupDef extends ArquillianDescriptor
    String getGroupName();
    
    GroupDef setGroupName(String name);
+
+   GroupDef setGroupDefault();
    
+   boolean isGroupDefault();
+
    ContainerDef container(String name);
    
    List<ContainerDef> getGroupContainers();

@@ -61,7 +61,26 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
    {
       return group.getAttribute("qualifier");
    }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#setGroupDefault()
+    */
+   @Override
+   public GroupDef setGroupDefault()
+   {
+      group.attribute("default", true);
+      return this;
+   }
    
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#isGroupDefault()
+    */
+   @Override
+   public boolean isGroupDefault()
+   {
+      return Boolean.parseBoolean(group.getAttribute("default"));
+   }
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
     */
@@ -83,5 +102,14 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
          containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
       }
       return containers;
+   }
+
+   /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return group.toString(true);
    }
 }

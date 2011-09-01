@@ -341,12 +341,14 @@ public class ArquillianDescriptorTestCase
    {
       desc = create()
             .group(GROUP_NAME_1)
+               .setGroupDefault()
                .container(CONTAINER_NAME_1)
                .container(CONTAINER_NAME_2)
             .group(GROUP_NAME_2)
                .container(CONTAINER_NAME_3).exportAsString();
       
       assertXPath(desc, "/arquillian/group/@qualifier", GROUP_NAME_1, GROUP_NAME_2);
+      assertXPath(desc, "/arquillian/group[1]/@default", true);
       assertXPath(desc, "/arquillian/group/container/@qualifier", CONTAINER_NAME_1, CONTAINER_NAME_2, CONTAINER_NAME_3);
       
       ArquillianDescriptor descriptor = create(desc);

@@ -66,6 +66,7 @@
 	    		<element ref="tns:container" minOccurs="1" maxOccurs="unbounded" />
 	    	</choice>
 	    	<attribute name="qualifier" type="string" use="required" />
+            <attribute name="default" type="boolean" use="optional" default="false"/>
 	    </complexType>
         <unique name="unique-qualifier-of-containers-within-group">
             <annotation>

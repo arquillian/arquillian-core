@@ -83,4 +83,13 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
       }
       return properties;
    }
+
+   /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return protocol.toString(true);
+   }
 }

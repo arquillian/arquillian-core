@@ -98,4 +98,13 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
       }
       return null;
    }
+
+   /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return engine.toString(true);
+   }
 }

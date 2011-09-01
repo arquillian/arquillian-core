@@ -32,13 +32,13 @@ import org.jboss.shrinkwrap.descriptor.spi.Node;
 public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
 {
    private Node group;
-   
+
    public GroupContainerDefImpl(String descirptorName, Node model, Node group, Node container)
    {
       super(descirptorName, model, container);
       this.group = group;
    }
-   
+
    //-------------------------------------------------------------------------------------||
    // Required Implementations - GroupDescriptor -----------------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -61,18 +61,38 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
    {
       return group.getAttribute("qualifier");
    }
-   
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#setGroupDefault()
+    */
+   @Override
+   public GroupDef setGroupDefault()
+   {
+      group.attribute("default", true);
+      return this;
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#isGroupDefault()
+    */
+   @Override
+   public boolean isGroupDefault()
+   {
+      return Boolean.parseBoolean(group.getAttribute("default"));
+   }
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
     */
    @Override
    public ContainerDef container(String name)
    {
-      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.getOrCreate("container@qualifier=" + name));
+      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group,
+            group.getOrCreate("container@qualifier=" + name));
       contianer.setContainerName(name);
-      return contianer; 
+      return contianer;
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupContainers()
     */
@@ -80,10 +100,19 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
    public List<ContainerDef> getGroupContainers()
    {
       List<ContainerDef> containers = new ArrayList<ContainerDef>();
-      for(Node container : group.get("container"))
+      for (Node container : group.get("container"))
       {
          containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
       }
       return containers;
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return group.toString(true);
    }
 }
