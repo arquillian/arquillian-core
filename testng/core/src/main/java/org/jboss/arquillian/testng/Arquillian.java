@@ -17,6 +17,7 @@
 package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
+import java.util.Stack;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -33,6 +34,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Arquillian
@@ -44,9 +46,17 @@ public abstract class Arquillian implements IHookable
 {
    public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
    
+   private static enum Cycle { BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS, AFTER_SUITE }
+
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
-   @BeforeSuite(alwaysRun = true)
+   private static ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
+      protected java.util.Stack<Cycle> initialValue() {
+         return new Stack<Cycle>();
+      };
+   };
+
+   @BeforeSuite(groups = "arquillian", inheritGroups = true)
    public void arquillianBeforeSuite() throws Exception
    {
       if(deployableTest.get() == null)
@@ -54,48 +64,94 @@ public abstract class Arquillian implements IHookable
          TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
          adaptor.beforeSuite(); 
          deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
+         cycleStack.get().push(Cycle.BEFORE_SUITE);
       }
    }
 
-   @AfterSuite(alwaysRun = true)
+   @AfterSuite(groups = "arquillian", inheritGroups = true, alwaysRun = true)
    public void arquillianAfterSuite() throws Exception
    {
       if (deployableTest.get() == null) 
       {
          return; // beforeSuite failed
       }
+      if(cycleStack.get().empty())
+      {
+         return;
+      }
+      if(cycleStack.get().peek() != Cycle.BEFORE_SUITE)
+      {
+         return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_SUITE
+      }
+      else
+      {
+         cycleStack.get().pop();
+      }
       deployableTest.get().afterSuite();
       deployableTest.get().shutdown();
       deployableTest.set(null);
       deployableTest.remove();
+      cycleStack.set(null);
+      cycleStack.remove();
    }
 
-   @BeforeClass(alwaysRun = true)
+   @BeforeClass(groups = "arquillian", inheritGroups = true)
    public void arquillianBeforeClass() throws Exception
    {
+      verifyTestRunnerAdaptorHasBeenSet();
+      cycleStack.get().push(Cycle.BEFORE_CLASS);
       deployableTest.get().beforeClass(getClass(), LifecycleMethodExecutor.NO_OP);
    }
 
-   @AfterClass(alwaysRun = true)
+   @AfterClass(groups = "arquillian", inheritGroups = true, alwaysRun = true)
    public void arquillianAfterClass() throws Exception
    {
+      if(cycleStack.get().empty())
+      {
+         return;
+      }
+      if(cycleStack.get().peek() != Cycle.BEFORE_CLASS)
+      {
+         return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_CLASS
+      }
+      else
+      {
+         cycleStack.get().pop();
+      }
+      verifyTestRunnerAdaptorHasBeenSet();
       deployableTest.get().afterClass(getClass(), LifecycleMethodExecutor.NO_OP);
    }
    
-   @BeforeMethod(alwaysRun = true)
+   @BeforeMethod(groups = "arquillian", inheritGroups = true)
    public void arquillianBeforeTest(Method testMethod) throws Exception 
    {
+      verifyTestRunnerAdaptorHasBeenSet();
+      cycleStack.get().push(Cycle.BEFORE);
       deployableTest.get().before(this, testMethod, LifecycleMethodExecutor.NO_OP);
    }
 
-   @AfterMethod(alwaysRun = true)
+   @AfterMethod(groups = "arquillian", inheritGroups = true, alwaysRun = true)
    public void arquillianAfterTest(Method testMethod) throws Exception 
    {
+      if(cycleStack.get().empty())
+      {
+         return;
+      }
+      if(cycleStack.get().peek() != Cycle.BEFORE)
+      {
+         return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_CLASS
+      }
+      else
+      {
+         cycleStack.get().pop();
+      }
+      verifyTestRunnerAdaptorHasBeenSet();
       deployableTest.get().after(this, testMethod, LifecycleMethodExecutor.NO_OP);
    }
 
    public void run(final IHookCallBack callback, final ITestResult testResult)
    {
+      verifyTestRunnerAdaptorHasBeenSet();
       TestResult result;
       try
       {
@@ -181,5 +237,13 @@ public abstract class Arquillian implements IHookable
       values[0] = parameterValues; 
       
       return values;
+   }
+
+   private void verifyTestRunnerAdaptorHasBeenSet()
+   {
+      if(deployableTest.get() == null)
+      {
+         throw new IllegalStateException("No TestRunnerAdaptor found, @BeforeSuite has not been called");
+      }
    }
 }
