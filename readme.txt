@@ -14,23 +14,8 @@
  Contents of distribution
  ========================
 
- doc/
-
-    API docs and reference guide. Open doc/en-US/html/index.html in your
-    browser for instructions on how to get started using Arquillian.
-   
- demo/
-
-    The Arquillian JUnit examples. The examples are described in more detail in the 
-    reference guide 
-
- demo-testng/
-
-    The Arquillian TestNG examples. The examples are described in more detail in the 
-    reference guide 
+ The Arquillian Core, Container Extension, Test integration for JUnit and TestNG, Common TestEnrichers and Common Protocols.
      
- finish me...
-
  Licensing
  =========
  
@@ -40,11 +25,8 @@
  Arquillian URLs
  ===============
 
+ Project Site:              http://jboss.org/arquillian
  User Forums & Wiki:        http://community.jboss.org/community/arquillian
  Development Forums & Wiki: http://community.jboss.org/community/arquillian/dev
- Source Code:               http://anonsvn.jboss.org/repos/common/arquillian/trunk
  Issue Tracker:             https://jira.jboss.org/jira/browse/ARQ
 
- TODO Add link to project page, API docs and reference guide when ready
-
-vim:et:ts=3:sw=3:tw=78
