@@ -62,6 +62,13 @@ public class BeanManagerProducer
 
    private BeanManager lookup(Context context)
    {
+      BeanManager beanManager = CDIExtension.getBeanManager();
+
+      if (beanManager != null)
+      {
+         return beanManager;
+      }
+
       for (String beanManagerJndiName : BEAN_MANAGER_JNDI_NAMES)
       {
          try
