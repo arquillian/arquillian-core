@@ -124,6 +124,8 @@ public class ContainerRegistryCreator
             defaultConfig = container;
          }
       }
+      boolean containerMarkedAsDefault = defaultConfig != null;
+
       // verify only one container or group is marked as default
       for(GroupDef group : desc.getGroups())
       {
@@ -131,7 +133,11 @@ public class ContainerRegistryCreator
          {
             if(defaultConfig != null)
             {
-               throw new IllegalStateException("Multiple Containers/Groups defined as default, only one is allowed:\n" + defaultConfig + ":" + group);
+               if(containerMarkedAsDefault)
+               {
+                  throw new IllegalStateException("Multiple Containers/Groups defined as default, only one is allowed:\n" + defaultConfig + ":" + group);
+               }
+               throw new IllegalStateException("Multiple Groups defined as default, only one is allowed:\n" + defaultConfig + ":" + group);
             }
             defaultConfig = group;
          }

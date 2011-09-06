@@ -160,49 +160,76 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       }
    }
 
-   @Test(expected = IllegalStateException.class)
+   @Test
    public void shouldThrowExceptionIfMultipleContainersSetAsDefault()
    {
-      fire(
-            Descriptors.create(ArquillianDescriptor.class)
-               .container(CONTAINER_1)
-                  .setDefault()
-               .container(CONTAINER_2)
-                  .setDefault());
+      try
+      {
+         fire(
+               Descriptors.create(ArquillianDescriptor.class)
+                  .container(CONTAINER_1)
+                     .setDefault()
+                  .container(CONTAINER_2)
+                     .setDefault());
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Multiple Containers defined as default"));
+      }
    }
 
-   @Test(expected = IllegalStateException.class)
+   @Test
    public void shouldThrowExceptionIfMultipleGroupsSetAsDefault()
    {
-      fire(
-            Descriptors.create(ArquillianDescriptor.class)
-               .group(GROUP_1)
-                  .setGroupDefault()
-               .group(GROUP_2)
-                  .setGroupDefault());
+      try
+      {
+         fire(
+               Descriptors.create(ArquillianDescriptor.class)
+                  .group(GROUP_1)
+                     .setGroupDefault()
+                  .group(GROUP_2)
+                     .setGroupDefault());
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Multiple Groups defined as default"));
+      }
    }
 
-   @Test(expected = IllegalStateException.class)
+   @Test
    public void shouldThrowExceptionIfMultipleGroupsOrContainersSetAsDefault()
    {
-      fire(
-            Descriptors.create(ArquillianDescriptor.class)
-               .container(CONTAINER_1)
-                  .setDefault()
-               .group(GROUP_1)
-                  .setGroupDefault());
+      try
+      {
+         fire(
+               Descriptors.create(ArquillianDescriptor.class)
+                  .container(CONTAINER_1)
+                     .setDefault()
+                  .group(GROUP_1)
+                     .setGroupDefault());
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Multiple Containers/Groups defined as default"));
+      }
    }
 
-   @Ignore // fails for the wrong reason, SHRINKDESC-84
-   @Test(expected = IllegalStateException.class)
+   @Test
    public void shouldThrowExceptionIfMultipleContainersInGroupSetAsDefault()
    {
-      fire( Descriptors.create(ArquillianDescriptor.class)
-            .group(GROUP_1)
-               .container(CONTAINER_1)
-                  .setDefault()
-               .container(CONTAINER_2)
-                  .setDefault());
+      try
+      {
+         fire( Descriptors.create(ArquillianDescriptor.class)
+               .group(GROUP_1)
+                  .container(CONTAINER_1)
+                     .setDefault()
+                  .container(CONTAINER_2)
+                     .setDefault());
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Multiple Containers within Group defined as default"));
+      }
    }
 
    private void verifyRegistry(String... containerNames)
