@@ -19,8 +19,6 @@ package org.jboss.arquillian.config.descriptor.impl;
 
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
-import org.jboss.shrinkwrap.descriptor.spi.node.query.Pattern;
-import org.jboss.shrinkwrap.descriptor.spi.node.query.Patterns;
 
 /**
  * EngineDefImpl
@@ -30,8 +28,8 @@ import org.jboss.shrinkwrap.descriptor.spi.node.query.Patterns;
  */
 public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
 {
-   private static final Pattern[] exportPath = Patterns.from("property@name=deploymentExportPath");
-   private static final Pattern[] maxTestClasses = Patterns.from("property@name=maxTestClassesBeforeRestart");
+   private static final String exportPath = "property@name=deploymentExportPath";
+   private static final String maxTestClasses = "property@name=maxTestClassesBeforeRestart";
    
    private Node engine;
    
@@ -79,7 +77,7 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
       return getTextIfExistsAsInteger(maxTestClasses);
    }
    
-   private Integer getTextIfExistsAsInteger(Pattern... pattern)
+   private Integer getTextIfExistsAsInteger(String pattern)
    {
       String text = getTextIfExists(pattern);
       if(text != null)
@@ -89,7 +87,7 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
       return null;
    }
 
-   private String getTextIfExists(Pattern... pattern)
+   private String getTextIfExists(String pattern)
    {
       Node propery = engine.getSingle(pattern);
       if(propery != null)
