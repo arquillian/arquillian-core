@@ -25,6 +25,7 @@ import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
+import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
 import org.jboss.shrinkwrap.descriptor.spi.DescriptorExporter;
 import org.jboss.shrinkwrap.descriptor.spi.Node;
 import org.jboss.shrinkwrap.descriptor.spi.NodeProviderImplBase;
@@ -60,6 +61,7 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    {
       super(descirptorName);
       this.model = model;
+      NodePropertiesReplacer.walkAndReplace(this.model);
    }
 
    //-------------------------------------------------------------------------------------||
@@ -177,5 +179,14 @@ public class ArquillianDescriptorImpl extends NodeProviderImplBase implements Ar
    protected DescriptorExporter getExporter()
    {
       return new XmlDomExporter();
+   }
+   
+   /* (non-Javadoc)
+    * @see org.jboss.shrinkwrap.descriptor.api.Descriptor#exportAsString()
+    */
+   @Override
+   public String exportAsString() throws DescriptorExportException
+   {      
+      return StringPropertyReplacer.replaceProperties(super.exportAsString());
    }
 }

@@ -39,6 +39,7 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
    {
       super(descriptorName, model);
       this.engine = engine;
+      NodePropertiesReplacer.walkAndReplace(this.engine);
    }
    
    /* (non-Javadoc)

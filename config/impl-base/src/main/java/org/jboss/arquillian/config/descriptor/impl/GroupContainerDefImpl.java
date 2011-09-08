@@ -37,6 +37,7 @@ public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
    {
       super(descirptorName, model, container);
       this.group = group;
+      NodePropertiesReplacer.walkAndReplace(this.group);
    }
 
    //-------------------------------------------------------------------------------------||

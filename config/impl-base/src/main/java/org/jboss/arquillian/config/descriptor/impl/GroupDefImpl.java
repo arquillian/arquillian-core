@@ -37,6 +37,7 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
    {
       super(descirptorName, model);
       this.group = group;
+      NodePropertiesReplacer.walkAndReplace(this.group);
    }
    
    //-------------------------------------------------------------------------------------||

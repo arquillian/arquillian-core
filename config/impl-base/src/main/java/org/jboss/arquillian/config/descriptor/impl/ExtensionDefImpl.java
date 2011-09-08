@@ -49,6 +49,7 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
    {
       super(descirptorName, model);
       this.extension = extension;
+      NodePropertiesReplacer.walkAndReplace(this.extension);
    }
 
    // -------------------------------------------------------------------------------------||

@@ -37,6 +37,7 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
    {
       super(descriptorName, model, container);
       this.protocol = protocol;
+      NodePropertiesReplacer.walkAndReplace(this.protocol);
    }
    
    //-------------------------------------------------------------------------------------||

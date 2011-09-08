@@ -51,6 +51,7 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
    {
       super(descirptorName, model);
       this.container = container;
+      NodePropertiesReplacer.walkAndReplace(this.container);
    }
    
    //-------------------------------------------------------------------------------------||

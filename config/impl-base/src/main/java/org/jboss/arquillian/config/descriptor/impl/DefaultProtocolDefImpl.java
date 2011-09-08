@@ -37,6 +37,7 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
    {
       super(descirptorName, model);
       this.protocol = protocol;
+      NodePropertiesReplacer.walkAndReplace(this.protocol);
    }
 
    //-------------------------------------------------------------------------------------||
