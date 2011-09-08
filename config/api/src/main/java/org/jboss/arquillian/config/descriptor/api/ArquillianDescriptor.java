@@ -46,4 +46,6 @@ public interface ArquillianDescriptor extends Descriptor
    
    List<ExtensionDef> getExtensions();   
    
+   ArquillianDescriptor resolve();
+   
 }

@@ -25,6 +25,8 @@ import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptorImplBase;
 
@@ -167,4 +169,16 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    {
       return model;
    }
+
+	@Override
+	public ArquillianDescriptor resolve() 
+	{
+		String descrStr = this.exportAsString();
+		ArquillianDescriptor newArqDescriptor = 
+			Descriptors.importAs(ArquillianDescriptor.class)
+				.from(StringPropertyReplacer.replaceProperties(descrStr));
+		
+		return newArqDescriptor;
+	}   
+   
 }
