@@ -44,6 +44,6 @@ public interface ArquillianDescriptor extends Descriptor
    
    List<GroupDef> getGroups();
    
-   List<ExtensionDef> getExtensions();   
+   List<ExtensionDef> getExtensions();
    
 }

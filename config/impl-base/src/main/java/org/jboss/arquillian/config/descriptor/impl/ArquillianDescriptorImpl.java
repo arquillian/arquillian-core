@@ -166,5 +166,5 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    public Node getRootNode()
    {
       return model;
-   }
+   }   
 }
