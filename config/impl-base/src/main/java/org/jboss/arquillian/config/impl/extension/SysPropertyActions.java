@@ -19,17 +19,16 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.arquillian.config.descriptor.impl;
+package org.jboss.arquillian.config.impl.extension;
 
-import java.security.PrivilegedAction;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * Priviledged actions for the package
  * @author Scott.Stark@jboss.org
  * @version $Revision: 2787 $
  */
-@SuppressWarnings("unchecked")
 class SysPropertyActions
 {
    interface SysProps
@@ -45,9 +44,9 @@ class SysPropertyActions
       {
          public String getProperty(final String name, final String defaultValue)
          {
-            PrivilegedAction action = new PrivilegedAction()
+            final PrivilegedAction<String> action = new PrivilegedAction<String>()
             {
-               public Object run()
+               public String run()
                {
                   return System.getProperty(name, defaultValue);
                }

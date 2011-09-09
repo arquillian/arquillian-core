@@ -19,10 +19,11 @@
   * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   */
-package org.jboss.arquillian.config.descriptor.impl;
+package org.jboss.arquillian.config.impl.extension;
 
 import java.util.Properties;
 import java.io.File;
+
 
 /**
  * A utility class for replacing properties in strings. 

@@ -55,7 +55,8 @@ public class ConfigurationRegistrar
          descriptor = Descriptors.create(ArquillianDescriptor.class);
       }
       
-      descriptorInst.set(descriptor);
+      final ArquillianDescriptor resolvedDesc = ConfigurationSysPropResolver.resolveSystemProperties(descriptor);
+      descriptorInst.set(resolvedDesc);
    }
    
    private InputStream loadArquillianXml()
