@@ -62,13 +62,6 @@ public class BeanManagerProducer
 
    private BeanManager lookup(Context context)
    {
-      BeanManager beanManager = CDIExtension.getBeanManager();
-
-      if (beanManager != null)
-      {
-         return beanManager;
-      }
-
       for (String beanManagerJndiName : BEAN_MANAGER_JNDI_NAMES)
       {
          try
@@ -80,6 +73,13 @@ public class BeanManagerProducer
             log.fine("Tried to lookup the BeanManager with name " + beanManagerJndiName + " but caught exception: "
                   + e.getMessage());
          }
+      }
+
+      BeanManager beanManager = CDIExtension.getBeanManager();
+
+      if (beanManager != null)
+      {
+         return beanManager;
       }
 
       log.info("BeanManager not found.");
