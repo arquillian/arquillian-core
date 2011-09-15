@@ -17,10 +17,13 @@
  */
 package org.jboss.arquillian.testenricher.cdi.client;
 
+import javax.enterprise.inject.spi.Extension;
+
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.testenricher.cdi.CDIInjectionEnricher;
 import org.jboss.arquillian.testenricher.cdi.container.CDIEnricherRemoteExtension;
+import org.jboss.arquillian.testenricher.cdi.container.CDIExtension;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -43,6 +46,7 @@ public class CDIEnricherArchiveAppender implements AuxiliaryArchiveAppender
                   .addPackages(false, 
                         CDIInjectionEnricher.class.getPackage(),
                         CDIEnricherRemoteExtension.class.getPackage())
+                  .addAsServiceProvider(Extension.class, CDIExtension.class)
                   .addAsServiceProvider(RemoteLoadableExtension.class, CDIEnricherRemoteExtension.class);
    }
 }

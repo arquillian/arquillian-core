@@ -75,6 +75,13 @@ public class BeanManagerProducer
          }
       }
 
+      BeanManager beanManager = CDIExtension.getBeanManager();
+
+      if (beanManager != null)
+      {
+         return beanManager;
+      }
+
       log.info("BeanManager not found.");
       return null;
    }
