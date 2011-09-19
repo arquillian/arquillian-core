@@ -19,6 +19,7 @@ package org.jboss.arquillian.testenricher.ejb;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -28,10 +29,11 @@ import javax.naming.NamingException;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
- * Enricher that provide EJB class and setter method injection. 
+ * Enricher that provide EJB class and setter method injection.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -41,37 +43,42 @@ public class EJBInjectionEnricher implements TestEnricher
    private static final String ANNOTATION_NAME = "javax.ejb.EJB";
 
    private static final Logger log = Logger.getLogger(TestEnricher.class.getName());
-   
+
    @Inject
    private Instance<Context> contextInst;
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi.Context, java.lang.Object)
+
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.arquillian.spi.TestEnricher#enrich(org.jboss.arquillian.spi .Context, java.lang.Object)
     */
    public void enrich(Object testCase)
    {
-      if(SecurityActions.isClassPresent(ANNOTATION_NAME) && contextInst.get() != null) 
+      if (SecurityActions.isClassPresent(ANNOTATION_NAME) && contextInst.get() != null)
       {
          injectClass(testCase);
       }
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi.Context, java.lang.reflect.Method)
+   /*
+    * (non-Javadoc)
+    *
+    * @see org.jboss.arquillian.spi.TestEnricher#resolve(org.jboss.arquillian.spi .Context, java.lang.reflect.Method)
     */
-   public Object[] resolve(Method method) 
+   public Object[] resolve(Method method)
    {
-     return new Object[method.getParameterTypes().length];
+      return new Object[method.getParameterTypes().length];
    }
-   
+
    /**
     * Obtains all field in the specified class which contain the specified annotation
+    *
     * @param clazz
     * @param annotation
     * @return
     * @throws IllegalArgumentException If either argument is not specified
     */
-   //TODO Hack, this leaks out privileged operations outside the package.  Extract out properly.
+   // TODO Hack, this leaks out privileged operations outside the package. Extract out properly.
    protected List<Field> getFieldsWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotation)
          throws IllegalArgumentException
    {
@@ -88,50 +95,50 @@ public class EJBInjectionEnricher implements TestEnricher
       // Delegate to the privileged operations
       return SecurityActions.getFieldsWithAnnotation(clazz, annotation);
    }
-   
-   protected void injectClass(Object testCase) 
+
+   protected void injectClass(Object testCase)
    {
-      try 
+      try
       {
          @SuppressWarnings("unchecked")
-         Class<? extends Annotation> ejbAnnotation = (Class<? extends Annotation>)SecurityActions.getThreadContextClassLoader().loadClass(ANNOTATION_NAME);
-         
+         Class<? extends Annotation> ejbAnnotation = (Class<? extends Annotation>) SecurityActions.getThreadContextClassLoader().loadClass(ANNOTATION_NAME);
+
          List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(
-               testCase.getClass(), 
+               testCase.getClass(),
                ejbAnnotation);
-         
-         for(Field field : annotatedFields) 
+
+         for (Field field : annotatedFields)
          {
-            if(field.get(testCase) == null) // only try to lookup fields that are not already set
+            if (field.get(testCase) == null) // only try to lookup fields that are not already set
             {
                EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
                try
                {
-                  Object ejb = lookupEJB(field.getType(), fieldAnnotation.mappedName());
+                  String[] jndiNames = resolveJNDINames(field.getType(), fieldAnnotation.mappedName(), fieldAnnotation.beanName());
+                  Object ejb = lookupEJB(jndiNames);
                   field.set(testCase, ejb);
                }
-               catch (Exception e) 
+               catch (Exception e)
                {
-                  log.fine("Could not lookup " + fieldAnnotation + ", other Enrichers might, move on. Exception: " + e.getMessage());
+                  log.fine("Could not lookup " + fieldAnnotation + ", other Enrichers might, move on. Exception: "
+                        + e.getMessage());
                }
             }
          }
-         
-         List<Method> methods = SecurityActions.getMethodsWithAnnotation(
-               testCase.getClass(), 
-               ejbAnnotation);
-         
-         for(Method method : methods) 
+
+         List<Method> methods = SecurityActions.getMethodsWithAnnotation(testCase.getClass(), ejbAnnotation);
+
+         for (Method method : methods)
          {
-            if(method.getParameterTypes().length != 1) 
+            if (method.getParameterTypes().length != 1)
             {
                throw new RuntimeException("@EJB only allowed on single argument methods");
             }
-            if(!method.getName().startsWith("set")) 
+            if (!method.getName().startsWith("set"))
             {
                throw new RuntimeException("@EJB only allowed on 'set' methods");
             }
-            EJB parameterAnnotation = null; //method.getParameterAnnotations()[0]
+            EJB parameterAnnotation = null; // method.getParameterAnnotations()[0]
             for (Annotation annotation : method.getParameterAnnotations()[0])
             {
                if (EJB.class.isAssignableFrom(annotation.annotationType()))
@@ -139,76 +146,147 @@ public class EJBInjectionEnricher implements TestEnricher
                   parameterAnnotation = (EJB) annotation;
                }
             }
-            String mappedName = parameterAnnotation == null ? null : parameterAnnotation.mappedName();
-            Object ejb = lookupEJB(method.getParameterTypes()[0], mappedName);
+
+            // Default values of the annotation attributes.
+            String mappedName = null;
+            String beanName = null;
+
+            if (parameterAnnotation != null)
+            {
+               mappedName = parameterAnnotation.mappedName();
+               beanName = parameterAnnotation.beanName();
+            }
+
+            String[] jndiNames = resolveJNDINames(method.getParameterTypes()[0], mappedName, beanName);
+            Object ejb = lookupEJB(jndiNames);
             method.invoke(testCase, ejb);
          }
-         
-      } 
-      catch (Exception e) 
+
+      }
+      catch (Exception e)
       {
          throw new RuntimeException("Could not inject members", e);
       }
    }
-   
-   protected Object lookupEJB(Class<?> fieldType, String mappedName) throws Exception 
+
+   /**
+    * Resolves the JNDI name of the given field.
+    *
+    * If <tt>mappedName</tt> or <tt>beanName</tt> are specified, they're used to resolve JNDI name. Otherwise, default policy
+    * applies.
+    *
+    * If both, the <tt>mappedName</tt> and <tt>beanName</tt>, are specified at the same time, an {@link IllegalStateException}
+    * will be thrown.
+    *
+    * @param fieldType annotated field which JNDI name should be resolved.
+    * @param mappedName Value of {@link EJB}'s <tt>mappedName</tt> attribute.
+    * @param beanName Value of {@link EJB}'s <tt>beanName</tt> attribute.
+    *
+    * @return possible JNDI names which should be looked up to access the proper object.
+    */
+   protected String[] resolveJNDINames(Class<?> fieldType, String mappedName, String beanName)
    {
-      // TODO: figure out test context ? 
-      Context initcontext = createContext();
-      
-      // TODO: These names are not spec compliant; fieldType needs to be a bean type here,
-      //       but usually is just an interface of a bean.  These seldom work.
-      String[] jndiNames = {
-            "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
-            "java:global/test.ear/test/" + fieldType.getSimpleName(),
-            "java:global/test/" + fieldType.getSimpleName(),
-            "java:global/test/" + fieldType.getSimpleName() + "Bean",
-            "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
-            "test/" + fieldType.getSimpleName() + "Bean/local",
-            "test/" + fieldType.getSimpleName() + "Bean/remote",
-            "test/" + fieldType.getSimpleName() + "/no-interface",
-            fieldType.getSimpleName() + "Bean/local",
-            fieldType.getSimpleName() + "Bean/remote",
-            fieldType.getSimpleName() + "/no-interface",
-            // WebSphere Application Server Local EJB default binding
-            "ejblocal:" + fieldType.getCanonicalName(),
-            // WebSphere Application Server Remote EJB default binding
-            fieldType.getCanonicalName()
-      };
-      if ((mappedName != null) && (!mappedName.equals("")))
+
+      MessageFormat msg = new MessageFormat(
+            "Trying to resolve JNDI name for field \"{0}\" with mappedName=\"{1}\" and beanName=\"{2}\"");
+      log.finer(msg.format(new Object[]
+      {fieldType, mappedName, beanName}));
+
+      Validate.notNull(fieldType, "EJB enriched field cannot to be null.");
+
+      boolean isMappedNameSet = hasValue(mappedName);
+      boolean isBeanNameSet = hasValue(beanName);
+
+      if (isMappedNameSet && isBeanNameSet)
       {
-         // Use only the mapped name to lookup this EJB
-         jndiNames = new String[]{ mappedName };
+         throw new IllegalStateException(
+               "@EJB annotation attributes 'mappedName' and 'beanName' cannot be specified at the same time.");
       }
-      
-      for(String jndiName : jndiNames)
+
+      String[] jndiNames;
+
+      // If set, use only mapped name or bean name to lookup the EJB.
+      if (isMappedNameSet)
       {
-         try 
+         jndiNames = new String[]
+         {mappedName};
+      }
+      else if (isBeanNameSet)
+      {
+         jndiNames = new String[]
+         {"java:module/" + beanName + "!" + fieldType.getName()};
+      }
+      else
+      {
+         // TODO: These names are not spec compliant; fieldType needs to be a bean type here, but usually is just an interface of a bean. These seldom work.
+         jndiNames = new String[] {
+               "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
+               "java:global/test.ear/test/" + fieldType.getSimpleName(),
+               "java:global/test/" + fieldType.getSimpleName(),
+               "java:global/test/" + fieldType.getSimpleName() + "Bean",
+               "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+               "test/" + fieldType.getSimpleName() + "Bean/local", "test/" + fieldType.getSimpleName() + "Bean/remote",
+               "test/" + fieldType.getSimpleName() + "/no-interface", fieldType.getSimpleName() + "Bean/local",
+               fieldType.getSimpleName() + "Bean/remote", fieldType.getSimpleName() + "/no-interface",
+               // WebSphere Application Server Local EJB default binding
+               "ejblocal:" + fieldType.getCanonicalName(),
+               // WebSphere Application Server Remote EJB default binding
+               fieldType.getCanonicalName()};
+      }
+      return jndiNames;
+   }
+
+   protected Object lookupEJB(String[] jndiNames) throws Exception
+   {
+      // TODO: figure out test context ?
+      Context initcontext = createContext();
+
+      for (String jndiName : jndiNames)
+      {
+         try
          {
             return initcontext.lookup(jndiName);
-         } 
-         catch (NamingException e) 
+         }
+         catch (NamingException e)
          {
             // no-op, try next
          }
       }
       throw new NamingException("No EJB found in JNDI, tried the following names: " + joinJndiNames(jndiNames));
    }
-   
+
    protected Context createContext() throws Exception
    {
       return contextInst.get();
    }
-   
+
    // Simple helper for printing the jndi names
    private String joinJndiNames(String[] strings)
    {
       StringBuilder sb = new StringBuilder();
-      
-      for(String string: strings)
+
+      for (String string : strings)
       {
          sb.append(string).append(", ");
       }
       return sb.toString();
+   }
+
+   /**
+    * Helper method that checks if the given String has a non-empty value.
+    *
+    * @param string String to be checked.
+    * @return true if <tt>string</tt> is not null and has non-empty value; false otherwise.
+    */
+   private boolean hasValue(String string)
+   {
+      if (string != null && (!string.trim().equals("")))
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
    }
 }
