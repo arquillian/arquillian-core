@@ -186,20 +186,22 @@
                 <artifactId>shrinkwrap-impl-base</artifactId>
                 <version>${version.shrinkwrap_shrinkwrap}</version>
             </dependency>
+
+            <!-- ShrinkWrap Resolver -->
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-api</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
+                <version>${version.shrinkwrap_resolver}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
+                <version>${version.shrinkwrap_resolver}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
+                <version>${version.shrinkwrap_resolver}</version>
             </dependency>
 
             <!-- ShrinkWrap Descriptors -->
