@@ -24,13 +24,13 @@ import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.ArchiveAsset;
 import org.jboss.shrinkwrap.api.asset.Asset;
+import org.jboss.shrinkwrap.api.asset.ClassAsset;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.asset.UrlAsset;
 import org.jboss.shrinkwrap.api.formatter.Formatter;
-import org.jboss.shrinkwrap.impl.base.asset.ArchiveAsset;
-import org.jboss.shrinkwrap.impl.base.asset.ClassAsset;
-import org.jboss.shrinkwrap.impl.base.asset.ClassLoaderAsset;
 
 /**
  * ToolingDeploymentFormatter
