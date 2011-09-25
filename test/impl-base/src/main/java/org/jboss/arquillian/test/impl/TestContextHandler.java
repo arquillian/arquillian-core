@@ -18,9 +18,12 @@
 package org.jboss.arquillian.test.impl;
 
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
@@ -45,6 +48,9 @@ public class TestContextHandler
    @Inject
    private Instance<TestContext> testContextInstance;
    
+   @Inject @ClassScoped
+   private InstanceProducer<TestClass> testClassProducer;
+
    public void createSuiteContext(@Observes(precedence=100) EventContext<SuiteEvent> context)
    {
       SuiteContext suiteContext = this.suiteContextInstance.get();
@@ -65,6 +71,7 @@ public class TestContextHandler
       try
       {
          classContext.activate(context.getEvent().getTestClass().getJavaClass());
+         testClassProducer.set(context.getEvent().getTestClass());
          context.proceed();
       }
       finally
