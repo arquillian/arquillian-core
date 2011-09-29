@@ -119,7 +119,10 @@ public abstract class Arquillian implements IHookable
             {
                for(int i = 0; i < source.length; i++)
                {
-                  target[i] = source[i];
+                  if(source[i] != null)
+                  {
+                     target[i] = source[i];
+                  }
                }
             }
             
