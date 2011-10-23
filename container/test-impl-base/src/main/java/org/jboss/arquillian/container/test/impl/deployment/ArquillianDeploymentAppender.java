@@ -19,7 +19,7 @@ package org.jboss.arquillian.container.test.impl.deployment;
 import org.jboss.arquillian.container.test.impl.ContainerTestRemoteExtension;
 import org.jboss.arquillian.container.test.impl.RemoteExtensionLoader;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.ExtensionLoader;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,10 +31,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArquillianDeploymentAppender implements AuxiliaryArchiveAppender
+public class ArquillianDeploymentAppender extends CachedAuxilliaryArchiveAppender
 {
    @Override
-   public Archive<?> createAuxiliaryArchive()
+   protected Archive<?> buildArchive()
    {
       return ShrinkWrap.create(JavaArchive.class, "arquillian-core.jar")
                         .addPackages(

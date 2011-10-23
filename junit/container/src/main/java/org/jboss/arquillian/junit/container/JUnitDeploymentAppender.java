@@ -17,7 +17,7 @@
 package org.jboss.arquillian.junit.container;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,10 +31,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppender implements AuxiliaryArchiveAppender
+public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender
 {
-
-   public Archive<?> createAuxiliaryArchive()
+   @Override
+   protected Archive<?> buildArchive()
    {
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
                         .addPackages(

@@ -18,7 +18,7 @@
 package org.jboss.arquillian.testenricher.initialcontext.client;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.testenricher.initialcontext.InitialContextProducer;
 import org.jboss.arquillian.testenricher.initialcontext.container.InitialContextRemoteExtension;
 import org.jboss.shrinkwrap.api.Archive;
@@ -31,10 +31,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextArchiveAppender implements AuxiliaryArchiveAppender
+public class InitialContextArchiveAppender extends CachedAuxilliaryArchiveAppender
 {
    @Override
-   public Archive<?> createAuxiliaryArchive()
+   protected Archive<?> buildArchive()
    {
       return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-initialcontext.jar")
                   .addClasses(

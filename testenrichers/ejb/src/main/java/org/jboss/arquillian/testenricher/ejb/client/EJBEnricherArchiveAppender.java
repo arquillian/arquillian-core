@@ -18,7 +18,7 @@
 package org.jboss.arquillian.testenricher.ejb.client;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.testenricher.ejb.EJBInjectionEnricher;
 import org.jboss.arquillian.testenricher.ejb.container.EJBEnricherRemoteExtension;
 import org.jboss.shrinkwrap.api.Archive;
@@ -31,10 +31,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EJBEnricherArchiveAppender implements AuxiliaryArchiveAppender
+public class EJBEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender
 {
    @Override
-   public Archive<?> createAuxiliaryArchive()
+   protected Archive<?> buildArchive()
    {
       return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-ejb.jar")
                   .addPackage(EJBInjectionEnricher.class.getPackage())

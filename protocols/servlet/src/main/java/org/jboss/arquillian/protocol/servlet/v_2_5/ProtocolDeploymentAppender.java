@@ -35,9 +35,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  */
 public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
 {
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.AuxiliaryArchiveAppender#createAuxiliaryArchive()
-    */
    @Override
    public WebArchive createAuxiliaryArchive()
    {

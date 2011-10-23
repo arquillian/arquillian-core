@@ -17,7 +17,7 @@
 package org.jboss.arquillian.testng.container;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filter;
@@ -31,10 +31,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGDeploymentAppender implements AuxiliaryArchiveAppender
+public class TestNGDeploymentAppender extends CachedAuxilliaryArchiveAppender
 {
-
-   public Archive<?> createAuxiliaryArchive()
+   @Override
+   protected Archive<?> buildArchive()
    {
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-testng.jar")
                .addPackages(
