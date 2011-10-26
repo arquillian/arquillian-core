@@ -16,7 +16,12 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -34,9 +39,14 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  */
 public class ConfigurationRegistrar
 {
+   private static final Logger log = Logger.getLogger(ConfigurationRegistrar.class.getName());
+
    static final String ARQUILLIAN_XML_PROPERTY = "arquillian.xml"; 
    static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
    
+   static final String ARQUILLIAN_XML_FOLDER_PROPERTY = "arquillian.xml.folder.path";
+   static final String ARQUILLIAN_XML_FOLDER_DEFAULT = System.getProperty("user.home") + File.separator +  ".arquillian";
+
    @Inject @ApplicationScoped
    private InstanceProducer<ArquillianDescriptor> descriptorInst;
 
@@ -61,6 +71,15 @@ public class ConfigurationRegistrar
    
    private InputStream loadArquillianXml()
    {
+      InputStream arquillianXml = loadLocalArquillianXml();
+      if (arquillianXml == null)
+         return loadGlobalArquillianXml();
+
+      return arquillianXml;
+   }
+
+   private InputStream loadLocalArquillianXml()
+   {
       ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
       return classLoader.getResourceAsStream(getConfigFileName());
    }
@@ -74,4 +93,40 @@ public class ConfigurationRegistrar
       }
       return name;
    }
+
+   private InputStream loadGlobalArquillianXml()
+   {
+      try
+      {
+         return getGlobalArquillianXml();
+      }
+      catch (FileNotFoundException e)
+      {
+         log.log(Level.WARNING, "Exception while reading global configuration", e);
+         return null;
+      }
+   }
+
+   private InputStream getGlobalArquillianXml() throws FileNotFoundException
+   {
+      File globalFolder = new File(getConfigFolderPath());
+      if (globalFolder.exists()) {
+         File globalArquillianXml = new File(globalFolder + File.separator + getConfigFileName());
+         if (globalArquillianXml.exists()) {
+            return new FileInputStream(globalArquillianXml);
+         }
+      }
+      return null;
+   }
+
+   private String getConfigFolderPath()
+   {
+      String folderPath = System.getProperty(ARQUILLIAN_XML_FOLDER_PROPERTY);
+
+      if (folderPath == null)
+         return ARQUILLIAN_XML_FOLDER_DEFAULT;
+
+      return folderPath;
+   }
+
 }
