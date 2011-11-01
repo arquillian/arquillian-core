@@ -105,7 +105,7 @@ public class ExceptionProxy implements Externalizable
          return original;
       }
 
-      Throwable throwable = createProxyException("Original exception not deserilizable, ClassNotFoundException"); //constructExceptionForClass(clazz);
+      Throwable throwable = createProxyException("Original exception not deserializable, ClassNotFoundException"); //constructExceptionForClass(clazz);
       throwable.setStackTrace(trace);
       return throwable;
    }
