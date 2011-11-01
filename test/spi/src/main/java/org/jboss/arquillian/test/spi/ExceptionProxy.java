@@ -352,11 +352,17 @@ public class ExceptionProxy implements Externalizable
             // move on, try to serialize anyway
          }
 
-         ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
-         ObjectOutputStream output = new ObjectOutputStream(originalOut);
-         output.writeObject(original);
-         output.flush();
-         originalBytes = originalOut.toByteArray();
+         try
+         {
+            ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
+            ObjectOutputStream output = new ObjectOutputStream(originalOut);
+            output.writeObject(original);
+            output.flush();
+            originalBytes = originalOut.toByteArray();
+         }
+         catch (Exception e)
+         {
+         }
       }
       out.writeObject(originalBytes);
    }
