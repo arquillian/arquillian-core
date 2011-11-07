@@ -152,4 +152,13 @@
             </build>
         </profile>
     </profiles>
+
+    <distributionManagement>
+      <repository>
+        <id>local-nexus-thirdparty</id>
+        <name>Local Nexus Third Party</name>
+        <url>http://localhost:8081/content/repositories/thirdparty/</url>
+      </repository>
+    </distributionManagement>
+
 </project>
