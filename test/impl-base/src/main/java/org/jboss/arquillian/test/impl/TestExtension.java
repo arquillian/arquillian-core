@@ -21,6 +21,8 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.impl.context.ClassContextImpl;
 import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
 import org.jboss.arquillian.test.impl.context.TestContextImpl;
+import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
  * TestExtension
@@ -36,6 +38,8 @@ public class TestExtension implements LoadableExtension
       builder.context(SuiteContextImpl.class)
              .context(ClassContextImpl.class)
              .context(TestContextImpl.class);
+
+      builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
       
       builder.observer(TestContextHandler.class)
              .observer(TestInstanceEnricher.class);

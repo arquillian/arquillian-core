@@ -10,31 +10,27 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.test.impl.enricher.resource;
+package org.jboss.arquillian.test.impl.enricher.resource;
 
 import java.util.Arrays;
 import java.util.List;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import junit.framework.Assert;
 
-import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,10 +43,11 @@ import org.mockito.runners.MockitoJUnitRunner;
  * ArquillianTestEnricherTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author Vineet Reynolds
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ArquillianTestEnricherContextTestCase extends AbstractContainerTestTestBase
+public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
 {
    @Inject
    private Instance<Injector> injector;
@@ -58,22 +55,22 @@ public class ArquillianTestEnricherContextTestCase extends AbstractContainerTest
    @Mock
    private ServiceLoader serviceLoader;
 
+   @Mock
    private ResourceProvider resourceProvider;
 
-   private InitialContext context;
+   @Mock
+   private Object resource;
 
    @Before
    public void addServiceLoader() throws Exception
    {
-      context = new InitialContext();
-
-      resourceProvider = new InitialContextProvider();
-      injector.get().inject(resourceProvider);
-
       List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
       Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
+      Mockito.when(resourceProvider.canProvide(Object.class)).thenReturn(true);
+      Mockito.when(
+            resourceProvider.lookup(ObjectClass.class.getField("resource").getAnnotation(ArquillianResource.class)))
+            .thenReturn(resource);
 
-      bind(ApplicationScoped.class, Context.class, context);
       bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
    }
 
@@ -83,33 +80,15 @@ public class ArquillianTestEnricherContextTestCase extends AbstractContainerTest
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
 
-      ContextClass test = new ContextClass();
+      ObjectClass test = new ObjectClass();
       enricher.enrich(test);
 
-      Assert.assertEquals(context, test.context);
+      Assert.assertEquals(resource, test.resource);
    }
 
-   @Test
-   public void shouldBeAbleToInjectServlet() throws Exception
-   {
-      TestEnricher enricher = new ArquillianResourceTestEnricher();
-      injector.get().inject(enricher);
-
-      InitialContextClass test = new InitialContextClass();
-      enricher.enrich(test);
-
-      Assert.assertEquals(context, test.context);
-   }
-
-   public class ContextClass 
+   public class ObjectClass
    {
       @ArquillianResource
-      public Context context;
-   }
-
-   public class InitialContextClass 
-   {
-      @ArquillianResource
-      public InitialContext context;
+      public Object resource;
    }
 }

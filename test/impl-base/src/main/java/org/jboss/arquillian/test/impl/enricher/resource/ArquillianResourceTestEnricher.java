@@ -10,31 +10,24 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.test.impl.enricher.resource;
+package org.jboss.arquillian.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
-import org.jboss.arquillian.container.test.api.ContainerController;
-import org.jboss.arquillian.container.test.api.Deployer;
-import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * ArquillianTestEnricher
@@ -44,20 +37,9 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  */
 public class ArquillianResourceTestEnricher implements TestEnricher
 {
-   private static Map<Class<?>, ResourceProvider> providers = new HashMap<Class<?>, ResourceProvider>();
-   static
-   {
-      providers.put(URL.class, new URLResourceProvider());
-      providers.put(URI.class, new URIResourceProvider());
-      providers.put(InitialContext.class, new InitialContextProvider());
-      providers.put(Context.class, new InitialContextProvider());
-      providers.put(Deployer.class, new DeployerProvider());
-      providers.put(ContainerController.class, new ContainerControllerProvider());
-   }
-   
    @Inject
-   private Instance<Injector> injector;
-   
+   private Instance<ServiceLoader> loader;
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
     */
@@ -71,7 +53,7 @@ public class ArquillianResourceTestEnricher implements TestEnricher
             // null value will throw exception in lookup
             value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class));
          }
-         catch (Exception e) 
+         catch (Exception e)
          {
             throw new RuntimeException("Could not lookup value for field " + field, e);
          }
@@ -79,11 +61,11 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          {
             if(!field.isAccessible())
             {
-               field.setAccessible(true);            
+               field.setAccessible(true);
             }
                field.set(testCase, value);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                throw new RuntimeException("Could not set value on field " + field + " using " + value);
             }
@@ -102,36 +84,36 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          ArquillianResource resource = getResourceAnnotation(method.getParameterAnnotations()[i]);
          if(resource != null)
          {
-            values[i] = lookup(method.getParameterTypes()[i], resource);   
+            values[i] = lookup(method.getParameterTypes()[i], resource);
          }
-          
       }
       return values;
    }
 
    /**
-    * 
+    *
     * @param type
     * @param resource
     * @return
     * @throws IllegalArgumentException If no ResourceProvider found for Type
-    * @throws RuntimeException If ResourceProvider return null 
+    * @throws RuntimeException If ResourceProvider return null
     */
    private Object lookup(Class<?> type, ArquillianResource resource)
    {
-      ResourceProvider provider = providers.get(type);
-      if(provider == null)
+      Collection<ResourceProvider> resourceProviders = loader.get().all(ResourceProvider.class);
+      for(ResourceProvider resourceProvider: resourceProviders)
       {
-         throw new IllegalArgumentException("No ResourceProvider found for type: " + type);
+         if(resourceProvider.canProvide(type))
+         {
+            Object value = resourceProvider.lookup(resource);
+            if(value == null)
+            {
+               throw new RuntimeException("Provider for type " + type + " returned a null value: " + resourceProvider);
+            }
+            return value;
+         }
       }
-      injector.get().inject(provider);
-      
-      Object value = provider.lookup(resource);
-      if(value == null)
-      {
-         throw new RuntimeException("Provider for type " + type + " returned a null value: " + provider);
-      }
-      return value;
+      throw new IllegalArgumentException("No ResourceProvider found for type: " + type);
    }
 
    private ArquillianResource getResourceAnnotation(Annotation[] annotations)
@@ -145,5 +127,4 @@ public class ArquillianResourceTestEnricher implements TestEnricher
       }
       return null;
    }
-   
 }

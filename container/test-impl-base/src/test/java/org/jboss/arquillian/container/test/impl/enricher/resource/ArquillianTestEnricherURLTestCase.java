@@ -18,21 +18,30 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
-import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 
 /**
@@ -41,11 +50,29 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ArquillianTestEnricherURLTestCase extends AbstractContainerTestTestBase
 {
    @Inject
    private Instance<Injector> injector;
-   
+
+   @Mock
+   private ServiceLoader serviceLoader;
+
+   private ResourceProvider resourceProvider;
+
+   @Before
+   public void addServiceLoader() throws Exception
+   {
+      resourceProvider = new URLResourceProvider();
+      injector.get().inject(resourceProvider);
+
+      List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
+      Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
+
+      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+   }
+
    @Test
    public void shouldBeAbleToInjectBaseContext() throws Exception
    {
@@ -55,10 +82,10 @@ public class ArquillianTestEnricherURLTestCase extends AbstractContainerTestTest
 
       URLBaseContextClass test = new URLBaseContextClass();
       enricher.enrich(test);
-      
+
       Assert.assertEquals("http://TEST:8080", test.url.toExternalForm());
    }
-   
+
    @Test
    public void shouldBeAbleToInjectServlet() throws Exception
    {
@@ -71,10 +98,10 @@ public class ArquillianTestEnricherURLTestCase extends AbstractContainerTestTest
 
       URLServletContextClass test = new URLServletContextClass();
       enricher.enrich(test);
-      
+
       Assert.assertEquals("http://TEST:8080/test/", test.url.toExternalForm());
    }
-   
+
    public class URLBaseContextClass 
    {
       @ArquillianResource

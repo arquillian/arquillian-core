@@ -21,6 +21,7 @@ import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * ContainerControllerProvider
@@ -40,5 +41,14 @@ public class ContainerControllerProvider implements ResourceProvider
    public Object lookup(ArquillianResource resource)
    {
       return controller.get();
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider#canProvide(java.lang.Class)
+    */
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return ContainerController.class.isAssignableFrom(type);
    }
 }

@@ -21,6 +21,7 @@ import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * InitialContextProvider
@@ -33,13 +34,15 @@ public class DeployerProvider implements ResourceProvider
    @Inject
    private Instance<Deployer> deployer;
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.testenricher.arquillian.ResourceProvider#lookup(org.jboss.arquillian.api.ArquillianResource)
-    */
    @Override
    public Object lookup(ArquillianResource resource)
    {
       return deployer.get();
    }
 
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return Deployer.class.isAssignableFrom(type);
+   }
 }

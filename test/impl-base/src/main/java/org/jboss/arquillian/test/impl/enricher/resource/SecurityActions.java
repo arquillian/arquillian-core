@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.test.impl.enricher.resource;
+package org.jboss.arquillian.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -28,9 +28,9 @@ import java.util.List;
 
 /**
  * SecurityActions
- * 
+ *
  * A set of privileged actions that are not to leak out
- * of this package 
+ * of this package
  *
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  * @version $Revision: $
@@ -108,9 +108,9 @@ final class SecurityActions
    }
 
    /**
-    * Create a new instance by finding a constructor that matches the argumentTypes signature 
+    * Create a new instance by finding a constructor that matches the argumentTypes signature
     * using the arguments for instantiation.
-    * 
+    *
     * @param className Full classname of class to create
     * @param argumentTypes The constructor argument types
     * @param arguments The constructor arguments
@@ -162,20 +162,20 @@ final class SecurityActions
       }
    }
 
-   public static boolean isClassPresent(String name) 
+   public static boolean isClassPresent(String name)
    {
-      try 
+      try
       {
          ClassLoader classLoader = getThreadContextClassLoader();
-         classLoader.loadClass(name); 
+         classLoader.loadClass(name);
          return true;
       }
-      catch (ClassNotFoundException e) 
+      catch (ClassNotFoundException e)
       {
          return false;
       }
    }
-   
+
    static List<Field> getFieldsWithAnnotation(final Class<?> source, final Class<? extends Annotation> annotationClass) 
    {
       List<Field> declaredAccessableFields = AccessController.doPrivileged(new PrivilegedAction<List<Field>>()
@@ -189,7 +189,7 @@ final class SecurityActions
                {
                   if(field.isAnnotationPresent(annotationClass))
                   {
-                     if(!field.isAccessible()) 
+                     if(!field.isAccessible())
                      {
                         field.setAccessible(true);
                      }
@@ -203,7 +203,7 @@ final class SecurityActions
       });
       return declaredAccessableFields;
    }
-   
+
    //-------------------------------------------------------------------------------||
    // Inner Classes ----------------------------------------------------------------||
    //-------------------------------------------------------------------------------||

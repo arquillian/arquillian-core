@@ -29,6 +29,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * URLResourceProvider
@@ -41,9 +42,6 @@ public class URLResourceProvider implements ResourceProvider
    @Inject
    private Instance<ProtocolMetaData> protocolMetadata;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.testenricher.arquillian.ResourceProvider#lookup(java.lang.reflect.Field, org.jboss.arquillian.api.ArquillianResource)
-    */
    @Override
    public Object lookup(ArquillianResource resource)
    {
@@ -81,6 +79,12 @@ public class URLResourceProvider implements ResourceProvider
          }
       }
       return null;
+   }
+
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return URL.class.isAssignableFrom(type);
    }
 
    private boolean allInSameContext(List<Servlet> servlets)

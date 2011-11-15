@@ -18,10 +18,12 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * InitialContextProvider
@@ -34,13 +36,16 @@ public class InitialContextProvider implements ResourceProvider
    @Inject
    private Instance<Context> initialContext;
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.testenricher.arquillian.ResourceProvider#lookup(org.jboss.arquillian.api.ArquillianResource)
-    */
    @Override
    public Object lookup(ArquillianResource resource)
    {
       return initialContext.get();
+   }
+
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return Context.class.isAssignableFrom(type) || InitialContext.class.isAssignableFrom(type);
    }
 
 }
