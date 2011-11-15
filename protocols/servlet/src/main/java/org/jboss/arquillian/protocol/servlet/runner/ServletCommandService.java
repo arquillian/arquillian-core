@@ -40,9 +40,13 @@ public class ServletCommandService implements CommandService
       while (timeoutTime > System.currentTimeMillis())
       {
          Command<?> newCommand = ServletTestRunner.events.get(currentId);
-         if(newCommand != null && newCommand.getResult() != null)
-         {
-            return (T)newCommand.getResult();
+         if (newCommand != null) {
+             if (newCommand.getThrowable() != null) {
+                 throw new RuntimeException(newCommand.getThrowable());
+             }
+             if (newCommand.getResult() != null) {
+                 return (T) newCommand.getResult();
+             }
          }
          try
          {

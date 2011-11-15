@@ -38,7 +38,7 @@ public class ContainerCommandObserver
    @Inject
    private Instance<ContainerController> controllerInst;
    
-   @SuppressWarnings("rawtypes") // Generics not supported fully by core
+   @SuppressWarnings({ "rawtypes", "unchecked" }) // Generics not supported fully by core
    public void onException(@Observes EventContext<Command> event)
    {
       try
@@ -47,54 +47,33 @@ public class ContainerCommandObserver
       }
       catch (Exception e) 
       {
+         event.getEvent().setResult("FAILED: " + e.getMessage());
          event.getEvent().setThrowable(e);
       }
    }
    
    public void start(@Observes StartContainerCommand event)
    {
-      try
+      if (event.getConfiguration() == null)
       {
-         if (event.getConfiguration() == null)
-         {
-            controllerInst.get().start(event.getContainerQualifier());
-         }
-         else
-         {
-            controllerInst.get().start(event.getContainerQualifier(), event.getConfiguration());
-         }
-         event.setResult("SUCCESS");
+         controllerInst.get().start(event.getContainerQualifier());
       }
-      catch (Exception e) 
+      else
       {
-         event.setResult("FAILED: " + e.getMessage());
+         controllerInst.get().start(event.getContainerQualifier(), event.getConfiguration());
       }
+      event.setResult("SUCCESS");
    }
    
    public void stop(@Observes StopContainerCommand event)
    {
-      try
-      {
-         controllerInst.get().stop(event.getContainerQualifier());
-         event.setResult("SUCCESS");
-      }
-      catch (Exception e) 
-      {
-         event.setResult("FAILED: " + e.getMessage());
-      }
+      controllerInst.get().stop(event.getContainerQualifier());
+      event.setResult("SUCCESS");
    }
    
    public void kill(@Observes KillContainerCommand event)
    {
-      try
-      {
-         controllerInst.get().kill(event.getContainerQualifier());
-         event.setResult("SUCCESS");
-      }
-      catch (Exception e) 
-      {
-         event.setResult("FAILED: " + e.getMessage());
-      }
+      controllerInst.get().kill(event.getContainerQualifier());
+      event.setResult("SUCCESS");
    }
-   
 }

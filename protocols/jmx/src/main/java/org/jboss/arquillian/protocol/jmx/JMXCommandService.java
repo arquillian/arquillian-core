@@ -43,8 +43,13 @@ public class JMXCommandService implements CommandService {
             long timeoutTime = System.currentTimeMillis() + TIMEOUT;
             while (timeoutTime > System.currentTimeMillis()) {
                 Command<?> newCommand = (Command<?>) server.invoke(runner, "receive", new Object[] {}, new String[] {});
-                if (newCommand != null && newCommand.getResult() != null) {
-                    return (T) newCommand.getResult();
+                if (newCommand != null) {
+                    if (newCommand.getThrowable() != null) {
+                        throw new RuntimeException(newCommand.getThrowable());
+                    }
+                    if (newCommand.getResult() != null) {
+                        return (T) newCommand.getResult();
+                    }
                 }
                 try {
                     Thread.sleep(100);

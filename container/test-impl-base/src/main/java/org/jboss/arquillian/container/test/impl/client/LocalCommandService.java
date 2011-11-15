@@ -40,6 +40,10 @@ public class LocalCommandService implements CommandService
    public <T> T execute(Command<T> command)
    {
       commandEvent.fire(command);
+      if (command.getThrowable() != null) 
+      {
+         throw new RuntimeException(command.getThrowable());
+      }
       return command.getResult();
    }
 

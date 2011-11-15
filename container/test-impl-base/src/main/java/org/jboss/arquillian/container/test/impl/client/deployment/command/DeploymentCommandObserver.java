@@ -43,7 +43,7 @@ public class DeploymentCommandObserver
    @Inject
    private Instance<Deployer> deployerInst;
    
-   @SuppressWarnings("rawtypes") // Generics not supported fully by core
+   @SuppressWarnings({ "rawtypes", "unchecked" }) // Generics not supported fully by core
    public void onException(@Observes EventContext<Command> event)
    {
       try
@@ -52,35 +52,21 @@ public class DeploymentCommandObserver
       }
       catch (Exception e) 
       {
+         event.getEvent().setResult("FAILED: " + e.getMessage());
          event.getEvent().setThrowable(e);
       }
    }
    
    public void deploy(@Observes DeployDeploymentCommand event)
    {
-      try
-      {
-         deployerInst.get().deploy(event.getDeploymentName());
-         event.setResult("SUCCESS");
-      }
-      catch (Exception e) 
-      {
-         event.setResult("FAILED: " + e.getMessage());
-      }
+      deployerInst.get().deploy(event.getDeploymentName());
+      event.setResult("SUCCESS");
    }
-
 
    public void undeploy(@Observes UnDeployDeploymentCommand event)
    {
-      try
-      {
-         deployerInst.get().undeploy(event.getDeploymentName());
-         event.setResult("SUCCESS");
-      }
-      catch (Exception e) 
-      {
-         event.setResult("FAILED: " + e.getMessage());
-      }
+      deployerInst.get().undeploy(event.getDeploymentName());
+      event.setResult("SUCCESS");
    }
    
    public void getDeployment(@Observes GetDeploymentCommand event)
