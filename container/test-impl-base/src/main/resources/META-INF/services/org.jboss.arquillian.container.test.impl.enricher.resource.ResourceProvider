@@ -1,0 +1,4 @@
+org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider
+org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider
+org.jboss.arquillian.container.test.impl.enricher.resource.InitialContextProvider
+org.jboss.arquillian.container.test.impl.enricher.resource.DeployerProvider

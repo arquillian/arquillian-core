@@ -42,4 +42,15 @@ public class DeployerProvider implements ResourceProvider
       return deployer.get();
    }
 
+   /*
+    * (non-Javadoc)
+    * @see org.jboss.arquillian.container.test.impl.enricher.resource.ResourceProvider#canProvide(java.lang.Class)
+    */
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return Deployer.class.isAssignableFrom(type);
+   }
+
+
 }

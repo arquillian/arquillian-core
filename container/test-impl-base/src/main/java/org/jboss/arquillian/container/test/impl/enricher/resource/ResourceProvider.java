@@ -28,4 +28,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 public interface ResourceProvider
 {
    Object lookup(ArquillianResource resource);
+   
+   boolean canProvide(Class<?> type);
 }

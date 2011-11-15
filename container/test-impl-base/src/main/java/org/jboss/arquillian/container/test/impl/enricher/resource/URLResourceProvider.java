@@ -83,6 +83,16 @@ public class URLResourceProvider implements ResourceProvider
       return null;
    }
 
+   /*
+    * (non-Javadoc)
+    * @see org.jboss.arquillian.container.test.impl.enricher.resource.ResourceProvider#canProvide(java.lang.Class)
+    */
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return URL.class.isAssignableFrom(type);
+   }
+
    private boolean allInSameContext(List<Servlet> servlets)
    {
       Set<String> context = new HashSet<String>();
