@@ -37,6 +37,11 @@
          <artifactId>arquillian-core-spi</artifactId>
          <version>${project.version}</version>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.test</groupId>
+         <artifactId>arquillian-test-api</artifactId>
+         <version>${project.version}</version>
+      </dependency>
 
       <dependency>
          <groupId>org.jboss.shrinkwrap</groupId>

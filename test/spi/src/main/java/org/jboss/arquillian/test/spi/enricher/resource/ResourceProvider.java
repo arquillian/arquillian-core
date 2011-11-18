@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.container.test.impl.enricher.resource;
+package org.jboss.arquillian.test.spi.enricher.resource;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
 
