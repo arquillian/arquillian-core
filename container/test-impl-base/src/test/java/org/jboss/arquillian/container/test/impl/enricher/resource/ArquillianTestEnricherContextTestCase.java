@@ -17,6 +17,9 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -27,9 +30,15 @@ import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 
 /**
@@ -38,16 +47,37 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ArquillianTestEnricherContextTestCase extends AbstractContainerTestTestBase
 {
    @Inject
    private Instance<Injector> injector;
+   
+   @Mock
+   private ServiceLoader serviceLoader;
+   
+   private ResourceProvider resourceProvider;
+   
+   private InitialContext context;
 
+   @Before
+   public void addServiceLoader() throws Exception
+   {
+      context = new InitialContext();
+      
+      resourceProvider = new InitialContextProvider();
+      injector.get().inject(resourceProvider);
+      
+      List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
+      Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
+
+      bind(ApplicationScoped.class, Context.class, context);
+      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+   }
+   
    @Test
    public void shouldBeAbleToInjectBaseContext() throws Exception
    {
-      InitialContext context = new InitialContext();
-      bind(ApplicationScoped.class, Context.class, context);
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
 
@@ -60,9 +90,6 @@ public class ArquillianTestEnricherContextTestCase extends AbstractContainerTest
    @Test
    public void shouldBeAbleToInjectServlet() throws Exception
    {
-      InitialContext context = new InitialContext();
-      bind(ApplicationScoped.class, Context.class, context);
-      
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
 

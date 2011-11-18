@@ -20,12 +20,11 @@ package org.jboss.arquillian.container.test.impl.enricher.resource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.Collection;
 
-import org.jboss.arquillian.container.test.spi.util.ServiceLoader;
-import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
@@ -38,11 +37,9 @@ import org.jboss.arquillian.test.spi.TestEnricher;
 public class ArquillianResourceTestEnricher implements TestEnricher
 {
 
-   private static Set<ResourceProvider> resourceProviders = ServiceLoader.load(ResourceProvider.class).getProviders();
-         
    @Inject
-   private Instance<Injector> injector;
-   
+   private Instance<ServiceLoader> loader;
+         
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.TestEnricher#enrich(java.lang.Object)
     */
@@ -104,11 +101,11 @@ public class ArquillianResourceTestEnricher implements TestEnricher
     */
    private Object lookup(Class<?> type, ArquillianResource resource)
    {
+      Collection<ResourceProvider> resourceProviders = loader.get().all(ResourceProvider.class);
       for(ResourceProvider resourceProvider: resourceProviders)
       {
          if(resourceProvider.canProvide(type))
          {
-            injector.get().inject(resourceProvider);
             Object value = resourceProvider.lookup(resource);
             if(value == null)
             {
