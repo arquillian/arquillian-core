@@ -27,7 +27,6 @@ import org.jboss.arquillian.container.test.impl.client.deployment.tool.ArchiveDe
 import org.jboss.arquillian.container.test.impl.client.protocol.ProtocolRegistryCreator;
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
 import org.jboss.arquillian.container.test.impl.deployment.ArquillianDeploymentAppender;
-import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.container.test.impl.enricher.resource.DeployerProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.InitialContextProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider;
@@ -44,6 +43,7 @@ import org.jboss.arquillian.test.impl.TestContextHandler;
 import org.jboss.arquillian.test.impl.context.ClassContextImpl;
 import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
 import org.jboss.arquillian.test.impl.context.TestContextImpl;
+import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl;
 
 import org.jboss.arquillian.container.test.impl.client.deployment.ContainerDeployerCreator;
-import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.container.test.impl.enricher.resource.DeployerProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.InitialContextProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider;
@@ -29,6 +28,7 @@ import org.jboss.arquillian.container.test.impl.execution.ContainerTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.impl.TestExtension;
+import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
