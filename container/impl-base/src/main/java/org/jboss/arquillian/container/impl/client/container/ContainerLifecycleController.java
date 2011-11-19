@@ -22,8 +22,10 @@ import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.event.KillContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
+import org.jboss.arquillian.container.spi.event.StartClassContainers;
 import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopClassContainers;
 import org.jboss.arquillian.container.spi.event.StopContainer;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopManualContainers;
@@ -41,12 +43,12 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  */
 public class ContainerLifecycleController
 {
-   @Inject 
+   @Inject
    private Instance<ContainerRegistry> containerRegistry;
 
    @Inject
    private Instance<Injector> injector;
-   
+
    public void setupContainers(@Observes SetupContainers event) throws Exception
    {
       forEachContainer(new Operation<Container>()
@@ -77,6 +79,21 @@ public class ContainerLifecycleController
       });
    }
 
+   public void startClassContainers(@Observes StartClassContainers event) throws Exception
+   {
+      forEachClassContainer(new Operation<Container>()
+      {
+         @Inject
+         private Event<StartContainer> event;
+
+         @Override
+         public void perform(Container container)
+         {
+            event.fire(new StartContainer(container));
+         }
+      });
+   }
+
    public void stopSuiteContainers(@Observes StopSuiteContainers event) throws Exception
    {
       forEachSuiteContainer(new Operation<Container>()
@@ -91,14 +108,14 @@ public class ContainerLifecycleController
          }
       });
    }
-   
-   public void stopManualContainers(@Observes StopManualContainers event) throws Exception
+
+   public void stopClassContainers(@Observes StopClassContainers event) throws Exception
    {
-      forEachManualContainer(new Operation<Container>()
+      forEachClassContainer(new Operation<Container>()
       {
          @Inject
          private Event<StopContainer> stopContainer;
-         
+
          @Override
          public void perform(Container container)
          {
@@ -106,7 +123,22 @@ public class ContainerLifecycleController
          }
       });
    }
-   
+
+   public void stopManualContainers(@Observes StopManualContainers event) throws Exception
+   {
+      forEachManualContainer(new Operation<Container>()
+      {
+         @Inject
+         private Event<StopContainer> stopContainer;
+
+         @Override
+         public void perform(Container container)
+         {
+            stopContainer.fire(new StopContainer(container));
+         }
+      });
+   }
+
    public void setupContainer(@Observes SetupContainer event) throws Exception
    {
       forContainer(event.getContainer(), new Operation<Container>()
@@ -126,14 +158,14 @@ public class ContainerLifecycleController
          @Override
          public void perform(Container container) throws Exception
          {
-            if (!container.getState().equals(Container.State.STARTED)) 
+            if (!container.getState().equals(Container.State.STARTED))
             {
                container.start();
             }
          }
       });
    }
-   
+
    public void stopContainer(@Observes StopContainer event) throws Exception
    {
       forContainer(event.getContainer(), new Operation<Container>()
@@ -141,14 +173,14 @@ public class ContainerLifecycleController
          @Override
          public void perform(Container container) throws Exception
          {
-            if (container.getState().equals(Container.State.STARTED)) 
+            if (container.getState().equals(Container.State.STARTED))
             {
                container.stop();
             }
          }
       });
    }
-   
+
    public void killContainer(@Observes KillContainer event) throws Exception
    {
       forContainer(event.getContainer(), new Operation<Container>()
@@ -156,54 +188,67 @@ public class ContainerLifecycleController
          @Override
          public void perform(Container container) throws Exception
          {
-            if (container.getState().equals(Container.State.STARTED)) 
+            if (container.getState().equals(Container.State.STARTED))
             {
                container.kill();
             }
          }
       });
    }
-   
+
    private void forEachContainer(Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);
       ContainerRegistry registry = containerRegistry.get();
-      if(registry == null)
+      if (registry == null)
       {
          return;
       }
-      for(Container container : registry.getContainers())
+      for (Container container : registry.getContainers())
       {
          operation.perform(container);
       }
    }
-   
+
    private void forEachSuiteContainer(Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);
       ContainerRegistry registry = containerRegistry.get();
-      for(Container container : registry.getContainers())
+      for (Container container : registry.getContainers())
       {
-         if ("suite".equals(container.getContainerConfiguration().getMode())) 
+         if ("suite".equals(container.getContainerConfiguration().getMode()))
          {
             operation.perform(container);
          }
       }
    }
    
+   private void forEachClassContainer(Operation<Container> operation) throws Exception
+   {
+      injector.get().inject(operation);
+      ContainerRegistry registry = containerRegistry.get();
+      for (Container container : registry.getContainers())
+      {
+         if ("class".equals(container.getContainerConfiguration().getMode()))
+         {
+            operation.perform(container);
+         }
+      }
+   }
+
    private void forEachManualContainer(Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);
       ContainerRegistry registry = containerRegistry.get();
-      for(Container container : registry.getContainers())
+      for (Container container : registry.getContainers())
       {
-         if ("manual".equals(container.getContainerConfiguration().getMode())) 
+         if ("manual".equals(container.getContainerConfiguration().getMode()))
          {
             operation.perform(container);
          }
       }
    }
-   
+
    private void forContainer(Container container, Operation<Container> operation) throws Exception
    {
       injector.get().inject(operation);

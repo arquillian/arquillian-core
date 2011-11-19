@@ -37,8 +37,10 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
+import org.jboss.arquillian.container.spi.event.StartClassContainers;
 import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopClassContainers;
 import org.jboss.arquillian.container.spi.event.StopContainer;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.container.AfterSetup;
@@ -72,20 +74,28 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
 {
    private static final String CONTAINER_1_NAME = "container_1";
    private static final String CONTAINER_2_NAME = "container_2";
-   
+   private static final String CONTAINER_3_NAME = "container_3";
+   private static final String CONTAINER_4_NAME = "container_4";
+
    @Inject
    private Instance<Injector> injector;
-   
+
    private ContainerRegistry registry;
-   
+
    @Mock 
    private ServiceLoader serviceLoader;
-   
+
    @Mock
    private ContainerDef container1;
 
    @Mock
    private ContainerDef container2;
+
+   @Mock
+   private ContainerDef container3;
+
+   @Mock
+   private ContainerDef container4;
 
    @Mock
    private DeployableContainer deployableContainer;
@@ -97,14 +107,18 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
       when(container1.getContainerName()).thenReturn(CONTAINER_1_NAME);
       when(container2.getContainerName()).thenReturn(CONTAINER_2_NAME);
+      when(container3.getContainerName()).thenReturn(CONTAINER_3_NAME);
+      when(container4.getContainerName()).thenReturn(CONTAINER_4_NAME);
       when(container1.getMode()).thenReturn("suite");
       when(container2.getMode()).thenReturn("suite");
-      
+      when(container3.getMode()).thenReturn("class");
+      when(container4.getMode()).thenReturn("class");
+
       registry = new LocalContainerRegistry(injector.get());
-      
+
       bind(ApplicationScoped.class, ContainerRegistry.class, registry);
    }
-   
+
    @Override
    protected void addExtensions(List<Class<?>> extensions)
    {
@@ -117,69 +131,121 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
    {
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
-      
+      registry.create(container3, serviceLoader);
+      registry.create(container4, serviceLoader);
+
       fire(new SetupContainers());
-      
+
       assertEventFiredInContext(SetupContainer.class, ContainerContext.class);
-      assertEventFired(SetupContainer.class, 2);
-      
+      assertEventFired(SetupContainer.class, 4);
+
       assertEventFiredInContext(BeforeSetup.class, ContainerContext.class);
-      assertEventFired(BeforeSetup.class, 2);
-      
+      assertEventFired(BeforeSetup.class, 4);
+
       assertEventFiredInContext(AfterSetup.class, ContainerContext.class);
-      assertEventFired(AfterSetup.class, 2);
-      
-      verify(deployableContainer, times(2)).setup(isA(DummyContainerConfiguration.class));
+      assertEventFired(AfterSetup.class, 4);
+
+      verify(deployableContainer, times(4)).setup(isA(DummyContainerConfiguration.class));
    }
 
    @Test
-   public void shouldStartAllContainersInRegistry() throws Exception
+   public void shouldStartAllSuiteContainersInRegistry() throws Exception
    {
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
-      
+      registry.create(container3, serviceLoader);
+      registry.create(container4, serviceLoader);
+
       fire(new StartSuiteContainers());
-      
+
       assertEventFiredInContext(StartContainer.class, ContainerContext.class);
       assertEventFired(StartContainer.class, 2);
-      
+
       assertEventFiredInContext(BeforeStart.class, ContainerContext.class);
       assertEventFired(BeforeStart.class, 2);
-      
+
       assertEventFiredInContext(AfterStart.class, ContainerContext.class);
       assertEventFired(AfterStart.class, 2);
-      
+
       verify(deployableContainer, times(2)).start();
    }
-   
+
    @Test
-   public void shouldStopAllContainersInRegistry() throws Exception
+   public void shouldStartAllClassContainersInRegistry() throws Exception
    {
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
-      
+      registry.create(container3, serviceLoader);
+      registry.create(container4, serviceLoader);
+
+      fire(new StartClassContainers());
+
+      assertEventFiredInContext(StartContainer.class, ContainerContext.class);
+      assertEventFired(StartContainer.class, 2);
+
+      assertEventFiredInContext(BeforeStart.class, ContainerContext.class);
+      assertEventFired(BeforeStart.class, 2);
+
+      assertEventFiredInContext(AfterStart.class, ContainerContext.class);
+      assertEventFired(AfterStart.class, 2);
+
+      verify(deployableContainer, times(2)).start();
+   }
+
+   @Test
+   public void shouldStopAllSuiteContainersInRegistry() throws Exception
+   {
+      registry.create(container1, serviceLoader);
+      registry.create(container2, serviceLoader);
+
       //we need to manually set this since we don't actually start them
       for (Container c : registry.getContainers()) {
          c.setState(Container.State.STARTED);
       }
-      
+
       fire(new StopSuiteContainers());
-      
+
       assertEventFiredInContext(StopContainer.class, ContainerContext.class);
       assertEventFired(StopContainer.class, 2);
-      
+
       assertEventFiredInContext(BeforeStop.class, ContainerContext.class);
       assertEventFired(BeforeStop.class, 2);
-      
+
       assertEventFiredInContext(AfterStop.class, ContainerContext.class);
       assertEventFired(AfterStop.class, 2);
-      
+
+      verify(deployableContainer, times(2)).stop();
+   }
+
+   @Test
+   public void shouldStopAllClassContainersInRegistry() throws Exception
+   {
+      registry.create(container1, serviceLoader);
+      registry.create(container2, serviceLoader);
+      registry.create(container3, serviceLoader);
+      registry.create(container4, serviceLoader);
+
+      //we need to manually set this since we don't actually start them
+      for (Container c : registry.getContainers()) {
+         c.setState(Container.State.STARTED);
+      }
+
+      fire(new StopClassContainers());
+
+      assertEventFiredInContext(StopContainer.class, ContainerContext.class);
+      assertEventFired(StopContainer.class, 2);
+
+      assertEventFiredInContext(BeforeStop.class, ContainerContext.class);
+      assertEventFired(BeforeStop.class, 2);
+
+      assertEventFiredInContext(AfterStop.class, ContainerContext.class);
+      assertEventFired(AfterStop.class, 2);
+
       verify(deployableContainer, times(2)).stop();
    }
 
    public static class DummyContainerConfiguration implements ContainerConfiguration
    {
-
       /* (non-Javadoc)
        * @see org.jboss.arquillian.spi.client.container.ContainerConfiguration#validate()
        */
@@ -187,6 +253,5 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       public void validate() throws ConfigurationException
       {
       }
-      
    }
 }

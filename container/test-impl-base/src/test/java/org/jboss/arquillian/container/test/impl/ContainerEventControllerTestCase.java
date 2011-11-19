@@ -35,7 +35,9 @@ import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.event.DeployManagedDeployments;
 import org.jboss.arquillian.container.spi.event.SetupContainers;
+import org.jboss.arquillian.container.spi.event.StartClassContainers;
 import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
+import org.jboss.arquillian.container.spi.event.StopClassContainers;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopManualContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
@@ -125,7 +127,7 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    }
 
    @Test
-   public void shouldSetupAndStartContainers() throws Exception
+   public void shouldSetupAndStartSuiteContainers() throws Exception
    {
       fire(new BeforeSuite());
 
@@ -134,7 +136,15 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    }
 
    @Test
-   public void shouldStopContainers() throws Exception
+   public void shouldStartClassContainers() throws Exception
+   {
+      fire(new BeforeClass(testClass()));
+
+      assertEventFired(StartClassContainers.class, 1);
+   }
+
+   @Test
+   public void shouldStopSuiteContainers() throws Exception
    {
       fire(new AfterSuite());
 
@@ -150,12 +160,13 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    }
 
    @Test
-   public void shouldUnDeployManagedDeploymentsAndStopManualContainers() throws Exception
+   public void shouldUndeployManagedDeploymentsAndStopManualAndClassContainers() throws Exception
    {
       fire(new AfterClass(testClass()));
 
       assertEventFired(UnDeployManagedDeployments.class, 1);
       assertEventFired(StopManualContainers.class, 1);
+      assertEventFired(StopClassContainers.class, 1);
    }
 
    @Test
