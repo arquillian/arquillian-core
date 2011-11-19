@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -49,5 +50,15 @@ public class URIResourceProvider extends URLResourceProvider
       {
          throw new RuntimeException("Could not convert URL to URI: " + object, e);
       }
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider#canProvide(java.lang.Class)
+    */
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      return URI.class.isAssignableFrom(type);
    }
 }

@@ -27,7 +27,10 @@ import org.jboss.arquillian.container.test.impl.client.deployment.tool.ArchiveDe
 import org.jboss.arquillian.container.test.impl.client.protocol.ProtocolRegistryCreator;
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
 import org.jboss.arquillian.container.test.impl.deployment.ArquillianDeploymentAppender;
-import org.jboss.arquillian.container.test.impl.enricher.resource.ArquillianResourceTestEnricher;
+import org.jboss.arquillian.container.test.impl.enricher.resource.DeployerProvider;
+import org.jboss.arquillian.container.test.impl.enricher.resource.InitialContextProvider;
+import org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider;
+import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
 import org.jboss.arquillian.container.test.impl.execution.ClientBeforeAfterLifecycleEventExecuter;
 import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
@@ -40,7 +43,9 @@ import org.jboss.arquillian.test.impl.TestContextHandler;
 import org.jboss.arquillian.test.impl.context.ClassContextImpl;
 import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
 import org.jboss.arquillian.test.impl.context.TestContextImpl;
+import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * ContainerTestExtension
@@ -68,7 +73,11 @@ public class ContainerTestExtension implements LoadableExtension
       builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
              .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
              .service(Protocol.class, LocalProtocol.class)
-             .service(CommandService.class, LocalCommandService.class);
+             .service(CommandService.class, LocalCommandService.class)
+             .service(ResourceProvider.class, URLResourceProvider.class)
+             .service(ResourceProvider.class, URIResourceProvider.class)
+             .service(ResourceProvider.class, DeployerProvider.class)
+             .service(ResourceProvider.class, InitialContextProvider.class);
       
       builder.observer(ContainerEventController.class)
              .observer(ContainerRestarter.class)
