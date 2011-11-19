@@ -28,8 +28,6 @@ import org.jboss.arquillian.container.test.impl.execution.ContainerTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.test.impl.TestExtension;
-import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
-import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
@@ -45,8 +43,7 @@ public class ContainerTestRemoteExtension extends TestExtension implements Remot
    {
       super.register(builder);
       
-      builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class)
-             .service(ResourceProvider.class, URLResourceProvider.class)
+      builder.service(ResourceProvider.class, URLResourceProvider.class)
              .service(ResourceProvider.class, URIResourceProvider.class)
              .service(ResourceProvider.class, DeployerProvider.class)
              .service(ResourceProvider.class, InitialContextProvider.class);
