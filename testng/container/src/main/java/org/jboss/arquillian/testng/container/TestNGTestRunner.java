@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.testng.container;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,6 @@ import java.util.List;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.testng.TestNG;
-import org.testng.internal.AnnotationTypeEnum;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
 import org.testng.xml.XmlSuite;
@@ -59,7 +59,16 @@ public class TestNGTestRunner implements TestRunner
    {
       XmlSuite suite = new XmlSuite();
       suite.setName("Arquillian");
-      suite.setAnnotations(AnnotationTypeEnum.JDK.getName());
+
+      // TestNG >= 6.3 has removed this method
+      try
+      {
+         Method method = XmlSuite.class.getMethod("setAnnotations", String.class);
+         method.invoke(suite, "JDK");
+      }
+      catch (Exception e) {
+         // no-op
+      }
 
       XmlTest test = new XmlTest(suite);
       test.setName("Arquillian - " + className);
