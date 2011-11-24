@@ -19,6 +19,7 @@ package org.jboss.arquillian.junit;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -50,6 +51,26 @@ public class Arquillian extends BlockJUnit4ClassRunner
       State.runnerStarted();
    }
    
+   @Override
+   protected List<FrameworkMethod> getChildren()
+   {
+      List<FrameworkMethod> children = super.getChildren();
+      // Only sort if InOrder is defined, else keep them in original order returned by parent
+      boolean hasDefinedOrder = false;
+      for(FrameworkMethod method : children)
+      {
+         if(method.getAnnotation(InSequence.class) != null)
+         {
+            hasDefinedOrder = true;
+         }
+      }
+      if(hasDefinedOrder)
+      {
+         Collections.sort(children, new InSequenceSorter());
+      }
+      return children;
+   }
+
    @Override
    public void run(final RunNotifier notifier)
    {

@@ -35,6 +35,7 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.After;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -154,14 +155,24 @@ public class JUnitTestBaseClass
       }
    }
    
-   protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes)
+   protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception
+   {
+      return run(adaptor, (RunListener)null, classes);
+   }
+
+   protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
       throws Exception
    {
       try
       {
          setAdaptor(adaptor);
+         JUnitCore core = new JUnitCore();
+         if(listener != null)
+         {
+            core.addListener(listener);
+         }
          
-         return JUnitCore.runClasses(classes);
+         return core.run(classes);
       }
       finally
       {
