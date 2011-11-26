@@ -73,7 +73,6 @@
         <module>examples</module>
 
         <module>bom</module>
-        <!-- <module>doc/reference</module> -->
     </modules>
 
     <build>
