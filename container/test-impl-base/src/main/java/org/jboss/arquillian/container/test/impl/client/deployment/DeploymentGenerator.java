@@ -181,7 +181,7 @@ public class DeploymentGenerator
          }
          description.setTestableArchive(
                packager.generateDeployment(
-                     new TestDeployment(applicationArchive, auxiliaryArchives),
+                     new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
                      serviceLoader.get().all(ProtocolArchiveProcessor.class)));
       }
    }

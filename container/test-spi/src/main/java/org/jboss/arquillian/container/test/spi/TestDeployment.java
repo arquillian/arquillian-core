@@ -18,6 +18,9 @@ package org.jboss.arquillian.container.test.spi;
 
 import java.util.Collection;
 
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -30,14 +33,28 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public class TestDeployment
 {
+   private DeploymentDescription deploymentDescription;
    private Archive<?> applicationArchive;
    private Collection<Archive<?>> auxiliaryArchives;
    
    /**
     * @param applicationArchive The user defined {@link Archive}
-    * @param auxiliaryArchives All extra library {@link Archive}s defined by extensions / core / frameworks. 
+    * @param auxiliaryArchives All extra library {@link Archive}s defined by extensions / core / frameworks.
+    *
+    *  @deprecated
     */
    public TestDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
+   {
+      this(null, applicationArchive, auxiliaryArchives);
+   }
+
+   /**
+    * @param deploymentDescription The deployment that backs this TestDeployment
+    * @param applicationArchive The user defined {@link Archive}
+    * @param auxiliaryArchives All extra library {@link Archive}s defined by extensions / core / frameworks.
+    *
+    */
+   public TestDeployment(DeploymentDescription deploymentDescription, Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
    {
       if(applicationArchive == null)
       {
@@ -48,8 +65,24 @@ public class TestDeployment
          throw new IllegalArgumentException("AuxiliaryArchives must be specified");
       }
 
+      this.deploymentDescription = deploymentDescription;
       this.applicationArchive = applicationArchive;
       this.auxiliaryArchives = auxiliaryArchives;
+   }
+
+   public TargetDescription getTargetDescription()
+   {
+      return deploymentDescription == null ? null:deploymentDescription.getTarget();
+   }
+
+   public ProtocolDescription getProtocolDescription()
+   {
+      return deploymentDescription == null ? null:deploymentDescription.getProtocol();
+   }
+
+   public String getDeploymentName()
+   {
+      return deploymentDescription == null ? null:deploymentDescription.getName();
    }
 
    /**
@@ -66,7 +99,7 @@ public class TestDeployment
    {
       return applicationArchive;
    }
-   
+
    public Collection<Archive<?>> getAuxiliaryArchives()
    {
       return auxiliaryArchives;
