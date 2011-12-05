@@ -29,7 +29,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  */
 public interface ResourceProvider
 {
-   Object lookup(ArquillianResource resource, Annotation... qualifiers);
-
    boolean canProvide(Class<?> type);
+
+   Object lookup(ArquillianResource resource, Annotation... qualifiers);
 }

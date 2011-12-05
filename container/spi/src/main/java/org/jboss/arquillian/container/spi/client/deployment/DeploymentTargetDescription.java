@@ -42,6 +42,12 @@ public class DeploymentTargetDescription
       return name;
    }
 
+   @Override
+   public String toString()
+   {
+      return name;
+   }
+
    /* (non-Javadoc)
     * @see java.lang.Object#hashCode()
     */

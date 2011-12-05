@@ -25,7 +25,6 @@ import javax.naming.InitialContext;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * InitialContextProvider
@@ -33,13 +32,13 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextProvider implements ResourceProvider
+public class InitialContextProvider extends OperatesOnDeploymentAwareProvider
 {
    @Inject
    private Instance<Context> initialContext;
-   
+
    @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
+   public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
    {
       return initialContext.get();
    }
@@ -49,5 +48,4 @@ public class InitialContextProvider implements ResourceProvider
    {
       return Context.class.isAssignableFrom(type) || InitialContext.class.isAssignableFrom(type);
    }
-
 }

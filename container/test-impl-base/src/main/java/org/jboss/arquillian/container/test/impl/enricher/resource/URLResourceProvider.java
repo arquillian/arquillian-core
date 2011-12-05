@@ -30,7 +30,6 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * URLResourceProvider
@@ -38,13 +37,24 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class URLResourceProvider implements ResourceProvider
+public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
 {
    @Inject
    private Instance<ProtocolMetaData> protocolMetadata;
 
    @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
+   public boolean canProvide(Class<?> type)
+   {
+      return URL.class.isAssignableFrom(type);
+   }
+
+   @Override
+   public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
+   {
+      return locateURL(resource);
+   }
+
+   private Object locateURL(ArquillianResource resource)
    {
       ProtocolMetaData metaData = protocolMetadata.get();
       if(metaData == null)
@@ -82,12 +92,6 @@ public class URLResourceProvider implements ResourceProvider
       return null;
    }
 
-   @Override
-   public boolean canProvide(Class<?> type)
-   {
-      return URL.class.isAssignableFrom(type);
-   }
-
    private boolean allInSameContext(List<Servlet> servlets)
    {
       Set<String> context = new HashSet<String>();
@@ -118,7 +122,7 @@ public class URLResourceProvider implements ResourceProvider
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Could not convert Servlet to URL, " + context, e);
+         throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
       }
    }
 }
