@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.test.spi.enricher.resource;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**
@@ -27,7 +29,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  */
 public interface ResourceProvider
 {
-   Object lookup(ArquillianResource resource);
+   Object lookup(ArquillianResource resource, Annotation... qualifiers);
 
    boolean canProvide(Class<?> type);
 }

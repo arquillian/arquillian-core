@@ -17,6 +17,14 @@
  */
 package org.jboss.arquillian.test.impl.enricher.resource;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,9 +75,6 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
       List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
       Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
       Mockito.when(resourceProvider.canProvide(Object.class)).thenReturn(true);
-      Mockito.when(
-            resourceProvider.lookup(ObjectClass.class.getField("resource").getAnnotation(ArquillianResource.class)))
-            .thenReturn(resource);
 
       bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
    }
@@ -77,6 +82,10 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
    @Test
    public void shouldBeAbleToInjectBaseContext() throws Exception
    {
+      Mockito.when(
+            resourceProvider.lookup(ObjectClass.class.getField("resource").getAnnotation(ArquillianResource.class)))
+            .thenReturn(resource);
+
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
 
@@ -86,9 +95,76 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
       Assert.assertEquals(resource, test.resource);
    }
 
+   @Test
+   public void shouldBeAbleToInjectBaseContextOnMethod() throws Exception
+   {
+      Method resourceMethod = ObjectClass.class.getMethod("test", Object.class);
+      Annotation resourceAnnotation = resourceMethod.getParameterAnnotations()[0][0];
+
+      Mockito.when(
+            resourceProvider.lookup((ArquillianResource)resourceAnnotation)).thenReturn(resource);
+
+      TestEnricher enricher = new ArquillianResourceTestEnricher();
+      injector.get().inject(enricher);
+
+      Object[] result = enricher.resolve(resourceMethod);
+
+      Assert.assertEquals(resource, result[0]);
+   }
+
+   @Test
+   public void shouldBeAbleToInjectBaseContextWithQualifier() throws Exception
+   {
+      Field resource2Field = ObjectClass2.class.getField("resource2");
+
+      Mockito.when(
+            resourceProvider.lookup(resource2Field.getAnnotation(ArquillianResource.class), resource2Field.getAnnotation(ArquillianTestQualifier.class)))
+            .thenReturn(resource);
+
+      TestEnricher enricher = new ArquillianResourceTestEnricher();
+      injector.get().inject(enricher);
+
+      ObjectClass2 test = new ObjectClass2();
+      enricher.enrich(test);
+
+      Assert.assertEquals(resource, test.resource2);
+   }
+
+   @Test
+   public void shouldBeAbleToInjectBaseContextOnMethodWithQualifier() throws Exception
+   {
+      Method resourceMethod = ObjectClass.class.getMethod("testWithQualifier", Object.class);
+      Annotation resourceAnnotation = resourceMethod.getParameterAnnotations()[0][0];
+
+      Mockito.when(
+            resourceProvider.lookup((ArquillianResource)resourceAnnotation, resourceMethod.getParameterAnnotations()[0][1]))
+            .thenReturn(resource);
+
+      TestEnricher enricher = new ArquillianResourceTestEnricher();
+      injector.get().inject(enricher);
+
+      Object[] result = enricher.resolve(resourceMethod);
+
+      Assert.assertEquals(resource, result[0]);
+   }
+
    public class ObjectClass
    {
       @ArquillianResource
       public Object resource;
+
+      public void test(@ArquillianResource Object resource) {}
+
+      public void testWithQualifier(@ArquillianResource @ArquillianTestQualifier Object resource) {}
    }
+
+   public class ObjectClass2
+   {
+      @ArquillianResource @ArquillianTestQualifier
+      public Object resource2;
+   }
+
+   @Retention(RUNTIME)
+   @Target({ElementType.FIELD, ElementType.PARAMETER})
+   public @interface ArquillianTestQualifier { }
 }

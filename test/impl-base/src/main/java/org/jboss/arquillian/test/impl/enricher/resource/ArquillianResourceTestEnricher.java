@@ -20,7 +20,9 @@ package org.jboss.arquillian.test.impl.enricher.resource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -50,8 +52,9 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          Object value = null;
          try
          {
+            Annotation[] qualifiers = filterAnnotations(field.getAnnotations());
             // null value will throw exception in lookup
-            value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class));
+            value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class), qualifiers);
          }
          catch (Exception e)
          {
@@ -84,7 +87,8 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          ArquillianResource resource = getResourceAnnotation(method.getParameterAnnotations()[i]);
          if(resource != null)
          {
-            values[i] = lookup(method.getParameterTypes()[i], resource);
+            Annotation[] qualifiers = filterAnnotations(method.getParameterAnnotations()[i]);
+            values[i] = lookup(method.getParameterTypes()[i], resource, qualifiers);
          }
       }
       return values;
@@ -98,14 +102,14 @@ public class ArquillianResourceTestEnricher implements TestEnricher
     * @throws IllegalArgumentException If no ResourceProvider found for Type
     * @throws RuntimeException If ResourceProvider return null
     */
-   private Object lookup(Class<?> type, ArquillianResource resource)
+   private Object lookup(Class<?> type, ArquillianResource resource, Annotation... qualifiers)
    {
       Collection<ResourceProvider> resourceProviders = loader.get().all(ResourceProvider.class);
       for(ResourceProvider resourceProvider: resourceProviders)
       {
          if(resourceProvider.canProvide(type))
          {
-            Object value = resourceProvider.lookup(resource);
+            Object value = resourceProvider.lookup(resource, qualifiers);
             if(value == null)
             {
                throw new RuntimeException("Provider for type " + type + " returned a null value: " + resourceProvider);
@@ -126,5 +130,26 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          }
       }
       return null;
+   }
+
+   /**
+    * @param annotations
+    * @return
+    */
+   private Annotation[] filterAnnotations(Annotation[] annotations)
+   {
+      if(annotations == null)
+      {
+         return new Annotation[0];
+      }
+      List<Annotation> filtered = new ArrayList<Annotation>();
+      for(Annotation annotation : annotations)
+      {
+         if(annotation.annotationType() != ArquillianResource.class)
+         {
+            filtered.add(annotation);
+         }
+      }
+      return filtered.toArray(new Annotation[0]);
    }
 }

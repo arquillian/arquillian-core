@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import java.lang.annotation.Annotation;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -37,7 +39,7 @@ public class InitialContextProvider implements ResourceProvider
    private Instance<Context> initialContext;
    
    @Override
-   public Object lookup(ArquillianResource resource)
+   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
    {
       return initialContext.get();
    }

@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import java.lang.annotation.Annotation;
+
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -35,7 +37,7 @@ public class DeployerProvider implements ResourceProvider
    private Instance<Deployer> deployer;
    
    @Override
-   public Object lookup(ArquillianResource resource)
+   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
    {
       return deployer.get();
    }

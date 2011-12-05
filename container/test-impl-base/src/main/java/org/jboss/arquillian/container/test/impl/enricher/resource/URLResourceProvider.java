@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ public class URLResourceProvider implements ResourceProvider
    private Instance<ProtocolMetaData> protocolMetadata;
 
    @Override
-   public Object lookup(ArquillianResource resource)
+   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
    {
       ProtocolMetaData metaData = protocolMetadata.get();
       if(metaData == null)

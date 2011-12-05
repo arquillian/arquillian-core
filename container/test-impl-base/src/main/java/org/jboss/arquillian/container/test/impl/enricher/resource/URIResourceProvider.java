@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,9 +33,9 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 public class URIResourceProvider extends URLResourceProvider
 {
    @Override
-   public Object lookup(ArquillianResource resource)
+   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
    {
-      Object object = super.lookup(resource);
+      Object object = super.lookup(resource, qualifiers);
       if(object == null)
       {
          return object;
