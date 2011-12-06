@@ -18,8 +18,15 @@
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
 import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
@@ -31,6 +38,11 @@ import javax.management.remote.JMXServiceURL;
  */
 public class JMXContext extends NamedContext
 {
+   private static final Logger log = Logger.getLogger(JMXContext.class.getName());
+
+   private static Set<Reference<MBeanServerConnection>> jmxConnectorRefs =
+         Collections.synchronizedSet(new HashSet<Reference<MBeanServerConnection>>());
+
    /*
     * The Host and Port of a Remote MBean Server
     */
@@ -70,15 +82,16 @@ public class JMXContext extends NamedContext
     */
    public MBeanServerConnection getConnection()
    {
-      if(connection == null) 
+      if(connection == null)
       {
          try
          {
-            connection = JMXConnectorFactory.connect(getRemoteJMXURL(), null).getMBeanServerConnection();
-         }
-         catch (IOException e) 
-         {
-            throw new RuntimeException("Could not create remote JMX connection: "  + this, e);
+            JMXConnector connector = JMXConnectorFactory.connect(getRemoteJMXURL(), null);
+            connection = connector.getMBeanServerConnection();
+            WeakReference<MBeanServerConnection> ref = new JMXConnectorReference(connection, connector);
+            jmxConnectorRefs.add(ref);
+         } catch (IOException e) {
+            throw new RuntimeException("Could not create remote JMX connection: " + this, e);
          }
       }
       return connection;
@@ -100,5 +113,31 @@ public class JMXContext extends NamedContext
    public String toString()
    {
       return "JMXContext [host=" + host + ", port=" + port + ", connection=" + connection + "]";
+   }
+
+   private static class JMXConnectorReference extends WeakReference<MBeanServerConnection>
+   {
+      private JMXConnector connector;
+
+      public JMXConnectorReference(final MBeanServerConnection connection, JMXConnector connector)
+      {
+         super(connection);
+         this.connector = connector;
+      }
+
+      @Override
+      public boolean enqueue()
+      {
+         try
+         {
+            connector.close();
+         } catch (Exception ignored) {
+            log.warning("Could not close JMXConnector: " + connector);
+         } finally {
+            connector = null;
+            jmxConnectorRefs.remove(this);
+         }
+         return super.enqueue();
+      }
    }
 }
