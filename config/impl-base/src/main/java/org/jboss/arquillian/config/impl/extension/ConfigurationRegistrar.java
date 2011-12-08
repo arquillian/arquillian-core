@@ -34,9 +34,13 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  */
 public class ConfigurationRegistrar
 {
-   static final String ARQUILLIAN_XML_PROPERTY = "arquillian.xml"; 
-   static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
-   
+   public static final String ARQUILLIAN_XML_PROPERTY = "arquillian.xml";
+   public static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
+
+   public static final String ARQUILLIAN_PROP_PROPERTY = "arquillian.properties";
+   public static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
+
+
    @Inject @ApplicationScoped
    private InstanceProducer<ArquillianDescriptor> descriptorInst;
 
@@ -44,7 +48,7 @@ public class ConfigurationRegistrar
    {
       ArquillianDescriptor descriptor;
       
-      InputStream input = loadArquillianXml();
+      InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
       if(input != null)
       {
          descriptor = Descriptors.importAs(ArquillianDescriptor.class)
@@ -56,22 +60,12 @@ public class ConfigurationRegistrar
       }
       
       final ArquillianDescriptor resolvedDesc = ConfigurationSysPropResolver.resolveSystemProperties(descriptor);
+
+      new PropertiesParser().addProperties(
+            resolvedDesc,
+            FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
+
       descriptorInst.set(resolvedDesc);
    }
    
-   private InputStream loadArquillianXml()
-   {
-      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-      return classLoader.getResourceAsStream(getConfigFileName());
-   }
-   
-   private String getConfigFileName()
-   {
-      String name = System.getProperty(ARQUILLIAN_XML_PROPERTY);
-      if(name == null)
-      {
-         name = ARQUILLIAN_XML_DEFAULT;
-      }
-      return name;
-   }
 }
