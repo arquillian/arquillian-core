@@ -18,11 +18,10 @@ package org.jboss.arquillian.core.impl.loadable;
 
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.core.impl.loadable.util.FakeService;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

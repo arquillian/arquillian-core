@@ -19,8 +19,6 @@ package org.jboss.arquillian.test.impl;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -34,6 +32,7 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;

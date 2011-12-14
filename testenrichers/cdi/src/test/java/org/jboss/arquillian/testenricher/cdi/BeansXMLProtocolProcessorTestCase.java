@@ -19,8 +19,6 @@ package org.jboss.arquillian.testenricher.cdi;
 
 import java.util.ArrayList;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.testenricher.cdi.client.BeansXMLProtocolProcessor;
 import org.jboss.shrinkwrap.api.Archive;
@@ -28,6 +26,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 
 

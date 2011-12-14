@@ -18,13 +18,11 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
-import org.jboss.arquillian.container.test.impl.client.deployment.tool.ToolingDeploymentFormatter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

@@ -17,11 +17,10 @@
  */
 package org.jboss.arquillian.core.impl;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

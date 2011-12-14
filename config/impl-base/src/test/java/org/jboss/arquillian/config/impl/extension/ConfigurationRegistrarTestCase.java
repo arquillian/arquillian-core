@@ -17,14 +17,13 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

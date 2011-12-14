@@ -16,14 +16,13 @@
  */
 package org.jboss.arquillian.core.impl;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.impl.context.ApplicationContextImpl;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

@@ -19,12 +19,11 @@ package org.jboss.arquillian.core.impl;
 
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

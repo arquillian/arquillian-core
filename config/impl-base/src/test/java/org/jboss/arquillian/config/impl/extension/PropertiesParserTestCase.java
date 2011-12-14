@@ -17,11 +17,10 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

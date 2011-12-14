@@ -17,14 +17,13 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
-import junit.framework.Assert;
-
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
 import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
+import org.junit.Assert;
 import org.junit.Test;
 
 

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
