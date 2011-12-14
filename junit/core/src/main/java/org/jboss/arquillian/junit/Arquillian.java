@@ -105,42 +105,45 @@ public class Arquillian extends BlockJUnit4ClassRunner
             }
          }
       }
-      // initialization ok, run children
-      if(State.hasTestAdaptor())  
+      notifier.addListener(new RunListener()
       {
-         notifier.addListener(new RunListener() 
+         @Override
+         public void testRunFinished(Result result) throws Exception
          {
-            @Override
-            public void testRunFinished(Result result) throws Exception
+            State.runnerFinished();
+            shutdown();
+         }
+
+         private void shutdown()
+         {
+            try
             {
-               State.runnerFinished();
-               shutdown();
-            }
-            
-            private void shutdown() 
-            {
-               try  
+               if(State.isLastRunner())
                {
-                  if(State.hasTestAdaptor() && State.isLastRunner()) 
+                  try
                   {
-                     try
+                     if(State.hasTestAdaptor())
                      {
                         TestRunnerAdaptor adaptor = State.getTestAdaptor();
                         adaptor.afterSuite();
                         adaptor.shutdown();
                      }
-                     finally 
-                     {
-                        State.clean();
-                     }
                   }
-               } 
-               catch (Exception e) 
-               {
-                  throw new RuntimeException("Could not run @AfterSuite", e);
+                  finally
+                  {
+                     State.clean();
+                  }
                }
             }
-         });
+            catch (Exception e)
+            {
+               throw new RuntimeException("Could not run @AfterSuite", e);
+            }
+         }
+      });
+      // initialization ok, run children
+      if(State.hasTestAdaptor())
+      {
          super.run(notifier);
       }
    }

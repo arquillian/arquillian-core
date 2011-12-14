@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>6-beta-2</version>
+        <version>8</version>
         <relativePath />
     </parent>
 
@@ -25,9 +25,8 @@
     <properties>
 
         <!-- jboss-parent override -->
-        <version.release.plugin>2.1</version.release.plugin>
-        <maven.compiler.target>1.5</maven.compiler.target>
-        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
+        <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
 
 
         <!-- External Deps -->
