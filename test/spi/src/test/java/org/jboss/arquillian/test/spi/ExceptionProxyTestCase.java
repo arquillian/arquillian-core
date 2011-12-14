@@ -60,6 +60,7 @@ public class ExceptionProxyTestCase
    /**
     * @param throwable
     */
+   @SuppressWarnings("unused")
    private void printConstructors(Throwable throwable) throws Exception
    {
       System.out.println("Declared-Constrcutors for: " + throwable.getClass());

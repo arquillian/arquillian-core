@@ -38,7 +38,7 @@ import org.junit.Test;
 public class ExceptionProxySerializationTestCase
 {
    
-   @Test @Ignore // not ready for automation
+   @Test @Ignore // not ready for automation, uncomment ObjectInputStream override in ExceptionProxy.readExternal to run
    public void shouldBeAbleToDeserialize() throws Exception
    {
       ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -66,9 +66,13 @@ public class ExceptionProxySerializationTestCase
          @Override
          protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
          {
-            if(UnknownException.class.getName().equals(name)) 
+            if(UnknownException.class.getName().equals(name))
             {
                return null;
+            }
+            if(UnknownObject.class.getName().equals(name))
+            {
+               throw new NoClassDefFoundError(name);
             }
             return super.loadClass(name, resolve);
          }

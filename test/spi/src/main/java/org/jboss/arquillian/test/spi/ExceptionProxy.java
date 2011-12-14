@@ -24,7 +24,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Constructor;
 
 /**
  * Takes an exception class and creates a proxy that can be used to rebuild the
@@ -118,127 +117,6 @@ public class ExceptionProxy implements Externalizable
    }
 
    /**
-    * Constructs an instance of the passed in class if a suitable constructor
-    * is found. If the constructor subclasses {@link Throwable} it is returned.
-    * If a Class instance is not constructed ot is not a {@link Throwable} then
-    * another exception is returned indicating this.
-    *
-    * @param clazz
-    *            Class to construct
-    * @return Instance of the Throwable class.
-    */
-   private Throwable constructExceptionForClass(Class<?> clazz)
-   {
-      Object object = buildObjectFromClassConstructors(clazz);
-
-      if (object == null)
-      {
-         return createProxyException("Could not find suitable constructor");
-      }
-
-      if (!(object instanceof Throwable))
-      {
-         return createProxyException("Proxy references non-Throwable type");
-      }
-      return (Throwable) object;
-   }
-
-   private Object buildObjectFromClassConstructors(Class<?> clazz)
-   {
-      // try the (String,Throwable) constructor first
-      Object object = buildExceptionFromConstructor(clazz, new Class<?>[] {String.class, Throwable.class}, new Object[] {message, getCause()});
-      if (object != null)
-      {
-         return object;
-      }
-
-      // try the (String,Exception) constructor
-      object = buildExceptionFromConstructor(clazz, new Class<?>[] {String.class, Exception.class}, new Object[] {message, getCause()});
-      if (object != null)
-      {
-         return object;
-      }
-
-      // try the (Throwable) constructor
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]{Throwable.class}, new Object[] {getCause()});
-      if (object != null)
-      {
-         return object;
-      }
-
-      // try the (Exception) constructor
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]{Exception.class}, new Object[] {getCause()});
-      if (object != null)
-      {
-         return object;
-      }
-
-      // try the (Object) constructor
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]{Object.class}, new Object[] {message});
-      if (object != null)
-      {
-         return object;
-      }
-
-      // try the (String, Object) constructor
-      object = buildExceptionFromConstructor(clazz, new Class<?>[]{String.class}, new Object[] {message});
-      if (object != null)
-      {
-         return object;
-      }
-
-      return null;
-   }
-
-   /**
-    * Attempt to build an exception of the given class type using the
-    * constructor signature and parameters passed in. If no constructor matches
-    * or the constructor throws an exception, then null is returned.
-    *
-    * @param clazz
-    *            Class to construct
-    * @param signature
-    *            Array of class types to match the signature on
-    * @param params
-    *            Parameter values to pass to the constructor if found.
-    * @return The object instance created using the constructor
-    */
-   private <T> T buildExceptionFromConstructor(Class<T> clazz, Class<?>[] signature, Object[] params) {
-		Constructor<?> constructor = null;
-		// try the message,cause constructor first
-        Class<?> nextSource = clazz;
-//        while (nextSource != Object.class && constructor == null)
-//        {
-      		try
-      		{
-      			constructor = nextSource.getDeclaredConstructor(signature);
-      		}
-      		catch (SecurityException e)
-      		{
-      			// we'll try the next signature
-      		}
-      		catch (NoSuchMethodException e)
-      		{
-      			// we'll try the next signature
-      		}
-//      		nextSource = nextSource.getSuperclass();
-//        }
-		// if we found a working constructor, use it
-		if (constructor != null) {
-			try {
-				@SuppressWarnings("unchecked")
-				T result = (T) constructor.newInstance(params);
-				return result;
-			} catch (Throwable e) {
-				return null;
-			}
-		}
-		// no matching constructor, no result
-		return null;
-
-	}
-
-   /**
     * Static method to create an exception proxy for the passed in
     * {@link Throwable} class. If null is passed in, null is returned as the
     * exception proxy
@@ -302,29 +180,21 @@ public class ExceptionProxy implements Externalizable
          try
          {
             ByteArrayInputStream originalIn = new ByteArrayInputStream(originalExceptionData);
-            ObjectInputStream input = new ObjectInputStream(originalIn) ;
-            /*// need to active for testing
-            {
-
-               @Override
-               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
-               {
-                  return Class.forName(desc.getName(), false, Thread.currentThread().getContextClassLoader());
-               }
-            };
-            */
+            ObjectInputStream input = new ObjectInputStream(originalIn);
+//           // Uncomment to run ExceptionProxySerializationTestCase            
+//            {
+//               @Override
+//               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+//               {
+//                  return Class.forName(desc.getName(), false, Thread.currentThread().getContextClassLoader());
+//               }
+//            };
             original = (Throwable)input.readObject();
-            try
-            {
-               // reset the cause, so we can de-serialize them individual
-               SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
-            }
-            catch (Exception e)
-            {
-               // move on, try to serialize anyway
-            }
+            
+            // reset the cause, so we can de-serialize them individual
+            SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
          }
-         catch (ClassNotFoundException e)
+         catch (Throwable e) // ClassNotFoundExcpetion / NoClassDefFoundError
          {
             // ignore, could not load class on client side, move on and create a fake 'proxy' later
          }
