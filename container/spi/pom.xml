@@ -55,12 +55,18 @@
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-api</artifactId>
+            <artifactId>shrinkwrap-descriptors-api-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-api-javaee</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-impl</artifactId>
-            <scope>test</scope> <!-- ARQ-514, this is OK for testing -->
+            <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -68,8 +74,6 @@
             <artifactId>shrinkwrap-impl-base</artifactId>
             <scope>test</scope>
         </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -23,7 +23,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,8 +45,9 @@ public class SynchronousPaymentProcessorTestCase
 				)
 				.addAsManifestResource(new StringAsset(
 				         Descriptors.create(BeansDescriptor.class)
-				            .alternativeClass(MockPaymentProcessor.class)
-				            .exportAsString()), 
+				                 .createAlternatives().clazz(MockPaymentProcessor.class.getName())
+				                     .up()
+				             .exportAsString()),
 				      ArchivePaths.create("beans.xml"));
 	}
 	

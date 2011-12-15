@@ -16,7 +16,7 @@
     <groupId>org.jboss.arquillian.config</groupId>
     <artifactId>arquillian-config-impl-base</artifactId>
     <name>Arquillian Config Implementation Base</name>
-    <description>Implementation for the Confi module.</description>
+    <description>Implementation for the Config module.</description>
 
 
     <!-- Properties -->
@@ -49,6 +49,7 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
             <artifactId>shrinkwrap-descriptors-spi</artifactId>
+            <scope>compile</scope>
         </dependency>
         
         <dependency>

@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-api</artifactId>
+            <artifactId>shrinkwrap-descriptors-api-base</artifactId>
         </dependency>
 
         <dependency>

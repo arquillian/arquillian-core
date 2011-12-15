@@ -25,7 +25,7 @@ import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
 

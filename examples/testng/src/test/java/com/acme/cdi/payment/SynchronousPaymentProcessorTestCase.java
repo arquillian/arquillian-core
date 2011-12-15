@@ -22,7 +22,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.cdi.beans.BeansDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,7 +40,8 @@ public class SynchronousPaymentProcessorTestCase extends Arquillian {
 				)
 				.addAsManifestResource(new StringAsset(
 				      Descriptors.create(BeansDescriptor.class)
-				         .alternativeClass(MockPaymentProcessor.class)
+				          .createAlternatives().clazz(MockPaymentProcessor.class.getName())
+				              .up()
 				         .exportAsString()
 				), "beans.xml");
 	}

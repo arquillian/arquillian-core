@@ -56,6 +56,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-spi</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
@@ -77,7 +83,12 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-impl</artifactId>
+            <artifactId>shrinkwrap-descriptors-api-javaee</artifactId>
+            <scope>test</scope> <!-- ARQ-514, OK in test scope -->
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
             <scope>test</scope> <!-- ARQ-514, OK in test scope -->
         </dependency>
         <dependency>

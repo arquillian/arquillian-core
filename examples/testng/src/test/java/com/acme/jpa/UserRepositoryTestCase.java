@@ -26,10 +26,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.ProviderType;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.SchemaGenerationModeType;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.TransactionType;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -49,13 +47,18 @@ public class UserRepositoryTestCase extends Arquillian
                      User.class.getPackage())
                .addAsManifestResource(new StringAsset(
                      Descriptors.create(PersistenceDescriptor.class)
-                        .persistenceUnit("Domain")
-                           .provider(ProviderType.HIBERNATE)
-                           .transactionType(TransactionType.JTA)
-                           .classes(User.class)
-                           .excludeUnlistedClasses()
-                           .jtaDataSource("java:/DefaultDS")
-                           .schemaGenerationMode(SchemaGenerationModeType.CREATE_DROP)
+                        .createPersistenceUnit()
+                            .name("Domain")
+                            .provider("org.hibernate.ejb.HibernatePersistence")
+                            .transactionType(PersistenceUnitTransactionType._JTA)
+                            .clazz(User.class.toString())
+                            .excludeUnlistedClasses(true)
+                            .jtaDataSource("java:/DefaultDS")
+                            .getOrCreateProperties()
+                                .createProperty()
+                                    .name("hibernate.hbm2ddl.auto")
+                                    .value("create-drop")
+                                    .up().up().up()
                         .exportAsString()), "persistence.xml");
    }
    

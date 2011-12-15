@@ -40,35 +40,20 @@
                 <version>${version.javax.inject_javax.inject}</version>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-api</artifactId>
+                <artifactId>shrinkwrap-bom</artifactId>
                 <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-spi</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-impl-base</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-                <artifactId>shrinkwrap-descriptors-api</artifactId>
+                <artifactId>shrinkwrap-descriptors-bom</artifactId>
                 <version>${version.shrinkwrap_descriptors}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-                <artifactId>shrinkwrap-descriptors-spi</artifactId>
-                <version>${version.shrinkwrap_descriptors}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-                <artifactId>shrinkwrap-descriptors-impl</artifactId>
-                <version>${version.shrinkwrap_descriptors}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>

@@ -46,6 +46,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-spi</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- servlet api -->
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
