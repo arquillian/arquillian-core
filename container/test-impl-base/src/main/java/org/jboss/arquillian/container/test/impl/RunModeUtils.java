@@ -20,7 +20,7 @@ package org.jboss.arquillian.container.test.impl;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
 
@@ -39,17 +39,18 @@ public final class RunModeUtils
     * 
     * Verify @Deployment.testable vs @RunAsClient on Class or Method level 
     * 
-    * @param description
+    * @param deployment
     * @param testClass
     * @param testMethod
     * @return
     */
-   public static boolean isRunAsClient(DeploymentDescription description, Class<?> testClass, Method testMethod)
+   public static boolean isRunAsClient(Deployment deployment, Class<?> testClass, Method testMethod)
    {
       boolean runAsClient = true;
-      if(description != null)
+      if(deployment != null)
       {
-         runAsClient =  description.testable() ? false:true;
+         runAsClient =  deployment.getDescription().testable() ? false:true;
+         runAsClient =  deployment.isDeployed() ? runAsClient:true;
          
          if(testMethod.isAnnotationPresent(RunAsClient.class))
          {

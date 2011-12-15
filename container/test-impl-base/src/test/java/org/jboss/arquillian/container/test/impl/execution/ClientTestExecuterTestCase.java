@@ -23,9 +23,9 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
@@ -48,8 +48,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
 {
    @Mock
-   private DeploymentDescription deployment;
+   private DeploymentDescription deploymentDescriptor;
    
+   @Mock
+   private Deployment deployment;
 
    /* (non-Javadoc)
     * @see org.jboss.arquillian.core.test.AbstractManagerTestBase#addExtensions(java.util.List)
@@ -63,13 +65,17 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
    @Before
    public void bindDeployment()
    {
-      bind(ApplicationScoped.class, DeploymentDescription.class, deployment);      
+      bind(ApplicationScoped.class, Deployment.class, deployment);
+      bind(ApplicationScoped.class, DeploymentDescription.class, deploymentDescriptor);
+      
+      when(deployment.getDescription()).thenReturn(deploymentDescriptor);
+      when(deployment.isDeployed()).thenReturn(true);
    }
    
    @Test
-   public void shouldExecuteRemoteIfDeploymentIsTestable() throws Exception
+   public void shouldExecuteRemoteIfDeploymentIsTestableAndDeployed() throws Exception
    {
-      when(deployment.testable()).thenReturn(true);
+      when(deploymentDescriptor.testable()).thenReturn(true);
       
       fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
       
@@ -77,9 +83,20 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
    }
 
    @Test
+   public void shouldExecuteLocalIfDeploymentIsTestableButNotDeployed() throws Exception
+   {
+      when(deploymentDescriptor.testable()).thenReturn(true);
+      when(deployment.isDeployed()).thenReturn(false); // override @Before setup
+      
+      fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
+      
+      assertEventFired(LocalExecutionEvent.class, 1);
+   }
+
+   @Test
    public void shouldExecuteLocalIfDeploymentIsNotTestable() throws Exception
    {
-      when(deployment.testable()).thenReturn(false);
+      when(deploymentDescriptor.testable()).thenReturn(false);
       
       fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
       
@@ -89,7 +106,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
    @Test
    public void shouldExecuteLocalIfDeploymentIsTestableAndClassRunModeAsClient() throws Exception
    {
-      when(deployment.testable()).thenReturn(true);
+      when(deploymentDescriptor.testable()).thenReturn(true);
 
       fire(test("methodLevelRunModeDefault", new ClassLevelRunModeAsClient()));
       
@@ -99,7 +116,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
    @Test
    public void shouldExecuteLocalIfDeploymentIsTestableAndMethodRunModeAsClient() throws Exception
    {
-      when(deployment.testable()).thenReturn(true);
+      when(deploymentDescriptor.testable()).thenReturn(true);
       
       fire(test("methodLevelRunModeAsClient", new ClassLevelRunModeDefault()));
       

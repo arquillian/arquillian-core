@@ -18,7 +18,7 @@
 package org.jboss.arquillian.container.test.impl;
 
 import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.impl.TestInstanceEnricher;
@@ -33,7 +33,7 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 public class ClientTestInstanceEnricher extends TestInstanceEnricher
 {
    @Inject
-   private Instance<DeploymentDescription> deploymentDescription;
+   private Instance<Deployment> deployment;
 
    @Inject
    private Instance<Container> container;
@@ -42,7 +42,7 @@ public class ClientTestInstanceEnricher extends TestInstanceEnricher
    public void enrich(Before event) throws Exception
    {
       boolean runAsClient = RunModeUtils.isRunAsClient(
-            this.deploymentDescription.get(), 
+            this.deployment.get(),
             event.getTestClass().getJavaClass(), 
             event.getTestMethod());
       

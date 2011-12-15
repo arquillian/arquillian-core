@@ -17,7 +17,7 @@
 package org.jboss.arquillian.container.test.impl.execution;
 
 import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -50,7 +50,7 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 public class ClientBeforeAfterLifecycleEventExecuter
 {
    @Inject
-   private Instance<DeploymentDescription> deploymentDescription;
+   private Instance<Deployment> deployment;
    
    @Inject
    private Instance<Container> container;
@@ -84,7 +84,7 @@ public class ClientBeforeAfterLifecycleEventExecuter
    private boolean isRunAsClient(TestLifecycleEvent event)
    {
       return RunModeUtils.isRunAsClient(
-            deploymentDescription.get(), 
+            deployment.get(),
             event.getTestClass().getJavaClass(), 
             event.getTestMethod());
    }
