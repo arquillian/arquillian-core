@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,6 +58,13 @@ public class ProtocolMetaData
    {
       contexts.add(obj);
       return this;
+   }
+
+   /**
+    * @return unmodifiable list of contexts
+    */
+   public List<Object> getContexts() {
+       return Collections.unmodifiableList(contexts);
    }
 
    @Override
