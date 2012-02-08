@@ -26,6 +26,7 @@ import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.protocol.servlet.Processor;
+import org.jboss.arquillian.protocol.servlet.ServletUtil;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.ApplicationDescriptor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -139,7 +140,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
             ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
                   applicationArchive.get(APPLICATION_XML_PATH).getAsset().openStream());
             
-            applicationXml.webModule(wrappedWar.getName(), wrappedWar.getName());
+            applicationXml.webModule(wrappedWar.getName(), ServletUtil.calculateContextRoot(wrappedWar.getName()));
             
             // SHRINKWRAP-187, to eager on not allowing overrides, delete it first
             applicationArchive.delete(APPLICATION_XML_PATH);

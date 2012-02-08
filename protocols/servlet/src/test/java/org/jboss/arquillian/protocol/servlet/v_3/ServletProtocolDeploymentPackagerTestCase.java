@@ -157,7 +157,12 @@ public class ServletProtocolDeploymentPackagerTestCase
       String applicationXmlContent = TestUtil.convertToString(archive.get("META-INF/application.xml").getAsset().openStream());
       Assert.assertTrue(
             "verify that the arquillian-protocol.war was added to the application.xml",
-            applicationXmlContent.contains("test.war"));
+            applicationXmlContent.contains("<web-uri>test.war</web-uri>"));
+
+      // ARQ-670
+      Assert.assertTrue(
+              "verify that the arquillian-protocol.war has correct context-root in application.xml",
+              applicationXmlContent.contains("<context-root>test</context-root>"));
 
       Assert.assertTrue(
             "Verify protocol Processor SPI was called",

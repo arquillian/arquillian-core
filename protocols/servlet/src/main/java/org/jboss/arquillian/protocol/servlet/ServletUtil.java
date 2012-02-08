@@ -78,4 +78,18 @@ public final class ServletUtil
       }
       return URI.create("http://" + address + ":" + port + contextRoot);
    }
+
+   public static String calculateContextRoot(String archiveName)
+   {
+       String correctedName = archiveName;
+       if(correctedName.startsWith("/"))
+       {
+          correctedName = correctedName.substring(1);
+       }
+       if(correctedName.indexOf(".") != -1)
+       {
+          correctedName = correctedName.substring(0, correctedName.lastIndexOf("."));
+       }
+       return correctedName;
+   }
 }
