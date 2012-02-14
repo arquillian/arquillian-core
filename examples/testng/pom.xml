@@ -23,7 +23,7 @@
 
         <!-- Versioning -->
         <version.weld_core>1.0.1-SP4</version.weld_core>
-        <version.weld_core_11>1.1.0.Final</version.weld_core_11>
+        <version.weld_core_11>1.1.5.Final</version.weld_core_11>
         <version.org.apache.openejb_openejb.core>3.1.4</version.org.apache.openejb_openejb.core>
         <version.openwebbeans>1.0.0</version.openwebbeans>
         <version.jboss_60>6.0.0.Final</version.jboss_60>
@@ -41,13 +41,11 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
                     <scope>provided</scope>
-                </dependency>
+                </dependency>      
                 <dependency>
                     <groupId>javax.persistence</groupId>
                     <artifactId>persistence-api</artifactId>
@@ -74,15 +72,13 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-weld-se-embedded-1</artifactId>
-                    <version>${project.version}</version>
+                    <version>1.0.0.CR3</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <!-- org.jboss.weld -->
                 <dependency>
                     <groupId>org.jboss.weld</groupId>
@@ -134,15 +130,13 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.container</groupId>
                     <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
-                    <version>${project.version}</version>
+                    <version>1.0.0.CR3</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <!-- org.jboss.weld -->
                 <dependency>
                     <groupId>org.jboss.weld</groupId>
@@ -225,12 +219,10 @@
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <dependency>
                     <groupId>org.apache.openwebbeans</groupId>
                     <artifactId>openwebbeans-spi</artifactId>
@@ -302,12 +294,10 @@
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <dependency>
                     <groupId>org.jboss.jbossas</groupId>
                     <artifactId>jboss-as-depchain</artifactId>
@@ -389,12 +379,10 @@
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <dependency>
                     <groupId>org.jboss.jbossas</groupId>
                     <artifactId>jboss-as-client</artifactId>
@@ -427,12 +415,10 @@
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <dependency>
                     <groupId>org.jboss.jbossas</groupId>
                     <artifactId>jboss-as-client</artifactId>
@@ -465,12 +451,10 @@
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <dependency>
                     <groupId>org.jboss.jbossas</groupId>
                     <artifactId>jboss-as-client</artifactId>
@@ -531,12 +515,10 @@
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
-                    <!-- Need on all profiles except Glassfish to compile, 
-                        api is not 100% up to date with final spec -->
-                    <groupId>org.jboss.ejb3</groupId>
-                    <artifactId>jboss-ejb3-api</artifactId>
-                    <version>3.1.0</version>
-                </dependency>
+                    <groupId>org.jboss.spec.javax.ejb</groupId>
+                    <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>      
                 <dependency>
                     <groupId>org.apache.openejb</groupId>
                     <artifactId>openejb-core</artifactId>
@@ -612,9 +594,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
-            <version>1.1</version>
+            <groupId>org.jboss.spec.javax.jms</groupId>
+            <artifactId>jboss-jms-api_1.1_spec</artifactId>
+            <version>1.0.0.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
