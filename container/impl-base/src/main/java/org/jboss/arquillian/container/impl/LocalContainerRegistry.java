@@ -101,7 +101,7 @@ public class LocalContainerRegistry implements ContainerRegistry
    @Override
    public List<Container> getContainers()
    {
-      return Collections.unmodifiableList(containers);
+      return Collections.unmodifiableList(new ArrayList<Container>(containers));
    }
    
    /* (non-Javadoc)
