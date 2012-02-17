@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.container.spi.Container;
+import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -87,7 +88,11 @@ public class ContainerDeployController
             //once the container is manually started, not now
             if (! "manual".equals(container.getContainerConfiguration().getMode()))
             {
-               event.fire(new DeployDeployment(container, deployment));
+                if(container.getState() != State.STARTED)
+                {
+                    throw new IllegalStateException("Trying to deploy a managed deployment " + deployment.getDescription().getName() + " to a non started managed contianer " + container.getName());
+                }
+                event.fire(new DeployDeployment(container, deployment));
             }
          }
       });

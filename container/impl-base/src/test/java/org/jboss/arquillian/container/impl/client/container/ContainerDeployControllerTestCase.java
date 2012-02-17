@@ -168,8 +168,8 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
    @Test
    public void shouldDeployAllManagedDeployments() throws Exception
    {
-      registry.create(container1, serviceLoader);
-      registry.create(container2, serviceLoader);
+      registry.create(container1, serviceLoader).setState(State.STARTED);
+      registry.create(container2, serviceLoader).setState(State.STARTED);
 
       fire(new DeployManagedDeployments());
       
@@ -203,10 +203,8 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
    @Test
    public void shouldUnDeployAllManagedDeployments() throws Exception
    {
-      registry.create(container1, serviceLoader);
-      registry.create(container2, serviceLoader);
-      registry.getContainer(CONTAINER_1_NAME).setState(State.STARTED);
-      registry.getContainer(CONTAINER_2_NAME).setState(State.STARTED);
+      registry.create(container1, serviceLoader).setState(State.STARTED);
+      registry.create(container2, serviceLoader).setState(State.STARTED);
       
       // setup all deployment as deployed so that we can observe UnDeployDeployment events
       scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_1_NAME)).deployed();
@@ -245,14 +243,13 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
 
       ordered.verify(deployableContainer2, times(1)).undeploy(
             scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_2_NAME)).getDescription().getTestableArchive());
-
    }
    
    @Test
    public void shouldCatchExceptionInDeploymentContext() throws Exception
    {
-      registry.create(container1, serviceLoader);
-      registry.create(container2, serviceLoader);
+      registry.create(container1, serviceLoader).setState(State.STARTED);
+      registry.create(container2, serviceLoader).setState(State.STARTED);
       
       when(deployableContainer1.deploy(isA(Archive.class))).thenThrow(new DeploymentException("_TEST_"));
       
@@ -272,5 +269,14 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
       assertEventFiredInContext(DeploymentException.class, DeploymentContext.class);
       
       assertEventFiredTyped(Throwable.class, 1);
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionOnDeploymentToNonStartedContainer() throws Exception
+   {
+      registry.create(container1, serviceLoader);
+      registry.create(container2, serviceLoader);
+      
+      fire(new DeployManagedDeployments());
    }
 }
