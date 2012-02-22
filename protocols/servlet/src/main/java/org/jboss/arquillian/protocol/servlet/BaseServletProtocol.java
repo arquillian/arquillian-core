@@ -17,7 +17,10 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
+import java.util.Collection;
+
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
@@ -55,12 +58,14 @@ public abstract class BaseServletProtocol implements Protocol<ServletProtocolCon
    @Override
    public ServletMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback)
    {
-      return new ServletMethodExecutor(
-            ServletUtil.determineBaseURI(
-                  protocolConfiguration, 
-                  metaData, 
-                  ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME), 
-            callback);
+      Collection<HTTPContext> contexts = metaData.getContexts(HTTPContext.class);
+      if(contexts.size() == 0)
+      {
+          throw new IllegalArgumentException(
+                   "No " + HTTPContext.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
+                   "Servlet protocol can not be used");
+      }
+      return new ServletMethodExecutor(protocolConfiguration, contexts, callback);
    }
    
    protected abstract String getProtcolName();

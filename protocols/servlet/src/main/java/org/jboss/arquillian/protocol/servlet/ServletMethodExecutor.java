@@ -23,9 +23,11 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
@@ -44,25 +46,25 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
 
    public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
 
-   private URI baseURI;
+   private ServletURIHandler uriHandler;
    private CommandCallback callback;
    
-   public ServletMethodExecutor(URI baseURI, final CommandCallback callback)
+   public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts, final CommandCallback callback)
    {
+      if(config == null)
+      {
+         throw new IllegalArgumentException("ServletProtocolConfiguration must be specified");
+      }
+      if (contexts == null || contexts.size() == 0)
+      {
+         throw new IllegalArgumentException("HTTPContext must be specified");
+      }
       if (callback == null)
       {
          throw new IllegalArgumentException("Callback must be specified");
       }
-      this.baseURI = baseURI;
+      this.uriHandler = new ServletURIHandler(config, contexts);
       this.callback = callback;
-   }
-
-   /**
-    * @return the baseURI
-    */
-   public URI getBaseURI()
-   {
-      return baseURI;
    }
 
    public TestResult invoke(final TestMethodExecutor testMethodExecutor)
@@ -72,12 +74,14 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
          throw new IllegalArgumentException("TestMethodExecutor must be specified");
       }
 
+      URI targetBaseURI = uriHandler.locateTestServlet(testMethodExecutor.getMethod());
+
       Class<?> testClass = testMethodExecutor.getInstance().getClass();
-      final String url = baseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+      final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
             + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
             + testMethodExecutor.getMethod().getName();
 
-      final String eventUrl = baseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+      final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
             + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
             + testMethodExecutor.getMethod().getName() + "&cmd=event";
 

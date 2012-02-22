@@ -23,6 +23,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.junit.Assert;
@@ -101,6 +102,47 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
       Assert.assertEquals("http://TEST-X:8080/test-X/", test.url.toExternalForm());
    }
 
+   @Test
+   public void shouldBeAbleToInjectServletContextURLQualifiedAndTargeted() throws Exception
+   {
+      URLBaseContextClassQualifiedTargeted test = execute(
+            URLBaseContextClassQualifiedTargeted.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("NAME-A", "TEST-A-Y", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-Y")))
+               .addContext(new HTTPContext("NAME-B", "TEST-B-Y", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-Y"))),
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("NAME-A", "TEST-A-X", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-X")))
+               .addContext(new HTTPContext("NAME-B", "TEST-B-X", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-X"))));
+
+      Assert.assertEquals("http://TEST-B-X:8080/test-X/", test.url.toExternalForm());
+   }
+
+   @Test
+   public void shouldBeAbleToInjectServletContextURLQualifiedAndNoTarget() throws Exception
+   {
+      URLServletContextClassQualified test = execute(
+            URLServletContextClassQualified.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("NAME-A", "TEST-A-Y", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-Y")))
+               .addContext(new HTTPContext("NAME-B", "TEST-B-Y", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-Y"))),
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("NAME-A", "TEST-A-X", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-X")))
+               .addContext(new HTTPContext("NAME-B", "TEST-B-X", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-X"))));
+
+      // Default on multiple Named contexts is the first one added
+      Assert.assertEquals("http://TEST-A-X:8080/test-X/", test.url.toExternalForm());
+   }
+
    @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionOnMissingContainerRegistry() throws Exception
    {
@@ -135,6 +177,20 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
             new ProtocolMetaData());
    }
 
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnUnKnownTargetInDeployment() throws Exception
+   {
+      execute(
+            URLBaseContextClassQualifiedTargetedMissing.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST-Y", 8080)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-Y"))),
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST-X", 8080)
+               .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test-X"))));
+   }
+
    public static class URLBaseContextClass
    {
       @ArquillianResource
@@ -162,6 +218,18 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    public static class URLBaseContextClassQualifiedMissing
    {
       @ArquillianResource @OperateOnDeployment("MISSING")
+      public URL url;
+   }
+
+   public static class URLBaseContextClassQualifiedTargeted
+   {
+      @ArquillianResource @OperateOnDeployment("X") @TargetsContainer("NAME-B")
+      public URL url;
+   }
+
+   public static class URLBaseContextClassQualifiedTargetedMissing
+   {
+      @ArquillianResource @OperateOnDeployment("X") @TargetsContainer("MISSING")
       public URL url;
    }
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -51,10 +52,11 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
    @Override
    public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
    {
-      return locateURL(resource);
+      return locateURL(resource, locateTargetQualification(qualifiers));
    }
 
-   private Object locateURL(ArquillianResource resource)
+
+   private Object locateURL(ArquillianResource resource, TargetsContainer targets)
    {
       ProtocolMetaData metaData = protocolMetadata.get();
       if(metaData == null)
@@ -63,7 +65,16 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       }
       if(metaData.hasContext(HTTPContext.class))
       {
-         HTTPContext context = metaData.getContext(HTTPContext.class);
+         HTTPContext context = null;
+         if(targets != null)
+         {
+            context = locateNamedHttpContext(metaData, targets.value());
+         }
+         else
+         {
+            context = metaData.getContexts(HTTPContext.class).iterator().next();
+         }
+
          if(resource.value() != null && resource.value() != ArquillianResource.class)
          {
             // TODO: we need to check for class. Not all containers have ServletClass available.
@@ -87,6 +98,32 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
          else
          {
             return toURL(context);
+         }
+      }
+      return null;
+   }
+
+   private HTTPContext locateNamedHttpContext(ProtocolMetaData metaData, String value)
+   {
+      for(HTTPContext context : metaData.getContexts(HTTPContext.class))
+      {
+         if(value.equals(context.getName()))
+         {
+            return context;
+         }
+      }
+      throw new IllegalArgumentException(
+            "Could not find named context " + value + " in metadata. " +
+            "Please verify your @" + TargetsContainer.class.getName() + " definition");
+   }
+
+   private TargetsContainer locateTargetQualification(Annotation[] qualifiers)
+   {
+      for(Annotation qualifier : qualifiers)
+      {
+         if(TargetsContainer.class.isAssignableFrom(qualifier.annotationType()))
+         {
+            return TargetsContainer.class.cast(qualifier);
          }
       }
       return null;

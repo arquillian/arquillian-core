@@ -43,7 +43,11 @@ public class ServletCommandServiceTestCase extends AbstractServerBase
       MockTestRunner.add(new TestStringCommand());
       MockTestRunner.add(new TestIntegerCommand());
       
-      ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL(), new TestCommandCallback(results));
+      ServletMethodExecutor executor = new ServletMethodExecutor(
+              new ServletProtocolConfiguration(), 
+              createContexts(), 
+              new TestCommandCallback(results));
+      
       TestResult result = executor.invoke(new MockTestExecutor());
 
       Assert.assertEquals(

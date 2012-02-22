@@ -28,7 +28,7 @@ import java.util.Set;
  * @author <a href="mailto:ian@ianbrandt.com">Ian Brandt</a>
  * @version $Revision: $
  */
-public class HTTPContext
+public class HTTPContext extends NamedContext
 {
    private final String host;
    private final int port;
@@ -37,15 +37,21 @@ public class HTTPContext
 
    public HTTPContext(String host, int port)
    {
+       this("no-named", host, port);
+   }
+   
+   public HTTPContext(String name, String host, int port)
+   {
+      super(name);
+      
       if (host == null) {
          throw new IllegalArgumentException("host must not be null");
       }
-
       this.host = host;
       this.port = port;
       this.servlets = new HashSet<Servlet>();
    }
-
+    
    /**
     * @return the ip
     */

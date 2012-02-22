@@ -29,7 +29,7 @@ import javax.management.remote.JMXServiceURL;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JMXContext
+public class JMXContext extends NamedContext
 {
    /*
     * The Host and Port of a Remote MBean Server
@@ -44,12 +44,24 @@ public class JMXContext
    
    public JMXContext(String host, int port)
    {
+      this("no-named", host, port);
+   }
+   
+   public JMXContext(String name, String host, int port)
+   {
+      super(name);
       this.host = host;
       this.port = port;
    }
    
    public JMXContext(MBeanServerConnection connection)
    {
+      this("no-named", connection);
+   }
+   
+   public JMXContext(String name, MBeanServerConnection connection)
+   {
+      super(name);
       this.connection = connection;
    }
 

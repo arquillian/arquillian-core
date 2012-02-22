@@ -17,12 +17,15 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
-import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
-import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,35 +38,20 @@ import org.junit.Test;
  */
 public class BaseServletProtocolTestCase
 {
-   private BaseServletProtocol protocol = new BaseServletProtocol()
-   {
-      @Override
-      protected String getProtcolName()
-      {
-         return "Test";
-      }
-      
-      @Override
-      public DeploymentPackager getPackager()
-      {
-         return null;
-      }
-   };
-
    @Test
    public void shouldFindTestServletInMetadata() throws Exception
    {
       ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+
+      HTTPContext testContext = new HTTPContext("127.0.0.1", 8080)
+         .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
       
-      ServletMethodExecutor executor = protocol.getExecutor(
-            config, 
-            new ProtocolMetaData()
-               .addContext(
-                     new HTTPContext("127.0.0.1", 8080)
-                        .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))),
-            new TestCommandCallback());
+      Method testMethod = getTestMethod("testNoAnnotations");
       
-      Assert.assertEquals("http://127.0.0.1:8080/test", executor.getBaseURI().toString());
+      ServletURIHandler handler = new ServletURIHandler(config, to(testContext));
+      URI result = handler.locateTestServlet(testMethod);
+      
+      Assert.assertEquals("http://127.0.0.1:8080/test", result.toString());
    }
    
    @Test
@@ -73,16 +61,95 @@ public class BaseServletProtocolTestCase
       config.setHost("10.10.10.1");
       config.setPort(90);
       
-      ServletProtocol protocol = new ServletProtocol();
+      HTTPContext testContext = new HTTPContext("127.0.0.1", 8080)
+      .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+   
+      Method testMethod = getTestMethod("testNoAnnotations");
       
-      ServletMethodExecutor executor = protocol.getExecutor(
-            config, 
-            new ProtocolMetaData()
-               .addContext(
-                     new HTTPContext("127.0.0.1", 8080)
-                        .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))),
-            new TestCommandCallback());
-      
-      Assert.assertEquals("http://10.10.10.1:90/test", executor.getBaseURI().toString());
+      ServletURIHandler handler = new ServletURIHandler(config, to(testContext));
+      URI result = handler.locateTestServlet(testMethod);
+
+      Assert.assertEquals("http://10.10.10.1:90/test", result.toString());
    }
+   
+   @Test
+   public void shouldMatchNamedTargetedContext() throws Exception
+   {
+      ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+
+      HTTPContext testContextOne = new HTTPContext("Y", "127.0.0.1", 8080)
+         .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+
+      HTTPContext testContextTwo = new HTTPContext("X", "127.0.0.1", 8081)
+         .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+      
+      Method testMethod = getTestMethod("testTargeted");
+      
+      ServletURIHandler handler = new ServletURIHandler(config, to(testContextOne, testContextTwo));
+      URI result = handler.locateTestServlet(testMethod);
+      
+      Assert.assertEquals("http://127.0.0.1:8081/test", result.toString());
+   }
+
+   @Test
+   public void shouldOverrideMatchNamedTargetedContext() throws Exception
+   {
+      ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+      config.setHost("10.10.10.1");
+      config.setPort(90);
+      
+      HTTPContext testContextOne = new HTTPContext("Y", "127.0.0.1", 8080)
+         .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "testY"));
+
+      HTTPContext testContextTwo = new HTTPContext("X", "127.0.0.1", 8081)
+         .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "testX"));
+   
+      Method testMethod = getTestMethod("testTargeted");
+      
+      ServletURIHandler handler = new ServletURIHandler(config, to(testContextOne, testContextTwo));
+      URI result = handler.locateTestServlet(testMethod);
+
+      Assert.assertEquals("http://10.10.10.1:90/testX", result.toString());
+   }
+   
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnMissingNamedTargetedContext() throws Exception
+   {
+      ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+
+      HTTPContext testContextOne = new HTTPContext("Y", "127.0.0.1", 8080)
+         .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+      
+      Method testMethod = getTestMethod("testTargeted");
+      
+      ServletURIHandler handler = new ServletURIHandler(config, to(testContextOne));
+      handler.locateTestServlet(testMethod);
+   }
+
+   private Collection<HTTPContext> to(HTTPContext... inputs)
+   {
+      List<HTTPContext> contexts = new ArrayList<HTTPContext>();
+      for(HTTPContext input : inputs)
+      {
+         contexts.add(input);
+      }
+      return contexts;
+   }
+
+   private Method getTestMethod(String methodName) throws Exception
+   {
+      return getClass().getDeclaredMethod(methodName);
+   }
+
+
+   /*
+    * Methods used for ServletURIHandler HTTPContext lookups. 
+    */
+   
+   @SuppressWarnings("unused")
+   private void testNoAnnotations() {}
+
+   @SuppressWarnings("unused")
+   @TargetsContainer("X")
+   private void testTargeted() {}
 }

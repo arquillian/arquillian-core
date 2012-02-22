@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class ProtocolMetaData
       return false;
    }
    
+   @Deprecated
    public <T> T getContext(Class<T> clazz)
    {
       for(Object obj: contexts)
@@ -54,6 +56,19 @@ public class ProtocolMetaData
       return null;
    }
    
+   public <T> Collection<T> getContexts(Class<T> clazz)
+   {
+      List<T> filteredContexts = new ArrayList<T>();
+      for(Object obj: contexts)
+      {
+         if(clazz.isInstance(obj))
+         {
+             filteredContexts.add(clazz.cast(obj));
+         }
+      }
+      return filteredContexts;
+   }
+
    public ProtocolMetaData addContext(Object obj)
    {
       contexts.add(obj);

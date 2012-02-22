@@ -41,7 +41,7 @@ public class ProtocolTestCase extends AbstractServerBase
    {
       MockTestRunner.add(new TestResult(Status.PASSED, null));
       
-      ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL(), new TestCommandCallback());
+      ServletMethodExecutor executor = createExecutor();
       TestResult result = executor.invoke(new MockTestExecutor());
       
       Assert.assertEquals(
@@ -59,7 +59,7 @@ public class ProtocolTestCase extends AbstractServerBase
    {
       MockTestRunner.add(new TestResult(Status.FAILED, new Exception().fillInStackTrace()));
       
-      ServletMethodExecutor executor = new ServletMethodExecutor(createBaseURL(), new TestCommandCallback());
+      ServletMethodExecutor executor = createExecutor();
       TestResult result = executor.invoke(new MockTestExecutor());
       
       Assert.assertEquals(
@@ -119,5 +119,13 @@ public class ProtocolTestCase extends AbstractServerBase
       Assert.assertTrue(
             "No Exception should have been thrown",
             result.getThrowable() instanceof ClassNotFoundException);
+   }
+
+   protected ServletMethodExecutor createExecutor()
+   {
+       return new ServletMethodExecutor(
+               new ServletProtocolConfiguration(),
+               createContexts(), 
+               new TestCommandCallback());
    }
 }

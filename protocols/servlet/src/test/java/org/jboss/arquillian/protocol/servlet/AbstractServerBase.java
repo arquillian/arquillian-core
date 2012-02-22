@@ -21,7 +21,12 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
+import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -56,6 +61,19 @@ public class AbstractServerBase
       server.stop();
    }
 
+   protected Collection<HTTPContext> createContexts()
+   {
+       List<HTTPContext> context = new ArrayList<HTTPContext>();
+       context.add(createContext());
+       return context;
+   }
+   protected HTTPContext createContext()
+   {
+      URI baseURI = createBaseURL();
+      HTTPContext context = new HTTPContext(baseURI.getHost(), baseURI.getPort());
+      context.add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, baseURI.getPath()));
+      return context;
+   }
    protected URI createBaseURL()
    {
       return URI.create("http://localhost:" + server.getConnectors()[0].getPort() + "/arquillian-protocol");

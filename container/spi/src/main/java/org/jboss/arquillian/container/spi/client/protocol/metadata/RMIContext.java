@@ -24,11 +24,23 @@ import javax.naming.InitialContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class RMIContext
+public class RMIContext extends NamedContext
 {
    private String ip;
    private int port;
 
+   public RMIContext(String ip, int port)
+   {
+      this("no-named", ip, port);
+   }
+   
+   public RMIContext(String name, String ip, int port)
+   {
+      super(name);
+      
+      this.ip = ip;
+      this.port = port;
+   }
    
    /**
     * @return the ip

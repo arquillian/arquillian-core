@@ -20,7 +20,6 @@ package org.jboss.arquillian.protocol.servlet;
 import java.net.URI;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -38,7 +37,7 @@ public final class ServletUtil
    
    private ServletUtil() {}
    
-   public static URI determineBaseURI(ServletProtocolConfiguration config, ProtocolMetaData metaData, String servletName)
+   public static URI determineBaseURI(ServletProtocolConfiguration config, HTTPContext context, String servletName)
    {
       String address = config.getHost();
       Integer port = config.getPort();
@@ -46,35 +45,25 @@ public final class ServletUtil
       // TODO: can not set contextRoot in config, change to prefixContextRoot
       String contextRoot = null; //protocolConfiguration.getContextRoot(); 
       
-      if( metaData.hasContext(HTTPContext.class))
+      Servlet servlet = context.getServletByName(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
+      if(servlet != null)
       {
-         HTTPContext context = metaData.getContext(HTTPContext.class);
-         Servlet servlet = context.getServletByName(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
-         if(servlet != null)
+         // use the context where the Arquillian servlet is found
+         if(address == null)
          {
-            // use the context where the Arquillian servlet is found
-            if(address == null)
-            {
-               address = context.getHost();
-            }
-            if(port == null)
-            {
-               port = context.getPort();
-            }
-            contextRoot = servlet.getContextRoot();
+            address = context.getHost();
          }
-         else
+         if(port == null)
          {
-            throw new IllegalArgumentException(
-                  ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME + " not found. " +
-                  "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
+            port = context.getPort();
          }
+         contextRoot = servlet.getContextRoot();
       }
       else
       {
          throw new IllegalArgumentException(
-               "No " + HTTPContext.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
-               "Servlet protocol can not be used");
+              ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME + " not found. " +
+              "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
       }
       return URI.create("http://" + address + ":" + port + contextRoot);
    }
