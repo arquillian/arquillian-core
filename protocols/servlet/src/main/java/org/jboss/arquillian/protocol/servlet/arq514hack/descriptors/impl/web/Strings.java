@@ -82,7 +82,7 @@ public class Strings
 
    public static boolean isNullOrEmpty(String string)
    {
-      return string == null || string.isEmpty();
+      return string == null || "".equals(string);
    }
 
    public static boolean isTrue(String value)
