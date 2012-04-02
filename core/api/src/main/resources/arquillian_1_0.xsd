@@ -94,6 +94,7 @@
 	                    <enumeration value="suite"/>
 	                    <enumeration value="class"/>
 	                    <enumeration value="manual"/>
+                      <enumeration value="custom"/>
 	                </restriction>
 	            </simpleType>
 	        </attribute>

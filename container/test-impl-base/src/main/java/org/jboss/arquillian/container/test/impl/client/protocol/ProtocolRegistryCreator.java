@@ -47,6 +47,7 @@ public class ProtocolRegistryCreator
    
    public void createRegistry(@Observes ArquillianDescriptor event) throws Exception
    {
+      @SuppressWarnings("rawtypes")
       Collection<Protocol> protocols = serviceLoader.get().all(Protocol.class); 
 
       Protocol<?> defaultProtocol = null;
@@ -75,7 +76,7 @@ public class ProtocolRegistryCreator
       registryInstance.set(registry);
    }
    
-   private Protocol<?> findMatch(ProtocolDescription description, Collection<Protocol> protocols)
+   private Protocol<?> findMatch(ProtocolDescription description, @SuppressWarnings("rawtypes") Collection<Protocol> protocols)
    {
       for(Protocol<?> protocol : protocols)
       {

@@ -16,12 +16,13 @@
  */
 package org.jboss.arquillian.container.test.impl.client.protocol;
 
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
-import org.jboss.arquillian.container.test.impl.client.protocol.ProtocolRegistryCreator;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
@@ -35,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 
@@ -71,33 +71,79 @@ public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBa
    public void shouldBindProtocolRegistryToContext() throws Exception
    {
       fire(createDescriptor());
-      
+
       assertEventFiredInContext(ProtocolRegistry.class, ApplicationContext.class);
    }
-   
-   @SuppressWarnings("rawtypes")
+
    @Test
+   @SuppressWarnings("rawtypes")
+   public void shouldSetDefaultDefinedProtocolAsDefault()
+   {
+      String protocolName = "default-protocol";
+
+      when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
+      when(serviceLoader.all(Protocol.class)).thenReturn(Arrays.asList((Protocol)protocol));
+
+      fire(createDescriptor(protocolName));
+
+      ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);
+      Assert.assertTrue(protocol.isDefaultProtocol());
+   }
+
+   @Test
+   @SuppressWarnings("rawtypes")
    public void shouldBindFoundProtocolsToRegistry() throws Exception
    {
       String protocolName = "protocol";
-      Mockito.when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
-      Mockito.when(serviceLoader.all(Protocol.class)).thenReturn(Arrays.asList((Protocol)protocol));
-      
+      when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
+      when(serviceLoader.all(Protocol.class)).thenReturn(Arrays.asList((Protocol)protocol));
+
       fire(createDescriptor());
-      
+      ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);
+      Assert.assertFalse(protocol.isDefaultProtocol());
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfDefaultDefinedProtocolNotFound() throws Exception
+   {
+      try
+      {
+         fire(createDescriptor("DOES_NOT_EXIST"));
+      }
+      catch (Exception e)
+      {
+         Assert.assertTrue("Verify thrown exception", e.getMessage().contains("Defined default protocol"));
+         throw e;
+      }
+   }
+
+   private ProtocolDefinition verifyRegistryProtocol(String protocolName)
+   {
       ProtocolRegistry registry = getManager().resolve(ProtocolRegistry.class);
       ProtocolDefinition registeredProtocol = registry.getProtocol(new ProtocolDescription(protocolName));
       Assert.assertNotNull(
             "Verify " + Protocol.class.getSimpleName() + " was registered",
             registeredProtocol);
-      
+
       Assert.assertEquals(
             "Verify same protocol instance was registered", 
             protocol, registeredProtocol.getProtocol());
+
+      return registeredProtocol;
    }
-   
+
    private ArquillianDescriptor createDescriptor()
    {
-      return Descriptors.create(ArquillianDescriptor.class);
+      return createDescriptor(null);
+   }
+
+   private ArquillianDescriptor createDescriptor(String defaultProtocol)
+   {
+      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class);
+      if(defaultProtocol != null)
+      {
+         desc.defaultProtocol(defaultProtocol);
+      }
+      return desc;
    }
 }

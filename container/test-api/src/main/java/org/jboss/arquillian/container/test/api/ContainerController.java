@@ -31,7 +31,6 @@ import java.util.Map;
  */
 public interface ContainerController 
 {
-   
    public void start(String containerQualifier);
    
    public void start(String containerQualifier, Map<String, String> config);
@@ -39,5 +38,6 @@ public interface ContainerController
    public void stop(String containerQualifier);
    
    public void kill(String containerQualifier);
-   
+
+   public boolean isStarted(String containerQualifier);
 }

@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
@@ -72,10 +74,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerLifecycleControllerTestCase extends AbstractContainerTestBase
 {
-   private static final String CONTAINER_1_NAME = "container_1";
-   private static final String CONTAINER_2_NAME = "container_2";
-   private static final String CONTAINER_3_NAME = "container_3";
-   private static final String CONTAINER_4_NAME = "container_4";
+   private static final String CONTAINER_1_NAME = "container_1_suite";
+   private static final String CONTAINER_2_NAME = "container_2_suite";
+   private static final String CONTAINER_3_NAME = "container_3_class";
+   private static final String CONTAINER_4_NAME = "container_4_class";
+   private static final String CONTAINER_5_NAME = "container_5_custom";
 
    @Inject
    private Instance<Injector> injector;
@@ -98,6 +101,9 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
    private ContainerDef container4;
 
    @Mock
+   private ContainerDef container5;
+
+   @Mock
    private DeployableContainer deployableContainer;
 
    @Before
@@ -109,10 +115,12 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       when(container2.getContainerName()).thenReturn(CONTAINER_2_NAME);
       when(container3.getContainerName()).thenReturn(CONTAINER_3_NAME);
       when(container4.getContainerName()).thenReturn(CONTAINER_4_NAME);
+      when(container5.getContainerName()).thenReturn(CONTAINER_5_NAME);
       when(container1.getMode()).thenReturn("suite");
       when(container2.getMode()).thenReturn("suite");
       when(container3.getMode()).thenReturn("class");
       when(container4.getMode()).thenReturn("class");
+      when(container5.getMode()).thenReturn("custom");
 
       registry = new LocalContainerRegistry(injector.get());
 
@@ -133,19 +141,20 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       registry.create(container2, serviceLoader);
       registry.create(container3, serviceLoader);
       registry.create(container4, serviceLoader);
+      registry.create(container5, serviceLoader);
 
       fire(new SetupContainers());
 
       assertEventFiredInContext(SetupContainer.class, ContainerContext.class);
-      assertEventFired(SetupContainer.class, 4);
+      assertEventFired(SetupContainer.class, 5);
 
       assertEventFiredInContext(BeforeSetup.class, ContainerContext.class);
-      assertEventFired(BeforeSetup.class, 4);
+      assertEventFired(BeforeSetup.class, 5);
 
       assertEventFiredInContext(AfterSetup.class, ContainerContext.class);
-      assertEventFired(AfterSetup.class, 4);
+      assertEventFired(AfterSetup.class, 5);
 
-      verify(deployableContainer, times(4)).setup(isA(DummyContainerConfiguration.class));
+      verify(deployableContainer, times(5)).setup(isA(DummyContainerConfiguration.class));
    }
 
    @Test
@@ -155,6 +164,7 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       registry.create(container2, serviceLoader);
       registry.create(container3, serviceLoader);
       registry.create(container4, serviceLoader);
+      registry.create(container5, serviceLoader);
 
       fire(new StartSuiteContainers());
 
@@ -177,6 +187,7 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       registry.create(container2, serviceLoader);
       registry.create(container3, serviceLoader);
       registry.create(container4, serviceLoader);
+      registry.create(container5, serviceLoader);
 
       fire(new StartClassContainers());
 
@@ -197,6 +208,7 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
    {
       registry.create(container1, serviceLoader);
       registry.create(container2, serviceLoader);
+      registry.create(container5, serviceLoader);
 
       //we need to manually set this since we don't actually start them
       for (Container c : registry.getContainers()) {
@@ -224,6 +236,7 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       registry.create(container2, serviceLoader);
       registry.create(container3, serviceLoader);
       registry.create(container4, serviceLoader);
+      registry.create(container5, serviceLoader);
 
       //we need to manually set this since we don't actually start them
       for (Container c : registry.getContainers()) {
@@ -244,11 +257,37 @@ public class ContainerLifecycleControllerTestCase extends AbstractContainerTestB
       verify(deployableContainer, times(2)).stop();
    }
 
+   @Test
+   public void shouldNotStartCustomContainersInRegistry() throws Exception
+   {
+       registry.create(container5, serviceLoader).setState(Container.State.STOPPED);
+
+       fire(new SetupContainers());
+       verify(deployableContainer, times(1)).setup(isA(DummyContainerConfiguration.class));
+
+       fire(new StartSuiteContainers());
+       verify(deployableContainer, times(0)).start();
+       fire(new StartClassContainers());
+       verify(deployableContainer, times(0)).start();
+
+       Assert.assertEquals(Container.State.SETUP, registry.getContainer(CONTAINER_5_NAME).getState());
+   }
+
+   @Test
+   public void shouldNotStopCustomContainersInRegistry() throws Exception
+   {
+       registry.create(container5, serviceLoader).setState(Container.State.STARTED);
+
+       fire(new StopClassContainers());
+       verify(deployableContainer, times(0)).stop();
+       fire(new StopSuiteContainers());
+       verify(deployableContainer, times(0)).stop();
+
+       Assert.assertEquals(Container.State.STARTED, registry.getContainer(CONTAINER_5_NAME).getState());
+   }
+
    public static class DummyContainerConfiguration implements ContainerConfiguration
    {
-      /* (non-Javadoc)
-       * @see org.jboss.arquillian.spi.client.container.ContainerConfiguration#validate()
-       */
       @Override
       public void validate() throws ConfigurationException
       {

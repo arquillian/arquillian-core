@@ -76,10 +76,10 @@ public class ClientContainerController implements ContainerController
 
       if (!containerExists(registry.getContainers(), containerQualifier))
       {
-         throw new IllegalArgumentException("No container with the specified name exists");
+         throw new IllegalArgumentException("No container found in registry with name " + containerQualifier);
       }
 
-      if (!isManualContainer(registry.getContainers(), containerQualifier))
+      if (!isControllableContainer(registry.getContainers(), containerQualifier))
       {
          throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
       }
@@ -94,6 +94,12 @@ public class ClientContainerController implements ContainerController
       
       for (Deployment d : managedDeployments)
       {
+         if(d.getDescription().managed() && "custom".equalsIgnoreCase(container.getContainerConfiguration().getMode()))
+         {
+            throw new IllegalStateException(
+                  "Trying to deploy managed deployment " + d.getDescription().getName() +
+                  " to custom mode container " + container.getName());
+         }
          if (!d.isDeployed()) 
          {
             log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() + 
@@ -123,7 +129,7 @@ public class ClientContainerController implements ContainerController
          throw new IllegalArgumentException("No container with the specified name exists");
       }
       
-      if (!isManualContainer(registry.getContainers(), containerQualifier))
+      if (!isControllableContainer(registry.getContainers(), containerQualifier))
       {
          throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
       }
@@ -174,7 +180,7 @@ public class ClientContainerController implements ContainerController
          throw new IllegalArgumentException("No container with the specified name exists");
       }
       
-      if (!isManualContainer(registry.getContainers(), containerQualifier))
+      if (!isControllableContainer(registry.getContainers(), containerQualifier))
       {
          throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
       }
@@ -212,7 +218,7 @@ public class ClientContainerController implements ContainerController
          throw new IllegalArgumentException("No container with the specified name exists");
       }
       
-      if (!isManualContainer(registry.getContainers(), containerQualifier))
+      if (!isControllableContainer(registry.getContainers(), containerQualifier))
       {
          throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
       }
@@ -222,6 +228,24 @@ public class ClientContainerController implements ContainerController
       log.info("Hard killing of a server instance");
 
       event.fire(new KillContainer(container));
+   }
+
+   @Override
+   public boolean isStarted(String containerQualifier)
+   {
+      ContainerRegistry registry = containerRegistry.get();
+      if (registry == null)
+      {
+         throw new IllegalArgumentException("No container registry in context");
+      }
+
+      if (!containerExists(registry.getContainers(), containerQualifier))
+      {
+         throw new IllegalArgumentException("No container found in registry with name " + containerQualifier);
+      }
+
+      Container container = registry.getContainer(new TargetDescription(containerQualifier));
+      return container.getState() == Container.State.STARTED;
    }
 
    private boolean containerExists(List<Container> containers, String name)
@@ -236,11 +260,13 @@ public class ClientContainerController implements ContainerController
       return false;
    }
 
-   private boolean isManualContainer(List<Container> containers, String containerQualifier)
+   private boolean isControllableContainer(List<Container> containers, String containerQualifier)
    {
       for (Container container : containers)
       {
-         if (container.getName().equals(containerQualifier) && "manual".equals(container.getContainerConfiguration().getMode()))
+         String contianerMode = container.getContainerConfiguration().getMode();
+         if (container.getName().equals(containerQualifier) &&
+               ("manual".equalsIgnoreCase(contianerMode) || "custom".equalsIgnoreCase(contianerMode)))
          {
             return true;
          }

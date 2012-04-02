@@ -94,33 +94,51 @@ public class DeploymentGenerator
    protected void validate(DeploymentScenario scenario)
    {
       ContainerRegistry conReg = containerRegistry.get();
-      for(TargetDescription target : scenario.targets())
+      for (TargetDescription target : scenario.targets())
       {
          Container container = conReg.getContainer(target);
-         if(container == null)
+         if (container == null)
          {
             throw new ValidationException(
-                  DeploymentScenario.class.getSimpleName() + " contains targets not matching any defined Container in the registry. " + target.getName() + 
-                  ". Possible causes are: No Deployable Container found on Classpath or " + 
-                  "your have defined a @" + org.jboss.arquillian.container.test.api.Deployment.class.getName() + " with a @" + TargetsContainer.class.getName() + 
-                  " value that does not match any found/configured Containers (see arquillian.xml container@qualifier) ");
+                  DeploymentScenario.class.getSimpleName()
+                        + " contains targets not matching any defined Container in the registry. " + target.getName()
+                        + ". Possible causes are: No Deployable Container found on Classpath or "
+                        + "your have defined a @" + org.jboss.arquillian.container.test.api.Deployment.class.getName()
+                        + " with a @" + TargetsContainer.class.getName()
+                        + " value that does not match any found/configured Containers (see arquillian.xml container@qualifier) ");
          }
       }
-      
-     ProtocolRegistry proReg = protocolRegistry.get();
-     for(ProtocolDescription proDesc : scenario.protocols())
-     {
-        if(ProtocolDescription.DEFAULT.equals(proDesc))
-        {
-           continue;
-        }
-        ProtocolDefinition protocol = proReg.getProtocol(proDesc);
-        if(protocol == null)
-        {
-           throw new ValidationException(
-                 DeploymentScenario.class.getSimpleName() + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
-        }
-     }
+
+      for(Deployment deployment : scenario.deployments())
+      {
+         Container container = conReg.getContainer(deployment.getDescription().getTarget());
+         if("custom".equalsIgnoreCase(container.getContainerConfiguration().getMode()))
+         {
+            if(deployment.getDescription().managed())
+            {
+               throw new ValidationException(
+                     "Deployment " + deployment.getDescription().getName() + " is targeted against container " + 
+                     container.getName() + ". This container is set to mode custom which can not handle managed deployments. " +
+                     "Please verify the @" + TargetsContainer.class.getName() + " annotation or container@mode in arquillian.xml");
+            }
+         }
+      }
+
+      ProtocolRegistry proReg = protocolRegistry.get();
+      for (ProtocolDescription proDesc : scenario.protocols())
+      {
+         if (ProtocolDescription.DEFAULT.equals(proDesc))
+         {
+            continue;
+         }
+         ProtocolDefinition protocol = proReg.getProtocol(proDesc);
+         if (protocol == null)
+         {
+            throw new ValidationException(DeploymentScenario.class.getSimpleName()
+                  + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
+         }
+      }
+
    }
 
    //-------------------------------------------------------------------------------------||

@@ -17,7 +17,6 @@
  */
 package org.jboss.arquillian.container.test.impl.client.container.command;
 
-import java.util.logging.Logger;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.core.api.Instance;
@@ -33,8 +32,6 @@ import org.jboss.arquillian.core.spi.EventContext;
  */
 public class ContainerCommandObserver
 {
-   private static final Logger log = Logger.getLogger(ContainerCommandObserver.class.getName());
-
    @Inject
    private Instance<ContainerController> controllerInst;
    
@@ -75,5 +72,10 @@ public class ContainerCommandObserver
    {
       controllerInst.get().kill(event.getContainerQualifier());
       event.setResult("SUCCESS");
+   }
+
+   public void isStarted(@Observes ContainerStartedCommand event)
+   {
+      event.setResult(controllerInst.get().isStarted(event.getContainerQualifier()));
    }
 }

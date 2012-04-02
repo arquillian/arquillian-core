@@ -20,6 +20,7 @@ package org.jboss.arquillian.container.test.impl.client.container;
 import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.ContainerController;
+import org.jboss.arquillian.container.test.impl.client.container.command.ContainerStartedCommand;
 import org.jboss.arquillian.container.test.impl.client.container.command.KillContainerCommand;
 import org.jboss.arquillian.container.test.impl.client.container.command.StartContainerCommand;
 import org.jboss.arquillian.container.test.impl.client.container.command.StopContainerCommand;
@@ -38,13 +39,13 @@ public class ContainerContainerController implements ContainerController
 {
    @Inject
    private Instance<ServiceLoader> serviceLoader;
-   
+
    @Override
    public void start(String containerQualifier) 
    {
       getCommandService().execute(new StartContainerCommand(containerQualifier));
    }
-   
+
    @Override
    public void start(String containerQualifier, Map<String, String> config)
    {
@@ -56,13 +57,19 @@ public class ContainerContainerController implements ContainerController
    {
       getCommandService().execute(new StopContainerCommand(containerQualifier));
    }
-   
+
    @Override
    public void kill(String containerQualifier)
    {
       getCommandService().execute(new KillContainerCommand(containerQualifier));
    }
-   
+
+   @Override
+   public boolean isStarted(String containerQualifier)
+   {
+      return getCommandService().execute(new ContainerStartedCommand(containerQualifier));
+   }
+
    private CommandService getCommandService()
    {
       ServiceLoader loader = serviceLoader.get();
