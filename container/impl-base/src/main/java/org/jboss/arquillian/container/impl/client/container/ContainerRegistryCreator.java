@@ -19,6 +19,7 @@ package org.jboss.arquillian.container.impl.client.container;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
@@ -102,6 +103,10 @@ public class ContainerRegistryCreator
             // ignore
          }
       }
+      else if (activeConfiguration != null && reg.getContainers().size() == 0)
+      {
+         throw new IllegalArgumentException("No container or group found that match given qualifier: " + activeConfiguration);
+      }
 
       // export
       registry.set(reg);
@@ -164,23 +169,23 @@ public class ContainerRegistryCreator
 
    private String getActivatedConfiguration() 
    {
-      try
+      if(exists(System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY)))
       {
-         if(exists(System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY)))
-         {
-            return System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
-         }
-         
-         InputStream arquillianLaunchStream = Thread.currentThread().getContextClassLoader()
+         return System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
+      }
+
+      InputStream arquillianLaunchStream = Thread.currentThread().getContextClassLoader()
                                                    .getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT);
-         if(arquillianLaunchStream != null)
+      if(arquillianLaunchStream != null)
+      {
+         try
          {
             return readActivatedValue(new BufferedReader(new InputStreamReader(arquillianLaunchStream)));
          }
-      }
-      catch (Exception e) 
-      {
-         log.info("Could not read active container configuration: " + e.getMessage());
+         catch (Exception e)
+         {
+            log.log(Level.WARNING, "Could not read resource " + ARQUILLIAN_LAUNCH_DEFAULT, e);
+         }
       }
       return null;
    }

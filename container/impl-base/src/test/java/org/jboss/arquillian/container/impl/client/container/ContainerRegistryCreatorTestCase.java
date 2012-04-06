@@ -159,8 +159,8 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       }
    }
 
-   @Test
-   public void shouldThrowExceptionIfMultipleContainersSetAsDefault()
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfMultipleContainersSetAsDefault() throws IllegalStateException
    {
       try
       {
@@ -174,11 +174,12 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Containers defined as default"));
+         throw e;
       }
    }
 
-   @Test
-   public void shouldThrowExceptionIfMultipleGroupsSetAsDefault()
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfMultipleGroupsSetAsDefault() throws IllegalStateException
    {
       try
       {
@@ -192,11 +193,12 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Groups defined as default"));
+         throw e;
       }
    }
 
-   @Test
-   public void shouldThrowExceptionIfMultipleGroupsOrContainersSetAsDefault()
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfMultipleGroupsOrContainersSetAsDefault() throws IllegalStateException
    {
       try
       {
@@ -210,11 +212,12 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Containers/Groups defined as default"));
+         throw e;
       }
    }
 
-   @Test
-   public void shouldThrowExceptionIfMultipleContainersInGroupSetAsDefault()
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfMultipleContainersInGroupSetAsDefault() throws IllegalStateException
    {
       try
       {
@@ -228,6 +231,27 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Containers within Group defined as default"));
+         throw e;
+      }
+   }
+
+   @Test(expected =  IllegalArgumentException.class)
+   public void shouldThrowExceptionOnDefinedLaunchQualifierMissing() throws IllegalArgumentException
+   {
+      System.setProperty(ContainerRegistryCreator.ARQUILLIAN_LAUNCH_PROPERTY, CONTAINER_1);
+      try
+      {
+         fire( Descriptors.create(ArquillianDescriptor.class)
+               .container(CONTAINER_2));
+      }
+      catch (IllegalArgumentException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("No container or group found that match given qualifier"));
+         throw e;
+      }
+      finally
+      {
+         System.setProperty(ContainerRegistryCreator.ARQUILLIAN_LAUNCH_PROPERTY, "");
       }
    }
 
