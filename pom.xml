@@ -69,8 +69,6 @@
         <module>testenrichers</module>
         <module>protocols</module>
 
-        <module>examples</module>
-
         <module>bom</module>
     </modules>
 
