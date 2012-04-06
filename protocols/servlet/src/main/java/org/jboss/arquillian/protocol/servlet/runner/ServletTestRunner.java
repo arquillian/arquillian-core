@@ -16,11 +16,7 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
@@ -223,13 +219,23 @@ public class ServletTestRunner extends HttpServlet
    {
       try 
       {
+         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+         try {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            oos.flush();
+            oos.close();
+         } catch (NotSerializableException e) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            writeObject(createFailedResult(e), response);
+            return;
+         }
+
          // Set HttpServletResponse status BEFORE getting the output stream
          response.setStatus(HttpServletResponse.SC_OK);
-         ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
-         oos.writeObject(object);
-         oos.flush();
-         oos.close();
-      } 
+         baos.writeTo(response.getOutputStream());
+      }
       catch (Exception e) 
       {
          try 

@@ -104,7 +104,7 @@ public class ExceptionProxy implements Externalizable
          return original;
       }
 
-      Throwable throwable = createProxyException("Original exception not deserilizable, ClassNotFoundException"); //constructExceptionForClass(clazz);
+      Throwable throwable = createProxyException("Original exception not deserializable, ClassNotFoundException"); //constructExceptionForClass(clazz);
       throwable.setStackTrace(trace);
       return throwable;
    }
@@ -222,11 +222,17 @@ public class ExceptionProxy implements Externalizable
             // move on, try to serialize anyway
          }
 
-         ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
-         ObjectOutputStream output = new ObjectOutputStream(originalOut);
-         output.writeObject(original);
-         output.flush();
-         originalBytes = originalOut.toByteArray();
+         try
+         {
+            ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
+            ObjectOutputStream output = new ObjectOutputStream(originalOut);
+            output.writeObject(original);
+            output.flush();
+            originalBytes = originalOut.toByteArray();
+         }
+         catch (Exception e)
+         {
+         }
       }
       out.writeObject(originalBytes);
    }
