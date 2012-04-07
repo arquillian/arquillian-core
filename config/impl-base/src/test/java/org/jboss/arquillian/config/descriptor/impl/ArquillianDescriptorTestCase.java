@@ -28,6 +28,7 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
@@ -199,7 +200,7 @@ public class ArquillianDescriptorTestCase
       Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getDefaultProtocol().getProperties().get(PROPERTY_NAME_1));
    }
 
-   @Test
+   @Test @Ignore // Dependencies not supported on container level in v. 1.0
    public void shouldBeAbleToAddContainerWithDependencies() throws Exception
    {
       desc = create()
@@ -217,7 +218,7 @@ public class ArquillianDescriptorTestCase
       Assert.assertEquals(DEPENDENCY_2, descriptor.getContainers().get(0).getDependencies().get(1));
    }
 
-   @Test
+   @Test @Ignore // Dependencies not supported on container level in v. 1.0
    public void shouldBeAbleToAddContainerWithDependenciesAndOverwrite() throws Exception
    {
       desc = create()
