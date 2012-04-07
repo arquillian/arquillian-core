@@ -19,7 +19,11 @@ package org.jboss.arquillian.container.impl;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * MapObjectPopulator
@@ -29,8 +33,12 @@ import java.util.Map;
  */
 public class MapObject
 {
+   public static Logger log = Logger.getLogger(MapObject.class.getName());
+
    public static void populate(Object object, Map<String, String> values) throws Exception
    {
+      Map<String, String> clonedValues = new HashMap<String, String>(values);
+      Set<String> candidates = new HashSet<String>();
       for (Method candidate : object.getClass().getMethods())
       {
          String methodName = candidate.getName();
@@ -40,13 +48,22 @@ public class MapObject
          {
             candidate.setAccessible(true);
             String propertyName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
-            if (values.containsKey(propertyName))
+            candidates.add(propertyName);
+            if (clonedValues.containsKey(propertyName))
             {
                candidate.invoke(
                      object, 
-                     convert(candidate.getParameterTypes()[0], values.get(propertyName)));
+                     convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
+               clonedValues.remove(propertyName);
             }
          }
+      }
+      if(clonedValues.size() > 0) 
+      {
+         log.warning(
+               "Configuration contain properties not supported by the backing object " + object.getClass().getName() + "\n" +
+               "Unused property entries: " + clonedValues + "\n" +
+               "Supported property names: " + candidates);
       }
    }
 
