@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -17,15 +18,14 @@
     <artifactId>arquillian-testenricher-parent</artifactId>
     <packaging>pom</packaging>
     <name>Arquillian TestEnricher Aggregator</name>
-    <url>http://www.jboss.org</url>
     <description>Arquillian TestEnricher Aggregator</description>
 
     <modules>
         <module>cdi</module>
         <module>ejb</module>
         <module>resource</module>
-	
-	<!-- Producers -->
-	<module>initialcontext</module>
+
+        <!-- Producers -->
+        <module>initialcontext</module>
     </modules>
 </project>

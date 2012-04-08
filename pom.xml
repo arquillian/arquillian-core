@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -19,7 +20,7 @@
     <version>1.0.0.Final-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Arquillian Aggregator</name>
-    <url>http://www.jboss.org</url>
+    <url>http://arquillian.org</url>
     <description>Arquillian Aggregator</description>
 
     <properties>
@@ -31,18 +32,15 @@
 
         <!-- External Deps -->
         <version.shrinkwrap_shrinkwrap>1.0.0</version.shrinkwrap_shrinkwrap>
-        <version.shrinkwrap_resolver>1.0.0-beta-6</version.shrinkwrap_resolver>
         <version.shrinkwrap_descriptors>2.0.0-alpha-2</version.shrinkwrap_descriptors>
 
     </properties>
 
-    <!-- Issues -->
     <issueManagement>
         <system>jira</system>
         <url>http://jira.jboss.com/jira/browse/ARQ</url>
     </issueManagement>
 
-    <!-- Licenses -->
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>

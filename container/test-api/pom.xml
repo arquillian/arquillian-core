@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <!-- Parent -->
-   <parent>
-      <groupId>org.jboss.arquillian</groupId>
-      <artifactId>arquillian-build</artifactId>
-      <version>1.0.0.Final-SNAPSHOT</version>
-      <relativePath>../../build/pom.xml</relativePath>
-   </parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-build</artifactId>
+        <version>1.0.0.Final-SNAPSHOT</version>
+        <relativePath>../../build/pom.xml</relativePath>
+    </parent>
 
-   <!-- Model Version -->
-   <modelVersion>4.0.0</modelVersion>
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
 
-   <!-- Artifact Configuration -->
-   <groupId>org.jboss.arquillian.container</groupId>
-   <artifactId>arquillian-container-test-api</artifactId>
-   <name>Arquillian Container Test API</name>
-   <description>Integration with the Test extention for the container extension.</description>
+    <!-- Artifact Configuration -->
+    <groupId>org.jboss.arquillian.container</groupId>
+    <artifactId>arquillian-container-test-api</artifactId>
+    <name>Arquillian Container Test API</name>
+    <description>Integration with the Test extention for the container extension.</description>
 
 
-   <!-- Properties -->
-   <properties>
+    <!-- Properties -->
+    <properties>
 
-      <!-- Versioning -->
+        <!-- Versioning -->
 
-   </properties>
+    </properties>
 
-   <!-- Dependencies -->
-   <dependencies>
+    <!-- Dependencies -->
+    <dependencies>
 
-      <!-- 
-    org.jboss.arquillian
-     -->
+        <!-- org.jboss.arquillian -->
 
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-   </dependencies>
+    </dependencies>
 </project>
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -18,7 +19,6 @@
     <artifactId>arquillian-testng-standalone</artifactId>
     <name>Arquillian TestRunner TestNG Standalone</name>
     <description>TestNG Standalone Implementation for the Arquillian Project</description>
-
 
     <!-- Properties -->
     <properties>
@@ -56,7 +56,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
 
         <!-- External Projects -->
         <dependency>
