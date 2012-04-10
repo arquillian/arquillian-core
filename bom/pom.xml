@@ -32,6 +32,15 @@
         <url>git://github.com/arquillian/arquillian-core.git</url>
     </scm>
 
+    <developers>
+        <developer>
+            <id>arquillian.org</id>
+            <name>Arquillian Community</name>
+            <organization>arquillian.org</organization>
+            <organizationUrl>http://arquillian.org</organizationUrl>
+        </developer>
+    </developers>
+
     <properties>
 
         <version.shrinkwrap_shrinkwrap>1.0.0</version.shrinkwrap_shrinkwrap>
