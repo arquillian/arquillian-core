@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * Config class enables users to use fluent API for creating a list of
- * properties which should be overridden in the existing arquillian
+ * properties which should be overridden in the existing Arquillian
  * configuration. It holds a map of properties that can be retrieved via
  * {@link Config#map()} and the results should be passed e.g. to
  * {@link ContainerController#start(String, Map)} 

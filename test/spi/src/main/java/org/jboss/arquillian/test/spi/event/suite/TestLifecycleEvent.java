@@ -38,7 +38,6 @@ public class TestLifecycleEvent extends TestEvent implements LifecycleEvent
  
     * @param testInstance The Test instance
     * @param testMethod The Test Method being executed
-    * @param executor A call back when the LifecycleMethod represented by this event should be invoked
     */
    public TestLifecycleEvent(Object testInstance, Method testMethod)
    {

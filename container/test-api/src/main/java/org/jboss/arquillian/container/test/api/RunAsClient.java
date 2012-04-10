@@ -25,8 +25,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * In RunAsClient mode the @{@link Deployment} is processed and deployed to the Container, 
- * but the @Test is not executed inside the container.
+ * The run mode for a test method is determined by the @Deployment annotations member testable.
+ * By default testable is true which tells Arquillian to execute the test methods in container. If testable is set to false,
+ * Arquillian will execute the test methods on the client side.
+ *
+ * <p>
+ * In some cases it is useful to run different test methods in a test class in different modes,
+ * e.g. a client method that calls a Servlet for then to verify some internal state in a in container method.
+ *
+ * Usage Example:<br/>
+ * <pre><code>
+ * &#64;Deployment
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class);
+ * }
+ *
+ * &#64;Test &#64;RunAsClient
+ * public void shouldExecuteOnClientSide() { ... }
+ *
+ * &#64;Test
+ * public void shouldExecuteInContainer() { ... }
+ * </code></pre>
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

@@ -24,9 +24,58 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines that this @Test method will operate within the context of the deployment. 
- * 
- * It will have access to the meta data provided by the @Deployment and the Container where it is deployed. 
+ * Defines that the target should operate within the context of the referenced deployment.
+ * <p>
+ * When using multiple {@link Deployment}'s within the same TestCase you need to specify which deployment the
+ * individual test methods should operate on.
+ * <p>
+ * Within the context of a deployment you will have access to the meta data provided by the
+ * deployment and the container where it is deployed, e.g. URLs
+ * <p>
+ * Usage Example for test method:<br/>
+ * <pre><code>
+ * &#64;Deployment(name = "X")
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class)
+ *          .addClass(MyServletX.class);
+ * }
+ *
+ * &#64;Deployment(name = "Y")
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class)
+ *          .addClass(MyServletY.class);
+ * }
+ *
+ * &#64;Test &#64;OperatesOnDeployment("X")
+ * public void shouldExecuteInX() { ... }
+ *
+ * &#64;Test &#64;OperatesOnDeployment("Y")
+ * public void shouldExecuteInY() { ... }
+ * </code></pre>
+ *
+ * Additionally you can reference another deployments metadata from within another context by qualifiing
+ * OperateOnDeployment on ArquillianResource injection points.
+ * <p>
+ *
+ * Usage Example for ArquillianResource:<br/>
+ * <pre><code>
+ * &#64;Deployment(name = "X")
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class)
+ *          .addClass(MyServletX.class);
+ * }
+ * &#64;Deployment(name = "Y")
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class)
+ *          .addClass(MyServletY.class);
+ * }
+ *
+ * &#64;Test &#64;OperatesOnDeployment("X")
+ * public void shouldExecuteInX() { ... }
+ *
+ * &#64;Test &#64;OperatesOnDeployment("Y") &#64;RunAsClient
+ * public void shouldExecuteInY(&#64;ArquillianResource &#64;OperateOnDeployment("X") URL deploymentXURLContext) { ... }
+ * </code></pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -36,5 +85,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 public @interface OperateOnDeployment
 {
-   String value();
+    /**
+     * Refer to the deployment name this should operate on.
+     *
+     * @return The Deployment name this method operates on
+     * @see Deployment#name()
+     */
+    String value();
 }

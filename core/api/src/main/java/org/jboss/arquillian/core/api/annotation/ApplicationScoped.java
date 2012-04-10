@@ -26,7 +26,8 @@ import java.lang.annotation.Target;
 import org.jboss.arquillian.core.api.annotation.Scope;
 
 /**
- * SuiteScoped
+ * The application scope is provided by Arquillian Core and is always available.
+ * A Global scope that last from manager start until manager shutdown.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

@@ -23,7 +23,40 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 
 /**
- * Used to target a deployment to a specific Container.
+ * When using multiple containers within the same test suite, you can use the @TargetsContainer annotation to specify 
+ * which container a deployment should be deployed to.
+ *
+ * <p>
+ * Usage Example:<br/>
+ * <pre><code>
+ * &#64;Deployment &#64;TargetsContainer("X")
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class);
+ * }
+ *
+ * &#64;Deployment
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class)
+ * }
+ * </code></pre>
+ *
+ * The TargetsContainer name refers to the container qualifier defined in the Arquillian configuration.
+ *
+ * <pre><code>
+ * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+ * &lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ *   xmlns="http://jboss.org/schema/arquillian"
+ *   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ *
+ *      &lt;group qualifier="G"&gt;
+ *          &lt;container qualifier="X" /&gt;
+ *          &lt;container qualifier="Y" default="true" /&gt;
+ *      &lt;/group&gt;
+ * &lt;/arquillian&gt;
+ * </code></pre>
+ *
+ * If a container is defined as default=true in configuration, the @TagetsContainer annotation can be emitted
+ * when targeting that container. Only one container can be set as default within a group.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -34,7 +67,7 @@ import java.lang.annotation.Retention;
 public @interface TargetsContainer 
 {
    /**
-    * The name of the target.
+    * The name of the target container as defined in configuration.
     * 
     * @return The target name.
     */

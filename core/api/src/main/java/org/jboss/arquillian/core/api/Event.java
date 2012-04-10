@@ -17,7 +17,17 @@
 package org.jboss.arquillian.core.api;
 
 /**
- * Event
+ * <pre>
+ * {@code @Inject
+ * private Event<MyEvent> myEvent;
+ *
+ * public void listen(@Observes OtherEvent otherEvent) {
+ *     // do something..
+ *     myEvent.fire(new MyEvent());
+ *     // do something..
+ * }
+ * }
+ * </pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

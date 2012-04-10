@@ -24,8 +24,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines that this method returns a deployment definition, either a {@link Archive} or a {@link Descriptor}.
+ * The {@code @Deployment} is used to define which methods should be be considered as deployment producers. Arquillian support
+ * two types of deployment units, a {@link Archive} or a {@link Descriptor}.
+ * <p>
+ * A deployment represent the isolation level of your test, that being a single JavaArchive or a multi module EnterpriseArchive.
+ * <p>
+ * The deployment producer will be executed to create the deployment before the Test run, this to detect environment problems as soon as 
+ * possible.
  *
+ * <p>
+ * Usage Example:<br/>
+ * <pre><code>
+ * &#64;Deployment
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class);
+ * }
+ *
+ * &#64;Deployment
+ * public static Descriptor create() {
+ *      return Descriptors.create(HornetQDescriptor.class);
+ * }
+ * </code></pre>
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -35,7 +54,7 @@ import java.lang.annotation.Target;
 public @interface Deployment 
 {
    /**
-    * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or target is using @OperateOnDeployment
+    * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or method is using @OperateOnDeployment
     * 
     * @return The name of this Deployment
     */

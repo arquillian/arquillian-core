@@ -24,7 +24,34 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines how Arquillian should communicate with the @{@link Deployment} when executing it in container.
+ * Defines how Arquillian should communicate with and prepare the @{@link Deployment} for in container testing.
+ * <p>
+ * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can override this behavior 
+ * by using @OverProtocol on the @Deployment method.
+ *
+ * <p>
+ * Usage Example:<br/>
+ * <pre><code>
+ * &#64;Deployment &#64;OverProtocol("MyCustomProtocol")
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class);
+ * }
+ * </code></pre>
+ *
+ * You can also override the default behavior on a global level using arquillian.xml. This will apply to
+ * all containers and all deployments in your test suite.
+ *
+ * <p>
+ * Usage Example:<br/>
+ * <pre><code>
+ * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+ * &lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ *   xmlns="http://jboss.org/schema/arquillian"
+ *   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ *
+ *      &lt;defaultProtocol type="Servlet 3.0" /&gt;
+ * &lt;/arquillian&gt;
+ * </code></pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -35,7 +62,7 @@ import java.lang.annotation.Target;
 public @interface OverProtocol 
 {
    /**
-    * A String reference to the protocol
+    * A String reference to the protocol name
     * 
     * @return
     */

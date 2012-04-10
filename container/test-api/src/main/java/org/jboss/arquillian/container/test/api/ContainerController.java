@@ -25,6 +25,38 @@ import java.util.Map;
 
 /**
  * A interface that describes how you can start/stop server instances during test execution.
+ * <p>
+ * Usage Example:<br/>
+ * <pre><code>
+ * &#64;Deployment
+ * public static WebArchive create() {
+ *      return ShrinkWrap.create(WebArchive.class)
+
+ * }
+ *
+ * &#64;ArquillianResource
+ * private ContainerController controller;
+ *
+ * &#64;Test
+ * public void shouldStartServerX() {
+ *      controller.start("X")
+ * }
+ * </code></pre>
+ *
+ * <pre><code>
+ * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+ * &lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ *   xmlns="http://jboss.org/schema/arquillian"
+ *   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ *
+ *      &lt;group qualifier="G"&gt;
+ *          &lt;container qualifier="X" mode="manual" /&gt;
+ *          &lt;container qualifier="Y" default="true" /&gt;
+ *      &lt;/group&gt;
+ * &lt;/arquillian&gt;
+ * </code></pre>
+ *
+ * Only containers configured to be in mode manual or custom can be controlled via the ContainerController.
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $

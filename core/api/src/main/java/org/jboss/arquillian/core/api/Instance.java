@@ -17,7 +17,17 @@
 package org.jboss.arquillian.core.api;
 
 /**
- * Instance
+ * <pre>
+ * {@code @Inject
+ * private Instance<MyObject> myObjectInst;
+ *
+ * public void listen(@Observes OtherEvent otherEvent) {
+ *     // do something..
+ *     myObjectInst.get().performSomeOperation();
+ *     // do something..
+ * }
+ * }
+ * </pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

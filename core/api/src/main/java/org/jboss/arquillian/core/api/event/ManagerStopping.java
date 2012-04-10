@@ -18,7 +18,7 @@
 package org.jboss.arquillian.core.api.event;
 
 /**
- * ManagerStopping
+ * The event fired during Manager shutdown
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

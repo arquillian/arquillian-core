@@ -24,7 +24,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * ObservesEvent
+ * <pre>
+ * {@code 
+ * public void listen(@Observes SomeEvent event) {
+ *     // do something..
+ * }
+ * }
+ * </pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

@@ -23,13 +23,31 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.net.URL;
-
-import javax.naming.InitialContext;
 
 /**
- * Defines a InjectionPoint for Arquillian Controlled Resources. <br/>
- * e.g: {@link Deployer}, {@link URL}, {@link InitialContext}
+ * Arquillian has support for multiple injection points like @EJB, @Resources and @Inject, but there are also
+ * non standard component model objects available within the Arquillian runtime that can be of useful during testing.
+ * <p>
+ * Arquillian can expose these objects to the test case using the @ArquillianResource injection annotation.
+ *
+ * Usage Example of Field injection:<br/>
+ * <pre><code>
+ * &#64;ArquillianResource
+ * private InitialContext context;
+ *
+ * &#64;Test
+ * public void shouldBeAbleToGetContext() {
+ *      context.lookup("");
+ * }
+ * </code></pre>
+ *
+ * Usage Example of Argument injection:<br/>
+ * <pre><code>
+ * &#64;Test
+ * public void shouldBeAbleToGetContext(&#64;ArquillianResource InitialContext context) {
+ *      context.lookup("");
+ * }
+ * </code></pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

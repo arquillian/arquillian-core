@@ -17,7 +17,7 @@
 package org.jboss.arquillian.core.api.event;
 
 /**
- * ManagerStarted
+ * The event fired during Manager startup
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
