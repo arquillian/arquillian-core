@@ -99,13 +99,7 @@ public class DeploymentGenerator
          Container container = conReg.getContainer(target);
          if (container == null)
          {
-            throw new ValidationException(
-                  DeploymentScenario.class.getSimpleName()
-                        + " contains targets not matching any defined Container in the registry. " + target.getName()
-                        + ". Possible causes are: No Deployable Container found on Classpath or "
-                        + "your have defined a @" + org.jboss.arquillian.container.test.api.Deployment.class.getName()
-                        + " with a @" + TargetsContainer.class.getName()
-                        + " value that does not match any found/configured Containers (see arquillian.xml container@qualifier) ");
+            throwTargetNotFoundValidationException(conReg, target);
          }
       }
 
@@ -238,4 +232,46 @@ public class DeploymentGenerator
          }
       }
    }
+
+   private void throwTargetNotFoundValidationException(ContainerRegistry conReg, TargetDescription target)
+   {
+      if (conReg.getContainers().size() == 0)
+      {
+         throwNoContainerFound(target);
+      }
+      throwNoMatchFound(conReg, target);
+   }
+
+   private void throwNoContainerFound(TargetDescription target)
+   {
+      throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
+            + ") not matching any defined Container in the registry.\n"
+            + "Please include at least 1 Deployable Container on your Classpath.");
+   }
+
+   private void throwNoMatchFound(ContainerRegistry conReg, TargetDescription target)
+   {
+      throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
+            + ") not matching any defined Container in the registry.\n" + "Possible causes are: None of the "
+            + conReg.getContainers().size() + " Containers are marked as default or you have defined a " + "@"
+            + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + " with a @"
+            + TargetsContainer.class.getSimpleName() + " of value (" + target.getName() + ") that "
+            + "does not match any found/configured Containers (" + toString(conReg)
+            + "), see arquillian.xml container@qualifier");
+   }
+
+   private String toString(ContainerRegistry reg)
+   {
+      StringBuilder sb = new StringBuilder();
+      for (Container container : reg.getContainers())
+      {
+         sb.append(container.getName()).append(",");
+      }
+      if (sb.length() > 0)
+      {
+         sb.deleteCharAt(sb.length() - 1);
+      }
+      return sb.toString();
+   }
+
 }

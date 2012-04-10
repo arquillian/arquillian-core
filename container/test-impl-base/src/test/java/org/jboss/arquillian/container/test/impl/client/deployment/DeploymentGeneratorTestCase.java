@@ -202,14 +202,30 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       try
       {
          fire(createEvent(DeploymentWithContainerReference.class));
-      } 
-      catch (Exception e) 
+      }
+      catch (Exception e)
       {
-         Assert.assertTrue("Validate correct error message", e.getMessage().contains("not matching any defined Container"));
+         Assert.assertTrue("Validate correct error message", e.getMessage().contains("Please include at least 1 Deployable Container on your Classpath"));
          throw e;
       }
    }
    
+   @Test(expected = ValidationException.class)
+   public void shouldThrowExceptionOnWrongContainerReference() throws Exception
+   {
+      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+      try
+      {
+         fire(createEvent(DeploymentWithContainerReference.class));
+      }
+      catch (Exception e)
+      {
+         //e.printStackTrace();
+         Assert.assertTrue("Validate correct error message", e.getMessage().contains("does not match any found/configured Containers"));
+         throw e;
+      }
+   }
+
    @Test(expected = ValidationException.class)
    public void shouldThrowExceptionOnMissingProtocolReference() throws Exception
    {
@@ -217,8 +233,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       try
       {
          fire(createEvent(DeploymentWithProtocolReference.class));
-      } 
-      catch (Exception e) 
+      }
+      catch (Exception e)
       {
          Assert.assertTrue("Validate correct error message", e.getMessage().contains("not maching any defined Protocol"));
          throw e;
@@ -232,8 +248,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       try
       {
          fire(createEvent(DeploymentManagedWithCustomContainerReference.class));
-      } 
-      catch (Exception e) 
+      }
+      catch (Exception e)
       {
          Assert.assertTrue("Validate correct error message", e.getMessage().contains("This container is set to mode custom "));
          throw e;
