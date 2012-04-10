@@ -255,6 +255,43 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       }
    }
 
+   /*
+    *  ARQ-619, multiple DeployableContainer on classpath is not currently allowed, but not reported.
+    */
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfMultipleDeployableContainersFoundOnClassapth()
+   {
+      Mockito.when(serviceLoader.onlyOne(DeployableContainer.class))
+         .thenThrow(new IllegalStateException("Multiple service implementations found for ..."));
+
+      try
+      {
+         fire( Descriptors.create(ArquillianDescriptor.class));
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Could not add a default container"));
+         throw e;
+      }
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfFailedToCreateDefaultDeployableContainerInstance()
+   {
+      Mockito.when(serviceLoader.onlyOne(DeployableContainer.class))
+         .thenThrow(new RuntimeException("Class yatta yatta not found..."));
+
+      try
+      {
+         fire( Descriptors.create(ArquillianDescriptor.class));
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Could not create the default"));
+         throw e;
+      }
+   }
+
    private void verifyRegistry(String... containerNames)
    {
       ContainerRegistry registry = regInst.get();
