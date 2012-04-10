@@ -79,6 +79,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    public static final String PROTOCOL_NAME_1 = "TEST_DEFAULT_1";
    public static final String PROTOCOL_NAME_2 = "TEST_DEFAULT_2";
    public static final String CONTAINER_NAME_1 = "CONTAINER_NAME_1";
+   public static final String CONTAINER_NAME_2 = "CONTAINER_NAME_2";
    
    
    @Override
@@ -196,6 +197,18 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       verifyScenario("DeploymentNonManagedWithCustomContainerReference");
    }
 
+   @Test
+   public void shouldAllowMultipleSameNamedArchiveDeploymentWithDifferentTargets() throws Exception
+   {
+      addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("suite");
+      addContainer(CONTAINER_NAME_2).getContainerConfiguration().setMode("suite");
+      addProtocol(PROTOCOL_NAME_1, true);
+
+      fire(createEvent(DeploymentMultipleSameNameArchiveDifferentTarget.class));
+
+      verifyScenario("X", "Y");
+   }
+
    @Test(expected = ValidationException.class)
    public void shouldThrowExceptionOnMissingContainerReference() throws Exception
    {
@@ -220,7 +233,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       }
       catch (Exception e)
       {
-         //e.printStackTrace();
          Assert.assertTrue("Validate correct error message", e.getMessage().contains("does not match any found/configured Containers"));
          throw e;
       }
@@ -237,6 +249,34 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       catch (Exception e)
       {
          Assert.assertTrue("Validate correct error message", e.getMessage().contains("not maching any defined Protocol"));
+         throw e;
+      }
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnMultipleNoNamedDeployments() throws Exception
+   {
+      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+      try
+      {
+         fire(createEvent(DeploymentMultipleNoNamed.class));
+      }
+      catch (Exception e)
+      {
+         throw e;
+      }
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldThrowExceptionOnMultipleSameNamedArchiveDeployments() throws Exception
+   {
+      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+      try
+      {
+         fire(createEvent(DeploymentMultipleSameNameArchive.class));
+      }
+      catch (Exception e)
+      {
          throw e;
       }
    }
@@ -263,8 +303,24 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       
       for(int i = 0; i < names.length; i++)
       {
-         scenario.deployments().get(i).getDescription().getName().equals(names[i]);
+         contains(scenario.deployments(), names[i]);
       }
+   }
+
+   private void contains(Collection<org.jboss.arquillian.container.spi.client.deployment.Deployment> deployments, String name)
+   {
+      if(deployments == null || deployments.size() == 0)
+      {
+         Assert.fail("No deployment by name " + name + " found in scenario. Scenario is empty");
+      }
+      for(org.jboss.arquillian.container.spi.client.deployment.Deployment deployment : deployments)
+      {
+         if(name.equals(deployment.getDescription().getName()))
+         {
+            return;
+         }
+      }
+      Assert.fail("No deployment by name " + name + " found in scenario. " + deployments);
    }
 
    private Container addContainer(String name)
@@ -300,9 +356,60 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    {
       @SuppressWarnings("unused")
       @Deployment
-      public static JavaArchive deploy() 
+      public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+
+   private static class DeploymentMultipleNoNamed
+   {
+      @SuppressWarnings("unused")
+      @Deployment
+      public static JavaArchive deploy()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+
+      @SuppressWarnings("unused")
+      @Deployment
+      public static JavaArchive deploy2()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+
+   private static class DeploymentMultipleSameNameArchive
+   {
+      @SuppressWarnings("unused")
+      @Deployment(name = "Y")
+      public static JavaArchive deploy()
+      {
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
+      }
+
+      @SuppressWarnings("unused")
+      @Deployment(name = "X")
+      public static JavaArchive deploy2()
+      {
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
+      }
+   }
+
+   private static class DeploymentMultipleSameNameArchiveDifferentTarget
+   {
+      @SuppressWarnings("unused")
+      @Deployment(name = "Y") @TargetsContainer(CONTAINER_NAME_1)
+      public static JavaArchive deploy()
+      {
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
+      }
+
+      @SuppressWarnings("unused")
+      @Deployment(name = "X") @TargetsContainer(CONTAINER_NAME_2)
+      public static JavaArchive deploy2()
+      {
+         return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
    }
 
@@ -310,7 +417,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    {
       @SuppressWarnings("unused")
       @Deployment(testable = false)
-      public static JavaArchive deploy() 
+      public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
@@ -320,7 +427,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    {
       @SuppressWarnings("unused")
       @Deployment @TargetsContainer("DOES_NOT_EXIST")
-      public static JavaArchive deploy() 
+      public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
@@ -330,7 +437,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    {
       @SuppressWarnings("unused")
       @Deployment @OverProtocol("DOES_NOT_EXIST")
-      public static JavaArchive deploy() 
+      public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
@@ -341,7 +448,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       @SuppressWarnings("unused")
       @Deployment(managed = true, testable = false)
       @TargetsContainer(CONTAINER_NAME_1)
-      public static JavaArchive deploy() 
+      public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
@@ -352,7 +459,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       @SuppressWarnings("unused")
       @Deployment(name = "DeploymentNonManagedWithCustomContainerReference", managed = false, testable = false)
       @TargetsContainer(CONTAINER_NAME_1)
-      public static JavaArchive deploy() 
+      public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }

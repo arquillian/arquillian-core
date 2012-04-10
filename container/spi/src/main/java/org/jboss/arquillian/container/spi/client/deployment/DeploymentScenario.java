@@ -45,6 +45,7 @@ public class DeploymentScenario
    {
       Validate.notNull(deployment, "Deployment must be specified");
       validateNotSameNameAndTypeOfDeployment(deployment);
+      validateNotSameArchiveAndSameTarget(deployment);
 
       this.deployments.add(new Deployment(deployment));
       return this;
@@ -344,6 +345,32 @@ public class DeploymentScenario
             {
                throw new IllegalArgumentException("Can not add multiple " + 
                            Archive.class.getName() + " deployments with the same name: " + deployment.getName());
+            }
+         }
+      }
+   }
+
+   /**
+    * Validate that a deployment with a archive of the same name does not have the same taget
+    *
+    * @param deployment
+    *
+    */
+   private void validateNotSameArchiveAndSameTarget(DeploymentDescription deployment)
+   {
+      if(!deployment.isArchiveDeployment())
+      {
+         return;
+      }
+      for (Deployment existing : archiveDeployments(deployments))
+      {
+         if(existing.getDescription().getArchive().getName().equals(deployment.getArchive().getName()))
+         {
+            if(existing.getDescription().getTarget().equals(deployment.getTarget()))
+            {
+               throw new IllegalArgumentException("Can not add multiple " +
+                           Archive.class.getName() + " archive deployments with the same archive name " + deployment.getName() +
+                           " that target the same target " + deployment.getTarget());
             }
          }
       }

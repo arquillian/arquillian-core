@@ -45,7 +45,7 @@ public class DeploymentScenarioTestCase
     * - A single Archive is default
     * - A Archive and a Descriptor, Archive is default
     * - Only allow equal names of deployments if they are of different Types
-    * 
+    * - Only allow archive deployments with same name if they have different targets
     */
 
    @Test
@@ -215,15 +215,41 @@ public class DeploymentScenarioTestCase
       Assert.assertTrue(deployment.getDescription().isArchiveDeployment());
    }
 
+   @Test
+   public void shouldAllowMultipleArchiveDeploymentsWithSameArchiveNameWithDifferentTargets()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class, "test.jar"))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class, "test.jar"))
+            .setTarget(new TargetDescription("B")));
+
+      Assert.assertEquals(2, scenario.deployments().size());
+   }
+
    @Test(expected = IllegalArgumentException.class)
    public void shouldNotAllowMultipleArchiveDeploymentsWithSameName()
    {
       DeploymentScenario scenario = new DeploymentScenario();
       scenario.addDeployment(
-            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
+            new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
             .setTarget(TargetDescription.DEFAULT));
       scenario.addDeployment(
-            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
+            new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void shouldNotAllowMultipleArchiveDeploymentsWithSameArchiveName()
+   {
+      DeploymentScenario scenario = new DeploymentScenario();
+      scenario.addDeployment(
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class, "test.jar"))
+            .setTarget(TargetDescription.DEFAULT));
+      scenario.addDeployment(
+            new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class, "test.jar"))
             .setTarget(TargetDescription.DEFAULT));
    }
 
