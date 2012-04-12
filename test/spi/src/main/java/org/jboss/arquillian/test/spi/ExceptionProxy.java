@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
@@ -190,7 +191,7 @@ public class ExceptionProxy implements Externalizable
 //               }
 //            };
             original = (Throwable)input.readObject();
-            
+
             // reset the cause, so we can de-serialize them individual
             SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
          }
@@ -222,11 +223,15 @@ public class ExceptionProxy implements Externalizable
             // move on, try to serialize anyway
          }
 
-         ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
-         ObjectOutputStream output = new ObjectOutputStream(originalOut);
-         output.writeObject(original);
-         output.flush();
-         originalBytes = originalOut.toByteArray();
+          try {
+              ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
+              ObjectOutputStream output = new ObjectOutputStream(originalOut);
+              output.writeObject(original);
+              output.flush();
+              originalBytes = originalOut.toByteArray();
+          } catch (NotSerializableException e) {
+              // in case some class breaks Serialization contract
+          }
       }
       out.writeObject(originalBytes);
    }
