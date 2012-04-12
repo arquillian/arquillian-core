@@ -17,7 +17,14 @@
  */
 package org.jboss.arquillian.test.spi;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -49,9 +56,28 @@ public class ExceptionProxyTestCase
       proxy(new UnsatisfiedResolutionException(new Exception(MSG)));
    }
 
+   @Test
+   public void shouldSerializeNonSerializableExceptions() throws Exception
+   {
+      ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonSerializableException()));
+      Throwable t = proxy.createException();
+
+      Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+      Assert.assertEquals(NullPointerException.class, t.getCause().getClass());
+   }
+
+   private ExceptionProxy serialize(ExceptionProxy proxy) throws Exception
+   {
+      ByteArrayOutputStream output = new ByteArrayOutputStream();
+      ObjectOutputStream out = new ObjectOutputStream(output);
+      out.writeObject(proxy);
+
+      ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(output.toByteArray()));
+      return (ExceptionProxy)in.readObject();
+   }
+
    private void proxy(Throwable throwable) throws Throwable
    {
-
       //printConstructors(throwable);
       
       throw ExceptionProxy.createForException(throwable).createException();
@@ -156,4 +182,17 @@ public class ExceptionProxyTestCase
       }
    }
 
+   public static class NonSerializableException extends RuntimeException
+   {
+      private static final long serialVersionUID = 1L;
+
+      @SuppressWarnings("unused")
+      private InputStream input;
+
+      public NonSerializableException()
+      {
+         super(new NullPointerException());
+         input = System.in;
+      }
+   }
 }

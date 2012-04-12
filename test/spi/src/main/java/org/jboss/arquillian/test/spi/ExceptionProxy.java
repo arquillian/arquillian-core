@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
@@ -66,6 +67,8 @@ public class ExceptionProxy implements Externalizable
 
    private Throwable original;
 
+   private boolean deserializationProblem = false;
+
    public ExceptionProxy() {}
 
    public ExceptionProxy(Throwable throwable)
@@ -104,7 +107,8 @@ public class ExceptionProxy implements Externalizable
          return original;
       }
 
-      Throwable throwable = createProxyException("Original exception not deserilizable, ClassNotFoundException"); //constructExceptionForClass(clazz);
+      Throwable throwable = createProxyException(
+            "Original exception " + (deserializationProblem ? "not deserilizable, ClassNotFoundException":"not serializable, NotSerializableException"));
       throwable.setStackTrace(trace);
       return throwable;
    }
@@ -190,13 +194,14 @@ public class ExceptionProxy implements Externalizable
 //               }
 //            };
             original = (Throwable)input.readObject();
-            
+
             // reset the cause, so we can de-serialize them individual
             SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
          }
          catch (Throwable e) // ClassNotFoundExcpetion / NoClassDefFoundError
          {
             // ignore, could not load class on client side, move on and create a fake 'proxy' later
+            deserializationProblem = true;
          }
       }
    }
@@ -222,11 +227,15 @@ public class ExceptionProxy implements Externalizable
             // move on, try to serialize anyway
          }
 
-         ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
-         ObjectOutputStream output = new ObjectOutputStream(originalOut);
-         output.writeObject(original);
-         output.flush();
-         originalBytes = originalOut.toByteArray();
+          try {
+              ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
+              ObjectOutputStream output = new ObjectOutputStream(originalOut);
+              output.writeObject(original);
+              output.flush();
+              originalBytes = originalOut.toByteArray();
+          } catch (NotSerializableException e) {
+              // in case some class breaks Serialization contract
+          }
       }
       out.writeObject(originalBytes);
    }
