@@ -49,6 +49,11 @@
             <artifactId>arquillian-test-impl-base</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.config</groupId>
+            <artifactId>arquillian-config-impl-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- External Projects -->
         <dependency>

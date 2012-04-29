@@ -33,10 +33,14 @@
             <artifactId>arquillian-testng-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.arquillian.test</groupId>
             <artifactId>arquillian-test-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.config</groupId>
+            <artifactId>arquillian-config-impl-base</artifactId>
             <version>${project.version}</version>
         </dependency>
 
