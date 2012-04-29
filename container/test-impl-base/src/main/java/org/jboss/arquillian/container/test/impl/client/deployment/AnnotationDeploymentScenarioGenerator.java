@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.DeploymentName;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -91,12 +93,12 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       DeploymentDescription deployment = null;
       if(Archive.class.isAssignableFrom(deploymentMethod.getReturnType()))
       {
-         deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
+         deployment = new DeploymentDescription(deploymentName(deploymentMethod), invoke(Archive.class, deploymentMethod));
          deployment.shouldBeTestable(deploymentAnnotation.testable());
       }
       else if(Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType()))
       {
-         deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
+         deployment = new DeploymentDescription(deploymentName(deploymentMethod), invoke(Descriptor.class, deploymentMethod));
          //deployment.shouldBeTestable(false);
       }
       deployment.shouldBeManaged(deploymentAnnotation.managed());
@@ -117,6 +119,20 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       }
       
       return deployment;
+   }
+
+   private String deploymentName(Method deploymentMethod)
+   {
+      for (Annotation methodAnnotation : deploymentMethod.getAnnotations())
+      {
+         Class<? extends Annotation> annotationType = methodAnnotation.annotationType();
+         if (annotationType.isAnnotationPresent(DeploymentName.class))
+         {
+            return annotationType.getAnnotation(DeploymentName.class).value();
+         }
+      }
+
+      return deploymentMethod.getAnnotation(Deployment.class).name();
    }
 
    /**

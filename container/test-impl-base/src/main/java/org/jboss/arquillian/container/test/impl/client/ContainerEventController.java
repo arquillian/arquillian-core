@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.container.test.impl.client;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.container.spi.Container;
@@ -35,6 +36,7 @@ import org.jboss.arquillian.container.spi.event.StopClassContainers;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopManualContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
+import org.jboss.arquillian.container.test.api.DeploymentName;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.core.api.Event;
@@ -187,9 +189,26 @@ public class ContainerEventController
       }
       else
       {
-         target = DeploymentTargetDescription.DEFAULT;
+         String name = deploymentName(method);
+         if (name == null)
+               target = DeploymentTargetDescription.DEFAULT;
+         else
+               target = new DeploymentTargetDescription(name);
       }
       return target;
+   }
+
+   private String deploymentName(Method deploymentMethod)
+   {
+      for (Annotation methodAnnotation : deploymentMethod.getAnnotations())
+      {
+         Class<? extends Annotation> annotationType = methodAnnotation.annotationType();
+         if (annotationType.isAnnotationPresent(DeploymentName.class))
+         {
+            return annotationType.getAnnotation(DeploymentName.class).value();
+         }
+      }
+      return null;
    }
    
    private abstract class ResultCallback
