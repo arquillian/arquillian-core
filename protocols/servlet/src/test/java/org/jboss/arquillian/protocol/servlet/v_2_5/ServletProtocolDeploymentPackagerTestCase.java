@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.api.Testable;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
@@ -62,7 +63,7 @@ public class ServletProtocolDeploymentPackagerTestCase
       
       Assert.assertTrue(
             "Verify that a defined JavaArchive using EE5 WebArchive protocol is build as EnterpriseArchive",
-            EnterpriseArchive.class.isInstance(archive));
+            Validate.isArchiveOfType(EnterpriseArchive.class, archive));
 
       Assert.assertTrue(
             "Verify that the auxiliaryArchives EE Modules are placed in /",

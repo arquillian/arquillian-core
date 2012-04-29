@@ -17,8 +17,15 @@
 package org.jboss.arquillian.container.spi.client.deployment;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.arquillian.container.spi.ConfigurationException;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Validate
@@ -30,8 +37,29 @@ import org.jboss.arquillian.container.spi.ConfigurationException;
  */
 public final class Validate
 {
+   private static Map<Class<? extends Archive<?>>, String> archiveExpressions;
+
+   static
+   {
+      archiveExpressions = new HashMap<Class<? extends Archive<?>>, String>();
+      archiveExpressions.put(JavaArchive.class, ".jar");
+      archiveExpressions.put(WebArchive.class, ".war");
+      archiveExpressions.put(EnterpriseArchive.class, ".ear");
+      archiveExpressions.put(ResourceAdapterArchive.class, ".rar");
+   }
+
    private Validate()
    {
+   }
+
+   public static boolean isArchiveOfType(Class<? extends Archive<?>> type, Archive<?> archive)
+   {
+      String expression = archiveExpressions.get(type);
+      if(expression == null)
+      {
+         return false;
+      }
+      return archive.getName().endsWith(expression);
    }
 
    /**

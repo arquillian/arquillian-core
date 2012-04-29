@@ -19,6 +19,7 @@ package org.jboss.arquillian.testenricher.cdi.client;
 
 import java.util.Map;
 
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.shrinkwrap.api.Archive;
@@ -51,13 +52,13 @@ public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor
       
       if(containsBeansXML(testDeployment.getApplicationArchive()))
       {
-         if(WebArchive.class.isInstance(protocolArchive))
+         if(Validate.isArchiveOfType(WebArchive.class, protocolArchive))
          {
-            WebArchive.class.cast(protocolArchive).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            protocolArchive.as(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
          }
-         else if(JavaArchive.class.isInstance(protocolArchive))
+         else if(Validate.isArchiveOfType(JavaArchive.class, protocolArchive))
          {
-            JavaArchive.class.cast(protocolArchive).addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+            protocolArchive.as(JavaArchive.class).addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
          }
       }
    }
