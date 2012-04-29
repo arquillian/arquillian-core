@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
@@ -60,19 +61,19 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       
       Processor processor = new Processor(testDeployment, processors);
       
-      if(EnterpriseArchive.class.isInstance(applicationArchive))
+      if(Validate.isArchiveOfType(EnterpriseArchive.class,  applicationArchive))
       {
-         return handleArchive(EnterpriseArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor, testDeployment);
+         return handleArchive(applicationArchive.as(EnterpriseArchive.class), auxiliaryArchives, protocol, processor, testDeployment);
       } 
 
-      if(WebArchive.class.isInstance(applicationArchive))
+      if(Validate.isArchiveOfType(WebArchive.class, applicationArchive))
       {
-         return handleArchive(WebArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor);
+         return handleArchive(applicationArchive.as(WebArchive.class), auxiliaryArchives, protocol, processor);
       } 
 
-      if(JavaArchive.class.isInstance(applicationArchive))
+      if(Validate.isArchiveOfType(JavaArchive.class, applicationArchive))
       {
-         return handleArchive(JavaArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor);
+         return handleArchive(applicationArchive.as(JavaArchive.class), auxiliaryArchives, protocol, processor);
       }
 
       throw new IllegalArgumentException(ServletProtocolDeploymentPackager.class.getName()  + 

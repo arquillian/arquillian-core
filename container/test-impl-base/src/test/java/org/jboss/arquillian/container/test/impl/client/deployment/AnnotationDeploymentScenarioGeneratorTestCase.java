@@ -21,6 +21,7 @@ import java.util.List;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -67,7 +68,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
 
          Assert.assertEquals(-1, deployment.getOrder());
          Assert.assertEquals(true, deployment.managed());
-         Assert.assertTrue(JavaArchive.class.isInstance(deployment.getArchive()));
+         Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deployment.getArchive()));
       }
    }
 
@@ -96,7 +97,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertEquals(1, deploymentOne.getOrder());
       Assert.assertEquals(false, deploymentOne.managed());
       Assert.assertEquals(false, deploymentOne.testable());
-      Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
+      Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentOne.getArchive()));
       Assert.assertNull(deploymentOne.getExpectedException());
 
       DeploymentDescription deploymentTwo = scenario.get(1);
@@ -113,7 +114,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertEquals(2, deploymentTwo.getOrder());
       Assert.assertEquals(false, deploymentTwo.managed());
       Assert.assertEquals(true, deploymentTwo.testable());
-      Assert.assertTrue(JavaArchive.class.isInstance(deploymentTwo.getArchive()));
+      Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentTwo.getArchive()));
       Assert.assertNull(deploymentTwo.getExpectedException());
    }
 
@@ -130,7 +131,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       DeploymentDescription deploymentOne = scenario.get(0);
 
       Assert.assertEquals(false, deploymentOne.testable());
-      Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
+      Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentOne.getArchive()));
       Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
    }
 
