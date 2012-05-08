@@ -30,6 +30,7 @@ import org.jboss.arquillian.protocol.servlet.ServletUtil;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.ApplicationDescriptor;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -48,6 +49,11 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  */
 public class ServletProtocolDeploymentPackager implements DeploymentPackager
 {
+   private static final ArchivePath EJB_JAR_XML_JAR_PATH = ArchivePaths.create("META-INF/ejb-jar.xml");
+   private static final ArchivePath EJB_JAR_XML_WAR_PATH = ArchivePaths.create("WEB-INF/ejb-jar.xml");
+   private static final ArchivePath BEANS_XML_JAR_PATH = ArchivePaths.create("META-INF/beans.xml");
+   private static final ArchivePath BEANS_XML_WAR_PATH = ArchivePaths.create("WEB-INF/beans.xml");
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
     */
@@ -96,12 +102,20 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
 
    private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
    {
-      return handleArchive(
-            ShrinkWrap.create(WebArchive.class, "test.war")
-               .addAsLibrary(applicationArchive),
-            auxiliaryArchives, 
-            protocol,
-            processor);
+      WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war");
+      if (applicationArchive.contains(EJB_JAR_XML_JAR_PATH))
+      {
+         archive.add(applicationArchive.get(EJB_JAR_XML_JAR_PATH).getAsset(), EJB_JAR_XML_WAR_PATH);
+         applicationArchive.delete(EJB_JAR_XML_JAR_PATH);
+      }
+
+      if (applicationArchive.contains(BEANS_XML_JAR_PATH))
+      {
+         archive.add(applicationArchive.get(BEANS_XML_JAR_PATH).getAsset(), BEANS_XML_WAR_PATH);
+         applicationArchive.delete(BEANS_XML_JAR_PATH);
+      }
+      archive.addAsLibrary(applicationArchive);
+      return handleArchive(archive, auxiliaryArchives, protocol, processor);
    }
 
    private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
