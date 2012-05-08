@@ -17,6 +17,7 @@
 package org.jboss.arquillian.test.spi;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +86,20 @@ public class TestClass
          }
       }
       return foundMethods.toArray(new Method[0]);
+   }
+   
+   public Field[] getFields(Class<? extends Annotation> annotation)
+   {
+      List<Field> found = new ArrayList<Field>();
+      Field[] fields = testClass.getFields();
+      for(Field field: fields)
+      {
+         if(field.isAnnotationPresent(annotation)) 
+         {
+            found.add(field);
+         }
+      }
+      return found.toArray(new Field[0]);
    }
 
 }
