@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.container.spi.client.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -39,6 +42,7 @@ public class DeploymentDescription
    private Descriptor descriptor;
    
    private Archive<?> testableArchive;
+   private List<String> servicesToExclude = new ArrayList<String>();
    
    private Class<? extends Exception> expectedException;
 
@@ -153,6 +157,15 @@ public class DeploymentDescription
       return this;
    }
    
+   public DeploymentDescription shouldExcludeServices(List<String> servicesToExclude) {
+      if(!isArchiveDeployment())
+      {
+         throw new IllegalArgumentException("Only an Archive deployment can exclude services: " + getName());
+      }
+      this.servicesToExclude = servicesToExclude;
+      return this;
+   }
+   
    /**
     * @return the testable
     */
@@ -161,6 +174,9 @@ public class DeploymentDescription
       return testable;
    }
 
+   public List<String> servicesToExclude() {
+      return servicesToExclude;
+   }
 
    /**
     * @return the testableArchive

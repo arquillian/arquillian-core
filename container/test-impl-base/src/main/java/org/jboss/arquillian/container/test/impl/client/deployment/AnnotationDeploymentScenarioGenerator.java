@@ -16,9 +16,12 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -26,7 +29,9 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ExcludeServices;
 import org.jboss.arquillian.container.test.api.OverProtocol;
+import org.jboss.arquillian.container.test.api.ServiceType;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
@@ -57,6 +62,13 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
          deployments.add(generateDeployment(deploymentMethod));
       }
       
+      Field[] deploymentFields = testClass.getFields(Deployment.class);
+      for (Field deploymentField : deploymentFields)
+      {
+         validate(deploymentField);
+         deployments.add(generateDeployment(deploymentField));
+      }
+      
       return deployments;
    }
 
@@ -78,26 +90,50 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       }
    }
    
+   private void validate(Field deploymentField)
+   {
+      if(!Modifier.isStatic(deploymentField.getModifiers()))
+      {
+         throw new IllegalArgumentException("Field annotated with " + Deployment.class.getName() + " is not static. "  + deploymentField);
+      }
+      if(!Archive.class.isAssignableFrom(deploymentField.getType()) && !Descriptor.class.isAssignableFrom(deploymentField.getType())) 
+      {
+         throw new IllegalArgumentException(
+               "Field annotated with " + Deployment.class.getName() + 
+               " must be of type " + Archive.class.getName() +  " or " + Descriptor.class.getName() + ". " + deploymentField);
+      }
+   }
+   
    /**
-    * @param deploymentMethod
+    * @param deploymentMember
     * @return
     */
-   private DeploymentDescription generateDeployment(Method deploymentMethod)
+   private DeploymentDescription generateDeployment(AccessibleObject deploymentMember)
    {
-      TargetDescription target = generateTarget(deploymentMethod);
-      ProtocolDescription protocol = generateProtocol(deploymentMethod);
+      TargetDescription target = generateTarget(deploymentMember);
+      ProtocolDescription protocol = generateProtocol(deploymentMember);
       
-      Deployment deploymentAnnotation = deploymentMethod.getAnnotation(Deployment.class);
+      Deployment deploymentAnnotation = deploymentMember.getAnnotation(Deployment.class);
       DeploymentDescription deployment = null;
-      if(Archive.class.isAssignableFrom(deploymentMethod.getReturnType()))
+      Class<?> type = getType(deploymentMember);
+      if(Archive.class.isAssignableFrom(type))
       {
-         deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
-         deployment.shouldBeTestable(deploymentAnnotation.testable());
+         deployment = new DeploymentDescription(deploymentAnnotation.name(), getOrInvoke(Archive.class, deploymentMember));
+         ExcludeServices excludeServicesAnnotation = deploymentMember.getAnnotation(ExcludeServices.class);
+         if (excludeServicesAnnotation != null) {
+             List<String> exclusions = Arrays.asList(excludeServicesAnnotation.value());
+             deployment.shouldExcludeServices(exclusions);
+             if (exclusions.contains(ServiceType.ALL) || exclusions.contains(ServiceType.TEST_RUNNER)) {
+                 deployment.shouldBeTestable(false);
+             }
+         }
+         else {
+             deployment.shouldBeTestable(deploymentAnnotation.testable());
+         }
       }
-      else if(Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType()))
+      else if(Descriptor.class.isAssignableFrom(type))
       {
-         deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
-         //deployment.shouldBeTestable(false);
+         deployment = new DeploymentDescription(deploymentAnnotation.name(), getOrInvoke(Descriptor.class, deploymentMember));
       }
       deployment.shouldBeManaged(deploymentAnnotation.managed());
       deployment.setOrder(deploymentAnnotation.order());
@@ -110,20 +146,20 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
          deployment.setProtocol(protocol);
       }
       
-      if(deploymentMethod.isAnnotationPresent(ShouldThrowException.class))
+      if(deploymentMember.isAnnotationPresent(ShouldThrowException.class))
       {
-         deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
+         deployment.setExpectedException(deploymentMember.getAnnotation(ShouldThrowException.class).value());
          deployment.shouldBeTestable(false); // can't test against failing deployments
       }
       
       return deployment;
    }
-
+   
    /**
     * @param deploymentMethod
     * @return
     */
-   private TargetDescription generateTarget(Method deploymentMethod)
+   private TargetDescription generateTarget(AccessibleObject deploymentMethod)
    {
       if(deploymentMethod.isAnnotationPresent(TargetsContainer.class))
       {
@@ -136,7 +172,7 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
     * @param deploymentMethod
     * @return
     */
-   private ProtocolDescription generateProtocol(Method deploymentMethod)
+   private ProtocolDescription generateProtocol(AccessibleObject deploymentMethod)
    {
       if(deploymentMethod.isAnnotationPresent(OverProtocol.class))
       {
@@ -145,6 +181,18 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       return ProtocolDescription.DEFAULT;
    }
 
+   private <T> T getOrInvoke(Class<T> type, AccessibleObject deploymentMember)
+   {
+      if (deploymentMember instanceof Method)
+      {
+         return invoke(type, (Method) deploymentMember);
+      }
+      else
+      {
+         return get(type, (Field) deploymentMember); 
+      }
+   }
+   
    /**
     * @param deploymentMethod
     * @return
@@ -160,4 +208,33 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
          throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
       }
    }
+  
+   /**
+    * @param deploymentField
+    * @return
+    */
+   private <T> T get(Class<T> type, Field deploymentField)
+   {
+      try
+      {
+         return type.cast(deploymentField.get(null));
+      }
+      catch (Exception e) 
+      {
+         throw new RuntimeException("Could not get value of deployment field: " + deploymentField, e);
+      }
+   }
+   
+   private Class<?> getType(AccessibleObject member)
+   {
+      if (member instanceof Method)
+      {
+         return Method.class.cast(member).getReturnType();
+      }
+      else
+      {
+         return Field.class.cast(member).getType();
+      }
+   }
+   
 }

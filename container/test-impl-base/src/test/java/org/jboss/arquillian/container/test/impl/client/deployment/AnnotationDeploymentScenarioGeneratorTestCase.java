@@ -22,7 +22,9 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ExcludeServices;
 import org.jboss.arquillian.container.test.api.OverProtocol;
+import org.jboss.arquillian.container.test.api.ServiceType;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -132,7 +134,62 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
       Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
    }
+   
+   @Test
+   public void shouldThrowExceptionOnFieldOverridesTestableDeployment()
+   {
+      List<DeploymentDescription> scenario = generate(ShouldThrowExceptionOnDeploymentField.class);
+      
+      Assert.assertNotNull(scenario);
+      Assert.assertEquals(
+            "Verify all deployments were found",
+            1, scenario.size());
+      
+      DeploymentDescription deploymentOne = scenario.get(0);
 
+      Assert.assertEquals(false, deploymentOne.testable());
+      Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
+      Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
+   }
+
+   @Test
+   public void shouldAcceptDeploymentWithExcludedServices()
+   {
+       List<DeploymentDescription> descriptors = new AnnotationDeploymentScenarioGenerator().generate(
+               new TestClass(DeploymentWithExcludedServices.class));
+       Assert.assertNotNull(descriptors);
+       Assert.assertEquals(1, descriptors.size());
+       DeploymentDescription deployment = descriptors.get(0);
+       Assert.assertFalse(deployment.testable());
+       Assert.assertEquals(1, deployment.servicesToExclude().size());
+       Assert.assertEquals(ServiceType.ALL, deployment.servicesToExclude().get(0));
+   }
+   
+   @Test
+   public void shouldAcceptDeploymentWithTestRunnerServiceExcluded()
+   {
+       List<DeploymentDescription> descriptors = new AnnotationDeploymentScenarioGenerator().generate(
+               new TestClass(DeploymentWithTestRunnerServiceExcluded.class));
+       Assert.assertNotNull(descriptors);
+       Assert.assertEquals(1, descriptors.size());
+       DeploymentDescription deployment = descriptors.get(0);
+       Assert.assertFalse(deployment.testable());
+       Assert.assertEquals(1, deployment.servicesToExclude().size());
+       Assert.assertEquals(ServiceType.TEST_RUNNER, deployment.servicesToExclude().get(0));
+   }
+   
+   @Test
+   public void shouldAllowDeploymentOnField() throws Exception
+   {
+      List<DeploymentDescription> descriptors = new AnnotationDeploymentScenarioGenerator().generate(
+            new TestClass(DeploymentOnField.class));
+      
+      Assert.assertNotNull(descriptors);
+      Assert.assertEquals(1, descriptors.size());
+      Assert.assertTrue(descriptors.get(0).testable());
+   }
+   
+   @Test
    public void shouldAllowNoDeploymentPresent() throws Exception
    {
       List<DeploymentDescription> descriptors = new AnnotationDeploymentScenarioGenerator().generate(
@@ -193,6 +250,28 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    }
 
    @SuppressWarnings("unused")
+   private static class DeploymentWithExcludedServices 
+   {
+      @Deployment
+      @ExcludeServices
+      public static Archive<?> createDeployment()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+   
+   @SuppressWarnings("unused")
+   private static class DeploymentWithTestRunnerServiceExcluded
+   {
+      @Deployment
+      @ExcludeServices(ServiceType.TEST_RUNNER)
+      public static Archive<?> createDeployment()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+   
+   @SuppressWarnings("unused")
    private static class ExpectedDeploymentExceptionSet 
    {
       @Deployment(name = "second", testable = true) // testable should be overwritten by @Expected
@@ -202,7 +281,23 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
          return ShrinkWrap.create(JavaArchive.class);
       }
    }
-
+   
+   @SuppressWarnings("unused")
+   private static class DeploymentOnField
+   {
+      @Deployment
+      @ExcludeServices({})
+      public static Archive<?> deployment = ShrinkWrap.create(JavaArchive.class);
+   }
+   
+   @SuppressWarnings("unused")
+   private static class ShouldThrowExceptionOnDeploymentField 
+   {
+      @Deployment(testable = true) // testable should be overwritten by @ShouldThrowException
+      @ShouldThrowException(Exception.class)
+      public static Archive<?> deployment = ShrinkWrap.create(JavaArchive.class);
+   }
+   
    private static class DeploymentNotPresent
    {
    }

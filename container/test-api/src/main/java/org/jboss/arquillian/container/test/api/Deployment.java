@@ -24,12 +24,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * The {@code @Deployment} is used to define which methods should be be considered as deployment producers. Arquillian support
+ * The {@code @Deployment} is used to define which methods should be be considered as deployment producers. Arquillian supports
  * two types of deployment units, a {@link Archive} or a {@link Descriptor}.
  * <p>
- * A deployment represent the isolation level of your test, that being a single JavaArchive or a multi module EnterpriseArchive.
+ * A deployment represents the isolation level of your test, that being a single JavaArchive or a multi-module EnterpriseArchive.
  * <p>
- * The deployment producer will be executed to create the deployment before the Test run, this to detect environment problems as soon as 
+ * The deployment producer will be executed to create the deployment before the Test run to detect environment problems as soon as 
  * possible.
  *
  * <p>
@@ -50,7 +50,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Deployment 
 {
    /**
