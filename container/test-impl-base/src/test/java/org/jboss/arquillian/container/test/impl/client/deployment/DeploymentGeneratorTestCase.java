@@ -39,6 +39,7 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ExcludeServices;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
@@ -160,7 +161,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    public void shouldCallPackagingSPIsOnTestableArchive() throws Exception
    {
       addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      addProtocol(PROTOCOL_NAME_1, true);
+      addProtocol(PROTOCOL_NAME_1, false);
       
       fire(createEvent(DeploymentWithDefaults.class));
       
@@ -171,6 +172,22 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    
       verifyScenario("_DEFAULT_");
    }
+   
+   @Test
+   public void shouldCallPackagingSPIsOnTestableArchiveFromFieldWithContainerAndProtocolReferences() throws Exception
+   {
+      addContainer("test-container").getContainerConfiguration().setMode("suite");
+      addProtocol(PROTOCOL_NAME_1, false);
+      
+      fire(createEvent(DeploymentFieldWithContainerAndProtocolReferences.class));
+      
+      CallMap spi = getManager().resolve(CallMap.class);
+      Assert.assertTrue(spi.wasCalled(ApplicationArchiveProcessor.class));
+      Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveAppender.class));
+      Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveProcessor.class));
+
+      verifyScenario("_DEFAULT_");
+   }
 
    @Test
    public void shouldNotCallPackagingSPIsOnNonTestableArchive() throws Exception
@@ -179,6 +196,22 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       addProtocol(PROTOCOL_NAME_1, true);
       
       fire(createEvent(DeploymentNonTestableWithDefaults.class));
+      
+      CallMap spi = getManager().resolve(CallMap.class);
+      Assert.assertFalse(spi.wasCalled(ApplicationArchiveProcessor.class));
+      Assert.assertFalse(spi.wasCalled(AuxiliaryArchiveAppender.class));
+      Assert.assertFalse(spi.wasCalled(AuxiliaryArchiveProcessor.class));
+
+      verifyScenario("_DEFAULT_");
+   }
+   
+   @Test
+   public void shouldNotCallPackagingSPIsOnExcludeServicesArchive() throws Exception
+   {
+      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+      addProtocol(PROTOCOL_NAME_1, true);
+      
+      fire(createEvent(DeploymentExcludeServicesWithDefaults.class));
       
       CallMap spi = getManager().resolve(CallMap.class);
       Assert.assertFalse(spi.wasCalled(ApplicationArchiveProcessor.class));
@@ -208,7 +241,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
       verifyScenario("X", "Y");
    }
-
+   
    @Test(expected = ValidationException.class)
    public void shouldThrowExceptionOnMissingContainerReference() throws Exception
    {
@@ -422,6 +455,17 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
          return ShrinkWrap.create(JavaArchive.class);
       }
    }
+   
+   private static class DeploymentExcludeServicesWithDefaults
+   {
+      @SuppressWarnings("unused")
+      @Deployment
+      @ExcludeServices
+      public static JavaArchive deploy()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
 
    private static class DeploymentWithContainerReference
    {
@@ -443,6 +487,15 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       }
    }
    
+   private static class DeploymentFieldWithContainerAndProtocolReferences
+   {
+      @SuppressWarnings("unused")
+      @Deployment
+      @TargetsContainer("test-container")
+      @OverProtocol(PROTOCOL_NAME_1)
+      public static JavaArchive deployment = ShrinkWrap.create(JavaArchive.class);
+   }
+
    private static class DeploymentManagedWithCustomContainerReference
    {
       @SuppressWarnings("unused")

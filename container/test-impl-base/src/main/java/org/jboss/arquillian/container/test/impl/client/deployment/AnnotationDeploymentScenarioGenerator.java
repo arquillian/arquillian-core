@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -28,7 +29,9 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.ExcludeServices;
 import org.jboss.arquillian.container.test.api.OverProtocol;
+import org.jboss.arquillian.container.test.api.ServiceType;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
@@ -116,7 +119,17 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       if(Archive.class.isAssignableFrom(type))
       {
          deployment = new DeploymentDescription(deploymentAnnotation.name(), getOrInvoke(Archive.class, deploymentMember));
-         deployment.shouldBeTestable(deploymentAnnotation.testable());
+         ExcludeServices excludeServicesAnnotation = deploymentMember.getAnnotation(ExcludeServices.class);
+         if (excludeServicesAnnotation != null) {
+             List<String> exclusions = Arrays.asList(excludeServicesAnnotation.value());
+             deployment.shouldExcludeServices(exclusions);
+             if (exclusions.contains(ServiceType.ALL) || exclusions.contains(ServiceType.TEST_RUNNER)) {
+                 deployment.shouldBeTestable(false);
+             }
+         }
+         else {
+             deployment.shouldBeTestable(deploymentAnnotation.testable());
+         }
       }
       else if(Descriptor.class.isAssignableFrom(type))
       {
