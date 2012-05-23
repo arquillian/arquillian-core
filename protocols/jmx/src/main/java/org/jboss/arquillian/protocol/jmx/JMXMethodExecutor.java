@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.Notification;
@@ -28,7 +31,6 @@ import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.logging.Logger;
 
 /**
  * JMXMethodExecutor
@@ -38,7 +40,7 @@ import org.jboss.logging.Logger;
 public class JMXMethodExecutor implements ContainerMethodExecutor {
 
     // Provide logging
-    private static Logger log = Logger.getLogger(JMXMethodExecutor.class);
+    private static Logger log = Logger.getLogger(JMXMethodExecutor.class.getName());
 
     private final MBeanServerConnection mbeanServer;
     private final CommandCallback callback;
@@ -65,7 +67,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
             mbeanServer.addNotificationListener(objectName, commandListener, null, null);
 
             JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
-            log.debugf("Invoke %s", testCanonicalName);
+            log.fine("Invoke " + testCanonicalName);
             result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod));
 
         } catch (final Throwable th) {
@@ -77,13 +79,13 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
                 try {
                     mbeanServer.removeNotificationListener(objectName, commandListener);
                 } catch (Throwable th) {
-                    log.errorf(th, "Cannot remove notification listener");
+                    log.log(Level.SEVERE, "Cannot remove notification listener", th);
                 }
             }
         }
-        log.debugf("Result: %s", result);
+        log.fine("Result: " + result);
         if (result.getStatus() == Status.FAILED)
-            log.errorf(result.getThrowable(), "Failed: %s", testCanonicalName);
+            log.log(Level.SEVERE, "Failed: " + testCanonicalName, result.getThrowable());
         return result;
     }
 

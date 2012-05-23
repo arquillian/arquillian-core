@@ -18,6 +18,8 @@ package org.jboss.arquillian.protocol.jmx;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
@@ -30,7 +32,6 @@ import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.util.TestRunners;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.logging.Logger;
 
 /**
  * An MBean to run test methods in container.
@@ -40,7 +41,7 @@ import org.jboss.logging.Logger;
 public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean
 {
    // Provide logging
-   private static Logger log = Logger.getLogger(JMXTestRunner.class);
+   private static Logger log = Logger.getLogger(JMXTestRunner.class.getName());
 
    // package shared MBeanServer with JMXCommandService
    static MBeanServer localMBeanServer;
@@ -86,7 +87,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    {
       ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
       mbeanServer.registerMBean(this, oname);
-      log.debug("JMXTestRunner registered: " + oname);
+      log.fine("JMXTestRunner registered: " + oname);
       localMBeanServer = mbeanServer;
       return oname;
    }
@@ -97,7 +98,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       if (mbeanServer.isRegistered(oname))
       {
          mbeanServer.unregisterMBean(oname);
-         log.debug("JMXTestRunner unregistered: " + oname);
+         log.fine("JMXTestRunner unregistered: " + oname);
       }
       localMBeanServer = null;
    }
@@ -120,11 +121,11 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
             runner = TestRunners.getTestRunner(getClass().getClassLoader());
          }
 
-         log.debugf("Load test class: %s", className);
+         log.fine("Load test class: " + className);
          Class<?> testClass = testClassLoader.loadTestClass(className);
-         log.debugf("Test class loaded from: %s", testClass.getClassLoader());
+         log.fine("Test class loaded from: " + testClass.getClassLoader());
 
-         log.debugf("Execute: %s.%s", testClass, methodName);
+         log.fine("Execute: " + className + "." + methodName);
          result = runner.execute(testClass, methodName);
       }
       catch (Throwable th)
@@ -135,9 +136,9 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       }
       finally
       {
-         log.debugf("Result: %s", result);
+         log.fine("Result: " + result);
          if (result.getStatus() == Status.FAILED)
-            log.errorf(result.getThrowable(), "Failed: %s.%s", className, methodName);
+            log.log(Level.SEVERE, "Failed: " + className + "." + methodName, result.getThrowable());
       }
       return result;
    }

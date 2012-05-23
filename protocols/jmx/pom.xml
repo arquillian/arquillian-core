@@ -21,33 +21,14 @@
 
     <!-- Properties -->
     <properties>
-
-        <!-- Versioning -->
-        <version.jboss_logging>3.0.0.Beta4</version.jboss_logging>
-        <version.jboss_logmanager>1.2.0.CR8</version.jboss_logmanager>
-
     </properties>
 
     <!-- Dependencies -->
     <dependencies>
-
-        <!-- org.jboss.arquillian -->
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-container-test-spi</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>${version.jboss_logging}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.logmanager</groupId>
-            <artifactId>jboss-logmanager</artifactId>
-            <version>${version.jboss_logmanager}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Test -->
