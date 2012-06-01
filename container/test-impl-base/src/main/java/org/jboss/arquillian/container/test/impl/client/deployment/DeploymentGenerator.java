@@ -157,7 +157,6 @@ public class DeploymentGenerator
          {
             continue;
          }
-         // TODO: could be optimalized to only be loaded pr Container
          List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(description);
          
          ProtocolDefinition protocolDefinition = protoReg.getProtocol(description.getProtocol());
@@ -207,7 +206,11 @@ public class DeploymentGenerator
       
       for(AuxiliaryArchiveAppender archiveAppender : archiveAppenders)
       {
-         archives.add(archiveAppender.createAuxiliaryArchive());
+         Archive<?> auxiliaryArchive = archiveAppender.createAuxiliaryArchive();
+         if(auxiliaryArchive != null)
+         {
+            archives.add(auxiliaryArchive);
+         }
       }
       return archives;
    }

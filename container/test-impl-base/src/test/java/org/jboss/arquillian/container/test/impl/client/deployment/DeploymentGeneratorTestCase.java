@@ -44,6 +44,7 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
+import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveProcessor;
@@ -64,7 +65,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -207,6 +210,29 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       fire(createEvent(DeploymentMultipleSameNameArchiveDifferentTarget.class));
 
       verifyScenario("X", "Y");
+   }
+
+   @Test // ARQ-971
+   @SuppressWarnings("unchecked")
+   public void shouldFilterNullAuxiliaryArchiveAppenderResulsts() throws Exception {
+      when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
+         .thenReturn(create(AuxiliaryArchiveAppender.class, injectorInst.get().inject(new NullAuxiliaryArchiveAppender())));
+
+      addContainer(CONTAINER_NAME_1);
+      addProtocol(PROTOCOL_NAME_1, true);
+
+      fire(createEvent(DeploymentWithDefaults.class));
+
+      CallMap spi = getManager().resolve(CallMap.class);
+      Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveAppender.class));
+
+      DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
+      Assert.assertEquals(1, scenario.deployments().size());
+
+      ArgumentCaptor<TestDeployment> captor = ArgumentCaptor.forClass(TestDeployment.class);
+      verify(packager).generateDeployment(captor.capture(), Mockito.any(Collection.class));
+
+      Assert.assertEquals(0, captor.getValue().getAuxiliaryArchives().size());
    }
 
    @Test(expected = ValidationException.class)
@@ -503,6 +529,16 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       {
          called();
          return ShrinkWrap.create(JavaArchive.class, this.getClass().getSimpleName() + ".jar");
+      }
+   }
+
+   private static class NullAuxiliaryArchiveAppender extends TestMaker implements AuxiliaryArchiveAppender 
+   {
+      @Override
+      public Archive<?> createAuxiliaryArchive()
+      {
+         called();
+         return null;
       }
    }
 
