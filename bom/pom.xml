@@ -7,7 +7,7 @@
     <!-- Artifact Information -->
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-bom</artifactId>
-    <version>1.0.1.Final-SNAPSHOT</version>
+    <version>1.0.1.Final</version>
     <packaging>pom</packaging>
     <name>Arquillian BOM</name>
     <url>http://arquillian.org</url>
