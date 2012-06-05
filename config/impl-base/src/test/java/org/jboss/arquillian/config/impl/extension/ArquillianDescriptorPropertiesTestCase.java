@@ -63,7 +63,9 @@ public class ArquillianDescriptorPropertiesTestCase
    private static final String PROPERTY_NAME_2 = "test2-name";
    private static final String PROPERTY_VALUE_2 = "test2-value";
    private static final String PROPERTY_NAME_3 = "test3-name";
-   private static final String PROPERTY_VALUE_3 = "test3-value";   
+   private static final String PROPERTY_VALUE_3 = "test3-value";
+   private static final String PROPERTY_NAME_4 = "test4-name";
+   private static final String PROPERTY_VALUE_4 = "test4-value";
    
    private static final Integer PROPERTY_INT_VALUE_1 = 10;
    
@@ -71,6 +73,7 @@ public class ArquillianDescriptorPropertiesTestCase
    private static final String KEY_PROPERTY_VALUE_1 	= "property.value.1";
    private static final String KEY_PROPERTY_VALUE_2     = "property.value.2";
    private static final String KEY_PROPERTY_VALUE_3     = "property.value.3";
+   private static final String KEY_ENV_NAME_1           = "env.JBOSS_HOME";
    private static final String KEY_CONTAINER_NAME_1 	= "container.name.1";
    private static final String KEY_CONTAINER_NAME_2 	= "container.name.2";
    private static final String KEY_CONTAINER_NAME_3     = "container.name.3";
@@ -83,7 +86,7 @@ public class ArquillianDescriptorPropertiesTestCase
    @After
    public void print() 
    {
-      System.out.println(desc.exportAsString());
+      //System.out.println(desc.exportAsString());
    }
 
    @Test
@@ -332,12 +335,15 @@ public class ArquillianDescriptorPropertiesTestCase
    {
       System.setProperty(KEY_PROPERTY_VALUE_1, PROPERTY_VALUE_1);
       System.setProperty(KEY_PROPERTY_VALUE_2, PROPERTY_VALUE_2);
+      // we have to fake setting an environment variable because we can't depend on what's available
+      System.setProperty(KEY_ENV_NAME_1, PROPERTY_VALUE_4);
       
       desc = create()
             .container(CONTAINER_NAME_1)
                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
             .container(CONTAINER_NAME_2)
-               .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2));
+               .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2))
+               .property(PROPERTY_NAME_4, setPropKey(KEY_ENV_NAME_1));
       desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
       final String descString = desc.exportAsString();
       
@@ -347,15 +353,18 @@ public class ArquillianDescriptorPropertiesTestCase
       assertXPath(descString, "/arquillian/container[1]/configuration/property/text()", PROPERTY_VALUE_1);
 
       assertXPath(descString, "/arquillian/container[2]/@qualifier", CONTAINER_NAME_2);
-      assertXPath(descString, "/arquillian/container[2]/configuration/property/@name", PROPERTY_NAME_2);
-      assertXPath(descString, "/arquillian/container[2]/configuration/property/text()", PROPERTY_VALUE_2);
-
+      assertXPath(descString, "/arquillian/container[2]/configuration/property[1]/@name", PROPERTY_NAME_2);
+      assertXPath(descString, "/arquillian/container[2]/configuration/property[1]/text()", PROPERTY_VALUE_2);
+      assertXPath(descString, "/arquillian/container[2]/configuration/property[2]/@name", PROPERTY_NAME_4);
+      assertXPath(descString, "/arquillian/container[2]/configuration/property[2]/text()", PROPERTY_VALUE_4);
+      
       ArquillianDescriptor descriptor = create(descString);
       Assert.assertEquals(2, descriptor.getContainers().size());
       Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
       Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
       Assert.assertEquals(CONTAINER_NAME_2, descriptor.getContainers().get(1).getContainerName());
       Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_2));
+      Assert.assertEquals(PROPERTY_VALUE_4, descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_4));
    }
    
    @Test

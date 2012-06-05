@@ -21,6 +21,7 @@
   */
 package org.jboss.arquillian.config.impl.extension;
 
+import java.util.Map;
 import java.util.Properties;
 import java.io.File;
 
@@ -54,6 +55,9 @@ public final class StringPropertyReplacer
    /** Path separator alias */
    private static final String PATH_SEPARATOR_ALIAS = ":";
 
+   /** Environment variable base property */
+   private static final String ENV_VAR_BASE_PROPERTY_KEY = "env.";
+   
    // States used in property parsing
    private static final int NORMAL = 0;
    private static final int SEEN_DOLLAR = 1;
@@ -73,6 +77,12 @@ public final class StringPropertyReplacer
     * 
     * The property ${/} is replaced with System.getProperty("file.separator")
     * value and the property ${:} is replaced with System.getProperty("path.separator").
+    *
+    * Prior to resolving variables, environment variables are assigned to the
+    * collection of properties. Each environment variable is prefixed with the
+    * prefix "env.". If a system property is already defined for the prefixed
+    * environment variable, the system property is honored as an override
+    * (primarily for testing).
     * 
     * @param string - the string with possible ${} references
     * @return the input string with all property references replaced if any.
@@ -80,7 +90,16 @@ public final class StringPropertyReplacer
     */
    public static String replaceProperties(final String string)
    {
-      return replaceProperties(string, null);
+      Properties props = System.getProperties();
+      for (Map.Entry<String, String> var : System.getenv().entrySet())
+      {
+         String propKey = ENV_VAR_BASE_PROPERTY_KEY + var.getKey();
+         // honor overridden environment variable (primarily for testing)
+         if (!props.containsKey(propKey)) {
+             props.setProperty(propKey, var.getValue());
+         }
+      }
+      return replaceProperties(string, props);
    }
 
    /**
