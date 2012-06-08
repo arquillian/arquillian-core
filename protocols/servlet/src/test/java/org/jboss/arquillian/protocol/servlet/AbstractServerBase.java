@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
@@ -32,8 +34,6 @@ import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.junit.After;
 import org.junit.Before;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
 
 /**
  * AbstractServerBase
@@ -49,8 +49,11 @@ public class AbstractServerBase
    public void setup() throws Exception
    {
       server = new Server(8181);
-      Context root = new Context(server, "/arquillian-protocol", Context.SESSIONS);
+
+      ServletContextHandler root = new ServletContextHandler(ServletContextHandler.SESSIONS);
+      root.setContextPath("/arquillian-protocol");
       root.addServlet(ServletTestRunner.class, ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING);
+      server.setHandler(root);
       server.start();
    }
 

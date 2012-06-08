@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi:ts=2:sw=2:expandtab: -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -24,8 +25,6 @@
 
         <!-- Arquillian Core common Deps, Test related -->
         <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
-        <version.jboss_logging>2.1.0.GA</version.jboss_logging>
-        <version.jetty_jetty>6.1.9</version.jetty_jetty>
         <version.junit_junit>4.8.1</version.junit_junit>
         <version.mockito_all>1.8.3</version.mockito_all>
         <version.testng_testng>5.14.6</version.testng_testng>
@@ -69,12 +68,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-embedded</artifactId>
-                <version>${version.jetty_jetty}</version>
-                <scope>test</scope>
-            </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
