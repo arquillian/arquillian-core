@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.protocol.servlet.v_3;
 
+import static org.jboss.arquillian.container.test.api.Testable.MARKER_FILE_PATH;
 import static org.jboss.arquillian.protocol.servlet.ServletUtil.APPLICATION_XML_PATH;
 
 import java.util.ArrayList;
@@ -125,8 +126,29 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       }
       else if(applicationArchiveWars.size() > 1)
       {
-         // TODO: fetch the TestDeployment.getArchiveForEnrichment
-         throw new UnsupportedOperationException("Multiple WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
+          WebArchive singleMarkedArchive = null;
+          for (ArchivePath warPath: applicationArchiveWars.keySet()) {
+              WebArchive applicationArchiveWar = applicationArchive.getAsType(WebArchive.class, warPath);
+              if (applicationArchiveWar.contains(MARKER_FILE_PATH)) {
+                  if (singleMarkedArchive == null) {
+                      singleMarkedArchive = applicationArchiveWar;
+                  } else {
+                      throw new UnsupportedOperationException("Multiple marked WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
+                  }
+              }
+          }
+
+          if (singleMarkedArchive == null) {
+              throw new UnsupportedOperationException("Multiple WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
+          } else {
+              // Remove marker from archive again
+              singleMarkedArchive.delete(MARKER_FILE_PATH);
+              handleArchive(
+                      singleMarkedArchive,
+                      new ArrayList<Archive<?>>(), // reuse the War handling, but Auxiliary Archives should be added to the EAR, not the WAR
+                      protocol,
+                      processor);
+          }
       }
       else
       {
