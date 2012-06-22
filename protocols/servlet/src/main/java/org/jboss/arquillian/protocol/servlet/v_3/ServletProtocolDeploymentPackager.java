@@ -63,7 +63,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       
       if(EnterpriseArchive.class.isInstance(applicationArchive))
       {
-         return handleArchive(EnterpriseArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor);
+         return handleArchive(EnterpriseArchive.class.cast(applicationArchive), auxiliaryArchives, protocol, processor, testDeployment);
       } 
 
       if(WebArchive.class.isInstance(applicationArchive))
@@ -105,7 +105,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
             processor);
    }
 
-   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor) 
+   private Archive<?> handleArchive(EnterpriseArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives, JavaArchive protocol, Processor processor, TestDeployment testDeployment) 
    {
       Map<ArchivePath, Node> applicationArchiveWars = applicationArchive.getContent(Filters.include(".*\\.war"));
       if(applicationArchiveWars.size() == 1)
@@ -126,25 +126,15 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager
       }
       else if(applicationArchiveWars.size() > 1)
       {
-          WebArchive singleMarkedArchive = null;
-          for (ArchivePath warPath: applicationArchiveWars.keySet()) {
-              WebArchive applicationArchiveWar = applicationArchive.getAsType(WebArchive.class, warPath);
-              if (applicationArchiveWar.contains(MARKER_FILE_PATH)) {
-                  if (singleMarkedArchive == null) {
-                      singleMarkedArchive = applicationArchiveWar;
-                  } else {
-                      throw new UnsupportedOperationException("Multiple marked WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
-                  }
-              }
-          }
-
-          if (singleMarkedArchive == null) {
+          Archive<?> archiveToTest = testDeployment.getArchiveForEnrichment();
+          if (archiveToTest == null) {
               throw new UnsupportedOperationException("Multiple WebArchives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
+          } else if (!WebArchive.class.isInstance(archiveToTest)) {
+              //TODO: Removed throwing an exception when EJB modules are supported as well
+              throw new UnsupportedOperationException("Archive to test is not a WebArchive!");
           } else {
-              // Remove marker from archive again
-              singleMarkedArchive.delete(MARKER_FILE_PATH);
               handleArchive(
-                      singleMarkedArchive,
+                      WebArchive.class.cast(archiveToTest),
                       new ArrayList<Archive<?>>(), // reuse the War handling, but Auxiliary Archives should be added to the EAR, not the WAR
                       protocol,
                       processor);

@@ -1,9 +1,9 @@
 package org.jboss.arquillian.container.test.api;
 
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * When testing an ear deployment containing multiple wars using the servlet protocol
@@ -36,8 +36,13 @@ public final class Testable {
      * @param archive
      * @return
      */
-    public static WebArchive archiveToTest(WebArchive archive) {
-        return archive.addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("arquillian.ArchiveUnderTest"));
+    public static <T extends Archive<T>> T archiveToTest(T archive) {
+        return archive.add(EmptyAsset.INSTANCE, MARKER_FILE_PATH);
     }
+
+    public static <T extends Archive<T>> boolean isArchiveToTest(T archive) {
+        return archive.contains(MARKER_FILE_PATH);
+    }
+
     
 }
