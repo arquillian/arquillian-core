@@ -17,11 +17,18 @@
 package org.jboss.arquillian.container.test.spi;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.container.test.api.Testable;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
+import org.jboss.shrinkwrap.api.Filters;
+import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * Value object that contains the {@link Archive}s needed for deployment. <br/>
@@ -36,6 +43,7 @@ public class TestDeployment
    private DeploymentDescription deploymentDescription;
    private Archive<?> applicationArchive;
    private Collection<Archive<?>> auxiliaryArchives;
+   private Archive<?> archiveForEnrichment;
    
    /**
     * @param applicationArchive The user defined {@link Archive}
@@ -91,8 +99,32 @@ public class TestDeployment
     */
    public Archive<?> getArchiveForEnrichment() 
    {
-      // TODO: lookup 'tagged' archive. return applicationArchive if none found
-      return applicationArchive;
+       if (archiveForEnrichment == null) {
+           if (EnterpriseArchive.class.isInstance(applicationArchive)) {
+               EnterpriseArchive archive = EnterpriseArchive.class.cast(applicationArchive);
+               //TODO: Extend to EJBs once they are supported
+               Map<ArchivePath, Node> nested = archive.getContent(Filters.include("/.*\\.war"));
+               if (!nested.isEmpty()) {
+                   for(ArchivePath path : nested.keySet()) {
+                      try {
+                          WebArchive genericArchive = archive.getAsType(WebArchive.class, path);
+                          if(Testable.isArchiveToTest(genericArchive)) {
+                             if(archiveForEnrichment != null) {
+                                 throw new UnsupportedOperationException("Multiple marked Archives found in " + applicationArchive.getName() + ". Can not determine which to enrich");
+                             }
+                             archiveForEnrichment = genericArchive;
+                         }
+                      } catch (IllegalArgumentException e) {
+                         // no-op, Nested archive is not a ShrinkWrap archive. 
+                      }
+                   }
+               }
+           } else {
+               archiveForEnrichment = applicationArchive;
+           }
+       }
+       
+      return archiveForEnrichment;
    }
 
    public Archive<?> getApplicationArchive()
