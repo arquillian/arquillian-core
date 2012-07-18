@@ -109,7 +109,8 @@ public class ContainerImpl implements Container
    @Override
    public ContainerConfiguration createDeployableConfiguration() throws Exception
    {
-      ContainerConfiguration config = deployableContainer.getConfigurationClass().newInstance();
+      ContainerConfiguration config = SecurityActions.newInstance(
+            deployableContainer.getConfigurationClass(), new Class<?>[0], new Object[0]);
       MapObject.populate(config, containerConfiguration.getContainerProperties());
       config.validate();
       return config;

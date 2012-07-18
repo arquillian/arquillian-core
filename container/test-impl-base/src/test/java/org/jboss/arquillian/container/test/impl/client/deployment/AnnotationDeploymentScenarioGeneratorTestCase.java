@@ -19,6 +19,7 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -133,13 +134,29 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
    }
 
+   @Test
    public void shouldAllowNoDeploymentPresent() throws Exception
    {
-      List<DeploymentDescription> descriptors = new AnnotationDeploymentScenarioGenerator().generate(
-            new TestClass(DeploymentNotPresent.class));
+      List<DeploymentDescription> descriptors = generate(DeploymentNotPresent.class);
       
       Assert.assertNotNull(descriptors);
       Assert.assertEquals(0, descriptors.size());
+   }
+
+   @Test
+   public void shouldAllowNonPublicDeploymentMethods() throws Exception {
+      List<DeploymentDescription> descriptors = generate(DeploymentProtectedMethods.class);
+      
+      Assert.assertNotNull(descriptors);
+      Assert.assertEquals(3, descriptors.size());
+   }
+   
+   @Test
+   public void shouldAllowNonPublicDeploymentMethodsFromSuperClass() throws Exception {
+      List<DeploymentDescription> descriptors = generate(DeploymentProtectedMethodsInherited.class);
+      
+      Assert.assertNotNull(descriptors);
+      Assert.assertEquals(3, descriptors.size());
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -203,6 +220,28 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       }
    }
 
+   @SuppressWarnings("unused")
+   private static class DeploymentProtectedMethods {
+      
+      @Deployment
+      static JavaArchive one() {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+
+      @Deployment
+      private static JavaArchive two() {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+      
+      @Deployment
+      protected static JavaArchive tree() {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+
+   private static class DeploymentProtectedMethodsInherited extends DeploymentProtectedMethods {
+   }
+   
    private static class DeploymentNotPresent
    {
    }

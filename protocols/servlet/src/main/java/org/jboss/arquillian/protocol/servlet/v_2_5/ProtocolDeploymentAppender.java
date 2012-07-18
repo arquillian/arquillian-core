@@ -18,7 +18,6 @@ package org.jboss.arquillian.protocol.servlet.v_2_5;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.protocol.servlet.runner.SecurityActions;
 import org.jboss.arquillian.protocol.servlet.runner.ServletRemoteExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -40,7 +39,7 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
    {
       // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
       return ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
-                     .addPackage(SecurityActions.class.getPackage())
+                     .addPackage(ServletRemoteExtension.class.getPackage())
                      .setWebXML(new StringAsset(
                            WebUtils.createNewDescriptor().exportAsString()
                      ))

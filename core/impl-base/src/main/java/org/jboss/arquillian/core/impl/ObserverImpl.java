@@ -87,6 +87,10 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
          {
             return false;
          }
+         if(!method.isAccessible())
+         {
+            method.setAccessible(true);
+         }
          method.invoke(target, arguments);
          return true;
       }

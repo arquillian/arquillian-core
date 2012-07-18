@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -50,7 +49,7 @@ final class Reflections
       {
          return observerMethods;
       }
-      for(Method method : clazz.getMethods())
+      for(Method method : clazz.getDeclaredMethods())
       {
          if(isObserverMethod(method))
          {
@@ -120,12 +119,7 @@ final class Reflections
    
    public static <T> T createInstance(Class<T> clazz) throws Exception
    {
-      Constructor<T> constructor = clazz.getDeclaredConstructor();
-      if(!constructor.isAccessible())
-      {
-         constructor.setAccessible(true);
-      }
-      return constructor.newInstance();
+      return SecurityActions.newInstance(clazz, new Class<?>[0], new Object[0]);
    }
 
    public static boolean isType(Type type, Class<?> clazz)
@@ -246,6 +240,4 @@ final class Reflections
       }
       return false;
    }
-
-   
 }

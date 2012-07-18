@@ -99,23 +99,52 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase
    {
       String name = "some-name";
       String prop = "prop-value";
-      
+
       ContainerRegistry registry = new LocalContainerRegistry(injector.get());
       registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
                            .property("property", prop), serviceLoader);
-      
+
       Container container = registry.getContainer(new TargetDescription(name));
-      
+
       Assert.assertEquals(
             "Verify that the only registered container is returned as default",
             name, container.getName());
 
       Assert.assertEquals(
             "Verify that the configuration was populated",
-            prop, 
+            prop,
             ((DummyContainerConfiguration)container.createDeployableConfiguration()).getProperty());
    }
-   
+
+   @Test
+   public void shouldBeAbleToCreatePrivateContainerConfiguration() throws Exception
+   {
+      // Override default configured class
+      ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
+      DeployableContainer<PrivateDummyContainerConfiguration> deployableContainer = Mockito.mock(DeployableContainer.class); 
+
+      Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
+      Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(PrivateDummyContainerConfiguration.class);
+
+      String name = "some-name";
+      String prop = "prop-value";
+
+      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
+                           .property("property", prop), serviceLoader);
+
+      Container container = registry.getContainer(new TargetDescription(name));
+
+      Assert.assertEquals(
+            "Verify that the only registered container is returned as default",
+            name, container.getName());
+
+      Assert.assertEquals(
+            "Verify that the configuration was populated",
+            prop,
+            ((PrivateDummyContainerConfiguration)container.createDeployableConfiguration()).getProperty());
+   }
+
    @Test
    public void shouldBeAbleToSpecifyTarget() throws Exception
    {
@@ -169,14 +198,16 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase
          return property;
       }
 
-      /* (non-Javadoc)
-       * @see org.jboss.arquillian.spi.client.container.ContainerConfiguration#validate()
-       */
       @Override
       public void validate() throws ConfigurationException
       {
-         // TODO Auto-generated method stub
-         
+      }
+   }
+
+   private static class PrivateDummyContainerConfiguration extends DummyContainerConfiguration
+   {
+      private PrivateDummyContainerConfiguration()
+      {
       }
    }
 }

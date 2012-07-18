@@ -146,4 +146,18 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
             "Verify service has been statically injected",
             service.isValid());
    }
+   
+   /*
+    * ARQ-1024: Protected services should be loadable
+    */
+   @SuppressWarnings("unchecked")
+   @Test
+   public void shouldBeAbleToLoadProtectedServices() throws Exception {
+      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      registry.addService(
+            FakeService.class, (Class<FakeService>)Class.forName("org.jboss.arquillian.core.impl.loadable.util.PackageProtectedService"));
+   
+      FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
+      Assert.assertNotNull("Could load package protected service", service);
+   }
 }

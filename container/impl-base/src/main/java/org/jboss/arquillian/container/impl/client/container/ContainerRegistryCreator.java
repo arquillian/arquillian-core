@@ -177,12 +177,12 @@ public class ContainerRegistryCreator
 
    private String getActivatedConfiguration() 
    {
-      if(exists(System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY)))
+      if(exists(SecurityActions.getProperty(ARQUILLIAN_LAUNCH_PROPERTY)))
       {
-         return System.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
+         return SecurityActions.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
       }
 
-      InputStream arquillianLaunchStream = Thread.currentThread().getContextClassLoader()
+      InputStream arquillianLaunchStream = SecurityActions.getThreadContextClassLoader()
                                                    .getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT);
       if(arquillianLaunchStream != null)
       {

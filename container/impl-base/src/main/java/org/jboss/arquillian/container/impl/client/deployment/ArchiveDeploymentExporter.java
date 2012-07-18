@@ -52,7 +52,7 @@ public class ArchiveDeploymentExporter
       }
       EngineDef engine = descriptor.engine();
 
-      String systemExport = System.getProperty("arquillian.deploymentExportPath");
+      String systemExport = SecurityActions.getProperty("arquillian.deploymentExportPath");
       String exportPath = (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath():systemExport;
       
       if(exportPath != null && event.getDeployment().isArchiveDeployment())

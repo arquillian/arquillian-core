@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl.loadable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -154,7 +153,17 @@ public class JavaSPIExtensionLoader implements ExtensionLoader
       line = line.trim();
       return line;
    }
-   
+
+   private <T> Set<T> createInstances(Class<T> serviceType, Set<Class<? extends T>> providers)
+   {
+      Set<T> providerImpls = new LinkedHashSet<T>();
+      for(Class<? extends T> serviceClass: providers)
+      {
+         providerImpls.add(createInstance(serviceClass));
+      }
+      return providerImpls;
+   }
+
    /**
     * Create a new instance of the found Service. <br/>
     * 
@@ -171,26 +180,11 @@ public class JavaSPIExtensionLoader implements ExtensionLoader
    {
       try
       {
-         Constructor<? extends T> constructor = SecurityActions.getConstructor(serviceImplClass);
-         if (!constructor.isAccessible())
-         {
-            constructor.setAccessible(true);
-         }
-         return constructor.newInstance();
+         return SecurityActions.newInstance(serviceImplClass, new Class<?>[0], new Object[0]);
       }
       catch (Exception e) 
       {
          throw new RuntimeException("Could not create a new instance of Service implementation " + serviceImplClass.getName(), e);
       }
-   }
-   
-   private <T> Set<T> createInstances(Class<T> serviceType, Set<Class<? extends T>> providers)
-   {
-      Set<T> providerImpls = new LinkedHashSet<T>();
-      for(Class<? extends T> serviceClass: providers)
-      {
-         providerImpls.add(createInstance(serviceClass));
-      }
-      return providerImpls;
    }
 }
