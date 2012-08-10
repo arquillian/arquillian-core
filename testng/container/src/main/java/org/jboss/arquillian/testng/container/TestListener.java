@@ -32,7 +32,7 @@ public class TestListener implements ITestListener
 {
 
    private ITestContext context;
-   
+
    public void onFinish(ITestContext paramITestContext)
    {
       context = paramITestContext;
@@ -62,26 +62,28 @@ public class TestListener implements ITestListener
    {
    }
 
-   public TestResult getTestResult() 
+   public TestResult getTestResult()
    {
-      if(context.getFailedTests().size() > 0) 
+      if (context.getFailedConfigurations().size() > 0)
       {
-         return new TestResult(
-               Status.FAILED, 
+         return new TestResult(Status.FAILED,
+               context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
+      }
+      else if (context.getFailedTests().size() > 0)
+      {
+         return new TestResult(Status.FAILED,
                context.getFailedTests().getAllResults().iterator().next().getThrowable());
-      } 
-      else if(context.getSkippedTests().size() > 0)
+      }
+      else if (context.getSkippedTests().size() > 0)
       {
          return new TestResult(Status.SKIPPED);
       }
-      if(context.getPassedTests().size() > 0) 
+      if (context.getPassedTests().size() > 0)
       {
-         return new TestResult(
-               Status.PASSED, 
+         return new TestResult(Status.PASSED,
                context.getPassedTests().getAllResults().iterator().next().getThrowable());
-      } 
-      return new TestResult(
-            Status.FAILED, 
+      }
+      return new TestResult(Status.FAILED,
             new RuntimeException("Unknown test result: " + context).fillInStackTrace());
    }
 }
