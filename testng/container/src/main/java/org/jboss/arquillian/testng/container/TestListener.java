@@ -31,57 +31,63 @@ import org.testng.ITestResult;
 public class TestListener implements ITestListener
 {
 
-   private ITestContext context;
-   
-   public void onFinish(ITestContext paramITestContext)
-   {
-      context = paramITestContext;
-   }
+    private ITestContext context;
 
-   public void onStart(ITestContext paramITestContext)
-   {
-   }
+    public void onFinish(ITestContext paramITestContext)
+    {
+        context = paramITestContext;
+    }
 
-   public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult)
-   {
-   }
+    public void onStart(ITestContext paramITestContext)
+    {
+    }
 
-   public void onTestFailure(ITestResult paramITestResult)
-   {
-   }
+    public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult)
+    {
+    }
 
-   public void onTestSkipped(ITestResult paramITestResult)
-   {
-   }
+    public void onTestFailure(ITestResult paramITestResult)
+    {
+    }
 
-   public void onTestStart(ITestResult paramITestResult)
-   {
-   }
+    public void onTestSkipped(ITestResult paramITestResult)
+    {
+    }
 
-   public void onTestSuccess(ITestResult paramITestResult)
-   {
-   }
+    public void onTestStart(ITestResult paramITestResult)
+    {
+    }
 
-   public TestResult getTestResult() 
-   {
-      if(context.getFailedTests().size() > 0) 
-      {
-         return new TestResult(
-               Status.FAILED, 
-               context.getFailedTests().getAllResults().iterator().next().getThrowable());
-      } 
-      else if(context.getSkippedTests().size() > 0)
-      {
-         return new TestResult(Status.SKIPPED);
-      }
-      if(context.getPassedTests().size() > 0) 
-      {
-         return new TestResult(
-               Status.PASSED, 
-               context.getPassedTests().getAllResults().iterator().next().getThrowable());
-      } 
-      return new TestResult(
-            Status.FAILED, 
-            new RuntimeException("Unknown test result: " + context).fillInStackTrace());
-   }
+    public void onTestSuccess(ITestResult paramITestResult)
+    {
+    }
+
+    public TestResult getTestResult()
+    {
+        if(context.getFailedConfigurations().size() > 0)
+        {
+            return new TestResult(
+                    Status.FAILED,
+                    context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
+        }
+        else if(context.getFailedTests().size() > 0)
+        {
+            return new TestResult(
+                    Status.FAILED,
+                    context.getFailedTests().getAllResults().iterator().next().getThrowable());
+        }
+        else if(context.getSkippedTests().size() > 0)
+        {
+            return new TestResult(Status.SKIPPED);
+        }
+        if(context.getPassedTests().size() > 0)
+        {
+            return new TestResult(
+                    Status.PASSED,
+                    context.getPassedTests().getAllResults().iterator().next().getThrowable());
+        }
+        return new TestResult(
+                Status.FAILED,
+                new RuntimeException("Unknown test result: " + context).fillInStackTrace());
+    }
 }
