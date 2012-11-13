@@ -189,8 +189,7 @@ public class EJBInjectionEnricher implements TestEnricher
 
       MessageFormat msg = new MessageFormat(
             "Trying to resolve JNDI name for field \"{0}\" with mappedName=\"{1}\" and beanName=\"{2}\"");
-      log.finer(msg.format(new Object[]
-      {fieldType, mappedName, beanName}));
+      log.finer(msg.format(new Object[] {fieldType, mappedName, beanName}));
 
       Validate.notNull(fieldType, "EJB enriched field cannot to be null.");
 
@@ -208,31 +207,40 @@ public class EJBInjectionEnricher implements TestEnricher
       // If set, use only mapped name or bean name to lookup the EJB.
       if (isMappedNameSet)
       {
-         jndiNames = new String[]
-         {mappedName};
+         jndiNames = new String[] {mappedName};
       }
       else if (isBeanNameSet)
       {
-         jndiNames = new String[]
-         {"java:module/" + beanName + "!" + fieldType.getName()};
+         jndiNames = new String[] {"java:module/" + beanName + "!" + fieldType.getName()};
       }
       else
       {
-         // TODO: These names are not spec compliant; fieldType needs to be a bean type here, but usually is just an interface of a bean. These seldom work.
-         jndiNames = new String[] {
-               "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
-               "java:global/test.ear/test/" + fieldType.getSimpleName(),
-               "java:global/test/" + fieldType.getSimpleName(),
-               "java:global/test/" + fieldType.getSimpleName() + "Bean",
-               "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
-               "test/" + fieldType.getSimpleName() + "Bean/local", "test/" + fieldType.getSimpleName() + "Bean/remote",
-               "test/" + fieldType.getSimpleName() + "/no-interface", fieldType.getSimpleName() + "Bean/local",
-               fieldType.getSimpleName() + "Bean/remote", fieldType.getSimpleName() + "/no-interface",
-               // WebSphere Application Server Local EJB default binding
-               "ejblocal:" + fieldType.getCanonicalName(),
-               // WebSphere Application Server Remote EJB default binding
-               fieldType.getCanonicalName()};
+          jndiNames = getJndiNamesForAnonymousEJB(fieldType);
+
       }
+      return jndiNames;
+   }
+
+   protected String[] getJndiNamesForAnonymousEJB(Class<?> fieldType)
+   {
+      String[] jndiNames;
+      // TODO: These names are not spec compliant; fieldType needs to be a bean type here, but usually is just an interface of a bean. These seldom work.
+      jndiNames = new String[] {
+            "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
+            "java:global/test.ear/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName() + "Bean",
+            "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+            "test/" + fieldType.getSimpleName() + "Bean/local",
+            "test/" + fieldType.getSimpleName() + "Bean/remote",
+            "test/" + fieldType.getSimpleName() + "/no-interface",
+            fieldType.getSimpleName() + "Bean/local",
+            fieldType.getSimpleName() + "Bean/remote",
+            fieldType.getSimpleName() + "/no-interface",
+            // WebSphere Application Server Local EJB default binding
+            "ejblocal:" + fieldType.getCanonicalName(),
+            // WebSphere Application Server Remote EJB default binding
+            fieldType.getCanonicalName()};
       return jndiNames;
    }
 
