@@ -63,7 +63,7 @@ public class ServletURIHandler
                ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
    }
 
-   private HTTPContext locateHTTPContext(Method method)
+   protected HTTPContext locateHTTPContext(Method method)
    {
       TargetsContainer targetContainer = method.getAnnotation(TargetsContainer.class);
       if (targetContainer != null)

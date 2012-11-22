@@ -46,8 +46,10 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
 
    public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
 
-   private ServletURIHandler uriHandler;
-   private CommandCallback callback;
+   protected ServletURIHandler uriHandler;
+   protected CommandCallback callback;
+
+   protected ServletMethodExecutor() {}
    
    public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts, final CommandCallback callback)
    {
@@ -135,7 +137,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       }
    }
 
-   private <T> T executeWithRetry(String url, Class<T> type) throws Exception
+   protected <T> T executeWithRetry(String url, Class<T> type) throws Exception
    {
       long timeoutTime = System.currentTimeMillis() + 1000;
       boolean interrupted = false;
@@ -162,7 +164,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       throw new IllegalStateException("Error launching request at " + url + ". No result returned");
    }
 
-   private <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception 
+   protected <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception
    {
       URLConnection connection = new URL(url).openConnection();
       if (!(connection instanceof HttpURLConnection))
