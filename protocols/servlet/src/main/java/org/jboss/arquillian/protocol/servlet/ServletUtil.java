@@ -10,7 +10,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -33,19 +33,19 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
 public final class ServletUtil
 {
    public static final ArchivePath WEB_XML_PATH = ArchivePaths.create("WEB-INF/web.xml");
-   public static final ArchivePath APPLICATION_XML_PATH = ArchivePaths.create("META-INF/application.xml");   
-   
+   public static final ArchivePath APPLICATION_XML_PATH = ArchivePaths.create("META-INF/application.xml");
+
    private ServletUtil() {}
-   
+
    public static URI determineBaseURI(ServletProtocolConfiguration config, HTTPContext context, String servletName)
    {
       String address = config.getHost();
       Integer port = config.getPort();
 
       // TODO: can not set contextRoot in config, change to prefixContextRoot
-      String contextRoot = null; //protocolConfiguration.getContextRoot(); 
-      
-      Servlet servlet = context.getServletByName(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
+      String contextRoot = null; //protocolConfiguration.getContextRoot();
+
+      Servlet servlet = context.getServletByName(servletName);
       if(servlet != null)
       {
          // use the context where the Arquillian servlet is found
@@ -62,7 +62,7 @@ public final class ServletUtil
       else
       {
          throw new IllegalArgumentException(
-              ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME + " not found. " +
+                 servletName + " not found. " +
               "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
       }
       return URI.create("http://" + address + ":" + port + contextRoot);

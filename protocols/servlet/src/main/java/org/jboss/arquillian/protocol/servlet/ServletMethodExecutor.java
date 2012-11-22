@@ -18,6 +18,7 @@ package org.jboss.arquillian.protocol.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -26,11 +27,13 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
+import org.jboss.arquillian.protocol.servlet.proxy.RemoteProxyServlet;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 
@@ -46,9 +49,13 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
 
    public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
 
+   private static final Logger log = Logger.getLogger(ServletMethodExecutor.class.getName());
+
    private ServletURIHandler uriHandler;
    private CommandCallback callback;
-   
+
+   private boolean proxied = false;
+
    public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts, final CommandCallback callback)
    {
       if(config == null)
@@ -67,6 +74,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       this.callback = callback;
    }
 
+   @Override
    public TestResult invoke(final TestMethodExecutor testMethodExecutor)
    {
       if (testMethodExecutor == null)
@@ -74,16 +82,43 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
          throw new IllegalArgumentException("TestMethodExecutor must be specified");
       }
 
-      URI targetBaseURI = uriHandler.locateTestServlet(testMethodExecutor.getMethod());
+      Method method = testMethodExecutor.getMethod();
+
+      String servletMapping = ARQUILLIAN_SERVLET_MAPPING;
+      String internalHostParams = "";
+
+      URI targetBaseURI;
+      URI servletURI = uriHandler.locateTestServlet(method);
+
+      if (proxied) {
+          URI arqProxy = uriHandler.getArquillianProxyServlet(method, RemoteProxyServlet.SERVLET_NAME);
+
+          if (arqProxy != null) {
+              internalHostParams =
+                      "&internalHost=" + servletURI.getHost() +
+                      "&internalPort=" + servletURI.getPort();
+              servletMapping = RemoteProxyServlet.SERVLET_MAPPING;
+              targetBaseURI = arqProxy;
+          } else {
+              log.warning("Container does not provide a proxy cofiguration. Continue without a proxy.");
+              targetBaseURI = servletURI;
+          }
+      } else {
+          targetBaseURI = servletURI;
+      }
 
       Class<?> testClass = testMethodExecutor.getInstance().getClass();
-      final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+      final String url = targetBaseURI.toASCIIString() + servletMapping
             + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-            + testMethodExecutor.getMethod().getName();
+            + testMethodExecutor.getMethod().getName()
+            + internalHostParams;
 
-      final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+      final String eventUrl = targetBaseURI.toASCIIString() + servletMapping
             + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-            + testMethodExecutor.getMethod().getName() + "&cmd=event";
+            + testMethodExecutor.getMethod().getName() + "&cmd=event"
+            + internalHostParams;
+
+      log.info("Invocation url: " + url + ".");
 
       Timer eventTimer = null;
       try
@@ -162,7 +197,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       throw new IllegalStateException("Error launching request at " + url + ". No result returned");
    }
 
-   private <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception 
+   private <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception
    {
       URLConnection connection = new URL(url).openConnection();
       if (!(connection instanceof HttpURLConnection))
@@ -175,14 +210,14 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       httpConnection.setDoInput(true);
       try
       {
-         
+
          if(requestObject != null)
          {
             httpConnection.setRequestMethod("POST");
             httpConnection.setDoOutput(true);
             httpConnection.setRequestProperty("Content-Type", "application/octet-stream");
          }
-         
+
          if(requestObject != null)
          {
             ObjectOutputStream ous = new ObjectOutputStream(httpConnection.getOutputStream());
@@ -190,7 +225,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
             {
                ous.writeObject(requestObject);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                throw new RuntimeException("Error sending request Object, " + requestObject, e);
             }
@@ -205,7 +240,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
          {
             httpConnection.getResponseCode();
          }
-         catch (ConnectException e) 
+         catch (ConnectException e)
          {
             return null; // Could not connect
          }
@@ -217,11 +252,11 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
             {
                o = ois.readObject();
             }
-            finally 
+            finally
             {
-               ois.close();   
+               ois.close();
             }
-            
+
             if (!returnType.isInstance(o))
             {
                throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got " + o);
@@ -244,5 +279,10 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
          httpConnection.disconnect();
       }
       return null;
+   }
+
+   public void setProxied()
+   {
+       proxied = true;
    }
 }
