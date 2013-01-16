@@ -19,6 +19,7 @@ package org.jboss.arquillian.testenricher.ejb;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -59,21 +60,40 @@ public class EJBInjectionEnricherTestCase
       Field simpleEJBField = getField(injectionPoints, "simpleInjection");
 
       // Should invoke default JNDI names resolution.
-      String[] r = cut.resolveJNDINames(simpleEJBField.getType(), null, null);
+      String[] r = cut.resolveJNDINames(simpleEJBField.getType(), null, null, null);
 
       // TODO: change to something more appropriate (test default JNDI names).
       assertThat(r.length > 5, is(true));
    }
 
-   @Test(expected = IllegalStateException.class)
-   public void testResolveJNDINameMappedNameAndBeanNameSpecified()
+   @Test
+   public void testResolveJNDINameInvalidAttributes()
    {
 
       // What field doesn't matter for this test case.
       Field anyField = enrichedClass.getClass().getDeclaredFields()[0];
 
       // Specifying both: mappedName and beanName is not allowed.
-      cut.resolveJNDINames(anyField.getType(), "anyString()", "anyString()");
+      try {
+         cut.resolveJNDINames(anyField.getType(), "anyString()", "anyString()", null);
+         fail();
+      } catch (IllegalStateException e) {
+         // Expected
+	  }
+      // Specifying both: mappedName and lookup is not allowed.
+      try {
+         cut.resolveJNDINames(anyField.getType(), "anyString()", null, "anyString()");
+         fail();
+      } catch (IllegalStateException e) {
+         // Expected
+	  }
+      // Specifying both: beanName and lookup is not allowed.
+      try {
+         cut.resolveJNDINames(anyField.getType(), null, "anyString()", "anyString()");
+         fail();
+      } catch (IllegalStateException e) {
+         // Expected
+	  }
    }
 
    @Test
@@ -85,7 +105,7 @@ public class EJBInjectionEnricherTestCase
 
       EJB fieldAnnotation = (EJB) mappedNameEJBField.getAnnotation(EJB.class);
 
-      String[] r = cut.resolveJNDINames(mappedNameEJBField.getType(), fieldAnnotation.mappedName(), null);
+      String[] r = cut.resolveJNDINames(mappedNameEJBField.getType(), fieldAnnotation.mappedName(), null, null);
 
       /*
        * When 'mappedName' is set, the only JNDI name to check is the exact value specified in the annotation.
@@ -104,7 +124,7 @@ public class EJBInjectionEnricherTestCase
 
       EJB fieldAnnotation = (EJB) beanNameEJBField.getAnnotation(EJB.class);
 
-      String[] r = cut.resolveJNDINames(beanNameEJBField.getType(), null, fieldAnnotation.beanName());
+      String[] r = cut.resolveJNDINames(beanNameEJBField.getType(), null, fieldAnnotation.beanName(), null);
 
       // Expected: java:module/<bean-name>[!<fully-qualified-interface-name>]
       String expected = "java:module/" + ExemplaryEJBMockImpl.class.getSimpleName() + "!"
@@ -115,12 +135,31 @@ public class EJBInjectionEnricherTestCase
       assertThat(r[0], is(expected));
    }
 
+   @Test
+   public void testResolveJNDINameLookupSpecified()
+   {
+      List<Field> injectionPoints = SecurityActions.getFieldsWithAnnotation(enrichedClass.getClass(), EJB.class);
+
+      Field lookupEJBField = getField(injectionPoints, "lookupInjection");
+
+      EJB fieldAnnotation = (EJB) lookupEJBField.getAnnotation(EJB.class);
+
+      String[] r = cut.resolveJNDINames(lookupEJBField.getType(), null, null, fieldAnnotation.lookup());
+
+      /*
+       * When 'lookup' is set, the only JNDI name to check is the exact value specified in the annotation.
+       */
+      assertThat(r, is(notNullValue()));
+      assertThat(r.length, is(1));
+      assertThat(r[0], is(fieldAnnotation.lookup()));
+   }
+
    @Test(expected = IllegalArgumentException.class)
    public void testResolveJNDINameFieldNotSet()
    {
 
       // Annotated field must be set.
-      cut.resolveJNDINames(null, "anyString()", null);
+      cut.resolveJNDINames(null, "anyString()", null, null);
    }
 
    /**
@@ -167,6 +206,9 @@ public class EJBInjectionEnricherTestCase
 
       @EJB(beanName = "ExemplaryEJBMockImpl")
       ExemplaryEJB beanNameInjection;
+
+      @EJB(lookup = "java:global/org/arquillian/Test")
+      ExemplaryEJB lookupInjection;
    }
 
    /**
