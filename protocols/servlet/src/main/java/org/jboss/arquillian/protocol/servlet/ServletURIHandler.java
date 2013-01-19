@@ -22,14 +22,12 @@ import java.net.URI;
 import java.util.Collection;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
-import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 
 /**
  * ServletURIHandler
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @author <a href="mailto:mlazar@redhat.com">Matej Lazar</a>
  * @version $Revision: $
  */
 public class ServletURIHandler
@@ -40,7 +38,7 @@ public class ServletURIHandler
    private Collection<HTTPContext> contexts;
 
    /**
-    *
+    * 
     */
    public ServletURIHandler(ServletProtocolConfiguration config, Collection<HTTPContext> contexts)
    {
@@ -59,25 +57,13 @@ public class ServletURIHandler
    public URI locateTestServlet(Method method)
    {
       HTTPContext context = locateHTTPContext(method);
-
       return ServletUtil.determineBaseURI(
-               config,
-               context,
+               config, 
+               context, 
                ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
    }
 
-   public URI getArquillianProxyServlet(Method method, String servletName)
-   {
-       HTTPContext context = locateHTTPContext(method);
-       if (context.getArquillianProxyServletHost() != null) {
-           //Default proxy servlet could not be mapped. See ServletUtils.getServletNames.
-           Servlet servlet = context.getServletByName(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
-           return URI.create("http://" + context.getArquillianProxyServletHost() + ":" + context.getArquillianProxyServletPort() + servlet.getContextRoot());
-       }
-       return null;
-   }
-
-   private HTTPContext locateHTTPContext(Method method)
+   protected HTTPContext locateHTTPContext(Method method)
    {
       TargetsContainer targetContainer = method.getAnnotation(TargetsContainer.class);
       if (targetContainer != null)

@@ -33,20 +33,17 @@ public class HTTPContext extends NamedContext
    private final String host;
    private final int port;
 
-   private String arquillianProxyServletHost;
-   private int arquillianProxyServletPort;
-
    private final Set<Servlet> servlets;
 
    public HTTPContext(String host, int port)
    {
        this("no-named", host, port);
    }
-
+   
    public HTTPContext(String name, String host, int port)
    {
       super(name);
-
+      
       if (host == null) {
          throw new IllegalArgumentException("host must not be null");
       }
@@ -54,7 +51,7 @@ public class HTTPContext extends NamedContext
       this.port = port;
       this.servlets = new HashSet<Servlet>();
    }
-
+    
    /**
     * @return the ip
     */
@@ -98,35 +95,10 @@ public class HTTPContext extends NamedContext
       return null;
    }
 
-
-   public String getArquillianProxyServletHost()
-   {
-      return arquillianProxyServletHost;
-   }
-
-   public void setArquillianProxyServletHost(String arquillianProxyServletHost)
-   {
-      this.arquillianProxyServletHost = arquillianProxyServletHost;
-   }
-
-   public int getArquillianProxyServletPort()
-   {
-      return arquillianProxyServletPort;
-   }
-
-   public void setArquillianProxyServletPort(int arquillianProxyServletPort)
-   {
-      this.arquillianProxyServletPort = arquillianProxyServletPort;
-   }
-
    @Override
    public String toString()
    {
-       String proxy = "";
-       if (getArquillianProxyServletHost() != null) {
-           proxy = ", proxy=" + getArquillianProxyServletHost() + ":" + getArquillianProxyServletPort() + " ";
-       }
-       return "HTTPContext [host=" + host + ", port=" + port + proxy +", servlets=" + toString(servlets) + "]";
+      return "HTTPContext [host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
    }
 
    private String toString(Set<Servlet> servlets)
