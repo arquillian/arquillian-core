@@ -32,10 +32,10 @@ import org.jboss.arquillian.core.spi.Validate;
 public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
 {
    private static Logger log = Logger.getLogger("Context");
-   
+
    private ConcurrentHashMap<T, ObjectStore> stores;
-   
-   private ThreadLocal<Stack<StoreHolder<T>>> activeStore = new ThreadLocal<Stack<StoreHolder<T>>>() {
+
+   private ThreadLocal<Stack<StoreHolder<T>>> activeStore = new InheritableThreadLocal<Stack<StoreHolder<T>>>() {
 
       @Override
       protected Stack<StoreHolder<T>> initialValue()
@@ -43,12 +43,12 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
          return new Stack<StoreHolder<T>>();
       }
    };
-   
+
    public AbstractContext()
    {
       stores = new ConcurrentHashMap<T, ObjectStore>();
    }
-   
+
    @Override
    public T getActiveId()
    {
@@ -58,16 +58,16 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
       }
       return null;
    }
-   
+
    @Override
-   public void activate(T id) 
+   public void activate(T id)
    {
       Validate.notNull(id, "ID must be specified");
       activeStore.get().push(new StoreHolder<T>(id, createObjectStore(id)));
    }
-   
+
    @Override
-   public void deactivate() 
+   public void deactivate()
    {
       if(isActive())
       {
@@ -78,7 +78,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
          log.info("Trying to deactivate context, but none active: " + super.getClass().getSimpleName());
       }
    }
-   
+
    public void deactivateAll()
    {
       if(isActive())
@@ -92,9 +92,9 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
    {
       return !activeStore.get().isEmpty();
    }
-   
+
    @Override
-   public void destroy(T id) 
+   public void destroy(T id)
    {
       ObjectStore store = stores.remove(id);
       if(store != null)
@@ -102,7 +102,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
          store.clear();
       }
    }
-   
+
    @Override
    public ObjectStore getObjectStore()
    {
@@ -133,14 +133,14 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
          stores.clear();
       }
    }
-   
-   protected abstract ObjectStore createNewObjectStore(); 
-   
-   
+
+   protected abstract ObjectStore createNewObjectStore();
+
+
    //-------------------------------------------------------------------------------------||
    // Internal Helper Methods ------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
-   
+
    private ObjectStore createObjectStore(T id)
    {
       Validate.notNull(id, "ID must be specified");
@@ -152,18 +152,18 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
       }
       return store;
    }
-   
-   private class StoreHolder<X> 
+
+   private class StoreHolder<X>
    {
       private X id;
       private ObjectStore store;
-      
+
       public StoreHolder(X id, ObjectStore store)
       {
          this.id = id;
          this.store = store;
       }
-      
+
       /**
        * @return the id
        */
@@ -171,7 +171,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
       {
          return id;
       }
-      
+
       /**
        * @return the store
        */
