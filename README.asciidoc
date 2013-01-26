@@ -1,9 +1,9 @@
 == Arquillian - So you can rule your code. Not the bugs.
 
-...................................
+****
 Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to
 easily create automated integration, functional and acceptance tests for Java middleware.
-...................................
+****
 
 === What is it?
 
