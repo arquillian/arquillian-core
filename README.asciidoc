@@ -1,9 +1,7 @@
 == Arquillian - So you can rule your code. Not the bugs.
 
-****
 Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to
 easily create automated integration, functional and acceptance tests for Java middleware.
-****
 
 === What is it?
 
@@ -26,20 +24,14 @@ To avoid introducing unnecessary complexity into the developer’s build environ
 
 The Arquillian project adheres to three core principles:
 
-*Tests should be portable to any supported container*
-************************************************
+Tests should be portable to any supported container::
 Keeping container-specific APIs out of the tests enables developers to verify application portability by running tests in a variety of containers. It also means that lightweight containers can be used as a substitute for full containers during development.
-************************************************
 
-*Tests should be executable from both the IDE and the build tool*
-************************************************
+Tests should be executable from both the IDE and the build tool::
 By leveraging the IDE, the developer can skip the build for a faster turnaround and has a familiar environment for debugging. These benefits shouldn’t sacrifice the ability to run the tests in continuous integration using a build tool.
-************************************************
 
-*The platform should extend or integrate existing test frameworks*
-************************************************
+The platform should extend or integrate existing test frameworks::
 An extensible architecture encourages reuse of existing software and fosters a unified Java testing ecosystem.
-************************************************
 
 Regardless of how complex it becomes, executing an Arquillian test is as simple as selecting “Run As > Test” in the IDE or executing the “test” goal from the build tool.
 
