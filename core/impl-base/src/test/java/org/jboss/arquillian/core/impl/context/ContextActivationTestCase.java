@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.core.impl.context;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.jboss.arquillian.core.spi.context.ObjectStore;
 import org.jboss.arquillian.core.test.context.ManagerTest2Context;
 import org.jboss.arquillian.core.test.context.ManagerTest2ContextImpl;
@@ -44,21 +41,21 @@ public class ContextActivationTestCase
       try
       {
          Assert.assertFalse(context.isActive());
-         
+
          context.activate();
          Assert.assertTrue(context.isActive());
-         
+
          ObjectStore store = context.getObjectStore();
          store.add(Boolean.class, true);
-         
+
          Assert.assertEquals(
                "Verify that we can get objects from a active context",
-               new Boolean(true), 
+               new Boolean(true),
                store.get(Boolean.class));
-         
+
          context.deactivate();
          Assert.assertFalse(context.isActive());
-         
+
          try
          {
             context.getObjectStore();
@@ -66,13 +63,13 @@ public class ContextActivationTestCase
          }
          catch (Exception e) {
          }
-   
+
          context.activate();
          store = context.getObjectStore();
-   
+
          Assert.assertEquals(
                "Verify that we can get objects from a active context",
-               new Boolean(true), 
+               new Boolean(true),
                store.get(Boolean.class));
       }
       finally
@@ -80,70 +77,37 @@ public class ContextActivationTestCase
          context.deactivate();
          context.destroy();
       }
-      
+
    }
-   
-   @Test
-   public void shouldNotBeAbleToReadFromDifferentThread() throws Exception
-   {
-      final CountDownLatch latch = new CountDownLatch(1);
-      final ManagerTestContext context = new ManagerTestContextImpl();
-      try
-      {
-         context.activate();
-         context.getObjectStore().add(Object.class, new Object());
-         
-         Thread thread = new Thread() 
-         {
-            public void run() 
-            {
-               Assert.assertFalse(context.isActive());
-               
-               latch.countDown();
-            };
-         };
-         thread.start();
-         
-         if(!latch.await(1, TimeUnit.SECONDS))
-         {
-            Assert.fail("Thread never called?");
-         }
-      }
-      finally
-      {
-         context.deactivate();
-         context.destroy();
-      }
-   }
-   
+
    @Test
    public void shouldBeAbleToStackContextOfSameType()
    {
-      ManagerTest2Context context = new ManagerTest2ContextImpl();      
-      
+      ManagerTest2Context context = new ManagerTest2ContextImpl();
+
       try
       {
          context.activate("PARENT");
          context.getObjectStore().add(String.class, "test");
-         
+
          try
          {
             context.activate("CHILD");
             Assert.assertNull(
-                  "Should not be able to read from previously stacked context", 
+                  "Should not be able to read from previously stacked context",
                   context.getObjectStore().get(String.class));
-            
+
          }
          finally
          {
             context.deactivate();
          }
-         
+
          Assert.assertTrue(
-               "Outer Context should still be active", 
+               "Outer Context should still be active",
                context.isActive());
-      } 
-      finally 
+      }
+      finally
       {
          context.deactivate();
          context.clearAll();

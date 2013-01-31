@@ -56,27 +56,27 @@ public class ManagerImpl implements Manager
    //-------------------------------------------------------------------------------------||
    public static final String ARQUILLIAN_DEBUG_PROPERTY = "arquillian.debug";
    public static Boolean DEBUG = Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DEBUG_PROPERTY));
-   
+
    private ThreadLocal<Stack<Object>> eventStack;
-   
+
    /*
-    * Hack: 
-    * Events can be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling. 
+    * Hack:
+    * Events can be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling.
     * It is up to the exception handler to re-throw the exception if it can't handle it. When the re-throw happens
     * the higher level event will get the exception and re-fire it on the bus. We need to keep track of which exceptions
-    * has been handled in the call chain so we can re-throw without re-firing on a higher level. 
+    * has been handled in the call chain so we can re-throw without re-firing on a higher level.
     */
-   private ThreadLocal<Set<Class<? extends Throwable>>> handledThrowables = new ThreadLocal<Set<Class<? extends Throwable>>>() {
+   private ThreadLocal<Set<Class<? extends Throwable>>> handledThrowables = new InheritableThreadLocal<Set<Class<? extends Throwable>>>() {
       @Override
       protected Set<Class<? extends Throwable>> initialValue()
       {
          return new HashSet<Class<? extends Throwable>>();
       }
-   }; 
-   
+   };
+
    private final List<Context> contexts;
    private final List<Extension> extensions;
-   
+
 
    ManagerImpl(final Collection<Class<? extends Context>> contextClasses, final Collection<Class<?>> extensionClasses)
    {
@@ -84,22 +84,22 @@ public class ManagerImpl implements Manager
       this.extensions = new ArrayList<Extension>();
       try
       {
-         
+
          List<Extension> createdExtensions = createExtensions(extensionClasses);
          List<Context> createdContexts = createContexts(contextClasses);
-         
+
          createApplicationContextAndActivate();
 
          this.contexts.addAll(createdContexts);
          this.extensions.addAll(createdExtensions);
 
          addContextsToApplicationScope();
-         
+
          fireProcessing();
-         
+
          addContextsToApplicationScope();
       }
-      catch (Exception e) 
+      catch (Exception e)
       {
          throw new RuntimeException("Could not create and process manager", e);
       }
@@ -114,7 +114,7 @@ public class ManagerImpl implements Manager
    {
       fire(event, null);
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.core.spi.Manager#fire(java.lang.Object, org.jboss.arquillian.impl.core.spi.NonManagedObserver)
     */
@@ -122,19 +122,19 @@ public class ManagerImpl implements Manager
    public <T> void fire(T event, NonManagedObserver<T> nonManagedObserver)
    {
       Validate.notNull(event, "Event must be specified");
-      
+
       debug(event, true);
       // we start fresh pr new event
       handledThrowables.get().clear();
-      
+
       List<ObserverMethod> observers = resolveObservers(event.getClass());
       List<ObserverMethod> interceptorObservers = resolveInterceptorObservers(event.getClass());
-      
+
       try
       {
          new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event).proceed();
-      } 
-      catch (Exception e) 
+      }
+      catch (Exception e)
       {
          Throwable fireException = e;
          if(fireException instanceof InvocationException)
@@ -157,7 +157,7 @@ public class ManagerImpl implements Manager
    }
 
    @Override
-   public <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance) 
+   public <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance)
    {
       Validate.notNull(scope, "Scope must be specified");
       Validate.notNull(type, "Type must be specified");
@@ -174,7 +174,7 @@ public class ManagerImpl implements Manager
       }
       scopedContext.getObjectStore().add(type, instance);
    }
-   
+
    @Override
    public <T> T resolve(Class<T> type)
    {
@@ -197,7 +197,7 @@ public class ManagerImpl implements Manager
    {
       inject(ExtensionImpl.of(obj));
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.Manager#getContext(java.lang.Class)
     */
@@ -218,24 +218,24 @@ public class ManagerImpl implements Manager
    // Exposed Convenience Impl Methods ---------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   
+
    public List<Context> getContexts()
    {
       return Collections.unmodifiableList(contexts);
    }
-   
+
    /**
     * @param <T>
     * @param scope
     * @param type
     * @param instance
     */
-   public <T> void bindAndFire(Class<? extends Annotation> scope, Class<T> type, T instance) 
+   public <T> void bindAndFire(Class<? extends Annotation> scope, Class<T> type, T instance)
    {
       bind(scope, type, instance);
       fire(instance);
    }
-   
+
    /**
     * @return the extensions
     */
@@ -251,16 +251,16 @@ public class ManagerImpl implements Manager
       }
       return null;
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.core.spi.Manager#start()
     */
    @Override
    public void start()
    {
-      fire(new ManagerStarted());      
+      fire(new ManagerStarted());
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.core.spi.Manager#shutdown()
     */
@@ -272,13 +272,13 @@ public class ManagerImpl implements Manager
       {
          fire(new ManagerStopping());
       }
-      catch (Exception e) 
+      catch (Exception e)
       {
          try
          {
             fireException(e);
          }
-         catch (Exception e2) 
+         catch (Exception e2)
          {
             shutdownException = e2;
          }
@@ -296,7 +296,7 @@ public class ManagerImpl implements Manager
          {
             eventStack.remove();
          }
-         
+
          handledThrowables.remove();
       }
       if(shutdownException != null)
@@ -321,36 +321,36 @@ public class ManagerImpl implements Manager
             if(extensions.contains(observer))
             {
                throw new IllegalArgumentException(
-                     "Attempted to register the same Observer: " + observer.getName() 
+                     "Attempted to register the same Observer: " + observer.getName()
                      + " multiple times, please check classpath for conflicting jar versions");
             }
             extensions.add(observer);
             return this;
          }
-         
+
          @Override
          public ManagerProcessing context(Class<? extends Context> context)
          {
             if(contexts.contains(context))
             {
                throw new IllegalArgumentException(
-                     "Attempted to register the same " + Context.class.getSimpleName() + " : " + context.getName() 
+                     "Attempted to register the same " + Context.class.getSimpleName() + " : " + context.getName()
                      + " multiple times, please check classpath for conflicting jar versions");
             }
             contexts.add(context);
             return this;
          }
       });
-      
+
       this.extensions.addAll(createExtensions(extensions));
       this.contexts.addAll(createContexts(contexts));
    }
-   
+
    boolean isExceptionHandled(Throwable e)
    {
       return handledThrowables.get().contains(e.getClass());
    }
-   
+
    void fireException(Throwable event)
    {
       debug(event, true);
@@ -369,7 +369,7 @@ public class ManagerImpl implements Manager
                debug(observer, false);
                observer.invoke(this, event);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                // getCause(InocationTargetException).getCause(RealCause);
                Throwable toBeFired = e.getCause();
@@ -429,10 +429,10 @@ public class ManagerImpl implements Manager
    }
 
    /**
-    * 
+    *
     */
    private void createApplicationContextAndActivate()
-   {    
+   {
       ApplicationContext context = new ApplicationContextImpl();
       context.activate();
       context.getObjectStore().add(Injector.class, InjectorImpl.of(this));
@@ -447,7 +447,7 @@ public class ManagerImpl implements Manager
    {
       ApplicationContext appContext = getContext(ApplicationContext.class);
       ObjectStore store = appContext.getObjectStore();
-      
+
       for(Context context : contexts)
       {
          store.add((Class<Context>)context.getClass().getInterfaces()[0], context);
@@ -507,7 +507,7 @@ public class ManagerImpl implements Manager
       }
       return activeContexts;
    }
-   
+
    private void inject(Extension extension)
    {
       injectInstances(extension);
@@ -524,7 +524,7 @@ public class ManagerImpl implements Manager
          point.set(InstanceImpl.of(Reflections.getType(point.getType()), point.getScope(), this));
       }
    }
-   
+
    /**
     * @param extension
     */
@@ -547,7 +547,7 @@ public class ManagerImpl implements Manager
       }
       return null;
    }
-   
+
    void debug(ObserverMethod method, boolean interceptor)
    {
       if(DEBUG)
@@ -562,13 +562,13 @@ public class ManagerImpl implements Manager
       {
          if(eventStack == null)
          {
-            eventStack = new ThreadLocal<Stack<Object>>() 
+            eventStack = new ThreadLocal<Stack<Object>>()
             {
                @Override
                protected Stack<Object> initialValue()
                {
                   return new Stack<Object>();
-               } 
+               }
             };
          }
          if(push)
@@ -585,7 +585,7 @@ public class ManagerImpl implements Manager
          }
       }
    }
-   
+
    private String getEventName(Object object)
    {
       Class<?> eventClass = object.getClass();
@@ -595,7 +595,7 @@ public class ManagerImpl implements Manager
       }
       return object.getClass().getSimpleName();
    }
-   
+
    private String calcDebugPrefix()
    {
       int size = eventStack.get().size();
