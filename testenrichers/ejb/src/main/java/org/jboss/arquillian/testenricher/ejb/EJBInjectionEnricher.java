@@ -114,7 +114,7 @@ public class EJBInjectionEnricher implements TestEnricher
                EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
                try
                {
-                  String[] jndiNames = resolveJNDINames(field.getType(), fieldAnnotation.mappedName(), fieldAnnotation.beanName());
+                  String[] jndiNames = resolveJNDINames(field.getType(), fieldAnnotation.mappedName(), fieldAnnotation.beanName(), fieldAnnotation.lookup());
                   Object ejb = lookupEJB(jndiNames);
                   field.set(testCase, ejb);
                }
@@ -150,14 +150,16 @@ public class EJBInjectionEnricher implements TestEnricher
             // Default values of the annotation attributes.
             String mappedName = null;
             String beanName = null;
+            String lookup = null;
 
             if (parameterAnnotation != null)
             {
                mappedName = parameterAnnotation.mappedName();
                beanName = parameterAnnotation.beanName();
+               lookup = parameterAnnotation.lookup();
             }
 
-            String[] jndiNames = resolveJNDINames(method.getParameterTypes()[0], mappedName, beanName);
+            String[] jndiNames = resolveJNDINames(method.getParameterTypes()[0], mappedName, beanName, lookup);
             Object ejb = lookupEJB(jndiNames);
             method.invoke(testCase, ejb);
          }
@@ -172,19 +174,20 @@ public class EJBInjectionEnricher implements TestEnricher
    /**
     * Resolves the JNDI name of the given field.
     *
-    * If <tt>mappedName</tt> or <tt>beanName</tt> are specified, they're used to resolve JNDI name. Otherwise, default policy
+    * If <tt>mappedName</tt>, <tt>lookup</tt> or <tt>beanName</tt> are specified, they're used to resolve JNDI name. Otherwise, default policy
     * applies.
     *
-    * If both, the <tt>mappedName</tt> and <tt>beanName</tt>, are specified at the same time, an {@link IllegalStateException}
+    * If more than one of the <tt>mappedName</tt>, <tt>lookup</tt> and <tt>beanName</tt> {@link EJB} annotation attributes is specified at the same time, an {@link IllegalStateException}
     * will be thrown.
     *
     * @param fieldType annotated field which JNDI name should be resolved.
     * @param mappedName Value of {@link EJB}'s <tt>mappedName</tt> attribute.
     * @param beanName Value of {@link EJB}'s <tt>beanName</tt> attribute.
+    * @param lookup Value of {@link EJB}'s <tt>lookup</tt> attribute.
     *
     * @return possible JNDI names which should be looked up to access the proper object.
     */
-   protected String[] resolveJNDINames(Class<?> fieldType, String mappedName, String beanName)
+   protected String[] resolveJNDINames(Class<?> fieldType, String mappedName, String beanName, String lookup)
    {
 
       MessageFormat msg = new MessageFormat(
@@ -196,11 +199,12 @@ public class EJBInjectionEnricher implements TestEnricher
 
       boolean isMappedNameSet = hasValue(mappedName);
       boolean isBeanNameSet = hasValue(beanName);
+      boolean isLookupSet = hasValue(lookup);
 
-      if (isMappedNameSet && isBeanNameSet)
+      if (isMoreThanOneValueTrue(isMappedNameSet, isBeanNameSet, isLookupSet))
       {
          throw new IllegalStateException(
-               "@EJB annotation attributes 'mappedName' and 'beanName' cannot be specified at the same time.");
+               "Only one of the @EJB annotation attributes 'mappedName', 'lookup' and 'beanName' can be specified at the same time.");
       }
 
       String[] jndiNames;
@@ -210,6 +214,11 @@ public class EJBInjectionEnricher implements TestEnricher
       {
          jndiNames = new String[]
          {mappedName};
+      }
+      else if (isLookupSet)
+      {
+         jndiNames = new String[]
+         {lookup};
       }
       else if (isBeanNameSet)
       {
@@ -289,4 +298,17 @@ public class EJBInjectionEnricher implements TestEnricher
          return false;
       }
    }
+
+   private boolean isMoreThanOneValueTrue(boolean... values) {
+		boolean trueFound = false;
+		for (boolean value : values) {
+			if (value) {
+				if (trueFound) {
+					return true;
+				}
+				trueFound = true;
+			}
+		}
+		return false;
+	}
 }
