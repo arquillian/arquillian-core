@@ -31,11 +31,13 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.api.Secure;
 
 /**
  * URLResourceProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
  * @version $Revision: $
  */
 public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
@@ -52,17 +54,18 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
    @Override
    public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
    {
-      return locateURL(resource, locateTargetQualification(qualifiers));
+      return locateURL(resource, qualifiers);
    }
 
-
-   private Object locateURL(ArquillianResource resource, TargetsContainer targets)
+   private Object locateURL(ArquillianResource resource, Annotation[] qualifiers)
    {
       ProtocolMetaData metaData = protocolMetadata.get();
       if(metaData == null)
       {
          return null;
       }
+
+      TargetsContainer targets = locateTargetQualification(qualifiers);
       if(metaData.hasContext(HTTPContext.class))
       {
          HTTPContext context = null;
@@ -97,7 +100,7 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
          }
          else
          {
-            return toURL(context);
+            return toURL(context, isSecure(qualifiers));
          }
       }
       return null;
@@ -129,6 +132,18 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       return null;
    }
 
+   private boolean isSecure(Annotation[] qualifiers)
+   {
+      for(Annotation qualifier : qualifiers)
+      {
+         if(Secure.class.isAssignableFrom(qualifier.annotationType()))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
    private boolean allInSameContext(List<Servlet> servlets)
    {
       Set<String> context = new HashSet<String>();
@@ -151,11 +166,11 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       }
    }
 
-   private URL toURL(HTTPContext context)
+   private URL toURL(HTTPContext context, boolean isSecure)
    {
       try
       {
-         return new URI("http", null, context.getHost(), context.getPort(), null, null, null).toURL();
+         return new URI((isSecure) ? "https" : "http", null, context.getHost(), context.getPort(), null, null, null).toURL();
       }
       catch (Exception e)
       {

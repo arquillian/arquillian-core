@@ -25,6 +25,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.api.Secure;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,6 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * ArquillianTestEnricherTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -60,6 +62,18 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    }
 
    @Test
+   public void shouldBeAbleToInjectBaseContextSecureURL() throws Exception
+   {
+      SecureURLBaseContextClass test = execute(
+            SecureURLBaseContextClass.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST", 8443)));
+
+      Assert.assertEquals("https://TEST:8443", test.url.toExternalForm());
+   }
+
+   @Test
    public void shouldBeAbleToInjectBaseContextURLQualified() throws Exception
    {
       URLBaseContextClassQualified test = execute(
@@ -71,6 +85,20 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
                .addContext(new HTTPContext("TEST-X", 8080)));
 
       Assert.assertEquals("http://TEST-X:8080", test.url.toExternalForm());
+   }
+
+   @Test
+   public void shouldBeAbleToInjectBaseContextSecureURLQualified() throws Exception
+   {
+      SecureURLBaseContextClassQualified test = execute(
+            SecureURLBaseContextClassQualified.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST-Y", 8443)),
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST-X", 8443)));
+
+      Assert.assertEquals("https://TEST-X:8443", test.url.toExternalForm());
    }
 
    @Test
@@ -196,6 +224,12 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
       @ArquillianResource
       public URL url;
    }
+   
+   public static class SecureURLBaseContextClass
+   {
+       @ArquillianResource @Secure
+       public URL url;
+   }
 
    public static class URLServletContextClass
    {
@@ -206,6 +240,12 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    public static class URLBaseContextClassQualified
    {
       @ArquillianResource @OperateOnDeployment("X")
+      public URL url;
+   }
+   
+   public static class SecureURLBaseContextClassQualified
+   {
+      @ArquillianResource @OperateOnDeployment("X") @Secure
       public URL url;
    }
 
