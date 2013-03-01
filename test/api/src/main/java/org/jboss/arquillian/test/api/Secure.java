@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
  * &#64;ArquillianResource
  * &#64;Secure
  * private URL url;
+ * </code></pre>
  *
  * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
  * @version $Revision: $
