@@ -47,12 +47,12 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    public void shouldHandleMultipleDeploymentsAllDefault() throws Exception
    {
       List<DeploymentDescription> scenario = generate(MultiDeploymentsDefault.class);
-      
+
       Assert.assertNotNull(scenario);
       Assert.assertEquals(
             "Verify all deployments were found",
             2, scenario.size());
-      
+
       for(DeploymentDescription deployment : scenario)
       {
          Assert.assertEquals(
@@ -64,23 +64,23 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
                "Verify deployment has default protocol",
                ProtocolDescription.DEFAULT,
                deployment.getProtocol());
-         
+
          Assert.assertEquals(-1, deployment.getOrder());
          Assert.assertEquals(true, deployment.managed());
          Assert.assertTrue(JavaArchive.class.isInstance(deployment.getArchive()));
       }
    }
-   
+
    @Test
    public void shouldHandleMultipleDeploymentsAllSet() throws Exception
    {
       List<DeploymentDescription> scenario = generate(MultiDeploymentsSet.class);
-      
+
       Assert.assertNotNull(scenario);
       Assert.assertEquals(
             "Verify all deployments were found",
             2, scenario.size());
-      
+
       DeploymentDescription deploymentOne = scenario.get(0);
 
       Assert.assertEquals(
@@ -92,13 +92,13 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
             "Verify deployment has specified protocol",
             new ProtocolDescription("protocol-first"),
             deploymentOne.getProtocol());
-      
+
       Assert.assertEquals(1, deploymentOne.getOrder());
       Assert.assertEquals(false, deploymentOne.managed());
       Assert.assertEquals(false, deploymentOne.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentOne.getArchive()));
       Assert.assertNull(deploymentOne.getExpectedException());
-      
+
       DeploymentDescription deploymentTwo = scenario.get(1);
 
       Assert.assertEquals(
@@ -109,24 +109,24 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
             "Verify deployment has specified protocol",
             new ProtocolDescription("protocol-second"),
             deploymentTwo.getProtocol());
-      
+
       Assert.assertEquals(2, deploymentTwo.getOrder());
       Assert.assertEquals(false, deploymentTwo.managed());
       Assert.assertEquals(true, deploymentTwo.testable());
       Assert.assertTrue(JavaArchive.class.isInstance(deploymentTwo.getArchive()));
       Assert.assertNull(deploymentTwo.getExpectedException());
    }
-   
+
    @Test
    public void shouldReadExpectedAndOverrideDeployment()
    {
       List<DeploymentDescription> scenario = generate(ExpectedDeploymentExceptionSet.class);
-      
+
       Assert.assertNotNull(scenario);
       Assert.assertEquals(
             "Verify all deployments were found",
             1, scenario.size());
-      
+
       DeploymentDescription deploymentOne = scenario.get(0);
 
       Assert.assertEquals(false, deploymentOne.testable());
@@ -138,7 +138,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    public void shouldAllowNoDeploymentPresent() throws Exception
    {
       List<DeploymentDescription> descriptors = generate(DeploymentNotPresent.class);
-      
+
       Assert.assertNotNull(descriptors);
       Assert.assertEquals(0, descriptors.size());
    }
@@ -146,15 +146,15 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    @Test
    public void shouldAllowNonPublicDeploymentMethods() throws Exception {
       List<DeploymentDescription> descriptors = generate(DeploymentProtectedMethods.class);
-      
+
       Assert.assertNotNull(descriptors);
       Assert.assertEquals(3, descriptors.size());
    }
-   
+
    @Test
    public void shouldAllowNonPublicDeploymentMethodsFromSuperClass() throws Exception {
       List<DeploymentDescription> descriptors = generate(DeploymentProtectedMethodsInherited.class);
-      
+
       Assert.assertNotNull(descriptors);
       Assert.assertEquals(3, descriptors.size());
    }
@@ -174,7 +174,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    }
 
    @SuppressWarnings("unused")
-   private static class MultiDeploymentsDefault 
+   private static class MultiDeploymentsDefault
    {
       @Deployment
       public static Archive<?> deploymentOne()
@@ -190,7 +190,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    }
 
    @SuppressWarnings("unused")
-   private static class MultiDeploymentsSet 
+   private static class MultiDeploymentsSet
    {
       @OverProtocol("protocol-first")
       @TargetsContainer("target-first")
@@ -210,10 +210,10 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    }
 
    @SuppressWarnings("unused")
-   private static class ExpectedDeploymentExceptionSet 
+   private static class ExpectedDeploymentExceptionSet
    {
       @Deployment(name = "second", testable = true) // testable should be overwritten by @Expected
-      @ShouldThrowException(Exception.class)
+      @ShouldThrowException
       public static Archive<?> deploymentOne()
       {
          return ShrinkWrap.create(JavaArchive.class);
@@ -222,7 +222,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
 
    @SuppressWarnings("unused")
    private static class DeploymentProtectedMethods {
-      
+
       @Deployment
       static JavaArchive one() {
          return ShrinkWrap.create(JavaArchive.class);
@@ -232,7 +232,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       private static JavaArchive two() {
          return ShrinkWrap.create(JavaArchive.class);
       }
-      
+
       @Deployment
       protected static JavaArchive tree() {
          return ShrinkWrap.create(JavaArchive.class);
@@ -241,7 +241,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
 
    private static class DeploymentProtectedMethodsInherited extends DeploymentProtectedMethods {
    }
-   
+
    private static class DeploymentNotPresent
    {
    }
@@ -265,7 +265,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
          return ShrinkWrap.create(JavaArchive.class);
       }
    }
-   
+
    private List<DeploymentDescription> generate(Class<?> testClass)
    {
       return new AnnotationDeploymentScenarioGenerator().generate(new TestClass(testClass));
