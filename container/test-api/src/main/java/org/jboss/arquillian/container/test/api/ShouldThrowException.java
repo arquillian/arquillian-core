@@ -24,10 +24,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Define that a Deployment should cause a exception during deployment. If the Container does not throw a exception, 
+ * Define that a Deployment should cause a exception during deployment. If the Container does not throw a exception,
  * or the exception is of the wrong type, a RuntimeException will be thrown and the test failed.
  * If the correct exception is thrown the test will execute as normal.
- * 
+ *
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -48,5 +48,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface ShouldThrowException
 {
-   Class<? extends Exception> value();
+   Class<? extends Exception> value() default Exception.class;
 }
