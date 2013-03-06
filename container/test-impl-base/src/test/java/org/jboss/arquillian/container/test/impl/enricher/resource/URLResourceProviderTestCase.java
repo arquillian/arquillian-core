@@ -62,7 +62,7 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    }
 
    @Test
-   public void shouldBeAbleToInjectBaseContextSecureURL() throws Exception
+   public void shouldBeAbleToInjectBaseSecureContextURL() throws Exception
    {
       SecureURLBaseContextClass test = execute(
             SecureURLBaseContextClass.class,
@@ -88,7 +88,7 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    }
 
    @Test
-   public void shouldBeAbleToInjectBaseContextSecureURLQualified() throws Exception
+   public void shouldBeAbleToInjectBaseSecureContextURLQualified() throws Exception
    {
       SecureURLBaseContextClassQualified test = execute(
             SecureURLBaseContextClassQualified.class,
@@ -112,6 +112,19 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
                   .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test"))));
 
       Assert.assertEquals("http://TEST:8080/test/", test.url.toExternalForm());
+   }
+
+   @Test
+   public void shouldBeAbleToInjectServletSecureContextURL() throws Exception
+   {
+       SecureURLServletContextClass test = execute(
+            SecureURLServletContextClass.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST", 8443)
+                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test"))));
+
+      Assert.assertEquals("https://TEST:8443/test/", test.url.toExternalForm());
    }
 
    @Test
@@ -234,6 +247,12 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    public static class URLServletContextClass
    {
       @ArquillianResource(URLServletContextClass.class)
+      public URL url;
+   }
+
+   public static class SecureURLServletContextClass
+   {
+      @ArquillianResource(URLServletContextClass.class) @Secure
       public URL url;
    }
 

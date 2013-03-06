@@ -91,12 +91,12 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
             {
                return null;
             }
-            return toURL(servlet);
+            return toURL(servlet, isSecure(qualifiers));
          }
          // TODO: evaluate, if all servlets are in the same context, and only one context exists, we can find the context         
          else if(allInSameContext(context.getServlets()))
          {
-            return toURL(context.getServlets().get(0));
+            return toURL(context.getServlets().get(0), isSecure(qualifiers));
          }
          else
          {
@@ -154,11 +154,13 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       return context.size() == 1;
    }
 
-   private URL toURL(Servlet servlet)
+   private URL toURL(Servlet servlet, boolean isSecure)
    {
       try
       {
-         return servlet.getBaseURI().toURL();
+         URI baseURI = servlet.getBaseURI();
+         return new URI((isSecure) ? "https" : "http", baseURI.getUserInfo(), baseURI.getHost(), baseURI.getPort(),
+               baseURI.getPath(), baseURI.getQuery(), baseURI.getFragment()).toURL();
       }
       catch (Exception e)
       {
