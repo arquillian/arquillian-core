@@ -169,6 +169,9 @@ public abstract class Arquillian implements IHookable
                // Parameters can be contextual, so extract information
                swapWithClassNames(callback.getParameters());
                testResult.setParameters(callback.getParameters());
+               if (testResult.getThrowable() != null) {
+                   throw testResult.getThrowable();
+               }
             }
 
             private void copyParameters(Object[] source, Object[] target)
