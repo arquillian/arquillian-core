@@ -25,7 +25,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.test.api.Secure;
+import org.jboss.arquillian.test.api.Secured;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -68,6 +68,18 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
             SecureURLBaseContextClass.class,
             ProtocolMetaData.class,
             new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST", 443)));
+
+      Assert.assertEquals("https://TEST", test.url.toExternalForm());
+   }
+
+   @Test
+   public void shouldBeAbleToInjectBaseSecureContextURLWithPort() throws Exception
+   {
+       SecureURLWithPortBaseContextClass test = execute(
+            SecureURLWithPortBaseContextClass.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
                .addContext(new HTTPContext("TEST", 8443)));
 
       Assert.assertEquals("https://TEST:8443", test.url.toExternalForm());
@@ -92,6 +104,20 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    {
       SecureURLBaseContextClassQualified test = execute(
             SecureURLBaseContextClassQualified.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST-Y", 443)),
+            new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST-X", 443)));
+
+      Assert.assertEquals("https://TEST-X", test.url.toExternalForm());
+   }
+
+   @Test
+   public void shouldBeAbleToInjectBaseSecureContextURLWithPortQualified() throws Exception
+   {
+      SecureURLWithPortBaseContextClassQualified test = execute(
+            SecureURLWithPortBaseContextClassQualified.class,
             ProtocolMetaData.class,
             new ProtocolMetaData()
                .addContext(new HTTPContext("TEST-Y", 8443)),
@@ -121,8 +147,21 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
             SecureURLServletContextClass.class,
             ProtocolMetaData.class,
             new ProtocolMetaData()
+               .addContext(new HTTPContext("TEST", 443)
+                  .add(new Servlet(SecureURLServletContextClass.class.getSimpleName(), "/test"))));
+
+      Assert.assertEquals("https://TEST/test/", test.url.toExternalForm());
+   }
+
+   @Test
+   public void shouldBeAbleToInjectServletSecureContextURLWithPort() throws Exception
+   {
+       SecureURLWithPortServletContextClass test = execute(
+            SecureURLWithPortServletContextClass.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
                .addContext(new HTTPContext("TEST", 8443)
-                  .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test"))));
+                  .add(new Servlet(SecureURLWithPortServletContextClass.class.getSimpleName(), "/test"))));
 
       Assert.assertEquals("https://TEST:8443/test/", test.url.toExternalForm());
    }
@@ -240,8 +279,14 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
    
    public static class SecureURLBaseContextClass
    {
-       @ArquillianResource @Secure
-       public URL url;
+      @ArquillianResource @Secured
+      public URL url;
+   }
+
+   public static class SecureURLWithPortBaseContextClass
+   {
+      @ArquillianResource @Secured(port = 8443)
+      public URL url;
    }
 
    public static class URLServletContextClass
@@ -252,7 +297,13 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
 
    public static class SecureURLServletContextClass
    {
-      @ArquillianResource(URLServletContextClass.class) @Secure
+      @ArquillianResource(SecureURLServletContextClass.class) @Secured
+      public URL url;
+   }
+
+   public static class SecureURLWithPortServletContextClass
+   {
+      @ArquillianResource(SecureURLWithPortServletContextClass.class) @Secured(port = 8443)
       public URL url;
    }
 
@@ -261,10 +312,16 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
       @ArquillianResource @OperateOnDeployment("X")
       public URL url;
    }
-   
+
    public static class SecureURLBaseContextClassQualified
    {
-      @ArquillianResource @OperateOnDeployment("X") @Secure
+      @ArquillianResource @OperateOnDeployment("X") @Secured
+      public URL url;
+   }
+
+   public static class SecureURLWithPortBaseContextClassQualified
+   {
+      @ArquillianResource @OperateOnDeployment("X") @Secured(port = 8443)
       public URL url;
    }
 

@@ -31,7 +31,7 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.test.api.Secure;
+import org.jboss.arquillian.test.api.Secured;
 
 /**
  * URLResourceProvider
@@ -66,6 +66,7 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       }
 
       TargetsContainer targets = locateTargetQualification(qualifiers);
+      Secured secured = locateSecureQualification(qualifiers);
       if(metaData.hasContext(HTTPContext.class))
       {
          HTTPContext context = null;
@@ -91,16 +92,16 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
             {
                return null;
             }
-            return toURL(servlet, isSecure(qualifiers));
+            return toURL(servlet, secured);
          }
          // TODO: evaluate, if all servlets are in the same context, and only one context exists, we can find the context         
          else if(allInSameContext(context.getServlets()))
          {
-            return toURL(context.getServlets().get(0), isSecure(qualifiers));
+            return toURL(context.getServlets().get(0), secured);
          }
          else
          {
-            return toURL(context, isSecure(qualifiers));
+            return toURL(context, secured);
          }
       }
       return null;
@@ -132,16 +133,16 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       return null;
    }
 
-   private boolean isSecure(Annotation[] qualifiers)
+   private Secured locateSecureQualification(Annotation[] qualifiers)
    {
       for(Annotation qualifier : qualifiers)
       {
-         if(Secure.class.isAssignableFrom(qualifier.annotationType()))
+         if(Secured.class.isAssignableFrom(qualifier.annotationType()))
          {
-            return true;
+            return Secured.class.cast(qualifier);
          }
       }
-      return false;
+      return null;
    }
 
    private boolean allInSameContext(List<Servlet> servlets)
@@ -154,13 +155,14 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       return context.size() == 1;
    }
 
-   private URL toURL(Servlet servlet, boolean isSecure)
+   private URL toURL(Servlet servlet, Secured secured)
    {
       try
       {
          URI baseURI = servlet.getBaseURI();
-         return new URI((isSecure) ? "https" : "http", baseURI.getUserInfo(), baseURI.getHost(), baseURI.getPort(),
-               baseURI.getPath(), baseURI.getQuery(), baseURI.getFragment()).toURL();
+         return new URI((secured == null) ? "http" : secured.protocol(), baseURI.getUserInfo(), baseURI.getHost(),
+               (secured == null) ? baseURI.getPort() : secured.port(), baseURI.getPath(), baseURI.getQuery(),
+               baseURI.getFragment()).toURL();
       }
       catch (Exception e)
       {
@@ -168,11 +170,12 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       }
    }
 
-   private URL toURL(HTTPContext context, boolean isSecure)
+   private URL toURL(HTTPContext context, Secured secured)
    {
       try
       {
-         return new URI((isSecure) ? "https" : "http", null, context.getHost(), context.getPort(), null, null, null).toURL();
+         return new URI((secured == null) ? "http" : secured.protocol(), null, context.getHost(),
+               (secured == null) ? context.getPort() : secured.port(), null, null, null).toURL();
       }
       catch (Exception e)
       {

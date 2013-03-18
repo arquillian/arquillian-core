@@ -24,12 +24,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Uses HTTPS protocol for URL and URI injection
+ * Uses the secured protocol for URL and URI injection.
  *
- * Usage Example of Field injection:<br/>
+ * Usage example of field injection:<br />
  * <pre><code>
  * &#64;ArquillianResource
- * &#64;Secure
+ * &#64;Secured
  * private URL url;
  * </code></pre>
  *
@@ -39,5 +39,19 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
-public @interface Secure {
+public @interface Secured {
+
+   /**
+    * Defines the name of the protocol to use.
+    *
+    * @return The protocol name or <code>https</code> if the protocol is undefined
+    */
+   String protocol() default "https";
+
+   /**
+    * Defines the port number on the host.
+    *
+    * @return The port number or <code>-1</code> if the port is undefined
+    */
+   int port() default -1;
 }
