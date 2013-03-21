@@ -41,7 +41,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    //-------------------------------------------------------------------------------------||
 
    private Node model;
-   
+
    //-------------------------------------------------------------------------------------||
    // Constructor ------------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -53,7 +53,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
          .attribute("xmlns", "http://jboss.org/schema/arquillian")
          .attribute("xsi:schemaLocation", "http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"));
    }
-   
+
    public ArquillianDescriptorImpl(String descirptorName, Node model)
    {
       super(descirptorName);
@@ -72,7 +72,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    {
       return new DefaultProtocolDefImpl(getDescriptorName(), model, model.getOrCreate("defaultProtocol")).setType(type);
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#getDefaultProtocol()
     */
@@ -85,7 +85,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
       }
       return null;
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#engine()
     */
@@ -94,8 +94,8 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    {
       return new EngineDefImpl(getDescriptorName(), model, model.getOrCreate("engine"));
    }
-   
-   public ContainerDef container(String name) 
+
+   public ContainerDef container(String name)
    {
       return new ContainerDefImpl(getDescriptorName(), model, model.getOrCreate("container@qualifier=" + name));
    }
@@ -108,7 +108,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    {
       return new GroupDefImpl(getDescriptorName(), model, model.getOrCreate("group@qualifier=" + name));
    }
-   
+
    @Override
    public ExtensionDef extension(String name)
    {
@@ -128,7 +128,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
       }
       return containers;
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.ArquillianDescriptor#getGroups()
     */
@@ -142,7 +142,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
       }
       return groups;
    }
-   
+
    @Override
    public List<ExtensionDef> getExtensions()
    {
@@ -153,7 +153,7 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
       }
       return extensions;
    }
-   
+
    //-------------------------------------------------------------------------------------||
    // Required Implementations - SchemaDescriptorProvider --------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -166,5 +166,5 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
    public Node getRootNode()
    {
       return model;
-   }   
+   }
 }
