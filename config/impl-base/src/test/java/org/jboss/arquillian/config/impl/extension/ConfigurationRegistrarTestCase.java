@@ -291,6 +291,26 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase
             });
    }
 
+   @Test
+   public void shouldBeAbleToLoadConfiguredXMLWithNewLinesFileResource() throws Exception
+   {
+      validate(
+            ConfigurationRegistrar.ARQUILLIAN_XML_PROPERTY,
+            "src/test/resources/registrar_tests/arquillian_multiple_line_properties.xml",
+            new AssertCallback()
+            {
+               @Override
+               public void validate()
+               {
+                  registrar.loadConfiguration(new ManagerStarted());
+                  ArquillianDescriptor desc = descInst.get();
+
+                  Assert.assertEquals(1, desc.getExtensions().size());
+                  Assert.assertEquals(" new value surrounded with new lines ", desc.getExtensions().get(0).getExtensionProperties().get("multiline-test"));
+               }
+            });
+   }
+
    static void validate(String property, String value, AssertCallback callback)
    {
       try

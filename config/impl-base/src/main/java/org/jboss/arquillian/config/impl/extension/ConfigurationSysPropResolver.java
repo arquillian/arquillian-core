@@ -24,10 +24,10 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  * replacing any sysprop EL expressions with a proper value or default,
  * and returning a new instance of the {@link ArquillianDescriptor}.
  * Fulfills ARQ-148.
- * 
+ *
  * TODO To eventually become part of a chain-based event mechanism
  * as defined by ARQ-284.
- * 
+ *
  * @author <a href="mailto:alr@jboss.org">Andrew Lee Rubinger</a>
  */
 class ConfigurationSysPropResolver
@@ -46,13 +46,13 @@ class ConfigurationSysPropResolver
     * values or defaults
     * @param descriptor The input to resolve, required
     * @return
-    * @throws IllegalArgumentException 
+    * @throws IllegalArgumentException
     */
    static ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
          throws IllegalArgumentException
    {
       final String descrStr = descriptor.exportAsString();
-      final ArquillianDescriptor newArqDescriptor = Descriptors.importAs(ArquillianDescriptor.class).from(
+      final ArquillianDescriptor newArqDescriptor = Descriptors.importAs(ArquillianDescriptor.class).fromString(
             StringPropertyReplacer.replaceProperties(descrStr));
 
       return newArqDescriptor;

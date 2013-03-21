@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
+import static org.jboss.arquillian.config.impl.extension.ConfigurationValuesTrimmer.trim;
+import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
+
 import java.io.InputStream;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
@@ -47,19 +50,19 @@ public class ConfigurationRegistrar
    public void loadConfiguration(@Observes ManagerStarted event)
    {
       ArquillianDescriptor descriptor;
-      
-      InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
+
+      final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
       if(input != null)
       {
          descriptor = Descriptors.importAs(ArquillianDescriptor.class)
-                                          .from(input);
+                                          .fromStream(input);
       }
-      else 
+      else
       {
          descriptor = Descriptors.create(ArquillianDescriptor.class);
       }
-      
-      final ArquillianDescriptor resolvedDesc = ConfigurationSysPropResolver.resolveSystemProperties(descriptor);
+
+      final ArquillianDescriptor resolvedDesc = trim(resolveSystemProperties(descriptor));
 
       new PropertiesParser().addProperties(
             resolvedDesc,
@@ -67,5 +70,5 @@ public class ConfigurationRegistrar
 
       descriptorInst.set(resolvedDesc);
    }
-   
+
 }
