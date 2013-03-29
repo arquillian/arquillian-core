@@ -3,5 +3,8 @@ dependencies {
    compile project(':core:spi')
    compile project(':config:api')
 
-   compile libraries.shrinkwrap_descriptors_impl
+   compile libraries.shrinkwrap_descriptors_spi
+
+   testCompile project(':core:impl-base')
+   testCompile project(':core:impl-base').sourceSets.test.output
 }

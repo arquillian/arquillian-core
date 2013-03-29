@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -56,7 +57,7 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
                {
                   runOrder.add(description.getMethodName());
                }
-            }, OrderedTestCase.class);
+            }, OrderedExample.class);
 
       Assert.assertTrue(result.wasSuccessful());
 
@@ -65,7 +66,7 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
       Assert.assertEquals("tree", runOrder.get(2));
    }
 
-   @Test
+   @Test @Ignore // JUnit 4.11 change the default order to alphabetical order 
    public void shouldNotChangeOriginalOrderIfInSequenceNotDefined() throws Exception
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
@@ -79,17 +80,17 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
                {
                   runOrder.add(description.getMethodName());
                }
-            }, UnOrderedTestCase.class);
+            }, UnOrderedExample.class);
 
       Assert.assertTrue(result.wasSuccessful());
 
       List<Method> filteredMethods = new ArrayList<Method>();
-      filteredMethods.addAll(Arrays.asList(UnOrderedTestCase.class.getMethods()));
+      filteredMethods.addAll(Arrays.asList(UnOrderedExample.class.getMethods()));
       // Remove method not belonging to UnOrderedTestCase.class
       for(int i = 0; i < filteredMethods.size(); i++)
       {
          Method mehod = filteredMethods.get(i);
-         if(mehod.getDeclaringClass() != UnOrderedTestCase.class)
+         if(mehod.getDeclaringClass() != UnOrderedExample.class)
          {
             filteredMethods.remove(mehod);
             i--;
@@ -102,7 +103,7 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
    }
 
    @RunWith(Arquillian.class)
-   public static class OrderedTestCase
+   public static class OrderedExample
    {
       @Test @InSequence(2)
       public void two() {}
@@ -115,7 +116,7 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
    }
 
    @RunWith(Arquillian.class)
-   public static class UnOrderedTestCase
+   public static class UnOrderedExample
    {
       @Test
       public void Cone() {}

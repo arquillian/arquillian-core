@@ -5,6 +5,11 @@ dependencies {
    provided libraries.shrinkwrap_impl // should be test, but until SHRINKWRAP-192 is released 
    provided libraries.cdi_api 
    
+   testCompile project(':core:impl-base')
+   testCompile project(':core:impl-base').sourceSets.test.output
+   testCompile project(':test:impl-base')
+   testCompile project(':test:impl-base').sourceSets.test.output
+   
    testCompile libraries.weld
    testRuntime libraries.slf4j_simple
    testRuntime libraries.el_api

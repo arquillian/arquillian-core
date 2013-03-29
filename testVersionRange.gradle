@@ -1,0 +1,84 @@
+apply plugin: TestVersionRangePlugin
+
+class TestVersionRangeExtension {
+   String artifact
+   String from
+}
+
+class TestVersionRangePlugin implements Plugin<Project> {
+
+   def void apply(Project project) {
+      project.extensions.create("testWith", TestVersionRangeExtension)
+      project.gradle.projectsEvaluated {
+         if(project.testWith.artifact != null && project.testWith.from != null)
+         {
+            testWith(
+               project,
+               project.testWith.artifact,
+               usingVersion(
+                  project.testWith.artifact, 
+                  project.testWith.from))
+         }
+      }
+   }
+
+      // create a new test tasks for each version changing the runtime classpath
+   def void testWith(Project project, String artifactName, String... versions) {
+      versions.each { version ->
+   
+         def String testConfigName = 'testDeps_' + version
+         def String testTaskName = 'test_' + version
+         def String artifact = artifactName + ':' + version
+   
+         project.configurations.add(testConfigName) {
+            description = 'Integration Test Classpath for ' + artifact
+            extendsFrom project.configurations.getByName('testRuntime'), project.configurations.getByName('testCompile')
+         }
+   
+         project.dependencies.add(testConfigName, artifact) { dep ->
+            dep.setForce(true)
+         }
+         def test = project.tasks.test
+         project.tasks.add(testTaskName, Test).configure  {
+            dependsOn(test)
+            description = 'Runs the unit tests using ' + artifact
+            group = 'verification'
+            excludes = test.excludes
+            includes = test.includes
+            ignoreFailures = true
+            logging.captureStandardOutput(LogLevel.INFO)
+            testReportDir = project.file(project.testReportDir.getPath() + '_' + version); // report/tests_version
+            testResultsDir = project.file(project.testResultsDir.getPath() + '_' + version); // test-results_version
+            classpath = project.configurations.getByName(testConfigName) + project.sourceSets.main.output + project.sourceSets.test.output
+         }
+   
+         project.tasks.check.dependsOn project.tasks.getByName(testTaskName)
+      }
+   }
+   
+   // fetch all versions in maven repo for given artifact starting with minVersion
+   def String[] usingVersion(String artifact, String minVersion) {
+      String url = 'http://repo1.maven.org/maven2/' + artifact.replaceAll('(:|\\.)', '/') + '/maven-metadata.xml'
+   
+      def List<String> versions = new ArrayList<String>()
+      def GradleVersion min = GradleVersion.version(minVersion)
+   
+      HttpURLConnection connection
+      try {
+         connection = new URL(url).openConnection()
+         connection.requestMethod = "GET"
+   
+         def metadata = new XmlSlurper().parse(connection.inputStream)
+         metadata.versioning.versions.version.each { version ->
+            def String foundVersion = version.text()
+            if(GradleVersion.version(foundVersion).compareTo(min) >= 0)
+            {
+               versions += foundVersion
+            }
+         }
+      } finally {
+         connection?.disconnect()
+      }
+      return versions.toArray(new String[0])
+   }
+}

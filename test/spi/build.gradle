@@ -1,5 +1,7 @@
 dependencies {
-   compile( project(':core:spi') )
+   compile project(':core:spi')
+   compile project(':core:spi')
+   compile project(':test:api')
    
-   compile( libraries.shrinkwrap_api )
+   compile libraries.shrinkwrap_api
 }

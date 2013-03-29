@@ -1,4 +1,8 @@
+description 'Impl Base for the Core'
+
 dependencies {
    compile project(":core:api")
    compile project(":core:spi")
+   
+   testCompile libraries.shrinkwrap_impl
 }

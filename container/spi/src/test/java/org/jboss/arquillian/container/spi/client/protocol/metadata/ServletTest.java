@@ -26,7 +26,7 @@ public class ServletTest
 {
    private static final String TEST_SERVLET_NAME = "jsp";
 
-   private static final String TEST_CONTEXT_ROOT = "/test";
+   private static final String TEST_CONTEXT_ROOT = "test";
 
    private static final String ROOT_CONTEXT_ROOT_BASE_URI = Servlet.HTTP_SCHEME + HTTPContextTest.TEST_HOST + ":"
          + HTTPContextTest.TEST_PORT + "/";

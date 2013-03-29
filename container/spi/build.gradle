@@ -6,5 +6,6 @@ dependencies {
    compile libraries.shrinkwrap_descriptors_api
    compile libraries.shrinkwrap_api
    
+   testCompile libraries.shrinkwrap_descriptors_impl_javaee
    testRuntime libraries.shrinkwrap_impl
 }

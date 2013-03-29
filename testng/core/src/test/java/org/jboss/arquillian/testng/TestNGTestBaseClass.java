@@ -39,7 +39,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
-import org.testng.internal.AnnotationTypeEnum;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
@@ -208,7 +207,16 @@ public class TestNGTestBaseClass
    {
       XmlSuite suite = new XmlSuite();
       suite.setName("Arquillian - TEST");
-      suite.setAnnotations(AnnotationTypeEnum.JDK.getName());
+      // TestNG >= 6.3 has removed this method
+      try
+      {
+         Method method = XmlSuite.class.getMethod("setAnnotations", String.class);
+         method.invoke(suite, "JDK");
+      }
+      catch (Exception e) {
+         // no-op
+      }
+
       suite.setConfigFailurePolicy("continue");
       XmlTest test = new XmlTest(suite);
       if(groups != null)

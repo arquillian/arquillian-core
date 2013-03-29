@@ -2,4 +2,11 @@ dependencies {
    compile project(':test:spi')
    
    provided libraries.testng
+   
+   testCompile libraries.mockito
+}
+
+testWith {
+   artifact = 'org.testng:testng'
+   from = /* >= */ '5.14.6'
 }

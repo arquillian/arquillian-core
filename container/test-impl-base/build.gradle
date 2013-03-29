@@ -8,7 +8,9 @@ dependencies {
    compile libraries.shrinkwrap_impl
 
    testCompile project(':core:impl-base')
+   testCompile project(':core:impl-base').sourceSets.test.output
    testCompile project(':container:impl-base')
+   testCompile project(':container:impl-base').sourceSets.test.output
 
    testCompile libraries.mockito
 }

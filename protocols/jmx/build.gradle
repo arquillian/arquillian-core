@@ -1,8 +1,7 @@
+description "Protocol handler for communicating via JMX"
+
 dependencies {
    compile project(':container:test-spi')
-   
-   provided libraries.jboss_logging
-   provided libraries.jboss_logmanager
    
    testCompile project(':junit:container')
 }
