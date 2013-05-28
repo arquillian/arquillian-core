@@ -20,10 +20,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -43,6 +45,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  */
 public class AnnotationDeploymentScenarioGenerator implements DeploymentScenarioGenerator
 {
+
+    private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
     */
@@ -92,6 +97,7 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       if(Archive.class.isAssignableFrom(deploymentMethod.getReturnType()))
       {
          deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
+         logWarningIfArchiveHasUnexpectedFileExtension(deployment);
          deployment.shouldBeTestable(deploymentAnnotation.testable());
       }
       else if(Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType()))
@@ -117,6 +123,17 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       }
       
       return deployment;
+   }
+
+   private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment)
+   {
+      if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive()))
+      {
+         log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
+               + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
+               + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
+               + " rely on the given file extension, the archive type is only a description of a certain structure.");
+      }
    }
 
    /**
