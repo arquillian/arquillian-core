@@ -33,6 +33,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  * Validation utility
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
+ * @author <a href="mailto:tommy.tynja@diabol.se">Tommy Tynj&auml;</a>
  * @version $Revision: $
  */
 public final class Validate
@@ -52,10 +53,26 @@ public final class Validate
    {
    }
 
+   public static String getArchiveExpression(Class<? extends Archive<?>> type)
+   {
+      return archiveExpressions.get(type);
+   }
+
+   public static boolean archiveHasExpectedFileExtension(final Archive<?> archive)
+   {
+      final String name = archive.getName();
+      for (Map.Entry<Class<? extends Archive<?>>, String> entry : archiveExpressions.entrySet()) {
+         if (name.endsWith(entry.getValue()) && !entry.getKey().isInstance(archive)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
    public static boolean isArchiveOfType(Class<? extends Archive<?>> type, Archive<?> archive)
    {
-      String expression = archiveExpressions.get(type);
-      if(expression == null)
+      String expression = getArchiveExpression(type);
+      if (expression == null)
       {
          return false;
       }

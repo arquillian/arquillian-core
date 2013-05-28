@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
@@ -34,6 +35,8 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import static org.jboss.arquillian.container.spi.client.deployment.Validate.*;
+
 /**
  * {@link DeploymentScenarioGenerator} that builds a {@link DeploymentScenario} based on 
  * the standard Arquillian API annotations.
@@ -43,6 +46,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  */
 public class AnnotationDeploymentScenarioGenerator implements DeploymentScenarioGenerator
 {
+
+    private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
     */
@@ -92,6 +98,7 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       if(Archive.class.isAssignableFrom(deploymentMethod.getReturnType()))
       {
          deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
+         logWarningIfArchiveHasUnexpectedFileExtension(deployment);
          deployment.shouldBeTestable(deploymentAnnotation.testable());
       }
       else if(Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType()))
@@ -117,6 +124,15 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       }
       
       return deployment;
+   }
+
+   void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment)
+   {
+      if (!archiveHasExpectedFileExtension(deployment.getArchive()))
+      {
+         log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName() +
+               " has unexpected file extension " + getFileExtension(deployment.getArchive()));
+      }
    }
 
    /**
@@ -158,6 +174,18 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       catch (Exception e) 
       {
          throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
+      }
+   }
+
+   private String getFileExtension(final Archive<?> archive)
+   {
+      if (archive == null || archive.getName() == null || !archive.getName().contains("."))
+      {
+         return "";
+      }
+      else
+      {
+         return archive.getName().substring(archive.getName().lastIndexOf("."));
       }
    }
 }

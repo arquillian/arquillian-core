@@ -16,10 +16,15 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
@@ -31,9 +36,10 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-
 
 /**
  * AnnotationDeploymentScenarioGeneratorTestCase
@@ -43,6 +49,25 @@ import org.junit.Test;
  */
 public class AnnotationDeploymentScenarioGeneratorTestCase
 {
+
+   private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
+   private static OutputStream logCapturingStream;
+   private static StreamHandler customLogHandler;
+
+   @Before
+   public void attachLogCapturer()
+   {
+      logCapturingStream = new ByteArrayOutputStream();
+      Handler[] handlers = log.getParent().getHandlers();
+      customLogHandler = new StreamHandler(logCapturingStream, handlers[0].getFormatter());
+      log.addHandler(customLogHandler);
+   }
+
+   public String getTestCapturedLog() throws IOException
+   {
+      customLogHandler.flush();
+      return logCapturingStream.toString();
+   }
 
    @Test
    public void shouldHandleMultipleDeploymentsAllDefault() throws Exception
@@ -174,6 +199,30 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
             new TestClass(DeploymentWrongReturnType.class));
    }
 
+   @Test
+   public void shouldLogWarningForMismatchingArchiveTypeAndFileExtension() throws Exception
+   {
+      final String expectedLogPart = "unexpected file extension";
+
+      new AnnotationDeploymentScenarioGenerator().generate(
+            new TestClass(DeploymentWithMismatchingTypeAndFileExtension.class));
+
+      String capturedLog = getTestCapturedLog();
+      Assert.assertTrue(capturedLog.contains(expectedLogPart));
+   }
+
+   @Test
+   public void shouldNotLogWarningForMatchingArchiveTypeAndFileExtension() throws Exception
+   {
+      final String warningLogPart = "unexpected file extension";
+
+      new AnnotationDeploymentScenarioGenerator().generate(
+            new TestClass(DeploymentWithSpecifiedFileExtension.class));
+
+      String capturedLog = getTestCapturedLog();
+      Assert.assertFalse(capturedLog.contains(warningLogPart));
+   }
+
    @SuppressWarnings("unused")
    private static class MultiDeploymentsDefault
    {
@@ -264,6 +313,26 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       public Object test()
       {
          return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+
+   @SuppressWarnings("unused")
+   private static class DeploymentWithMismatchingTypeAndFileExtension
+   {
+      @Deployment
+      public static WebArchive test()
+      {
+         return ShrinkWrap.create(WebArchive.class, "test.jar");
+      }
+   }
+
+   @SuppressWarnings("unused")
+   private static class DeploymentWithSpecifiedFileExtension
+   {
+      @Deployment
+      public static WebArchive test()
+      {
+         return ShrinkWrap.create(WebArchive.class, "test.war");
       }
    }
 
