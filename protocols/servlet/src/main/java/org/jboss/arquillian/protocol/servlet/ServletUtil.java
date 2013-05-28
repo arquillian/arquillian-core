@@ -45,7 +45,7 @@ public final class ServletUtil
       // TODO: can not set contextRoot in config, change to prefixContextRoot
       String contextRoot = null; //protocolConfiguration.getContextRoot(); 
       
-      Servlet servlet = context.getServletByName(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
+      Servlet servlet = context.getServletByName(servletName);
       if(servlet != null)
       {
          // use the context where the Arquillian servlet is found
@@ -62,7 +62,7 @@ public final class ServletUtil
       else
       {
          throw new IllegalArgumentException(
-              ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME + " not found. " +
+              servletName + " not found. " +
               "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
       }
       return URI.create("http://" + address + ":" + port + contextRoot);
