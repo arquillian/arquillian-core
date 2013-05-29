@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -34,8 +35,6 @@ import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScena
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
-
-import static org.jboss.arquillian.container.spi.client.deployment.Validate.*;
 
 /**
  * {@link DeploymentScenarioGenerator} that builds a {@link DeploymentScenario} based on 
@@ -126,12 +125,14 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       return deployment;
    }
 
-   void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment)
+   private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment)
    {
-      if (!archiveHasExpectedFileExtension(deployment.getArchive()))
+      if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive()))
       {
-         log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName() +
-               " has unexpected file extension " + getFileExtension(deployment.getArchive()));
+         log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
+               + " has an unexpected file extension. Archive name: " + deployment.getArchive().getName()
+               + ". It might not be wrong, but the container will rely on the file extension,"
+               + " the archive type is only a description of a certain structure.");
       }
    }
 
@@ -174,18 +175,6 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       catch (Exception e) 
       {
          throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
-      }
-   }
-
-   private String getFileExtension(final Archive<?> archive)
-   {
-      if (archive == null || archive.getName() == null || !archive.getName().contains("."))
-      {
-         return "";
-      }
-      else
-      {
-         return archive.getName().substring(archive.getName().lastIndexOf("."));
       }
    }
 }

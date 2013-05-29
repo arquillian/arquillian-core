@@ -53,6 +53,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
    private static OutputStream logCapturingStream;
    private static StreamHandler customLogHandler;
+   private final static String expectedLogPartForArchiveWithUnexpectedFileExtension = "unexpected file extension";
 
    @Before
    public void attachLogCapturer()
@@ -202,25 +203,41 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    @Test
    public void shouldLogWarningForMismatchingArchiveTypeAndFileExtension() throws Exception
    {
-      final String expectedLogPart = "unexpected file extension";
-
       new AnnotationDeploymentScenarioGenerator().generate(
             new TestClass(DeploymentWithMismatchingTypeAndFileExtension.class));
 
       String capturedLog = getTestCapturedLog();
-      Assert.assertTrue(capturedLog.contains(expectedLogPart));
+      Assert.assertTrue(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
    }
 
    @Test
    public void shouldNotLogWarningForMatchingArchiveTypeAndFileExtension() throws Exception
    {
-      final String warningLogPart = "unexpected file extension";
-
       new AnnotationDeploymentScenarioGenerator().generate(
             new TestClass(DeploymentWithSpecifiedFileExtension.class));
 
       String capturedLog = getTestCapturedLog();
-      Assert.assertFalse(capturedLog.contains(warningLogPart));
+      Assert.assertFalse(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
+   }
+
+   @Test
+   public void shouldLogWarningForDeploymentWithMissingFileExtension() throws Exception
+   {
+      new AnnotationDeploymentScenarioGenerator().generate(
+            new TestClass(DeploymentWithMissingFileExtension.class));
+
+      String capturedLog = getTestCapturedLog();
+      Assert.assertTrue(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
+   }
+
+   @Test // should not log warning when using the default archive name
+   public void shouldNotLogWarningForDeploymentWithoutSpecifiedName() throws Exception
+   {
+      new AnnotationDeploymentScenarioGenerator().generate(
+            new TestClass(DeploymentWithoutSpecifiedName.class));
+
+      String capturedLog = getTestCapturedLog();
+      Assert.assertFalse(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
    }
 
    @SuppressWarnings("unused")
@@ -333,6 +350,26 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       public static WebArchive test()
       {
          return ShrinkWrap.create(WebArchive.class, "test.war");
+      }
+   }
+
+   @SuppressWarnings("unused")
+   private static class DeploymentWithMissingFileExtension
+   {
+      @Deployment
+      public static WebArchive test()
+      {
+         return ShrinkWrap.create(WebArchive.class, "test");
+      }
+   }
+
+   @SuppressWarnings("unused")
+   private static class DeploymentWithoutSpecifiedName
+   {
+      @Deployment
+      public static WebArchive test()
+      {
+         return ShrinkWrap.create(WebArchive.class);
       }
    }
 
