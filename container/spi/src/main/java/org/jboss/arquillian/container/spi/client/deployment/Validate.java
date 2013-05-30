@@ -62,8 +62,7 @@ public final class Validate
    {
       final String name = archive.getName();
       for (Map.Entry<Class<? extends Archive<?>>, String> entry : archiveExpressions.entrySet()) {
-         if ((name.endsWith(entry.getValue()) && !entry.getKey().isInstance(archive)) ||
-            (!name.endsWith(entry.getValue()) && entry.getKey().isInstance(archive)))
+         if (!name.endsWith(entry.getValue()) && entry.getKey().isInstance(archive))
          {
             return false;
          }
