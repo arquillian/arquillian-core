@@ -37,6 +37,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +63,21 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       Handler[] handlers = log.getParent().getHandlers();
       customLogHandler = new StreamHandler(logCapturingStream, handlers[0].getFormatter());
       log.addHandler(customLogHandler);
+   }
+
+   @After
+   public void detachLagCapturer()
+   {
+      log.removeHandler(customLogHandler);
+      customLogHandler = null;
+      try
+      {
+         logCapturingStream.close();
+      } catch (IOException e)
+      {
+         throw new IllegalStateException("Potential memory leak as log capturing stream could not be closed");
+      }
+      logCapturingStream = null;
    }
 
    public String getTestCapturedLog() throws IOException
