@@ -131,8 +131,8 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       {
          log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
                + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
-               + ". It might not be wrong, but the container will rely on the given file extension,"
-               + " the archive type is only a description of a certain structure.");
+               + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
+               + " rely on the given file extension, the archive type is only a description of a certain structure.");
       }
    }
 
