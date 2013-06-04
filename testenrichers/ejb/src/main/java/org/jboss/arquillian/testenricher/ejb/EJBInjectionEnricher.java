@@ -18,6 +18,7 @@ package org.jboss.arquillian.testenricher.ejb;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.List;
@@ -54,9 +55,19 @@ public class EJBInjectionEnricher implements TestEnricher
     */
    public void enrich(Object testCase)
    {
-      if (SecurityActions.isClassPresent(ANNOTATION_NAME) && contextInst.get() != null)
+      if (SecurityActions.isClassPresent(ANNOTATION_NAME))
       {
-         injectClass(testCase);
+         try
+         {
+            if(createContext() != null)
+            {
+               injectClass(testCase);
+            }
+         }
+         catch(Exception e)
+         {
+            log.throwing(EJBInjectionEnricher.class.getName(), "enrich", e);
+         }
       }
    }
 
@@ -114,7 +125,11 @@ public class EJBInjectionEnricher implements TestEnricher
                EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
                try
                {
-                  String[] jndiNames = resolveJNDINames(field.getType(), fieldAnnotation.mappedName(), fieldAnnotation.beanName(), fieldAnnotation.lookup());
+                  String mappedName = fieldAnnotation.mappedName();;
+                  String beanName = fieldAnnotation.beanName();
+                  String lookup = attemptToGet31LookupField(fieldAnnotation);
+
+                  String[] jndiNames = resolveJNDINames(field.getType(), mappedName, beanName, lookup);
                   Object ejb = lookupEJB(jndiNames);
                   field.set(testCase, ejb);
                }
@@ -156,7 +171,7 @@ public class EJBInjectionEnricher implements TestEnricher
             {
                mappedName = parameterAnnotation.mappedName();
                beanName = parameterAnnotation.beanName();
-               lookup = parameterAnnotation.lookup();
+               lookup = attemptToGet31LookupField(parameterAnnotation);
             }
 
             String[] jndiNames = resolveJNDINames(method.getParameterTypes()[0], mappedName, beanName, lookup);
@@ -169,6 +184,22 @@ public class EJBInjectionEnricher implements TestEnricher
       {
          throw new RuntimeException("Could not inject members", e);
       }
+   }
+
+   protected String attemptToGet31LookupField(EJB annotation) throws IllegalAccessException,
+         InvocationTargetException
+   {
+      String lookup = null;
+      try
+      {
+         Method m = EJB.class.getMethod("lookup");
+         lookup = String.valueOf(m.invoke(annotation));
+      }
+      catch (NoSuchMethodException e)
+      {
+         // No op, running on < 3.1 EJB lib
+      }
+      return lookup;
    }
 
    /**
