@@ -47,6 +47,23 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase
    }
 
    @Test
+   public void shouldNotRestartContainerOnStartOfSequence() throws Exception
+   {
+      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+            .engine().maxTestClassesBeforeRestart(5);
+
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
+
+      for(int i = 0; i < 5; i++)
+      {
+         fire(new BeforeClass(getClass()));
+      }
+
+      assertEventFired(StartSuiteContainers.class, 0);
+      assertEventFired(StopSuiteContainers.class, 0);
+   }
+
+   @Test
    public void shouldRestartContainerForEveryX() throws Exception 
    {
       ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
@@ -54,15 +71,15 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase
 
       bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
       
-      for(int i = 0; i < 10; i++)
+      for(int i = 0; i < 6; i++)
       {
          fire(new BeforeClass(getClass()));
       }
 
-      assertEventFired(StartSuiteContainers.class, 2);
-      assertEventFired(StopSuiteContainers.class, 2);
+      assertEventFired(StartSuiteContainers.class, 1);
+      assertEventFired(StopSuiteContainers.class, 1);
    }
-   
+
    @Test
    public void shouldNotForceRestartIfMaxDeploymentsNotSet() throws Exception
    {
