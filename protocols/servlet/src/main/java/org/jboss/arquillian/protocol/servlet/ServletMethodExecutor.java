@@ -26,6 +26,7 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
@@ -42,12 +43,15 @@ import org.jboss.arquillian.test.spi.TestResult;
  */
 public class ServletMethodExecutor implements ContainerMethodExecutor
 {
+   private static final Logger log = Logger.getLogger(ContainerMethodExecutor.class.getName());
+
    public static final String ARQUILLIAN_SERVLET_NAME = "ArquillianServletRunner";
 
    public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
 
    protected ServletURIHandler uriHandler;
    protected CommandCallback callback;
+   protected ServletProtocolConfiguration config;
 
    protected ServletMethodExecutor() {}
    
@@ -65,6 +69,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       {
          throw new IllegalArgumentException("Callback must be specified");
       }
+      this.config = config;
       this.uriHandler = new ServletURIHandler(config, contexts);
       this.callback = callback;
    }
@@ -90,37 +95,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       Timer eventTimer = null;
       try
       {
-         eventTimer = new Timer();
-         eventTimer.schedule(new TimerTask()
-         {
-            @Override
-            public void run()
-            {
-               try
-               {
-                  Object o = execute(eventUrl, Object.class, null);
-                  if (o != null)
-                  {
-                     if (o instanceof Command)
-                     {
-                        Command<?> command = (Command<?>) o;
-                        callback.fired(command);
-                        execute(eventUrl, Object.class, command);
-                     }
-                     else
-                     {
-                        throw new RuntimeException("Recived a non " + Command.class.getName()
-                              + " object on event channel");
-                     }
-                  }
-               }
-               catch (Exception e)
-               {
-                  e.printStackTrace();
-               }
-            }
-         }, 0, 100);
-
+         eventTimer = createCommandServicePullTimer(eventUrl);
          return executeWithRetry(url, TestResult.class);
       }
       catch (Exception e)
@@ -246,5 +221,47 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
          httpConnection.disconnect();
       }
       return null;
+   }
+
+   protected Timer createCommandServicePullTimer(final String eventUrl)
+   {
+      if(config.getPullInMilliSeconds() == null || config.getPullInMilliSeconds() <= 0) {
+         log.warning("The Servlet Protocol has been configured with a pullInMilliSeconds interval of " + 
+               config.getPullInMilliSeconds() + ". The effect of this is that the Command Service has been disabled." + 
+               " Depending on which features you use, this might cause serious delays. Be on high alert for " + 
+               " possible timeout runtime exceptions.");
+         return null;
+      }
+      Timer eventTimer = new Timer();
+      eventTimer.schedule(new TimerTask()
+      {
+         @Override
+         public void run()
+         {
+            try
+            {
+               Object o = execute(eventUrl, Object.class, null);
+               if (o != null)
+               {
+                  if (o instanceof Command)
+                  {
+                     Command<?> command = (Command<?>) o;
+                     callback.fired(command);
+                     execute(eventUrl, Object.class, command);
+                  }
+                  else
+                  {
+                     throw new RuntimeException("Recived a non " + Command.class.getName()
+                           + " object on event channel");
+                  }
+               }
+            }
+            catch (Exception e)
+            {
+               e.printStackTrace();
+            }
+         }
+      }, 0, config.getPullInMilliSeconds());
+      return eventTimer;
    }
 }

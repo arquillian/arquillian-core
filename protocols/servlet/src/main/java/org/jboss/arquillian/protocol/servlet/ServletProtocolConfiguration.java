@@ -31,6 +31,7 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration
    private String host = null;
    private Integer port = null;
    private String contextRoot = null;;
+   private Integer pullInMilliSeconds = 100;
    
    /**
     * @return the host
@@ -83,5 +84,29 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration
    public URI getBaseURI()
    {
       return URI.create("http://" + host + ":" + port + "/" + contextRoot);
+   }
+
+   /**
+    * @return
+    */
+   public Integer getPullInMilliSeconds()
+   {
+      return pullInMilliSeconds;
+   }
+
+   /**
+    * The Command Service provided by the Serlvet protocol will pull
+    * for Remote events happened in the container every x milliseconds.
+    *
+    * This is used by certain extensions to send data/commands between the container
+    * and client. Used by e.g. The InContianer Deployment.
+    *
+    * Set the given pull interval time in milliseconds.
+    *
+    * @param pullInMilliSeconds
+    */
+   public void setPullInMilliSeconds(Integer pullInMilliSeconds)
+   {
+      this.pullInMilliSeconds = pullInMilliSeconds;
    }
 }
