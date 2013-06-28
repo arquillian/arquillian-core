@@ -53,6 +53,8 @@ ext.libraries = [
    // EE APIs
    servlet_api:                                 'org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.0.Final',
    ejb_api:                                     'org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final',
+   ejb_30_api:                                  'javax.ejb:ejb-api:3.0',
+   ejb_31_api:                                  'org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final',
    cdi_api:                                     'javax.enterprise:cdi-api:1.0',
    el_api:                                      'javax.el:el-api:2.2'
 ]

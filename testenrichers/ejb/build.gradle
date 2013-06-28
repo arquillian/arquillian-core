@@ -1,6 +1,29 @@
+configurations {
+	ejb30 {extendsFrom compile}
+	ejb31 {extendsFrom compile}
+}
+
 dependencies {
    compile project(':test:spi')
    compile project(':container:test-spi')
 
-   provided libraries.ejb_api
+   provided libraries.ejb_31_api
+
+   ejb30 libraries.ejb_30_api
+   ejb31 libraries.ejb_31_api
+}
+
+task testEJB30(type: Test) {
+	classpath = sourceSets.test.output + sourceSets.main.output + project.configurations.testCompile + project.configurations.ejb30
+	include '**/*30*Test*'
+}
+
+task testEJB31(type: Test) {
+	classpath = sourceSets.test.output + sourceSets.main.output + project.configurations.testCompile + project.configurations.ejb31
+	include '**/*Test*'
+}
+
+test {
+	dependsOn(testEJB30)
+	dependsOn(testEJB31)
 }
