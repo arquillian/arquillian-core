@@ -45,7 +45,7 @@ public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor
    @Override
    public void process(TestDeployment testDeployment, Archive<?> protocolArchive)
    {
-      if(testDeployment.getApplicationArchive() == protocolArchive)
+      if(testDeployment.getApplicationArchive().equals(protocolArchive))
       {
          return; // if the protocol is merged in the user Archive, the user is in control.
       }
@@ -54,11 +54,17 @@ public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor
       {
          if(Validate.isArchiveOfType(WebArchive.class, protocolArchive))
          {
-            protocolArchive.as(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            if(!protocolArchive.contains("WEB-INF/beans.xml"))
+            {
+               protocolArchive.as(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            }
          }
          else if(Validate.isArchiveOfType(JavaArchive.class, protocolArchive))
          {
-            protocolArchive.as(JavaArchive.class).addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+            if(!protocolArchive.contains("META-INF/beans.xml"))
+            {
+               protocolArchive.as(JavaArchive.class).addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+            }
          }
       }
    }
