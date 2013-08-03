@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl;
 import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
@@ -46,17 +45,15 @@ public class MapObject
       final Class<?> clazz = object.getClass();
       for (Method candidate : clazz.getMethods())
       {
-         String methodName = candidate.getName();
-         if (methodName.matches("^set[A-Z].*") &&
-               candidate.getReturnType().equals(Void.TYPE) &&
-               candidate.getParameterTypes().length == 1)
+         if (isSetter(candidate))
          {
             candidate.setAccessible(true);
+            final String methodName = candidate.getName();
             String propertyName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
             candidates.add(propertyName);
             if (clonedValues.containsKey(propertyName))
             {
-               if (shouldBeTrimmed(clazz, propertyName))
+               if (shouldBeTrimmed(candidate))
                {
                   String trimmed = MultilineTrimmer.trim(clonedValues.get(propertyName));
                   clonedValues.put(propertyName, trimmed);
@@ -72,8 +69,8 @@ public class MapObject
       {
          log.warning(
                "Configuration contain properties not supported by the backing object " + clazz.getName() + "\n" +
-               "Unused property entries: " + clonedValues + "\n" +
-               "Supported property names: " + candidates);
+                     "Unused property entries: " + clonedValues + "\n" +
+                     "Supported property names: " + candidates);
       }
    }
 
@@ -94,28 +91,16 @@ public class MapObject
       return urls;
    }
 
-   private static boolean shouldBeTrimmed(Class<?> clazz, String propertyName) throws NoSuchFieldException
+   private static boolean isSetter(Method candidate)
    {
-      final Field field = lookupCorrespondingField(clazz, propertyName);
-      return (String.class.equals(field.getType()) && !field.isAnnotationPresent(Multiline.class));
+      return candidate.getName().matches("^set[A-Z].*") &&
+            candidate.getReturnType().equals(Void.TYPE) &&
+            candidate.getParameterTypes().length == 1;
    }
 
-   private static Field lookupCorrespondingField(Class<?> clazz, String propertyName) throws NoSuchFieldException
+   private static boolean shouldBeTrimmed(Method candidate)
    {
-      Class<?> tmpClass = clazz;
-      do
-      {
-         try
-         {
-            return tmpClass.getDeclaredField(propertyName);
-         }
-         catch (NoSuchFieldException e)
-         {
-            tmpClass = tmpClass.getSuperclass();
-         }
-      } while (tmpClass != null);
-
-      return null;
+      return (String.class.equals(candidate.getParameterTypes()[0]) && !candidate.isAnnotationPresent(Multiline.class));
    }
 
    /**

@@ -27,7 +27,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
 @Retention(RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.METHOD})
 @Inherited
 @Documented
 public @interface Multiline

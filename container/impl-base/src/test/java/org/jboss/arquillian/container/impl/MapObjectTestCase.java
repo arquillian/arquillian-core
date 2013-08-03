@@ -119,13 +119,13 @@ public class MapObjectTestCase
       private Integer i;
       private Double d;
       private Boolean b;
-      @Multiline
       private String m;
 
       public void setS(String s) { this.s = s; }
       public void setI(Integer i) { this.i = i; }
       public void setD(Double d) { this.d = d; }
       public void setB(Boolean b) { this.b = b; }
+      @Multiline
       public void setM(String m) { this.m = m; }
    }
 
