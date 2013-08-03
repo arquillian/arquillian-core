@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 import org.junit.Test;
 
 /**
@@ -32,6 +33,7 @@ import org.junit.Test;
 public class MapObjectTestCase
 {
    private static final String VAL_STRING = "test123";
+   private static final String VAL_MULTILINE_STRING = "\n\n\n\n\r\n\t\t\ttest123 \r\n\t\t\t\ttest123" + System.getProperty("line.separator");
    private static final Integer VAL_INTEGER = 123;
    private static final Boolean VAL_BOOLEAN = true;
    private static final Double VAL_DOUBLE = 3.4;
@@ -79,6 +81,22 @@ public class MapObjectTestCase
       MapObject.populate(test, map("a", VAL_BOOLEAN));
    }
 
+   @Test
+   public void shouldKeepMultiline() throws Exception
+   {
+      TestObject test = new TestObject();
+      MapObject.populate(test, map("m", VAL_MULTILINE_STRING));
+      Assert.assertEquals(VAL_MULTILINE_STRING, test.m);
+   }
+
+   @Test
+   public void shouldTrimIfNotAnnotatedWithMultiline() throws Exception
+   {
+      TestObject test = new TestObject();
+      MapObject.populate(test, map("s", VAL_MULTILINE_STRING));
+      Assert.assertEquals(VAL_STRING + " " + VAL_STRING, test.s);
+   }
+
    private ChainedMap map(String name, Object value)
    {
       return new ChainedMap().map(name, value);
@@ -101,11 +119,14 @@ public class MapObjectTestCase
       private Integer i;
       private Double d;
       private Boolean b;
+      @Multiline
+      private String m;
 
       public void setS(String s) { this.s = s; }
       public void setI(Integer i) { this.i = i; }
       public void setD(Double d) { this.d = d; }
       public void setB(Boolean b) { this.b = b; }
+      public void setM(String m) { this.m = m; }
    }
 
 }

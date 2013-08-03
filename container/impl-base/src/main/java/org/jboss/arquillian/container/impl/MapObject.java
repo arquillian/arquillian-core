@@ -16,7 +16,10 @@
  */
 package org.jboss.arquillian.container.impl;
 
+import org.jboss.arquillian.config.descriptor.api.Multiline;
+
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
@@ -33,13 +36,15 @@ import java.util.logging.Logger;
  */
 public class MapObject
 {
+
    public static Logger log = Logger.getLogger(MapObject.class.getName());
 
    public static void populate(Object object, Map<String, String> values) throws Exception
    {
-      Map<String, String> clonedValues = new HashMap<String, String>(values);
-      Set<String> candidates = new HashSet<String>();
-      for (Method candidate : object.getClass().getMethods())
+      final Map<String, String> clonedValues = new HashMap<String, String>(values);
+      final Set<String> candidates = new HashSet<String>();
+      final Class<?> clazz = object.getClass();
+      for (Method candidate : clazz.getMethods())
       {
          String methodName = candidate.getName();
          if (methodName.matches("^set[A-Z].*") &&
@@ -51,6 +56,11 @@ public class MapObject
             candidates.add(propertyName);
             if (clonedValues.containsKey(propertyName))
             {
+               if (shouldBeTrimmed(clazz, propertyName))
+               {
+                  String trimmed = MultilineTrimmer.trim(clonedValues.get(propertyName));
+                  clonedValues.put(propertyName, trimmed);
+               }
                candidate.invoke(
                      object, 
                      convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
@@ -58,10 +68,10 @@ public class MapObject
             }
          }
       }
-      if(clonedValues.size() > 0) 
+      if(!clonedValues.isEmpty())
       {
          log.warning(
-               "Configuration contain properties not supported by the backing object " + object.getClass().getName() + "\n" +
+               "Configuration contain properties not supported by the backing object " + clazz.getName() + "\n" +
                "Unused property entries: " + clonedValues + "\n" +
                "Supported property names: " + candidates);
       }
@@ -69,40 +79,63 @@ public class MapObject
 
    public static URL[] convert(File[] files)
    {
-      URL[] urls = new URL[files.length];
+      final URL[] urls = new URL[files.length];
       try
       {
          for(int i = 0 ; i < files.length; i++)
          {
             urls[i] = files[i].toURI().toURL();
-            //System.out.println(urls[i]);
          }
       }
-      catch (Exception e) 
+      catch (Exception e)
       {
          throw new RuntimeException("Could not create URL from a File object?", e);
       }
       return urls;
    }
-   
+
+   private static boolean shouldBeTrimmed(Class<?> clazz, String propertyName) throws NoSuchFieldException
+   {
+      final Field field = lookupCorrespondingField(clazz, propertyName);
+      return (String.class.equals(field.getType()) && !field.isAnnotationPresent(Multiline.class));
+   }
+
+   private static Field lookupCorrespondingField(Class<?> clazz, String propertyName) throws NoSuchFieldException
+   {
+      Class<?> tmpClass = clazz;
+      do
+      {
+         try
+         {
+            return tmpClass.getDeclaredField(propertyName);
+         }
+         catch (NoSuchFieldException e)
+         {
+            tmpClass = tmpClass.getSuperclass();
+         }
+      } while (tmpClass != null);
+
+      return null;
+   }
+
    /**
     * Converts a String value to the specified class.
     * @param clazz
     * @param value
     * @return
     */
-   private static Object convert(Class<?> clazz, String value) 
+   private static Object convert(Class<?> clazz, String value)
    {
       /* TODO create a new Converter class and move this method there for reuse */
-      
-      if (Integer.class.equals(clazz) || int.class.equals(clazz)) 
+
+      if (Integer.class.equals(clazz) || int.class.equals(clazz))
       {
          return Integer.valueOf(value);
-      } 
-      else if (Double.class.equals(clazz) || double.class.equals(clazz)) 
+      }
+      else if (Double.class.equals(clazz) || double.class.equals(clazz))
       {
          return Double.valueOf(value);
-      } 
+      }
       else if (Long.class.equals(clazz) || long.class.equals(clazz))
       {
          return Long.valueOf(value);
@@ -111,7 +144,8 @@ public class MapObject
       {
          return Boolean.valueOf(value);
       }
-      
+
       return value;
    }
+
 }

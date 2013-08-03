@@ -103,7 +103,7 @@ public final class StringPropertyReplacer
    }
 
    /**
-    * Go through the input string and replace any occurance of ${p} with
+    * Go through the input string and replace any occurrence of ${p} with
     * the props.getProperty(p) value. If there is no such property p defined,
     * then the ${p} reference will remain unchanged.
     * 
@@ -137,7 +137,7 @@ public final class StringPropertyReplacer
          if (c == '$' && state != IN_BRACKET)
             state = SEEN_DOLLAR;
 
-         // Open bracket immediatley after dollar
+         // Open bracket immediately after dollar
          else if (c == '{' && state == SEEN_DOLLAR)
          {
             buffer.append(string.substring(start, i - 1));

@@ -38,7 +38,7 @@ class FileUtils
       props.putAll(System.getProperties());
 
       FileName resourceName = getConfigFileName(propertyName, defaultName);
-      InputStream input = loadResource(resourceName);
+      final InputStream input = loadResource(resourceName);
       if(input != null)
       {
          try
