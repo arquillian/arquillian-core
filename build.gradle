@@ -59,7 +59,7 @@ ext.libraries = [
    el_api:                                      'javax.el:el-api:2.2'
 ]
 
-
+defaultTasks 'build'
 
 def javaProjects() {
    subprojects.findAll { project -> new File(project.projectDir, 'src/main/java').exists() }

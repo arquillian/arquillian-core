@@ -16,11 +16,15 @@ dependencies {
 task testEJB30(type: Test) {
 	classpath = sourceSets.test.output + sourceSets.main.output + project.configurations.testCompile + project.configurations.ejb30
 	include '**/*30*Test*'
+        testReportDir = project.file(project.testReportDir.getPath() + '_ejb30'); // report/tests_version
+        testResultsDir = project.file(project.testResultsDir.getPath() + '_ejb30'); // test-results_version
 }
 
 task testEJB31(type: Test) {
 	classpath = sourceSets.test.output + sourceSets.main.output + project.configurations.testCompile + project.configurations.ejb31
 	include '**/*Test*'
+        testReportDir = project.file(project.testReportDir.getPath() + '_ejb31'); // report/tests_version
+        testResultsDir = project.file(project.testResultsDir.getPath() + '_ejb31'); // test-results_version
 }
 
 test {
