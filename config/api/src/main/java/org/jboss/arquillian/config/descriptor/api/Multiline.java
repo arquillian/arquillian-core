@@ -15,25 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.config.impl.extension;
+package org.jboss.arquillian.config.descriptor.api;
 
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import java.lang.annotation.*;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
+ * Marker annotation indicating that given configuration property should be read as defined, without trimming.
  *
+ * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public class ConfigurationValuesTrimmer
+@Retention(RUNTIME)
+@Target({ElementType.METHOD})
+@Inherited
+@Documented
+public @interface Multiline
 {
-
-   private static final String NEW_LINES = "(?m)\r?\n|(?m)\r*";
-   private static final String LEADING_AND_TRAILING_WHITESPACES = "(?m)^[ \t]+|(?m)[\t ]+$";
-
-   public static ArquillianDescriptor trim(ArquillianDescriptor descriptor)
-   {
-      final String exportedDescriptor = descriptor.exportAsString().replaceAll(LEADING_AND_TRAILING_WHITESPACES, " ").replaceAll(NEW_LINES, "");
-      return Descriptors.importAs(ArquillianDescriptor.class).fromString(exportedDescriptor);
-   }
-
 }

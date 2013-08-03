@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import static org.jboss.arquillian.config.impl.extension.ConfigurationValuesTrimmer.trim;
 import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
 
 import java.io.InputStream;
@@ -43,15 +42,28 @@ public class ConfigurationRegistrar
    public static final String ARQUILLIAN_PROP_PROPERTY = "arquillian.properties";
    public static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
 
-
    @Inject @ApplicationScoped
    private InstanceProducer<ArquillianDescriptor> descriptorInst;
 
    public void loadConfiguration(@Observes ManagerStarted event)
    {
-      ArquillianDescriptor descriptor;
-
       final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
+
+      final ArquillianDescriptor descriptor = resolveDescriptor(input);
+
+      final ArquillianDescriptor resolvedDesc = resolveSystemProperties(descriptor);
+
+      new PropertiesParser().addProperties(
+            resolvedDesc,
+            FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
+
+      descriptorInst.set(resolvedDesc);
+   }
+
+   private ArquillianDescriptor resolveDescriptor(final InputStream input)
+   {
+      final ArquillianDescriptor descriptor;
+
       if(input != null)
       {
          descriptor = Descriptors.importAs(ArquillianDescriptor.class)
@@ -61,14 +73,7 @@ public class ConfigurationRegistrar
       {
          descriptor = Descriptors.create(ArquillianDescriptor.class);
       }
-
-      final ArquillianDescriptor resolvedDesc = trim(resolveSystemProperties(descriptor));
-
-      new PropertiesParser().addProperties(
-            resolvedDesc,
-            FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
-
-      descriptorInst.set(resolvedDesc);
+      return descriptor;
    }
 
 }
