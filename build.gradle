@@ -68,6 +68,8 @@ def javaProjectsWithTest() {
    subprojects.findAll { project -> new File(project.projectDir, 'src/test/java').exists() }
 }
 
+buildDir = "target"
+
 configure(javaProjects()) { project ->
     apply plugin: 'java'
     apply plugin: 'maven'
