@@ -32,6 +32,10 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  *
+ * In case more observers observe the same event, they are ordered as they appear on classpath.
+ * If you need to reorder them, you can use {@code precedence} value. The higher the {@code precedence} is,
+ * the sooner the observer is executed.
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
