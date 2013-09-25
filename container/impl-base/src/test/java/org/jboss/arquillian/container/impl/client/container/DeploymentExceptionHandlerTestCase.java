@@ -86,7 +86,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
             new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
                .setExpectedException(NullPointerException.class))));
    }
-
+   
    @Test
    public void shouldCallDeploymentTransformers() throws Exception
    {
@@ -113,7 +113,55 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
             new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
                .setExpectedException(IllegalArgumentException.class))));
    }
+   
+   @Test
+   public void shouldSwallawExceptionIfExpectedAndDeploymentExceptionIsFieldOfThrown() throws Exception
+   {
+      MyDeploymentException myException = new MyDeploymentException("My special exception", new NullPointerException());
+      TestExceptionDeployThrower.shouldThrow = myException;
 
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
+            myException.getDeploymentException());
+
+      fire(new DeployDeployment(container, new Deployment(new DeploymentDescription("test",
+            ShrinkWrap.create(JavaArchive.class)).setExpectedException(NullPointerException.class))));
+   }
+
+   @Test
+   public void shouldSwallawExceptionIfExpectedAndDeploymentExceptionIsFieldOfThrownAndCauseOfOther() throws Exception
+   {
+      IllegalArgumentException recursiveException = new IllegalArgumentException(new MyDeploymentException(
+            "My special exception", new NullPointerException()));
+
+      TestExceptionDeployThrower.shouldThrow = recursiveException;
+
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
+            ((MyDeploymentException) recursiveException.getCause()).getDeploymentException());
+
+      fire(new DeployDeployment(container, new Deployment(new DeploymentDescription("test",
+            ShrinkWrap.create(JavaArchive.class)).setExpectedException(NullPointerException.class))));
+   }
+
+   private static class MyDeploymentException extends Exception
+   {
+      private static final long serialVersionUID = 4864115564504690695L;
+
+      private DeploymentException deploymentException;
+
+      public MyDeploymentException(String message, Throwable cause)
+      {
+         super(message);
+         this.deploymentException = new DeploymentException("Could not deploy", cause);
+      }
+
+      public DeploymentException getDeploymentException()
+      {
+         return deploymentException;
+      }
+   }
+   
    @Test(expected = DeploymentException.class)
    public void shouldRethrowExceptionIfWrongExpectedType() throws Exception
    {
