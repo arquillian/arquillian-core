@@ -65,9 +65,7 @@ public class DeploymentExceptionHandler
          }
          if(deployment.getExpectedException() != null)
          {
-            if(!containsType(
-                  transform(e), 
-                  deployment.getExpectedException()))
+            if (!containsType(e, deployment.getExpectedException()))
             {
                throw e;
             }
@@ -99,16 +97,19 @@ public class DeploymentExceptionHandler
    
    private boolean containsType(Throwable exception, Class<? extends Exception> expectedType)
    {
-      if(exception == null)
+      Throwable transformedException = transform(exception);
+
+      if(transformedException == null)
       {
          return false;
       }
-      if(expectedType.isAssignableFrom(exception.getClass()))
+      if(expectedType.isAssignableFrom(transformedException.getClass()))
       {
          return true;
       }
       
-      return containsType(exception.getCause(), expectedType);
+      
+      return containsType(transformedException.getCause(), expectedType);
    }
    
    private Throwable transform(Throwable exception)
