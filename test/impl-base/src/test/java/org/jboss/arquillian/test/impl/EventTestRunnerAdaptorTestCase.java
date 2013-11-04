@@ -139,10 +139,10 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
             "SuiteContext should" + (!suite ? " not":"") + " be active",
             suite, manager.getContext(SuiteContext.class).isActive());
       Assert.assertEquals(
-            "ClassContext should" + (!suite ? " not":"") + " be active",
+            "ClassContext should" + (!clazz ? " not":"") + " be active",
             clazz, manager.getContext(ClassContext.class).isActive());
       Assert.assertEquals(
-            "TestContext should" + (!suite ? " not":"") + " be active",
+            "TestContext should" + (!test ? " not":"") + " be active",
             test, manager.getContext(TestContext.class).isActive());
    }
 }

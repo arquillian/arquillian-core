@@ -27,31 +27,36 @@ import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
 import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
  * TestContextHandler
- *
+ * 
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @version $Revision: $
  */
 public class TestContextHandler
 {
    @Inject
    private Instance<SuiteContext> suiteContextInstance;
-   
+
    @Inject
    private Instance<ClassContext> classContextInstance;
 
    @Inject
    private Instance<TestContext> testContextInstance;
-   
-   @Inject @ClassScoped
+
+   @Inject
+   @ClassScoped
    private InstanceProducer<TestClass> testClassProducer;
 
-   public void createSuiteContext(@Observes(precedence=100) EventContext<SuiteEvent> context)
+   public void createSuiteContext(@Observes(precedence = 100) EventContext<SuiteEvent> context)
    {
       SuiteContext suiteContext = this.suiteContextInstance.get();
       try
@@ -62,10 +67,14 @@ public class TestContextHandler
       finally
       {
          suiteContext.deactivate();
+         if (AfterSuite.class.isAssignableFrom(context.getEvent().getClass()))
+         {
+            suiteContext.destroy();
+         }
       }
    }
 
-   public void createClassContext(@Observes(precedence=100) EventContext<ClassEvent> context)
+   public void createClassContext(@Observes(precedence = 100) EventContext<ClassEvent> context)
    {
       ClassContext classContext = this.classContextInstance.get();
       try
@@ -77,10 +86,14 @@ public class TestContextHandler
       finally
       {
          classContext.deactivate();
+         if (AfterClass.class.isAssignableFrom(context.getEvent().getClass()))
+         {
+            classContext.destroy(context.getEvent().getTestClass().getJavaClass());
+         }
       }
    }
 
-   public void createTestContext(@Observes(precedence=100) EventContext<TestEvent> context)
+   public void createTestContext(@Observes(precedence = 100) EventContext<TestEvent> context)
    {
       TestContext testContext = this.testContextInstance.get();
       try
@@ -91,6 +104,10 @@ public class TestContextHandler
       finally
       {
          testContext.deactivate();
+         if (After.class.isAssignableFrom(context.getEvent().getClass()))
+         {
+            testContext.destroy(context.getEvent().getTestInstance());
+         }
       }
    }
 }
