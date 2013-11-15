@@ -124,40 +124,42 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
             "Verify all deployments were found",
             2, scenario.size());
 
-      DeploymentDescription deploymentOne = scenario.get(0);
+      
+      for(DeploymentDescription deploymentDesc : scenario) {
 
-      Assert.assertEquals(
-            "Verify deployment has specified target",
-            new TargetDescription("target-first"),
-            deploymentOne.getTarget());
+         if(deploymentDesc.getOrder() == 1) {
+            Assert.assertEquals(
+                  "Verify deployment has specified target",
+                  new TargetDescription("target-first"),
+                  deploymentDesc.getTarget());
 
-      Assert.assertEquals(
-            "Verify deployment has specified protocol",
-            new ProtocolDescription("protocol-first"),
-            deploymentOne.getProtocol());
+            Assert.assertEquals(
+                  "Verify deployment has specified protocol",
+                  new ProtocolDescription("protocol-first"),
+                  deploymentDesc.getProtocol());
 
-      Assert.assertEquals(1, deploymentOne.getOrder());
-      Assert.assertEquals(false, deploymentOne.managed());
-      Assert.assertEquals(false, deploymentOne.testable());
-      Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentOne.getArchive()));
-      Assert.assertNull(deploymentOne.getExpectedException());
+            Assert.assertEquals(1, deploymentDesc.getOrder());
+            Assert.assertEquals(false, deploymentDesc.managed());
+            Assert.assertEquals(false, deploymentDesc.testable());
+            Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentDesc.getArchive()));
+            Assert.assertNull(deploymentDesc.getExpectedException());
+         } else {
+            Assert.assertEquals(
+                  "Verify deployment has specified target",
+                  new TargetDescription("target-second"),
+                  deploymentDesc.getTarget());
+            Assert.assertEquals(
+                  "Verify deployment has specified protocol",
+                  new ProtocolDescription("protocol-second"),
+                  deploymentDesc.getProtocol());
 
-      DeploymentDescription deploymentTwo = scenario.get(1);
-
-      Assert.assertEquals(
-            "Verify deployment has specified target",
-            new TargetDescription("target-second"),
-            deploymentTwo.getTarget());
-      Assert.assertEquals(
-            "Verify deployment has specified protocol",
-            new ProtocolDescription("protocol-second"),
-            deploymentTwo.getProtocol());
-
-      Assert.assertEquals(2, deploymentTwo.getOrder());
-      Assert.assertEquals(false, deploymentTwo.managed());
-      Assert.assertEquals(true, deploymentTwo.testable());
-      Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentTwo.getArchive()));
-      Assert.assertNull(deploymentTwo.getExpectedException());
+            Assert.assertEquals(2, deploymentDesc.getOrder());
+            Assert.assertEquals(false, deploymentDesc.managed());
+            Assert.assertEquals(true, deploymentDesc.testable());
+            Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentDesc.getArchive()));
+            Assert.assertNull(deploymentDesc.getExpectedException());
+         }
+      }
    }
 
    @Test
