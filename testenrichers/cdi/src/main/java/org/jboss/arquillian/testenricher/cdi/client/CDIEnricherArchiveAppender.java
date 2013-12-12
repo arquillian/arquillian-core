@@ -42,9 +42,6 @@ public class CDIEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender
                         CDIInjectionEnricher.class.getPackage(),
                         CDIEnricherRemoteExtension.class.getPackage())
                   // We can't use Extension.class, CDI API might not be available during package time
-                  .addAsManifestResource(
-                        new StringAsset("org.jboss.arquillian.testenricher.cdi.container.CDIExtension"), 
-                        "services/javax.enterprise.inject.spi.Extension")
                   .addAsServiceProvider(RemoteLoadableExtension.class, CDIEnricherRemoteExtension.class);
    }
 }
