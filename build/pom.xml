@@ -24,7 +24,7 @@
 
         <!-- Arquillian Core common Deps, Test related -->
         <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
-        <version.junit_junit>4.8.1</version.junit_junit>
+        <version.junit_junit>4.11</version.junit_junit>
         <version.mockito_all>1.8.3</version.mockito_all>
         <version.testng_testng>5.14.6</version.testng_testng>
     </properties>
