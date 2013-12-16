@@ -163,6 +163,27 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
    }
 
    @Test
+   public void shouldSortDeploymentsByOrder() throws Exception
+   {
+      List<DeploymentDescription> scenario = generate(MultiDeploymentsInReverseOrder.class);
+
+      Assert.assertNotNull(scenario);
+      Assert.assertEquals(
+            "Verify all deployments were found",
+            3, scenario.size());
+
+      Assert.assertTrue(
+         "Deployments are not sorted by order",
+         scenario.get(0).getOrder() < scenario.get(1).getOrder()
+      );
+      Assert.assertTrue(
+         "Deployments are not sorted by order",
+         scenario.get(1).getOrder() < scenario.get(2).getOrder()
+      );
+   }
+
+
+   @Test
    public void shouldReadExpectedAndOverrideDeployment()
    {
       List<DeploymentDescription> scenario = generate(ExpectedDeploymentExceptionSet.class);
@@ -288,6 +309,28 @@ public class AnnotationDeploymentScenarioGeneratorTestCase
       @OverProtocol("protocol-second")
       @TargetsContainer("target-second")
       @Deployment(name = "second", order = 2, managed = false)
+      public static Archive<?> deploymentTwo()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+   }
+
+   @SuppressWarnings("unused")
+   private static class MultiDeploymentsInReverseOrder
+   {
+      @Deployment(name = "second", order = 2)
+      public static Archive<?> deploymentOne()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+
+      @Deployment(name = "third", order = 3)
+      public static Archive<?> deploymentThree()
+      {
+         return ShrinkWrap.create(JavaArchive.class);
+      }
+
+      @Deployment(name = "first", order = 1)
       public static Archive<?> deploymentTwo()
       {
          return ShrinkWrap.create(JavaArchive.class);

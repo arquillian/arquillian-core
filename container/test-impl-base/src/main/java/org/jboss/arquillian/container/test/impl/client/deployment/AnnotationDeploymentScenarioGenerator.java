@@ -19,6 +19,8 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -61,7 +63,9 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
          validate(deploymentMethod);
          deployments.add(generateDeployment(deploymentMethod));
       }
-      
+
+      sortByDeploymentOrder(deployments);
+
       return deployments;
    }
 
@@ -176,5 +180,16 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       {
          throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
       }
+   }
+
+   private void sortByDeploymentOrder(List<DeploymentDescription> deploymentDescriptions) {
+      // sort them by order
+      Collections.sort(deploymentDescriptions, new Comparator<DeploymentDescription>()
+      {
+         public int compare(DeploymentDescription d1, DeploymentDescription d2)
+         {
+            return new Integer(d1.getOrder()).compareTo(d2.getOrder());
+         }
+      });
    }
 }
