@@ -287,7 +287,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   return test;
                }
             });
-            if(result.getThrowable() != null)
+            if (result != null && result.getThrowable() != null)
             {
                throw result.getThrowable();
             }
