@@ -98,9 +98,18 @@ public class ContainerRegistryCreator
          } 
          catch (IllegalStateException e)
          {
-            throw new IllegalStateException(
-                  "Could not add a default container to registry because multiple " +
-                           DeployableContainer.class.getName() + " found on classpath", e);
+            StringBuilder stringBuilder = new StringBuilder()
+               .append("Could not add a default container to registry because multiple instances of ")
+               .append(DeployableContainer.class.getName())
+               .append(" found on classpath (candidates are: ");
+            String separator = "";
+            for (DeployableContainer s : serviceLoader.all(DeployableContainer.class)) {
+               stringBuilder.append(separator)
+                  .append(s.getConfigurationClass().getName());
+               separator = ", ";
+            }
+            stringBuilder.append(")");
+            throw new IllegalStateException(stringBuilder.toString());         
          }
          catch (Exception e) 
          {
