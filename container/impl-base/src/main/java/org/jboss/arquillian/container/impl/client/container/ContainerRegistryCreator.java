@@ -99,7 +99,7 @@ public class ContainerRegistryCreator
          catch (IllegalStateException e)
          {
             throw new IllegalStateException(
-                  "Could not add a default container to registry because multipe " +
+                  "Could not add a default container to registry because multiple " +
                            DeployableContainer.class.getName() + " found on classpath", e);
          }
          catch (Exception e) 
