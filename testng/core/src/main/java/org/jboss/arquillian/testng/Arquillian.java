@@ -45,12 +45,12 @@ import org.testng.annotations.Test;
 public abstract class Arquillian implements IHookable
 {
    public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
-
+   
    private static enum Cycle { BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS, AFTER_SUITE }
 
-   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new InheritableThreadLocal<TestRunnerAdaptor>();
+   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
-   private static ThreadLocal<Stack<Cycle>> cycleStack = new InheritableThreadLocal<Stack<Cycle>>() {
+   private static ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
       protected java.util.Stack<Cycle> initialValue() {
          return new Stack<Cycle>();
       };
@@ -62,7 +62,7 @@ public abstract class Arquillian implements IHookable
       if(deployableTest.get() == null)
       {
          TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
-         adaptor.beforeSuite();
+         adaptor.beforeSuite(); 
          deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
          cycleStack.get().push(Cycle.BEFORE_SUITE);
       }
@@ -71,7 +71,7 @@ public abstract class Arquillian implements IHookable
    @AfterSuite(groups = "arquillian", inheritGroups = true, alwaysRun = true)
    public void arquillianAfterSuite() throws Exception
    {
-      if (deployableTest.get() == null)
+      if (deployableTest.get() == null) 
       {
          return; // beforeSuite failed
       }
@@ -121,9 +121,9 @@ public abstract class Arquillian implements IHookable
       verifyTestRunnerAdaptorHasBeenSet();
       deployableTest.get().afterClass(getClass(), LifecycleMethodExecutor.NO_OP);
    }
-
+   
    @BeforeMethod(groups = "arquillian", inheritGroups = true)
-   public void arquillianBeforeTest(Method testMethod) throws Exception
+   public void arquillianBeforeTest(Method testMethod) throws Exception 
    {
       verifyTestRunnerAdaptorHasBeenSet();
       cycleStack.get().push(Cycle.BEFORE);
@@ -131,7 +131,7 @@ public abstract class Arquillian implements IHookable
    }
 
    @AfterMethod(groups = "arquillian", inheritGroups = true, alwaysRun = true)
-   public void arquillianAfterTest(Method testMethod) throws Exception
+   public void arquillianAfterTest(Method testMethod) throws Exception 
    {
       if(cycleStack.get().empty())
       {
@@ -165,15 +165,15 @@ public abstract class Arquillian implements IHookable
                 */
                copyParameters(parameters, callback.getParameters());
                callback.runTestMethod(testResult);
-
-               // Parameters can be contextual, so extract information
+               
+               // Parameters can be contextual, so extract information 
                swapWithClassNames(callback.getParameters());
                testResult.setParameters(callback.getParameters());
                if (testResult.getThrowable() != null) {
                    throw testResult.getThrowable();
                }
             }
-
+            
             private void copyParameters(Object[] source, Object[] target)
             {
                for(int i = 0; i < source.length; i++)
@@ -184,7 +184,7 @@ public abstract class Arquillian implements IHookable
                   }
                }
             }
-
+            
             private void swapWithClassNames(Object[] source)
             {
                // clear parameters. they can be contextual and might fail TestNG during the report writing.
@@ -201,12 +201,12 @@ public abstract class Arquillian implements IHookable
                   }
                }
             }
-
+            
             public Method getMethod()
             {
                return testResult.getMethod().getMethod();
             }
-
+            
             public Object getInstance()
             {
                return Arquillian.this;
@@ -217,28 +217,28 @@ public abstract class Arquillian implements IHookable
             testResult.setThrowable(result.getThrowable());
          }
 
-         // calculate test end time. this is overwritten in the testng invoker..
+         // calculate test end time. this is overwritten in the testng invoker.. 
          testResult.setEndMillis( (result.getStart() - result.getEnd()) + testResult.getStartMillis());
-      }
+      } 
       catch (Exception e)
       {
          testResult.setThrowable(e);
       }
    }
-
+   
    @DataProvider(name = Arquillian.ARQUILLIAN_DATA_PROVIDER)
-   public Object[][] arquillianArgumentProvider(Method method)
+   public Object[][] arquillianArgumentProvider(Method method) 
    {
       Object[][] values = new Object[1][method.getParameterTypes().length];
-
+      
       if (deployableTest.get() == null)
       {
          return values;
       }
 
-      Object[] parameterValues = new Object[method.getParameterTypes().length];
-      values[0] = parameterValues;
-
+      Object[] parameterValues = new Object[method.getParameterTypes().length]; 
+      values[0] = parameterValues; 
+      
       return values;
    }
 
