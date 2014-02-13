@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.core.impl.context;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -46,21 +44,21 @@ public class ContextActivationTestCase
       try
       {
          Assert.assertFalse(context.isActive());
-
+         
          context.activate();
          Assert.assertTrue(context.isActive());
-
+         
          ObjectStore store = context.getObjectStore();
          store.add(Boolean.class, true);
-
+         
          Assert.assertEquals(
                "Verify that we can get objects from a active context",
-               new Boolean(true),
+               new Boolean(true), 
                store.get(Boolean.class));
-
+         
          context.deactivate();
          Assert.assertFalse(context.isActive());
-
+         
          try
          {
             context.getObjectStore();
@@ -68,13 +66,13 @@ public class ContextActivationTestCase
          }
          catch (Exception e) {
          }
-
+   
          context.activate();
          store = context.getObjectStore();
-
+   
          Assert.assertEquals(
                "Verify that we can get objects from a active context",
-               new Boolean(true),
+               new Boolean(true), 
                store.get(Boolean.class));
       }
       finally
@@ -82,170 +80,73 @@ public class ContextActivationTestCase
          context.deactivate();
          context.destroy();
       }
-
+      
    }
-
+   
+   @Test
+   public void shouldNotBeAbleToReadFromDifferentThread() throws Exception
+   {
+      final CountDownLatch latch = new CountDownLatch(1);
+      final ManagerTestContext context = new ManagerTestContextImpl();
+      try
+      {
+         context.activate();
+         context.getObjectStore().add(Object.class, new Object());
+         
+         Thread thread = new Thread() 
+         {
+            public void run() 
+            {
+               Assert.assertFalse(context.isActive());
+               
+               latch.countDown();
+            };
+         };
+         thread.start();
+         
+         if(!latch.await(1, TimeUnit.SECONDS))
+         {
+            Assert.fail("Thread never called?");
+         }
+      }
+      finally
+      {
+         context.deactivate();
+         context.destroy();
+      }
+   }
+   
    @Test
    public void shouldBeAbleToStackContextOfSameType()
    {
-      ManagerTest2Context context = new ManagerTest2ContextImpl();
-
+      ManagerTest2Context context = new ManagerTest2ContextImpl();      
+      
       try
       {
          context.activate("PARENT");
          context.getObjectStore().add(String.class, "test");
-
+         
          try
          {
             context.activate("CHILD");
             Assert.assertNull(
-                  "Should not be able to read from previously stacked context",
+                  "Should not be able to read from previously stacked context", 
                   context.getObjectStore().get(String.class));
-
+            
          }
          finally
          {
             context.deactivate();
          }
-
+         
          Assert.assertTrue(
-               "Outer Context should still be active",
+               "Outer Context should still be active", 
                context.isActive());
-      }
-      finally
+      } 
+      finally 
       {
          context.deactivate();
          context.clearAll();
-      }
-   }
-   @Test
-   public void shouldBeAbleToReadFromChildThread() throws Exception
-   {
-      final Cacther catcher = new Cacther();
-      final ManagerTestContext context = new ManagerTestContextImpl();
-      final CountDownLatch setupLatch = new CountDownLatch(1);
-      final CountDownLatch checkLatch = new CountDownLatch(1);
-      Thread setup = new Thread()
-      {
-         public void run()
-         {
-            context.activate();
-            context.getObjectStore().add(Object.class, new Object());
-
-            setupLatch.countDown();
-
-            Thread check = new Thread()
-            {
-               public void run()
-               {
-                  Assert.assertTrue("Context should be active on a sub thread", context.isActive());
-
-                  checkLatch.countDown();
-               };
-            };
-            check.setUncaughtExceptionHandler(catcher);
-            check.start();
-            try
-            {
-               if(!checkLatch.await(1, TimeUnit.SECONDS))
-               {
-                  Assert.fail("Check Thread never called?");
-               }
-            }
-            catch (Exception e)
-            {
-               throw new RuntimeException(e);
-            }
-            finally
-            {
-               context.deactivate();
-               context.destroy();
-            }
-         };
-      };
-      setup.setUncaughtExceptionHandler(catcher);
-      setup.start();
-      if(!setupLatch.await(1, TimeUnit.SECONDS)) {
-         Assert.fail("Setup Thread never called?");
-      }
-      setup.join();
-
-      catcher.assertAnyCaughtExceptions();
-   }
-
-   @Test
-   public void shouldNotBeAbleToReadFromDifferentThread() throws Exception
-   {
-      final Cacther catcher = new Cacther();
-      final ManagerTestContext context = new ManagerTestContextImpl();
-      final CountDownLatch setupLatch = new CountDownLatch(1);
-      final CountDownLatch checkLatch = new CountDownLatch(1);
-      Thread setup = new Thread()
-      {
-         public void run()
-         {
-            context.activate();
-            context.getObjectStore().add(Object.class, new Object());
-
-            setupLatch.countDown();
-
-            try
-            {
-               if(!checkLatch.await(1, TimeUnit.SECONDS))
-               {
-                  Assert.fail("Check Thread never called?");
-               }
-            }
-            catch (Exception e)
-            {
-               throw new RuntimeException(e);
-            }
-            finally
-            {
-               context.deactivate();
-               context.destroy();
-            }
-         };
-      };
-      setup.setUncaughtExceptionHandler(catcher);
-      Thread check = new Thread()
-      {
-         public void run()
-         {
-            Assert.assertFalse("Context should not be active on a different Thread", context.isActive());
-
-            checkLatch.countDown();
-         };
-      };
-      check.setUncaughtExceptionHandler(catcher);
-
-      setup.start();
-      if(!setupLatch.await(1, TimeUnit.SECONDS)) {
-         Assert.fail("Setup Thread never called?");
-      }
-      check.start();
-      check.join();
-      setup.join();
-
-      catcher.assertAnyCaughtExceptions();
-   }
-
-   private static class Cacther implements Thread.UncaughtExceptionHandler {
-
-      private List<Throwable> exceptions = new ArrayList<Throwable>();
-
-      @Override
-      public void uncaughtException(Thread t, Throwable e)
-      {
-         exceptions.add(e);
-      }
-
-      public void assertAnyCaughtExceptions()
-      {
-         if(exceptions.size() > 0)
-         {
-            throw (Error)exceptions.get(0);
-         }
       }
    }
 }

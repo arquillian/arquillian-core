@@ -80,7 +80,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
          };
       }
       events = new ConcurrentHashMap<String, Command<?>>();
-      currentCall = new InheritableThreadLocal<String>();
+      currentCall = new ThreadLocal<String>();
    }
 
    public ObjectName registerMBean(MBeanServer mbeanServer) throws JMException
@@ -179,7 +179,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    {
       currentCall.set(current);
    }
-
+   
    void setExposedTestRunnerForTest(TestRunner mockTestRunner)
    {
       this.mockTestRunner = mockTestRunner;

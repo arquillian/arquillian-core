@@ -26,10 +26,10 @@ import java.util.logging.Logger;
  */
 public class ThreadContext
 {
-   private static ThreadLocal<ClassLoader> previousClassloader = new InheritableThreadLocal<ClassLoader>();
-
+   private static ThreadLocal<ClassLoader> previousClassloader = new ThreadLocal<ClassLoader>();
+   
    private static Logger log = Logger.getLogger(ThreadContext.class.getName());
-
+   
    public static void set(ClassLoader classLoader)
    {
       if(previousClassloader.get() != null)
@@ -39,7 +39,7 @@ public class ThreadContext
       previousClassloader.set(Thread.currentThread().getContextClassLoader());
       Thread.currentThread().setContextClassLoader(classLoader);
    }
-
+   
    public static void reset()
    {
       if(previousClassloader.get() == null)
@@ -52,5 +52,5 @@ public class ThreadContext
          previousClassloader.set(null);
       }
    }
-
+   
 }
