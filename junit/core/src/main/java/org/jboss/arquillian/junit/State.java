@@ -50,7 +50,7 @@ public class State
     * A instance of all TestCases are created before the first one is started, so we keep track of which one
     * was the last one created. The last one created is the only one allowed to call AfterSuite.
     */
-   private static ThreadLocal<Integer> lastCreatedRunner = new InheritableThreadLocal<Integer>()
+   private static ThreadLocal<Integer> lastCreatedRunner = new ThreadLocal<Integer>()
    {
       @Override
       protected Integer initialValue()
