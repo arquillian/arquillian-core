@@ -88,7 +88,7 @@ public class ManagerImpl implements Manager
          List<Extension> createdExtensions = createExtensions(extensionClasses);
          List<Context> createdContexts = createContexts(contextClasses);
          
-         createApplicationContextAndActivate();
+         createApplicationContextAndInjector();
 
          this.contexts.addAll(createdContexts);
          this.extensions.addAll(createdExtensions);
@@ -130,8 +130,14 @@ public class ManagerImpl implements Manager
       List<ObserverMethod> observers = resolveObservers(event.getClass());
       List<ObserverMethod> interceptorObservers = resolveInterceptorObservers(event.getClass());
       
+      ApplicationContext context = (ApplicationContext)contexts.get(0);
+      boolean activatedApplicationContext = false;
       try
       {
+         if(!context.isActive()) {
+            context.activate();
+            activatedApplicationContext = true;
+         }
          new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event).proceed();
       } 
       catch (Exception e) 
@@ -153,6 +159,9 @@ public class ManagerImpl implements Manager
       finally
       {
          debug(event, false);
+         if(activatedApplicationContext && context.isActive()) {
+            context.deactivate();
+         }
       }
    }
 
@@ -431,7 +440,7 @@ public class ManagerImpl implements Manager
    /**
     * 
     */
-   private void createApplicationContextAndActivate()
+   private void createApplicationContextAndInjector()
    {    
       ApplicationContext context = new ApplicationContextImpl();
       context.activate();

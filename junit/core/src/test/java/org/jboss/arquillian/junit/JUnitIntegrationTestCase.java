@@ -16,12 +16,18 @@
  */
 package org.jboss.arquillian.junit;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
+
+import org.jboss.arquillian.junit.JUnitTestBaseClass.ExecuteLifecycle;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -129,14 +135,36 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       executeAllLifeCycles(adaptor);
-      
+
       throwException(Cycle.TEST, new Throwable());
-      
+
       Result result = run(adaptor, ArquillianClass1.class);
       Assert.assertFalse(result.wasSuccessful());
-      
+
       assertCycle(1, Cycle.values());
- 
+
+      verify(adaptor, times(1)).beforeSuite();
+      verify(adaptor, times(1)).afterSuite();
+   }
+
+   @Test
+   public void shouldWorkWithTimeout() throws Exception {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+      //executeAllLifeCycles(adaptor);
+      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+
+      doAnswer(new ExecuteLifecycle()).when(adaptor).test(any(TestMethodExecutor.class));
+
+      Result result = run(adaptor, ArquillianClass1WithTimeout.class);
+
+      Assert.assertFalse(result.wasSuccessful());
+      Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }

@@ -45,6 +45,8 @@ import org.junit.runners.model.Statement;
  */
 public class Arquillian extends BlockJUnit4ClassRunner
 {
+   private TestRunnerAdaptor adaptor;
+
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
@@ -144,6 +146,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
       // initialization ok, run children
       if(State.hasTestAdaptor())
       {
+         adaptor = State.getTestAdaptor();
          super.run(notifier);
       }
    }
@@ -260,7 +263,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            TestResult result = State.getTestAdaptor().test(new TestMethodExecutor()
+            TestResult result = adaptor.test(new TestMethodExecutor()
             {
                @Override
                public void invoke(Object... parameters) throws Throwable
