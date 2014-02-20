@@ -58,7 +58,7 @@ public class JavaSPIExtensionLoaderTestCase
       Archive<JavaArchive> jarThatReplaceServiceImpl = createJarThatReplaceServiceImpl();
 
       ClassLoader emptyParent = null;
-      ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarWithDefaultServiceImpl, jarThatReplaceServiceImpl);
+      ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarThatReplaceServiceImpl, jarWithDefaultServiceImpl);
 
       ClassLoader emptyClassLoader = new ClassLoader(null){};
       ClassLoader originalClassLoader = SecurityActions.getThreadContextClassLoader();

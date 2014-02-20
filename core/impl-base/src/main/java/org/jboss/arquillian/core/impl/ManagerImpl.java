@@ -24,8 +24,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.core.api.event.ManagerStopping;
 import org.jboss.arquillian.core.impl.context.ApplicationContextImpl;
@@ -84,19 +86,16 @@ public class ManagerImpl implements Manager
       this.extensions = new ArrayList<Extension>();
       try
       {
-         
          List<Extension> createdExtensions = createExtensions(extensionClasses);
          List<Context> createdContexts = createContexts(contextClasses);
          
-         createApplicationContextAndActivate();
+         createApplicationContextAndInjector();
 
          this.contexts.addAll(createdContexts);
          this.extensions.addAll(createdExtensions);
 
          addContextsToApplicationScope();
-         
          fireProcessing();
-         
          addContextsToApplicationScope();
       }
       catch (Exception e) 
@@ -130,8 +129,17 @@ public class ManagerImpl implements Manager
       List<ObserverMethod> observers = resolveObservers(event.getClass());
       List<ObserverMethod> interceptorObservers = resolveInterceptorObservers(event.getClass());
       
+      ApplicationContext context = (ApplicationContext)getScopedContext(ApplicationScoped.class);
+      // We need to know if we were to the one to Activate it to avoid:
+      // * nested ApplicationContexts
+      // * ending the scope to soon (to low in the stack)
+      boolean activatedApplicationContext = false;
       try
       {
+         if(!context.isActive()) {
+            context.activate();
+            activatedApplicationContext = true;
+         }
          new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event).proceed();
       } 
       catch (Exception e) 
@@ -153,6 +161,9 @@ public class ManagerImpl implements Manager
       finally
       {
          debug(event, false);
+         if(activatedApplicationContext && context.isActive()) {
+            context.deactivate();
+         }
       }
    }
 
@@ -218,7 +229,23 @@ public class ManagerImpl implements Manager
    // Exposed Convenience Impl Methods ---------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   
+   public <T> T executeInApplicationContext(Callable<T> callable) throws Exception {
+       ApplicationContext context =(ApplicationContext)getScopedContext(ApplicationScoped.class);
+       boolean activatedByUs = false;
+       try {
+           if(!context.isActive()) {
+               context.activate();
+               activatedByUs = true;
+           }
+           return callable.call();
+       }
+       finally {
+           if(activatedByUs && context.isActive()) {
+               context.deactivate();
+           }
+       }
+   }
+
    public List<Context> getContexts()
    {
       return Collections.unmodifiableList(contexts);
@@ -258,7 +285,8 @@ public class ManagerImpl implements Manager
    @Override
    public void start()
    {
-      fire(new ManagerStarted());      
+      fire(new ManagerStarted());
+      getContext(ApplicationContext.class).activate();
    }
    
    /* (non-Javadoc)
@@ -428,30 +456,37 @@ public class ManagerImpl implements Manager
       return created;
    }
 
-   /**
-    * 
-    */
-   private void createApplicationContextAndActivate()
+   private void createApplicationContextAndInjector() throws Exception
    {    
-      ApplicationContext context = new ApplicationContextImpl();
-      context.activate();
-      context.getObjectStore().add(Injector.class, InjectorImpl.of(this));
+      final ApplicationContext context = new ApplicationContextImpl();
       contexts.add(context);
+      executeInApplicationContext(new Callable<Object>() {
+          @Override
+          public Object call() throws Exception {
+              return context.getObjectStore().add(Injector.class, InjectorImpl.of(ManagerImpl.this));
+          }
+      });
    }
 
    /**
     * @param objectStore
     */
    @SuppressWarnings("unchecked")
-   private void addContextsToApplicationScope()
+   private void addContextsToApplicationScope() throws Exception
    {
-      ApplicationContext appContext = getContext(ApplicationContext.class);
-      ObjectStore store = appContext.getObjectStore();
-      
-      for(Context context : contexts)
-      {
-         store.add((Class<Context>)context.getClass().getInterfaces()[0], context);
-      }
+      executeInApplicationContext(new Callable<Void>() {
+         @Override
+         public Void call() throws Exception {
+            ApplicationContext appContext = getContext(ApplicationContext.class);
+            ObjectStore store = appContext.getObjectStore();
+
+            for(Context context : contexts)
+            {
+               store.add((Class<Context>)context.getClass().getInterfaces()[0], context);
+            }
+            return null;
+         }
+      });
    }
 
    /**

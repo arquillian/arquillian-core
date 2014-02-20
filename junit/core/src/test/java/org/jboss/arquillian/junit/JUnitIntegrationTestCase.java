@@ -129,14 +129,30 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       executeAllLifeCycles(adaptor);
-      
+
       throwException(Cycle.TEST, new Throwable());
-      
+
       Result result = run(adaptor, ArquillianClass1.class);
       Assert.assertFalse(result.wasSuccessful());
-      
+
       assertCycle(1, Cycle.values());
- 
+
+      verify(adaptor, times(1)).beforeSuite();
+      verify(adaptor, times(1)).afterSuite();
+   }
+
+   @Test
+   public void shouldWorkWithTimeout() throws Exception {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+      executeAllLifeCycles(adaptor);
+
+      Result result = run(adaptor, ArquillianClass1WithTimeout.class);
+
+      Assert.assertFalse(result.wasSuccessful());
+      Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }

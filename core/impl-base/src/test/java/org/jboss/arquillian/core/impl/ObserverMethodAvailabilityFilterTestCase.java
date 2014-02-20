@@ -17,9 +17,11 @@
  */
 package org.jboss.arquillian.core.impl;
 
+import java.util.List;
+
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.ManagerBuilder;
-import org.jboss.arquillian.core.spi.context.ApplicationContext;
+import org.jboss.arquillian.core.test.AbstractManagerTestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,21 +31,21 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ObserverMethodAvailabilityFilterTestCase
+public class ObserverMethodAvailabilityFilterTestCase extends AbstractManagerTestBase
 {
+   @Override
+   protected void addExtensions(List<Class<?>> extensions) {
+      extensions.add(ObserverMultiArgument.class);
+   }
    
    @Test
    public void shouldCallFilteredMethodsIfInContext() throws Exception
    {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-                     .extension(ObserverMultiArgument.class)
-                     .create();
+      bind(ApplicationScoped.class, Integer.class, 10);
       
-      manager.getContext(ApplicationContext.class).getObjectStore().add(Integer.class, 10);
+      fire(new String("_TEST_"));
       
-      manager.fire(new String("_TEST_"));
-      
-      ObserverMultiArgument extension = manager.getExtension(ObserverMultiArgument.class);
+      ObserverMultiArgument extension = getManager().getExtension(ObserverMultiArgument.class);
       
       Assert.assertTrue(
             "Non filtered method should have been called", 
@@ -57,13 +59,9 @@ public class ObserverMethodAvailabilityFilterTestCase
    @Test
    public void shouldNotCallFilteredMethodsIfNotInContext() throws Exception
    {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-                     .extension(ObserverMultiArgument.class)
-                     .create();
+      fire(new String("_TEST_"));
       
-      manager.fire(new String("_TEST_"));
-      
-      ObserverMultiArgument extension = manager.getExtension(ObserverMultiArgument.class);
+      ObserverMultiArgument extension = getManager().getExtension(ObserverMultiArgument.class);
       
       Assert.assertTrue(
             "Non filtered method should have been called", 

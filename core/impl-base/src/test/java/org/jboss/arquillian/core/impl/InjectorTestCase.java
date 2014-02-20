@@ -16,12 +16,14 @@
  */
 package org.jboss.arquillian.core.impl;
 
+import java.util.List;
+
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.impl.context.ApplicationContextImpl;
-import org.jboss.arquillian.core.spi.ManagerBuilder;
+import org.jboss.arquillian.core.test.AbstractManagerTestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,21 +33,21 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectorTestCase
+public class InjectorTestCase extends AbstractManagerTestBase
 {
+   @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(TestObserver.class);
+    }
 
    @Test
    public void shouldBeAbleToDoStaticInjection() throws Exception
    {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .extension(TestObserver.class).create();
+      bind(ApplicationScoped.class, Object.class, new Object());
       
-      manager.getContext(ApplicationContextImpl.class).getObjectStore()
-         .add(Object.class, new Object());
+      fire("test event");
       
-      manager.fire("test event");
-      
-      Assert.assertTrue(manager.getExtension(TestObserver.class).wasCalled);
+      Assert.assertTrue(getManager().getExtension(TestObserver.class).wasCalled);
    }
    
    private static class TestObserver 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -32,6 +33,7 @@ import org.jboss.arquillian.core.impl.UncheckedThrow;
 import org.jboss.arquillian.core.impl.context.ApplicationContextImpl;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.core.spi.context.Context;
 import org.junit.After;
 import org.junit.Assert;
@@ -49,7 +51,7 @@ public abstract class AbstractManagerTestBase
    private static List<Class<? extends Context>> contexts;
    
    @Before
-   public final void create() 
+   public final void create() throws Exception
    {
       contexts = new ArrayList<Class<? extends Context>>();
       ManagerBuilder builder = ManagerBuilder.from();
@@ -75,7 +77,13 @@ public abstract class AbstractManagerTestBase
       manager = (ManagerImpl)builder.create();
       manager.start();
       
-      manager.resolve(Injector.class).inject(this);
+      executeInApplicationScope(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+            manager.resolve(Injector.class).inject(AbstractManagerTestBase.this);
+            return null;
+        }
+      });
       startContexts(manager);
    }
    
@@ -109,7 +117,7 @@ public abstract class AbstractManagerTestBase
    {
       Assert.assertNotNull(
             "Event " + type.getName() + " should have been fired", 
-            manager.resolve(EventRegister.class).getCount(type));
+            getRegister().getCount(type));
    }
 
    public final void assertEventFired(Class<?> type, Integer count)
@@ -117,7 +125,7 @@ public abstract class AbstractManagerTestBase
       Assert.assertEquals(
             "The event of exact type " + type.getName() + " should have been fired",
             count,
-            manager.resolve(EventRegister.class).getCount(type));
+            getRegister().getCount(type));
    }
 
    public final void assertEventFiredTyped(Class<?> type, Integer count)
@@ -125,7 +133,7 @@ public abstract class AbstractManagerTestBase
       Assert.assertEquals(
             "The event of assiganble type to " + type.getName() + " should have been fired",
             count,
-            manager.resolve(EventRegister.class).getCountTyped(type));
+            getRegister().getCountTyped(type));
    }
 
    public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext)
@@ -143,7 +151,21 @@ public abstract class AbstractManagerTestBase
          Assert.assertEquals(
                "Event " + type.getName() + " should" + (active ? " ":" not") + " have been fired within context " + activeContext.getName(),
                active,
-               manager.resolve(EventRegister.class).wasActive(type, activeContext));
+               getRegister().wasActive(type, activeContext));
+   }
+
+   private EventRegister getRegister() {
+       try
+       {
+           return executeInApplicationScope(new Callable<EventRegister>() {
+              @Override
+              public EventRegister call() throws Exception {
+                 return manager.resolve(EventRegister.class);
+              }
+           });
+       } catch(Exception e) {
+           throw new RuntimeException(e);
+       }
    }
 
    //-------------------------------------------------------------------------------------||
@@ -160,11 +182,16 @@ public abstract class AbstractManagerTestBase
 
    protected void startContexts(Manager manager)
    {
+       manager.getContext(ApplicationContext.class).activate();
    }
 
    //-------------------------------------------------------------------------------------||
    // Internal Helpers - Track events ----------------------------------------------------||
    //-------------------------------------------------------------------------------------||
+
+   public <T> T executeInApplicationScope(Callable<T> op) throws Exception {
+       return manager.executeInApplicationContext(op);
+   }
 
    public static class EventRegisterObserver 
    {

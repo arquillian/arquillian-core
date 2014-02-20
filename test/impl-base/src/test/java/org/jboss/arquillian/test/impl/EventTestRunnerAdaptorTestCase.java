@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.jboss.arquillian.core.spi.Manager;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.context.ClassContext;
@@ -58,7 +59,8 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
    @Override
    protected void startContexts(Manager manager)
    {
-      // this is a test of the Context activation, don't auto start
+      // this is a test of the Context activation, don't auto start.
+
    }
 
    @Test
@@ -74,17 +76,22 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
       TestMethodExecutor testExecutor = Mockito.mock(TestMethodExecutor.class);
       Mockito.when(testExecutor.getInstance()).thenReturn(testInstance);
       Mockito.when(testExecutor.getMethod()).thenReturn(testMethod);
+
+      // ApplicationContext is auto started, deactivate to be future proof
+      manager.getContext(ApplicationContext.class).deactivate();
       
       verifyNoActiveContext(manager);
 
       adaptor.beforeSuite();
       assertEventFired(BeforeSuite.class, 1);
+      assertEventFiredInContext(BeforeSuite.class, ApplicationContext.class);
       assertEventFiredInContext(BeforeSuite.class, SuiteContext.class);
 
       verifyNoActiveContext(manager);
       
       adaptor.beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(BeforeClass.class, 1);
+      assertEventFiredInContext(BeforeClass.class, ApplicationContext.class);
       assertEventFiredInContext(BeforeClass.class, SuiteContext.class);
       assertEventFiredInContext(BeforeClass.class, ClassContext.class);
 
@@ -92,6 +99,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
 
       adaptor.before(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(Before.class, 1);
+      assertEventFiredInContext(Before.class, ApplicationContext.class);
       assertEventFiredInContext(Before.class, SuiteContext.class);
       assertEventFiredInContext(Before.class, ClassContext.class);
       assertEventFiredInContext(Before.class, TestContext.class);
@@ -100,6 +108,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
       
       adaptor.test(testExecutor);
       assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 1);
+      assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ApplicationContext.class);
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, SuiteContext.class);
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ClassContext.class);
       assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, TestContext.class);
@@ -108,6 +117,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
       
       adaptor.after(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
       assertEventFired(After.class, 1);
+      assertEventFiredInContext(After.class, ApplicationContext.class);
       assertEventFiredInContext(After.class, SuiteContext.class);
       assertEventFiredInContext(After.class, ClassContext.class);
       assertEventFiredInContext(After.class, TestContext.class);
@@ -116,6 +126,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
 
       adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
       assertEventFired(AfterClass.class, 1);
+      assertEventFiredInContext(AfterClass.class, ApplicationContext.class);
       assertEventFiredInContext(AfterClass.class, SuiteContext.class);
       assertEventFiredInContext(AfterClass.class, ClassContext.class);
 
@@ -123,6 +134,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
 
       adaptor.afterSuite();
       assertEventFired(AfterSuite.class, 1);
+      assertEventFiredInContext(AfterSuite.class, ApplicationContext.class);
       assertEventFiredInContext(AfterSuite.class, SuiteContext.class);
 
       verifyNoActiveContext(manager);
@@ -130,11 +142,14 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
 
    private void verifyNoActiveContext(Manager manager)
    {
-      verify(false, false, false, manager);
+      verify(false, false, false, false, manager);
    }
    
-   private void verify(boolean suite, boolean clazz, boolean test, Manager manager)
+   private void verify(boolean application, boolean suite, boolean clazz, boolean test, Manager manager)
    {
+      Assert.assertEquals(
+            "ApplicationContext should" + (!application ? " not":"") + " be active",
+             application, manager.getContext(ApplicationContext.class).isActive());
       Assert.assertEquals(
             "SuiteContext should" + (!suite ? " not":"") + " be active",
             suite, manager.getContext(SuiteContext.class).isActive());

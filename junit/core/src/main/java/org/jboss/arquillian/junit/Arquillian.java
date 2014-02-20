@@ -45,6 +45,8 @@ import org.junit.runners.model.Statement;
  */
 public class Arquillian extends BlockJUnit4ClassRunner
 {
+   private TestRunnerAdaptor adaptor;
+
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
@@ -122,9 +124,8 @@ public class Arquillian extends BlockJUnit4ClassRunner
                {
                   try
                   {
-                     if(State.hasTestAdaptor())
+                     if(adaptor != null)
                      {
-                        TestRunnerAdaptor adaptor = State.getTestAdaptor();
                         adaptor.afterSuite();
                         adaptor.shutdown();
                      }
@@ -134,6 +135,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                      State.clean();
                   }
                }
+               adaptor = null;
             }
             catch (Exception e)
             {
@@ -144,6 +146,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
       // initialization ok, run children
       if(State.hasTestAdaptor())
       {
+         adaptor = State.getTestAdaptor();
          super.run(notifier);
       }
    }
@@ -179,7 +182,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            State.getTestAdaptor().beforeClass(
+            adaptor.beforeClass(
                   Arquillian.this.getTestClass().getJavaClass(), 
                   new StatementLifecycleExecutor(onlyBefores));
             originalStatement.evaluate();
@@ -201,7 +204,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                originalStatement,
                new Statement() { @Override public void evaluate() throws Throwable 
                {
-                  State.getTestAdaptor().afterClass(
+                   adaptor.afterClass(
                         Arquillian.this.getTestClass().getJavaClass(), 
                         new StatementLifecycleExecutor(onlyAfters));
                }}
@@ -219,7 +222,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            State.getTestAdaptor().before(
+             adaptor.before(
                   target, 
                   method.getMethod(), 
                   new StatementLifecycleExecutor(onlyBefores));
@@ -242,7 +245,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                originalStatement, 
                new Statement() { @Override public void evaluate() throws Throwable
                {
-                  State.getTestAdaptor().after(
+                   adaptor.after(
                         target, 
                         method.getMethod(), 
                         new StatementLifecycleExecutor(onlyAfters));
@@ -260,7 +263,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            TestResult result = State.getTestAdaptor().test(new TestMethodExecutor()
+            TestResult result = adaptor.test(new TestMethodExecutor()
             {
                @Override
                public void invoke(Object... parameters) throws Throwable
