@@ -239,7 +239,7 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
          @Override
          public Method getMethod()
          {
-            return nonExistingOperatesOnDeploymentMethod();
+            return nonExistingOperateOnDeploymentMethod();
          }
 
          @Override
@@ -285,11 +285,11 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
    }
 
    @OperateOnDeployment("NON_EXISTING_DEPLOYMENT")
-   private Method nonExistingOperatesOnDeploymentMethod()
+   private Method nonExistingOperateOnDeploymentMethod()
    {
       try
       {
-         return ContainerEventControllerTestCase.class.getDeclaredMethod("nonExistingOperatesOnDeploymentMethod");
+         return ContainerEventControllerTestCase.class.getDeclaredMethod("nonExistingOperateOnDeploymentMethod");
       }
       catch (Exception e)
       {

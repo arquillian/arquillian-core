@@ -46,10 +46,10 @@ import java.lang.annotation.Target;
  *          .addClass(MyServletY.class);
  * }
  *
- * &#64;Test &#64;OperatesOnDeployment("X")
+ * &#64;Test &#64;OperateOnDeployment("X")
  * public void shouldExecuteInX() { ... }
  *
- * &#64;Test &#64;OperatesOnDeployment("Y")
+ * &#64;Test &#64;OperateOnDeployment("Y")
  * public void shouldExecuteInY() { ... }
  * </code></pre>
  *
@@ -70,10 +70,10 @@ import java.lang.annotation.Target;
  *          .addClass(MyServletY.class);
  * }
  *
- * &#64;Test &#64;OperatesOnDeployment("X")
+ * &#64;Test &#64;OperateOnDeployment("X")
  * public void shouldExecuteInX() { ... }
  *
- * &#64;Test &#64;OperatesOnDeployment("Y") &#64;RunAsClient
+ * &#64;Test &#64;OperateOnDeployment("Y") &#64;RunAsClient
  * public void shouldExecuteInY(&#64;ArquillianResource &#64;OperateOnDeployment("X") URL deploymentXURLContext) { ... }
  * </code></pre>
  *

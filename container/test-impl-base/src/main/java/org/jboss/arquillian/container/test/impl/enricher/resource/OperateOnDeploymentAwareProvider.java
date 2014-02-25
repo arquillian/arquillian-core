@@ -35,12 +35,12 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
- * OperatesOnDeploymentAwareProvider
+ * OperateOnDeploymentAwareProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvider
+public abstract class OperateOnDeploymentAwareProvider implements ResourceProvider
 {
    @Inject
    private Instance<ContainerContext> containerContext;
@@ -66,7 +66,7 @@ public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvi
    {
       DeploymentContext context = null;
       DeploymentScenario scenario = null;
-      boolean activateContext = containsOperatesOnDeployment(qualifiers);
+      boolean activateContext = containsOperateOnDeployment(qualifiers);
       boolean contextActivated = false;
       try
       {
@@ -80,7 +80,7 @@ public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvi
                throw new IllegalStateException("No " + DeploymentScenario.class.getSimpleName() + " found. " +
                      "Possible cause, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side. (@" + RunAsClient.class.getSimpleName() + ")");
             }
-            OperateOnDeployment operatesOn = getOperatesOnDeployment(qualifiers);
+            OperateOnDeployment operatesOn = getOperateOnDeployment(qualifiers);
             deployment = scenario.deployment(new DeploymentTargetDescription(operatesOn.value()));
             if(deployment == null)
             {
@@ -140,12 +140,12 @@ public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvi
       }
    }
 
-   public boolean containsOperatesOnDeployment(Annotation[] qualifiers)
+   public boolean containsOperateOnDeployment(Annotation[] qualifiers)
    {
-      return getOperatesOnDeployment(qualifiers) != null;
+      return getOperateOnDeployment(qualifiers) != null;
    }
 
-   private OperateOnDeployment getOperatesOnDeployment(Annotation[] qualifiers)
+   private OperateOnDeployment getOperateOnDeployment(Annotation[] qualifiers)
    {
       if(qualifiers != null)
       {

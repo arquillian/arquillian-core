@@ -39,7 +39,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProviderBase
+public class URLResourceProviderTestCase extends OperateOnDeploymentAwareProviderBase
 {
    @Override
    protected ResourceProvider getResourceProvider()
