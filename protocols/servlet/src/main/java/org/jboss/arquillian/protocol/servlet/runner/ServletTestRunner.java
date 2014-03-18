@@ -32,7 +32,6 @@ import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.util.TestRunners;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 
 /**
  * ServletTestRunner
@@ -245,6 +244,6 @@ public class ServletTestRunner extends HttpServlet
    
    private TestResult createFailedResult(Throwable throwable)
    {
-      return new TestResult(Status.FAILED, throwable);
+      return TestResult.failed(throwable);
    }
 }

@@ -22,6 +22,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -30,6 +33,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.mockito.runners.MockitoJUnitRunner;
 
 
@@ -151,6 +156,29 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
 
       Assert.assertFalse(result.wasSuccessful());
       Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+
+      verify(adaptor, times(1)).beforeSuite();
+      verify(adaptor, times(1)).afterSuite();
+   }
+
+   @Test
+   public void shouldWorkWithAssume() throws Exception {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+      executeAllLifeCycles(adaptor);
+      final List<Failure> assumptionFailure = new ArrayList<Failure>();
+      Result result = run(adaptor, new RunListener() {
+          @Override
+        public void testAssumptionFailure(Failure failure) {
+              assumptionFailure.add(failure);
+        }
+      }, ArquillianClass1WithAssume.class);
+
+      Assert.assertEquals(1, assumptionFailure.size());
+      Assert.assertTrue(result.wasSuccessful());
+      Assert.assertEquals(0, result.getFailureCount());
+      Assert.assertEquals(0, result.getIgnoreCount());
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
 
       verify(adaptor, times(1)).beforeSuite();

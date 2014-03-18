@@ -25,7 +25,6 @@ import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
 import org.jboss.arquillian.protocol.servlet.test.TestIntegerCommand;
 import org.jboss.arquillian.protocol.servlet.test.TestStringCommand;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +41,7 @@ public class ServletCommandServiceTestCase extends AbstractServerBase
    {
       Object[] results = new Object[] {"Wee", 100};
 
-      MockTestRunner.add(new TestResult(Status.PASSED, null));
+      MockTestRunner.add(TestResult.passed());
       MockTestRunner.add(new TestStringCommand());
       MockTestRunner.add(new TestIntegerCommand());
 
@@ -85,7 +84,7 @@ public class ServletCommandServiceTestCase extends AbstractServerBase
 
       Object[] results = new Object[] {"Wee", 100};
 
-      MockTestRunner.add(new TestResult(Status.FAILED, null));
+      MockTestRunner.add(TestResult.failed(null));
       MockTestRunner.add(new TestStringCommand());
 
       ServletMethodExecutor executor = new ServletMethodExecutor(

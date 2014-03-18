@@ -39,7 +39,7 @@ public class ProtocolTestCase extends AbstractServerBase
    @Test
    public void shouldReturnTestResult() throws Exception 
    {
-      MockTestRunner.add(new TestResult(Status.PASSED, null));
+      MockTestRunner.add(TestResult.passed());
       
       ServletMethodExecutor executor = createExecutor();
       TestResult result = executor.invoke(new MockTestExecutor());
@@ -57,7 +57,7 @@ public class ProtocolTestCase extends AbstractServerBase
    @Test
    public void shouldReturnThrownException() throws Exception 
    {
-      MockTestRunner.add(new TestResult(Status.FAILED, new Exception().fillInStackTrace()));
+      MockTestRunner.add(TestResult.failed(new Exception().fillInStackTrace()));
       
       ServletMethodExecutor executor = createExecutor();
       TestResult result = executor.invoke(new MockTestExecutor());

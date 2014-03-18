@@ -235,6 +235,7 @@ public class ExceptionProxy implements Externalizable
               originalBytes = originalOut.toByteArray();
           } catch (NotSerializableException e) {
               // in case some class breaks Serialization contract
+              e.printStackTrace();
           }
       }
       out.writeObject(originalBytes);

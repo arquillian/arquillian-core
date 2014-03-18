@@ -22,8 +22,7 @@ import java.util.List;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.junit.Test;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -51,7 +50,7 @@ public class JUnitTestRunner implements TestRunner
 
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      TestResult testResult = new TestResult(Status.PASSED);
+      TestResult testResult = TestResult.passed(); // = new TestResult(Status.PASSED);
       ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();
       try
       {
@@ -63,26 +62,29 @@ public class JUnitTestRunner implements TestRunner
              runner.addListener(listener);
 
           Result result = runner.run(Request.method(testClass, methodName));
-          testResult.setThrowable(exceptionHolder.getException());
 
           if (result.getFailureCount() > 0)
           {
-             testResult.setStatus(Status.FAILED);
-             testResult.setThrowable(result.getFailures().get(0).getException());
+             testResult = TestResult.failed(result.getFailures().get(0).getException());
           }
-          if (result.getIgnoreCount() > 0)
+          else if (result.getIgnoreCount() > 0)
           {
-              testResult.setStatus(Status.SKIPPED);
+              testResult = TestResult.skipped(null); // Will this ever happen incontainer?
           }
+          else {
+              testResult = TestResult.passed();
+          }
+
+          testResult.setThrowable(exceptionHolder.getException());
       }
       catch (Throwable th) {
-          testResult.setStatus(Status.FAILED);
-          testResult.setThrowable(th);
+          testResult = TestResult.failed(th);
       }
-      finally
-      {
-          testResult.setEnd(System.currentTimeMillis());
+      // AssumptionViolatedException might not be Serializable. Recreate with only String message.
+      if(testResult.getThrowable() instanceof AssumptionViolatedException) {
+          testResult = TestResult.skipped(new AssumptionViolatedException(testResult.getThrowable().getMessage()));
       }
+      testResult.setEnd(System.currentTimeMillis());
       return testResult;
    }
 
@@ -98,12 +100,8 @@ public class JUnitTestRunner implements TestRunner
       @Override
       public void testFinished(Description description) throws Exception
       {
-         Test test = description.getAnnotation(Test.class);
-         if (test != null && test.expected() != Test.None.class)
-         {
-            exception = State.getTestException();
-            State.caughtTestException(null);
-         }
+          exception = State.getTestException();
+          State.caughtTestException(null);
       }
    }
 }

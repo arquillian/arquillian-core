@@ -30,6 +30,18 @@ public final class TestResult implements Serializable
 {
    private static final long serialVersionUID = 1L;
 
+   public static TestResult passed() {
+       return new TestResult(Status.PASSED);
+   }
+
+   public static TestResult skipped(Throwable cause) {
+       return new TestResult(Status.SKIPPED, cause);
+   }
+
+   public static TestResult failed(Throwable cause) {
+       return new TestResult(Status.FAILED, cause);
+   }
+
    /**
     * The test status
     * 
@@ -66,6 +78,7 @@ public final class TestResult implements Serializable
     * <br/>
     * Start time is set to Current Milliseconds.
     */
+   @Deprecated
    public TestResult()
    {
       this(null);
@@ -79,6 +92,7 @@ public final class TestResult implements Serializable
     * @param status
     *            The result status.
     */
+   @Deprecated
    public TestResult(Status status)
    {
       this(status, null);
@@ -94,6 +108,7 @@ public final class TestResult implements Serializable
     * @param throwable
     *            thrown exception if any
     */
+   @Deprecated
    public TestResult(Status status, Throwable throwable)
    {
       this.status = status;
@@ -110,9 +125,11 @@ public final class TestResult implements Serializable
       return status;
    }
 
-   public void setStatus(Status status)
+   @Deprecated
+   public TestResult setStatus(Status status)
    {
       this.status = status;
+      return this;
    }
 
    /**
@@ -131,10 +148,11 @@ public final class TestResult implements Serializable
       return throwable;
    }
 
-   public void setThrowable(Throwable throwable)
+   public TestResult setThrowable(Throwable throwable)
    {
       this.throwable = throwable;
       this.exceptionProxy = ExceptionProxy.createForException(throwable);
+      return this;
    }
 
    /**
@@ -143,9 +161,10 @@ public final class TestResult implements Serializable
     * @param start
     *            Start time in milliseconds
     */
-   public void setStart(long start)
+   public TestResult setStart(long start)
    {
       this.start = start;
+      return this;
    }
 
    /**
@@ -164,9 +183,10 @@ public final class TestResult implements Serializable
     * @param End
     *            time in milliseconds
     */
-   public void setEnd(long end)
+   public TestResult setEnd(long end)
    {
       this.end = end;
+      return this;
    }
 
    /**

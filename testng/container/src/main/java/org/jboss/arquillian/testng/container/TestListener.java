@@ -17,7 +17,6 @@
 package org.jboss.arquillian.testng.container;
 
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -66,24 +65,24 @@ public class TestListener implements ITestListener
    {
       if (context.getFailedConfigurations().size() > 0)
       {
-         return new TestResult(Status.FAILED,
+         return TestResult.failed(
                context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
       }
       else if (context.getFailedTests().size() > 0)
       {
-         return new TestResult(Status.FAILED,
+         return TestResult.failed(
                context.getFailedTests().getAllResults().iterator().next().getThrowable());
       }
       else if (context.getSkippedTests().size() > 0)
       {
-         return new TestResult(Status.SKIPPED);
+         return TestResult.skipped(null);
       }
       if (context.getPassedTests().size() > 0)
       {
-         return new TestResult(Status.PASSED,
+         return TestResult.passed().setThrowable(
                context.getPassedTests().getAllResults().iterator().next().getThrowable());
       }
-      return new TestResult(Status.FAILED,
+      return TestResult.failed(
             new RuntimeException("Unknown test result: " + context).fillInStackTrace());
    }
 }
