@@ -35,12 +35,10 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.core.spi.context.ApplicationContext;
+import org.jboss.arquillian.core.api.threading.ContextSnapshot;
+import org.jboss.arquillian.core.api.threading.ExecutorService;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
-import org.jboss.arquillian.test.spi.context.ClassContext;
-import org.jboss.arquillian.test.spi.context.SuiteContext;
-import org.jboss.arquillian.test.spi.context.TestContext;
 
 /**
  * A Handler for executing the remote Test Method.<br/>
@@ -79,16 +77,7 @@ public class RemoteTestExecuter
    private InstanceProducer<TestResult> testResult;
 
    @Inject
-   private Instance<ApplicationContext> applicationContextInst;
-
-   @Inject
-   private Instance<SuiteContext> suiteContextInst;
-
-   @Inject
-   private Instance<ClassContext> classContextInst;
-   
-   @Inject
-   private Instance<TestContext> testContextInst;
+   private Instance<ExecutorService> executorService;
 
 
    public void execute(@Observes RemoteExecutionEvent event) throws Exception
@@ -124,14 +113,7 @@ public class RemoteTestExecuter
    @SuppressWarnings({"unchecked", "rawtypes"})
    public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol, ProtocolConfiguration protocolConfiguration)
    {
-      final ApplicationContext applicationContext = applicationContextInst.get();
-      final SuiteContext suiteContext = suiteContextInst.get();
-      
-      final ClassContext classContext = classContextInst.get();
-      final Class<?> classContextId = classContext.getActiveId();
-      
-      final TestContext testContext = testContextInst.get();
-      final Object testContextId = testContext.getActiveId();
+      final ContextSnapshot state = executorService.get().createSnapshotContext();
       
       ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(
             protocolConfiguration, 
@@ -140,20 +122,14 @@ public class RemoteTestExecuter
                @Override
                public void fired(Command<?> event)
                {
-                  applicationContext.activate();
-                  suiteContext.activate();
-                  classContext.activate(classContextId);
-                  testContext.activate(testContextId);
+                  state.activate();
                   try
                   {
                      remoteEvent.fire(event);
                   }
                   finally
                   {
-                     testContext.deactivate();
-                     classContext.deactivate();
-                     suiteContext.deactivate();
-                     applicationContext.deactivate();
+                     state.deactivate();
                   }
                }
             });
