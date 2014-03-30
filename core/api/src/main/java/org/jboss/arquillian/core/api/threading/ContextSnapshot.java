@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -14,27 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.core.api;
-
+package org.jboss.arquillian.core.api.threading;
 
 /**
- * <pre>
- * {@code @Inject @ApplicationScoped
- * private InstanceProducer<MyObject> myObjectInst;
+ * Holds the contextual state from a previous call.
  *
- * public void listen(@Observes OtherEvent otherEvent) {
- *     // do something..
- *     myObjectInst.set(new MyObject());
- *     // do something..
- * }
- * }
- * </pre>
+ * Used to replicate Contextual information across threads.
  *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
-public interface InstanceProducer<T> extends Instance<T>
-{
-   void set(T value);
+public interface ContextSnapshot {
 
+    /**
+     * Activate all previously active Contexts.
+     */
+    void activate();
+    
+    /**
+     * Deactivate all previously active Contexts.
+     */
+    void deactivate();
 }

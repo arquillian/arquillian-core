@@ -30,7 +30,9 @@ import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.arquillian.core.api.event.ManagerStopping;
+import org.jboss.arquillian.core.api.threading.ExecutorService;
 import org.jboss.arquillian.core.impl.context.ApplicationContextImpl;
+import org.jboss.arquillian.core.impl.threading.ThreadedExecutorService;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.EventPoint;
 import org.jboss.arquillian.core.spi.Extension;
@@ -89,7 +91,7 @@ public class ManagerImpl implements Manager
          List<Extension> createdExtensions = createExtensions(extensionClasses);
          List<Context> createdContexts = createContexts(contextClasses);
          
-         createApplicationContextAndInjector();
+         createBuiltInServices();
 
          this.contexts.addAll(createdContexts);
          this.extensions.addAll(createdExtensions);
@@ -456,14 +458,18 @@ public class ManagerImpl implements Manager
       return created;
    }
 
-   private void createApplicationContextAndInjector() throws Exception
+   private void createBuiltInServices() throws Exception
    {    
       final ApplicationContext context = new ApplicationContextImpl();
       contexts.add(context);
       executeInApplicationContext(new Callable<Object>() {
           @Override
           public Object call() throws Exception {
-              return context.getObjectStore().add(Injector.class, InjectorImpl.of(ManagerImpl.this));
+              ManagerImpl.this.bind(
+                      ApplicationScoped.class, Injector.class, InjectorImpl.of(ManagerImpl.this));
+              ManagerImpl.this.bind(
+                      ApplicationScoped.class, ExecutorService.class, new ThreadedExecutorService(ManagerImpl.this));
+              return null;
           }
       });
    }
