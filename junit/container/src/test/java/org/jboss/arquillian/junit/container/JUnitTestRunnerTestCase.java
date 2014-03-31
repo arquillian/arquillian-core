@@ -20,44 +20,130 @@ package org.jboss.arquillian.junit.container;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.rules.ExpectedException;
 
 public class JUnitTestRunnerTestCase
 {
    @Test
-   public void shouldReturnPassedTest() throws Exception 
+   public void shouldReturnExceptionToClientIfAnnotatedExpectedAndPassing() throws Exception
+   {
+      State.caughtTestException(new IllegalArgumentException());
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldPassAnnotatedExpected");
+      
+      Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
+      Assert.assertNotNull(result.getThrowable());
+      Assert.assertEquals(IllegalArgumentException.class, result.getThrowable().getClass());
+   }
+
+   @Test
+   public void shouldNotReturnExceptionToClientIfAnnotatedExpectedAndFailingOnNoExceptionThrown() throws Exception
    {
       JUnitTestRunner runner = new JUnitTestRunner();
-      TestResult result = runner.execute(JUnitTestRunnerTestCase.class, "shouldProvidePassingTestToRunner");
-      
-      Assert.assertNotNull(result);
+      TestResult result = runner.execute(TestScenarios.class, "shouldFailAnnotatedExpected");
+
+      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+      Assert.assertNull(result.getThrowable());
+      //Assert.assertEquals(IllegalArgumentException.class, result.getThrowable().getClass());
+   }
+
+   @Test
+   public void shouldReturnExceptionToClientIfAnnotatedExpectedAndFailingOnWrongExceptionThrown() throws Exception
+   {
+      State.caughtTestException(new UnsupportedOperationException());
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldFailAnnotatedExpectedWrongException");
+
+      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+      Assert.assertNotNull(result.getThrowable());
+      Assert.assertEquals(UnsupportedOperationException.class, result.getThrowable().getClass());
+   }
+
+   @Test
+   public void shouldNotReturnExceptionToClientIfAsumptionPassing() throws Exception
+   {
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldPassOnAssumption");
+
       Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
       Assert.assertNull(result.getThrowable());
    }
 
    @Test
-   public void shouldReturnExceptionOnPassedTest() throws Exception 
+   public void shouldReturnExceptionToClientIfAsumptionFailing() throws Exception
    {
-      // Simulate setting the Exception like Arquillian would. This is a JUnit hack to avoid JUnit Swallowing the Exception.
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldSkipOnAssumption");
+
+      Assert.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+      Assert.assertNotNull(result.getThrowable());
+      Assert.assertEquals(AssumptionViolatedException.class, result.getThrowable().getClass());
+   }
+
+   @Test
+   public void shouldNotReturnExceptionToClientIfExpectedRulePassing() throws Exception
+   {
       State.caughtTestException(new IllegalArgumentException());
       JUnitTestRunner runner = new JUnitTestRunner();
-      TestResult result = runner.execute(JUnitTestRunnerTestCase.class, "shouldProvideExpectedExceptionToRunner");
-      
-      Assert.assertNotNull(result);
+      TestResult result = runner.execute(TestScenarios.class, "shouldPassOnException");
+
       Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
-      Assert.assertNotNull(result.getThrowable());
-      Assert.assertEquals(IllegalArgumentException.class, result.getThrowable().getClass());
+      Assert.assertNull(result.getThrowable());
    }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldProvideExpectedExceptionToRunner() throws Exception
-   {
-      throw new IllegalArgumentException();
-   }
-   
+
    @Test
-   public void shouldProvidePassingTestToRunner() throws Exception 
+   public void shouldReturnExceptionToClientIfExpectedRuleFailing() throws Exception
    {
-      Assert.assertTrue(true);
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldFailOnException");
+
+      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+      Assert.assertNotNull(result.getThrowable());
+      Assert.assertEquals(AssertionError.class, result.getThrowable().getClass());
+   }
+
+   public static class TestScenarios {
+
+       @Rule
+       public ExpectedException e = ExpectedException.none();
+
+       @Test
+       public void shouldSkipOnAssumption() throws Exception {
+           Assume.assumeTrue(false);
+       }
+
+       @Test
+       public void shouldPassOnAssumption() throws Exception {
+           Assume.assumeTrue(true);
+       }
+
+       @Test
+       public void shouldFailOnException() throws Exception {
+           e.expect(IllegalArgumentException.class);
+       }
+
+       @Test
+       public void shouldPassOnException() throws Exception {
+           e.expect(IllegalArgumentException.class);
+           throw new IllegalArgumentException();
+       }
+
+       @Test(expected = IllegalArgumentException.class)
+       public void shouldPassAnnotatedExpected() throws Exception {
+           throw new IllegalArgumentException();
+       }
+
+       @Test(expected = IllegalArgumentException.class)
+       public void shouldFailAnnotatedExpected() throws Exception {
+       }
+
+       @Test(expected = IllegalArgumentException.class)
+       public void shouldFailAnnotatedExpectedWrongException() throws Exception {
+           throw new UnsupportedOperationException();
+       }
    }
 }

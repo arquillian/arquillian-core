@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -28,6 +29,8 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.internal.runners.model.MultipleFailureException;
+import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -213,49 +216,65 @@ public class Arquillian extends BlockJUnit4ClassRunner
          }
       };
    }   
-   
+
    @Override
-   protected Statement withBefores(final FrameworkMethod method, final Object target, final Statement originalStatement)
-   {
-      final Statement onlyBefores = super.withBefores(method, target, new EmptyStatement());
-      return new Statement()
-      {
-         @Override
-         public void evaluate() throws Throwable
-         {
-             adaptor.before(
-                  target, 
-                  method.getMethod(), 
-                  new StatementLifecycleExecutor(onlyBefores));
-            originalStatement.evaluate();
-         }
-      };
-   }
-   
-   @Override
-   protected Statement withAfters(final FrameworkMethod method, final Object target, final Statement originalStatement)
-   {
-      final Statement onlyAfters = super.withAfters(method, target, new EmptyStatement());
-      return new Statement()
-      {
-         @Override
-         public void evaluate() throws Throwable
-         {
-            multiExecute
-            (
-               originalStatement, 
-               new Statement() { @Override public void evaluate() throws Throwable
-               {
-                   adaptor.after(
-                        target, 
-                        method.getMethod(), 
-                        new StatementLifecycleExecutor(onlyAfters));
-               }}
-            );
-         }
-      };
-   }
-      
+   @SuppressWarnings("deprecation")
+   protected Statement methodBlock(final FrameworkMethod method) {
+       Object test;
+       try {
+           test= new ReflectiveCallable() {
+               @Override
+               protected Object runReflectiveCall() throws Throwable {
+                   return createTest();
+               }
+           }.run();
+       } catch (Throwable e) {
+           return new Fail(e);
+       }
+       try
+       {
+           Method withRules = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules",
+                   new Class[] {FrameworkMethod.class, Object.class, Statement.class});
+           withRules.setAccessible(true);
+
+           Statement statement = methodInvoker(method, test);
+           statement = possiblyExpectingExceptions(method, test, statement);
+           statement = withPotentialTimeout(method, test, statement);
+
+           final Object testObj = test;
+           final Statement testStatement = statement;
+
+           Statement arounds = withBefores(method, test, testStatement);
+           arounds = withAfters(method, test, arounds);
+           arounds = (Statement)withRules.invoke(this, new Object[] {method, test, arounds});
+           final Statement withArounds = arounds;
+           return new Statement() {
+
+               @Override
+               public void evaluate() throws Throwable {
+                   try {
+                       final AtomicInteger integer = new AtomicInteger();
+                       adaptor.before(testObj, method.getMethod(), new LifecycleMethodExecutor() {
+                           @Override
+                           public void invoke() throws Throwable {
+                               integer.incrementAndGet();
+                           }
+                       });
+                       if(integer.get() > 0) {
+                           withArounds.evaluate();
+                       } else {
+                           testStatement.evaluate();
+                       }
+                   } finally {
+                       adaptor.after(testObj, method.getMethod(), LifecycleMethodExecutor.NO_OP);
+                   }
+               }
+           };
+       } catch(Exception e) {
+           throw new RuntimeException("Could not create statement", e);
+       }
+    }
+
    @Override
    protected Statement methodInvoker(final FrameworkMethod method, final Object test)
    {

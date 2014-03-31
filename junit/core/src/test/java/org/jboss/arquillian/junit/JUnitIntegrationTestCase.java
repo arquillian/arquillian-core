@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,7 +50,7 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
    public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception 
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(new TestResult(Status.PASSED));
+      when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
       
       Result result = run(adaptor, ArquillianClass1.class);
 
@@ -157,6 +156,36 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
       Assert.assertFalse(result.wasSuccessful());
       Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+
+      verify(adaptor, times(1)).beforeSuite();
+      verify(adaptor, times(1)).afterSuite();
+   }
+
+   @Test
+   public void shouldWorkWithExpectedExceptionRule() throws Exception {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+      executeAllLifeCycles(adaptor);
+
+      Result result = run(adaptor, ArquillianClass1WithExpectedExceptionRule.class);
+
+      Assert.assertTrue(result.wasSuccessful());
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
+
+      verify(adaptor, times(1)).beforeSuite();
+      verify(adaptor, times(1)).afterSuite();
+   }
+
+   @Test
+   public void shouldWorkWithExpectedException() throws Exception {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+      executeAllLifeCycles(adaptor);
+
+      Result result = run(adaptor, ArquillianClass1WithExpectedException.class);
+
+      Assert.assertTrue(result.wasSuccessful());
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
 
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
