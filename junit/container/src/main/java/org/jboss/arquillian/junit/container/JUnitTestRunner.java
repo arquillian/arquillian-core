@@ -75,7 +75,9 @@ public class JUnitTestRunner implements TestRunner
               testResult = TestResult.passed();
           }
 
-          testResult.setThrowable(exceptionHolder.getException());
+          if (exceptionHolder.getException() != null) {
+              testResult.setThrowable(exceptionHolder.getException());
+          }
       }
       catch (Throwable th) {
           testResult = TestResult.failed(th);

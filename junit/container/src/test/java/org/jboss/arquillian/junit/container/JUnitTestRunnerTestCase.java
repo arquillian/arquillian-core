@@ -60,4 +60,28 @@ public class JUnitTestRunnerTestCase
    {
       Assert.assertTrue(true);
    }
+
+   private static boolean failShouldProvideErrorToRunner = false;
+   
+   @Test
+   public void shouldFailOnUnexpectedError() throws Exception
+   {
+         failShouldProvideErrorToRunner = true;
+         try {
+            JUnitTestRunner runner = new JUnitTestRunner();
+            TestResult result = runner.execute(JUnitTestRunnerTestCase.class, "shouldProvideErrorToRunner");
+
+            Assert.assertNotNull(result.getThrowable());
+            Assert.assertEquals(result.getThrowable().getClass(), NoClassDefFoundError.class);
+         } finally {
+            failShouldProvideErrorToRunner = false;
+         }
+   }
+   
+   @Test
+   public void shouldProvideErrorToRunner() {
+      if (failShouldProvideErrorToRunner) {
+         throw new NoClassDefFoundError();
+      }
+   }
 }
