@@ -150,6 +150,9 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
       httpConnection.setUseCaches(false);
       httpConnection.setDefaultUseCaches(false);
       httpConnection.setDoInput(true);
+
+      prepareHttpConnection(httpConnection);
+
       try
       {
          
@@ -221,6 +224,10 @@ public class ServletMethodExecutor implements ContainerMethodExecutor
          httpConnection.disconnect();
       }
       return null;
+   }
+
+   @SuppressWarnings("UnusedParameters")
+   protected void prepareHttpConnection(HttpURLConnection connection) {
    }
 
    protected Timer createCommandServicePullTimer(final String eventUrl)
