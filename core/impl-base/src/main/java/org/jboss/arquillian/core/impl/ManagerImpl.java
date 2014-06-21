@@ -630,11 +630,12 @@ public class ManagerImpl implements Manager
    private String getEventName(Object object)
    {
       Class<?> eventClass = object.getClass();
-      if(eventClass.getInterfaces().length == 1 && !eventClass.getInterfaces()[0].getName().startsWith("java"))
+      // Print the Interface name of Anonymous classes to show the defined interface, not creation point.
+      if(eventClass.isAnonymousClass() && eventClass.getInterfaces().length == 1 && !eventClass.getInterfaces()[0].getName().startsWith("java"))
       {
          return eventClass.getInterfaces()[0].getSimpleName();
       }
-      return object.getClass().getSimpleName();
+      return eventClass.getSimpleName();
    }
    
    private String calcDebugPrefix()
