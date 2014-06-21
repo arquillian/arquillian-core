@@ -51,6 +51,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
     * 
     */
    private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_PATH = "arquillian.deploymentExportPath";
+   private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED = "arquillian.deploymentExportExploded";
 
    private static final String TARGET_NAME = "test.jar";
 
@@ -69,7 +70,6 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
    @Mock
    private DeployableContainer<?> deployableContainer;
 
-   @Mock
    private DeploymentDescription deployment;
 
    @Before
@@ -97,9 +97,9 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
       try
       {
          bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
-         
+
          fire(new BeforeDeploy(deployableContainer, deployment));
-   
+
          fileShouldExist(true);
       }
       finally
@@ -143,12 +143,75 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
       fileShouldExist(true);
    }
 
+   @Test
+   public void shouldBeExportedExplodedWhenDeploymentExportExplodedIsSet() throws Exception {
+      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH)
+            .deploymentExportExploded(true));
+
+      fire(new BeforeDeploy(deployableContainer, deployment));
+
+      directoryShouldExist();
+   }
+
+   @Test
+   public void shouldExportExplodedIfExportExplodedSystemPropertyIsSet() throws Exception
+   {
+      System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
+      System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "true");
+      try
+      {
+         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+
+         fire(new BeforeDeploy(deployableContainer, deployment));
+
+         fileShouldExist(true);
+      }
+      finally
+      {
+         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, "");
+         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "");
+      }
+   }
+
    private void fileShouldExist(boolean bol)
    {
       File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
 
-      Assert.assertEquals("File exists", bol, file.exists());
+      try {
+         Assert.assertEquals("File exists", bol, file.exists());
+         if(bol) {
+            Assert.assertTrue("File is a file", file.isFile());
+         }
+      }
+      finally {
+         delete(file);
+      }
 
+   }
+
+   private void directoryShouldExist()
+   {
+      File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
+
+      try {
+         Assert.assertTrue("File exists", file.exists());
+         Assert.assertTrue("File is a directory", file.isDirectory());
+      }
+      finally {
+        delete(file);
+      }
+   }
+
+   private void delete(File file) {
+      if(!file.exists()) {
+         return;
+      }
+      if(file.isDirectory()) {
+         for(File sub : file.listFiles()) {
+            delete(sub);
+         }
+      }
       file.delete();
    }
 }

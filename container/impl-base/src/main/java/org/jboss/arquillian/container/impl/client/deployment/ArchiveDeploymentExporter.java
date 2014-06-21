@@ -27,6 +27,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.exporter.ExplodedExporter;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 /**
@@ -53,7 +54,9 @@ public class ArchiveDeploymentExporter
       EngineDef engine = descriptor.engine();
 
       String systemExport = SecurityActions.getProperty("arquillian.deploymentExportPath");
+      String systemExportExploded = SecurityActions.getProperty("arquillian.deploymentExportExploded");
       String exportPath = (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath():systemExport;
+      Boolean exportExploded = (systemExportExploded == null || systemExportExploded.length() == 0) ? engine.getDeploymentExportExploded():Boolean.parseBoolean(systemExport);
       
       if(exportPath != null && event.getDeployment().isArchiveDeployment())
       {
@@ -79,9 +82,15 @@ public class ArchiveDeploymentExporter
             deployment = event.getDeployment().getArchive();
          }
          
-         deployment.as(ZipExporter.class).exportTo(
-               new File(exportDir, createFileName(event.getDeployment(), deployment)), 
-               true);  
+         if(exportExploded) {
+            deployment.as(ExplodedExporter.class).exportExploded(
+                  exportDir, createFileName(event.getDeployment(), deployment));
+         }
+         else {
+            deployment.as(ZipExporter.class).exportTo(
+                  new File(exportDir, createFileName(event.getDeployment(), deployment)),
+                  true);
+         }
       }
    }
    

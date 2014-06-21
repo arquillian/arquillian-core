@@ -29,6 +29,10 @@ public interface EngineDef extends ArquillianDescriptor
    EngineDef deploymentExportPath(String path);
    
    String getDeploymentExportPath();
+
+   EngineDef deploymentExportExploded(Boolean exploded);
+
+   Boolean getDeploymentExportExploded();
    
    EngineDef maxTestClassesBeforeRestart(Integer max);
    

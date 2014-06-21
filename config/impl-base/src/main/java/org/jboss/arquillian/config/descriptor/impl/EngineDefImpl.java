@@ -29,6 +29,7 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
 {
    private static final String exportPath = "property@name=deploymentExportPath";
+   private static final String exportExploded = "property@name=deploymentExportExploded";
    private static final String maxTestClasses = "property@name=maxTestClassesBeforeRestart";
    
    private Node engine;
@@ -59,6 +60,25 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
    }
 
    /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#deploymentExportExploded(java.lang.Boolean)
+    */
+   @Override
+   public EngineDef deploymentExportExploded(Boolean exploded)
+   {
+      engine.getOrCreate(exportExploded).text(exploded);
+      return this;
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getDeploymentExportExploded()
+    */
+   @Override
+   public Boolean getDeploymentExportExploded()
+   {
+      return getTextIfExistsAsBoolean(exportExploded, false);
+   }
+
+   /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#maxTestClassesBeforeRestart(java.lang.Integer)
     */
    @Override
@@ -67,7 +87,7 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
       engine.getOrCreate(maxTestClasses).text(max);
       return this;
    }
-   
+
    /* (non-Javadoc)
     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getMaxTestClassesBeforeRestart()
     */
@@ -76,7 +96,7 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
    {
       return getTextIfExistsAsInteger(maxTestClasses);
    }
-   
+
    private Integer getTextIfExistsAsInteger(String pattern)
    {
       String text = getTextIfExists(pattern);
@@ -85,6 +105,16 @@ public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
          return Integer.parseInt(text);
       }
       return null;
+   }
+
+   private Boolean getTextIfExistsAsBoolean(String pattern, Boolean defaultValue)
+   {
+      String text = getTextIfExists(pattern);
+      if(text != null)
+      {
+         return Boolean.parseBoolean(text);
+      }
+      return defaultValue;
    }
 
    private String getTextIfExists(String pattern)
