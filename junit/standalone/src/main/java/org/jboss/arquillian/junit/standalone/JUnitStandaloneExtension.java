@@ -30,6 +30,7 @@ public class JUnitStandaloneExtension implements LoadableExtension
    @Override
    public void register(ExtensionBuilder builder)
    {
-      builder.observer(LocalTestMethodExecutor.class);
+      builder.observer(LocalTestMethodExecutor.class)
+             .observer(AllLifecycleEventExecutor.class);
    }
 }
