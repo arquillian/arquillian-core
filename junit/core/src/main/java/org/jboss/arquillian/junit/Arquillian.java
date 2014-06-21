@@ -92,9 +92,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
          }
          else
          {
-            TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
             try 
             {
+               // ARQ-1742 If exceptions happen during boot
+               TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
                // don't set it if beforeSuite fails
                adaptor.beforeSuite();
                State.testAdaptor(adaptor);
