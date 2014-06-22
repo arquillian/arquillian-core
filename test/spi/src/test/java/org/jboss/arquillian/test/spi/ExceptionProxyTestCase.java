@@ -19,8 +19,12 @@ package org.jboss.arquillian.test.spi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 
@@ -63,7 +67,29 @@ public class ExceptionProxyTestCase
       Throwable t = proxy.createException();
 
       Assert.assertEquals(ArquillianProxyException.class, t.getClass());
-      Assert.assertEquals(NullPointerException.class, t.getCause().getClass());
+      Assert.assertTrue(
+              "Verify Proxy message contain root exception of serialization problem",
+              t.getMessage().contains("java.io.NotSerializableException"));
+      Assert.assertTrue(
+              "Verify Proxy message contain root cause of serialization problem",
+              t.getMessage().contains("BufferedInputStream"));
+      Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+   }
+
+   @Test
+   public void shouldSerializeNonDeSerializableExceptions() throws Exception
+   {
+      ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonDeserializableExtension("Test")));
+      Throwable t = proxy.createException();
+
+      Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+      Assert.assertTrue(
+              "Verify Proxy message contain root exception of deserialization problem",
+              t.getMessage().contains("NonDeserializableExtension"));
+      Assert.assertTrue(
+              "Verify Proxy message contain root cause of deserialization problem",
+              t.getMessage().contains("Could not de-serialize"));
+      Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
    }
 
    private ExceptionProxy serialize(ExceptionProxy proxy) throws Exception
@@ -89,7 +115,7 @@ public class ExceptionProxyTestCase
    @SuppressWarnings("unused")
    private void printConstructors(Throwable throwable) throws Exception
    {
-      System.out.println("Declared-Constrcutors for: " + throwable.getClass());
+      System.out.println("Declared-Constructors for: " + throwable.getClass());
       for(Constructor<?> constructor : throwable.getClass().getDeclaredConstructors())
       {
          System.out.println(constructor);
@@ -191,8 +217,28 @@ public class ExceptionProxyTestCase
 
       public NonSerializableException()
       {
-         super(new NullPointerException());
+         super(new UnsupportedOperationException());
          input = System.in;
+      }
+   }
+
+   public static class NonDeserializableExtension extends RuntimeException implements Externalizable {
+
+      public NonDeserializableExtension() {
+      }
+
+      public NonDeserializableExtension(String message) {
+          super(message, new UnsupportedOperationException());
+      }
+
+      @Override
+      public void writeExternal(ObjectOutput out) throws IOException {
+          out.writeChars(getMessage());
+      }
+
+      @Override
+      public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+          throw new RuntimeException("Could not de-serialize");
       }
    }
 }

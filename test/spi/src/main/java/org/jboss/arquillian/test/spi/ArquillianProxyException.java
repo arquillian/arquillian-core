@@ -57,10 +57,8 @@ public class ArquillianProxyException extends RuntimeException {
 	 * @param cause
 	 *            cause from the original exception
 	 */
-	public ArquillianProxyException(String message, String exceptionClassName,
-			String reason, Throwable cause) {
-		this(String.format("%s : %s [Proxied because : %s]", exceptionClassName,message, 
-				reason),cause);
+	public ArquillianProxyException(String message, String exceptionClassName, String reason, Throwable cause) {
+		this(String.format("%s : %s [Proxied because : %s]", exceptionClassName, message, reason), cause);
 	}
 
 }

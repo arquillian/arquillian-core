@@ -67,7 +67,7 @@ public class ExceptionProxy implements Externalizable
 
    private Throwable original;
 
-   private boolean deserializationProblem = false;
+   private Throwable serializationProcessException = null;
 
    public ExceptionProxy() {}
 
@@ -108,8 +108,7 @@ public class ExceptionProxy implements Externalizable
       }
 
       Throwable throwable = createProxyException(
-            "Original exception " + (deserializationProblem ? "not deserilizable, ClassNotFoundException":"not serializable, NotSerializableException"));
-      throwable.setStackTrace(trace);
+            "Original exception caused: " + (serializationProcessException != null ? serializationProcessException.getClass() + ": " + serializationProcessException.getMessage():"Unknown serialization issue"));
       return throwable;
    }
 
@@ -195,14 +194,22 @@ public class ExceptionProxy implements Externalizable
 //            };
             original = (Throwable)input.readObject();
 
-            // reset the cause, so we can de-serialize them individual
-            SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
+            if(causeProxy != null)
+            {
+               // reset the cause, so we can de-serialize them individual
+               SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
+            }
          }
-         catch (Throwable e) // ClassNotFoundExcpetion / NoClassDefFoundError
+         catch (Throwable e) // Possible ClassNotFoundExcpetion / NoClassDefFoundError
          {
             // ignore, could not load class on client side, move on and create a fake 'proxy' later
-            deserializationProblem = true;
+            serializationProcessException = e;
          }
+      }
+      // Override with the remote serialization issue cause if exists
+      Throwable tmpSerializationProcessException = (Throwable)in.readObject();
+      if(tmpSerializationProcessException != null) {
+          serializationProcessException = tmpSerializationProcessException;
       }
    }
 
@@ -235,10 +242,11 @@ public class ExceptionProxy implements Externalizable
               originalBytes = originalOut.toByteArray();
           } catch (NotSerializableException e) {
               // in case some class breaks Serialization contract
-              e.printStackTrace();
+              serializationProcessException = e;
           }
       }
       out.writeObject(originalBytes);
+      out.writeObject(serializationProcessException);
    }
 
    @Override
