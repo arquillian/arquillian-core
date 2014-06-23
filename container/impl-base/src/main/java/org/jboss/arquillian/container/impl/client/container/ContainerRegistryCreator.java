@@ -46,7 +46,9 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 public class ContainerRegistryCreator
 {
    static final String ARQUILLIAN_LAUNCH_PROPERTY = "arquillian.launch";
-   static final String ARQUILLIAN_LAUNCH_DEFAULT = "arquillian.launch";
+   static final String ARQUILLIAN_LAUNCH_DEFAULT = "arquillian.launch_file";
+   @Deprecated
+   static final String ARQUILLIAN_LAUNCH_DEFAULT_DEPRECATED = "arquillian.launch";
 
    private Logger log = Logger.getLogger(ContainerRegistryCreator.class.getName());
    
@@ -191,8 +193,22 @@ public class ContainerRegistryCreator
          return SecurityActions.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);
       }
 
+      String qualifier = readLaunchFile(ARQUILLIAN_LAUNCH_DEFAULT);
+      if(qualifier == null) {
+          qualifier = readLaunchFile(ARQUILLIAN_LAUNCH_DEFAULT_DEPRECATED);
+          if(qualifier != null) {
+              log.log(Level.WARNING,
+                      "The use of " + ARQUILLIAN_LAUNCH_DEFAULT_DEPRECATED + " has been deprecated and replaced with " + ARQUILLIAN_LAUNCH_DEFAULT +
+                      ". The .launch file extension caused warnings when found in Eclipse due to conflicts with the Eclipse Launch Profile files. " + 
+                      "See https://issues.jboss.org/browse/ARQ-1607 for more information.");
+          }
+      }
+      return qualifier;
+   }
+
+   private String readLaunchFile(String resourceName) {
       InputStream arquillianLaunchStream = SecurityActions.getThreadContextClassLoader()
-                                                   .getResourceAsStream(ARQUILLIAN_LAUNCH_DEFAULT);
+                                                   .getResourceAsStream(resourceName);
       if(arquillianLaunchStream != null)
       {
          try
@@ -201,7 +217,7 @@ public class ContainerRegistryCreator
          }
          catch (Exception e)
          {
-            log.log(Level.WARNING, "Could not read resource " + ARQUILLIAN_LAUNCH_DEFAULT, e);
+            log.log(Level.WARNING, "Could not read resource " + resourceName, e);
          }
       }
       return null;
