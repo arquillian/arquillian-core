@@ -37,6 +37,8 @@ public class State
    // Cleaned up in JUnitTestRunner
    private static ThreadLocal<Throwable> caughtTestException = new ThreadLocal<Throwable>();
    
+   private static ThreadLocal<Throwable> caughtExceptionAfterJunit = new ThreadLocal<Throwable>();
+
    /*
     * Keep track of previous BeforeSuite initialization exceptions 
     */
@@ -135,11 +137,29 @@ public class State
       return caughtTestException.get();
    }
 
+   public static Throwable caughtExceptionAfterJunit()
+   {
+       return caughtExceptionAfterJunit.get();
+   }
+
+   public static void caughtExceptionAfterJunit(Throwable afterException)
+   {
+      if(afterException == null)
+      {
+          caughtExceptionAfterJunit.remove();
+      }
+      else
+      {
+          caughtExceptionAfterJunit.set(afterException);
+      }
+   }
+
    static void clean()
    {
       lastCreatedRunner.remove();
       deployableTest.remove();
       caughtInitializationException.remove();
+      caughtExceptionAfterJunit.remove();
    }
 
 }

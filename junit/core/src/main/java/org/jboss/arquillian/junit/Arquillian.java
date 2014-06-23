@@ -261,10 +261,17 @@ public class Arquillian extends BlockJUnit4ClassRunner
                                integer.incrementAndGet();
                            }
                        });
-                       if(integer.get() > 0) {
-                           withArounds.evaluate();
-                       } else {
-                           testStatement.evaluate();
+                       try {
+                           State.caughtExceptionAfterJunit(null);
+                           if(integer.get() > 0) {
+                               withArounds.evaluate();
+                           } else {
+                               testStatement.evaluate();
+                           }
+                       }
+                       catch (Throwable e) {
+                           State.caughtExceptionAfterJunit(e);
+                           throw e;
                        }
                    } finally {
                        adaptor.after(testObj, method.getMethod(), LifecycleMethodExecutor.NO_OP);
