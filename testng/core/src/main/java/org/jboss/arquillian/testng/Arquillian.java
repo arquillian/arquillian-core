@@ -26,6 +26,8 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -34,7 +36,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.testng.annotations.Listeners;
 
 /**
  * Arquillian
@@ -42,6 +44,7 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@Listeners(Arquillian.UpdateResultListener.class)
 public abstract class Arquillian implements IHookable
 {
    public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
@@ -248,5 +251,19 @@ public abstract class Arquillian implements IHookable
       {
          throw new IllegalStateException("No TestRunnerAdaptor found, @BeforeSuite has not been called");
       }
+   }
+
+   public static final class UpdateResultListener implements IInvokedMethodListener {
+
+       @Override
+       public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+           if(method.isTestMethod() && testResult.getStatus() != ITestResult.SUCCESS) {
+               State.caughtExceptionAfter(testResult.getThrowable());
+           }
+       }
+
+       @Override
+       public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+       }
    }
 }
