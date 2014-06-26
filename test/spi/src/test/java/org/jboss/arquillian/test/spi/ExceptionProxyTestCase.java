@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Assert;
 
@@ -90,6 +91,18 @@ public class ExceptionProxyTestCase
               "Verify Proxy message contain root cause of deserialization problem",
               t.getMessage().contains("Could not de-serialize"));
       Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+   }
+
+   @Test
+   public void shouldRecreateInvocationTargetExceptions() throws Exception
+   {
+      ExceptionProxy proxy = serialize(ExceptionProxy.createForException(
+              new InvocationTargetException(new RuntimeException(new ClassNotFoundException()))));
+      Throwable t = proxy.createException();
+
+      Assert.assertEquals(InvocationTargetException.class, t.getClass());
+      Assert.assertEquals(RuntimeException.class, t.getCause().getClass());
+      Assert.assertEquals(ClassNotFoundException.class, t.getCause().getCause().getClass());
    }
 
    private ExceptionProxy serialize(ExceptionProxy proxy) throws Exception

@@ -25,6 +25,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Takes an exception class and creates a proxy that can be used to rebuild the
@@ -197,7 +198,12 @@ public class ExceptionProxy implements Externalizable
             if(causeProxy != null)
             {
                // reset the cause, so we can de-serialize them individual
-               SecurityActions.setFieldValue(Throwable.class, original, "cause", causeProxy.createException());
+               Throwable cause = causeProxy.createException();
+               if(original instanceof InvocationTargetException) {
+                   SecurityActions.setFieldValue(InvocationTargetException.class, original, "target", cause);
+               } else {
+                   SecurityActions.setFieldValue(Throwable.class, original, "cause", cause);
+               }
             }
          }
          catch (Throwable e) // Possible ClassNotFoundExcpetion / NoClassDefFoundError
