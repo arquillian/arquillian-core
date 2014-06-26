@@ -253,6 +253,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
 
                @Override
                public void evaluate() throws Throwable {
+                   List<Throwable> exceptions = new ArrayList<Throwable>();
                    try {
                        final AtomicInteger integer = new AtomicInteger();
                        adaptor.before(testObj, method.getMethod(), new LifecycleMethodExecutor() {
@@ -271,11 +272,25 @@ public class Arquillian extends BlockJUnit4ClassRunner
                        }
                        catch (Throwable e) {
                            State.caughtExceptionAfterJunit(e);
-                           throw e;
+                           exceptions.add(e);
                        }
                    } finally {
-                       adaptor.after(testObj, method.getMethod(), LifecycleMethodExecutor.NO_OP);
+                       try {
+                           adaptor.after(testObj, method.getMethod(), LifecycleMethodExecutor.NO_OP);
+                       }
+                       catch(Throwable e) {
+                           exceptions.add(e);
+                       }
                    }
+                   if(exceptions.isEmpty())
+                   {
+                      return;
+                   }
+                   if(exceptions.size() == 1)
+                   {
+                      throw exceptions.get(0);
+                   }
+                   throw new MultipleFailureException(exceptions);
                }
            };
        } catch(Exception e) {

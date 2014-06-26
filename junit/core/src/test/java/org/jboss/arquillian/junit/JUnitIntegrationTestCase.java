@@ -213,4 +213,23 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }
+
+   @Test
+   public void shouldThrowMultipleExceptionsWhenBeforeAndAfterThrowException() throws Exception {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+      executeAllLifeCycles(adaptor);
+
+      Result result = run(adaptor, ArquillianClass1ExceptionInBeforeAndAfter.class);
+
+      Assert.assertFalse(result.wasSuccessful());
+      Assert.assertEquals(2,  result.getFailureCount());
+      Assert.assertTrue(result.getFailures().get(0).getMessage().equals("BeforeException"));
+      Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterException"));
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+      assertCycle(0, Cycle.TEST);
+
+      verify(adaptor, times(1)).beforeSuite();
+      verify(adaptor, times(1)).afterSuite();
+   }
 }
