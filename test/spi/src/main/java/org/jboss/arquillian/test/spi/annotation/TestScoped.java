@@ -27,7 +27,7 @@ import org.jboss.arquillian.core.api.annotation.Scope;
 
 
 /**
- * SuiteScoped
+ * TestScoped
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
