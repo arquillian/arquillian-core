@@ -149,9 +149,14 @@ final class SecurityActions
       final T obj;
       try
       {
-         Constructor<T> constructor = getConstructor(implClass, argumentTypes);
+         final Constructor<T> constructor = getConstructor(implClass, argumentTypes);
          if(!constructor.isAccessible()) {
-            constructor.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+               public Void run() {
+                  constructor.setAccessible(true);
+                  return null;
+               }
+            });
          }
          obj = constructor.newInstance(arguments);
       }
