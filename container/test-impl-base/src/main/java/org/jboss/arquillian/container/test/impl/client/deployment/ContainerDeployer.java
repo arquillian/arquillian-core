@@ -17,8 +17,11 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
+import static java.security.AccessController.doPrivileged;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.security.PrivilegedAction;
 
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.DeployDeploymentCommand;
@@ -41,23 +44,43 @@ public class ContainerDeployer implements Deployer
    private Instance<ServiceLoader> serviceLoader;
    
    @Override
-   public void deploy(String name)
+   public void deploy(final String name)
    {
-      getCommandService().execute(new DeployDeploymentCommand(name));
+      doPrivileged(new PrivilegedAction<Void>()
+      {
+         public Void run()
+         {
+            getCommandService().execute(new DeployDeploymentCommand(name));
+            return null;
+         }
+      });
    }
 
    @Override
-   public void undeploy(String name)
+   public void undeploy(final String name)
    {
-      getCommandService().execute(new UnDeployDeploymentCommand(name));      
+      doPrivileged(new PrivilegedAction<Void>()
+      {
+         public Void run()
+         {
+            getCommandService().execute(new UnDeployDeploymentCommand(name));
+            return null;
+         }
+      });
    }
 
    @Override
-   public InputStream getDeployment(String name)
+   public InputStream getDeployment(final String name)
    {
-      return new ByteArrayInputStream(
-            getCommandService().execute(
-                  new GetDeploymentCommand(name)));
+      return doPrivileged(new PrivilegedAction<InputStream>()
+      {
+         public InputStream run()
+         {
+            return new ByteArrayInputStream(
+               getCommandService().execute(
+                     new GetDeploymentCommand(name)));
+         }
+      });
    }
    
    private CommandService getCommandService()
