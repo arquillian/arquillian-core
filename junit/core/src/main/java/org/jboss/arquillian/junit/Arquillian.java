@@ -70,7 +70,9 @@ public class Arquillian extends BlockJUnit4ClassRunner
       }
       if(hasDefinedOrder)
       {
-         Collections.sort(children, new InSequenceSorter());
+         List<FrameworkMethod> sorted = new ArrayList<FrameworkMethod>(children);
+         Collections.sort(sorted, new InSequenceSorter());
+         return sorted;
       }
       return children;
    }

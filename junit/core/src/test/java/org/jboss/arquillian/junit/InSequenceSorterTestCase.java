@@ -19,18 +19,18 @@ package org.jboss.arquillian.junit;
 
 import static org.mockito.Mockito.mock;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunListener;
+import org.junit.runners.MethodSorters;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -83,22 +83,16 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
 
       Assert.assertTrue(result.wasSuccessful());
 
-      List<Method> filteredMethods = new ArrayList<Method>();
-      filteredMethods.addAll(Arrays.asList(UnOrderedTestCase.class.getMethods()));
-      // Remove method not belonging to UnOrderedTestCase.class
-      for(int i = 0; i < filteredMethods.size(); i++)
+      String[] ordered = new String[] {"Atree", "Btwo", "Cone"};
+      boolean inOriginalOrder = true;
+      for(int i = 0; i < ordered.length; i++)
       {
-         Method mehod = filteredMethods.get(i);
-         if(mehod.getDeclaringClass() != UnOrderedTestCase.class)
+         if(!ordered[i].equals(runOrder.get(i)))
          {
-            filteredMethods.remove(mehod);
-            i--;
+            inOriginalOrder = false;
          }
       }
-      for(int i = 0; i < filteredMethods.size(); i++)
-      {
-         Assert.assertEquals(filteredMethods.get(i).getName(), runOrder.get(i));
-      }
+      Assert.assertTrue(inOriginalOrder);
    }
 
    @RunWith(Arquillian.class)
@@ -114,7 +108,7 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass
       public void one() {}
    }
 
-   @RunWith(Arquillian.class)
+   @RunWith(Arquillian.class) @FixMethodOrder(MethodSorters.NAME_ASCENDING)
    public static class UnOrderedTestCase
    {
       @Test
