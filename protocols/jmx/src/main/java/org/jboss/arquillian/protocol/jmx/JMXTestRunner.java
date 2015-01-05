@@ -57,14 +57,19 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    private TestRunner mockTestRunner;
 
    private TestClassLoader testClassLoader;
+   
+   private final String objectName;
 
    public interface TestClassLoader
    {
       Class<?> loadTestClass(String className) throws ClassNotFoundException;
    }
-
    public JMXTestRunner(TestClassLoader classLoader)
    {
+      this(classLoader,JMXTestRunnerMBean.OBJECT_NAME);
+   }
+
+   public JMXTestRunner(TestClassLoader classLoader, String objectName) {
       this.testClassLoader = classLoader;
 
       // Initialize the default TestClassLoader
@@ -81,11 +86,12 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       }
       events = new ConcurrentHashMap<String, Command<?>>();
       currentCall = new ThreadLocal<String>();
+      this.objectName = objectName;
    }
 
    public ObjectName registerMBean(MBeanServer mbeanServer) throws JMException
    {
-      ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+      ObjectName oname = new ObjectName(this.objectName);
       mbeanServer.registerMBean(this, oname);
       log.fine("JMXTestRunner registered: " + oname);
       localMBeanServer = mbeanServer;
@@ -94,7 +100,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
 
    public void unregisterMBean(MBeanServer mbeanServer) throws JMException
    {
-      ObjectName oname = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+      ObjectName oname = new ObjectName(this.objectName);
       if (mbeanServer.isRegistered(oname))
       {
          mbeanServer.unregisterMBean(oname);
