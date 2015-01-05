@@ -43,11 +43,17 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
     private static Logger log = Logger.getLogger(JMXMethodExecutor.class.getName());
 
     private final MBeanServerConnection mbeanServer;
+    private final String objectName;
     private final CommandCallback callback;
 
-    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callbac) {
+    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback) {
+        this(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME);
+    }
+
+    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback, String objectName) {
         this.mbeanServer = mbeanServer;
-        this.callback = callbac;
+        this.callback = callback;
+        this.objectName = objectName;
     }
 
     public TestResult invoke(TestMethodExecutor testMethodExecutor) {
@@ -62,7 +68,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
         ObjectName objectName = null;
         TestResult result = null;
         try {
-            objectName = new ObjectName(JMXTestRunnerMBean.OBJECT_NAME);
+            objectName = new ObjectName(this.objectName);
             commandListener = new CallbackNotificationListener(objectName);
             mbeanServer.addNotificationListener(objectName, commandListener, null, null);
 
