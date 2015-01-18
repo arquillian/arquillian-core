@@ -50,9 +50,9 @@ public class Arquillian extends BlockJUnit4ClassRunner
 {
    private TestRunnerAdaptor adaptor;
 
-   public Arquillian(Class<?> klass) throws InitializationError
+   public Arquillian(Class<?> testClass) throws InitializationError
    {
-      super(klass);
+      super(testClass);
    }
    
    @Override
