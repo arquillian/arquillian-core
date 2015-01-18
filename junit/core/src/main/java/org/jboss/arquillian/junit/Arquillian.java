@@ -50,9 +50,9 @@ public class Arquillian extends BlockJUnit4ClassRunner
 {
    private TestRunnerAdaptor adaptor;
 
-   public Arquillian(Class<?> klass) throws InitializationError
+   public Arquillian(Class<?> testClass) throws InitializationError
    {
-      super(klass);
+      super(testClass);
       if(State.isRunningInEclipse()) {
           State.runnerStarted();
       }
