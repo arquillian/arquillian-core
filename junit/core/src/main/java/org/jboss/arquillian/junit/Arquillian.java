@@ -26,8 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
+import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
@@ -323,7 +326,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   } 
                   catch (Throwable e) 
                   {
-                     // Force a way to return the thrown Exception from the Container the client. 
+                     // Force a way to return the thrown Exception from the Container to the client. 
                      State.caughtTestException(e);
                      throw e;
                   }
@@ -339,8 +342,16 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   return test;
                }
             });
-            if(result.getThrowable() != null)
+            Throwable throwable = result.getThrowable();
+            if(throwable != null)
             {
+               if (result.getStatus() == Status.SKIPPED)
+               {
+                   if (throwable instanceof SkippedTestExecutionException)
+                   {
+                       result.setThrowable(new AssumptionViolatedException(throwable.getMessage()));    
+                   }
+               }
                throw result.getThrowable();
             }
          }
