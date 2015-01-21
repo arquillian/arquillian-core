@@ -20,7 +20,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.jboss.arquillian.core.spi.Manager;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
+import org.jboss.arquillian.test.impl.execution.DefaultTestExecutionDecider;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.context.ClassContext;
@@ -32,6 +34,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,6 +66,90 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
 
    }
 
+   @Test
+   public void shouldSkipWhenUsingExecutionDecider() throws Exception
+   {
+
+       ServiceLoader serviceLoder = Mockito.mock(ServiceLoader.class);       
+       Mockito.when(serviceLoder.onlyOne(TestExecutionDecider.class, DefaultTestExecutionDecider.class))
+           .thenReturn(TestExecutionDecider.DONT_EXECUTE);
+
+       Manager manager = Mockito.spy(getManager());
+       Mockito.when(manager.resolve(ServiceLoader.class)).thenReturn(serviceLoder);
+
+       EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(manager);
+       
+       Class<?> testClass = getClass();
+       Method testMethod = testClass.getMethod("shouldSkipWhenUsingExecutionDecider");
+       Object testInstance = this;
+       
+       TestMethodExecutor testExecutor = Mockito.mock(TestMethodExecutor.class);
+       Mockito.when(testExecutor.getInstance()).thenReturn(testInstance);
+       Mockito.when(testExecutor.getMethod()).thenReturn(testMethod);
+
+       // ApplicationContext is auto started, deactivate to be future proof
+       manager.getContext(ApplicationContext.class).deactivate();
+       
+       verifyNoActiveContext(manager);
+
+       adaptor.beforeSuite();
+       assertEventFired(BeforeSuite.class, 1);
+       assertEventFiredInContext(BeforeSuite.class, ApplicationContext.class);
+       assertEventFiredInContext(BeforeSuite.class, SuiteContext.class);
+
+       verifyNoActiveContext(manager);
+       
+       adaptor.beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
+       assertEventFired(BeforeClass.class, 1);
+       assertEventFiredInContext(BeforeClass.class, ApplicationContext.class);
+       assertEventFiredInContext(BeforeClass.class, SuiteContext.class);
+       assertEventFiredInContext(BeforeClass.class, ClassContext.class);
+
+       verifyNoActiveContext(manager);
+
+       adaptor.before(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
+       assertEventFired(Before.class, 0);
+       assertEventNotFiredInContext(Before.class, ApplicationContext.class);
+       assertEventNotFiredInContext(Before.class, SuiteContext.class);
+       assertEventNotFiredInContext(Before.class, ClassContext.class);
+       assertEventNotFiredInContext(Before.class, TestContext.class);
+
+       verifyNoActiveContext(manager);
+       
+       adaptor.test(testExecutor);
+       assertEventFired(org.jboss.arquillian.test.spi.event.suite.Test.class, 0);
+       assertEventNotFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ApplicationContext.class);
+       assertEventNotFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, SuiteContext.class);
+       assertEventNotFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, ClassContext.class);
+       assertEventNotFiredInContext(org.jboss.arquillian.test.spi.event.suite.Test.class, TestContext.class);
+
+       verifyNoActiveContext(manager);
+       
+       adaptor.after(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
+       assertEventFired(After.class, 0);
+       assertEventNotFiredInContext(After.class, ApplicationContext.class);
+       assertEventNotFiredInContext(After.class, SuiteContext.class);
+       assertEventNotFiredInContext(After.class, ClassContext.class);
+       assertEventNotFiredInContext(After.class, TestContext.class);
+       
+       verifyNoActiveContext(manager);
+
+       adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
+       assertEventFired(AfterClass.class, 1);
+       assertEventFiredInContext(AfterClass.class, ApplicationContext.class);
+       assertEventFiredInContext(AfterClass.class, SuiteContext.class);
+       assertEventFiredInContext(AfterClass.class, ClassContext.class);
+
+       verifyNoActiveContext(manager);
+
+       adaptor.afterSuite();
+       assertEventFired(AfterSuite.class, 1);
+       assertEventFiredInContext(AfterSuite.class, ApplicationContext.class);
+       assertEventFiredInContext(AfterSuite.class, SuiteContext.class);
+
+       verifyNoActiveContext(manager);       
+   }
+   
    @Test
    public void shouldHandleLifeCycleEvents() throws Exception 
    {

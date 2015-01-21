@@ -25,7 +25,9 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
+import org.jboss.arquillian.test.impl.execution.DefaultTestExecutionDecider;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -37,6 +39,7 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 
 /**
  * EventTestRunnerAdaptor
@@ -91,7 +94,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
-      
+
+      TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
+
+      if (testExecutionDecider != null && !testExecutionDecider.execute(testMethod))
+      {
+          return;
+      }
+
       manager.fire(new Before(testInstance, testMethod, executor));
    }
 
@@ -99,6 +109,13 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
+
+      TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
+
+      if (testExecutionDecider != null && !testExecutionDecider.execute(testMethod))
+      {
+          return;
+      }
 
       manager.fire(new After(testInstance, testMethod, executor));
    }
@@ -108,6 +125,15 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
 
       final List<TestResult> result = new ArrayList<TestResult>();
+      
+      TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
+
+      if (testExecutionDecider != null && !testExecutionDecider.execute(testMethodExecutor.getMethod()))
+      {
+          result.add(TestResult.skipped(null));
+          return result.get(0);
+      }      
+
       manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>()
       {
          @Inject
@@ -126,4 +152,18 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       manager.shutdown();
    }
+   
+   private TestExecutionDecider resolveTestExecutionDecider(Manager manager)
+   {
+       Validate.notNull(manager, "Manager must be specified.");
+       ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
+
+       if (serviceLoader != null)
+       {
+           return serviceLoader.onlyOne(TestExecutionDecider.class, DefaultTestExecutionDecider.class);
+       }
+
+       return null;
+   }
+
 }
