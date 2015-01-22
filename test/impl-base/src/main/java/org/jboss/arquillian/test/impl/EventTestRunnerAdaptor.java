@@ -41,6 +41,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision.Decision;
+import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDeciderComparator;
 
@@ -133,7 +134,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
       {
-          result.add(TestResult.skipped(new Exception(executionDecision.getReason())));
+          result.add(TestResult.skipped(new SkippedTestExecutionException(executionDecision.getReason())));
           return result.get(0);
       }      
 
@@ -157,11 +158,11 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    }
    
    private ExecutionDecision resolveExecutionDecision(Manager manager, Method testMethod)
-   {       
+   {
        Validate.notNull(manager, "Manager must be specified.");
        ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
 
-       ExecutionDecision decision = TestExecutionDecider.EXECUTE.execute(testMethod);
+       ExecutionDecision executionDecision = TestExecutionDecider.EXECUTE.decide(testMethod);
 
        if (serviceLoader != null)
        {
@@ -174,9 +175,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
                for (final TestExecutionDecider decider : deciders)
                {
-                   decision = decider.execute(testMethod);
+                   executionDecision = decider.decide(testMethod);
                    
-                   if (decision.getDecision() == Decision.DONT_EXECUTE)
+                   if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
                    {
                        break;
                    }
@@ -184,7 +185,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
            }
        }
 
-       return decision;
+       return executionDecision;
    }
 
 }

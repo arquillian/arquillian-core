@@ -34,6 +34,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Assert;
@@ -71,7 +72,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
    {
 
        List<TestExecutionDecider> deciders = new ArrayList<TestExecutionDecider>();
-       deciders.add(TestExecutionDecider.DONT_EXECUTE);
+       deciders.add(NEGATIVE_EXECUTION_DECIDER);
        
        ServiceLoader serviceLoder = Mockito.mock(ServiceLoader.class);       
        Mockito.when(serviceLoder.all(TestExecutionDecider.class)).thenReturn(deciders);
@@ -249,4 +250,20 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
             "TestContext should" + (!test ? " not":"") + " be active",
             test, manager.getContext(TestContext.class).isActive());
    }
+   
+   private static final TestExecutionDecider NEGATIVE_EXECUTION_DECIDER = new TestExecutionDecider()
+   {
+
+       @Override
+       public ExecutionDecision decide(Method testMethod)
+       {
+           return ExecutionDecision.dontExecute("Skipping execution of test method: " + testMethod.getName());
+       }
+
+       @Override
+       public int precedence() {
+           return 0;
+       }
+
+   };
 }

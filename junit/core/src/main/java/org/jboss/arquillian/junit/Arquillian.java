@@ -27,6 +27,7 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
+import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.internal.AssumptionViolatedException;
@@ -321,7 +322,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                   } 
                   catch (Throwable e) 
                   {
-                     // Force a way to return the thrown Exception from the Container the client. 
+                     // Force a way to return the thrown Exception from the Container to the client. 
                      State.caughtTestException(e);
                      throw e;
                   }
@@ -342,7 +343,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
             {
                if (result.getStatus() == Status.SKIPPED)
                {
-                   result.setThrowable(new AssumptionViolatedException(throwable.getMessage()));
+                   if (throwable instanceof SkippedTestExecutionException)
+                   {
+                       result.setThrowable(new AssumptionViolatedException(throwable.getMessage()));    
+                   }
                }
                throw result.getThrowable();
             }

@@ -23,6 +23,7 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
+import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.testng.IHookCallBack;
@@ -222,7 +223,10 @@ public abstract class Arquillian implements IHookable
          {
             if (result.getStatus() == Status.SKIPPED)
             {
-                result.setThrowable(new SkipException(throwable.getMessage()));
+                if (throwable instanceof SkippedTestExecutionException)
+                {
+                    result.setThrowable(new SkipException(throwable.getMessage()));
+                }
             }
             testResult.setThrowable(result.getThrowable());
          }
