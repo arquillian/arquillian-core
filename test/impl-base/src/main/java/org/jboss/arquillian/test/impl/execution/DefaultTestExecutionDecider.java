@@ -18,6 +18,7 @@ package org.jboss.arquillian.test.impl.execution;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 
 /**
@@ -31,7 +32,7 @@ public class DefaultTestExecutionDecider implements TestExecutionDecider
      * @see org.jboss.arquillian.test.spi.execution.TestExecutionDecider#decide(java.lang.reflect.Method)
      */
     @Override
-    public boolean execute(Method testMethod)
+    public ExecutionDecision execute(Method testMethod)
     {
         return TestExecutionDecider.EXECUTE.execute(testMethod);
     }

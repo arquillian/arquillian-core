@@ -29,9 +29,9 @@ public interface TestExecutionDecider
     {
 
         @Override
-        public boolean execute(Method testMethod)
+        public ExecutionDecision execute(Method testMethod)
         {
-            return true;
+            return ExecutionDecision.execute();
         }
 
     };
@@ -40,9 +40,9 @@ public interface TestExecutionDecider
     {
 
         @Override
-        public boolean execute(Method testMethod)
+        public ExecutionDecision execute(Method testMethod)
         {
-            return false;
+            return ExecutionDecision.dontExecute();
         }
 
     };
@@ -50,7 +50,7 @@ public interface TestExecutionDecider
     /**
      * 
      * @param testMethod test method to resolve a test execution on
-     * @return true if execution is performed, false otherwise
+     * @return execution decision telling if a test method is going to be executed or not
      */
-    boolean execute(Method testMethod);
+    ExecutionDecision execute(Method testMethod);
 }

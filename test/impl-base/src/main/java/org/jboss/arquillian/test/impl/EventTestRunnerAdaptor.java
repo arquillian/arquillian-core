@@ -39,6 +39,7 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.execution.ExecutionDecision.Decision;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 
 /**
@@ -97,7 +98,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
 
-      if (testExecutionDecider != null && !testExecutionDecider.execute(testMethod))
+      if (testExecutionDecider != null && testExecutionDecider.execute(testMethod).getDecision() == Decision.DONT_EXECUTE)
       {
           return;
       }
@@ -112,7 +113,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
 
-      if (testExecutionDecider != null && !testExecutionDecider.execute(testMethod))
+      if (testExecutionDecider != null && testExecutionDecider.execute(testMethod).getDecision() == Decision.DONT_EXECUTE)
       {
           return;
       }
@@ -125,10 +126,10 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
 
       final List<TestResult> result = new ArrayList<TestResult>();
-      
+
       TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
 
-      if (testExecutionDecider != null && !testExecutionDecider.execute(testMethodExecutor.getMethod()))
+      if (testExecutionDecider != null && testExecutionDecider.execute(testMethodExecutor.getMethod()).getDecision() == Decision.DONT_EXECUTE)
       {
           result.add(TestResult.skipped(null));
           return result.get(0);
