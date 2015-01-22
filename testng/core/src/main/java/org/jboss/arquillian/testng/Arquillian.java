@@ -22,6 +22,7 @@ import java.util.Stack;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.testng.IHookCallBack;
@@ -29,6 +30,7 @@ import org.testng.IHookable;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -215,8 +217,13 @@ public abstract class Arquillian implements IHookable
                return Arquillian.this;
             }
          });
-         if(result.getThrowable() != null)
+         Throwable throwable = result.getThrowable();
+         if(throwable != null)
          {
+            if (result.getStatus() == Status.SKIPPED)
+            {
+                result.setThrowable(new SkipException(throwable.getMessage()));
+            }
             testResult.setThrowable(result.getThrowable());
          }
 
