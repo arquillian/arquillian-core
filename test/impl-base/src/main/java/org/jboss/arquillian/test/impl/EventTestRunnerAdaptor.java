@@ -161,11 +161,10 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
        Validate.notNull(manager, "Manager must be specified.");
        ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
 
-       ExecutionDecision finalDecision = TestExecutionDecider.EXECUTE.execute(testMethod);
+       ExecutionDecision decision = TestExecutionDecider.EXECUTE.execute(testMethod);
 
        if (serviceLoader != null)
        {
-
            final List<TestExecutionDecider> deciders = new ArrayList<TestExecutionDecider>(serviceLoader.all(TestExecutionDecider.class));
 
            if (deciders.size() != 0)
@@ -175,18 +174,17 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
                for (final TestExecutionDecider decider : deciders)
                {
-                   ExecutionDecision decision = decider.execute(testMethod);
-
+                   decision = decider.execute(testMethod);
+                   
                    if (decision.getDecision() == Decision.DONT_EXECUTE)
                    {
-                       finalDecision = decision;
                        break;
                    }
                }
            }
        }
 
-       return finalDecision;
+       return decision;
    }
 
 }
