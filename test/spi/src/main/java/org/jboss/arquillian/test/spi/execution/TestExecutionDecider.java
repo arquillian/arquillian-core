@@ -34,6 +34,11 @@ public interface TestExecutionDecider
             return ExecutionDecision.execute();
         }
 
+        @Override
+        public int precedence() {
+            return 1;
+        }
+
     };
 
     static final TestExecutionDecider DONT_EXECUTE = new TestExecutionDecider()
@@ -42,7 +47,12 @@ public interface TestExecutionDecider
         @Override
         public ExecutionDecision execute(Method testMethod)
         {
-            return ExecutionDecision.dontExecute();
+            return ExecutionDecision.dontExecute("Skipping execution of test method: " + testMethod.getName());
+        }
+
+        @Override
+        public int precedence() {
+            return 0;
         }
 
     };
@@ -53,4 +63,11 @@ public interface TestExecutionDecider
      * @return execution decision telling if a test method is going to be executed or not
      */
     ExecutionDecision execute(Method testMethod);
+
+    /**
+     * Higher the precedence is, sooner this decider will be treated.
+     * 
+     * @return precedence of this decider
+     */
+    int precedence();
 }

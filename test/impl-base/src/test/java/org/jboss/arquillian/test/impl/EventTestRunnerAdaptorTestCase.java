@@ -17,12 +17,12 @@
 package org.jboss.arquillian.test.impl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
-import org.jboss.arquillian.test.impl.execution.DefaultTestExecutionDecider;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.context.ClassContext;
@@ -70,9 +70,11 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
    public void shouldSkipWhenUsingExecutionDecider() throws Exception
    {
 
+       List<TestExecutionDecider> deciders = new ArrayList<TestExecutionDecider>();
+       deciders.add(TestExecutionDecider.DONT_EXECUTE);
+       
        ServiceLoader serviceLoder = Mockito.mock(ServiceLoader.class);       
-       Mockito.when(serviceLoder.onlyOne(TestExecutionDecider.class, DefaultTestExecutionDecider.class))
-           .thenReturn(TestExecutionDecider.DONT_EXECUTE);
+       Mockito.when(serviceLoder.all(TestExecutionDecider.class)).thenReturn(deciders);
 
        Manager manager = Mockito.spy(getManager());
        Mockito.when(manager.resolve(ServiceLoader.class)).thenReturn(serviceLoder);

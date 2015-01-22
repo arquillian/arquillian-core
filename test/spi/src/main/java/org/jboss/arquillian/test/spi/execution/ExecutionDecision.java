@@ -41,11 +41,6 @@ public final class ExecutionDecision implements Serializable
         return new ExecutionDecision(Decision.EXECUTE, reason);
     }
 
-    public static ExecutionDecision dontExecute()
-    {
-        return new ExecutionDecision(Decision.DONT_EXECUTE);
-    }
-
     public static ExecutionDecision dontExecute(String reason)
     {
         return new ExecutionDecision(Decision.DONT_EXECUTE, reason);

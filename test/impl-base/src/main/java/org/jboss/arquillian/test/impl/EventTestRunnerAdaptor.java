@@ -18,6 +18,7 @@ package org.jboss.arquillian.test.impl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
@@ -27,7 +28,6 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.test.impl.execution.DefaultTestExecutionDecider;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -39,8 +39,10 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision.Decision;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
+import org.jboss.arquillian.test.spi.execution.TestExecutionDeciderComparator;
 
 /**
  * EventTestRunnerAdaptor
@@ -96,9 +98,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
 
-      TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
+      ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethod);
 
-      if (testExecutionDecider != null && testExecutionDecider.execute(testMethod).getDecision() == Decision.DONT_EXECUTE)
+      if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
       {
           return;
       }
@@ -111,9 +113,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
 
-      TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
+      ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethod);
 
-      if (testExecutionDecider != null && testExecutionDecider.execute(testMethod).getDecision() == Decision.DONT_EXECUTE)
+      if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
       {
           return;
       }
@@ -127,9 +129,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       final List<TestResult> result = new ArrayList<TestResult>();
 
-      TestExecutionDecider testExecutionDecider = resolveTestExecutionDecider(manager);
+      ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethodExecutor.getMethod());
 
-      if (testExecutionDecider != null && testExecutionDecider.execute(testMethodExecutor.getMethod()).getDecision() == Decision.DONT_EXECUTE)
+      if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
       {
           result.add(TestResult.skipped(null));
           return result.get(0);
@@ -154,19 +156,37 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       manager.shutdown();
    }
    
-   private TestExecutionDecider resolveTestExecutionDecider(Manager manager)
+   private ExecutionDecision resolveExecutionDecision(Manager manager, Method testMethod)
    {       
        Validate.notNull(manager, "Manager must be specified.");
        ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
 
-       TestExecutionDecider decider = null;
+       ExecutionDecision finalDecision = TestExecutionDecider.EXECUTE.execute(testMethod);
 
        if (serviceLoader != null)
        {
-           decider = serviceLoader.onlyOne(TestExecutionDecider.class, DefaultTestExecutionDecider.class);
+
+           final List<TestExecutionDecider> deciders = new ArrayList<TestExecutionDecider>(serviceLoader.all(TestExecutionDecider.class));
+
+           if (deciders.size() != 0)
+           {
+               Collections.sort(deciders, new TestExecutionDeciderComparator());
+               Collections.reverse(deciders);
+
+               for (final TestExecutionDecider decider : deciders)
+               {
+                   ExecutionDecision decision = decider.execute(testMethod);
+
+                   if (decision.getDecision() == Decision.DONT_EXECUTE)
+                   {
+                       finalDecision = decision;
+                       break;
+                   }
+               }
+           }
        }
 
-       return decider;
+       return finalDecision;
    }
 
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the 
  * distribution for a full listing of individual contributors.
  *
@@ -14,27 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.test.impl.execution;
+package org.jboss.arquillian.test.spi.execution;
 
-import java.lang.reflect.Method;
-
-import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
-import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
+import java.util.Comparator;
 
 /**
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  *
  */
-public class DefaultTestExecutionDecider implements TestExecutionDecider
-{
+public class TestExecutionDeciderComparator implements Comparator<TestExecutionDecider> {
 
-    /* (non-Javadoc)
-     * @see org.jboss.arquillian.test.spi.execution.TestExecutionDecider#decide(java.lang.reflect.Method)
-     */
     @Override
-    public ExecutionDecision execute(Method testMethod)
-    {
-        return TestExecutionDecider.EXECUTE.execute(testMethod);
+    public int compare(TestExecutionDecider decider1, TestExecutionDecider decider2) {
+        return decider1.precedence() - decider2.precedence();
     }
 
 }
