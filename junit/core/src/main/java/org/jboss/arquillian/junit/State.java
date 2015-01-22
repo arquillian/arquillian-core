@@ -61,6 +61,31 @@ public class State
       }
    };
 
+   /*
+    * @HACK
+    * Eclipse hack:
+    * See above. We need to track constructor invocations when running in Eclipse, but run() invocations in
+    * Surefire due to how groups are handled in Surefire.
+    */
+   private static boolean runningInEclipse = false;
+
+   static {
+       try {
+           Arquillian.class.getClassLoader().loadClass("org.eclipse.jdt.internal.junit.runner.RemoteTestRunner");
+           runningInEclipse = true;
+       } catch(Exception e ) {
+           runningInEclipse = false;
+       }
+   }
+
+   public static boolean isRunningInEclipse() {
+       return runningInEclipse;
+   }
+
+   public static boolean isNotRunningInEclipse() {
+       return !runningInEclipse;
+   }
+
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
    
    static void runnerStarted() 

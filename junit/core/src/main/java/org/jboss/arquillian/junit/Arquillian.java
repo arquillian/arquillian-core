@@ -53,6 +53,9 @@ public class Arquillian extends BlockJUnit4ClassRunner
    public Arquillian(Class<?> klass) throws InitializationError
    {
       super(klass);
+      if(State.isRunningInEclipse()) {
+          State.runnerStarted();
+      }
    }
    
    @Override
@@ -80,8 +83,9 @@ public class Arquillian extends BlockJUnit4ClassRunner
    @Override
    public void run(final RunNotifier notifier)
    {
-      State.runnerStarted();
-
+      if(State.isNotRunningInEclipse()) {
+          State.runnerStarted();
+      }
       // first time we're being initialized
       if(!State.hasTestAdaptor())   
       {
