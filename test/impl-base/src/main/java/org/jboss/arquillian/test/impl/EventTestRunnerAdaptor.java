@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.test.impl.execution.ExecutionDecisionExceptionConverter;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -134,9 +133,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
       {
-          Exception skippingException = ExecutionDecisionExceptionConverter.convert(executionDecision);
-
-          result.add(TestResult.skipped(skippingException));
+          result.add(TestResult.skipped(new Exception(executionDecision.getReason())));
           return result.get(0);
       }      
 
