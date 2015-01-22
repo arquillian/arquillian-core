@@ -50,8 +50,6 @@ import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 {
    private Manager manager;
-   
-   private static final ThreadLocal<TestExecutionDecider> testExecutionDecider = new ThreadLocal<TestExecutionDecider>();
 
    public EventTestRunnerAdaptor(ManagerBuilder builder)
    {
@@ -156,24 +154,18 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    }
    
    private TestExecutionDecider resolveTestExecutionDecider(Manager manager)
-   {
-       TestExecutionDecider cachedTestExecutionDecider = testExecutionDecider.get();
-
-       if (cachedTestExecutionDecider != null)
-       {
-           return cachedTestExecutionDecider;
-       }
-
+   {       
        Validate.notNull(manager, "Manager must be specified.");
        ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
 
+       TestExecutionDecider decider = null;
+
        if (serviceLoader != null)
        {
-           TestExecutionDecider decider = serviceLoader.onlyOne(TestExecutionDecider.class, DefaultTestExecutionDecider.class);
-           testExecutionDecider.set(decider);
+           decider = serviceLoader.onlyOne(TestExecutionDecider.class, DefaultTestExecutionDecider.class);
        }
 
-       return testExecutionDecider.get();
+       return decider;
    }
 
 }
