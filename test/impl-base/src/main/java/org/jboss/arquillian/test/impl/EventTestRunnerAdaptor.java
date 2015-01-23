@@ -175,7 +175,15 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
                for (final TestExecutionDecider decider : deciders)
                {
-                   executionDecision = decider.decide(testMethod);
+                   final ExecutionDecision tempExecutionDecision = decider.decide(testMethod);
+                   
+                   if (tempExecutionDecision == null)
+                   {
+                       continue;
+                   } else
+                   {
+                       executionDecision = tempExecutionDecision;
+                   }
                    
                    if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
                    {
