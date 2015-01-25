@@ -30,7 +30,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
 /**
- * ClientContainerController
+ * ContainerContainerController
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
@@ -70,7 +70,7 @@ public class ContainerContainerController implements ContainerController
       return getCommandService().execute(new ContainerStartedCommand(containerQualifier));
    }
 
-   private CommandService getCommandService()
+   protected CommandService getCommandService()
    {
       ServiceLoader loader = serviceLoader.get();
       if(loader == null)
