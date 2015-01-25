@@ -182,7 +182,7 @@ public class ClientContainerController implements ContainerController
       
       if (!isControllableContainer(registry.getContainers(), containerQualifier))
       {
-         throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
+         throw new IllegalArgumentException("Could not stop " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
       }
 
       Container container = registry.getContainer(new TargetDescription(containerQualifier));
@@ -248,7 +248,7 @@ public class ClientContainerController implements ContainerController
       return container.getState() == Container.State.STARTED;
    }
 
-   private boolean containerExists(List<Container> containers, String name)
+   protected boolean containerExists(List<Container> containers, String name)
    {
       for (Container container : containers)
       {
@@ -260,7 +260,7 @@ public class ClientContainerController implements ContainerController
       return false;
    }
 
-   private boolean isControllableContainer(List<Container> containers, String containerQualifier)
+   protected boolean isControllableContainer(List<Container> containers, String containerQualifier)
    {
       for (Container container : containers)
       {
@@ -272,5 +272,17 @@ public class ClientContainerController implements ContainerController
          }
       }
       return false;
+   }
+
+   protected Event<ContainerControlEvent> getContainerControllerEvent() {
+      return event;
+   }
+
+   protected Instance<ContainerRegistry> getContainerRegistry() {
+      return containerRegistry;
+   }
+
+   protected Instance<DeploymentScenario> getDeploymentScenario() {
+      return deploymentScenario;
    }
 }
