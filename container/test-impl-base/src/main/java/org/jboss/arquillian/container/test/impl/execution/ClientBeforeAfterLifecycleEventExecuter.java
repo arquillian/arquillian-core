@@ -22,6 +22,7 @@ import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
@@ -96,6 +97,13 @@ public class ClientBeforeAfterLifecycleEventExecuter
    
    private void execute(LifecycleEvent event) throws Throwable
    {
-      event.getExecutor().invoke();
+      LifecycleMethodExecutor executor = event.getExecutor();
+      ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+      try {
+          Thread.currentThread().setContextClassLoader(null);
+          executor.invoke();
+      } finally {
+          Thread.currentThread().setContextClassLoader(tccl);
+      }
    }
 }

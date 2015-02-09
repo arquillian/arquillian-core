@@ -27,6 +27,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
@@ -57,10 +58,16 @@ public class LocalTestExecuter
       TestResult result = new TestResult();
       try 
       {
-         event.getExecutor().invoke(
-               enrichArguments(
-                     event.getExecutor().getMethod(), 
-                     serviceLoader.get().all(TestEnricher.class)));
+         TestMethodExecutor executor = event.getExecutor();
+         Collection<TestEnricher> enrichers = serviceLoader.get().all(TestEnricher.class);
+         Object[] enrichArguments = enrichArguments(executor.getMethod(), enrichers);
+         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+         try {
+             Thread.currentThread().setContextClassLoader(null);
+             executor.invoke(enrichArguments);
+         } finally {
+             Thread.currentThread().setContextClassLoader(tccl);
+         }
          result.setStatus(Status.PASSED);
       } 
       catch (Throwable e) 

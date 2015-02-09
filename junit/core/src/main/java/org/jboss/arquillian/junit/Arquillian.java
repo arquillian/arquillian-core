@@ -274,7 +274,13 @@ public class Arquillian extends BlockJUnit4ClassRunner
                        try {
                            State.caughtExceptionAfterJunit(null);
                            if(integer.get() > 0) {
-                               withArounds.evaluate();
+                               ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                               try {
+                                   Thread.currentThread().setContextClassLoader(null);
+                                   withArounds.evaluate();
+                               } finally {
+                                   Thread.currentThread().setContextClassLoader(tccl);
+                               }
                            } else {
                                testStatement.evaluate();
                            }
