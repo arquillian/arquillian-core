@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -58,7 +59,10 @@ public class RemoteExtensionLoader implements ExtensionLoader
    public Collection<LoadableExtension> load()
    {
       List<LoadableExtension> extensions = new ArrayList<LoadableExtension>();
-      Collection<RemoteLoadableExtension> loaded = all(SecurityActions.getThreadContextClassLoader(), RemoteLoadableExtension.class);
+      Collection<RemoteLoadableExtension> loaded = Collections.emptyList();      
+      if (SecurityActions.getThreadContextClassLoader() != null) {
+          loaded = all(SecurityActions.getThreadContextClassLoader(), RemoteLoadableExtension.class);
+      }
       if(loaded.size() == 0)
       {
          loaded = all(RemoteExtensionLoader.class.getClassLoader(), RemoteLoadableExtension.class);
