@@ -94,7 +94,12 @@ final class SecurityActions
 
    static <T> T newInstance(final String className, final Class<?>[] argumentTypes, final Object[] arguments, final Class<T> expectedType)
    {
-      return newInstance(className, argumentTypes, arguments, expectedType, getThreadContextClassLoader());
+      @SuppressWarnings("unchecked")
+      Class<T> implClass = (Class<T>) loadClass(className);
+      if (!expectedType.isAssignableFrom(implClass)) {
+          throw new RuntimeException("Loaded class " + className + " is not of expected type " + expectedType);
+      }
+      return newInstance(implClass, argumentTypes, arguments);
    }
 
    static <T> T newInstance(final String className, final Class<?>[] argumentTypes, final Object[] arguments, final Class<T> expectedType, ClassLoader classLoader)
