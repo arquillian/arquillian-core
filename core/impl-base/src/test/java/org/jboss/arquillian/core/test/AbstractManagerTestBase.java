@@ -199,7 +199,7 @@ public abstract class AbstractManagerTestBase
       private InstanceProducer<EventRegister> register;
 
       @SuppressWarnings("unchecked")
-      public void register(@Observes Object event)
+      public synchronized void register(@Observes Object event)
       {
          if(register.get() == null)
          {
