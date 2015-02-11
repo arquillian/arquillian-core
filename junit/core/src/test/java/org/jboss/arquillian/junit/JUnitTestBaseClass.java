@@ -18,17 +18,21 @@
 package org.jboss.arquillian.junit;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doAnswer;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.arquillian.junit.event.AfterRules;
+import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
+import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.runner.JUnitCore;
@@ -45,7 +49,13 @@ import org.mockito.stubbing.Answer;
  */
 public class JUnitTestBaseClass
 {
-   public static enum Cycle { BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS }
+   public static enum Cycle {
+       BEFORE_RULE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_RULE;
+
+       public static Cycle[] basics() {
+           return new Cycle[] {BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS};
+       }
+   }
    
    /*
     * Setup / Clear the static callback info. 
@@ -110,6 +120,9 @@ public class JUnitTestBaseClass
             {
                ((TestMethodExecutor)argument).invoke();               
             }
+            else if(argument instanceof TestLifecycleEvent) {
+                ((TestLifecycleEvent)argument).getExecutor().invoke();
+            }
          }
          return null;
       }
@@ -137,6 +150,8 @@ public class JUnitTestBaseClass
     */
    protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception
    {
+      doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
       doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
       doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
       doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));

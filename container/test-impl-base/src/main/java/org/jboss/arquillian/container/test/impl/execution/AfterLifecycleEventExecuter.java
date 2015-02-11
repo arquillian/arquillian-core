@@ -17,7 +17,7 @@
 package org.jboss.arquillian.container.test.impl.execution;
 
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 
 /**
  * Observer that executes the After phase on the test case.
@@ -30,7 +30,7 @@ import org.jboss.arquillian.test.spi.event.suite.After;
  */
 public class AfterLifecycleEventExecuter
 {
-   public void on(@Observes(precedence = 100) After event) throws Throwable
+   public void on(@Observes(precedence = 100) AfterTestLifecycleEvent event) throws Throwable
    {
       event.getExecutor().invoke();
    }

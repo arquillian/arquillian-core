@@ -17,7 +17,7 @@
 package org.jboss.arquillian.container.test.impl.execution;
 
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 
 /**
  * Observer that executes the Before phase on the test case.
@@ -30,7 +30,7 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
  */
 public class BeforeLifecycleEventExecuter
 {
-   public void on(@Observes(precedence = -100) Before event) throws Throwable
+   public void on(@Observes(precedence = -100) BeforeTestLifecycleEvent event) throws Throwable
    {
       event.getExecutor().invoke();
    }

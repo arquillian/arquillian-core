@@ -22,7 +22,7 @@ import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class UpdateTestResultBeforeAfterTestCase {
 
     @Mock
-    private EventContext<After> event;
+    private EventContext<AfterTestLifecycleEvent> event;
 
     @Test
     public void shouldPassResultIfNoExceptionCaughtAfterJunit() throws Exception {

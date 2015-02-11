@@ -39,6 +39,7 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.event.suite.Test;
+import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision.Decision;
 import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
@@ -146,6 +147,18 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       return result.get(0);
    }
    
+   @Override
+   public <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception {
+       Validate.notNull(event, "Event must be specified");
+
+       ExecutionDecision executionDecision = resolveExecutionDecision(manager, event.getTestMethod());
+       if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
+       {
+           return;
+       }
+       manager.fire(event);
+   }
+
    public void shutdown()
    {
       manager.shutdown();
@@ -189,5 +202,4 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
        }
        return executionDecision;
    }
-
 }

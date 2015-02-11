@@ -21,7 +21,7 @@ import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.junit.internal.AssumptionViolatedException;
 
 /**
@@ -32,7 +32,7 @@ import org.junit.internal.AssumptionViolatedException;
  */
 class UpdateTestResultBeforeAfter
 {
-    public void update(@Observes(precedence = 99) EventContext<After> context, TestResult result)
+    public void update(@Observes(precedence = 99) EventContext<AfterTestLifecycleEvent> context, TestResult result)
     {
         if(State.caughtExceptionAfterJunit() != null)
         {

@@ -17,6 +17,11 @@
  */
 package org.jboss.arquillian.test.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -27,7 +32,6 @@ import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
-import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
@@ -55,6 +59,10 @@ public class TestContextHandler
    @Inject
    @ClassScoped
    private InstanceProducer<TestClass> testClassProducer;
+
+   // Since there can be multiple AfterTestLifecycleEvents (After/AfterRules)
+   // and we don't know which is the last one, perform the clean up in AfterClass.
+   private Map<Class<?>, Set<Object>> activatedTestContexts = new HashMap<Class<?>, Set<Object>>();
 
    public void createSuiteContext(@Observes(precedence = 100) EventContext<SuiteEvent> context)
    {
@@ -88,6 +96,17 @@ public class TestContextHandler
          classContext.deactivate();
          if (AfterClass.class.isAssignableFrom(context.getEvent().getClass()))
          {
+            synchronized (activatedTestContexts) {
+               Class<?> testClass = context.getEvent().getTestClass().getJavaClass();
+               Set<Object> instances = activatedTestContexts.get(testClass);
+               if(instances != null) {
+                   TestContext testContext = testContextInstance.get();
+                   for(Object instance : instances) {
+                       testContext.destroy(instance);
+                   }
+                   activatedTestContexts.remove(testClass);
+               }
+            }
             classContext.destroy(context.getEvent().getTestClass().getJavaClass());
          }
       }
@@ -99,15 +118,20 @@ public class TestContextHandler
       try
       {
          testContext.activate(context.getEvent().getTestInstance());
+         synchronized (activatedTestContexts) {
+             Class<?> testClass = context.getEvent().getTestClass().getJavaClass();
+             Set<Object> instances = activatedTestContexts.get(testClass);
+             if(instances == null) {
+                 instances = new HashSet<Object>();
+                 activatedTestContexts.put(testClass, instances);
+             }
+             instances.add(context.getEvent().getTestInstance());
+         }
          context.proceed();
       }
       finally
       {
          testContext.deactivate();
-         if (After.class.isAssignableFrom(context.getEvent().getClass()))
-         {
-            testContext.destroy(context.getEvent().getTestInstance());
-         }
       }
    }
 }

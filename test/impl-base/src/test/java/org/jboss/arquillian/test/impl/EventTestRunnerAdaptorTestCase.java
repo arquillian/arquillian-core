@@ -34,6 +34,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
@@ -134,7 +135,16 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
        assertEventNotFiredInContext(After.class, SuiteContext.class);
        assertEventNotFiredInContext(After.class, ClassContext.class);
        assertEventNotFiredInContext(After.class, TestContext.class);
-       
+
+       verifyNoActiveContext(manager);
+
+       adaptor.fireCustomLifecycle(new BeforeTestLifecycleEvent(testInstance, testMethod, LifecycleMethodExecutor.NO_OP));
+       assertEventFired(BeforeTestLifecycleEvent.class, 0);
+       assertEventNotFiredInContext(BeforeTestLifecycleEvent.class, ApplicationContext.class);
+       assertEventNotFiredInContext(BeforeTestLifecycleEvent.class, SuiteContext.class);
+       assertEventNotFiredInContext(BeforeTestLifecycleEvent.class, ClassContext.class);
+       assertEventNotFiredInContext(BeforeTestLifecycleEvent.class, TestContext.class);
+
        verifyNoActiveContext(manager);
 
        adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);

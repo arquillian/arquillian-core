@@ -22,10 +22,10 @@ import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
-import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
-import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.LifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
@@ -65,7 +65,7 @@ public class ClientBeforeAfterLifecycleEventExecuter
       execute(event);
    }
 
-   public void on(@Observes(precedence = -100) Before event) throws Throwable
+   public void on(@Observes(precedence = -100) BeforeTestLifecycleEvent event) throws Throwable
    {
       if(isRunAsClient(event) || isLocalContainer())
       {
@@ -73,7 +73,7 @@ public class ClientBeforeAfterLifecycleEventExecuter
       }
    }
 
-   public void on(@Observes(precedence = 100) After event) throws Throwable
+   public void on(@Observes(precedence = 100) AfterTestLifecycleEvent event) throws Throwable
    {
       if(isRunAsClient(event) || isLocalContainer())
       {

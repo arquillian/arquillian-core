@@ -32,8 +32,8 @@ import org.jboss.arquillian.container.spi.event.SetupContainers;
 import org.jboss.arquillian.container.spi.event.StartClassContainers;
 import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopClassContainers;
-import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopManualContainers;
+import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
@@ -42,12 +42,12 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
-import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
-import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
@@ -119,7 +119,7 @@ public class ContainerEventController
     * 
     * Activate Container and Deployment context on Before / Test / After events
     */
-   public void createBeforeContext(@Observes EventContext<Before> context) 
+   public void createBeforeContext(@Observes EventContext<BeforeTestLifecycleEvent> context)
    {
       createContext(context);
    }
@@ -129,12 +129,12 @@ public class ContainerEventController
       createContext(context);
    }
 
-   public void createAfterContext(@Observes EventContext<After> context) 
+   public void createAfterContext(@Observes EventContext<AfterTestLifecycleEvent> context)
    {
       createContext(context);
    }
 
-   private void createContext(EventContext<? extends TestEvent> context) 
+   private void createContext(EventContext<? extends TestEvent> context)
    {
       try
       {
