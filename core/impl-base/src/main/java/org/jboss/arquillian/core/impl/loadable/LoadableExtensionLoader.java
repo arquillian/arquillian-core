@@ -18,6 +18,7 @@
 package org.jboss.arquillian.core.impl.loadable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -120,8 +121,10 @@ public class LoadableExtensionLoader
     */
    private ExtensionLoader locateExtensionLoader()
    {
-      //Collection<ExtensionLoader> loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);
-      Collection<ExtensionLoader> loaders = serviceLoader.all(SecurityActions.getThreadContextClassLoader(), ExtensionLoader.class);
+      Collection<ExtensionLoader> loaders = Collections.emptyList();      
+      if (SecurityActions.getThreadContextClassLoader() != null) {
+          loaders = serviceLoader.all(SecurityActions.getThreadContextClassLoader(), ExtensionLoader.class);
+      }
       if(loaders.size() == 0)
       {
          loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);

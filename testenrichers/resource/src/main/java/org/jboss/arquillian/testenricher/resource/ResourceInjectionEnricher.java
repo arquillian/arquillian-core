@@ -70,12 +70,13 @@ public class ResourceInjectionEnricher implements TestEnricher
      return new Object[method.getParameterTypes().length];
    }
 
+   @SuppressWarnings("unchecked")
    protected void injectClass(Object testCase) 
    {
       try 
       {
-         @SuppressWarnings("unchecked")
-         Class<? extends Annotation> resourceAnnotation = (Class<? extends Annotation>)SecurityActions.getThreadContextClassLoader().loadClass(ANNOTATION_NAME);
+         ClassLoader classLoader = ResourceInjectionEnricher.class.getClassLoader();
+         Class<? extends Annotation> resourceAnnotation = (Class<? extends Annotation>)classLoader.loadClass(ANNOTATION_NAME);
          
          List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(
                testCase.getClass(), 
