@@ -154,6 +154,13 @@ public abstract class AbstractManagerTestBase
                getRegister().wasActive(type, activeContext));
    }
 
+   public final void assertEventFiredOnOtherThread(Class<?> type)
+   {
+       Assert.assertTrue(
+               "The event of type to " + type.getName() + " should have been fired on a different thread",
+               getRegister().wasExecutedOnNonMainThread(type));
+   }
+
    private EventRegister getRegister() {
        try
        {
@@ -282,7 +289,22 @@ public abstract class AbstractManagerTestBase
       {
          return events.containsKey(type) ? events.get(type).size():0;
       }
-      
+
+      public Boolean wasExecutedOnNonMainThread(Class<?> type) {
+          if(getCount(type) == 0)
+          {
+             return false;
+          }
+          for(EventRecording recording : events.get(type))
+          {
+             if("main".equalsIgnoreCase(recording.getThreadName()))
+             {
+                return false;
+             }
+          }
+          return true;
+      }
+
       public Boolean wasActive(Class<?> type, Class<? extends Context> context)
       {
          if(getCount(type) == 0)
@@ -304,12 +326,18 @@ public abstract class AbstractManagerTestBase
    private static class EventRecording 
    {
       private Map<Class<? extends Context>, Boolean> activeContexts;
-      
+      private String threadName;
+
       public EventRecording()
       {
+         threadName = Thread.currentThread().getName();
          activeContexts = new HashMap<Class<? extends Context>, Boolean>();
       }
-      
+
+      public String getThreadName() {
+         return threadName;
+      }
+
       public EventRecording add(Class<? extends Context> context, Boolean isActive)
       {
          activeContexts.put(context, isActive);
