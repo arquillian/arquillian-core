@@ -18,10 +18,13 @@
 package org.jboss.arquillian.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
@@ -29,6 +32,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.annotation.ClassInjection;
+import org.jboss.arquillian.test.spi.annotation.MethodInjection;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
@@ -52,9 +57,21 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          Object value = null;
          try
          {
-            Annotation[] qualifiers = filterAnnotations(field.getAnnotations());
+             List<Annotation> annotations = filterAnnotations(Arrays.asList(field.getAnnotations()));
             // null value will throw exception in lookup
-            value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class), qualifiers);
+            
+            ClassInjection classInjectedResource = new ClassInjection()
+            {                
+                @Override
+                public Class<? extends Annotation> annotationType()
+                {
+                    return ClassInjection.class;
+                }
+            };
+
+            annotations.add(classInjectedResource);
+            
+            value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class), annotations);
          }
          catch (Exception e)
          {
@@ -87,7 +104,19 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          ArquillianResource resource = getResourceAnnotation(method.getParameterAnnotations()[i]);
          if(resource != null)
          {
-            Annotation[] qualifiers = filterAnnotations(method.getParameterAnnotations()[i]);
+            List<Annotation> qualifiers = filterAnnotations(Arrays.asList(method.getParameterAnnotations()[i]));
+
+            MethodInjection methodInjectedResource = new MethodInjection()
+            {                
+                @Override
+                public Class<? extends Annotation> annotationType()
+                {
+                    return MethodInjection.class;
+                }
+            };
+
+            qualifiers.add(methodInjectedResource);
+
             values[i] = lookup(method.getParameterTypes()[i], resource, qualifiers);
          }
       }
@@ -102,14 +131,14 @@ public class ArquillianResourceTestEnricher implements TestEnricher
     * @throws IllegalArgumentException If no ResourceProvider found for Type
     * @throws RuntimeException If ResourceProvider return null
     */
-   private Object lookup(Class<?> type, ArquillianResource resource, Annotation... qualifiers)
+   private Object lookup(Class<?> type, ArquillianResource resource, List<Annotation> qualifiers)
    {
       Collection<ResourceProvider> resourceProviders = loader.get().all(ResourceProvider.class);
       for(ResourceProvider resourceProvider: resourceProviders)
       {
          if(resourceProvider.canProvide(type))
          {
-            Object value = resourceProvider.lookup(resource, qualifiers);
+            Object value = resourceProvider.lookup(resource, qualifiers.toArray(new Annotation[0]));
             if(value == null)
             {
                throw new RuntimeException("Provider for type " + type + " returned a null value: " + resourceProvider);
@@ -136,13 +165,15 @@ public class ArquillianResourceTestEnricher implements TestEnricher
     * @param annotations
     * @return
     */
-   private Annotation[] filterAnnotations(Annotation[] annotations)
+   private List<Annotation> filterAnnotations(List<Annotation> annotations)
    {
+      List<Annotation> filtered = new ArrayList<Annotation>(); 
+       
       if(annotations == null)
       {
-         return new Annotation[0];
+         return filtered;
       }
-      List<Annotation> filtered = new ArrayList<Annotation>();
+      
       for(Annotation annotation : annotations)
       {
          if(annotation.annotationType() != ArquillianResource.class)
@@ -150,6 +181,6 @@ public class ArquillianResourceTestEnricher implements TestEnricher
             filtered.add(annotation);
          }
       }
-      return filtered.toArray(new Annotation[0]);
+      return filtered;
    }
 }
