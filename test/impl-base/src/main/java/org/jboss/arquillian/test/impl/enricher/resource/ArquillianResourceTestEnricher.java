@@ -30,8 +30,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.test.spi.annotation.ClassInjection;
-import org.jboss.arquillian.test.spi.annotation.MethodInjection;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
@@ -57,13 +55,13 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          {
              List<Annotation> qualifiers = filterAnnotations(Arrays.asList(field.getAnnotations()));
             // null value will throw exception in lookup
-            
-            ClassInjection classInjectedResource = new ClassInjection()
+             
+            ResourceProvider.ClassInjection classInjectedResource = new ResourceProvider.ClassInjection()
             {                
                 @Override
                 public Class<? extends Annotation> annotationType()
                 {
-                    return ClassInjection.class;
+                    return ResourceProvider.ClassInjection.class;
                 }
             };
 
@@ -104,12 +102,12 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          {
             List<Annotation> qualifiers = filterAnnotations(Arrays.asList(method.getParameterAnnotations()[i]));
 
-            MethodInjection methodInjectedResource = new MethodInjection()
+            ResourceProvider.MethodInjection methodInjectedResource = new ResourceProvider.MethodInjection()
             {                
                 @Override
                 public Class<? extends Annotation> annotationType()
                 {
-                    return MethodInjection.class;
+                    return ResourceProvider.MethodInjection.class;
                 }
             };
 

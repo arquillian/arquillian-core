@@ -35,8 +35,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
-import org.jboss.arquillian.test.spi.annotation.ClassInjection;
-import org.jboss.arquillian.test.spi.annotation.MethodInjection;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Assert;
@@ -126,7 +124,10 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
       Mockito.when(
           resourceProvider.lookup(
                   (ArquillianResource) Mockito.any(),
-                  Mockito.argThat(new CustomAnnotationMatcher(resource2Field.getAnnotation(ArquillianTestQualifier.class), ClassInjection.class))))
+                  Mockito.argThat(
+                      new CustomAnnotationMatcher(
+                          resource2Field.getAnnotation(ArquillianTestQualifier.class),
+                          ResourceProvider.ClassInjection.class))))
               .thenReturn(resource);
 
       TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -146,7 +147,10 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
       Mockito.when(
           resourceProvider.lookup(
                   (ArquillianResource) Mockito.any(),
-                  Mockito.argThat(new CustomAnnotationMatcher(resourceMethod.getParameterAnnotations()[0][1], MethodInjection.class))))
+                  Mockito.argThat(
+                      new CustomAnnotationMatcher(
+                          resourceMethod.getParameterAnnotations()[0][1],
+                          ResourceProvider.MethodInjection.class))))
               .thenReturn(resource);
 
       TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -186,7 +190,7 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
        {
            Class<?> qualifier = ((Annotation) varargArgument).annotationType();
 
-           return qualifier.equals(ClassInjection.class);
+           return qualifier.equals(ResourceProvider.ClassInjection.class);
        }
    }
    
@@ -199,7 +203,7 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
        {
            Class<?> qualifier = ((Annotation) varargArgument).annotationType();
            
-           return qualifier.equals(MethodInjection.class);
+           return qualifier.equals(ResourceProvider.MethodInjection.class);
        }
    }
    
