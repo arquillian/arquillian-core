@@ -17,7 +17,12 @@
  */
 package org.jboss.arquillian.test.spi.enricher.resource;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
 
@@ -29,7 +34,33 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  */
 public interface ResourceProvider
 {
-   boolean canProvide(Class<?> type);
+    boolean canProvide(Class<?> type);
 
-   Object lookup(ArquillianResource resource, Annotation... qualifiers);
+    Object lookup(ArquillianResource resource, Annotation... qualifiers);
+
+    /**
+     * This annotation is put to {@link ResourceProvider#lookup(ArquillianResource, Annotation...)} qualifiers parameter so
+     * implementation of ResourceProvider can enrich it knowing it enriches class scoped ArquillianResource.
+     *
+     * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
+     *
+     */
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    static @interface ClassInjection
+    {
+    }
+
+    /**
+     * This annotation is put to {@link ResourceProvider#lookup(ArquillianResource, Annotation...)} qualifiers parameter so
+     * implementation of ResourceProvider can enrich it knowing it enriches method scoped ArquillianResource.
+     *
+     * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
+     *
+     */
+    @Documented
+    @Retention(RUNTIME)
+    static @interface MethodInjection
+    {
+    }
 }
