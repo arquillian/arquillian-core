@@ -56,6 +56,9 @@ public class ArquillianResourceTestEnricher implements TestEnricher
              List<Annotation> qualifiers = filterAnnotations(Arrays.asList(field.getAnnotations()));
             // null value will throw exception in lookup
              
+            checkPresentScopeInjection(qualifiers, ResourceProvider.ClassInjection.class);
+            checkPresentScopeInjection(qualifiers, ResourceProvider.MethodInjection.class);
+             
             ResourceProvider.ClassInjection classInjectedResource = new ResourceProvider.ClassInjection()
             {                
                 @Override
@@ -101,6 +104,9 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          if(resource != null)
          {
             List<Annotation> qualifiers = filterAnnotations(Arrays.asList(method.getParameterAnnotations()[i]));
+
+            checkPresentScopeInjection(qualifiers, ResourceProvider.ClassInjection.class);
+            checkPresentScopeInjection(qualifiers, ResourceProvider.MethodInjection.class);
 
             ResourceProvider.MethodInjection methodInjectedResource = new ResourceProvider.MethodInjection()
             {                
@@ -178,5 +184,23 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          }
       }
       return filtered;
+   }
+   
+   private void checkPresentScopeInjection(List<Annotation> qualifiers, Class<? extends Annotation> scope)
+   {
+       boolean present = false;
+
+       for (Annotation qualifier : qualifiers) {
+           if (scope.isAssignableFrom(qualifier.annotationType())) {
+               present = true;
+               break;
+           }
+       }
+
+       if (present) {
+           throw new IllegalStateException(String.format("You have put %s or its subclass on ArquillianResource injection point "
+               + "with qualifiers '%s'. This annotation is not supposed to be used in your test case.",
+               scope.getName(), qualifiers.toString()));
+       }
    }
 }

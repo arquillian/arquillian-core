@@ -128,7 +128,7 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
                       new CustomAnnotationMatcher(
                           resource2Field.getAnnotation(ArquillianTestQualifier.class),
                           ResourceProvider.ClassInjection.class))))
-              .thenReturn(resource);
+          .thenReturn(resource);
 
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
@@ -151,7 +151,7 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
                       new CustomAnnotationMatcher(
                           resourceMethod.getParameterAnnotations()[0][1],
                           ResourceProvider.MethodInjection.class))))
-              .thenReturn(resource);
+          .thenReturn(resource);
 
       TestEnricher enricher = new ArquillianResourceTestEnricher();
       injector.get().inject(enricher);
@@ -160,6 +160,60 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
 
       Assert.assertEquals(resource, result[0]);
    }
+
+   @Test
+   public void shouldThrowExceptionWhenUsedMethodScopeInjectionOnArquillianResource() throws Exception
+   {
+       Method resourceMethod = ObjectClass3.class.getMethod("testWithInjectionQualifier", Object.class);
+       
+       Mockito.when(
+           resourceProvider.lookup(
+                   (ArquillianResource) Mockito.any(),
+                   Mockito.argThat(
+                       new CustomAnnotationMatcher(
+                           resourceMethod.getParameterAnnotations()[0][1],
+                           ResourceProvider.MethodInjection.class))))
+           .thenReturn(resource);
+
+       TestEnricher enricher = new ArquillianResourceTestEnricher();
+       injector.get().inject(enricher);
+
+       Throwable cause = null;
+
+       try {
+           enricher.resolve(resourceMethod);
+       } catch (Exception ex) {
+           cause = ex; 
+       }
+
+       Assert.assertEquals(IllegalStateException.class, cause.getClass());
+   }
+
+   @Test
+   public void shouldThrowExceptionWhenUsedClassScopeInjectionOnArquillianResource() {
+
+       Mockito.when(
+           resourceProvider.lookup(
+               (ArquillianResource) Mockito.any(),
+               Mockito.argThat(
+                   new ClassInjectionAnnotationMatcher())))
+           .thenReturn(resource);
+
+       TestEnricher enricher = new ArquillianResourceTestEnricher();
+       injector.get().inject(enricher);
+
+       ObjectClass3 test = new ObjectClass3();
+       
+       Throwable cause = null;
+       
+       try {
+           enricher.enrich(test);
+       } catch (RuntimeException ex) {
+           cause = ex.getCause(); 
+       }
+
+       Assert.assertEquals(IllegalStateException.class, cause.getClass());
+   }   
 
    public class ObjectClass
    {
@@ -175,6 +229,14 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
    {
       @ArquillianResource @ArquillianTestQualifier
       public Object resource2;
+   }
+
+   public class ObjectClass3
+   {
+       @ArquillianResource @ResourceProvider.ClassInjection
+       public Object resource;
+       
+       public void testWithInjectionQualifier(@ArquillianResource @ResourceProvider.MethodInjection Object resource) {}
    }
 
    @Retention(RUNTIME)
