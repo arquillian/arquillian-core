@@ -18,13 +18,11 @@
 package org.jboss.arquillian.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
@@ -57,7 +55,7 @@ public class ArquillianResourceTestEnricher implements TestEnricher
          Object value = null;
          try
          {
-             List<Annotation> annotations = filterAnnotations(Arrays.asList(field.getAnnotations()));
+             List<Annotation> qualifiers = filterAnnotations(Arrays.asList(field.getAnnotations()));
             // null value will throw exception in lookup
             
             ClassInjection classInjectedResource = new ClassInjection()
@@ -69,9 +67,9 @@ public class ArquillianResourceTestEnricher implements TestEnricher
                 }
             };
 
-            annotations.add(classInjectedResource);
+            qualifiers.add(classInjectedResource);
             
-            value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class), annotations);
+            value = lookup(field.getType(), field.getAnnotation(ArquillianResource.class), qualifiers);
          }
          catch (Exception e)
          {
