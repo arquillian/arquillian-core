@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,15 +47,17 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
     private final MBeanServerConnection mbeanServer;
     private final String objectName;
     private final CommandCallback callback;
+    private final Map<String, String> protocolProps;
 
     public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback) {
-        this(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME);
+        this(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME, null);
     }
 
-    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback, String objectName) {
+    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback, String objectName, Map<String, String> protocolProps) {
         this.mbeanServer = mbeanServer;
         this.callback = callback;
         this.objectName = objectName;
+        this.protocolProps = protocolProps;
     }
 
     public TestResult invoke(TestMethodExecutor testMethodExecutor) {
@@ -74,7 +78,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
 
             JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
             log.fine("Invoke " + testCanonicalName);
-            result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod));
+            result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod, protocolProps));
 
         } catch (final Throwable th) {
             result = new TestResult(Status.FAILED);

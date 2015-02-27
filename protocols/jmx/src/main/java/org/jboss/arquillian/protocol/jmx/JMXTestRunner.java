@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -57,7 +58,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    private TestRunner mockTestRunner;
 
    private TestClassLoader testClassLoader;
-   
+
    private final String objectName;
 
    public interface TestClassLoader
@@ -109,13 +110,14 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       localMBeanServer = null;
    }
 
-   public byte[] runTestMethod(String className, String methodName)
+   @Override
+   public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps)
    {
-      TestResult result = runTestMethodInternal(className, methodName);
+      TestResult result = runTestMethodInternal(className, methodName, protocolProps);
       return Serializer.toByteArray(result);
    }
 
-   private TestResult runTestMethodInternal(String className, String methodName)
+   private TestResult runTestMethodInternal(String className, String methodName, Map<String, String> protocolProps)
    {
       currentCall.set(className + methodName);
       TestResult result = new TestResult();
@@ -132,7 +134,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
          log.fine("Test class loaded from: " + testClass.getClassLoader());
 
          log.fine("Execute: " + className + "." + methodName);
-         result = runner.execute(testClass, methodName);
+         result = doRunTestMethod(runner, testClass, methodName, protocolProps);
       }
       catch (Throwable th)
       {
@@ -148,6 +150,10 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       }
       return result;
    }
+
+    protected TestResult doRunTestMethod(TestRunner runner, Class<?> testClass, String methodName, Map<String, String> protocolProps) {
+        return runner.execute(testClass, methodName);
+    }
 
    @Override
    public void send(Command<?> command)
@@ -185,7 +191,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    {
       currentCall.set(current);
    }
-   
+
    void setExposedTestRunnerForTest(TestRunner mockTestRunner)
    {
       this.mockTestRunner = mockTestRunner;

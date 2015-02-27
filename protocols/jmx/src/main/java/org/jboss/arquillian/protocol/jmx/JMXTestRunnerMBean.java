@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import java.util.Map;
+
 import javax.management.NotificationBroadcaster;
 
 import org.jboss.arquillian.container.test.spi.command.Command;
@@ -25,9 +27,9 @@ import org.jboss.arquillian.test.spi.TestResult;
  * An MBean to run test methods in container.
  * 
  * @author thomas.diesler@jboss.com
- * @version $Revision: $
  */
 public interface JMXTestRunnerMBean extends NotificationBroadcaster {
+	
     /** The ObjectName for this service: jboss.arquillian:service=jmx-test-runner */
     String OBJECT_NAME = "jboss.arquillian:service=jmx-test-runner";
 
@@ -36,9 +38,10 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
      *
      * @param className the test class name
      * @param methodName the test method name
+     * @param protocol configuration properties
      * @return a serialized {@link TestResult}
      */
-    public byte[] runTestMethod(String className, String methodName);
+    public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps);
     
     /**
      * Broadcast {@link Command} commands to any listeners

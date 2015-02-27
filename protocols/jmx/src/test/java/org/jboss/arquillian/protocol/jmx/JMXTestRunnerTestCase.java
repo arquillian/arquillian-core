@@ -41,7 +41,6 @@ import org.junit.Test;
  * Test the {@link JMXTestRunner}
  * 
  * @author thomas.diesler@jboss.com
- * @version $Revision: $
  */
 public class JMXTestRunnerTestCase {
     @Test
@@ -52,7 +51,7 @@ public class JMXTestRunnerTestCase {
 
         try {
             JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
-            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod"));
+            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod", null));
 
             assertNotNull("TestResult not null", result);
             assertNotNull("Status not null", result.getStatus());
