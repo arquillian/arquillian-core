@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

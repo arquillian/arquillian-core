@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -111,8 +115,29 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
    }
 
    @Override
+   public byte[] runTestMethod(String className, String methodName)
+   {
+       TestResult result = runTestMethodInternal(className, methodName, new HashMap<String, String>());
+       return Serializer.toByteArray(result);
+   }
+
+   @Override
    public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps)
    {
+      // detect if deprecated method is overridden in sub class, if so call it instead
+      try {
+          final Class<?> impl = this.getClass();
+          Method m = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
+                 public Method run() throws NoSuchMethodException {
+                    return impl.getMethod("runTestMethod", new Class[] {String.class, String.class});
+                 }
+              });
+
+          if(m.getDeclaringClass() != JMXTestRunner.class) {
+              return runTestMethod(className, methodName);
+          }
+      } catch(Exception e) { }
+
       TestResult result = runTestMethodInternal(className, methodName, protocolProps);
       return Serializer.toByteArray(result);
    }
@@ -151,9 +176,9 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
       return result;
    }
 
-    protected TestResult doRunTestMethod(TestRunner runner, Class<?> testClass, String methodName, Map<String, String> protocolProps) {
-        return runner.execute(testClass, methodName);
-    }
+   protected TestResult doRunTestMethod(TestRunner runner, Class<?> testClass, String methodName, Map<String, String> protocolProps) {
+       return runner.execute(testClass, methodName);
+   }
 
    @Override
    public void send(Command<?> command)

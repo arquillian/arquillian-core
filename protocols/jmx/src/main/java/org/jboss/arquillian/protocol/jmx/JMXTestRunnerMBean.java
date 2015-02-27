@@ -38,6 +38,17 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
      *
      * @param className the test class name
      * @param methodName the test method name
+     * @return a serialized {@link TestResult}
+     * @deprecated
+     */
+    @Deprecated
+    public byte[] runTestMethod(String className, String methodName);
+
+    /**
+     * Runs a test method on the given test class
+     *
+     * @param className the test class name
+     * @param methodName the test method name
      * @param protocol configuration properties
      * @return a serialized {@link TestResult}
      */

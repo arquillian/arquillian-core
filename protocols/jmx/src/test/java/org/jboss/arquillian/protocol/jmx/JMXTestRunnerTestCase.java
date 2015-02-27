@@ -16,10 +16,14 @@
  */
 package org.jboss.arquillian.protocol.jmx;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -43,6 +47,7 @@ import org.junit.Test;
  * @author thomas.diesler@jboss.com
  */
 public class JMXTestRunnerTestCase {
+
     @Test
     public void testJMXTestRunner() throws Throwable {
         MBeanServer mbeanServer = getMBeanServer();
@@ -51,10 +56,69 @@ public class JMXTestRunnerTestCase {
 
         try {
             JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
-            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod", null));
+            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod", new HashMap<String, String>()));
 
             assertNotNull("TestResult not null", result);
             assertNotNull("Status not null", result.getStatus());
+
+            if (result.getStatus() == Status.FAILED)
+                throw result.getThrowable();
+        } finally {
+            mbeanServer.unregisterMBean(oname);
+        }
+    }
+
+    @Test // backwards compatible
+    public void shouldInvokeOldRunMethodIfOldMethodIsOverridden() throws Throwable {
+        MBeanServer mbeanServer = getMBeanServer();
+        final AtomicInteger count = new AtomicInteger();
+        JMXTestRunner jmxTestRunner = new JMXTestRunner(null) {
+            @Override
+            public byte[] runTestMethod(String className, String methodName) {
+                count.incrementAndGet();
+                return super.runTestMethod(className, methodName);
+            }
+        };
+        ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
+
+        try {
+            JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
+            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod", new HashMap<String, String>()));
+
+            assertNotNull("TestResult not null", result);
+            assertNotNull("Status not null", result.getStatus());
+
+            assertEquals("Old runTestMethod should have been called", 1, count.get());
+
+            if (result.getStatus() == Status.FAILED)
+                throw result.getThrowable();
+        } finally {
+            mbeanServer.unregisterMBean(oname);
+        }
+    }
+
+    @Test // backwards compatible
+    public void shouldInvokeNewRunMethodIfNewMethodIsOverridden() throws Throwable {
+        MBeanServer mbeanServer = getMBeanServer();
+        final AtomicInteger count = new AtomicInteger();
+        JMXTestRunner jmxTestRunner = new JMXTestRunner(null) {
+            @Override
+            public byte[] runTestMethod(String className, String methodName, Map<String, String> props) {
+                count.incrementAndGet();
+                return super.runTestMethod(className, methodName, props);
+            }
+        };
+        ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
+
+        try {
+            JMXTestRunnerMBean testRunner = getMBeanProxy(mbeanServer, oname, JMXTestRunnerMBean.class);
+            TestResult result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(DummyTestCase.class.getName(), "testMethod", new HashMap<String, String>()));
+
+            assertNotNull("TestResult not null", result);
+            assertNotNull("Status not null", result.getStatus());
+
+            assertEquals("New runTestMethod should have been called", 1, count.get());
+
             if (result.getStatus() == Status.FAILED)
                 throw result.getThrowable();
         } finally {
@@ -66,41 +130,40 @@ public class JMXTestRunnerTestCase {
     public void shouldBeAbleToSendReceiveCommands() throws Throwable
     {
        Object[] results = new Object[]{"Success", 100};
-       MockTestRunner.add(new TestResult(Status.PASSED));
+       MockTestRunner.add(TestResult.passed());
        MockTestRunner.add(new TestStringCommand());
        MockTestRunner.add(new TestIntegerCommand());
-       
+
        MBeanServer mbeanServer = getMBeanServer();
        JMXTestRunner jmxTestRunner = new JMXTestTestRunner(null);
 
        jmxTestRunner.setExposedTestRunnerForTest(new MockTestRunner());
        ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
-       
+
        try
        {
           JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, new TestCommandCallback(results));
-          
+
           TestResult result = executor.invoke(new TestMethodExecutor()
           {
              @Override
              public void invoke(Object... parameters) throws Throwable { }
-             
+
              @Override
              public Method getMethod() { return testMethod(); }
-             
+
              @Override
              public Object getInstance()
              {
                 return JMXTestRunnerTestCase.this;
              }
           });
-           
+
           assertNotNull("TestResult not null", result);
           assertNotNull("Status not null", result.getStatus());
           if (result.getStatus() == Status.FAILED)
              throw result.getThrowable();
-          
-          
+
           for(int i = 0 ; i < results.length; i++)
           {
              Assert.assertEquals(
