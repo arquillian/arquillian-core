@@ -44,6 +44,7 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.impl.TestContextHandler;
 import org.jboss.arquillian.test.impl.context.ClassContextImpl;
+import org.jboss.arquillian.test.impl.context.SubSuiteContextImpl;
 import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
 import org.jboss.arquillian.test.impl.context.TestContextImpl;
 import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
@@ -65,8 +66,11 @@ public class ContainerTestExtension implements LoadableExtension
    {
       // Start -> Copied from TestExtension
       builder.context(SuiteContextImpl.class)
+             .context(SubSuiteContextImpl.class)
              .context(ClassContextImpl.class)
              .context(TestContextImpl.class);
+
+      builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
 
       builder.observer(TestContextHandler.class)
              .observer(ClientTestInstanceEnricher.class);
@@ -74,7 +78,6 @@ public class ContainerTestExtension implements LoadableExtension
       // End -> Copied from TestExtension
       
       builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
-             .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
              .service(Protocol.class, LocalProtocol.class)
              .service(CommandService.class, LocalCommandService.class)
              .service(ResourceProvider.class, URLResourceProvider.class)

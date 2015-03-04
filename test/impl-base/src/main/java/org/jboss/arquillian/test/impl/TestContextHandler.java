@@ -30,11 +30,14 @@ import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
+import org.jboss.arquillian.test.spi.context.SubSuiteContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent;
 import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
@@ -49,6 +52,9 @@ public class TestContextHandler
 {
    @Inject
    private Instance<SuiteContext> suiteContextInstance;
+
+   @Inject
+   private Instance<SubSuiteContext> subSuiteContextInstance;
 
    @Inject
    private Instance<ClassContext> classContextInstance;
@@ -78,6 +84,24 @@ public class TestContextHandler
          if (AfterSuite.class.isAssignableFrom(context.getEvent().getClass()))
          {
             suiteContext.destroy();
+         }
+      }
+   }
+
+   public void createSubSuiteContext(@Observes(precedence = 100) EventContext<SubSuiteEvent> context)
+   {
+      SubSuiteContext subSuiteContext = this.subSuiteContextInstance.get();
+      try
+      {
+         subSuiteContext.activate(context.getEvent().getClass());
+         context.proceed();
+      }
+      finally
+      {
+         subSuiteContext.deactivate();
+         if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
+         {
+            subSuiteContext.destroy(context.getEvent().getSubSuiteClass());
          }
       }
    }

@@ -18,6 +18,7 @@ package org.jboss.arquillian.test.spi;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
 /**
@@ -108,6 +109,8 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception;
+
+   <T extends Event> void fireCustomEvent(T event) throws Exception;
 
    /**
     * Shutdown Arquillian cleanly.  

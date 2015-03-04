@@ -59,7 +59,7 @@ public class ManagerImpl implements Manager
    // Instance Members -------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
    public static final String ARQUILLIAN_DEBUG_PROPERTY = "arquillian.debug";
-   public static Boolean DEBUG = Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DEBUG_PROPERTY));
+   public static Boolean DEBUG = true; // Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DEBUG_PROPERTY));
    
    private ThreadLocal<Stack<Object>> eventStack;
    
