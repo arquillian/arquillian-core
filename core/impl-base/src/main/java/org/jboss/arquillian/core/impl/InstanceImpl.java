@@ -17,6 +17,7 @@
 package org.jboss.arquillian.core.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 
 import org.jboss.arquillian.core.api.InstanceProducer;
 
@@ -59,6 +60,11 @@ public class InstanceImpl<T> implements InstanceProducer<T>
    public T get()
    {
       return manager.resolve(type);
+   }
+
+   @Override
+   public Collection<T> all() {
+       return manager.resolveAll(type);
    }
 
    /* (non-Javadoc)

@@ -36,5 +36,4 @@ package org.jboss.arquillian.core.api;
 public interface InstanceProducer<T> extends Instance<T>
 {
    void set(T value);
-
 }

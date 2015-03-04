@@ -17,10 +17,14 @@
 package org.jboss.arquillian.core.impl;
 
 
+import java.util.Iterator;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
+import org.jboss.arquillian.core.test.context.ManagerTest2Context;
+import org.jboss.arquillian.core.test.context.ManagerTest2ContextImpl;
 import org.jboss.arquillian.core.test.context.ManagerTestContext;
 import org.jboss.arquillian.core.test.context.ManagerTestContextImpl;
 import org.jboss.arquillian.core.test.context.ManagerTestScoped;
@@ -57,9 +61,125 @@ public class InstanceImplTestCase
       } 
       finally
       {
-         context.deactivate();
-         context.destroy();
+         context.clearAll();
       }
+   }
+
+   @Test
+   public void shouldBeOnlyLookupInClosestContext() throws Exception
+   {
+      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
+         .context(ManagerTestContextImpl.class)
+         .context(ManagerTest2ContextImpl.class).create();
+
+      Object testObject = new Object();
+      Object test2Object = new Object();
+      ManagerTestContext context = manager.getContext(ManagerTestContext.class);
+      ManagerTest2Context context2 = manager.getContext(ManagerTest2Context.class);
+      try
+      {
+         context.activate();
+         context.getObjectStore().add(Object.class, testObject);
+
+         context2.activate("a");
+         context2.getObjectStore().add(Object.class, test2Object);
+
+         Instance<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
+
+         Assert.assertEquals(
+               "Verify expected object was returned",
+               test2Object, instance.get());
+
+         context2.deactivate();
+
+         Assert.assertEquals(
+                 "Verify expected object was returned",
+                 testObject, instance.get());
+      }
+      finally
+      {
+         context.clearAll();
+      }
+   }
+
+   @Test
+   public void shouldBeAbleToLookupAllInAllActiveContext() {
+       ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
+           .context(ManagerTestContextImpl.class)
+           .context(ManagerTest2ContextImpl.class).create();
+
+        Object testObject = new Object();
+        Object test2Object = new Object();
+        ManagerTestContext context = manager.getContext(ManagerTestContext.class);
+        ManagerTest2Context context2 = manager.getContext(ManagerTest2Context.class);
+        try
+        {
+           context.activate();
+           context.getObjectStore().add(Object.class, testObject);
+
+           context2.activate("a");
+           context2.getObjectStore().add(Object.class, test2Object);
+
+           Instance<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
+
+           Assert.assertEquals(
+                 "Verify expected object was returned",
+                 test2Object, instance.get());
+
+           context2.deactivate();
+
+           Assert.assertEquals(
+                   "Verify expected object was returned",
+                   testObject, instance.get());
+        }
+        finally
+        {
+           context.clearAll();
+        }
+   }
+
+   @Test
+   public void shouldBeAbleToLookupAllInAllActiveSameTypeContext() {
+       ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
+           .context(ManagerTest2ContextImpl.class).create();
+
+        Object testObject = new Object();
+        Object test2Object = new Object();
+        ManagerTest2Context context = manager.getContext(ManagerTest2Context.class);
+        try
+        {
+           context.activate("a");
+           context.getObjectStore().add(Object.class, testObject);
+
+           context.activate("b");
+           context.getObjectStore().add(Object.class, test2Object);
+
+           Instance<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
+
+           Assert.assertEquals(
+                 "Verify expected object list size was returned",
+                 2, instance.all().size());
+
+
+           Iterator<Object> iterator = instance.all().iterator();
+           Assert.assertEquals(
+                   "Verify objects returned in actication order",
+                   test2Object, iterator.next());
+           Assert.assertEquals(
+                   "Verify objects returned in actication order",
+                   testObject, iterator.next());
+
+           context.deactivate();
+
+           Assert.assertEquals(
+                   "Verify expected object list size was returned",
+                   1, instance.all().size());
+
+        }
+        finally
+        {
+           context.clearAll();
+        }
    }
 
    @Test
@@ -73,7 +193,7 @@ public class InstanceImplTestCase
       try
       {
          context.activate();
-         
+
          InstanceProducer<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
          instance.set(new Object());
 
@@ -81,8 +201,7 @@ public class InstanceImplTestCase
       } 
       finally
       {
-         context.deactivate();
-         context.destroy();
+         context.clearAll();
       }
    }
 

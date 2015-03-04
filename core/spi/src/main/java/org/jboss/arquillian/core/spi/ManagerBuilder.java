@@ -18,6 +18,7 @@ package org.jboss.arquillian.core.spi;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jboss.arquillian.core.spi.context.Context;
@@ -42,7 +43,7 @@ public class ManagerBuilder
    
    private ManagerBuilder()
    {
-      contexts = new HashSet<Class<? extends Context>>();
+      contexts = new LinkedHashSet<Class<? extends Context>>();
       extensions = new HashSet<Class<?>>();
    }
 

@@ -16,6 +16,10 @@
  */
 package org.jboss.arquillian.core.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -116,6 +120,15 @@ public class ExtensionParseTestCase
       public void set(Object value)
       {
          this.object = value;
+      }
+
+      @Override
+      public Collection<Object> all() {
+         List<Object> all = new ArrayList<Object>();
+         if(object != null) {
+             all.add(object);
+         }
+         return all;
       }
    }
    

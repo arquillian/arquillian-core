@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -206,6 +207,28 @@ public class ManagerImpl implements Manager
    }
 
    @Override
+   public <T> List<T> resolveAll(Class<T> type) {
+       Validate.notNull(type, "Type must be specified");
+       List<T> all = new ArrayList<T>();
+       List<Context> activeContexts = resolveActiveContexts();
+       for(int i = activeContexts.size() -1; i >= 0; i--)
+       {
+          Context context = activeContexts.get(i);
+          List<ObjectStore> stores = context.getObjectStores();
+          for(int n = stores.size() -1; n >= 0; n--)
+          {
+              ObjectStore objectStore = stores.get(n);
+              T object = objectStore.get(type);
+              if(object != null)
+              {
+                 all.add(object);
+              }
+          }
+       }
+       return all;
+   }
+
+   @Override
    public void inject(Object obj)
    {
       inject(ExtensionImpl.of(obj));
@@ -342,7 +365,7 @@ public class ManagerImpl implements Manager
    public void fireProcessing() throws Exception
    {
       final Set<Class<?>> extensions = new HashSet<Class<?>>();
-      final Set<Class<? extends Context>> contexts = new HashSet<Class<? extends Context>>();
+      final Set<Class<? extends Context>> contexts = new LinkedHashSet<Class<? extends Context>>();
       fire(new ManagerProcessing()
       {
          @Override

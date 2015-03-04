@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.core.api;
 
+import java.util.Collection;
+
 /**
  * <pre>
  * {@code @Inject
@@ -35,4 +37,6 @@ package org.jboss.arquillian.core.api;
 public interface Instance<T> 
 {
    T get();
+
+   Collection<T> all();
 }

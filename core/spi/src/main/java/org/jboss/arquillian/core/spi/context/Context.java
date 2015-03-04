@@ -17,6 +17,7 @@
 package org.jboss.arquillian.core.spi.context;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Context
@@ -30,7 +31,15 @@ public interface Context
    
    boolean isActive();
    
+   /**
+    * @return The ObjectStore of the last activated context of given type
+    */
    ObjectStore getObjectStore();
    
+   /**
+    * @return All active Object stores for this context type
+    */
+   List<ObjectStore> getObjectStores();
+
    void clearAll();
 }

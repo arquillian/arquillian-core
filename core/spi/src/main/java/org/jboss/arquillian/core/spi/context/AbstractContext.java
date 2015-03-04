@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.core.spi.context;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,6 +113,22 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T>
          return activeStore.get().peek().getStore();
       }
       throw new RuntimeException("Context is not active: " + super.getClass().getSimpleName());
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.core.spi.context.Context#getObjectStores()
+    */
+   @Override
+   public List<ObjectStore> getObjectStores() {
+
+       if(isActive()) {
+           List<ObjectStore> stores = new ArrayList<ObjectStore>();
+           for(StoreHolder<T> holder : activeStore.get()) {
+               stores.add(holder.getStore());
+           }
+           return stores;
+       }
+       throw new RuntimeException("Context is not active: " + super.getClass().getSimpleName());
    }
 
    /* (non-Javadoc)

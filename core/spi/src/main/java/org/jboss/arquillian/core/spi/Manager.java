@@ -17,6 +17,7 @@
 package org.jboss.arquillian.core.spi;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Manager
@@ -32,6 +33,7 @@ public interface Manager
    
    // Contextual 
    <T> T resolve(Class<T> type);
+   <T> List<T> resolveAll(Class<T> type);
    <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance);
    
    // Injector
