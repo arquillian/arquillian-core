@@ -84,7 +84,11 @@ public class DeploymentGenerator
       validate(scenario);
       createTestableDeployments(scenario, event.getTestClass());
 
-      deployment.set(scenario);
+      if(event.hasProducer()) {
+          event.set(scenario);
+      } else {
+          deployment.set(scenario);
+      }
    }
 
    //-------------------------------------------------------------------------------------||

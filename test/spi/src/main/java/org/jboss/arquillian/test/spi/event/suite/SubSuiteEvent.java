@@ -1,15 +1,17 @@
 package org.jboss.arquillian.test.spi.event.suite;
 
+import org.jboss.arquillian.test.spi.TestClass;
+
 
 public class SubSuiteEvent extends SuiteEvent {
 
-    private Class<?> subSuiteClass;
+    private TestClass subSuiteClass;
     
     public SubSuiteEvent(Class<?> subSuiteClass) {
-        this.subSuiteClass = subSuiteClass;
+        this.subSuiteClass = new TestClass(subSuiteClass);
     }
     
-    public Class<?> getSubSuiteClass() {
+    public TestClass getSubSuiteClass() {
         return subSuiteClass;
     }
 }

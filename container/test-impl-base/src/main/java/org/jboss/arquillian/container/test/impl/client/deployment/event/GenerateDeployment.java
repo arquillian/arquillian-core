@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment.event;
 
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.test.spi.TestClass;
 
@@ -29,17 +31,32 @@ import org.jboss.arquillian.test.spi.TestClass;
 public class GenerateDeployment implements Event
 {
    private TestClass testClass;
-   
+   private InstanceProducer<DeploymentScenario> producer;
+
    public GenerateDeployment(TestClass testClass)
    {
-      this.testClass = testClass;
+      this(testClass, null);
    }
-   
+
+   public GenerateDeployment(TestClass testClass, InstanceProducer<DeploymentScenario> producer)
+   {
+      this.testClass = testClass;
+      this.producer = producer;
+   }
+
    /**
     * @return the testClass
     */
    public TestClass getTestClass()
    {
       return testClass;
+   }
+
+   public void set(DeploymentScenario scenario) {
+       producer.set(scenario);
+   }
+
+   public boolean hasProducer() {
+       return producer != null;
    }
 }

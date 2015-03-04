@@ -54,6 +54,7 @@ import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -100,6 +101,10 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    private ContainerRegistry containerRegistry;
    
    private ProtocolRegistry protocolRegistry;
+
+   @Mock
+   private InstanceProducer<DeploymentScenario> deploymentScenarioProducer;
+
    
    @Mock
    @SuppressWarnings("rawtypes")
@@ -210,6 +215,18 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       fire(createEvent(DeploymentMultipleSameNameArchiveDifferentTarget.class));
 
       verifyScenario("X", "Y");
+   }
+
+   @Test
+   public void shouldUseEventDeploymentScenarioProducerIfProvided() throws Exception
+   {
+      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+      addProtocol(PROTOCOL_NAME_1, true);
+
+      fire(createEvent(DeploymentWithDefaults.class, deploymentScenarioProducer));
+
+      verify(deployableContainer, times(0)).getDefaultProtocol();
+      verify(deploymentScenarioProducer, times(1)).set(Mockito.any(DeploymentScenario.class));
    }
 
    @Test // ARQ-971
@@ -368,6 +385,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
          .getProtocol(new ProtocolDescription(name));
    }
 
+   @SuppressWarnings("unchecked")
    private <T> Collection<T> create(Class<T> type, T... instances) 
    {
       List<T> list = new ArrayList<T>();
@@ -380,7 +398,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentWithDefaults
    {
-      @SuppressWarnings("unused")
       @Deployment
       public static JavaArchive deploy()
       {
@@ -390,14 +407,12 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentMultipleNoNamed
    {
-      @SuppressWarnings("unused")
       @Deployment
       public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class);
       }
 
-      @SuppressWarnings("unused")
       @Deployment
       public static JavaArchive deploy2()
       {
@@ -407,14 +422,12 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentMultipleSameNameArchive
    {
-      @SuppressWarnings("unused")
       @Deployment(name = "Y")
       public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
 
-      @SuppressWarnings("unused")
       @Deployment(name = "X")
       public static JavaArchive deploy2()
       {
@@ -424,14 +437,12 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentMultipleSameNameArchiveDifferentTarget
    {
-      @SuppressWarnings("unused")
       @Deployment(name = "Y") @TargetsContainer(CONTAINER_NAME_1)
       public static JavaArchive deploy()
       {
          return ShrinkWrap.create(JavaArchive.class, "test.jar");
       }
 
-      @SuppressWarnings("unused")
       @Deployment(name = "X") @TargetsContainer(CONTAINER_NAME_2)
       public static JavaArchive deploy2()
       {
@@ -441,7 +452,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentNonTestableWithDefaults
    {
-      @SuppressWarnings("unused")
       @Deployment(testable = false)
       public static JavaArchive deploy()
       {
@@ -451,7 +461,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentWithContainerReference
    {
-      @SuppressWarnings("unused")
       @Deployment @TargetsContainer("DOES_NOT_EXIST")
       public static JavaArchive deploy()
       {
@@ -461,7 +470,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentWithProtocolReference
    {
-      @SuppressWarnings("unused")
       @Deployment @OverProtocol("DOES_NOT_EXIST")
       public static JavaArchive deploy()
       {
@@ -471,7 +479,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    
    private static class DeploymentManagedWithCustomContainerReference
    {
-      @SuppressWarnings("unused")
       @Deployment(managed = true, testable = false)
       @TargetsContainer(CONTAINER_NAME_1)
       public static JavaArchive deploy()
@@ -482,7 +489,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
 
    private static class DeploymentNonManagedWithCustomContainerReference
    {
-      @SuppressWarnings("unused")
       @Deployment(name = "DeploymentNonManagedWithCustomContainerReference", managed = false, testable = false)
       @TargetsContainer(CONTAINER_NAME_1)
       public static JavaArchive deploy()
@@ -496,6 +502,11 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
       return new GenerateDeployment(new TestClass(testClass));
    }
    
+   private GenerateDeployment createEvent(Class<?> testClass, InstanceProducer<DeploymentScenario> producer)
+   {
+      return new GenerateDeployment(new TestClass(testClass), producer);
+   }
+
    private static class CallMap 
    {
       private Set<Class<?>> calls = new HashSet<Class<?>>();

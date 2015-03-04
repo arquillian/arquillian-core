@@ -39,13 +39,17 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.test.spi.annotation.SubSuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.Test;
@@ -71,6 +75,9 @@ public class ContainerEventController
    @Inject 
    private Instance<DeploymentScenario> deploymentScenario;
 
+   @Inject @SubSuiteScoped
+   private InstanceProducer<DeploymentScenario> deploymentScenarioSubSuiteProducer;
+
    @Inject
    private Event<ContainerMultiControlEvent> container;
    
@@ -89,6 +96,20 @@ public class ContainerEventController
    public void execute(@Observes AfterSuite event)
    {
       container.fire(new StopSuiteContainers());
+   }
+
+   /*
+    * SubSuite level
+    */
+   public void execute(@Observes BeforeSubSuite event)
+   {
+      deployment.fire(new GenerateDeployment(event.getSubSuiteClass(), deploymentScenarioSubSuiteProducer));
+      container.fire(new DeployManagedDeployments());
+   }
+
+   public void execute(@Observes AfterSubSuite event)
+   {
+       container.fire(new UnDeployManagedDeployments());
    }
 
    /*

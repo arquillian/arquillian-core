@@ -93,7 +93,7 @@ public class TestContextHandler
       SubSuiteContext subSuiteContext = this.subSuiteContextInstance.get();
       try
       {
-         subSuiteContext.activate(context.getEvent().getClass());
+         subSuiteContext.activate(context.getEvent().getSubSuiteClass().getJavaClass());
          context.proceed();
       }
       finally
@@ -101,7 +101,7 @@ public class TestContextHandler
          subSuiteContext.deactivate();
          if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
          {
-            subSuiteContext.destroy(context.getEvent().getSubSuiteClass());
+            subSuiteContext.destroy(context.getEvent().getSubSuiteClass().getJavaClass());
          }
       }
    }
