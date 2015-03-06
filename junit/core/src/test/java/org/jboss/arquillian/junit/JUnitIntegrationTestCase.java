@@ -34,6 +34,7 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Result;
@@ -57,7 +58,7 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
    public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception 
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
+      when(adaptor.test(any(SubSuiteClass.class), isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
       
       Result result = run(adaptor, ArquillianClass1.class);
 
@@ -288,11 +289,11 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
 
       doAnswer(new ThrowsException(new RuntimeException("AfterRuleException"))).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
       doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(SubSuiteClass.class), any(Class.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(SubSuiteClass.class), any(Class.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(SubSuiteClass.class), any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(SubSuiteClass.class), any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(SubSuiteClass.class), any(TestMethodExecutor.class));
 
       Result result = run(adaptor, ArquillianClass1WithExceptionInAfterAndAfterRule.class);
 

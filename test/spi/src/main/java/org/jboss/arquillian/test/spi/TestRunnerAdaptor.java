@@ -18,7 +18,7 @@ package org.jboss.arquillian.test.spi;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.core.spi.event.Event;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
 /**
@@ -34,7 +34,7 @@ public interface TestRunnerAdaptor
    /**
     * Activate a new TestSuite.<br/> 
     * This will trigger the BeforeSuite event.
-    * 
+    *
     * @throws Exception
     */
    void beforeSuite() throws Exception; 
@@ -42,10 +42,30 @@ public interface TestRunnerAdaptor
    /**
     * Deactivate the TestSuite.<br/>
     * This will trigger the AfterSuite event.
-    * 
+    *
     * @throws Exception
     */
    void afterSuite() throws Exception;
+
+   /**
+    * Activate a new SubSuite.<br/>
+    * This will trigger the BeforeSubSuite event.
+    *
+    * @param subsuite
+    * @param executor
+    * @throws Exception
+    */
+   void beforeSubSuite(SubSuiteClass subSuiteClass) throws Exception;
+
+   /**
+    * Activate a new SubSuite.<br/>
+    * This will trigger the AfterSubSuite event.
+    *
+    * @param subsuite
+    * @param executor
+    * @throws Exception
+    */
+   void afterSubSuite(SubSuiteClass subSuiteClass) throws Exception;
 
    /**
     * Activate a new TestClass.<br/>
@@ -56,6 +76,8 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
+
+   void beforeClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
    
    /**
     * Deactivate the TestClass.<br/>
@@ -66,6 +88,8 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
+
+   void afterClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
    
    /**
     * Activate a new TestInstance.<br/>
@@ -77,6 +101,8 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+
+   void before(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
    
    /**
     * Deactivate the TestInstance.<br/>
@@ -89,6 +115,8 @@ public interface TestRunnerAdaptor
     */
    void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
 
+   void after(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+
    /**
     * Activate a TestMethod execution.<br/>
     * This will trigger the Test event.
@@ -98,7 +126,9 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
-   
+
+   TestResult test(SubSuiteClass subSuiteClass, TestMethodExecutor testMethodExecutor) throws Exception;
+
    /**
     * Fire any custom Test Lifecycle event.<br/>
     * <br/>
@@ -109,8 +139,6 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception;
-
-   <T extends Event> void fireCustomEvent(T event) throws Exception;
 
    /**
     * Shutdown Arquillian cleanly.  

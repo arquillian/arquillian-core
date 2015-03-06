@@ -33,14 +33,19 @@ public class Test extends TestEvent
     */
    public Test(TestMethodExecutor testMethodExecutor)
    {
+       this(null, testMethodExecutor);
+   }
+
+   public Test(SubSuiteClass subSuiteClass, TestMethodExecutor testMethodExecutor)
+   {
       // TODO: how to validate testMethodExecutor
-      super(testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
-      
+      super(subSuiteClass, testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
+
       //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
-      
+
       this.testMethodExecutor = testMethodExecutor;
    }
-   
+
    public TestMethodExecutor getTestMethodExecutor()
    {
       return testMethodExecutor;

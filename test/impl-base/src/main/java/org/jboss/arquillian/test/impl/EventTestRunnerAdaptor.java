@@ -28,17 +28,19 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.Validate;
-import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.Before;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.test.spi.event.suite.BeforeSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.jboss.arquillian.test.spi.execution.ExecutionDecision;
@@ -81,21 +83,47 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       manager.fire(new AfterSuite());
    }
 
+   @Override
+   public void beforeSubSuite(SubSuiteClass subSuiteClass) throws Exception
+   {
+       manager.fire(new BeforeSubSuite(subSuiteClass));
+   }
+
+   @Override
+   public void afterSubSuite(SubSuiteClass subSuiteClass) throws Exception
+   {
+       manager.fire(new AfterSubSuite(subSuiteClass));
+   }
+
    public void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
+   {
+       beforeClass(null,  testClass, executor);
+   }
+
+   public void beforeClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
    {
       Validate.notNull(testClass, "TestClass must be specified");
       
-      manager.fire(new BeforeClass(testClass, executor));
+      manager.fire(new BeforeClass(subSuiteClass, testClass, executor));
    }
 
    public void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
    {
-      Validate.notNull(testClass, "TestClass must be specified");
-      
-      manager.fire(new AfterClass(testClass, executor));
+       afterClass(null, testClass, executor);
    }
 
-   public void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
+   public void afterClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
+   {
+      Validate.notNull(testClass, "TestClass must be specified");
+      
+      manager.fire(new AfterClass(subSuiteClass, testClass, executor));
+   }
+
+   public void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception {
+       before(null, testInstance, testMethod, executor);
+   }
+
+   public void before(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
@@ -106,11 +134,16 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
           return;
       }
 
-      manager.fire(new Before(testInstance, testMethod, executor));
+      manager.fire(new Before(subSuiteClass, testInstance, testMethod, executor));
    }
 
    public void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
    {
+      after(null, testInstance, testMethod, executor);
+   }
+
+   public void after(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
+   {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
 
@@ -120,10 +153,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
           return;
       }
 
-      manager.fire(new After(testInstance, testMethod, executor));
+      manager.fire(new After(subSuiteClass, testInstance, testMethod, executor));
    }
-   
-   public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
+
+   public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception {
+       return test(null, testMethodExecutor);
+   }
+
+   public TestResult test(SubSuiteClass subSuiteClass, TestMethodExecutor testMethodExecutor) throws Exception
    {
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
 
@@ -134,7 +171,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
       }      
 
       final List<TestResult> result = new ArrayList<TestResult>();
-      manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>()
+      manager.fire(new Test(subSuiteClass, testMethodExecutor), new NonManagedObserver<Test>()
       {
          @Inject
          private Instance<TestResult> testResult;
@@ -157,11 +194,6 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
        {
            return;
        }
-       manager.fire(event);
-   }
-
-   @Override
-   public <T extends Event> void fireCustomEvent(T event) throws Exception {
        manager.fire(event);
    }
 

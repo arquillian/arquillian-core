@@ -17,8 +17,10 @@
  */
 package org.jboss.arquillian.test.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +40,7 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
 import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
@@ -91,17 +94,26 @@ public class TestContextHandler
    public void createSubSuiteContext(@Observes(precedence = 100) EventContext<SubSuiteEvent> context)
    {
       SubSuiteContext subSuiteContext = this.subSuiteContextInstance.get();
+      SubSuiteClass subSuite = context.getEvent().getSubSuiteClass();
+      List<Class<?>> subSuiteClasses = subSuite != null ? subSuite.getSubSuiteChain():new ArrayList<Class<?>>();
+
       try
       {
-         subSuiteContext.activate(context.getEvent().getSubSuiteClass().getJavaClass());
+         for(int i = subSuiteClasses.size()-1; i >= 0; i--) {
+             System.out.println("A: " + subSuiteClasses.get(i));
+             subSuiteContext.activate(subSuiteClasses.get(i));
+         }
          context.proceed();
       }
       finally
       {
-         subSuiteContext.deactivate();
-         if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
-         {
-            subSuiteContext.destroy(context.getEvent().getSubSuiteClass().getJavaClass());
+         for(int i = 0; i < subSuiteClasses.size(); i++) {
+             subSuiteContext.deactivate();
+             System.out.println("D: " + subSuiteClasses.get(i));
+             if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
+             {
+                 subSuiteContext.destroy(subSuiteClasses.get(i));
+             }
          }
       }
    }

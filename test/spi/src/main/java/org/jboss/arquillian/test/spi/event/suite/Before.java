@@ -44,6 +44,11 @@ public class Before extends BeforeTestLifecycleEvent
     */
    public Before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
    {
-      super(testInstance, testMethod, executor);
+      this(null, testInstance, testMethod, executor);
+   }
+
+   public Before(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
+   {
+      super(subSuiteClass, testInstance, testMethod, executor);
    }
 }

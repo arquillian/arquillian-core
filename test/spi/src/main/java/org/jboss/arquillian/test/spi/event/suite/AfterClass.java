@@ -42,4 +42,8 @@ public class AfterClass extends ClassLifecycleEvent
    {
       super(testClass, executor);
    }
+
+   public AfterClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) {
+       super(subSuiteClass, testClass, executor);
+   }
 }

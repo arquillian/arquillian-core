@@ -32,6 +32,8 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
+import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.junit.After;
 import org.junit.Assert;
@@ -152,11 +154,16 @@ public class JUnitTestBaseClass
    {
       doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
       doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+//      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+//      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+//      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+//      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+//      doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(SubSuiteClass.class), any(Class.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(SubSuiteClass.class), any(Class.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(SubSuiteClass.class), any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(SubSuiteClass.class), any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+      doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(SubSuiteClass.class), any(TestMethodExecutor.class));
    }
    
    public void assertCycle(int count, Cycle... cycles)

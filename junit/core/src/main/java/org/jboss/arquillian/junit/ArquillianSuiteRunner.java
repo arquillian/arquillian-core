@@ -6,8 +6,7 @@ import java.util.List;
 import org.jboss.arquillian.junit.suite.Suite;
 import org.jboss.arquillian.junit.suite.resolve.ResolveStrategy;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
-import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
-import org.jboss.arquillian.test.spi.event.suite.BeforeSubSuite;
+import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -19,18 +18,20 @@ import org.junit.runners.model.InitializationError;
 class ArquillianSuiteRunner extends ParentRunner<Runner> {
 
     private TestRunnerAdaptor adaptor = null;
-
+    private SubSuiteClass subSuiteClass;
     private List<Runner> runners;
 
     public ArquillianSuiteRunner(Class<?> testClass) throws InitializationError {
-        this(testClass, discoverChildren(testClass));
+        this(SubSuiteClass.of(null, testClass), testClass);
     }
     
-    public ArquillianSuiteRunner(Class<?> testClass, List<Runner> runners) throws InitializationError {
+    public ArquillianSuiteRunner(SubSuiteClass subSuiteClass, Class<?> testClass) throws InitializationError {
         super(testClass);
-        this.runners = runners;
+        // iffy
+        this.subSuiteClass = subSuiteClass.getSuiteClass() == testClass ? subSuiteClass:SubSuiteClass.of(subSuiteClass, testClass);
+        this.runners =  discoverChildren(this.subSuiteClass, testClass);
     }
-    
+
     @Override
     protected List<Runner> getChildren() {
         return runners;
@@ -47,13 +48,13 @@ class ArquillianSuiteRunner extends ParentRunner<Runner> {
         adaptor = State.getOrCreateTestAdaptor(notifier, getDescription());
         List<Throwable> exceptions = new ArrayList<Throwable>();
         try {
-            adaptor.fireCustomEvent(new BeforeSubSuite(getTestClass().getJavaClass()));
+            adaptor.beforeSubSuite(subSuiteClass);
             super.run(notifier);
         } catch(Throwable e) {
             exceptions.add(e);
         } finally {
             try {
-                adaptor.fireCustomEvent(new AfterSubSuite(getTestClass().getJavaClass()));
+                adaptor.afterSubSuite(subSuiteClass);
             } catch(Throwable e2) {
                 exceptions.add(e2);
             }
@@ -72,7 +73,7 @@ class ArquillianSuiteRunner extends ParentRunner<Runner> {
         child.run(notifier);
     }
 
-    public static List<Runner> discoverChildren(Class<?> testClass) {
+    public static List<Runner> discoverChildren(SubSuiteClass subSuiteClass, Class<?> testClass) {
         if(!testClass.isAnnotationPresent(Suite.class)) {
             throw new IllegalArgumentException("Missing " + Suite.class.getName() + " annotation for given TestClass " + testClass.getName());
         }
@@ -84,7 +85,7 @@ class ArquillianSuiteRunner extends ParentRunner<Runner> {
             ResolveStrategy strategy = strategyClass.newInstance();
             
             for(Class<?> resolved : strategy.resolve(suite.value())) {
-                Runner runner = Runners.runners(resolved);
+                Runner runner = Runners.runners(subSuiteClass, resolved);
                 result.add(runner);
             }
             return result;

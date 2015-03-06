@@ -43,6 +43,7 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.SubSuiteScoped;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
@@ -103,7 +104,7 @@ public class ContainerEventController
     */
    public void execute(@Observes BeforeSubSuite event)
    {
-      deployment.fire(new GenerateDeployment(event.getSubSuiteClass(), deploymentScenarioSubSuiteProducer));
+      deployment.fire(new GenerateDeployment(new TestClass(event.getSubSuiteClass().getSuiteClass()), deploymentScenarioSubSuiteProducer));
       container.fire(new DeployManagedDeployments());
    }
 

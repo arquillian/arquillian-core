@@ -18,9 +18,9 @@ public class AfterRules extends AfterTestLifecycleEvent {
      * @param testMethod The test method that is about to be executed
      * @param executor A call back when the LifecycleMethod represented by this event should be invoked
      */
-    public AfterRules(Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
+    public AfterRules(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
     {
-       super(testInstance, testMethod, executor);
+       super(subSuiteClass, testInstance, testMethod, executor);
     }
 
 }

@@ -43,4 +43,8 @@ public class BeforeClass extends ClassLifecycleEvent
    {
       super(testClass, executor);
    }
+
+   public BeforeClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) {
+       super(subSuiteClass, testClass, executor);
+   }
 }

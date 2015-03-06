@@ -25,13 +25,13 @@ import org.jboss.arquillian.test.spi.TestClass;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClassEvent extends SuiteEvent
+public class ClassEvent extends SubSuiteEvent
 {
    private TestClass testClass;
    
    /**
     * @param testClass The Test case {@link Class}
-    * @throws IllegalArgumentException if testCase is null 
+    * @throws IllegalArgumentException if testCase is null
     */
    public ClassEvent(Class<?> testClass)
    {
@@ -40,15 +40,35 @@ public class ClassEvent extends SuiteEvent
    
    /**
     * @param testClass The Test case {@link Class}
-    * @throws IllegalArgumentException if testCase is null 
+    * @throws IllegalArgumentException if testCase is null
     */
    public ClassEvent(TestClass testClass)
    {
+      this(null, testClass);
+   }
+
+   /**
+    * @param subSuite The SubSuite hierarchy this ClassEvent belongs to
+    * @param testClass The Test case {@link Class}
+    * @throws IllegalArgumentException if testCase is null
+    */
+   public ClassEvent(SubSuiteClass subSuite, Class<?> testClass) {
+       this(subSuite, new TestClass(testClass));
+   }
+
+   /**
+    * @param subSuite The SubSuite hierarchy this ClassEvent belongs to
+    * @param testClass The Test case {@link Class}
+    * @throws IllegalArgumentException if testCase is null
+    */
+   public ClassEvent(SubSuiteClass subSuite, TestClass testClass)
+   {
+      super(subSuite);
+
       Validate.notNull(testClass, "TestClass must be specified");
-      
       this.testClass = testClass;
    }
-   
+
    public TestClass getTestClass()
    {
       return testClass;

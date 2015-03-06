@@ -37,8 +37,13 @@ public class TestEvent extends ClassEvent
     */
    public TestEvent(Object testInstance, Method testMethod)
    {
-      super(validateAndExtractClass(testInstance, testMethod));
-      
+       this(null, testInstance, testMethod);
+   }
+
+   public TestEvent(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod)
+   {
+      super(subSuiteClass, validateAndExtractClass(testInstance, testMethod));
+
       this.testInstance = testInstance;
       this.testMethod = testMethod;
    }
@@ -48,7 +53,7 @@ public class TestEvent extends ClassEvent
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
-      
+
       return testInstance.getClass();
    }
    
@@ -56,7 +61,7 @@ public class TestEvent extends ClassEvent
    {
       return testInstance;
    }
-   
+
    public Method getTestMethod()
    {
       return testMethod;
