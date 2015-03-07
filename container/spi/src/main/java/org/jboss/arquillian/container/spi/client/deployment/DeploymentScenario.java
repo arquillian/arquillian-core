@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.spi.client.deployment;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -35,6 +38,9 @@ import org.jboss.shrinkwrap.api.Archive;
 public class DeploymentScenario
 {
    private final List<Deployment> deployments;
+
+   @Inject
+   private Instance<DeploymentScenario> allScenarios;
 
    public DeploymentScenario()
    {
@@ -200,6 +206,7 @@ public class DeploymentScenario
     */
    private Deployment findDefaultDeployment()
    {
+      List<Deployment> deployments = getAllDeployments();
       if (deployments.size() == 1)
       {
          return deployments.get(0);
@@ -317,7 +324,7 @@ public class DeploymentScenario
    private List<Deployment> findMatchingDeployments(DeploymentTargetDescription target) 
    {
       List<Deployment> matching = new ArrayList<Deployment>();
-      for(Deployment deployment : deployments)
+      for(Deployment deployment : getAllDeployments())
       {
          if(deployment.getDescription().getName().equals(target.getName()))
          {
@@ -374,5 +381,20 @@ public class DeploymentScenario
             }
          }
       }
+   }
+
+   private List<Deployment> getAllDeployments() {
+       List<Deployment> result = new ArrayList<Deployment>();
+       result.addAll(deployments);
+
+       if(allScenarios != null) {
+           Collection<DeploymentScenario> scenarios = allScenarios.all();
+           for(DeploymentScenario scenario : scenarios) {
+               if(scenario != this) {
+                   result.addAll(scenario.deployments());
+               }
+           }
+       }
+       return result;
    }
 }

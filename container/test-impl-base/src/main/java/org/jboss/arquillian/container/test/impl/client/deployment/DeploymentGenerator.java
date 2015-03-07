@@ -39,6 +39,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPacka
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -60,6 +61,9 @@ public class DeploymentGenerator
    @Inject
    private Instance<ServiceLoader> serviceLoader;
    
+   @Inject
+   private Instance<Injector> injector;
+
    @Inject @ClassScoped
    private InstanceProducer<DeploymentScenario> deployment;
 
@@ -74,8 +78,8 @@ public class DeploymentGenerator
       DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
             DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
       
-      DeploymentScenario scenario = new DeploymentScenario();
-      
+      DeploymentScenario scenario = injector.get().inject(new DeploymentScenario());
+
       for(DeploymentDescription deployment : generator.generate(event.getTestClass())) 
       {
          scenario.addDeployment(deployment);
