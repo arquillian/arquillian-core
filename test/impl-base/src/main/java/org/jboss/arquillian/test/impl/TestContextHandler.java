@@ -110,10 +110,10 @@ public class TestContextHandler
          for(int i = 0; i < subSuiteClasses.size(); i++) {
              subSuiteContext.deactivate();
              System.out.println("D: " + subSuiteClasses.get(i));
-             if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
-             {
-                 subSuiteContext.destroy(subSuiteClasses.get(i));
-             }
+         }
+         if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
+         {
+             subSuiteContext.destroy(subSuite.getSuiteClass());
          }
       }
    }
