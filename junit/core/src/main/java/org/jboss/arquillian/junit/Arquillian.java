@@ -26,12 +26,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
-import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.MultipleFailureException;
@@ -55,17 +55,20 @@ import org.junit.runners.model.Statement;
 public class Arquillian extends BlockJUnit4ClassRunner
 {
    private TestRunnerAdaptor adaptor;
-   private SubSuiteClass subSuiteClass;
+   private TestClass suiteTestClass;
 
    public Arquillian(Class<?> testClass) throws InitializationError
    {
-      this(null, testClass);
+      this(new TestClass(testClass), testClass);
    }
 
-   public Arquillian(SubSuiteClass subSuiteClass, Class<?> testClass) throws InitializationError
+   public Arquillian(TestClass suiteTestClass, Class<?> testClass) throws InitializationError
    {
       super(testClass);
-      this.subSuiteClass = subSuiteClass;
+      this.suiteTestClass = suiteTestClass;
+      if(suiteTestClass.getSuiteClass() != testClass) {
+          this.suiteTestClass.addChild(testClass);
+      }
       if(State.isRunningInEclipse()) {
           State.runnerStarted();
       }
@@ -207,8 +210,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          public void evaluate() throws Throwable
          {
             adaptor.beforeClass(
-                  subSuiteClass,
-                  Arquillian.this.getTestClass().getJavaClass(), 
+                  suiteTestClass,
                   new StatementLifecycleExecutor(onlyBefores));
             originalStatement.evaluate();
          }
@@ -230,8 +232,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                new Statement() { @Override public void evaluate() throws Throwable 
                {
                    adaptor.afterClass(
-                        subSuiteClass,
-                        Arquillian.this.getTestClass().getJavaClass(), 
+                        suiteTestClass,
                         new StatementLifecycleExecutor(onlyAfters));
                }}
             );
@@ -249,7 +250,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          public void evaluate() throws Throwable
          {
              adaptor.before(
-                  subSuiteClass,
+                  suiteTestClass,
                   target,
                   method.getMethod(),
                   new StatementLifecycleExecutor(onlyBefores));
@@ -273,7 +274,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                new  Statement() { @Override public void evaluate() throws Throwable
                {
                   adaptor.after(
-                          subSuiteClass,
+                          suiteTestClass,
                           target,
                           method.getMethod(),
                           new StatementLifecycleExecutor(onlyAfters));
@@ -320,7 +321,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                    List<Throwable> exceptions = new ArrayList<Throwable>();
 
                    try {
-                       adaptor.fireCustomLifecycle(new BeforeRules(subSuiteClass, test, method.getMethod(), new LifecycleMethodExecutor() {
+                       adaptor.fireCustomLifecycle(new BeforeRules(suiteTestClass, test, method.getMethod(), new LifecycleMethodExecutor() {
                            @Override
                            public void invoke() throws Throwable {
                                integer.incrementAndGet();
@@ -342,7 +343,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                    }
                    finally {
                        try {
-                           adaptor.fireCustomLifecycle(new AfterRules(subSuiteClass, test, method.getMethod(), LifecycleMethodExecutor.NO_OP));
+                           adaptor.fireCustomLifecycle(new AfterRules(suiteTestClass, test, method.getMethod(), LifecycleMethodExecutor.NO_OP));
                        } catch(Throwable t) {
                            State.caughtExceptionAfterJunit(t);
                            exceptions.add(t);
@@ -372,7 +373,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            TestResult result = adaptor.test(subSuiteClass, new TestMethodExecutor()
+            TestResult result = adaptor.test(suiteTestClass, new TestMethodExecutor()
             {
                @Override
                public void invoke(Object... parameters) throws Throwable

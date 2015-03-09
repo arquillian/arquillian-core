@@ -18,58 +18,112 @@ package org.jboss.arquillian.test.spi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Wraps a class to be run, providing method validation and annotation searching.
+ * Wraps a class to be run, providing method validation and annotation
+ * searching.
  * 
+ * @author aslak@redhat.com
  * @author thomas.diesler@jboss.com
  * @version $Revision: $
  */
-public class TestClass
-{
+public class TestClass {
+   private TestClass parent;
    private Class<?> testClass;
+   private List<Class<?>> children;
 
-   public TestClass(Class<?> testClass)
-   {
+   public TestClass(Class<?> testClass) {
+      this(null, testClass);
+   }
+
+   private TestClass(TestClass parent, Class<?> testClass) {
       if (testClass == null)
          throw new IllegalArgumentException("Null testClass");
 
+      this.children = new ArrayList<Class<?>>();
+      this.parent = parent;
       this.testClass = testClass;
    }
 
-   public Class<?> getJavaClass()
-   {
+   /* Single TestClass */
+
+   public Class<?> getJavaClass() {
       return testClass;
    }
 
-   public String getName()
-   {
+   public String getName() {
       return testClass.getName();
    }
 
-   public boolean isAnnotationPresent(Class<? extends Annotation> annotation)
-   {
+   public boolean isAnnotationPresent(Class<? extends Annotation> annotation) {
       return testClass.isAnnotationPresent(annotation);
    }
-   
-   public <A extends Annotation> A getAnnotation(Class<A> annotation)
-   {
+
+   public <A extends Annotation> A getAnnotation(Class<A> annotation) {
       return testClass.getAnnotation(annotation);
    }
-   
-   public Method getMethod(Class<? extends Annotation> annotation)
-   {
+
+   public Method getMethod(Class<? extends Annotation> annotation) {
       Method[] methods = getMethods(annotation);
-      if(methods.length > 0)
-      {
+      if (methods.length > 0) {
          return methods[0];
       }
       return null;
    }
-   
-   public Method[] getMethods(Class<? extends Annotation> annotation)
-   {
-      return SecurityActions.getMethodsWithAnnotation(testClass, annotation).toArray(new Method[0]);
+
+   public Method[] getMethods(Class<? extends Annotation> annotation) {
+      return SecurityActions.getMethodsWithAnnotation(testClass, annotation)
+            .toArray(new Method[0]);
    }
+
+   /* Suite TestClass */
+   public boolean hasParent() {
+      return parent != null;
+   }
+
+   public Class<?> getSuiteClass() {
+      return testClass;
+   }
+
+   public TestClass getParent() {
+      return parent;
+   }
+
+   public List<Class<?>> getChildren() {
+      return new ArrayList<Class<?>>(children);
+   }
+
+   public void addChild(Class<?> childSuite) {
+      this.children.add(childSuite);
+   }
+
+   public List<Class<?>> getParents() {
+      List<Class<?>> all = new ArrayList<Class<?>>();
+      all.add(testClass);
+      TestClass parent = this;
+      while ((parent = parent.getParent()) != null) {
+         all.add(parent.getSuiteClass());
+      }
+      return all;
+   }
+
+   TestClass createChild(Class<?> suiteClass) {
+      TestClass suite = new TestClass(this, suiteClass);
+      this.addChild(suiteClass);
+      return suite;
+   }
+
+   public static TestClass of(TestClass parent, Class<?> suiteClass) {
+      if (parent == null) {
+         return new TestClass(suiteClass);
+      }
+      return parent.createChild(suiteClass);
+   }
+   
+   public boolean isSuite() {
+      return this.children.size() > 0;
+   }
+
 }

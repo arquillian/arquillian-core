@@ -3,6 +3,7 @@ package org.jboss.arquillian.junit.event;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 
 /**
@@ -18,9 +19,9 @@ public class BeforeRules extends BeforeTestLifecycleEvent {
      * @param testMethod The test method that is about to be executed
      * @param executor A call back when the LifecycleMethod represented by this event should be invoked
      */
-    public BeforeRules(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
+    public BeforeRules(TestClass testClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
     {
-       super(subSuiteClass, testInstance, testMethod, executor);
+       super(testClass, testInstance, testMethod, executor);
     }
 
 }

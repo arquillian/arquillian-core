@@ -19,7 +19,7 @@ package org.jboss.arquillian.test.spi.event.suite;
 import java.lang.reflect.Method;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
-import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
+import org.jboss.arquillian.test.spi.TestClass;
 
 /**
  * Events fired After the Test method execution
@@ -48,9 +48,9 @@ public class AfterTestLifecycleEvent extends TestLifecycleEvent
       this(null, testInstance, testMethod, executor);
    }
 
-   public AfterTestLifecycleEvent(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
+   public AfterTestLifecycleEvent(TestClass testClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
    {
-      super(subSuiteClass, testInstance, testMethod, executor);
+      super(testClass, testInstance, testMethod, executor);
    }
 
 }

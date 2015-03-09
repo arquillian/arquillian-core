@@ -18,6 +18,8 @@ package org.jboss.arquillian.test.spi.event.suite;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.test.spi.TestClass;
+
 /**
  * Base for events fired in the Test execution cycle.
  *
@@ -37,24 +39,18 @@ public class TestEvent extends ClassEvent
     */
    public TestEvent(Object testInstance, Method testMethod)
    {
-       this(null, testInstance, testMethod);
+       this(new TestClass(testInstance.getClass()), testInstance, testMethod);
    }
 
-   public TestEvent(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod)
+   public TestEvent(TestClass testClass, Object testInstance, Method testMethod)
    {
-      super(subSuiteClass, validateAndExtractClass(testInstance, testMethod));
+      super(testClass);
 
-      this.testInstance = testInstance;
-      this.testMethod = testMethod;
-   }
-
-   // TODO: eeehh..? 
-   private static Class<?> validateAndExtractClass(Object testInstance, Method testMethod) 
-   {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
 
-      return testInstance.getClass();
+      this.testInstance = testInstance;
+      this.testMethod = testMethod;
    }
    
    public Object getTestInstance()

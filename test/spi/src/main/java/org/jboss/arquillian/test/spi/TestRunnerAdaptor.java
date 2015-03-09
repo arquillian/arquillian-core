@@ -18,7 +18,6 @@ package org.jboss.arquillian.test.spi;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
 /**
@@ -55,7 +54,7 @@ public interface TestRunnerAdaptor
     * @param executor
     * @throws Exception
     */
-   void beforeSubSuite(SubSuiteClass subSuiteClass) throws Exception;
+   void beforeSubSuite(TestClass testClass) throws Exception;
 
    /**
     * Activate a new SubSuite.<br/>
@@ -65,7 +64,7 @@ public interface TestRunnerAdaptor
     * @param executor
     * @throws Exception
     */
-   void afterSubSuite(SubSuiteClass subSuiteClass) throws Exception;
+   void afterSubSuite(TestClass testClass) throws Exception;
 
    /**
     * Activate a new TestClass.<br/>
@@ -77,7 +76,7 @@ public interface TestRunnerAdaptor
     */
    void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
 
-   void beforeClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
+   void beforeClass(TestClass testClass, LifecycleMethodExecutor executor) throws Exception;
    
    /**
     * Deactivate the TestClass.<br/>
@@ -89,7 +88,7 @@ public interface TestRunnerAdaptor
     */
    void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
 
-   void afterClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
+   void afterClass(TestClass testClass, LifecycleMethodExecutor executor) throws Exception;
    
    /**
     * Activate a new TestInstance.<br/>
@@ -102,7 +101,7 @@ public interface TestRunnerAdaptor
     */
    void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
 
-   void before(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+   void before(TestClass testClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
    
    /**
     * Deactivate the TestInstance.<br/>
@@ -115,7 +114,7 @@ public interface TestRunnerAdaptor
     */
    void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
 
-   void after(SubSuiteClass subSuiteClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+   void after(TestClass testClass, Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
 
    /**
     * Activate a TestMethod execution.<br/>
@@ -127,7 +126,7 @@ public interface TestRunnerAdaptor
     */
    TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
 
-   TestResult test(SubSuiteClass subSuiteClass, TestMethodExecutor testMethodExecutor) throws Exception;
+   TestResult test(TestClass testClass, TestMethodExecutor testMethodExecutor) throws Exception;
 
    /**
     * Fire any custom Test Lifecycle event.<br/>

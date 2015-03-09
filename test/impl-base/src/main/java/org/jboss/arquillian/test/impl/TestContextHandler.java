@@ -40,7 +40,6 @@ import org.jboss.arquillian.test.spi.event.suite.AfterSubSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.ClassEvent;
 import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent;
-import org.jboss.arquillian.test.spi.event.suite.SubSuiteEvent.SubSuiteClass;
 import org.jboss.arquillian.test.spi.event.suite.SuiteEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
@@ -94,8 +93,8 @@ public class TestContextHandler
    public void createSubSuiteContext(@Observes(precedence = 100) EventContext<SubSuiteEvent> context)
    {
       SubSuiteContext subSuiteContext = this.subSuiteContextInstance.get();
-      SubSuiteClass subSuite = context.getEvent().getSubSuiteClass();
-      List<Class<?>> subSuiteClasses = subSuite != null ? subSuite.getSubSuiteChain():new ArrayList<Class<?>>();
+      TestClass subSuite = context.getEvent().getTestClass();
+      List<Class<?>> subSuiteClasses = subSuite != null && subSuite.isSuite() ? subSuite.getParents():new ArrayList<Class<?>>();
 
       try
       {

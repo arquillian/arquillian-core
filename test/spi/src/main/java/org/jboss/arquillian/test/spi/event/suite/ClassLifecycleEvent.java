@@ -62,10 +62,7 @@ public class ClassLifecycleEvent extends ClassEvent implements LifecycleEvent
     */
    public ClassLifecycleEvent(Class<?> testClass, LifecycleMethodExecutor executor)
    {
-      super(testClass);  
-
-      Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
-      this.executor = executor;
+      this(new TestClass(testClass), executor);
    }
 
    /**
@@ -77,14 +74,6 @@ public class ClassLifecycleEvent extends ClassEvent implements LifecycleEvent
    public ClassLifecycleEvent(TestClass testClass, LifecycleMethodExecutor executor)
    {
       super(testClass);  
-
-      Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
-      this.executor = executor;
-   }
-
-   public ClassLifecycleEvent(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor)
-   {
-      super(subSuiteClass, testClass);
 
       Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
       this.executor = executor;

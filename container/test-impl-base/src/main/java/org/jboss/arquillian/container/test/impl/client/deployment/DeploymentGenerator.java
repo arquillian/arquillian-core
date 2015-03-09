@@ -186,7 +186,7 @@ public class DeploymentGenerator
             if(ClassContainer.class.isInstance(applicationArchive)) 
             {
                ClassContainer<?> classContainer = ClassContainer.class.cast(applicationArchive);
-               classContainer.addClass(testCase.getJavaClass());
+               classContainer.addClasses(testCase.getChildren().toArray(new Class<?>[0]));
             }
          } 
          catch (UnsupportedOperationException e) 

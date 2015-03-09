@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.test.spi.event.suite;
 
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 
 /**
@@ -33,13 +34,13 @@ public class Test extends TestEvent
     */
    public Test(TestMethodExecutor testMethodExecutor)
    {
-       this(null, testMethodExecutor);
+       this(new TestClass(testMethodExecutor.getInstance().getClass()), testMethodExecutor);
    }
 
-   public Test(SubSuiteClass subSuiteClass, TestMethodExecutor testMethodExecutor)
+   public Test(TestClass testClass, TestMethodExecutor testMethodExecutor)
    {
       // TODO: how to validate testMethodExecutor
-      super(subSuiteClass, testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
+      super(testClass, testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
 
       //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
 

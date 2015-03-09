@@ -17,6 +17,7 @@
 package org.jboss.arquillian.test.spi.event.suite;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestClass;
 
 /**
  * Event fired Before the Class execution.
@@ -44,7 +45,8 @@ public class BeforeClass extends ClassLifecycleEvent
       super(testClass, executor);
    }
 
-   public BeforeClass(SubSuiteClass subSuiteClass, Class<?> testClass, LifecycleMethodExecutor executor) {
-       super(subSuiteClass, testClass, executor);
+   public BeforeClass(TestClass testClass, LifecycleMethodExecutor executor)
+   {
+      super(testClass, executor);
    }
 }
