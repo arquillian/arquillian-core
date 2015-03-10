@@ -12,13 +12,13 @@ public final class Runners {
         if(testClass.isAnnotationPresent(Suite.class)) {
             return new ArquillianSuiteRunner(testClass);
         }
-        return new Arquillian(testClass);
+        return new ArquillianTestRunner(testClass);
     }
 
     public static Runner runners(TestClass suiteTestClass, Class<?> testClass) throws InitializationError {
         if(testClass.isAnnotationPresent(Suite.class)) {
             return new ArquillianSuiteRunner(new TestClass(suiteTestClass, testClass));
         }
-        return new Arquillian(new TestClass(suiteTestClass, testClass));
+        return new ArquillianTestRunner(new TestClass(suiteTestClass, testClass));
     }
 }
