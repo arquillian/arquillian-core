@@ -55,20 +55,17 @@ import org.junit.runners.model.Statement;
 public class Arquillian extends BlockJUnit4ClassRunner
 {
    private TestRunnerAdaptor adaptor;
-   private TestClass suiteTestClass;
+   private TestClass testClass;
 
    public Arquillian(Class<?> testClass) throws InitializationError
    {
-      this(new TestClass(testClass), testClass);
+      this(new TestClass(testClass));
    }
 
-   public Arquillian(TestClass suiteTestClass, Class<?> testClass) throws InitializationError
+   public Arquillian(TestClass testClass) throws InitializationError
    {
-      super(testClass);
-      this.suiteTestClass = suiteTestClass;
-      if(suiteTestClass.getSuiteClass() != testClass) {
-          this.suiteTestClass.addChild(testClass);
-      }
+      super(testClass.getJavaClass());
+      this.testClass = testClass;
       if(State.isRunningInEclipse()) {
           State.runnerStarted();
       }
@@ -210,7 +207,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          public void evaluate() throws Throwable
          {
             adaptor.beforeClass(
-                  suiteTestClass,
+                  testClass,
                   new StatementLifecycleExecutor(onlyBefores));
             originalStatement.evaluate();
          }
@@ -232,7 +229,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                new Statement() { @Override public void evaluate() throws Throwable 
                {
                    adaptor.afterClass(
-                        suiteTestClass,
+                        testClass,
                         new StatementLifecycleExecutor(onlyAfters));
                }}
             );
@@ -250,7 +247,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          public void evaluate() throws Throwable
          {
              adaptor.before(
-                  suiteTestClass,
+                  testClass,
                   target,
                   method.getMethod(),
                   new StatementLifecycleExecutor(onlyBefores));
@@ -274,7 +271,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                new  Statement() { @Override public void evaluate() throws Throwable
                {
                   adaptor.after(
-                          suiteTestClass,
+                          testClass,
                           target,
                           method.getMethod(),
                           new StatementLifecycleExecutor(onlyAfters));
@@ -321,7 +318,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                    List<Throwable> exceptions = new ArrayList<Throwable>();
 
                    try {
-                       adaptor.fireCustomLifecycle(new BeforeRules(suiteTestClass, test, method.getMethod(), new LifecycleMethodExecutor() {
+                       adaptor.fireCustomLifecycle(new BeforeRules(testClass, test, method.getMethod(), new LifecycleMethodExecutor() {
                            @Override
                            public void invoke() throws Throwable {
                                integer.incrementAndGet();
@@ -343,7 +340,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                    }
                    finally {
                        try {
-                           adaptor.fireCustomLifecycle(new AfterRules(suiteTestClass, test, method.getMethod(), LifecycleMethodExecutor.NO_OP));
+                           adaptor.fireCustomLifecycle(new AfterRules(testClass, test, method.getMethod(), LifecycleMethodExecutor.NO_OP));
                        } catch(Throwable t) {
                            State.caughtExceptionAfterJunit(t);
                            exceptions.add(t);
@@ -373,7 +370,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
          @Override
          public void evaluate() throws Throwable
          {
-            TestResult result = adaptor.test(suiteTestClass, new TestMethodExecutor()
+            TestResult result = adaptor.test(testClass, new TestMethodExecutor()
             {
                @Override
                public void invoke(Object... parameters) throws Throwable

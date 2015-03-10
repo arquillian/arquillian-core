@@ -94,7 +94,7 @@ public class TestContextHandler
    {
       SubSuiteContext subSuiteContext = this.subSuiteContextInstance.get();
       TestClass subSuite = context.getEvent().getTestClass();
-      List<Class<?>> subSuiteClasses = subSuite != null && subSuite.isSuite() ? subSuite.getParents():new ArrayList<Class<?>>();
+      List<Class<?>> subSuiteClasses = subSuite != null ? subSuite.getParentChain():new ArrayList<Class<?>>();
 
       try
       {
@@ -112,7 +112,7 @@ public class TestContextHandler
          }
          if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
          {
-             subSuiteContext.destroy(subSuite.getSuiteClass());
+             subSuiteContext.destroy(subSuite.getJavaClass());
          }
       }
    }

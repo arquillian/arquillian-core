@@ -22,14 +22,13 @@ class ArquillianSuiteRunner extends ParentRunner<Runner> {
     private List<Runner> runners;
 
     public ArquillianSuiteRunner(Class<?> testClass) throws InitializationError {
-        this(TestClass.of(null, testClass), testClass);
+        this(new TestClass(null, testClass));
     }
     
-    public ArquillianSuiteRunner(TestClass suiteTestClass, Class<?> testClass) throws InitializationError {
-        super(testClass);
-        // iffy
-        this.suiteTestClass = suiteTestClass.getSuiteClass() == testClass ? suiteTestClass:TestClass.of(suiteTestClass, testClass);
-        this.runners =  discoverChildren(this.suiteTestClass, testClass);
+    public ArquillianSuiteRunner(TestClass suiteTestClass) throws InitializationError {
+        super(suiteTestClass.getJavaClass());
+        this.suiteTestClass = suiteTestClass;
+        this.runners =  discoverChildren(suiteTestClass);
     }
 
     @Override
@@ -73,8 +72,8 @@ class ArquillianSuiteRunner extends ParentRunner<Runner> {
         child.run(notifier);
     }
 
-    public static List<Runner> discoverChildren(TestClass suiteTestClass, Class<?> testClass) {
-        if(!testClass.isAnnotationPresent(Suite.class)) {
+    public static List<Runner> discoverChildren(TestClass testClass) {
+       if(!testClass.isAnnotationPresent(Suite.class)) {
             throw new IllegalArgumentException("Missing " + Suite.class.getName() + " annotation for given TestClass " + testClass.getName());
         }
         Suite suite = testClass.getAnnotation(Suite.class);
@@ -85,7 +84,7 @@ class ArquillianSuiteRunner extends ParentRunner<Runner> {
             ResolveStrategy strategy = strategyClass.newInstance();
             
             for(Class<?> resolved : strategy.resolve(suite.value())) {
-                Runner runner = Runners.runners(suiteTestClass, resolved);
+                Runner runner = Runners.runners(testClass, resolved);
                 result.add(runner);
             }
             return result;

@@ -19,7 +19,9 @@ package org.jboss.arquillian.test.spi;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Wraps a class to be run, providing method validation and annotation
@@ -32,19 +34,22 @@ import java.util.List;
 public class TestClass {
    private TestClass parent;
    private Class<?> testClass;
-   private List<Class<?>> children;
+   private Set<TestClass> children;
 
    public TestClass(Class<?> testClass) {
       this(null, testClass);
    }
 
-   private TestClass(TestClass parent, Class<?> testClass) {
+   public TestClass(TestClass parent, Class<?> testClass) {
       if (testClass == null)
          throw new IllegalArgumentException("Null testClass");
 
-      this.children = new ArrayList<Class<?>>();
+      this.children = new HashSet<TestClass>();
       this.parent = parent;
       this.testClass = testClass;
+      if(parent != null) {
+         this.parent.addChild(this);
+      }
    }
 
    /* Single TestClass */
@@ -79,51 +84,46 @@ public class TestClass {
    }
 
    /* Suite TestClass */
-   public boolean hasParent() {
-      return parent != null;
+
+   void addChild(TestClass child) {
+      if(!children.contains(child)) {
+         this.children.add(child);
+      }
    }
 
-   public Class<?> getSuiteClass() {
-      return testClass;
+   public boolean hasParent() {
+      return parent != null;
    }
 
    public TestClass getParent() {
       return parent;
    }
 
-   public List<Class<?>> getChildren() {
-      return new ArrayList<Class<?>>(children);
+   public List<Class<?>> getChildrenChain() {
+      List<Class<?>> childrenChain = new ArrayList<Class<?>>();
+      childrenChain.add(getJavaClass());
+      for(TestClass child : this.children) {
+         childrenChain.addAll(child.getChildrenChain());
+      }
+      return childrenChain;
    }
 
-   public void addChild(Class<?> childSuite) {
-      this.children.add(childSuite);
-   }
-
-   public List<Class<?>> getParents() {
+   /**
+    * @return All Parents including this order by child first.
+    */
+   public List<Class<?>> getParentChain() {
       List<Class<?>> all = new ArrayList<Class<?>>();
-      all.add(testClass);
+      if(this.isSuite()) {
+         all.add(testClass);
+      }
       TestClass parent = this;
       while ((parent = parent.getParent()) != null) {
-         all.add(parent.getSuiteClass());
+         all.add(parent.getJavaClass());
       }
       return all;
-   }
-
-   TestClass createChild(Class<?> suiteClass) {
-      TestClass suite = new TestClass(this, suiteClass);
-      this.addChild(suiteClass);
-      return suite;
-   }
-
-   public static TestClass of(TestClass parent, Class<?> suiteClass) {
-      if (parent == null) {
-         return new TestClass(suiteClass);
-      }
-      return parent.createChild(suiteClass);
    }
    
    public boolean isSuite() {
       return this.children.size() > 0;
    }
-
 }
