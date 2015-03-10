@@ -31,6 +31,7 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
+import org.jboss.arquillian.test.spi.annotation.SubSuiteScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SubSuiteContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
@@ -64,9 +65,11 @@ public class TestContextHandler
    @Inject
    private Instance<TestContext> testContextInstance;
 
-   @Inject
-   @ClassScoped
-   private InstanceProducer<TestClass> testClassProducer;
+   @Inject @ClassScoped
+   private InstanceProducer<TestClass> testClassProducerClass;
+
+   @Inject @SubSuiteScoped
+   private InstanceProducer<TestClass> testClassProducerSubSuite;
 
    // Since there can be multiple AfterTestLifecycleEvents (After/AfterRules)
    // and we don't know which is the last one, perform the clean up in AfterClass.
@@ -94,13 +97,15 @@ public class TestContextHandler
    {
       SubSuiteContext subSuiteContext = this.subSuiteContextInstance.get();
       TestClass subSuite = context.getEvent().getTestClass();
-      List<Class<?>> subSuiteClasses = subSuite != null ? subSuite.getParentChain():new ArrayList<Class<?>>();
+      List<TestClass> subSuiteClasses = subSuite != null ? subSuite.getParentChain():new ArrayList<TestClass>();
 
       try
       {
          for(int i = subSuiteClasses.size()-1; i >= 0; i--) {
-             System.out.println("A: " + subSuiteClasses.get(i));
-             subSuiteContext.activate(subSuiteClasses.get(i));
+            TestClass subSuiteClass = subSuiteClasses.get(i);
+            System.out.println("A: " + subSuiteClass.getName());
+             subSuiteContext.activate(subSuiteClass.getJavaClass());
+             testClassProducerSubSuite.set(subSuiteClass);
          }
          context.proceed();
       }
@@ -108,7 +113,7 @@ public class TestContextHandler
       {
          for(int i = 0; i < subSuiteClasses.size(); i++) {
              subSuiteContext.deactivate();
-             System.out.println("D: " + subSuiteClasses.get(i));
+             System.out.println("D: " + subSuiteClasses.get(i).getName());
          }
          if (AfterSubSuite.class.isAssignableFrom(context.getEvent().getClass()))
          {
@@ -123,7 +128,7 @@ public class TestContextHandler
       try
       {
          classContext.activate(context.getEvent().getTestClass().getJavaClass());
-         testClassProducer.set(context.getEvent().getTestClass());
+         testClassProducerClass.set(context.getEvent().getTestClass());
          context.proceed();
       }
       finally

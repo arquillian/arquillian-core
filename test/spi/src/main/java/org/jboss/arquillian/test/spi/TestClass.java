@@ -111,14 +111,14 @@ public class TestClass {
    /**
     * @return All Parents including this order by child first.
     */
-   public List<Class<?>> getParentChain() {
-      List<Class<?>> all = new ArrayList<Class<?>>();
+   public List<TestClass> getParentChain() {
+      List<TestClass> all = new ArrayList<TestClass>();
       if(this.isSuite()) {
-         all.add(testClass);
+         all.add(this);
       }
       TestClass parent = this;
       while ((parent = parent.getParent()) != null) {
-         all.add(parent.getJavaClass());
+         all.add(parent);
       }
       return all;
    }
