@@ -55,7 +55,7 @@ public class TestClassTestCase {
       new TestClass(subSubRoot, Child2.class);
 
       Assert.assertEquals(3, subSubRoot.getParentChain().size());
-      Assert.assertEquals(SubSubRoot.class, subSubRoot.getParentChain().get(0));
+      Assert.assertEquals(SubSubRoot.class, subSubRoot.getParentChain().get(0).getJavaClass());
    }
 
    @Test
@@ -65,9 +65,9 @@ public class TestClassTestCase {
       TestClass subSubRoot = new TestClass(subRoot, SubSubRoot.class);
       new TestClass(subSubRoot, Child1.class);
 
-      Assert.assertEquals(SubSubRoot.class, subSubRoot.getParentChain().get(0));
-      Assert.assertEquals(SubRoot.class, subSubRoot.getParentChain().get(1));
-      Assert.assertEquals(Root.class, subSubRoot.getParentChain().get(2));
+      Assert.assertEquals(SubSubRoot.class, subSubRoot.getParentChain().get(0).getJavaClass());
+      Assert.assertEquals(SubRoot.class, subSubRoot.getParentChain().get(1).getJavaClass());
+      Assert.assertEquals(Root.class, subSubRoot.getParentChain().get(2).getJavaClass());
    }
 
    public static class Root {}
