@@ -15,7 +15,12 @@ public class PackageResolverStrategy implements ResolveStrategy {
         final List<Class<?>> result = new ArrayList<Class<?>>();
         for(final String pack : packages) {
             boolean recursive = false;
-            String[] packExp = pack.split("\\|");
+            String[] packExp = new String[2];
+            if(pack.indexOf("|") == -1) {
+               throw new IllegalArgumentException("Wrong expression, format: package.name|match-reg-exp");
+            }
+            packExp[0] = pack.substring(0, pack.indexOf("|"));
+            packExp[1] = pack.substring(pack.indexOf("|") +1, pack.length());
 
             String packageName = packExp[0];
             if(packageName.endsWith("*")) {
@@ -32,8 +37,9 @@ public class PackageResolverStrategy implements ResolveStrategy {
                 @Override
                 public void classFound(String className) {
                     try {
-                        if(classPattern.matcher(className).find()) {
-                            result.add(cl.loadClass(className));
+                        if(classPattern.matcher(className).matches()) {
+                           System.out.println("Adding class to Suite: " + className); 
+                           result.add(cl.loadClass(className));
                         }
                     } catch(Exception e) {
                         throw new RuntimeException("Could not resolve class: " + className, e);
