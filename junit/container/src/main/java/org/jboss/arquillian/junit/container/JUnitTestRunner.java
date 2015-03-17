@@ -20,14 +20,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
+import org.jboss.arquillian.junit.ArquillianTestRunner;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -63,7 +64,10 @@ public class JUnitTestRunner implements TestRunner
           for (RunListener listener : getRunListeners())
              runner.addListener(listener);
 
-          Result result = runner.run(Request.method(testClass, methodName));
+          ArquillianTestRunner directRunner = new ArquillianTestRunner(testClass);
+          directRunner.filter(Filter.matchMethodDescription(Description.createTestDescription(testClass, methodName)));
+          Result result = runner.run(directRunner);
+          //Result result = runner.run(Request.method(testClass, methodName));
 
           if (result.getFailureCount() > 0)
           {
