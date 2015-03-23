@@ -17,11 +17,21 @@
  */
 package org.jboss.arquillian.spi.client.deployment;
 
+import java.util.List;
+
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentTargetDescription;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
+import org.jboss.arquillian.core.api.Injector;
+import org.jboss.arquillian.core.spi.context.ApplicationContext;
+import org.jboss.arquillian.core.spi.context.Context;
+import org.jboss.arquillian.core.test.AbstractManagerTestBase;
+import org.jboss.arquillian.core.test.context.ManagerTest2Context;
+import org.jboss.arquillian.core.test.context.ManagerTest2ContextImpl;
+import org.jboss.arquillian.core.test.context.ManagerTestContext;
+import org.jboss.arquillian.core.test.context.ManagerTestContextImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
@@ -35,8 +45,15 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentScenarioTestCase
+public class DeploymentScenarioTestCase extends AbstractManagerTestBase
 {
+   @Override
+   protected void addContexts(List<Class<? extends Context>> contexts) {
+      super.addContexts(contexts);
+      contexts.add(ManagerTest2ContextImpl.class);
+      contexts.add(ManagerTestContextImpl.class);
+   }
+
    private final static String DEFAULT_NAME = DeploymentTargetDescription.DEFAULT.getName();
 
    /**
@@ -213,6 +230,38 @@ public class DeploymentScenarioTestCase
       // will default to Archive
       Assert.assertEquals("A", deployment.getDescription().getName());
       Assert.assertTrue(deployment.getDescription().isArchiveDeployment());
+   }
+
+   @Test
+   public void shouldLocateDeploymentsInAllActiveContexts() throws Exception {
+      // Given two different DeploymentScenarios
+      Injector injector = getManager().getContext(ApplicationContext.class).getObjectStore().get(Injector.class);
+      DeploymentScenario scenario1 = injector.inject(new DeploymentScenario());
+      scenario1.addDeployment(
+            new DeploymentDescription("A",ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+
+      DeploymentScenario scenario2 = injector.inject(new DeploymentScenario());
+      scenario2.addDeployment(
+            new DeploymentDescription("B",ShrinkWrap.create(JavaArchive.class))
+            .setTarget(TargetDescription.DEFAULT));
+
+      // When registered in two different active contexts
+      ManagerTestContext context = getManager().getContext(ManagerTestContext.class);
+      ManagerTest2Context context2 = getManager().getContext(ManagerTest2Context.class);
+
+      context.activate();
+      context.getObjectStore().add(DeploymentScenario.class, scenario1);
+
+      context2.activate("A");
+      context2.getObjectStore().add(DeploymentScenario.class, scenario2);
+
+      // Then deployment in 'other' scenario then where is was added should be found
+      Assert.assertNotNull(scenario1.deployment(new DeploymentTargetDescription("B")));
+
+      // Then when context is deactivated it should not be found
+      context2.deactivate();
+      Assert.assertNull(scenario1.deployment(new DeploymentTargetDescription("B")));
    }
 
    @Test
