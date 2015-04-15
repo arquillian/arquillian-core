@@ -51,6 +51,10 @@ public interface Deployer
    /**
     * Deploy the named deployment. <br/>
     * The operation will block until deploy is complete.
+    * <p>
+    * NOTE: The test that calls this method will run on the client side even if the annotation {@link RunAsClient} is not 
+    * declared - you cannot deploy any deployment from the container. Please use the annotation {@link RunAsClient} either 
+    * on the test method where the deploy(String name) method is called or on the whole test class.
     * 
     * @param name The name of the deployment
     */
