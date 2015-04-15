@@ -37,7 +37,7 @@ import java.io.InputStream;
  * &#64;ArquillianResource
  * private Deployer deployer;
  *
- * &#64;Test
+ * &#64;Test &#64;RunAsClient
  * public void shouldDeployX() {
  *      deployer.deploy("X");
  * }
@@ -51,6 +51,32 @@ public interface Deployer
    /**
     * Deploy the named deployment. <br/>
     * The operation will block until deploy is complete.
+    * <p>
+    * NOTE: If you want to run a test in a container, you cannot deploy a deployment from this test on the same container that the test is
+    * running in.
+    * </p>
+    * This is NOT correct for a test running in a container:<br/>
+    * <pre><code>
+    * &#64;Test &#64;OperatesOnDeployment("X")
+    * public void deployTest() {
+    *     deployer.deploy("X");
+    * }
+    * </code></pre>
+    * <p>
+    * If you run the test in this way for the very first deployment the test will be launched on the client side. If you try to redeploy
+    * a deployment from the container an exception will be thrown. In these cases please use the annotation {@link RunAsClient} either
+    * on the test method  or on the whole test class to be sure, that the test is running on the client side.
+    * </p>
+    * <p>
+    * NOTE: You can still (re)deploy a deployment on a different container than the test is running in.
+    * </p>
+    * This IS correct for a test running in a container: <br/>
+    * <pre><code>
+    * &#64;Test &#64;OperatesOnDeployment("X")
+    * public void deployTest() {
+    *     deployer.deploy("Y");
+    * }
+    * </code></pre>
     * 
     * @param name The name of the deployment
     */

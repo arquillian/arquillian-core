@@ -18,6 +18,7 @@
 package org.jboss.arquillian.container.test.impl;
 
 import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -32,6 +33,8 @@ import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProto
  */
 public final class RunModeUtils
 {
+   private static Logger log = Logger.getLogger(RunModeUtils.class.getName());
+
    private RunModeUtils() { }
    
    /**
@@ -46,20 +49,29 @@ public final class RunModeUtils
     */
    public static boolean isRunAsClient(Deployment deployment, Class<?> testClass, Method testMethod)
    {
+      boolean runMethodAsClient = testMethod.isAnnotationPresent(RunAsClient.class);
+      boolean runClassAsClient = testClass.isAnnotationPresent(RunAsClient.class);
+
       boolean runAsClient = true;
       if(deployment != null)
       {
          runAsClient =  deployment.getDescription().testable() ? false:true;
          runAsClient =  deployment.isDeployed() ? runAsClient:true;
-         
-         if(testMethod.isAnnotationPresent(RunAsClient.class))
+
+         if(runMethodAsClient)
          {
             runAsClient = true;
          }
-         else if(testClass.isAnnotationPresent(RunAsClient.class))
+         else if(runClassAsClient)
          {
             runAsClient = true;
          }
+      }
+      else if (!runMethodAsClient && !runClassAsClient)
+      {
+          log.warning("The test method \"" + testClass.getCanonicalName() + " " + testMethod.getName()
+              + "\" will run on the client side - there is no running deployment yet. Please use the "
+              + "annotation @RunAsClient");
       }
       return runAsClient;
    }
