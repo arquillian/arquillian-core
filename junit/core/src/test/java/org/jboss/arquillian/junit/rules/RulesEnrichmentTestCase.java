@@ -104,7 +104,7 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
         fire(new BeforeRules(test, testClass, statement, test.getClass().getMethod("verifyEnrichment"), testLifecycleMethodExecutor));
         testLifecycleMethodExecutor.invoke();
 
-        verifyEventFired();
+        verifyEventFired(2);
     }
 
     private void testMethodRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable
@@ -122,13 +122,14 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
         fire(new BeforeRules(test, testClass, statement, testMethod, testLifecycleMethodExecutor));
         testLifecycleMethodExecutor.invoke();
 
-        verifyEventFired();
+        verifyEventFired(2);
     }
 
-    private void verifyEventFired()
+    private void verifyEventFired(int numberOfRules)
     {
-        assertEventFired(BeforeEnrichment.class, 1);
-        assertEventFired(AfterEnrichment.class, 1);
+        // +2 since the StatementInstance and TestInstance is included
+        assertEventFired(BeforeEnrichment.class, numberOfRules + 2);
+        assertEventFired(AfterEnrichment.class, numberOfRules + 2);
     }
 
     private Statement getInvokingStatement(final AbstractRuleStatementEnrichment test)

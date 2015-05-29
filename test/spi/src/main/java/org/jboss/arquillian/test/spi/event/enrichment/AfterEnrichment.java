@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.test.spi.event.enrichment;
 
+import java.lang.reflect.Method;
+
 /**
  * AfterEnrichment
  *
@@ -25,5 +27,11 @@ package org.jboss.arquillian.test.spi.event.enrichment;
  */
 public class AfterEnrichment extends EnrichmentEvent
 {
+	public AfterEnrichment(Object instance) {
+		super(instance);
+	}
 
+    public AfterEnrichment(Object instance, Method method) {
+        super(instance, method);
+    }
 }

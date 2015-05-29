@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.test.spi.event.enrichment;
 
+import java.lang.reflect.Method;
+
 import org.jboss.arquillian.core.spi.event.Event;
 
 /**
@@ -27,5 +29,24 @@ import org.jboss.arquillian.core.spi.event.Event;
  */
 public class EnrichmentEvent implements Event
 {
+	private Object instance;
+    private Method method;
 
+	public EnrichmentEvent(Object instance) {
+		this.instance = instance;
+	}
+
+    public EnrichmentEvent(Object instance, Method method) {
+        this.instance = instance;
+        this.method = method;
+    }
+
+	public Object getInstance() {
+		return instance;
+	}
+
+	// Could be null
+	public Method getMethod() {
+        return method;
+    }
 }

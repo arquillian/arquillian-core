@@ -73,18 +73,16 @@ public class RulesEnricher
             toEnrich.add(event.getStatementInstance());
         }
 
-        enrichmentEvent.fire(new BeforeEnrichment());
-
         Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
-        for (TestEnricher enricher : testEnrichers)
+        for (Object instance : toEnrich)
         {
-            for (Object instance : toEnrich)
+            enrichmentEvent.fire(new BeforeEnrichment(instance));
+            for (TestEnricher enricher : testEnrichers)
             {
                 enricher.enrich(instance);
             }
-
+            enrichmentEvent.fire(new AfterEnrichment(instance));
         }
-        enrichmentEvent.fire(new AfterEnrichment());
     }
 
     /**

@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.test.impl;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 import org.jboss.arquillian.core.api.Event;
@@ -45,12 +46,14 @@ public class TestInstanceEnricher
    
    public void enrich(@Observes Before event) throws Exception
    {
-      enrichmentEvent.fire(new BeforeEnrichment());
+      Object instance = event.getTestInstance();
+      Method method = event.getTestMethod();
+      enrichmentEvent.fire(new BeforeEnrichment(instance, method));
       Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
       for(TestEnricher enricher : testEnrichers) 
       {
-         enricher.enrich(event.getTestInstance());
+         enricher.enrich(instance);
       }
-      enrichmentEvent.fire(new AfterEnrichment());
+      enrichmentEvent.fire(new AfterEnrichment(instance, method));
    }
 }
