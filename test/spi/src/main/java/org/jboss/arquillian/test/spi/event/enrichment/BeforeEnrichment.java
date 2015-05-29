@@ -25,5 +25,7 @@ package org.jboss.arquillian.test.spi.event.enrichment;
  */
 public class BeforeEnrichment extends EnrichmentEvent
 {
-
+	public BeforeEnrichment(Object instance) {
+		super(instance);
+	}
 }
