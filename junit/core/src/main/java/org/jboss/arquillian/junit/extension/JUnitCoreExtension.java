@@ -17,12 +17,14 @@
 package org.jboss.arquillian.junit.extension;
 
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.junit.RulesEnricher;
 
 class JUnitCoreExtension implements LoadableExtension {
 
     @Override
     public void register(ExtensionBuilder builder) {
         builder.observer(UpdateTestResultBeforeAfter.class);
+        builder.observer(RulesEnricher.class);
     }
 
 }
