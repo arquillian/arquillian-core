@@ -307,14 +307,18 @@ public class Arquillian extends BlockJUnit4ClassRunner
                    final AtomicInteger integer = new AtomicInteger();
                    List<Throwable> exceptions = new ArrayList<Throwable>();
 
-                   try {
-                       adaptor.fireCustomLifecycle(new BeforeRules(test, method.getMethod(), new LifecycleMethodExecutor() {
-                           @Override
-                           public void invoke() throws Throwable {
-                               integer.incrementAndGet();
-                               stmtWithRules.evaluate();
-                           }
-                       }));
+                   try
+                   {
+                       adaptor.fireCustomLifecycle(new BeforeRules(test, getTestClass(), stmtWithRules, method.getMethod(),
+                           new LifecycleMethodExecutor()
+                           {
+                               @Override
+                               public void invoke() throws Throwable
+                               {
+                                   integer.incrementAndGet();
+                                   stmtWithRules.evaluate();
+                               }
+                           }));
                        // If AroundRules (includes lifecycles) were not executed, invoke only lifecycles+test
                        if(integer.get() == 0) {
                            try {
