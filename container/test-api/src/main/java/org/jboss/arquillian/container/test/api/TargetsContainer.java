@@ -55,7 +55,7 @@ import java.lang.annotation.Retention;
  * &lt;/arquillian&gt;
  * </code></pre>
  *
- * If a container is defined as default=true in configuration, the @TagetsContainer annotation can be emitted
+ * If a container is defined as default=true in configuration, the @TargetsContainer annotation can be emitted
  * when targeting that container. Only one container can be set as default within a group.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
