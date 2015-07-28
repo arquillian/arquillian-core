@@ -35,8 +35,6 @@ class FileUtils
    static Properties loadArquillianProperties(String propertyName, String defaultName)
    {
       Properties props = new Properties();
-      props.putAll(System.getProperties());
-
       FileName resourceName = getConfigFileName(propertyName, defaultName);
       final InputStream input = loadResource(resourceName);
       if(input != null)
@@ -50,6 +48,7 @@ class FileUtils
             throw new RuntimeException("Could not load Arquillian properties file, " + resourceName.getName(), e);
          }
       }
+      props.putAll(System.getProperties());
       return props;
    }
 

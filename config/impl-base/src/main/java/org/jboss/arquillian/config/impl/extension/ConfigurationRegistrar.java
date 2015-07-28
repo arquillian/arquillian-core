@@ -19,6 +19,8 @@ package org.jboss.arquillian.config.impl.extension;
 import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
 
 import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -42,6 +44,8 @@ public class ConfigurationRegistrar
    public static final String ARQUILLIAN_PROP_PROPERTY = "arquillian.properties";
    public static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
 
+   private Map<String, String> systemEnvironmentVars = System.getenv();
+
    @Inject @ApplicationScoped
    private InstanceProducer<ArquillianDescriptor> descriptorInst;
 
@@ -49,13 +53,22 @@ public class ConfigurationRegistrar
    {
       final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
 
+      //First arquillian.xml is resolved
       final ArquillianDescriptor descriptor = resolveDescriptor(input);
 
-      final ArquillianDescriptor resolvedDesc = resolveSystemProperties(descriptor);
+      //Second arquillian.properties file and system properties are applied
+      final PropertiesParser propertiesParser = new PropertiesParser();
+      propertiesParser.addProperties(
+              descriptor,
+              FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
 
-      new PropertiesParser().addProperties(
-            resolvedDesc,
-            FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
+      //Fourth arquillian properties from system environment variables are applied
+      Properties envProperties = new Properties();
+      envProperties.putAll(systemEnvironmentVars);
+      propertiesParser.addProperties(descriptor, envProperties);
+
+      //Placeholder resolver
+      final ArquillianDescriptor resolvedDesc = resolveSystemProperties(descriptor);
 
       descriptorInst.set(resolvedDesc);
    }
@@ -76,4 +89,9 @@ public class ConfigurationRegistrar
       return descriptor;
    }
 
+   //testing purposes
+   void setEnvironmentVariables(Map<String, String> variables)
+   {
+      this.systemEnvironmentVars = variables;
+   }
 }
