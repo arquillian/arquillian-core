@@ -27,6 +27,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * ConfigurationRegistrarTestCase
  *
@@ -64,22 +67,20 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase
    public void shouldBeAbleToLoadConfiguredXMLFileResource() throws Exception
    {
       validate(
-            ConfigurationRegistrar.ARQUILLIAN_XML_PROPERTY,
-            "src/test/resources/registrar_tests/named_arquillian.xml",
-            new AssertCallback()
-            {
-               @Override
-               public void validate()
-               {
-                  registrar.loadConfiguration(new ManagerStarted());
-                  ArquillianDescriptor desc = descInst.get();
+              ConfigurationRegistrar.ARQUILLIAN_XML_PROPERTY,
+              "src/test/resources/registrar_tests/named_arquillian.xml",
+              new AssertCallback() {
+                  @Override
+                  public void validate() {
+                      registrar.loadConfiguration(new ManagerStarted());
+                      ArquillianDescriptor desc = descInst.get();
 
-                  Assert.assertEquals(1, desc.getContainers().size());
-                  Assert.assertEquals("A", desc.getContainers().get(0).getContainerName());
-                  // verify mode = class, override test will set it to suite
-                  Assert.assertEquals("class", desc.getContainers().get(0).getMode());
-               }
-            });
+                      Assert.assertEquals(1, desc.getContainers().size());
+                      Assert.assertEquals("A", desc.getContainers().get(0).getContainerName());
+                      // verify mode = class, override test will set it to suite
+                      Assert.assertEquals("class", desc.getContainers().get(0).getMode());
+                  }
+              });
    }
 
    @Test
@@ -210,21 +211,19 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase
                public void validate()
                {
                   ConfigurationRegistrarTestCase.validate(
-                        "arq.container.A.mode",
-                        "suite",
-                        new AssertCallback()
-                        {
-                           @Override
-                           public void validate()
-                           {
-                              registrar.loadConfiguration(new ManagerStarted());
-                              ArquillianDescriptor desc = descInst.get();
+                          "arq.container.A.mode",
+                          "suite",
+                          new AssertCallback() {
+                              @Override
+                              public void validate() {
+                                  registrar.loadConfiguration(new ManagerStarted());
+                                  ArquillianDescriptor desc = descInst.get();
 
-                              Assert.assertEquals(1, desc.getContainers().size());
-                              Assert.assertEquals("A", desc.getContainers().get(0).getContainerName());
-                              Assert.assertEquals("suite", desc.getContainers().get(0).getMode());
-                           }
-                        });
+                                  Assert.assertEquals(1, desc.getContainers().size());
+                                  Assert.assertEquals("A", desc.getContainers().get(0).getContainerName());
+                                  Assert.assertEquals("suite", desc.getContainers().get(0).getMode());
+                              }
+                          });
                }
             });
    }
@@ -289,6 +288,41 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase
                         });
                }
             });
+   }
+
+   @Test
+   public void shouldToOverrideToPropertiesWithSystemEnvironment() throws Exception
+   {
+       validate(
+               ConfigurationRegistrar.ARQUILLIAN_XML_PROPERTY,
+               "registrar_tests/named_arquillian.xml",
+               new AssertCallback()
+               {
+                   @Override
+                   public void validate()
+                   {
+                       ConfigurationRegistrarTestCase.validate(
+                               ConfigurationRegistrar.ARQUILLIAN_PROP_PROPERTY,
+                               "registrar_tests/override_named_arquillian.properties",
+                               new AssertCallback()
+                               {
+                                   @Override
+                                   public void validate()
+                                   {
+                                       Map<String, String> envVars = new HashMap<String, String>();
+                                       envVars.put("arq.container.A.mode", "none");
+                                       registrar.setEnvironmentVariables(envVars);
+                                       registrar.loadConfiguration(new ManagerStarted());
+
+                                       ArquillianDescriptor desc = descInst.get();
+
+                                       Assert.assertEquals(1, desc.getContainers().size());
+                                       Assert.assertEquals("A", desc.getContainers().get(0).getContainerName());
+                                       Assert.assertEquals("none", desc.getContainers().get(0).getMode());
+                                   }
+                               });
+                   }
+               });
    }
 
    static void validate(String property, String value, AssertCallback callback)
