@@ -39,7 +39,8 @@ public final class ServletUtil
    
    public static URI determineBaseURI(ServletProtocolConfiguration config, HTTPContext context, String servletName)
    {
-      String address = config.getHost();
+	  String scheme = config.getScheme();
+      String host = config.getHost();
       Integer port = config.getPort();
 
       // TODO: can not set contextRoot in config, change to prefixContextRoot
@@ -49,9 +50,13 @@ public final class ServletUtil
       if(servlet != null)
       {
          // use the context where the Arquillian servlet is found
-         if(address == null)
+         if(scheme == null)
          {
-            address = context.getHost();
+            scheme = "http";
+         }
+         if(host == null)
+         {
+            host = context.getHost();
          }
          if(port == null)
          {
@@ -65,7 +70,7 @@ public final class ServletUtil
               servletName + " not found. " +
               "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
       }
-      return URI.create("http://" + address + ":" + port + contextRoot);
+      return URI.create(scheme + "://" + host + ":" + port + contextRoot);
    }
 
    public static String calculateContextRoot(String archiveName)

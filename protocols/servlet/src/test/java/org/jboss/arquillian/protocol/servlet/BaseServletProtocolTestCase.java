@@ -58,6 +58,7 @@ public class BaseServletProtocolTestCase
    public void shouldOverrideMetadata() throws Exception
    {
       ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+      config.setScheme("https");
       config.setHost("10.10.10.1");
       config.setPort(90);
       
@@ -69,7 +70,7 @@ public class BaseServletProtocolTestCase
       ServletURIHandler handler = new ServletURIHandler(config, to(testContext));
       URI result = handler.locateTestServlet(testMethod);
 
-      Assert.assertEquals("http://10.10.10.1:90/test", result.toString());
+      Assert.assertEquals("https://10.10.10.1:90/test", result.toString());
    }
    
    @Test
@@ -95,6 +96,7 @@ public class BaseServletProtocolTestCase
    public void shouldOverrideMatchNamedTargetedContext() throws Exception
    {
       ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+      config.setScheme("https");
       config.setHost("10.10.10.1");
       config.setPort(90);
       
@@ -109,7 +111,7 @@ public class BaseServletProtocolTestCase
       ServletURIHandler handler = new ServletURIHandler(config, to(testContextOne, testContextTwo));
       URI result = handler.locateTestServlet(testMethod);
 
-      Assert.assertEquals("http://10.10.10.1:90/testX", result.toString());
+      Assert.assertEquals("https://10.10.10.1:90/testX", result.toString());
    }
    
    @Test(expected = IllegalArgumentException.class)
@@ -149,7 +151,6 @@ public class BaseServletProtocolTestCase
    @SuppressWarnings("unused")
    private void testNoAnnotations() {}
 
-   @SuppressWarnings("unused")
    @TargetsContainer("X")
    private void testTargeted() {}
 }

@@ -28,10 +28,27 @@ import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfigura
  */
 public class ServletProtocolConfiguration implements ProtocolConfiguration
 {
+   private String scheme = null;
    private String host = null;
    private Integer port = null;
    private String contextRoot = null;;
    private Integer pullInMilliSeconds = 100;
+   
+   /**
+    * @return the scheme
+    */
+   public String getScheme()
+   {
+      return scheme;
+   }
+
+   /**
+    * @param scheme the scheme to set
+    */
+   public void setScheme(String scheme)
+   {
+      this.scheme = scheme;
+   }
    
    /**
     * @return the host
@@ -83,7 +100,7 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration
 
    public URI getBaseURI()
    {
-      return URI.create("http://" + host + ":" + port + "/" + contextRoot);
+      return URI.create(scheme + "://" + host + ":" + port + "/" + contextRoot);
    }
 
    /**
