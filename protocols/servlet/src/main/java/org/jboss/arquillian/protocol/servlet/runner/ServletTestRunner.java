@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,14 +61,21 @@ public class ServletTestRunner extends HttpServlet
    public static final String CMD_NAME_TEST = "test";
    public static final String CMD_NAME_EVENT = "event";
 
+   private static ThreadLocal<ServletContext> currentServletContext;
+
    static ConcurrentHashMap<String, Command<?>> events;
    static ThreadLocal<String> currentCall;
+
+   public static ServletContext getCurrentServletContext() {
+      return currentServletContext.get();
+   }
 
    @Override
    public void init() throws ServletException
    {
       events = new ConcurrentHashMap<String, Command<?>>();
       currentCall = new ThreadLocal<String>();
+      currentServletContext = new ThreadLocal<ServletContext>();
    }
    
    @Override
@@ -75,6 +83,7 @@ public class ServletTestRunner extends HttpServlet
    {
       events.clear();
       currentCall.remove();
+      currentServletContext.remove();
    }
 
    @Override
@@ -117,7 +126,10 @@ public class ServletTestRunner extends HttpServlet
          {
             cmd = request.getParameter(PARA_CMD_NAME);
          }
-   
+
+         if(currentServletContext.get() == null) {
+            currentServletContext.set(request.getServletContext());
+         }
          currentCall.set(className + methodName);
          
          if(CMD_NAME_TEST.equals(cmd))
