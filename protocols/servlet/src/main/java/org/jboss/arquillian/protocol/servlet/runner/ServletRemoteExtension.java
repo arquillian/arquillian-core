@@ -19,6 +19,7 @@ package org.jboss.arquillian.protocol.servlet.runner;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * ServletRemoteExtension
@@ -32,5 +33,7 @@ public class ServletRemoteExtension implements RemoteLoadableExtension
    public void register(ExtensionBuilder builder)
    {
       builder.service(CommandService.class, ServletCommandService.class);
+      builder.service(ResourceProvider.class, ServletContextResourceProvider.class);
+      builder.observer(ServletContextRegistrar.class);
    }
 }

@@ -19,6 +19,8 @@ package org.jboss.arquillian.protocol.servlet;
 
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.protocol.servlet.runner.ServletContextResourceProvider;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * ServletExtension
@@ -33,5 +35,9 @@ public class ServletExtension implements LoadableExtension
    {
       builder.service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol.class)
              .service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_3.ServletProtocol.class);
+
+      if(Validate.classExists("javax.servlet.ServletContext")) {
+             builder.service(ResourceProvider.class, ServletContextResourceProvider.class);
+      }
    }
 }
