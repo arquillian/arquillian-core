@@ -33,6 +33,7 @@ public class ServletRemoteExtension implements RemoteLoadableExtension
    public void register(ExtensionBuilder builder)
    {
       builder.service(CommandService.class, ServletCommandService.class);
-      builder.service(ResourceProvider.class, ServletContextProvider.class);
+      builder.service(ResourceProvider.class, ServletContextResourceProvider.class);
+      builder.observer(ServletContextRegistrar.class);
    }
 }

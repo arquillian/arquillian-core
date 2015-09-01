@@ -32,23 +32,21 @@ import java.lang.annotation.Annotation;
  *
  * @author asotobu
  */
-public class ServletContextClientResourceProvider extends OperatesOnDeploymentAwareProvider {
+public class ServletContextResourceProvider extends OperatesOnDeploymentAwareProvider
+{
 
     @Inject
     Instance<ServletContext> servletContextInstance;
 
     @Override
-    public boolean canProvide(Class<?> type) {
+    public boolean canProvide(Class<?> type)
+    {
         return javax.servlet.ServletContext.class.isAssignableFrom(type);
     }
 
     @Override
-    public Object doLookup(ArquillianResource arquillianResource, Annotation... annotations) {
-
-        if(servletContextInstance.get() == null) {
-            throw new IllegalStateException("ServletContext is null");
-        }
-
+    public Object doLookup(ArquillianResource arquillianResource, Annotation... annotations)
+    {
         return servletContextInstance.get();
     }
 }
