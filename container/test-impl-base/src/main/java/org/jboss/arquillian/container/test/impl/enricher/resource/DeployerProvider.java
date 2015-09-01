@@ -45,6 +45,6 @@ public class DeployerProvider implements ResourceProvider
    @Override
    public boolean canProvide(Class<?> type)
    {
-      return Deployer.class.isAssignableFrom(type);
+      return type.isAssignableFrom(Deployer.class);
    }
 }

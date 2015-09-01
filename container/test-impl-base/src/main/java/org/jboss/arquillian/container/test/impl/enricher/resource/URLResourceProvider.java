@@ -46,7 +46,7 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
    @Override
    public boolean canProvide(Class<?> type)
    {
-      return URL.class.isAssignableFrom(type);
+      return type.isAssignableFrom(URL.class);
    }
 
    @Override

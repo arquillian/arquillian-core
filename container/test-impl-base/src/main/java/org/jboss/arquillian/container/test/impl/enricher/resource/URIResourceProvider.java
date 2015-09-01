@@ -53,6 +53,6 @@ public class URIResourceProvider extends URLResourceProvider
    @Override
    public boolean canProvide(Class<?> type)
    {
-      return URI.class.isAssignableFrom(type);
+      return type.isAssignableFrom(URI.class);
    }
 }

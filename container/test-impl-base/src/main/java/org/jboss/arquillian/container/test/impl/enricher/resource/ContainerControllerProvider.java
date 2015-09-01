@@ -51,6 +51,6 @@ public class ContainerControllerProvider implements ResourceProvider
    @Override
    public boolean canProvide(Class<?> type)
    {
-      return ContainerController.class.isAssignableFrom(type);
+      return type.isAssignableFrom(ContainerController.class);
    }
 }
