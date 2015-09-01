@@ -53,7 +53,7 @@ public class ProtocolTestCase extends AbstractServerBase
             "No Exception should have been thrown",
             result.getThrowable());
    }
-   
+
    @Test
    public void shouldReturnThrownException() throws Exception 
    {
