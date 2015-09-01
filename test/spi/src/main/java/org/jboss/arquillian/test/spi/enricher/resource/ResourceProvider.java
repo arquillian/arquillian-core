@@ -47,7 +47,7 @@ public interface ResourceProvider
      */
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
-    static @interface ClassInjection
+    @interface ClassInjection
     {
     }
 
@@ -60,7 +60,7 @@ public interface ResourceProvider
      */
     @Documented
     @Retention(RUNTIME)
-    static @interface MethodInjection
+    @interface MethodInjection
     {
     }
 }

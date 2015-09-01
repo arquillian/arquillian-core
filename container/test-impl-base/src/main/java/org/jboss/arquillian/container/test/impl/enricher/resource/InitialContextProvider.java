@@ -46,6 +46,6 @@ public class InitialContextProvider extends OperatesOnDeploymentAwareProvider
    @Override
    public boolean canProvide(Class<?> type)
    {
-      return Context.class.isAssignableFrom(type) || InitialContext.class.isAssignableFrom(type);
+      return type.isAssignableFrom(Context.class) || type.isAssignableFrom(InitialContext.class);
    }
 }

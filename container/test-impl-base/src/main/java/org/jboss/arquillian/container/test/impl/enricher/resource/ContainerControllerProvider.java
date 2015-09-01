@@ -36,21 +36,15 @@ public class ContainerControllerProvider implements ResourceProvider
    @Inject
    private Instance<ContainerController> controller;
    
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.testenricher.arquillian.ResourceProvider#lookup(org.jboss.arquillian.api.ArquillianResource)
-    */
    @Override
    public Object lookup(ArquillianResource resource, Annotation... qualifiers)
    {
       return controller.get();
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider#canProvide(java.lang.Class)
-    */
    @Override
    public boolean canProvide(Class<?> type)
    {
-      return ContainerController.class.isAssignableFrom(type);
+      return type.isAssignableFrom(ContainerController.class);
    }
 }
