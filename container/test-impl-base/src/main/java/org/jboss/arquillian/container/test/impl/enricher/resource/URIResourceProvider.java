@@ -38,7 +38,7 @@ public class URIResourceProvider extends URLResourceProvider
       Object object = super.lookup(resource, qualifiers);
       if(object == null)
       {
-         return object;
+         return null;
       }
       try
       {
