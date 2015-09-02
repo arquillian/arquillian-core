@@ -32,6 +32,7 @@ import org.jboss.arquillian.container.test.impl.deployment.ArquillianDeploymentA
 import org.jboss.arquillian.container.test.impl.enricher.resource.ContainerControllerProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.DeployerProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.InitialContextProvider;
+import org.jboss.arquillian.container.test.impl.enricher.resource.RemoteResourceCommandObserver;
 import org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
 import org.jboss.arquillian.container.test.impl.execution.ClientBeforeAfterLifecycleEventExecuter;
@@ -95,7 +96,8 @@ public class ContainerTestExtension implements LoadableExtension
              .observer(LocalTestExecuter.class)
              .observer(RemoteTestExecuter.class)
              .observer(DeploymentCommandObserver.class)
-             .observer(ContainerCommandObserver.class);
+             .observer(ContainerCommandObserver.class)
+             .observer(RemoteResourceCommandObserver.class);
    }
 
 }

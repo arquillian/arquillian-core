@@ -20,10 +20,10 @@ package org.jboss.arquillian.container.test.impl;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerContainerControllerCreator;
 import org.jboss.arquillian.container.test.impl.client.deployment.ContainerDeployerCreator;
 import org.jboss.arquillian.container.test.impl.enricher.resource.ContainerControllerProvider;
+import org.jboss.arquillian.container.test.impl.enricher.resource.ContainerURIResourceProvider;
+import org.jboss.arquillian.container.test.impl.enricher.resource.ContainerURLResourceProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.DeployerProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.InitialContextProvider;
-import org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider;
-import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;
 import org.jboss.arquillian.container.test.impl.execution.AfterLifecycleEventExecuter;
 import org.jboss.arquillian.container.test.impl.execution.BeforeLifecycleEventExecuter;
 import org.jboss.arquillian.container.test.impl.execution.ContainerTestExecuter;
@@ -45,8 +45,8 @@ public class ContainerTestRemoteExtension extends TestExtension implements Remot
    {
       super.register(builder);
       
-      builder.service(ResourceProvider.class, URLResourceProvider.class)
-             .service(ResourceProvider.class, URIResourceProvider.class)
+      builder.service(ResourceProvider.class, ContainerURLResourceProvider.class)
+             .service(ResourceProvider.class, ContainerURIResourceProvider.class)
              .service(ResourceProvider.class, DeployerProvider.class)
              .service(ResourceProvider.class, InitialContextProvider.class)
              .service(ResourceProvider.class, ContainerControllerProvider.class);

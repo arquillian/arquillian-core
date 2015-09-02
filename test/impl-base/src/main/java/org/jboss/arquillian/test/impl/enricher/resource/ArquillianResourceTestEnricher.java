@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.test.impl.enricher.resource;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -59,14 +60,7 @@ public class ArquillianResourceTestEnricher implements TestEnricher
             checkPresentScopeInjection(qualifiers, ResourceProvider.ClassInjection.class);
             checkPresentScopeInjection(qualifiers, ResourceProvider.MethodInjection.class);
 
-            ResourceProvider.ClassInjection classInjectedResource = new ResourceProvider.ClassInjection()
-            {
-                @Override
-                public Class<? extends Annotation> annotationType()
-                {
-                    return ResourceProvider.ClassInjection.class;
-                }
-            };
+            ResourceProvider.ClassInjection classInjectedResource = new SerializableClassInjection();
 
             qualifiers.add(classInjectedResource);
 
@@ -108,14 +102,7 @@ public class ArquillianResourceTestEnricher implements TestEnricher
             checkPresentScopeInjection(qualifiers, ResourceProvider.ClassInjection.class);
             checkPresentScopeInjection(qualifiers, ResourceProvider.MethodInjection.class);
 
-            ResourceProvider.MethodInjection methodInjectedResource = new ResourceProvider.MethodInjection()
-            {
-                @Override
-                public Class<? extends Annotation> annotationType()
-                {
-                    return ResourceProvider.MethodInjection.class;
-                }
-            };
+            ResourceProvider.MethodInjection methodInjectedResource = new SerializableMethodInjection();
 
             qualifiers.add(methodInjectedResource);
 
@@ -202,5 +189,25 @@ public class ArquillianResourceTestEnricher implements TestEnricher
                + "with qualifiers '%s'. This annotation is not supposed to be used in your test case.",
                scope.getName(), qualifiers.toString()));
        }
+   }
+
+   public static class SerializableClassInjection implements ResourceProvider.ClassInjection, Serializable {
+
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public Class<? extends Annotation> annotationType() {
+         return ResourceProvider.ClassInjection.class;
+      }
+   }
+
+   public static class SerializableMethodInjection implements ResourceProvider.MethodInjection, Serializable {
+
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public Class<? extends Annotation> annotationType() {
+         return ResourceProvider.MethodInjection.class;
+      }
    }
 }
