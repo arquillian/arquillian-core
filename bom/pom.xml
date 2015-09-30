@@ -44,7 +44,7 @@
     <properties>
 
         <version.shrinkwrap_shrinkwrap>1.2.2</version.shrinkwrap_shrinkwrap>
-        <version.shrinkwrap_descriptors>2.0.0-alpha-7</version.shrinkwrap_descriptors>
+        <version.shrinkwrap_descriptors>2.0.0-alpha-8</version.shrinkwrap_descriptors>
         <version.shrinkwrap_resolver>2.2.0</version.shrinkwrap_resolver>
 
         <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>

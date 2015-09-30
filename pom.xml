@@ -30,7 +30,7 @@
 
         <!-- External Deps -->
         <version.shrinkwrap_shrinkwrap>1.2.2</version.shrinkwrap_shrinkwrap>
-        <version.shrinkwrap_descriptors>2.0.0-alpha-7</version.shrinkwrap_descriptors>
+        <version.shrinkwrap_descriptors>2.0.0-alpha-8</version.shrinkwrap_descriptors>
 
     </properties>
 
