@@ -127,9 +127,7 @@ public class ServletTestRunner extends HttpServlet
             cmd = request.getParameter(PARA_CMD_NAME);
          }
 
-         if(currentServletContext.get() == null) {
-            currentServletContext.set(request.getServletContext());
-         }
+         currentServletContext.set(request.getServletContext());
          currentCall.set(className + methodName);
          
          if(CMD_NAME_TEST.equals(cmd))
@@ -160,6 +158,7 @@ public class ServletTestRunner extends HttpServlet
       finally
       {
          currentCall.remove();
+         currentServletContext.remove();
       }
    }
 
