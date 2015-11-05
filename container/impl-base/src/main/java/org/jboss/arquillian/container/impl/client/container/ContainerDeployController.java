@@ -90,7 +90,7 @@ public class ContainerDeployController
             {
                 if(container.getState() != State.STARTED)
                 {
-                    throw new IllegalStateException("Trying to deploy a managed deployment " + deployment.getDescription().getName() + " to a non started managed contianer " + container.getName());
+                    throw new IllegalStateException("Trying to deploy a managed deployment " + deployment.getDescription().getName() + " to a non started managed container " + container.getName());
                 }
                 event.fire(new DeployDeployment(container, deployment));
             }
