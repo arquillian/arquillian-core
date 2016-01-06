@@ -108,6 +108,10 @@ public class JUnitTestRunner implements TestRunner
 
       @Override
       public void testFailure(Failure failure) throws Exception {
+          if (exception != null) {
+              // In case of multiple errors only keep the first exception
+              return;
+          }
           exception = State.getTestException();
           Test test = failure.getDescription().getAnnotation(Test.class);
           if ( !(test != null && test.expected() != Test.None.class))

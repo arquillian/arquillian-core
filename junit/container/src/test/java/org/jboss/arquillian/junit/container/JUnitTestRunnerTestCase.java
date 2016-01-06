@@ -19,8 +19,10 @@ package org.jboss.arquillian.junit.container;
 
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
@@ -106,10 +108,80 @@ public class JUnitTestRunnerTestCase
       Assert.assertEquals(AssertionError.class, result.getThrowable().getClass());
    }
 
+   @Test
+   public void shouldReturnExceptionThrownInBeforeToClientWhenTestFails() throws Exception
+   {
+      Exception expectedException = new Exception("Expected");
+      TestScenarios.exceptionThrownInBefore = expectedException;
+
+      Exception unexpectedException = new Exception("Not expected");
+      TestScenarios.exceptionThrownInAfter = unexpectedException;
+
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldFailOnException");
+
+      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+      Assert.assertSame(expectedException, result.getThrowable());
+   }
+
+   @Test
+   public void shouldReturnAssertionErrorToClientWhenAfterThrowsException() throws Exception
+   {
+      Exception unexpectedException = new Exception("Not expected");
+      TestScenarios.exceptionThrownInAfter = unexpectedException;
+
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldFailOnException");
+
+      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+      Assert.assertNotNull(result.getThrowable());
+      Assert.assertEquals(AssertionError.class, result.getThrowable().getClass());
+   }
+
+   @Test
+   public void shouldReturnExceptionThrownInAfterClientWhenTestSucceeds() throws Exception
+   {
+      Exception expectedException = new Exception("Expected");
+      TestScenarios.exceptionThrownInAfter = expectedException;
+
+      JUnitTestRunner runner = new JUnitTestRunner();
+      TestResult result = runner.execute(TestScenarios.class, "shouldSucceed");
+
+      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+      Assert.assertSame(expectedException, result.getThrowable());
+   }
+
    public static class TestScenarios {
+
+       public static Exception exceptionThrownInBefore;
+
+       public static Exception exceptionThrownInAfter;
 
        @Rule
        public ExpectedException e = ExpectedException.none();
+
+       @Before
+       public void throwExceptionInBefore() throws Exception {
+           if (exceptionThrownInBefore != null) {
+               Exception e = exceptionThrownInBefore;
+               exceptionThrownInBefore = null;
+               throw e;
+           }
+       }
+
+       @After
+       public void throwExceptionInAfter() throws Exception {
+           if (exceptionThrownInAfter != null) {
+               Exception e = exceptionThrownInAfter;
+               exceptionThrownInAfter = null;
+               throw e;
+           }
+       }
+
+       @Test
+       public void shouldSucceed() {
+           Assert.assertTrue(true);
+       }
 
        @Test
        public void shouldSkipOnAssumption() throws Exception {
