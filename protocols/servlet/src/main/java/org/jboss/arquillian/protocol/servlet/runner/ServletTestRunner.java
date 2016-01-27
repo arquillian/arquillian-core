@@ -127,7 +127,7 @@ public class ServletTestRunner extends HttpServlet
             cmd = request.getParameter(PARA_CMD_NAME);
          }
 
-         currentServletContext.set(request.getServletContext());
+         currentServletContext.set(getServletContext());
          currentCall.set(className + methodName);
          
          if(CMD_NAME_TEST.equals(cmd))
