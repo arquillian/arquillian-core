@@ -27,5 +27,13 @@ import org.jboss.arquillian.core.spi.event.Event;
  */
 public class EnrichmentEvent implements Event
 {
+	private Object instance;
 
+	public EnrichmentEvent(Object instance) {
+		this.instance = instance;
+	}
+
+	public Object getInstance() {
+		return instance;
+	}
 }
