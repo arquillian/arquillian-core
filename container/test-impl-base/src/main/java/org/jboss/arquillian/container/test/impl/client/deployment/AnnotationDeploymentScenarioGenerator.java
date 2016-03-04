@@ -69,6 +69,16 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
       return deployments;
    }
 
+    /**
+     * Allows extensions to process or override parts of the deployment description.
+     *
+     * @param deploymentMethod      the method being processed
+     * @param deploymentDescription the current deployment description
+     */
+   protected void addtionalProcessing(Method deploymentMethod, DeploymentDescription deploymentDescription) {
+      // do nothing by default
+   }
+
    private void validate(Method deploymentMethod)
    {
       if(!Modifier.isStatic(deploymentMethod.getModifiers()))
@@ -125,7 +135,8 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
          deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
          deployment.shouldBeTestable(false); // can't test against failing deployments
       }
-      
+
+      addtionalProcessing(deploymentMethod, deployment);
       return deployment;
    }
 
