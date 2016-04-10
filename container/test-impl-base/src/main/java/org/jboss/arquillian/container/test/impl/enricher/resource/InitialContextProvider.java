@@ -32,7 +32,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextProvider extends OperatesOnDeploymentAwareProvider
+public class InitialContextProvider extends OperateOnDeploymentAwareProvider
 {
    @Inject
    private Instance<Context> initialContext;
