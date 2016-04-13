@@ -43,7 +43,7 @@ public class ClientTestInstanceEnricher extends TestInstanceEnricher
    {
       boolean runAsClient = RunModeUtils.isRunAsClient(
             this.deployment.get(),
-            event.getTestClass().getJavaClass(), 
+            event.getTestClass(),
             event.getTestMethod());
       
       if(runAsClient || RunModeUtils.isLocalContainer(container.get()))
