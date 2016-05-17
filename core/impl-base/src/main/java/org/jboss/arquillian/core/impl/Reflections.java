@@ -218,6 +218,10 @@ final class Reflections
       {
          return false;
       }
+      if (method.isBridge())
+      {
+         return false;
+      }
       if(containsAnnotation(Observes.class, method.getParameterAnnotations()[0]))
       {
          return true;
