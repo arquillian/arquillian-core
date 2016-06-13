@@ -1,11 +1,11 @@
-package org.jboss.arquillian.junit.scheduler;
-
-import java.util.Comparator;
+package org.jboss.arquillian.junit.scheduling;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
+import org.jboss.arquillian.junit.scheduling.scheduler.Scheduler;
+import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerBuilder;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -23,29 +23,11 @@ public class ArquillianScheduling extends Arquillian{
 		super(testClass);
 		
 		runtimeStatistics = StatisticsBuilder.build();
+		Scheduler scheduler = getScheduler(testClass);
 		
 		// Sorting tests
-		sort(new Sorter(new Comparator<Description>() {
-			@Override
-			public int compare(Description o1, Description o2) {
-				TestStatus o1TestStatus;
-				TestStatus o2TestStatus;
-				
-				// Gets the failures and passes of the specified test
-				o1TestStatus = runtimeStatistics.getTestStatus(o1);
-				o2TestStatus = runtimeStatistics.getTestStatus(o2);
-				
-				if(o1TestStatus == null || o2TestStatus == null){
-					return 0;
-				}
-				
-				int o1FailToPassFactor = o1TestStatus.getFailures() - o1TestStatus.getPasses();
-				int o2FailToPassFactor = o2TestStatus.getFailures() - o2TestStatus.getPasses();
-				
-				// Tests with more failures and less passes will be run first
-				return o2FailToPassFactor - o1FailToPassFactor;	
-			}
-		}));
+		filter(scheduler.getFilter());
+		sort(scheduler.getSorter());
 	}
 
 	@Override
@@ -69,5 +51,17 @@ public class ArquillianScheduling extends Arquillian{
 		super.run(notifier);
 	}
 
-	
+	public Scheduler getScheduler(Class<?> testClass){
+		ScheduleWith annotation = testClass.getAnnotation(ScheduleWith.class);
+		
+		if(annotation != null){
+			try {
+				return SchedulerBuilder.buildScheduler(annotation.value(),runtimeStatistics);
+			} catch (Exception e) {
+				return SchedulerBuilder.DEFAULT;
+			}
+		}
+		
+		return SchedulerBuilder.DEFAULT;
+	}
 }

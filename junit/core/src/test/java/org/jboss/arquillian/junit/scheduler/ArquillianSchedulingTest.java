@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass;
-import org.jboss.arquillian.junit.scheduler.ArquillianScheduling;
-import org.jboss.arquillian.junit.scheduler.Statistics;
-import org.jboss.arquillian.junit.scheduler.StatisticsBuilder;
+import org.jboss.arquillian.junit.scheduling.ArquillianScheduling;
+import org.jboss.arquillian.junit.scheduling.Statistics;
+import org.jboss.arquillian.junit.scheduling.StatisticsBuilder;
+import org.jboss.arquillian.junit.scheduling.scheduler.LatestFailedScheduler;
+import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -73,6 +75,7 @@ public class ArquillianSchedulingTest extends JUnitTestBaseClass {
 	
 
 	@RunWith(ArquillianScheduling.class)
+	@ScheduleWith(LatestFailedScheduler.class)
 	public static class FirstTestCase {
 		@Test
 		public void test1() {

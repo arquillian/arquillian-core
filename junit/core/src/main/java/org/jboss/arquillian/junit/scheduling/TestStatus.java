@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduler;
+package org.jboss.arquillian.junit.scheduling;
 
 //Keeps track of test failures and passes
 public class TestStatus {

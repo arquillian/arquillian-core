@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduler;
+package org.jboss.arquillian.junit.scheduling;
 
 import java.util.HashMap;
 import java.util.Map;

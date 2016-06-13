@@ -1,5 +1,6 @@
-package org.jboss.arquillian.junit.scheduler;
+package org.jboss.arquillian.junit.scheduling;
 
+import org.jboss.arquillian.junit.scheduling.statistics.FileStatisticsStorage;
 
 public class StatisticsBuilder {
 	private static Statistics statistics;
@@ -19,7 +20,6 @@ public class StatisticsBuilder {
 			return fileStorage.retrieve();
 		} catch (Exception e) {
 			return new Statistics(); 
-		
 		}
 	}
 }
