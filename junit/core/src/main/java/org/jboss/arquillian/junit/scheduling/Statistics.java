@@ -1,21 +1,29 @@
 package org.jboss.arquillian.junit.scheduling;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.jboss.arquillian.junit.scheduling.statistics.model.ClassStatus;
+import org.jboss.arquillian.junit.scheduling.statistics.model.TestStatus;
 import org.junit.runner.Description;
 
 public class Statistics {
-		
-	private Map<String, Map<String, TestStatus>> runStatistics =
-			new HashMap<String, Map<String, TestStatus>>();	
+
+	private Map<String,ClassStatus> runStatistics;
 	
+	public Statistics() {
+		runStatistics = new HashMap<String,ClassStatus>();
+	}
+
 	// Maps the testStatus using the description's class name and method name
 	private void recordTestMethod(Description description, TestStatus testStatus){			
-		HashMap<String, TestStatus> testStatistics = new HashMap<String,TestStatus>();
-		testStatistics.put(description.getMethodName(), testStatus);
+		ClassStatus classStatus = new ClassStatus();
+		classStatus.recordStatus(description.getMethodName(), testStatus);
 		
-		runStatistics.put(description.getClassName(), testStatistics);
+		runStatistics.put(description.getClassName(), classStatus);
 	}
 	
 	private TestStatus getPassStatus(){
@@ -34,7 +42,7 @@ public class Statistics {
 		}else{
 			TestStatus testStatus = getTestStatus(description);
 			if(testStatus == null){
-				runStatistics.get(className).put(methodName, getPassStatus());	
+				runStatistics.get(className).recordStatus(methodName, getPassStatus());	
 			}else{
 				testStatus.recordPass();
 			}	
@@ -60,11 +68,25 @@ public class Statistics {
 		String className = description.getClassName();
 		
 		if(runStatistics.containsKey(className)){
-			return runStatistics.get(className).get(description.getMethodName());	
+			return runStatistics.get(className).getStatus(description.getMethodName());
 		}
 		
-		return null;
-				
+		return null;	
 	}
 	
+	public int size(){
+		return runStatistics.size();
+	}
+	
+	public void addTestClass(String className, ClassStatus classStatus){
+		runStatistics.put(className, classStatus);
+	}
+	
+	public Set<String> getClassNames(){
+		return runStatistics.keySet();
+	}
+	
+	public List<ClassStatus> getClasses(){
+		return new ArrayList<ClassStatus>(runStatistics.values());
+	}
 }

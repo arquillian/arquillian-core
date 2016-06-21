@@ -3,7 +3,7 @@ package org.jboss.arquillian.junit.scheduling.scheduler;
 import java.util.Comparator;
 
 import org.jboss.arquillian.junit.scheduling.Statistics;
-import org.jboss.arquillian.junit.scheduling.TestStatus;
+import org.jboss.arquillian.junit.scheduling.statistics.model.TestStatus;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Sorter;

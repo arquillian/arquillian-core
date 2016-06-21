@@ -11,15 +11,16 @@ public class StatisticsBuilder {
 		statistics = stats;
 	}
 	
-	public static Statistics build() {
+	public static Statistics build() throws Exception {
 		if(statistics != null){
 			return statistics;
 		}
 		
-		try {
-			return fileStorage.retrieve();
-		} catch (Exception e) {
-			return new Statistics(); 
+		if( null != (statistics = fileStorage.retrieve())){
+			return statistics;
 		}
+		
+		return new Statistics();
+				
 	}
 }

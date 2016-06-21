@@ -4,12 +4,12 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
 import org.jboss.arquillian.junit.scheduling.scheduler.Scheduler;
 import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerBuilder;
+import org.jboss.arquillian.junit.scheduling.statistics.FileStatisticsStorage;
 import org.junit.runner.Description;
-import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
 
 /*
  * Scheduling Arquillian JUnit runner
@@ -18,8 +18,9 @@ import org.junit.runners.model.InitializationError;
 public class ArquillianScheduling extends Arquillian{
 	
 	private Statistics runtimeStatistics;
+	private final FileStatisticsStorage fileStorage = new FileStatisticsStorage();
 
-	public ArquillianScheduling(Class<?> testClass) throws NoTestsRemainException, InitializationError {
+	public ArquillianScheduling(Class<?> testClass) throws Exception {
 		super(testClass);
 		
 		runtimeStatistics = StatisticsBuilder.build();
@@ -46,20 +47,26 @@ public class ArquillianScheduling extends Arquillian{
 			public void testFailure(Failure failure) throws Exception {
 				runtimeStatistics.recordTestFailure(failure.getDescription());
 			}
+			
+			@Override
+			// Serialize recorded statistics information
+			public void testRunFinished(Result result) throws Exception {
+				try{
+					fileStorage.store(runtimeStatistics);
+				}catch(Exception err){
+					// TODO Re throw exception
+				}
+			}
 		});
 		
 		super.run(notifier);
 	}
 
-	public Scheduler getScheduler(Class<?> testClass){
+	public Scheduler getScheduler(Class<?> testClass) throws Exception{
 		ScheduleWith annotation = testClass.getAnnotation(ScheduleWith.class);
 		
 		if(annotation != null){
-			try {
-				return SchedulerBuilder.buildScheduler(annotation.value(),runtimeStatistics);
-			} catch (Exception e) {
-				return SchedulerBuilder.DEFAULT;
-			}
+			return SchedulerBuilder.buildScheduler(annotation.value(),runtimeStatistics);
 		}
 		
 		return SchedulerBuilder.DEFAULT;

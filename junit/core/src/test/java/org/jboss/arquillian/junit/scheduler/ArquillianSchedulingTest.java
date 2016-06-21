@@ -89,5 +89,4 @@ public class ArquillianSchedulingTest extends JUnitTestBaseClass {
 		public void test3() {
 		}
 	}
-	
 }

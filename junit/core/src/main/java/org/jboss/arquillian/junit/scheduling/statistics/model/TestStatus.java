@@ -1,4 +1,7 @@
-package org.jboss.arquillian.junit.scheduling;
+package org.jboss.arquillian.junit.scheduling.statistics.model;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 //Keeps track of test failures and passes
 public class TestStatus {
@@ -10,7 +13,7 @@ public class TestStatus {
 		passed = 0;
 		failures = 0;
 	}
-
+	
 	public void recordPass() {
 		passed++;
 	}
@@ -18,7 +21,7 @@ public class TestStatus {
 	public void removePass(){
 		passed--;
 	}
-
+	
 	public void recordFailure() {
 		failures++;
 	}
@@ -34,5 +37,19 @@ public class TestStatus {
 	public int getFailures() {
 		return failures;
 	}
+
+	public int getPassed() {
+		return passed;
+	}
+
+	public void setPassed(int passed) {
+		this.passed = passed;
+	}
+
+	public void setFailures(int failures) {
+		this.failures = failures;
+	}
+	
+	
 
 }
