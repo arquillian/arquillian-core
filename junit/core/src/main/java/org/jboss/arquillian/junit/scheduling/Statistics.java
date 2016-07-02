@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.jboss.arquillian.junit.scheduling.statistics.model.ClassStatus;
 import org.jboss.arquillian.junit.scheduling.statistics.model.TestStatus;
-import org.junit.runner.Description;
 
 public class Statistics {
 
@@ -19,11 +18,11 @@ public class Statistics {
 	}
 
 	// Maps the testStatus using the description's class name and method name
-	private void recordTestMethod(Description description, TestStatus testStatus){			
+	private void recordTestMethod(String className, String methodName, TestStatus testStatus){			
 		ClassStatus classStatus = new ClassStatus();
-		classStatus.recordStatus(description.getMethodName(), testStatus);
+		classStatus.recordStatus(methodName, testStatus);
 		
-		runStatistics.put(description.getClassName(), classStatus);
+		runStatistics.put(className, classStatus);
 	}
 	
 	private TestStatus getPassStatus(){
@@ -33,14 +32,11 @@ public class Statistics {
 		return testStatus;
 	}
 	
-	public void recordTestStarted(Description description)throws Exception{
-		String className = description.getClassName();
-		String methodName = description.getMethodName();
-		
+	public void recordTestStarted(String className, String methodName)throws Exception{
 		if(!runStatistics.containsKey(className)){
-			recordTestMethod(description, getPassStatus());
+			recordTestMethod(className,methodName,getPassStatus());
 		}else{
-			TestStatus testStatus = getTestStatus(description);
+			TestStatus testStatus = getTestStatus(className,methodName);
 			if(testStatus == null){
 				runStatistics.get(className).recordStatus(methodName, getPassStatus());	
 			}else{
@@ -49,29 +45,32 @@ public class Statistics {
 		}	
 	}
 	
-	public void recordTestFailure(Description description) throws Exception{
-		TestStatus testStatus = getTestStatus(description);
+	public void recordTestFailure(String className, String methodName) throws Exception{
+		TestStatus testStatus = getTestStatus(className,methodName);
 		
 		if(testStatus != null){
 			// Remove the initial pass given to all started methods
 			testStatus.removePass();
 			testStatus.recordFailure();
 		}else{
-			throw new Exception("Test method: " + description.getMethodName() 
-			+ " from class:" + description.getClassName() 
+			throw new Exception("Test method: " + methodName
+			+ " from class:" + className
 			+" not found in runtime statistics!");
 		}
 	}
 	
 	// Returns null if the given key is not found
-	public TestStatus getTestStatus(Description description){
-		String className = description.getClassName();
+	public TestStatus getTestStatus(String className, String methodName){
 		
 		if(runStatistics.containsKey(className)){
-			return runStatistics.get(className).getStatus(description.getMethodName());
+			return runStatistics.get(className).getStatus(methodName);
 		}
 		
 		return null;	
+	}
+	
+	public void reset(){
+		runStatistics.clear();
 	}
 	
 	public int size(){

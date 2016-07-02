@@ -11,6 +11,7 @@ import org.jboss.arquillian.junit.JUnitTestBaseClass;
 import org.jboss.arquillian.junit.scheduling.ArquillianScheduling;
 import org.jboss.arquillian.junit.scheduling.Statistics;
 import org.jboss.arquillian.junit.scheduling.StatisticsBuilder;
+import org.jboss.arquillian.junit.scheduling.scheduler.LatestFailedSchedulerParams;
 import org.jboss.arquillian.junit.scheduling.scheduler.LatestFailedScheduler;
 import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
@@ -21,40 +22,37 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunListener;
 
 public class ArquillianSchedulingTest extends JUnitTestBaseClass {
+	public static String CLASS_NAME =
+			"org.jboss.arquillian.junit.scheduler.ArquillianSchedulingTest$FirstTestCase";
 	
 	@Test
 	public void shouldInvokeTestsInTheGivenInorder() throws Exception {
 		TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 		executeAllLifeCycles(adaptor);
-		
-		// Initialize test description
-		Description test1Description = Description.createTestDescription(FirstTestCase.class, "test1");
-		Description test2Description = Description.createTestDescription(FirstTestCase.class, "test2");
-		Description test3Description = Description.createTestDescription(FirstTestCase.class, "test3");
-		
-		// Initialize statistics
-		Statistics stats = new Statistics();
-		stats.recordTestStarted(test1Description);
-		stats.recordTestFailure(test1Description);
-	
-		stats.recordTestStarted(test2Description);
-		stats.recordTestFailure(test2Description);
-		stats.recordTestStarted(test2Description);
-		stats.recordTestFailure(test2Description);
-		
-		stats.recordTestStarted(test3Description);
-		stats.recordTestFailure(test3Description);
-		stats.recordTestStarted(test3Description);
-		stats.recordTestFailure(test3Description);
-		stats.recordTestStarted(test3Description);
-		stats.recordTestFailure(test3Description);
 			
-
-		// Initialize the runtime statistics
-		// using the StatisticsBuilder's set method
-		Method method = StatisticsBuilder.class.getDeclaredMethod("set", Statistics.class);
-		method.setAccessible(true);
-		method.invoke(null, stats);
+//		// Initialize statistics
+//		Statistics stats = new Statistics();
+//		stats.recordTestStarted(CLASS_NAME,"test1");
+//		stats.recordTestFailure(CLASS_NAME,"test1");
+//	
+//		stats.recordTestStarted(CLASS_NAME,"test2");
+//		stats.recordTestFailure(CLASS_NAME,"test2");
+//		stats.recordTestStarted(CLASS_NAME,"test2");
+//		stats.recordTestFailure(CLASS_NAME,"test2");
+//		
+//		stats.recordTestStarted(CLASS_NAME,"test3");
+//		stats.recordTestFailure(CLASS_NAME,"test3");
+//		stats.recordTestStarted(CLASS_NAME,"test3");
+//		stats.recordTestFailure(CLASS_NAME,"test3");
+//		stats.recordTestStarted(CLASS_NAME,"test3");
+//		stats.recordTestFailure(CLASS_NAME,"test3");
+//			
+//
+//		// Initialize the runtime statistics
+//		// using the StatisticsBuilder's set method
+//		Method method = StatisticsBuilder.class.getDeclaredMethod("set", Statistics.class);
+//		method.setAccessible(true);
+//		method.invoke(null, stats);
 		
 		// Run the test
 		final List<String> pickedTests = new ArrayList<String>();
@@ -76,6 +74,7 @@ public class ArquillianSchedulingTest extends JUnitTestBaseClass {
 
 	@RunWith(ArquillianScheduling.class)
 	@ScheduleWith(LatestFailedScheduler.class)
+	@LatestFailedSchedulerParams(storeLongTerm = false,storagePath="statistics.xml")
 	public static class FirstTestCase {
 		@Test
 		public void test1() {

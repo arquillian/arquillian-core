@@ -4,7 +4,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
 import org.jboss.arquillian.junit.scheduling.scheduler.Scheduler;
 import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerBuilder;
-import org.jboss.arquillian.junit.scheduling.statistics.FileStatisticsStorage;
+import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerListener;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -17,45 +17,51 @@ import org.junit.runner.notification.RunNotifier;
 
 public class ArquillianScheduling extends Arquillian{
 	
-	private Statistics runtimeStatistics;
-	private final FileStatisticsStorage fileStorage = new FileStatisticsStorage();
-
+	private SchedulerListener schedulerListener;
+	
 	public ArquillianScheduling(Class<?> testClass) throws Exception {
 		super(testClass);
 		
-		runtimeStatistics = StatisticsBuilder.build();
 		Scheduler scheduler = getScheduler(testClass);
 		
 		// Sorting tests
 		filter(scheduler.getFilter());
 		sort(scheduler.getSorter());
+		
+		// Get the scheduler specific listener
+		schedulerListener = scheduler.getSchedulerListener();
+		schedulerListener.testRunStarted();
 	}
 
 	@Override
 	public void run(RunNotifier notifier) {
 		notifier.addListener(new RunListener(){
-			
+						
 			// Stores test method runs
 			@Override
 			public void testStarted(Description description) throws Exception {
-				// Assumes that all test will pass
-				runtimeStatistics.recordTestStarted(description);
+				schedulerListener.testStarted(
+						description.getClassName(), description.getMethodName());
 			}
 			
 			// Store information about the failed tests
 			@Override
 			public void testFailure(Failure failure) throws Exception {
-				runtimeStatistics.recordTestFailure(failure.getDescription());
+				Description description = failure.getDescription();
+				schedulerListener.testFailure(description.getClassName(),
+						description.getMethodName(), failure.getMessage());
 			}
 			
 			@Override
 			// Serialize recorded statistics information
 			public void testRunFinished(Result result) throws Exception {
-				try{
-					fileStorage.store(runtimeStatistics);
-				}catch(Exception err){
-					// TODO Re throw exception
+				try {
+					schedulerListener.testRunFinished();
+				} catch (Exception e) {
+					// TODO 
+					e.printStackTrace();
 				}
+				
 			}
 		});
 		
@@ -66,7 +72,7 @@ public class ArquillianScheduling extends Arquillian{
 		ScheduleWith annotation = testClass.getAnnotation(ScheduleWith.class);
 		
 		if(annotation != null){
-			return SchedulerBuilder.buildScheduler(annotation.value(),runtimeStatistics);
+			return SchedulerBuilder.buildScheduler(testClass,annotation.value());
 		}
 		
 		return SchedulerBuilder.DEFAULT;

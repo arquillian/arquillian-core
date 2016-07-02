@@ -59,7 +59,7 @@ public class ModelTransitioner {
 				
 				testStatusValueType = new TestStatusValueType();
 				testStatusValueType.setName(testName);
-				testStatusValueType.setPassed(testStatus.getPassed());
+				testStatusValueType.setPassed(testStatus.getPasses());
 				testStatusValueType.setFailures(testStatus.getFailures());
 				
 				testStatusValueTypes.add(testStatusValueType);

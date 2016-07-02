@@ -9,13 +9,26 @@ import java.io.Writer;
 import org.jboss.arquillian.junit.scheduling.Statistics;
 
 public class FileStatisticsStorage extends AbstractStatisticsStorage {
-	public static final String FILENAME = "statistics.xml";
-	public static final String DIR = "";
-	
-	private File statisticsFile;
 
-	public FileStatisticsStorage() {
-		statisticsFile = new File(FILENAME);
+	private File statisticsFile;
+	
+	public FileStatisticsStorage(String storagePath) throws Exception{
+		
+		if(storagePath.isEmpty()){
+			throw new Exception("No storagePath is specified!");
+		}
+		
+		File storagePathFile = new File(storagePath);
+		statisticsFile = storagePathFile.getAbsoluteFile();
+		
+		if(!statisticsFile.exists()){
+			File directoryFile = statisticsFile.getParentFile();
+			if(directoryFile == null){
+				throw new Exception("No parent directory found!");
+			}
+			
+			directoryFile.mkdirs();
+		}
 	}
 	
 	@Override

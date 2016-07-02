@@ -2,7 +2,6 @@ package org.jboss.arquillian.junit.scheduling.scheduler;
 
 import java.lang.reflect.Constructor;
 
-import org.jboss.arquillian.junit.scheduling.Statistics;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Sorter;
 
@@ -18,15 +17,21 @@ public class SchedulerBuilder {
 		public Filter getFilter() {
 			return Filter.ALL;
 		}
+		
+		@Override
+		public SchedulerListener getSchedulerListener() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	};
 	
-	public static Scheduler buildScheduler(Class<? extends Scheduler> schedulerClass
-			, Statistics statistics) throws Exception {
+	public static Scheduler buildScheduler(Class<?> testClass,
+			Class<? extends Scheduler> schedulerClass) throws Exception {
 		
 		Constructor<? extends Scheduler> schedulerConstructor =
-				schedulerClass.getConstructor(Statistics.class);
+				schedulerClass.getConstructor(Class.class);
 		
-		return schedulerConstructor.newInstance(statistics);	
+		return schedulerConstructor.newInstance(testClass);	
 	}
 	
 }

@@ -6,4 +6,5 @@ import org.junit.runner.manipulation.Sorter;
 public interface Scheduler {
 	public Filter getFilter();
 	public Sorter getSorter();
+	public SchedulerListener getSchedulerListener();
 }
