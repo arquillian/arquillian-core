@@ -18,7 +18,7 @@ package org.jboss.arquillian.testng.container;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.container.test.spi.TestRunner;
@@ -48,7 +48,7 @@ public class TestNGTestRunner implements TestRunner
       runner.addListener(resultListener);
       runner.addListener(new RemoveDependsOnTransformer());
       runner.setXmlSuites(
-            Arrays.asList(createSuite(testClass, methodName)));
+              Collections.singletonList(createSuite(testClass, methodName)));
       
       runner.run();
       

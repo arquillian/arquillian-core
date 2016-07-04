@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.impl;
 import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;

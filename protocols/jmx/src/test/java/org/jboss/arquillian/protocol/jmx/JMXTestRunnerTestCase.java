@@ -185,7 +185,7 @@ public class JMXTestRunnerTestCase {
     }
 
     private <T> T getMBeanProxy(MBeanServer mbeanServer, ObjectName name, Class<T> interf) {
-        return (T) MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
+        return MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
     }
 
     private Method testMethod() {

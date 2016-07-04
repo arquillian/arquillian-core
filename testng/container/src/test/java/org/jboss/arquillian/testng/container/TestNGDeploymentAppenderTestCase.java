@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.testng.container;
 
-import org.jboss.arquillian.testng.container.TestNGDeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.junit.Assert;

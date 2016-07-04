@@ -85,7 +85,7 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
       resourceProvider = getResourceProvider();
       injector.get().inject(resourceProvider);
 
-      List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
+      List<ResourceProvider> resourceProviders = Arrays.asList(resourceProvider);
       Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
 
       bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);

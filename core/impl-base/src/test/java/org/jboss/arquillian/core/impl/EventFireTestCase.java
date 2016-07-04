@@ -50,7 +50,7 @@ public class EventFireTestCase
       ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
          .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
       
-      manager.fire(new String("should cause exception"));
+      manager.fire("should cause exception");
       
       Assert.assertTrue(manager.getExtension(ExtensionObservingException.class).methodOneWasCalled);
    }

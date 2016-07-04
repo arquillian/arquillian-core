@@ -99,7 +99,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
     }
 
     private <T> T getMBeanProxy(ObjectName name, Class<T> interf) {
-        return (T) MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
+        return MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
     }
 
     private class CallbackNotificationListener implements NotificationListener {
