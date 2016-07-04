@@ -24,7 +24,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -213,17 +212,14 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase
          {
             try
             {
-               Collection<URL> beansXmlPaths = Arrays.asList(new URL(null, "archive://beans.xml", new URLStreamHandler()
-               {
+               Collection<URL> beansXmlPaths = Collections.singletonList(new URL(null, "archive://beans.xml", new URLStreamHandler() {
                   @Override
-                  protected URLConnection openConnection(URL u) throws IOException
-                  {
-                     return new URLConnection(u)
-                     {
-                        public void connect() throws IOException {}
-                        
-                        public InputStream getInputStream() throws IOException
-                        {
+                  protected URLConnection openConnection(URL u) throws IOException {
+                     return new URLConnection(u) {
+                        public void connect() throws IOException {
+                        }
+
+                        public InputStream getInputStream() throws IOException {
                            return new ByteArrayInputStream("<beans/>".getBytes());
                         }
                      };
@@ -256,7 +252,7 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase
       {
          public Collection<BeanDeploymentArchive> getBeanDeploymentArchives()
          {
-            return Arrays.asList((BeanDeploymentArchive)beanArchive);
+            return Collections.singletonList(beanArchive);
          }
          
          public ServiceRegistry getServices()

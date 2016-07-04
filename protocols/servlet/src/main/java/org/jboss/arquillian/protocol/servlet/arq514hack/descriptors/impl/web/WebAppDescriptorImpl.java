@@ -18,7 +18,6 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.web;
 
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.ServletDef;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebAppDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorExporter;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptorImplBase;
 

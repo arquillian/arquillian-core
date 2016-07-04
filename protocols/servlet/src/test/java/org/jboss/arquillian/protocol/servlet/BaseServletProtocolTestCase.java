@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
@@ -131,10 +132,7 @@ public class BaseServletProtocolTestCase
    private Collection<HTTPContext> to(HTTPContext... inputs)
    {
       List<HTTPContext> contexts = new ArrayList<HTTPContext>();
-      for(HTTPContext input : inputs)
-      {
-         contexts.add(input);
-      }
+      Collections.addAll(contexts, inputs);
       return contexts;
    }
 

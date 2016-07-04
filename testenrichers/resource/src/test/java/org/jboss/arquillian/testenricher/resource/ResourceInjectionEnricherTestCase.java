@@ -32,7 +32,7 @@ public class ResourceInjectionEnricherTestCase
       injectionValueMap.put("primitive_byte", new Byte("1"));
       injectionValueMap.put("primitive_int", 10);
       injectionValueMap.put("primitive_short", (short)10);
-      injectionValueMap.put("primitive_long", 10l);
+      injectionValueMap.put("primitive_long", 10L);
       injectionValueMap.put("primitive_float", 10f);
       injectionValueMap.put("primitive_double", 10d);
       injectionValueMap.put("primitive_boolean", true);

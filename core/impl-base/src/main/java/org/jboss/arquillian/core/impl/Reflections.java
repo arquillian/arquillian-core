@@ -126,7 +126,7 @@ final class Reflections
    {
       if(type instanceof Class<?>)
       {
-         return ((Class<?>)type) == clazz;
+         return type == clazz;
       }
       else if(type instanceof ParameterizedType)
       {

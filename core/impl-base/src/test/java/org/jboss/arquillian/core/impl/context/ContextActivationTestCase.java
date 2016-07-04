@@ -53,7 +53,7 @@ public class ContextActivationTestCase
          
          Assert.assertEquals(
                "Verify that we can get objects from a active context",
-               new Boolean(true), 
+                 Boolean.TRUE,
                store.get(Boolean.class));
          
          context.deactivate();
@@ -72,7 +72,7 @@ public class ContextActivationTestCase
    
          Assert.assertEquals(
                "Verify that we can get objects from a active context",
-               new Boolean(true), 
+                 Boolean.TRUE,
                store.get(Boolean.class));
       }
       finally

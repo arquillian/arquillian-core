@@ -170,7 +170,7 @@ public class JUnitTestBaseClass
    
    protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception
    {
-      return run(adaptor, (RunListener)null, classes);
+      return run(adaptor, null, classes);
    }
 
    protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)

@@ -73,7 +73,7 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
    @Before
    public void addServiceLoader() throws Exception
    {
-      List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
+      List<ResourceProvider> resourceProviders = Arrays.asList(resourceProvider);
       Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
       Mockito.when(resourceProvider.canProvide(Object.class)).thenReturn(true);
 

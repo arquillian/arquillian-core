@@ -45,9 +45,9 @@ public class TestDataProviderTransformer implements IAnnotationTransformer
       {
          if (testAnnotation instanceof TestAnnotation)
          {
-            TestAnnotation annoation = (TestAnnotation) testAnnotation;
-            annoation.setDataProviderClass(TestEnricherDataProvider.class);
-            annoation.setDataProvider(TestEnricherDataProvider.PROVIDER_NAME);
+            TestAnnotation annotation = (TestAnnotation) testAnnotation;
+            annotation.setDataProviderClass(TestEnricherDataProvider.class);
+            annotation.setDataProvider(TestEnricherDataProvider.PROVIDER_NAME);
          }
       }
    }

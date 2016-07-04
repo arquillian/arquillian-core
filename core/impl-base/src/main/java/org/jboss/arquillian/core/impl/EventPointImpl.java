@@ -60,7 +60,7 @@ public class EventPointImpl implements EventPoint
    @Override
    public Type getType()
    {
-      return (Class<?>) ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
+      return ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
    }
    
    /* (non-Javadoc)

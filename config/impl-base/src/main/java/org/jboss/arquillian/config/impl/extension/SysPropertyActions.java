@@ -51,7 +51,7 @@ class SysPropertyActions
                   return System.getProperty(name, defaultValue);
                }
             };
-            return (String) AccessController.doPrivileged(action);
+            return AccessController.doPrivileged(action);
          }
       };
       String getProperty(String name, String defaultValue);

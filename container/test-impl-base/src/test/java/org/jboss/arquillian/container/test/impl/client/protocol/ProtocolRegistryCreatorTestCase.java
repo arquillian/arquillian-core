@@ -18,7 +18,7 @@ package org.jboss.arquillian.container.test.impl.client.protocol;
 
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
@@ -82,7 +82,7 @@ public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBa
       String protocolName = "default-protocol";
 
       when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
-      when(serviceLoader.all(Protocol.class)).thenReturn(Arrays.asList((Protocol)protocol));
+      when(serviceLoader.all(Protocol.class)).thenReturn(Collections.singletonList((Protocol) protocol));
 
       fire(createDescriptor(protocolName));
 
@@ -96,7 +96,7 @@ public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBa
    {
       String protocolName = "protocol";
       when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
-      when(serviceLoader.all(Protocol.class)).thenReturn(Arrays.asList((Protocol)protocol));
+      when(serviceLoader.all(Protocol.class)).thenReturn(Collections.singletonList((Protocol) protocol));
 
       fire(createDescriptor());
       ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);

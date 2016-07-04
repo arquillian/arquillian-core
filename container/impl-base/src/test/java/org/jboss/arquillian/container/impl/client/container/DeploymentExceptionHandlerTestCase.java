@@ -17,7 +17,7 @@
  */
 package org.jboss.arquillian.container.impl.client.container;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandler;
@@ -91,7 +91,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
    public void shouldCallDeploymentTransformers() throws Exception
    {
       TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new IllegalArgumentException()); 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
 
       fire(new DeployDeployment(
             container, 
@@ -105,7 +105,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
    public void shouldTransformException() throws Exception
    {
       TestExceptionDeployThrower.shouldThrow = new IllegalStateException();
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
       Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(new IllegalArgumentException());
 
       fire(new DeployDeployment(
@@ -120,7 +120,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
       MyDeploymentException myException = new MyDeploymentException("My special exception", new NullPointerException());
       TestExceptionDeployThrower.shouldThrow = myException;
 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
       Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
             myException.getDeploymentException());
 
@@ -136,7 +136,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
 
       TestExceptionDeployThrower.shouldThrow = recursiveException;
 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
       Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
             ((MyDeploymentException) recursiveException.getCause()).getDeploymentException());
 
@@ -166,7 +166,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
    public void shouldRethrowExceptionIfWrongExpectedType() throws Exception
    {
       TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Arrays.asList(transformer));
+      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
 
       fire(new DeployDeployment(
             container, 

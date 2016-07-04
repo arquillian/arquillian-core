@@ -67,11 +67,11 @@ public class InjectionPointImpl implements InjectionPoint
       if(type.getActualTypeArguments()[0] instanceof ParameterizedType)
       {
          ParameterizedType first = (ParameterizedType)type.getActualTypeArguments()[0];
-         return (Class<?>)first.getRawType();
+         return first.getRawType();
       }
       else
       {
-         return (Class<?>)type.getActualTypeArguments()[0];
+         return type.getActualTypeArguments()[0];
       }
    }
    

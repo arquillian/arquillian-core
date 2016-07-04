@@ -129,7 +129,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
           final Class<?> impl = this.getClass();
           Method m = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
                  public Method run() throws NoSuchMethodException {
-                    return impl.getMethod("runTestMethod", new Class[] {String.class, String.class});
+                    return impl.getMethod("runTestMethod", String.class, String.class);
                  }
               });
 

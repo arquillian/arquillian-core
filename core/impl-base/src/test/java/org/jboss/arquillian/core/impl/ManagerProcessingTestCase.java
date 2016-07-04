@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class ManagerProcessingTestCase
 {
-   {
+   static {
       ManagerImpl.DEBUG = true;
    }
    
