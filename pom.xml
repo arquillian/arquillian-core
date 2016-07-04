@@ -27,9 +27,8 @@
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
         <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
 
-
         <!-- External Deps -->
-        <version.shrinkwrap_shrinkwrap>1.2.3</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
         <version.shrinkwrap_descriptors>2.0.0-alpha-9</version.shrinkwrap_descriptors>
 
     </properties>
