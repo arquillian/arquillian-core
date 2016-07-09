@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed;
 
 public class LatestFailedSchedulerParamValues {
 	private String storageDir;

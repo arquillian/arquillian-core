@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

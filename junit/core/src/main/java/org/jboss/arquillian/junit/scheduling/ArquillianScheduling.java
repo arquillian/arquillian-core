@@ -69,12 +69,8 @@ public class ArquillianScheduling extends Arquillian{
 	}
 
 	public Scheduler getScheduler(Class<?> testClass) throws Exception{
-		ScheduleWith annotation = testClass.getAnnotation(ScheduleWith.class);
 		
-		if(annotation != null){
-			return SchedulerBuilder.buildScheduler(testClass,annotation.value());
-		}
-		
-		return SchedulerBuilder.DEFAULT;
+		return SchedulerBuilder.buildScheduler(testClass,testClass
+				.getAnnotation(ScheduleWith.class));
 	}
 }

@@ -1,9 +1,11 @@
-package org.jboss.arquillian.junit.scheduling.scheduler;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed;
 
 import java.util.Comparator;
 
 import org.jboss.arquillian.junit.scheduling.Statistics;
 import org.jboss.arquillian.junit.scheduling.StatisticsBuilder;
+import org.jboss.arquillian.junit.scheduling.scheduler.Scheduler;
+import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerListener;
 import org.jboss.arquillian.junit.scheduling.statistics.FileStatisticsStorage;
 import org.jboss.arquillian.junit.scheduling.statistics.model.TestStatus;
 import org.junit.runner.Description;
@@ -35,7 +37,6 @@ public class LatestFailedScheduler implements Scheduler{
 			storageParams = new LatestFailedSchedulerParamValues(
 					LatestFailedSchedulerParams.STORE_LONG_TERM_DEFAULT_VALUE
 					, LatestFailedSchedulerParams.STORAGE_PATH_DEFAULT_VALUE);
-			System.out.println();
 		}
 	}
 

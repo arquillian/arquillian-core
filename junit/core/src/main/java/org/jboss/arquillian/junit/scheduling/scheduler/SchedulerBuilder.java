@@ -2,31 +2,21 @@ package org.jboss.arquillian.junit.scheduling.scheduler;
 
 import java.lang.reflect.Constructor;
 
-import org.junit.runner.manipulation.Filter;
-import org.junit.runner.manipulation.Sorter;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.LatestFailedScheduler;
 
 public class SchedulerBuilder {
-	public static final Scheduler DEFAULT = new Scheduler() {
-		
-		@Override
-		public Sorter getSorter() {
-			return Sorter.NULL;
-		}
-		
-		@Override
-		public Filter getFilter() {
-			return Filter.ALL;
-		}
-		
-		@Override
-		public SchedulerListener getSchedulerListener() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	};
-	
+
 	public static Scheduler buildScheduler(Class<?> testClass,
-			Class<? extends Scheduler> schedulerClass) throws Exception {
+			ScheduleWith annotation) throws Exception {
+		
+		Class<? extends Scheduler> schedulerClass;
+		
+		if(annotation != null){
+			schedulerClass = annotation.value();
+		}else{
+			// Use a default scheduler
+			schedulerClass = LatestFailedScheduler.class;
+		}
 		
 		Constructor<? extends Scheduler> schedulerConstructor =
 				schedulerClass.getConstructor(Class.class);
