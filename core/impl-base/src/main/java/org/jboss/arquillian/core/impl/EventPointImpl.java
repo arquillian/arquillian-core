@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -60,7 +60,7 @@ public class EventPointImpl implements EventPoint
    @Override
    public Type getType()
    {
-      return (Class<?>) ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
+      return ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
    }
    
    /* (non-Javadoc)

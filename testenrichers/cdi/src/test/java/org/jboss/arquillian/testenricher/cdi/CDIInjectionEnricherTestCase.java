@@ -1,3 +1,19 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.arquillian.testenricher.cdi;
 
 import java.io.ByteArrayInputStream;
@@ -8,7 +24,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -197,17 +212,14 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase
          {
             try
             {
-               Collection<URL> beansXmlPaths = Arrays.asList(new URL(null, "archive://beans.xml", new URLStreamHandler()
-               {
+               Collection<URL> beansXmlPaths = Collections.singletonList(new URL(null, "archive://beans.xml", new URLStreamHandler() {
                   @Override
-                  protected URLConnection openConnection(URL u) throws IOException
-                  {
-                     return new URLConnection(u)
-                     {
-                        public void connect() throws IOException {}
-                        
-                        public InputStream getInputStream() throws IOException
-                        {
+                  protected URLConnection openConnection(URL u) throws IOException {
+                     return new URLConnection(u) {
+                        public void connect() throws IOException {
+                        }
+
+                        public InputStream getInputStream() throws IOException {
                            return new ByteArrayInputStream("<beans/>".getBytes());
                         }
                      };
@@ -240,7 +252,7 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase
       {
          public Collection<BeanDeploymentArchive> getBeanDeploymentArchives()
          {
-            return Arrays.asList((BeanDeploymentArchive)beanArchive);
+            return Collections.singletonList(beanArchive);
          }
          
          public ServiceRegistry getServices()

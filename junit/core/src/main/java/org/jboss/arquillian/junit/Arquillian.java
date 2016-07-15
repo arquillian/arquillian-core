@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -288,7 +288,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
        try
        {
            Method withRules = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules",
-                   new Class[] {FrameworkMethod.class, Object.class, Statement.class});
+                   FrameworkMethod.class, Object.class, Statement.class);
            withRules.setAccessible(true);
 
            Statement statement = methodInvoker(method, test);
@@ -297,8 +297,8 @@ public class Arquillian extends BlockJUnit4ClassRunner
 
            Statement arounds = withBefores(method, test, statement);
            arounds = withAfters(method, test, arounds);
-           final Statement stmtwithLifecycle = arounds;
-           final Statement stmtWithRules = (Statement)withRules.invoke(this, new Object[] {method, test, arounds});
+           final Statement stmtWithLifecycle = arounds;
+           final Statement stmtWithRules = (Statement)withRules.invoke(this, method, test, arounds);
            return new Statement() {
 
                @Override
@@ -322,7 +322,7 @@ public class Arquillian extends BlockJUnit4ClassRunner
                        // If AroundRules (includes lifecycles) were not executed, invoke only lifecycles+test
                        if(integer.get() == 0) {
                            try {
-                               stmtwithLifecycle.evaluate();
+                               stmtWithLifecycle.evaluate();
                            } catch(Throwable t) {
                                State.caughtExceptionAfterJunit(t);
                                throw t;

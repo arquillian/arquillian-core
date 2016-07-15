@@ -371,10 +371,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
    private <T> Collection<T> create(Class<T> type, T... instances) 
    {
       List<T> list = new ArrayList<T>();
-      for(T instance : instances)
-      {
-         list.add(instance);
-      }
+      Collections.addAll(list, instances);
       return list;
    }
 

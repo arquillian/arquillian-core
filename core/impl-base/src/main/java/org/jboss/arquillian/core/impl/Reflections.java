@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -126,7 +126,7 @@ final class Reflections
    {
       if(type instanceof Class<?>)
       {
-         return ((Class<?>)type) == clazz;
+         return type == clazz;
       }
       else if(type instanceof ParameterizedType)
       {

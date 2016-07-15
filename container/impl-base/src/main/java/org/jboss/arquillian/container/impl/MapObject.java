@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.impl;
 import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;

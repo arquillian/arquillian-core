@@ -21,11 +21,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -188,7 +184,7 @@ public class TestNGTestBaseClass
          TestListenerAdapter listener = new TestListenerAdapter();
          TestNG runner = new TestNG(false);
          runner.addListener(listener);
-         runner.setXmlSuites(Arrays.asList(createSuite(groups, classes)));
+         runner.setXmlSuites(Collections.singletonList(createSuite(groups, classes)));
 
          runner.run();
          return listener;

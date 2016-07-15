@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -129,7 +129,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
           final Class<?> impl = this.getClass();
           Method m = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
                  public Method run() throws NoSuchMethodException {
-                    return impl.getMethod("runTestMethod", new Class[] {String.class, String.class});
+                    return impl.getMethod("runTestMethod", String.class, String.class);
                  }
               });
 

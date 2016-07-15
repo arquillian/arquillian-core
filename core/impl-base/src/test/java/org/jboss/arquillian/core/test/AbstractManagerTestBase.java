@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -146,7 +146,7 @@ public abstract class AbstractManagerTestBase
       assertEventInContext(type, activeContext, false);
    }
 
-   private final void assertEventInContext(Class<?> type, Class<? extends Context> activeContext, Boolean active)
+   private void assertEventInContext(Class<?> type, Class<? extends Context> activeContext, Boolean active)
    {
          Assert.assertEquals(
                "Event " + type.getName() + " should" + (active ? " ":" not") + " have been fired within context " + activeContext.getName(),

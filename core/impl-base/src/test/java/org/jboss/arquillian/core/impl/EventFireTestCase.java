@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -50,7 +50,7 @@ public class EventFireTestCase
       ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
          .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
       
-      manager.fire(new String("should cause exception"));
+      manager.fire("should cause exception");
       
       Assert.assertTrue(manager.getExtension(ExtensionObservingException.class).methodOneWasCalled);
    }
