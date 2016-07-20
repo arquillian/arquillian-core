@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.junit.container;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.junit.Arquillian;
@@ -45,7 +46,11 @@ public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender
                               Arquillian.class.getPackage().getName())
                         .addAsServiceProvider(
                               TestRunner.class, 
-                              JUnitTestRunner.class);
+                              JUnitTestRunner.class)
+                        .addClass(JUnitRemoteExtension.class)
+                        .addAsServiceProvider(
+                              RemoteLoadableExtension.class,
+                              JUnitRemoteExtension.class);
       return archive;
    }
 
