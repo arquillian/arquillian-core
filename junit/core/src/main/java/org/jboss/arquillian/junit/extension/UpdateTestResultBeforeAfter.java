@@ -38,11 +38,11 @@ class UpdateTestResultBeforeAfter
         {
             if(State.caughtExceptionAfterJunit() instanceof AssumptionViolatedException)
             {
-                result.setStatus(TestResult.Status.SKIPPED);
+                result.setStatus(Status.SKIPPED);
             }
             else
             {
-                result.setStatus(TestResult.Status.FAILED);
+                result.setStatus(Status.FAILED);
             }
             result.setThrowable(State.caughtExceptionAfterJunit());
         }

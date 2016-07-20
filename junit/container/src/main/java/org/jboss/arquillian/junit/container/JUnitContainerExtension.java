@@ -21,8 +21,6 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * JUnitExtension
- *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */

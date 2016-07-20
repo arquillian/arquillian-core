@@ -33,7 +33,7 @@ import org.junit.rules.TestRule;
 public class OuterRuleOuterStatementEnrichment extends AbstractRuleStatementEnrichment
 {
     @ArquillianResource
-    private ResourcesImpl resources;
+    private ResourceStub resources;
 
     @Rule
     public TestingTestRule testRule = new TestingTestRule();

@@ -16,9 +16,12 @@
  */
 package org.jboss.arquillian.junit.rules;
 
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * An implementation of MethodRule
@@ -28,9 +31,13 @@ import org.junit.runners.model.Statement;
  */
 public class TestingMethodRule implements MethodRule
 {
+    @ArquillianResource
+    private ResourceStub ruleResources;
+
     @Override
     public Statement apply(Statement base, FrameworkMethod method, Object target)
     {
+        assertNotNull(ruleResources);
         return new TestingStatement(base);
     }
 

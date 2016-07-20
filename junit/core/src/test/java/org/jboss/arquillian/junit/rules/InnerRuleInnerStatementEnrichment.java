@@ -16,10 +16,7 @@
  */
 package org.jboss.arquillian.junit.rules;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -27,6 +24,8 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Uses Rule and Statement as inner anonymous classes.
@@ -37,33 +36,28 @@ import org.junit.runners.model.Statement;
 public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnrichment
 {
     @ArquillianResource
-    private ResourcesImpl testResources;
+    private ResourceStub testResources;
 
     @Rule
     public TestRule testRule = new TestRule()
     {
         @ArquillianResource
-        private ResourcesImpl ruleResources;
+        private ResourceStub ruleResources;
 
         @Override
         public Statement apply(final Statement base, Description description)
         {
+            performRuleAssertion(testResources, ruleResources);
+
             return new Statement()
             {
                 @ArquillianResource
-                private ResourcesImpl statementResources;
+                private ResourceStub statementResources;
 
                 @Override
                 public void evaluate() throws Throwable
                 {
-                    assertNotNull(testResources);
-                    assertNotNull(ruleResources);
-                    assertNotNull(statementResources);
-
-                    Assert.assertNotEquals(testResources, ruleResources);
-                    Assert.assertNotEquals(testResources, statementResources);
-                    Assert.assertNotEquals(statementResources, ruleResources);
-
+                    performStatementAssertion(testResources, ruleResources, statementResources);
                     base.evaluate();
                 }
             };
@@ -74,32 +68,40 @@ public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnri
     public MethodRule methodRule = new MethodRule()
     {
         @ArquillianResource
-        private ResourcesImpl ruleResources;
+        private ResourceStub ruleResources;
 
         @Override
         public Statement apply(final Statement base, FrameworkMethod method, Object target)
         {
+            performRuleAssertion(testResources, ruleResources);
+
             return new Statement()
             {
                 @ArquillianResource
-                private ResourcesImpl statementResources;
+                private ResourceStub statementResources;
 
                 @Override
                 public void evaluate() throws Throwable
                 {
-                    assertNotNull(testResources);
-                    assertNotNull(ruleResources);
-                    assertNotNull(statementResources);
-
-                    Assert.assertNotEquals(testResources, ruleResources);
-                    Assert.assertNotEquals(testResources, statementResources);
-                    Assert.assertNotEquals(statementResources, ruleResources);
-                    
+                    performStatementAssertion(testResources, ruleResources, statementResources);
                     base.evaluate();
                 }
             };
         }
     };
+
+    private void performRuleAssertion(ResourceStub testResources, ResourceStub ruleResources)
+    {
+        ResourceAssertion.assertNotNullAndNotEqual(testResources, ruleResources);
+    }
+
+    private void performStatementAssertion(ResourceStub testResources, ResourceStub ruleResources,
+                                           ResourceStub statementResources)
+    {
+        performRuleAssertion(testResources, ruleResources);
+        ResourceAssertion.assertNotNullAndNotEqual(testResources, statementResources);
+        ResourceAssertion.assertNotNullAndNotEqual(statementResources, ruleResources);
+    }
 
     public TestRule getTestRule()
     {

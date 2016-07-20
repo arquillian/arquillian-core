@@ -52,7 +52,7 @@ public class JUnitTestRunner implements TestRunner
 
    public TestResult execute(Class<?> testClass, String methodName)
    {
-      TestResult testResult = TestResult.passed(); // = new TestResult(Status.PASSED);
+      TestResult testResult;
       ExpectedExceptionHolder exceptionHolder = new ExpectedExceptionHolder();
       try
       {

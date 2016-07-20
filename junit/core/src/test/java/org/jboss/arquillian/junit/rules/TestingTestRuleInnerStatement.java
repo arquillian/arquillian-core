@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.junit.rules;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * An Implementation of TestRule with Statement declared as inner anonymous class
@@ -33,22 +32,22 @@ import org.junit.runners.model.Statement;
 public class TestingTestRuleInnerStatement implements TestRule
 {
     @ArquillianResource
-    private ResourcesImpl ruleResources;
+    private ResourceStub ruleResources;
 
     @Override
     public Statement apply(final Statement base, Description description)
     {
+        assertNotNull(ruleResources);
+
         return new Statement()
         {
             @ArquillianResource
-            private ResourcesImpl statementResources;
+            private ResourceStub statementResources;
             
             @Override
             public void evaluate() throws Throwable
             {
-                assertNotNull(ruleResources);
-                assertNotNull(statementResources);
-                Assert.assertNotEquals(statementResources, ruleResources);
+                ResourceAssertion.assertNotNullAndNotEqual(statementResources, ruleResources);
                 base.evaluate();
             }
         };
