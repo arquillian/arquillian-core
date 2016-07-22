@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.statistics.model;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model;
 
 //Keeps track of test failures and passes
 public class TestStatus {

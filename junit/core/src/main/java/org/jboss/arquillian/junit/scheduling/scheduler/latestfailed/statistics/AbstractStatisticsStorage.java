@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.statistics;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -7,8 +7,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.jboss.arquillian.junit.scheduling.Statistics;
-import org.jboss.arquillian.junit.scheduling.statistics.model.ModelTransitioner;
-import org.jboss.arquillian.junit.scheduling.statistics.model.valuetypes.StatisticsValueType;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.ModelTransitioner;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.valuetypes.StatisticsValueType;
 
 public abstract class AbstractStatisticsStorage implements StatisticsStorage {
 	private final ModelTransitioner modelTransitioner = new ModelTransitioner();

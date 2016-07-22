@@ -13,8 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.jboss.arquillian.junit.scheduling.Statistics;
-import org.jboss.arquillian.junit.scheduling.statistics.AbstractStatisticsStorage;
-import org.jboss.arquillian.junit.scheduling.statistics.model.TestStatus;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.AbstractStatisticsStorage;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.TestStatus;
 import org.junit.Test;
 
 public class MarshalingTest {

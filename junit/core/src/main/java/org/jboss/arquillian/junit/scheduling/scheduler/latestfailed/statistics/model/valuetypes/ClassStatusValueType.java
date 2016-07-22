@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.statistics.model.valuetypes;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.valuetypes;
 
 import java.util.List;
 

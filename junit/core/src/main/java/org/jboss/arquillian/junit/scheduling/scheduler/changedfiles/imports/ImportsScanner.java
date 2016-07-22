@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.imports;
+package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports;
 
 import java.io.File;
 import java.util.Collection;
@@ -15,16 +15,22 @@ import com.thoughtworks.qdox.model.JavaSource;
 public class ImportsScanner {
 	private JavaProjectBuilder builder;
 
-	public ImportsScanner() throws Exception {
+	public ImportsScanner(String targetDir) throws Exception {
 		builder = new JavaProjectBuilder();
-		builder.addSourceTree(new File("src/test/java").getAbsoluteFile());
+		builder.addSourceTree(new File(targetDir).getAbsoluteFile());
 	}
 	
 	public Set<String> getImportingClasses(Set<String> classNames) throws Exception{
 				
+		Set<String> importingClassNames = new HashSet<String>();
+		
+		// Skip iteration over sources
+		if (classNames.isEmpty()) {
+			return importingClassNames;
+		}
+		
 		// Get all the source objects from the builder
 		Collection<JavaSource> sources = builder.getSources();
-		Set<String> importingClassNames = new HashSet<String>();
 		
 		for(JavaSource source : sources){
 			List<String> currentSourceImports = source.getImports();

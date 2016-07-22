@@ -1,13 +1,13 @@
-package org.jboss.arquillian.junit.scheduling.statistics.model;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.arquillian.junit.scheduling.Statistics;
-import org.jboss.arquillian.junit.scheduling.statistics.model.valuetypes.ClassStatusValueType;
-import org.jboss.arquillian.junit.scheduling.statistics.model.valuetypes.StatisticsValueType;
-import org.jboss.arquillian.junit.scheduling.statistics.model.valuetypes.TestStatusValueType;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.valuetypes.ClassStatusValueType;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.valuetypes.StatisticsValueType;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.valuetypes.TestStatusValueType;
 
 public class ModelTransitioner {
 	

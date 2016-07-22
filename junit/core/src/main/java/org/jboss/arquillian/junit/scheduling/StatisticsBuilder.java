@@ -1,6 +1,6 @@
 package org.jboss.arquillian.junit.scheduling;
 
-import org.jboss.arquillian.junit.scheduling.statistics.FileStatisticsStorage;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.FileStatisticsStorage;
 
 public class StatisticsBuilder {
 	private static Statistics statistics;

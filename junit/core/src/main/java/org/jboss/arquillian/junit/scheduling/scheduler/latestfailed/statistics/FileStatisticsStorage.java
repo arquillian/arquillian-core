@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.statistics;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics;
 
 import java.io.File;
 import java.io.FileReader;

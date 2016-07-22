@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.statistics.model;
+package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

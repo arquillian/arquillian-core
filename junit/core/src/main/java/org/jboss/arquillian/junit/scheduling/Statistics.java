@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.arquillian.junit.scheduling.statistics.model.ClassStatus;
-import org.jboss.arquillian.junit.scheduling.statistics.model.TestStatus;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.ClassStatus;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.TestStatus;
 
 public class Statistics {
 
