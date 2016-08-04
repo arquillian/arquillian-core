@@ -1,11 +1,11 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles;
+package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles;
 
-public class ChangedFilesSchedulerParamValues {
+public class ChangedFilesSuiteSchedulerParamValues {
 	private String workingDir;
 	private String testDir;
 	private boolean filterOnlyChangedFiles;
 	
-	public ChangedFilesSchedulerParamValues(String workingDir, String testDir, boolean filterOnlyChangedFiles) {
+	public ChangedFilesSuiteSchedulerParamValues(String workingDir, String testDir, boolean filterOnlyChangedFiles) {
 		this.workingDir = workingDir;
 		this.testDir = testDir;
 		this.filterOnlyChangedFiles = filterOnlyChangedFiles;

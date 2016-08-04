@@ -21,7 +21,6 @@ public class ArquillianScheduling extends Arquillian{
 	
 	public ArquillianScheduling(Class<?> testClass) throws Exception {
 		super(testClass);
-		
 		Scheduler scheduler = getScheduler(testClass);
 		
 		// Sorting tests

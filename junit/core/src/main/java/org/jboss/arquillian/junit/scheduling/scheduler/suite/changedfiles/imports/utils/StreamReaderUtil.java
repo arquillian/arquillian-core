@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.utils;
+package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

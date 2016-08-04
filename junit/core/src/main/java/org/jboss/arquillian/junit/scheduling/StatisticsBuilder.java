@@ -6,6 +6,7 @@ public class StatisticsBuilder {
 	private static Statistics statistics;
 	
 	// Invoke for test purposes only
+	@SuppressWarnings("unused")
 	private static void set(Statistics stats){
 		statistics = stats;
 	}

@@ -5,8 +5,8 @@ import static org.mockito.Mockito.*;
 
 import java.util.Set;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.CommandExecutor;
-import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.GitChangesResolver;
+import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.CommandExecutor;
+import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.GitChangesResolver;
 import org.junit.Test;
 
 public class GitChangesResolverTest {

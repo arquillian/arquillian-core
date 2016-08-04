@@ -1,8 +1,8 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports;
+package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports;
 
 import java.io.File;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.utils.StreamReaderUtil;
+import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.utils.StreamReaderUtil;
 
 public class CommandExecutor {
 

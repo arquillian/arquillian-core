@@ -7,18 +7,21 @@ import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.ImportsScanner;
+import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.GrepImportsScanner;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ImportsScannerTest {
+public class GrepImportsScannerTest {
+	
 	private static final String TEST_CLASS_1_CONTENT ="package org.jboss.arquillian.junit.scheduler;\n"
 			+ "import ChangedClass1;\n"
+			+ "import org.junit.Test;\n"
 			+ "public class Test1{\n"
 			+ "@Test public void test(){}\n}";
 	
 	private static final String TEST_CLASS_2_CONTENT ="package org.jboss.arquillian.junit.scheduler;\n"
 			+ "import ChangedClass2;\n"
+			+ "import org.junit.Test;\n"
 			+ "public class Test2{\n"
 			+ "@Test public void test(){}\n}";
 	
@@ -41,13 +44,13 @@ public class ImportsScannerTest {
 			throw new Exception("Resource directory not found!");
 		}
 		
-		File test1File =  File.createTempFile("Test1", ".java", resourceDir);
+		File test1File =  new File(resourceDir,"Test1.java");
 		FileOutputStream test1Output = new FileOutputStream(test1File);
 		
-		File test2File =  File.createTempFile("Test2", ".java", resourceDir);
+		File test2File =  new File(resourceDir,"Test2.java");
 		FileOutputStream test2Output = new FileOutputStream(test2File);
 		
-		File test3File =  File.createTempFile("Test3", ".java", resourceDir);
+		File test3File =  new File(resourceDir,"Test3.java");
 		FileOutputStream test3Output = new FileOutputStream(test3File);
 		
 		try{
@@ -71,7 +74,8 @@ public class ImportsScannerTest {
 	
 	@Test
 	public void shouldGetImportingClasses() throws Exception {
-		ImportsScanner importsScanner = new ImportsScanner(resourceDir.getAbsolutePath());
+		GrepImportsScanner importsScanner = new GrepImportsScanner(resourceDir.getAbsolutePath());
+		
 		Set<String> changedClasses = new HashSet<String>(3);
 		changedClasses.add("ChangedClass1");
 		changedClasses.add("ChangedClass2");
@@ -86,4 +90,5 @@ public class ImportsScannerTest {
 		assertTrue("Expected test class is not contained in the result!",
 				importingClasses.contains("org.jboss.arquillian.junit.scheduler.Test2"));	
 	}
+
 }

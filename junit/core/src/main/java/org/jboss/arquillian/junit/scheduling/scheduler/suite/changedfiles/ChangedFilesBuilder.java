@@ -1,8 +1,8 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles;
+package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles;
 
 import java.util.Set;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.GitChangesResolver;
+import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.GitChangesResolver;
 
 public class ChangedFilesBuilder {
 	private static Set<String> changedClasses;
@@ -13,6 +13,7 @@ public class ChangedFilesBuilder {
 	}
 	
 	// Used for testing purposes only
+	@SuppressWarnings("unused")
 	private static void set(Set<String> chClasses){
 		changedClasses = chClasses;
 	}

@@ -59,14 +59,14 @@ public class Statistics {
 		}
 	}
 	
-	// Returns null if the given key is not found
+	// Returns an empty TestStatus if the given key is not found
 	public TestStatus getTestStatus(String className, String methodName){
 		
 		if(runStatistics.containsKey(className)){
 			return runStatistics.get(className).getStatus(methodName);
 		}
 		
-		return null;	
+		return new TestStatus();	
 	}
 	
 	public void reset(){
