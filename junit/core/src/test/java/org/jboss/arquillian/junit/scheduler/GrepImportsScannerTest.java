@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.GrepImportsScanner;
+import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.GrepImportsScanner;
 import org.junit.Before;
 import org.junit.Test;
 

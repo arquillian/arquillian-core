@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles;
+package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

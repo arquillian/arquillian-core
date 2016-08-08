@@ -48,19 +48,13 @@ public class ArquillianScheduling extends Arquillian{
 			public void testFailure(Failure failure) throws Exception {
 				Description description = failure.getDescription();
 				schedulerListener.testFailure(description.getClassName(),
-						description.getMethodName(), failure.getMessage());
+					description.getMethodName(), failure.getMessage());
 			}
 			
 			@Override
 			// Serialize recorded statistics information
 			public void testRunFinished(Result result) throws Exception {
-				try {
-					schedulerListener.testRunFinished();
-				} catch (Exception e) {
-					// TODO 
-					e.printStackTrace();
-				}
-				
+				schedulerListener.testRunFinished();
 			}
 		});
 		

@@ -1,9 +1,9 @@
 package org.jboss.arquillian.junit.scheduling;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleSuiteWith;
+import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
 import org.jboss.arquillian.junit.scheduling.scheduler.Scheduler;
+import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerBuilder;
 import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerListener;
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.latestfailed.LatestFailedSuiteScheduler;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -53,7 +53,6 @@ public class ArquillianSuiteScheduling extends Suite {
 				try {
 					schedulerListener.testRunFinished();
 				} catch (Exception e) {
-					// TODO
 					e.printStackTrace();
 				}
 
@@ -64,13 +63,7 @@ public class ArquillianSuiteScheduling extends Suite {
 	}
 
 	private Scheduler getSuiteScheduler(Class<?> testClass) throws Exception {
-		// TODO generic builder
-		ScheduleSuiteWith annotation = testClass.getAnnotation(ScheduleSuiteWith.class);
-		if (annotation != null) {
-			return annotation.value().getConstructor(Class.class).newInstance(testClass);
-		}
-
-		// return the default suite scheduler
-		return new LatestFailedSuiteScheduler(testClass);
+		return SchedulerBuilder.buildScheduler(testClass,testClass
+				.getAnnotation(ScheduleWith.class));
 	}
 }

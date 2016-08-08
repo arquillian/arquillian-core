@@ -19,10 +19,10 @@ import org.jboss.arquillian.junit.scheduler.files.test.FirstChangedClassTest;
 import org.jboss.arquillian.junit.scheduler.files.test.SecondChangedClassTest;
 import org.jboss.arquillian.junit.scheduler.files.test.UnchangedClassTest;
 import org.jboss.arquillian.junit.scheduling.ArquillianSuiteScheduling;
-import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleSuiteWith;
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.ChangedFilesBuilder;
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.ChangedFilesSuiteScheduler;
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.ChangedFilesSuiteSchedulerParams;
+import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
+import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.ChangedFilesBuilder;
+import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.ChangedFilesSuiteScheduler;
+import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.ChangedFilesSuiteSchedulerParams;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -106,7 +106,7 @@ public class ArquillianSuiteSchedulingTest extends JUnitTestBaseClass{
 
 	@RunWith(ArquillianSuiteScheduling.class)
 	@SuiteClasses({UnchangedClassTest.class,SecondChangedClassTest.class,FirstChangedClassTest.class })
-	@ScheduleSuiteWith(ChangedFilesSuiteScheduler.class)
+	@ScheduleWith(ChangedFilesSuiteScheduler.class)
 	@ChangedFilesSuiteSchedulerParams(
 		workingDir="src/test/java/org/jboss/arquillian/junit/scheduler/files/src",
 		testDir = "src/test/java/org/jboss/arquillian/junit/scheduler/files/test"
@@ -117,7 +117,7 @@ public class ArquillianSuiteSchedulingTest extends JUnitTestBaseClass{
 	
 	@RunWith(ArquillianSuiteScheduling.class)
 	@SuiteClasses({UnchangedClassTest.class,SecondChangedClassTest.class,FirstChangedClassTest.class })
-	@ScheduleSuiteWith(ChangedFilesSuiteScheduler.class)
+	@ScheduleWith(ChangedFilesSuiteScheduler.class)
 	@ChangedFilesSuiteSchedulerParams(
 		workingDir="src/test/java/org/jboss/arquillian/junit/scheduler/files/src",
 		testDir = "src/test/java/org/jboss/arquillian/junit/scheduler/files/test",

@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports;
+package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.utils.ClassFileUtil;
+import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.utils.ClassFileUtil;
 import org.junit.Test;
 
 public class GrepImportsScanner implements ImportsScanner {

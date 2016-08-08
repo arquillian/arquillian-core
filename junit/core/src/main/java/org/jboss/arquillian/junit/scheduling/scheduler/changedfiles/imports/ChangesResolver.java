@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports;
+package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports;
 
 import java.util.Set;
 

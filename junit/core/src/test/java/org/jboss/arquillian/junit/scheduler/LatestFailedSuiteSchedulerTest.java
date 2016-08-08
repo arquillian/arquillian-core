@@ -13,6 +13,7 @@ import org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.FirstTe
 import org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.SecondTestClass;
 import org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.ThirdTestClass;
 import org.jboss.arquillian.junit.scheduling.ArquillianSuiteScheduling;
+import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.LatestFailedSchedulerParams;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -68,6 +69,7 @@ public class LatestFailedSuiteSchedulerTest extends JUnitTestBaseClass{
 	
 	@RunWith(ArquillianSuiteScheduling.class)
 	@SuiteClasses({SecondTestClass.class,FirstTestClass.class,ThirdTestClass.class})
+	@LatestFailedSchedulerParams(storagePath="statistics-suite.xml")
 	public static class TestSuite{
 		
 	}

@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduling.utils;
+package org.jboss.arquillian.junit.scheduling.sort;
 
 import java.util.ArrayList;
 

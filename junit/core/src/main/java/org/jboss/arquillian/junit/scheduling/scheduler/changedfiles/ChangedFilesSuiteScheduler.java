@@ -1,11 +1,11 @@
-package org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles;
+package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles;
 
 import java.util.Comparator;
 import java.util.Set;
 
 import org.jboss.arquillian.junit.scheduling.scheduler.Scheduler;
 import org.jboss.arquillian.junit.scheduling.scheduler.SchedulerListener;
-import org.jboss.arquillian.junit.scheduling.scheduler.suite.changedfiles.imports.GrepImportsScanner;
+import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.imports.GrepImportsScanner;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Sorter;
