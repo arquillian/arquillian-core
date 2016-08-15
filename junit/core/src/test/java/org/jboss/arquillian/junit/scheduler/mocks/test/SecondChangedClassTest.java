@@ -1,7 +1,7 @@
-package org.jboss.arquillian.junit.scheduler.files.test;
+package org.jboss.arquillian.junit.scheduler.mocks.test;
 
+import org.jboss.arquillian.junit.scheduler.mocks.src.SecondChangedClass;
 import org.junit.Test;
-import org.jboss.arquillian.junit.scheduler.files.src.SecondChangedClass;
 
 // Used for test purposes only
 // Tests the ChangedFilesScheduler

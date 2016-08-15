@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduler.files.src;
+package org.jboss.arquillian.junit.scheduler.mocks.src;
 
 // Used for test purposes only
 // Tests the ChangedFilesScheduler

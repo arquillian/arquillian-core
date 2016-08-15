@@ -7,6 +7,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * A marshal friendly {@link org.jboss.arquillian.junit.scheduling.Statistics} class. 
+ * <p>
+ * Contains the statistics data for a test class.
+ * 
+ */
 @XmlRootElement(name="statistics")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StatisticsValueType {

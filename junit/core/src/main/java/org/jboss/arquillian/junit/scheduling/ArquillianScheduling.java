@@ -11,8 +11,12 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 
-/*
- * Scheduling Arquillian JUnit runner
+/**
+ * Arquillian Scheduling JUnit runner
+ * 
+ * @author Dimcho Karpachev
+ * @version 1.0
+ * 
  */
 
 public class ArquillianScheduling extends Arquillian{
@@ -61,6 +65,16 @@ public class ArquillianScheduling extends Arquillian{
 		super.run(notifier);
 	}
 
+	/**
+	 * Returns a Scheduler object that can be used to sort and filter JUnit tests methods.
+	 * On the various Schedulers the sort and filter methods can have different implementations.
+	 * The class argument must only specify a JUnit test class.
+	 * 
+	 * @param testClass the JUnit test class currently executed by <code>ArquillianScheduling</code> 
+	 * @return a scheduler based on the annotations on <code>testClass</code> 
+	 * @throws Exception
+	 * @see Scheduler, SchedulerBuilder, RunWith
+	 */
 	public Scheduler getScheduler(Class<?> testClass) throws Exception{
 		
 		return SchedulerBuilder.buildScheduler(testClass,testClass

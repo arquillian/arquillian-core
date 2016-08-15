@@ -20,15 +20,45 @@ public class GrepImportsScanner implements ImportsScanner {
 		this.workingDir = workingDir;
 	}
 	
+	/**
+	 * Builds a standard class canonical name using a 
+	 * standard package name and a class file name.
+	 * <p>
+	 * Note that any trailing white spaces will be removed.
+	 * 
+	 * @param builder a <code>StringBuilder</code> to build the canonical name with
+	 * @param packageDeclaration the <code>String</code> which represents the package declaration
+	 * within the class file
+	 * @param className the name of a class file
+	 * @return the canonical name built from the <code>packageDeclaration</code> and a <code>className</code>
+	 */
 	private String buildClassCanonicalName(StringBuilder builder, String packageDeclaration, String className){
 		builder.append(packageDeclaration.substring("package".length(),
 				packageDeclaration.length() - 1).trim());
 		builder.append('.');
+		// Removes the file extension
 		builder.append(className.substring(0,className.lastIndexOf(".")));
 		
 		return builder.toString();
 	}
 	
+	/**
+	 * Finds all test classes which import a recently changed class file.
+	 * <p>
+	 * To determine which test classes are eligible this method
+	 * scans through their import statement to see if any references to the classes in
+	 * <code>classNames</code> are made and also if a <code>&#064;Test</code>
+	 * annotation is present. If a <code>&#064;Test</code> annotation is found 
+	 * and a class in <code>classNames</code> is imported,
+	 * then the test class is eligible and is added to a <code>Set</code>.
+	 * Note that the this method stops parsing the class file
+	 * after a class declaration statement is read.
+	 * 
+	 * @param classNames the changed classes's names 
+	 * @return the test classes which import the <code>classNames</code>
+	 * @throws Exception
+	 * @see ClassFileUtil
+	 */
 	@Override
 	public Set<String> getImportingClasses(Set<String> classNames) throws Exception {
 		ClassFileUtil classFilesUtil = new ClassFileUtil();

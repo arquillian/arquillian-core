@@ -8,13 +8,33 @@ import java.io.Writer;
 
 import org.jboss.arquillian.junit.scheduling.Statistics;
 
+/**
+ * File storage for test statistic information
+ */
 public class FileStatisticsStorage extends AbstractStatisticsStorage {
 
 	private File statisticsFile;
 	
+	/**
+	 * Constructs an object with the provided abstract path name.
+	 * Note that all necessary and none existent directories will be created. 
+	 * The text after the last '/' or on other operating systems '\\'
+	 * is considered as the name of the statistics file. For example: 
+	 * 
+	 * <p>
+	 *"storage/statistics.xml" creates a statistics.xml file in storage
+	 *"storage/statistics" creates a file named statistics in storage
+	 *"storage/statistics/" is also possible and again will create
+	 * a file named statistics in storage
+	 * 
+	 * @param storagePath the abstract path name to a file
+	 * @throws Exception - if <code> storagPath</code> is empty
+	 * or <code>null</code> and if the file denoted by this abstract pathname
+	 * doesn't have a parent.
+	 */
 	public FileStatisticsStorage(String storagePath) throws Exception{
 		
-		if(storagePath.isEmpty()){
+		if(storagePath == null || storagePath.isEmpty()){
 			throw new Exception("No storagePath is specified!");
 		}
 		

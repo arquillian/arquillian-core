@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass;
-import org.jboss.arquillian.junit.scheduler.files.src.ChangedClassNoTest;
-import org.jboss.arquillian.junit.scheduler.files.src.FirstChangedClass;
-import org.jboss.arquillian.junit.scheduler.files.src.SecondChangedClass;
-import org.jboss.arquillian.junit.scheduler.files.test.FirstChangedClassTest;
-import org.jboss.arquillian.junit.scheduler.files.test.SecondChangedClassTest;
-import org.jboss.arquillian.junit.scheduler.files.test.UnchangedClassTest;
+import org.jboss.arquillian.junit.scheduler.mocks.src.ChangedClassNoTest;
+import org.jboss.arquillian.junit.scheduler.mocks.src.FirstChangedClass;
+import org.jboss.arquillian.junit.scheduler.mocks.src.SecondChangedClass;
+import org.jboss.arquillian.junit.scheduler.mocks.test.FirstChangedClassTest;
+import org.jboss.arquillian.junit.scheduler.mocks.test.SecondChangedClassTest;
+import org.jboss.arquillian.junit.scheduler.mocks.test.UnchangedClassTest;
 import org.jboss.arquillian.junit.scheduling.ArquillianSuiteScheduling;
 import org.jboss.arquillian.junit.scheduling.scheduler.ScheduleWith;
 import org.jboss.arquillian.junit.scheduling.scheduler.changedfiles.ChangedFilesBuilder;

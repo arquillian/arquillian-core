@@ -11,6 +11,12 @@ import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.m
 
 public class ModelTransitioner {
 	
+	/**
+	 * Converts a jaxb marshal friendly model to the original model
+	 * 
+	 * @param statisticsValueType the marshal friendly object to convert 
+	 * @return the statistic data encapsulated in the original model
+	 */
 	public Statistics toStatistics(StatisticsValueType statisticsValueType) {
 		
 		Statistics statistics = new Statistics();
@@ -34,6 +40,12 @@ public class ModelTransitioner {
 		return statistics;
 	}
 	
+	/**
+	 * Converts the current model to a more marshal friendly one.
+	 * 
+	 * @param stats the statistics object to convert
+	 * @return the statistic data encapsulated in the jaxb marshal friendly model
+	 */
 	public StatisticsValueType toStatisticsValueType(Statistics stats) {
 		
 		List<ClassStatusValueType> classStatusValueTypes = new ArrayList<ClassStatusValueType>();

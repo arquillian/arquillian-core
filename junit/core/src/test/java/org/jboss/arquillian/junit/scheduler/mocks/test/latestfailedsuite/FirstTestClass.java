@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite;
+package org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite;
 
 import static org.junit.Assert.*;
 

@@ -1,6 +1,9 @@
 package org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model;
 
-//Keeps track of test failures and passes
+/**
+ * This class keeps track of test method failures and passes.
+ *
+ */
 public class TestStatus {
 
 	private int passed;
@@ -42,7 +45,4 @@ public class TestStatus {
 	public void setFailures(int failures) {
 		this.failures = failures;
 	}
-	
-	
-
 }

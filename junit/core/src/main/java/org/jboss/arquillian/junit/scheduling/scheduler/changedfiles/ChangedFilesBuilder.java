@@ -18,6 +18,15 @@ public class ChangedFilesBuilder {
 		changedClasses = chClasses;
 	}
 	
+	/**
+	 * Builds a {@link JGitChangesResolver} set of changed classes.
+	 * <p>
+	 * If the <code>changedClasses</code> object is already set
+	 * it is returned and used for testing purposes only.
+	 * 
+	 * @return a set containing every changed class
+	 * @throws Exception
+	 */
 	public Set<String> build() throws Exception{
 		if(changedClasses != null){
 			return changedClasses;

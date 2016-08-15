@@ -10,14 +10,40 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Sorter;
 
+/**
+ * CahngedFiles scheduling strategy for sorting test suites.
+ * <p>
+ * This strategy uses the changed classes in <code>changedClasses</code> and checks if any
+ * of them are imported by any test classes. Any test class that imports a changed class
+ * is ran before any other test classes.
+ *
+ */
 public class ChangedFilesSuiteScheduler implements Scheduler {
 	private static final String FILTER_DESCRIPTION = "Filters only tests which are touched by changed files";
 
+	/**
+	 *  The <code>ChangedFilesSuiteSchedulerParams</code> annotation's parameters
+	 *  
+	 *  @see ChangedFilesSuiteSchedulerParams
+	 */
 	private ChangedFilesSuiteSchedulerParamValues runtimeParams;
 	private Set<String> changedClasses;
 	private Set<String> importingTests;
 	private boolean runFlagIsSet;
 
+	/**
+	 * Class constructor.
+	 * <p>
+	 * Creates a <code>ChangedFilesSuiteScheduler</code> 
+	 * using the parameters of <code>ChangedFilesSuiteSchedulerParams</code> 
+	 * and the recently changed class files.
+	 * If the <code>ChangedFilesSuiteSchedulerParam</code> annotation is null,
+	 * default values for the <code>ChangedFilesSuiteSchedulerParamValues</code> are used.
+	 * 
+	 * @param klass the JUnit test suite currently executed by a SuiteScheduling runner
+	 * @throws Exception
+	 * @see LatestFailedSchedulerParamValues, ChangedFilesBuilder, GrepImportsScanner
+	 */
 	public ChangedFilesSuiteScheduler(Class<?> klass) throws Exception {
 
 		ChangedFilesSuiteSchedulerParams annotation = 

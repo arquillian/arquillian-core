@@ -12,18 +12,40 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Sorter;
 
+/**
+ * Latest failed scheduling strategy
+ * 
+ * @author Dimcho Karpachev
+ *
+ */
 public class LatestFailedScheduler implements Scheduler{
+	/**
+	 *  The <code>LatestFailedSchedulerParams</code> annotation's parameters
+	 *  
+	 *  @see LatestFailedSchedulerParams
+	 */
 	private LatestFailedSchedulerParamValues storageParams;
 	private Statistics statistics;
 	private FileStatisticsStorage fileStorage;
 	
+	/**
+	 * Class constructor.
+	 * <p>
+	 * Creates a <code>LatestFailedScheduler</code> 
+	 * using the parameters of <code>LataestFailedSchedulerParams</code> 
+	 * and the stored statistics information.
+	 * If the <code>LataestFailedSchedulerParams</code> annotation is null,
+	 * default values for the <code>LatestFailedSchedulerParams</code> are used.
+	 * 
+	 * @param testClass the JUnit test class currently executed by a Scheduling runner
+	 * @throws Exception
+	 * @see LatestFailedSchedulerParamValues, FileStatisticsStorage, StatisticsBuilder
+	 */
 	public LatestFailedScheduler(Class<?> testClass) throws Exception {
 		// Sets up the parameters passed by the annotation
-		// TODO annotation
 		LatestFailedSchedulerParams paramAnnotation =
 				testClass.getAnnotation(LatestFailedSchedulerParams.class);
 		
-		// TODO change  ParamValue class
 		if(paramAnnotation != null){
 			storageParams = new LatestFailedSchedulerParamValues(
 							paramAnnotation.storeLongTerm()
@@ -47,7 +69,7 @@ public class LatestFailedScheduler implements Scheduler{
 
 	@Override
 	public Sorter getSorter() {
-		return new Sorter(new LatestFailedSuiteComparator());
+		return new Sorter(new LatestFailedComparator());
 	}
 
 	// No scheduler listener is required
@@ -80,7 +102,11 @@ public class LatestFailedScheduler implements Scheduler{
 		};
 	}
 	
-	private class LatestFailedSuiteComparator implements Comparator<Description>{
+	/**
+	 * A latest failed strategy test comparator
+	 *
+	 */
+	private class LatestFailedComparator implements Comparator<Description>{
 		private final AtomicTestSortingUtil sorter = new AtomicTestSortingUtil();
 		
 		@Override

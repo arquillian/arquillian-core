@@ -1,5 +1,9 @@
 package org.jboss.arquillian.junit.scheduling.scheduler.changedfiles;
 
+/**
+ * A storage class for <code>ChangedFilesSuiteScheduler</code>'s parameters
+ * 
+ */
 public class ChangedFilesSuiteSchedulerParamValues {
 	private String workingDir;
 	private String testDir;

@@ -7,6 +7,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * A marshal friendly {@link org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.statistics.model.ClassStatus} class. 
+ * <p>
+ * Contains the name of a marshaled class and a
+ * marshal friendly list of atomic tests mapped to that name.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassStatusValueType {
 	@XmlAttribute

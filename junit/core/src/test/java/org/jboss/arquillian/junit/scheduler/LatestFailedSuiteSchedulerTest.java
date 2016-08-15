@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass;
-import org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.FirstTestClass;
-import org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.SecondTestClass;
-import org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.ThirdTestClass;
+import org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite.FirstTestClass;
+import org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite.SecondTestClass;
+import org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite.ThirdTestClass;
 import org.jboss.arquillian.junit.scheduling.ArquillianSuiteScheduling;
 import org.jboss.arquillian.junit.scheduling.scheduler.latestfailed.LatestFailedSchedulerParams;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;

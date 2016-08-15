@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.scheduler.files.test;
+package org.jboss.arquillian.junit.scheduler.mocks.test;
 
 import org.junit.Test;
 

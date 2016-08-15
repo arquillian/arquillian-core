@@ -17,11 +17,29 @@ public class JGitChangesResolver implements ChangesResolver {
 		this.git = git;
 	}
 	
+	/**
+	 * Constructs a <code>Git</code> object using the root of the local git repository
+	 * specified by the system property <code>user.dir</code> and sets this class's
+	 * <code>workingDir</code> property.
+	 * 
+	 * @param workingDir the working directory of the git command
+	 * @throws Exception
+	 */
 	public JGitChangesResolver(String workingDir) throws Exception {
 		git = Git.open(new File(System.getProperty("user.dir")));
 		this.workingDir = workingDir;
 	}
 
+	/**
+	 * Finds all the changed files in the specified <code>workingDir</code> using JGit.
+	 * <p>
+	 * Changed files are considered to be all the files 
+	 * that are tracked but changed either in the index or in the working tree
+	 * and all the untracked files that are not ignored.
+	 * 
+	 * @return the changed files in <code>workingDir</code>
+	 * @throws Exception
+	 */
 	private Set<String> getChangedFiles() throws Exception {
 		try{
 			StatusCommand status = git.status()
@@ -33,7 +51,6 @@ public class JGitChangesResolver implements ChangesResolver {
 			Set<String> changedFiles = new HashSet<String>();
 			changedFiles.addAll(commandStatus.getUntracked());
 	
-			// Add the know changed files for the repository
 			if (commandStatus.hasUncommittedChanges()) {
 				changedFiles.addAll(commandStatus.getUncommittedChanges());
 			}
@@ -46,6 +63,16 @@ public class JGitChangesResolver implements ChangesResolver {
 		}
 	}
 
+	/**
+	 * Resolves the changed class files in <code>workingDir</code>.
+	 * <p>
+	 * Every changed file name is parsed and if it represents
+	 * a java class file it is converted to a canonical class name.
+	 * 
+	 * @return a set with the canonical names of all the changed classes
+	 * @throws Exception
+	 * @see #getChangedFiles
+	 */
 	@Override
 	public Set<String> resolveChangedClasses() throws Exception {
 		Set<String> changedFiles = getChangedFiles();
