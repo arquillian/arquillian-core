@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <statistics>
+    <class name="org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite.FirstTestClass">
+        <test name="test2">
+            <passed>0</passed>
+            <failures>5</failures>
+        </test>
+        <test name="test3">
+            <passed>0</passed>
+            <failures>5</failures>
+        </test>
+        <test name="test1">
+            <passed>0</passed>
+            <failures>5</failures>
+        </test>
+    </class>
     <class name="org.jboss.arquillian.junit.scheduler.files.test.latestfailedsuite.ThirdTestClass">
         <test name="test8">
             <passed>2</passed>
@@ -36,6 +50,30 @@
         <test name="test5">
             <passed>2</passed>
             <failures>0</failures>
+        </test>
+    </class>
+    <class name="org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite.SecondTestClass">
+        <test name="test4">
+            <passed>5</passed>
+            <failures>0</failures>
+        </test>
+        <test name="test5">
+            <passed>5</passed>
+            <failures>0</failures>
+        </test>
+    </class>
+    <class name="org.jboss.arquillian.junit.scheduler.mocks.test.latestfailedsuite.ThirdTestClass">
+        <test name="test8">
+            <passed>5</passed>
+            <failures>0</failures>
+        </test>
+        <test name="test6">
+            <passed>5</passed>
+            <failures>0</failures>
+        </test>
+        <test name="test7">
+            <passed>0</passed>
+            <failures>5</failures>
         </test>
     </class>
 </statistics>

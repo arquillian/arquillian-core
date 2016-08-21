@@ -65,7 +65,7 @@ public class ArquillianSuiteSchedulingTest extends JUnitTestBaseClass{
 		
 		assertEquals(3, pickedClasses.size());
 		assertEquals("Tests were not sorted properly!",
-				"org.jboss.arquillian.junit.scheduler.files.test.UnchangedClassTest"
+				UnchangedClassTest.class.getName()
 				,pickedClasses.get(2));
 	}
 	
@@ -99,17 +99,17 @@ public class ArquillianSuiteSchedulingTest extends JUnitTestBaseClass{
 		
 		assertEquals(2, pickedTests.size());
 		assertTrue("Tests were not filtered properly!"
-				,pickedTests.contains("org.jboss.arquillian.junit.scheduler.files.test.FirstChangedClassTest"));
+				,pickedTests.contains(FirstChangedClassTest.class.getName()));
 		assertTrue("Tests were not filtered properly!"
-				,pickedTests.contains("org.jboss.arquillian.junit.scheduler.files.test.SecondChangedClassTest"));
+				,pickedTests.contains(SecondChangedClassTest.class.getName()));
 	}
 
 	@RunWith(ArquillianSuiteScheduling.class)
 	@SuiteClasses({UnchangedClassTest.class,SecondChangedClassTest.class,FirstChangedClassTest.class })
 	@ScheduleWith(ChangedFilesSuiteScheduler.class)
 	@ChangedFilesSuiteSchedulerParams(
-		workingDir="src/test/java/org/jboss/arquillian/junit/scheduler/files/src",
-		testDir = "src/test/java/org/jboss/arquillian/junit/scheduler/files/test"
+		workingDir="src/test/java/org/jboss/arquillian/junit/scheduler/mocks/src",
+		testDir = "src/test/java/org/jboss/arquillian/junit/scheduler/mocks/test"
 	)
 	public static class TestSuite{
 		
@@ -119,8 +119,8 @@ public class ArquillianSuiteSchedulingTest extends JUnitTestBaseClass{
 	@SuiteClasses({UnchangedClassTest.class,SecondChangedClassTest.class,FirstChangedClassTest.class })
 	@ScheduleWith(ChangedFilesSuiteScheduler.class)
 	@ChangedFilesSuiteSchedulerParams(
-		workingDir="src/test/java/org/jboss/arquillian/junit/scheduler/files/src",
-		testDir = "src/test/java/org/jboss/arquillian/junit/scheduler/files/test",
+		workingDir="src/test/java/org/jboss/arquillian/junit/scheduler/mocks/src",
+		testDir = "src/test/java/org/jboss/arquillian/junit/scheduler/mocks/test",
 		runOnlyChangedFiles = true
 	)
 	public static class TestSuiteWithFiltering{

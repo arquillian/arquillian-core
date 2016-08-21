@@ -65,11 +65,23 @@ public class AtomicTestSortingUtil {
 		o2TestStatus = statistics.getTestStatus(o2.getClassName(),o2.getMethodName());
 		
 		if(o1TestStatus == null && o2TestStatus == null){
-			return 0;
+				return 0;
 		}
 		
-		int o1FailToPassFactor = o1TestStatus.getFailures() - o1TestStatus.getPasses();
-		int o2FailToPassFactor = o2TestStatus.getFailures() - o2TestStatus.getPasses();
+		int o1FailToPassFactor;
+		int o2FailToPassFactor;
+		
+		if(o1TestStatus == null){
+			o1FailToPassFactor = 0;
+		}else{
+			o1FailToPassFactor = o1TestStatus.getFailures() - o1TestStatus.getPasses();
+		}
+		
+		if(o2TestStatus == null){
+			o2FailToPassFactor = 0;
+		}else{
+			o2FailToPassFactor = o2TestStatus.getFailures() - o2TestStatus.getPasses();
+		}
 		
 		// Tests with more failures and less passes will be run first
 		return o2FailToPassFactor - o1FailToPassFactor;

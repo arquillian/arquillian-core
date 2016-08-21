@@ -144,7 +144,7 @@ public class Statistics {
 	 * 
 	 * @param className a test class containing test methods
 	 * @param classStatus a class containing a map with method names as keys 
-	 * and <code>TestStatus</code>s for values 
+	 * and <code>TestStatus</code>exs for values 
 	 */
 	public void addTestClass(String className, ClassStatus classStatus){
 		runStatistics.put(className, classStatus);

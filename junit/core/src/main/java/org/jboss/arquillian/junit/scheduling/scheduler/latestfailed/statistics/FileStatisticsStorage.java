@@ -62,11 +62,12 @@ public class FileStatisticsStorage extends AbstractStatisticsStorage {
 
 	@Override
 	public Statistics retrieve() throws Exception {
-		if(!statisticsFile.exists() || statisticsFile.length()  == 0){
+		if(!statisticsFile.exists() || statisticsFile.length() == 0){
 			return null;
 		}
 		
 		Reader fileReader = new FileReader(statisticsFile);
+		
 		// Unmarshal the stored statistics
 		Statistics statistics = super.unmarshal(fileReader);
 		fileReader.close();
