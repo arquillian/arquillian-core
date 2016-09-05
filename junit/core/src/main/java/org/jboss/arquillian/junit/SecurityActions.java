@@ -25,6 +25,7 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -128,7 +129,7 @@ final class SecurityActions
     * Create a new instance by finding a constructor that matches the argumentTypes signature 
     * using the arguments for instantiation.
     * 
-    * @param className Full classname of class to create
+    * @param implClass Full classname of class to create
     * @param argumentTypes The constructor argument types
     * @param arguments The constructor arguments
     * @return a new instance
@@ -331,7 +332,7 @@ final class SecurityActions
             List<Method> foundMethods = new ArrayList<Method>();
             Class<?> nextSource = source;
             while (nextSource != Object.class) {
-               for(Method method : nextSource.getDeclaredMethods())
+               for(Method method : filterBridgeMethods(nextSource.getDeclaredMethods()))
                {
                   if(method.isAnnotationPresent(annotationClass))
                   {
@@ -381,7 +382,19 @@ final class SecurityActions
               }
           }
       }
-  }
+   }
+
+    private static Collection<Method> filterBridgeMethods(Method ... declaredMethods) {
+        final List<Method> nonBridgeMethods = new ArrayList<Method>(declaredMethods.length);
+
+        for (Method declaredMethod : declaredMethods) {
+            if (!declaredMethod.isBridge()) {
+                nonBridgeMethods.add(declaredMethod);
+            }
+        }
+
+        return nonBridgeMethods;
+    }
 
    //-------------------------------------------------------------------------------||
    // Inner Classes ----------------------------------------------------------------||
