@@ -22,16 +22,13 @@
     <description>Arquillian Aggregator</description>
 
     <properties>
-
         <!-- jboss-parent override -->
         <maven.compiler.target>1.5</maven.compiler.target>
         <maven.compiler.source>1.5</maven.compiler.source>
-        <maven.min.version>3.0.3</maven.min.version>
 
         <!-- External Deps -->
         <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
         <version.shrinkwrap_descriptors>2.0.0-alpha-10</version.shrinkwrap_descriptors>
-
     </properties>
 
     <issueManagement>

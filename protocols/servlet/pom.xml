@@ -20,7 +20,6 @@
 
     <!-- Properties -->
     <properties>
-
         <!-- Versioning -->
         <version.jetty_jetty>8.1.2.v20120308</version.jetty_jetty>
 
