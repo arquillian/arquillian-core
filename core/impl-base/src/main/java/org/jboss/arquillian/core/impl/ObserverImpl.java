@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.InvocationException;
@@ -34,6 +35,7 @@ import org.jboss.arquillian.core.spi.ObserverMethod;
  */
 public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
 {
+   private static Logger log = Logger.getLogger(ObserverMethod.class.getName());
    private Object target;
    private Method method;
  
@@ -160,6 +162,9 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod>
       {
          Class<?> argumentType = argumentTypes[i];
          arguments[i] = manager.resolve(argumentType);
+         if (arguments[i] == null) {
+            log.warning(String.format("Argument %d for %s.%s is null. It won't be invoked.", i, getMethod().getDeclaringClass().getSimpleName(), getMethod().getName()));
+         }
       }
       return arguments;
    }
