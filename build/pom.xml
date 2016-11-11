@@ -26,7 +26,7 @@
         <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
         <version.junit_junit>4.12</version.junit_junit>
         <version.mockito_all>1.8.3</version.mockito_all>
-        <version.testng_testng>5.14.6</version.testng_testng>
+        <version.testng_testng>6.9.10</version.testng_testng>
     </properties>
 
     <!-- Dependency Management -->
