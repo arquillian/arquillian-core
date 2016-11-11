@@ -60,16 +60,6 @@ public class TestNGTestRunner implements TestRunner
       XmlSuite suite = new XmlSuite();
       suite.setName("Arquillian");
 
-      // TestNG >= 6.3 has removed this method
-      try
-      {
-         Method method = XmlSuite.class.getMethod("setAnnotations", String.class);
-         method.invoke(suite, "JDK");
-      }
-      catch (Exception e) {
-         // no-op
-      }
-
       XmlTest test = new XmlTest(suite);
       test.setName("Arquillian - " + className);
       List<XmlClass> testClasses = new ArrayList<XmlClass>();
