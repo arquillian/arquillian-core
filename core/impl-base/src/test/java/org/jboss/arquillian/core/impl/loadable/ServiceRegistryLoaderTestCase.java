@@ -18,6 +18,8 @@
 package org.jboss.arquillian.core.impl.loadable;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -44,7 +46,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    @Test
    public void shouldBeAbleToLoadAll() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeExcluded.class);
       registry.addService(FakeService.class, ShouldBeIncluded.class);
       
@@ -66,7 +68,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    @Test
    public void shouldBeAbleToLoadAllEvenIfNonRegistered() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       
       Collection<FakeService> services = registry.getServiceLoader().all(FakeService.class);
       
@@ -79,7 +81,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    @Test
    public void shouldBeAbleToLoadOnlyOne() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeIncluded.class);
       
       FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
@@ -93,7 +95,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionIfMultipleFoundWhenTryingOnlyOne() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeIncluded.class);
       registry.addService(FakeService.class, ShouldBeExcluded.class);
       
@@ -104,7 +106,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    @Test
    public void shouldBeAbleToLoadDefaultIfNoneFound() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       
       Assert.assertNull(registry.getServiceLoader().onlyOne(FakeService.class));
       
@@ -120,7 +122,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    {
       bind(ApplicationScoped.class, String.class, "TEST");
       
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeIncluded.class);
       
       FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
@@ -137,7 +139,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    {
       bind(ApplicationScoped.class, String.class, "TEST");
       
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
 
       Assert.assertNull(registry.getServiceLoader().onlyOne(FakeService.class));
 
@@ -153,7 +155,7 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
    @SuppressWarnings("unchecked")
    @Test
    public void shouldBeAbleToLoadProtectedServices() throws Exception {
-      ServiceRegistry registry = new ServiceRegistry(injector.get());
+      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
       registry.addService(
             FakeService.class, (Class<FakeService>)Class.forName("org.jboss.arquillian.core.impl.loadable.util.PackageProtectedService"));
    

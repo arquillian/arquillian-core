@@ -18,6 +18,8 @@
 package org.jboss.arquillian.core.impl.loadable;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.jboss.arquillian.core.impl.loadable.util.FakeService;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded;
@@ -81,6 +83,52 @@ public class JavaSPIExtensionLoaderTestCase
 
       Assert.assertEquals("Unexpected number of providers loaded", 1, providers.size());
       Assert.assertEquals("Wrong provider loaded", expectedImplClass, providers.iterator().next().getClass());
+   }
+
+   @Test
+   public void shouldBeAbleToLoadVetoedClasses() throws Exception
+   {
+      Archive<JavaArchive> jarWithVetoedServiceImpl = createJarWithVetoedServices();
+
+      ClassLoader emptyParent = null;
+      ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarWithVetoedServiceImpl);
+
+      ClassLoader emptyClassLoader = new ClassLoader(null){};
+      ClassLoader originalClassLoader = SecurityActions.getThreadContextClassLoader();
+
+      Map<Class<?>, Set<Class<?>>> vetoed = null;
+      Class<?> service;
+      try
+      {
+         Thread.currentThread().setContextClassLoader(emptyClassLoader);
+
+         service = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.FakeService");
+         swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
+         swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
+
+         vetoed = new JavaSPIExtensionLoader().loadVetoed(swClassloader);
+      }
+      finally
+      {
+         Thread.currentThread().setContextClassLoader(originalClassLoader);
+      }
+
+      Assert.assertEquals("Unexpected number of vetoed services", 1, vetoed.size());
+      Assert.assertEquals("Unexpected number of vetoed services impl", 2, vetoed.get(service).size());
+
+   }
+
+   private Archive<JavaArchive> createJarWithVetoedServices()
+   {
+      StringAsset exclusions = new StringAsset("" +
+              "org.jboss.arquillian.core.impl.loadable.util.FakeService=org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded, " +
+              "org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
+
+      Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
+              .addClasses(FakeService.class, ShouldBeIncluded.class, ShouldBeExcluded.class)
+              .addAsManifestResource(exclusions, "exclusions");
+
+      return archive;
    }
 
    private Archive<JavaArchive> createJarWithDefaultServiceImpl()

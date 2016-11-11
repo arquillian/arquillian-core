@@ -69,7 +69,7 @@ public class LoadableExtensionLoader
    {
       ExtensionLoader extensionLoader = locateExtensionLoader();
       
-      final ServiceRegistry registry = new ServiceRegistry(injector.get());
+      final ServiceRegistry registry = new ServiceRegistry(injector.get(), extensionLoader.loadVetoed());
       
       Collection<LoadableExtension> extensions = extensionLoader.load();
 

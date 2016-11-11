@@ -18,6 +18,8 @@
 package org.jboss.arquillian.core.spi;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Extension point used to load the boot strap extensions.
@@ -28,4 +30,5 @@ import java.util.Collection;
 public interface ExtensionLoader
 {
    Collection<LoadableExtension> load();
+   Map<Class<?>, Set<Class<?>>> loadVetoed();
 }

@@ -38,10 +38,10 @@ public class ServiceRegistry
    private final Map<Class<?>, Set<Class<?>>> registry;
    private final Map<Class<?>, Set<Class<?>>> vetoed;
    
-   public ServiceRegistry(Injector injector)
+   public ServiceRegistry(Injector injector, Map<Class<?>, Set<Class<?>>> vetoed)
    {
       this.registry = new HashMap<Class<?>, Set<Class<?>>>();
-      this.vetoed = new HashMap<Class<?>, Set<Class<?>>>();
+      this.vetoed = new HashMap<Class<?>, Set<Class<?>>>(vetoed);
       this.injector = injector;
    }
    
@@ -78,6 +78,10 @@ public class ServiceRegistry
    {
       synchronized (registry)
       {
+
+         if(isImplementationVetoed(service, newServiceImpl))
+            return;
+
          Set<Class<?>> vetoedImpls = vetoed.get(service);
          if(vetoedImpls == null)
          {
