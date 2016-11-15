@@ -22,8 +22,10 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
+import org.jboss.arquillian.test.spi.TestClass;
 
 /**
  * RunModeUtils
@@ -38,7 +40,7 @@ public final class RunModeUtils
    private RunModeUtils() { }
    
    /**
-    * Check is this should run as client.
+    * Returns if the given test should run as client.
     * 
     * Verify @Deployment.testable vs @RunAsClient on Class or Method level 
     * 
@@ -47,31 +49,64 @@ public final class RunModeUtils
     * @param testMethod
     * @return
     */
-   public static boolean isRunAsClient(Deployment deployment, Class<?> testClass, Method testMethod)
+   public static boolean isRunAsClient(Deployment deployment, TestClass testClass, Method testMethod)
    {
-      boolean runMethodAsClient = testMethod.isAnnotationPresent(RunAsClient.class);
-      boolean runClassAsClient = testClass.isAnnotationPresent(RunAsClient.class);
-
       boolean runAsClient = true;
-      if(deployment != null)
+      if (deployment != null)
       {
-         runAsClient =  deployment.getDescription().testable() ? false:true;
-         runAsClient =  deployment.isDeployed() ? runAsClient:true;
+         runAsClient = deployment.getDescription().testable() ? false : true;
+         runAsClient = deployment.isDeployed() ? runAsClient : true;
 
-         if(runMethodAsClient)
+         if (testMethod.isAnnotationPresent(RunAsClient.class))
          {
             runAsClient = true;
          }
-         else if(runClassAsClient)
+         else if (testClass.isAnnotationPresent(RunAsClient.class))
          {
             runAsClient = true;
          }
       }
-      else if (!runMethodAsClient && !runClassAsClient)
+      return runAsClient;
+   }
+
+   /**
+    * Returns if the given test should run as client and also checks for a confusing use case, when the test is not
+    * intended to be run as a client test - in this case logs a warning. see: ARQ-1937
+    *
+    * @param deployment
+    * @param testClass
+    * @param testMethod
+    * @return
+    */
+   public static boolean isRunAsClientAndCheck(Deployment deployment, TestClass testClass, Method testMethod)
+   {
+      boolean runAsClient = isRunAsClient(deployment, testClass, testMethod);
+
+      if (runAsClient && deployment == null)
       {
-          log.warning("The test method \"" + testClass.getCanonicalName() + " " + testMethod.getName()
-              + "\" will run on the client side - there is no running deployment yet. Please use the "
-              + "annotation @RunAsClient");
+         Method[] methods = testClass.getMethods(org.jboss.arquillian.container.test.api.Deployment.class);
+         if (methods.length > 0)
+         {
+            if (!testMethod.isAnnotationPresent(RunAsClient.class) && !testClass.isAnnotationPresent(RunAsClient.class))
+            {
+               OperateOnDeployment onDeployment = testClass.getAnnotation(OperateOnDeployment.class);
+               String deploymentName = onDeployment == null ? "_DEFAULT_" : onDeployment.value();
+
+               for (Method m : methods)
+               {
+                  org.jboss.arquillian.container.test.api.Deployment deploymentAnnotation =
+                      m.getAnnotation(org.jboss.arquillian.container.test.api.Deployment.class);
+
+                  if (deploymentAnnotation.name().equals(deploymentName) && deploymentAnnotation.testable())
+                  {
+                     log.warning(
+                         "The test method " + testClass.getJavaClass().getCanonicalName() + "#" + testMethod.getName()
+                             + " will run on the client side,because the " + deploymentName + " deployment is not deployed."
+                             + " Please deploy the deployment or mark the test as a client test");
+                  }
+               }
+            }
+         }
       }
       return runAsClient;
    }

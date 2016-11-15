@@ -85,7 +85,7 @@ public class ClientBeforeAfterLifecycleEventExecuter
    {
       return RunModeUtils.isRunAsClient(
             deployment.get(),
-            event.getTestClass().getJavaClass(), 
+            event.getTestClass(),
             event.getTestMethod());
    }
 
