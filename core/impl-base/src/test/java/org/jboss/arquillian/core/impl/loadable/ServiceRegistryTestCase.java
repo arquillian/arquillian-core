@@ -18,6 +18,7 @@ package org.jboss.arquillian.core.impl.loadable;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.arquillian.core.impl.loadable.util.FakeService;
@@ -76,8 +77,8 @@ public class ServiceRegistryTestCase
    @Test
    public void shouldBeAbleToNotAddVetoedServices() throws Exception
    {
-      final HashMap<Class<?>, Set<Class<?>>> vetoed = new HashMap<Class<?>, Set<Class<?>>>();
-      final LinkedHashSet<Class<?>> vetoedServiceImpls = new LinkedHashSet<Class<?>>();
+      final Map<Class<?>, Set<Class<?>>> vetoed = new HashMap<Class<?>, Set<Class<?>>>();
+      final Set<Class<?>> vetoedServiceImpls = new LinkedHashSet<Class<?>>();
       vetoedServiceImpls.add(ShouldBeExcluded.class);
       vetoed.put(FakeService.class, vetoedServiceImpls);
 

@@ -182,8 +182,8 @@ public class JavaSPIExtensionLoader implements ExtensionLoader
    {
       String serviceFile = SERVICES + "/" + serviceClass.getName();
 
-      LinkedHashSet<Class<? extends T>> providers = new LinkedHashSet<Class<? extends T>>();
-      LinkedHashSet<Class<? extends T>> vetoedProviders = new LinkedHashSet<Class<? extends T>>();
+      Set<Class<? extends T>> providers = new LinkedHashSet<Class<? extends T>>();
+      Set<Class<? extends T>> vetoedProviders = new LinkedHashSet<Class<? extends T>>();
 
       try
       {
