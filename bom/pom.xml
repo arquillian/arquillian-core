@@ -43,7 +43,7 @@
 
     <properties>
 
-        <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
+        <version.shrinkwrap_core>1.2.6</version.shrinkwrap_core>
         <version.shrinkwrap_descriptors>2.0.0-alpha-10</version.shrinkwrap_descriptors>
         <version.shrinkwrap_resolver>2.2.4</version.shrinkwrap_resolver>
 
@@ -206,7 +206,7 @@
             <dependency>
                 <groupId>org.jboss.shrinkwrap</groupId>
                 <artifactId>shrinkwrap-bom</artifactId>
-                <version>${version.shrinkwrap_shrinkwrap}</version>
+                <version>${version.shrinkwrap_core}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

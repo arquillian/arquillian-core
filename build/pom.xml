@@ -23,10 +23,10 @@
     <properties>
 
         <!-- Arquillian Core common Deps, Test related -->
-        <version.javax.inject_javax.inject>1</version.javax.inject_javax.inject>
-        <version.junit_junit>4.12</version.junit_junit>
-        <version.mockito_all>1.8.3</version.mockito_all>
-        <version.testng_testng>6.9.10</version.testng_testng>
+        <version.javax.inject>1</version.javax.inject>
+        <version.junit>4.12</version.junit>
+        <version.mockito_all>1.10.19</version.mockito_all>
+        <version.testng>6.9.10</version.testng>
     </properties>
 
     <!-- Dependency Management -->
@@ -35,7 +35,7 @@
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
-                <version>${version.javax.inject_javax.inject}</version>
+                <version>${version.javax.inject}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -57,13 +57,13 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>${version.junit_junit}</version>
+                <version>${version.junit}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>${version.testng_testng}</version>
+                <version>${version.testng}</version>
                 <scope>test</scope>
             </dependency>
 
