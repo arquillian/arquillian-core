@@ -53,8 +53,8 @@ public class TestLifecycleEvent extends TestEvent implements LifecycleEvent
     */
    public TestLifecycleEvent(Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
    {
-      super(testInstance, testMethod);  
-      
+      super(testInstance, testMethod);
+
       Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
       this.executor = executor;
    }

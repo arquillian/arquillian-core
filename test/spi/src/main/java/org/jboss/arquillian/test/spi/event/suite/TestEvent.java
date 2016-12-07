@@ -38,17 +38,17 @@ public class TestEvent extends ClassEvent
    public TestEvent(Object testInstance, Method testMethod)
    {
       super(validateAndExtractClass(testInstance, testMethod));
-      
+
       this.testInstance = testInstance;
       this.testMethod = testMethod;
    }
 
-   // TODO: eeehh..? 
-   private static Class<?> validateAndExtractClass(Object testInstance, Method testMethod) 
+   // TODO: eeehh..?
+   private static Class<?> validateAndExtractClass(Object testInstance, Method testMethod)
    {
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
-      
+
       return testInstance.getClass();
    }
    
@@ -56,7 +56,7 @@ public class TestEvent extends ClassEvent
    {
       return testInstance;
    }
-   
+
    public Method getTestMethod()
    {
       return testMethod;

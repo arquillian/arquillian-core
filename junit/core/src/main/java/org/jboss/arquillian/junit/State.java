@@ -36,7 +36,7 @@ public class State
     */
    // Cleaned up in JUnitTestRunner
    private static ThreadLocal<Throwable> caughtTestException = new ThreadLocal<Throwable>();
-   
+
    private static ThreadLocal<Throwable> caughtExceptionAfterJunit = new ThreadLocal<Throwable>();
 
    /*
@@ -52,7 +52,7 @@ public class State
     * A instance of all TestCases are created before the first one is started, so we keep track of which one 
     * was the last one created. The last one created is the only one allowed to call AfterSuite.
     */
-   private static ThreadLocal<Integer> lastCreatedRunner = new ThreadLocal<Integer>() 
+   private static ThreadLocal<Integer> lastCreatedRunner = new ThreadLocal<Integer>()
    {
       @Override
       protected Integer initialValue()
@@ -87,7 +87,7 @@ public class State
    }
 
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
-   
+
    static void runnerStarted() 
    {
       lastCreatedRunner.set(lastCreatedRunner.get()+1);

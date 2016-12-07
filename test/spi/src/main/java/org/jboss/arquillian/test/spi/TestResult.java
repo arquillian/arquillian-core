@@ -17,38 +17,95 @@
 package org.jboss.arquillian.test.spi;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A test result which may be serialized for communicate between client and
  * server
- * 
+ *
  * @author Pete Muir
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * 
  */
 public final class TestResult implements Serializable
 {
    private static final long serialVersionUID = 1L;
 
-   public static TestResult passed() {
-       return new TestResult(Status.PASSED);
+   public static TestResult passed()
+   {
+      return new TestResult(Status.PASSED);
    }
 
-   public static TestResult skipped(Throwable cause) {
-       return new TestResult(Status.SKIPPED, cause);
+   public static TestResult passed(String description)
+   {
+      return new TestResult(Status.PASSED, description);
    }
 
-   public static TestResult failed(Throwable cause) {
-       return new TestResult(Status.FAILED, cause);
+   public static TestResult skipped(Throwable cause)
+   {
+      return new TestResult(Status.SKIPPED, cause);
+   }
+
+   public static TestResult skipped(String description)
+   {
+      return new TestResult(Status.SKIPPED, description);
+   }
+
+   public static TestResult skipped()
+   {
+      return new TestResult(Status.SKIPPED);
+   }
+
+   public static TestResult failed(Throwable cause)
+   {
+      return new TestResult(Status.FAILED, cause);
+   }
+
+   public static TestResult flatten(Collection<TestResult> results)
+   {
+      final TestResult combinedResult = new TestResult(Status.PASSED);
+      final Map<Status, TestResult> resultsPerStatus = new HashMap<Status, TestResult>();
+      final List<Throwable> allExceptions = new ArrayList<Throwable>();
+
+      for (TestResult result : results)
+      {
+         resultsPerStatus.put(result.getStatus(), result);
+         if (result.getThrowable() != null)
+         {
+            allExceptions.add(result.getThrowable());
+         }
+         combinedResult.addDescription(String.format("%s: '%s'%n", result.getStatus().name(), result.getDescription()));
+      }
+
+      if (resultsPerStatus.containsKey(Status.FAILED))
+      {
+         combinedResult.setStatus(Status.FAILED);
+      } else if (resultsPerStatus.containsKey(Status.PASSED))
+      {
+         combinedResult.setStatus(Status.PASSED);
+      } else if (resultsPerStatus.containsKey(Status.SKIPPED))
+      {
+         combinedResult.setStatus(Status.SKIPPED);
+      }
+
+      if (!allExceptions.isEmpty())
+      {
+         combinedResult.setThrowable(new CombinedException("Combined test result exceptions", allExceptions));
+      }
+
+      return combinedResult;
    }
 
    /**
     * The test status
-    * 
+    *
     * @author Pete Muir
-    * 
     */
-   public enum Status {
+   public enum Status
+   {
       /**
        * The test passed
        */
@@ -65,6 +122,8 @@ public final class TestResult implements Serializable
 
    private Status status;
 
+   private String description = "";
+
    transient private Throwable throwable;
 
    private ExceptionProxy exceptionProxy;
@@ -72,6 +131,13 @@ public final class TestResult implements Serializable
    private long start;
 
    private long end;
+
+   @Deprecated
+   public TestResult(Status status, String description)
+   {
+      this(status);
+      this.description = description;
+   }
 
    /**
     * Create a empty result.<br/>
@@ -88,25 +154,22 @@ public final class TestResult implements Serializable
     * Create a new TestResult.<br/>
     * <br/>
     * Start time is set to Current Milliseconds.
-    * 
-    * @param status
-    *            The result status.
+    *
+    * @param status The result status.
     */
    @Deprecated
    public TestResult(Status status)
    {
-      this(status, null);
+      this(status, (Throwable) null);
    }
 
    /**
     * Create a new TestResult.<br/>
     * <br/>
     * Start time is set to Current Milliseconds.
-    * 
-    * @param status
-    *            The result status.
-    * @param throwable
-    *            thrown exception if any
+    *
+    * @param status    The result status.
+    * @param throwable thrown exception if any
     */
    @Deprecated
    public TestResult(Status status, Throwable throwable)
@@ -130,6 +193,22 @@ public final class TestResult implements Serializable
    {
       this.status = status;
       return this;
+   }
+
+   public String getDescription()
+   {
+      return description;
+   }
+
+   @Deprecated
+   public void setDescription(String description)
+   {
+      this.description = description;
+   }
+
+   public void addDescription(String description)
+   {
+      this.description += description;
    }
 
    /**
@@ -157,9 +236,8 @@ public final class TestResult implements Serializable
 
    /**
     * Set the start time of the test.
-    * 
-    * @param start
-    *            Start time in milliseconds
+    *
+    * @param start Start time in milliseconds
     */
    public TestResult setStart(long start)
    {
@@ -169,7 +247,7 @@ public final class TestResult implements Serializable
 
    /**
     * Get the start time.
-    * 
+    *
     * @return Start time in milliseconds
     */
    public long getStart()
@@ -179,9 +257,8 @@ public final class TestResult implements Serializable
 
    /**
     * Set the end time of the test.
-    * 
-    * @param End
-    *            time in milliseconds
+    *
+    * @param end time in milliseconds
     */
    public TestResult setEnd(long end)
    {
@@ -191,7 +268,7 @@ public final class TestResult implements Serializable
 
    /**
     * Get the end time.
-    * 
+    *
     * @return End time in milliseconds
     */
    public long getEnd()

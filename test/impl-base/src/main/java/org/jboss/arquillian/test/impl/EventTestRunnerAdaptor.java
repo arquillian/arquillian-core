@@ -121,7 +121,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       manager.fire(new After(testInstance, testMethod, executor));
    }
-   
+
    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
    {
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
@@ -163,7 +163,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       manager.shutdown();
    }
-   
+
    private ExecutionDecision resolveExecutionDecision(Manager manager, Method testMethod)
    {
        Validate.notNull(manager, "Manager must be specified.");
