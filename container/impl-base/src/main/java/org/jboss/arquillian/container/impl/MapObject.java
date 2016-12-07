@@ -60,7 +60,7 @@ public class MapObject
                }
                candidate.invoke(
                      object,
-                     convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
+                     Converter.convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
                clonedValues.remove(propertyName);
             }
          }
@@ -102,35 +102,4 @@ public class MapObject
    {
       return (String.class.equals(candidate.getParameterTypes()[0]) && !candidate.isAnnotationPresent(Multiline.class));
    }
-
-   /**
-    * Converts a String value to the specified class.
-    * @param clazz
-    * @param value
-    * @return
-    */
-   private static Object convert(Class<?> clazz, String value)
-   {
-      /* TODO create a new Converter class and move this method there for reuse */
-
-      if (Integer.class.equals(clazz) || int.class.equals(clazz))
-      {
-         return Integer.valueOf(value);
-      }
-      else if (Double.class.equals(clazz) || double.class.equals(clazz))
-      {
-         return Double.valueOf(value);
-      }
-      else if (Long.class.equals(clazz) || long.class.equals(clazz))
-      {
-         return Long.valueOf(value);
-      }
-      else if (Boolean.class.equals(clazz) || boolean.class.equals(clazz))
-      {
-         return Boolean.valueOf(value);
-      }
-
-      return value;
-   }
-
 }
