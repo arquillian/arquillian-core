@@ -75,7 +75,7 @@ public class TestListener implements ITestListener
       }
       else if (context.getSkippedTests().size() > 0)
       {
-         return TestResult.skipped(null);
+         return TestResult.skipped();
       }
       if (context.getPassedTests().size() > 0)
       {

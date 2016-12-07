@@ -140,11 +140,15 @@ public class TestResultFlattenTest
    public void should_propagate_exception_when_only_one_cause_reported() throws Exception
    {
       // given
-
+      final RuntimeException cause = new RuntimeException("Exception 1");
+      final TestResult f1 = failed(cause);
+      final List<TestResult> testResults = asList(f1);
 
       // when
+      final TestResult result = TestResult.flatten(testResults);
 
       // then
+      assertThat(result.getThrowable()).isEqualTo(cause);
    }
 
    @Test
@@ -173,13 +177,16 @@ public class TestResultFlattenTest
       final TestResult e1 = failed(ex1);
       final RuntimeException ex2 = new RuntimeException("Exception 2");
       final TestResult e2 = failed(ex2);
-      final List<TestResult> testResults = asList(e1, e2);
+      final List<TestResult> testResults = asList(e2, e1);
 
       // when
       final TestResult result = TestResult.flatten(testResults);
 
       // then
-      assertThat(result.getThrowable().getMessage()).isEqualTo("0: blabla exception\n1:");
+      assertThat(result.getThrowable().getMessage()).isEqualTo("Exception 1: '[java.lang.RuntimeException] Exception 2'"
+            + System.getProperty("line.separator")
+            + "Exception 2: '[java.lang.RuntimeException] Exception 1'"
+            + System.getProperty("line.separator"));
    }
 
 }

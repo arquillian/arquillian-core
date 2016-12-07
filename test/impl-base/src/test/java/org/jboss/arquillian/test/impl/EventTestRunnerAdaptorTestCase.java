@@ -16,15 +16,14 @@
  */
 package org.jboss.arquillian.test.impl;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
@@ -43,6 +42,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -167,6 +170,7 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase
    public void shouldHandleLifeCycleEvents() throws Exception 
    {
       Manager manager = getManager();
+      manager.bind(ApplicationScoped.class, TestResult.class, TestResult.passed());
       EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(manager);
       
       Class<?> testClass = getClass();

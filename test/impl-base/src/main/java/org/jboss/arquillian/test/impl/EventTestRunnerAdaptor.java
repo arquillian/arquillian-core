@@ -132,7 +132,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
           return TestResult.skipped(new SkippedTestExecutionException(executionDecision.getReason()));
       }      
 
-      final List<TestResult> result = new ArrayList<TestResult>();
+      final List<TestResult> results = new ArrayList<TestResult>();
       manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>()
       {
          @Inject
@@ -141,10 +141,10 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
          @Override
          public void fired(Test event)
          {
-            result.add(testResult.get());
+            results.add(testResult.get());
          }
       });
-      return result.get(0);
+      return TestResult.flatten(results);
    }
    
    @Override

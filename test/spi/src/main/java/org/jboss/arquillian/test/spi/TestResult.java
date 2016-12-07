@@ -80,6 +80,29 @@ public final class TestResult implements Serializable
          combinedResult.addDescription(String.format("%s: '%s'%n", result.getStatus().name(), result.getDescription()));
       }
 
+      propragateTestResultStatus(combinedResult, resultsPerStatus);
+      propagateExceptions(combinedResult, allExceptions);
+
+      return combinedResult;
+   }
+
+   private static void propagateExceptions(TestResult combinedResult, List<Throwable> allExceptions)
+   {
+      if (!allExceptions.isEmpty())
+      {
+         switch (allExceptions.size())
+         {
+            case 1:
+               combinedResult.setThrowable(allExceptions.get(0));
+               break;
+            default:
+               combinedResult.setThrowable(new CombinedException("Combined test result exceptions", allExceptions));
+         }
+      }
+   }
+
+   private static void propragateTestResultStatus(TestResult combinedResult, Map<Status, TestResult> resultsPerStatus)
+   {
       if (resultsPerStatus.containsKey(Status.FAILED))
       {
          combinedResult.setStatus(Status.FAILED);
@@ -90,13 +113,6 @@ public final class TestResult implements Serializable
       {
          combinedResult.setStatus(Status.SKIPPED);
       }
-
-      if (!allExceptions.isEmpty())
-      {
-         combinedResult.setThrowable(new CombinedException("Combined test result exceptions", allExceptions));
-      }
-
-      return combinedResult;
    }
 
    /**

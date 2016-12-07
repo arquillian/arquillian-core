@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.junit.container;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -30,6 +27,9 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * JUnitTestRunner
@@ -71,7 +71,7 @@ public class JUnitTestRunner implements TestRunner
           }
           else if (result.getIgnoreCount() > 0)
           {
-              testResult = TestResult.skipped(null); // Will this ever happen incontainer?
+              testResult = TestResult.skipped(); // Will this ever happen incontainer?
           }
           else {
               testResult = TestResult.passed();
