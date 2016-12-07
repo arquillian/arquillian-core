@@ -20,3 +20,7 @@ test-output/
 
 # JBoss AS
 transaction.log
+
+# Floobits
+.floo
+.flooignore
