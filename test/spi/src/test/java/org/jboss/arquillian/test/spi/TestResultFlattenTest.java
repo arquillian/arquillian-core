@@ -28,6 +28,9 @@ import static org.jboss.arquillian.test.spi.TestResult.failed;
 
 public class TestResultFlattenTest
 {
+
+   public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
    @Test
    public void should_flatten_successful_test_results() throws Exception
    {
@@ -184,9 +187,9 @@ public class TestResultFlattenTest
 
       // then
       assertThat(result.getThrowable().getMessage()).isEqualTo("Exception 1: '[java.lang.RuntimeException] Exception 2'"
-            + System.getProperty("line.separator")
+            + LINE_SEPARATOR
             + "Exception 2: '[java.lang.RuntimeException] Exception 1'"
-            + System.getProperty("line.separator"));
+            + LINE_SEPARATOR);
    }
 
 }
