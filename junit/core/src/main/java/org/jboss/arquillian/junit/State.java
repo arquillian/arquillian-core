@@ -18,10 +18,6 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
-import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
-import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunNotifier;
 
 /**
  * State
@@ -91,57 +87,6 @@ public class State
    }
 
    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
-   
-   static TestRunnerAdaptor getOrCreateTestAdaptor(RunNotifier notifier, Description description) {
-       if(!State.hasTestAdaptor()) {
-           if(State.hasInitializationException()) {
-              // failed on suite level, ignore children
-              //notifier.fireTestIgnored(getDescription());
-              notifier.fireTestFailure(
-                    new Failure(description, 
-                          new RuntimeException(
-                                "Arquillian has previously been attempted initialized, but failed. See cause for previous exception", 
-                                State.getInitializationException())));
-           }
-           else
-           {
-              try 
-              {
-                 // ARQ-1742 If exceptions happen during boot
-                 TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
-                 // don't set it if beforeSuite fails
-                 adaptor.beforeSuite();
-                 State.testAdaptor(adaptor);
-                 return adaptor;
-              } 
-              catch (Exception e)  
-              {
-                 // caught exception during BeforeSuite, mark this as failed
-                 State.caughtInitializationException(e);
-                 notifier.fireTestFailure(new Failure(description, e));
-              }
-           }
-       }
-       return State.getTestAdaptor();
-   }
-   
-   static boolean shutdownIfLast(RunNotifier notifier, Description description) {
-       if(State.isLastRunner()) {
-           try {
-              TestRunnerAdaptor adaptor = State.getTestAdaptor();
-              if(adaptor != null) {
-                 adaptor.afterSuite();
-                 adaptor.shutdown();
-                 return true;
-              }
-           } catch(Exception e) {
-               notifier.fireTestFailure(new Failure(description, e));
-           } finally  {
-              State.clean();
-           }
-       }
-       return false;
-   }
    
    static void runnerStarted() 
    {

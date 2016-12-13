@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.test.spi.event.suite;
 
-import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 
 /**
@@ -34,19 +33,14 @@ public class Test extends TestEvent
     */
    public Test(TestMethodExecutor testMethodExecutor)
    {
-       this(new TestClass(testMethodExecutor.getInstance().getClass()), testMethodExecutor);
-   }
-
-   public Test(TestClass testClass, TestMethodExecutor testMethodExecutor)
-   {
       // TODO: how to validate testMethodExecutor
-      super(testClass, testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
-
+      super(testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
+      
       //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
-
+      
       this.testMethodExecutor = testMethodExecutor;
    }
-
+   
    public TestMethodExecutor getTestMethodExecutor()
    {
       return testMethodExecutor;

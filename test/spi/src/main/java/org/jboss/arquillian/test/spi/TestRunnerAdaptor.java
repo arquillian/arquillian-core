@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,7 +33,7 @@ public interface TestRunnerAdaptor
    /**
     * Activate a new TestSuite.<br/> 
     * This will trigger the BeforeSuite event.
-    *
+    * 
     * @throws Exception
     */
    void beforeSuite() throws Exception; 
@@ -41,7 +41,7 @@ public interface TestRunnerAdaptor
    /**
     * Deactivate the TestSuite.<br/>
     * This will trigger the AfterSuite event.
-    *
+    * 
     * @throws Exception
     */
    void afterSuite() throws Exception;
@@ -55,7 +55,7 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
-
+   
    /**
     * Deactivate the TestClass.<br/>
     * This will trigger the AfterClass event.
@@ -65,7 +65,7 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
-
+   
    /**
     * Activate a new TestInstance.<br/>
     * This will trigger the Before event.
@@ -76,7 +76,7 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
-
+   
    /**
     * Deactivate the TestInstance.<br/>
     * This will trigger the After event.
@@ -97,7 +97,7 @@ public interface TestRunnerAdaptor
     * @throws Exception
     */
    TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
-
+   
    /**
     * Fire any custom Test Lifecycle event.<br/>
     * <br/>
