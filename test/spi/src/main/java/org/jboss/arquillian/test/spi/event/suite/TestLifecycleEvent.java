@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,9 +16,9 @@
  */
 package org.jboss.arquillian.test.spi.event.suite;
 
-import java.lang.reflect.Method;
-
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+
+import java.lang.reflect.Method;
 
 /**
  * A TestLifeCycleEvent is a type of TestEvent used for e.g. @Before/@After operations on the
@@ -53,8 +53,8 @@ public class TestLifecycleEvent extends TestEvent implements LifecycleEvent
     */
    public TestLifecycleEvent(Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
    {
-      super(testInstance, testMethod);  
-      
+      super(testInstance, testMethod);
+
       Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
       this.executor = executor;
    }

@@ -121,7 +121,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
 
       manager.fire(new After(testInstance, testMethod, executor));
    }
-   
+
    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
    {
       Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
@@ -132,7 +132,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
           return TestResult.skipped(new SkippedTestExecutionException(executionDecision.getReason()));
       }      
 
-      final List<TestResult> result = new ArrayList<TestResult>();
+      final List<TestResult> results = new ArrayList<TestResult>();
       manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>()
       {
          @Inject
@@ -141,10 +141,10 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
          @Override
          public void fired(Test event)
          {
-            result.add(testResult.get());
+            results.add(testResult.get());
          }
       });
-      return result.get(0);
+      return TestResult.flatten(results);
    }
    
    @Override
@@ -163,7 +163,7 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor
    {
       manager.shutdown();
    }
-   
+
    private ExecutionDecision resolveExecutionDecision(Manager manager, Method testMethod)
    {
        Validate.notNull(manager, "Manager must be specified.");
