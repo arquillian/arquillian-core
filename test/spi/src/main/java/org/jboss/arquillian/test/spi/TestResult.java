@@ -80,7 +80,7 @@ public final class TestResult implements Serializable
          combinedResult.addDescription(String.format("%s: '%s'%n", result.getStatus().name(), result.getDescription()));
       }
 
-      propragateTestResultStatus(combinedResult, resultsPerStatus);
+      propagateTestResultStatus(combinedResult, resultsPerStatus);
       propagateExceptions(combinedResult, allExceptions);
 
       return combinedResult;
@@ -101,7 +101,7 @@ public final class TestResult implements Serializable
       }
    }
 
-   private static void propragateTestResultStatus(TestResult combinedResult, Map<Status, TestResult> resultsPerStatus)
+   private static void propagateTestResultStatus(TestResult combinedResult, Map<Status, TestResult> resultsPerStatus)
    {
       if (resultsPerStatus.containsKey(Status.FAILED))
       {
