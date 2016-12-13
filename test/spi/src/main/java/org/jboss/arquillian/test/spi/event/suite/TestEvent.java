@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,6 +17,8 @@
 package org.jboss.arquillian.test.spi.event.suite;
 
 import java.lang.reflect.Method;
+
+import org.jboss.arquillian.test.spi.TestClass;
 
 /**
  * Base for events fired in the Test execution cycle.
@@ -37,19 +39,18 @@ public class TestEvent extends ClassEvent
     */
    public TestEvent(Object testInstance, Method testMethod)
    {
-      super(validateAndExtractClass(testInstance, testMethod));
-
-      this.testInstance = testInstance;
-      this.testMethod = testMethod;
+       this(new TestClass(testInstance.getClass()), testInstance, testMethod);
    }
 
-   // TODO: eeehh..?
-   private static Class<?> validateAndExtractClass(Object testInstance, Method testMethod)
+   public TestEvent(TestClass testClass, Object testInstance, Method testMethod)
    {
+      super(testClass);
+
       Validate.notNull(testInstance, "TestInstance must be specified");
       Validate.notNull(testMethod, "TestMethod must be specified");
 
-      return testInstance.getClass();
+      this.testInstance = testInstance;
+      this.testMethod = testMethod;
    }
    
    public Object getTestInstance()
