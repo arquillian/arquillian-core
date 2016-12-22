@@ -26,6 +26,7 @@ import org.jboss.arquillian.core.impl.loadable.ServiceRegistryLoader;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.junit.RulesEnricher;
 import org.jboss.arquillian.junit.event.BeforeRules;
+import org.jboss.arquillian.junit.event.RulesEnrichment;
 import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -109,15 +110,16 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
     private void testTestRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable
     {
         Statement invokeStatement = getInvokingStatement(test);
-
         TestClass testClass = new TestClass(test.getClass());
-
+        Method testMethod = test.getClass().getMethod("verifyEnrichment");
         Description desc = Description.createTestDescription(test.getClass(), "verifyEnrichment");
-        final Statement statement = test.getTestRule().apply(invokeStatement, desc);
 
+        fire(new RulesEnrichment(test, testClass, testMethod, LifecycleMethodExecutor.NO_OP));
+
+        final Statement statement = test.getTestRule().apply(invokeStatement, desc);
         LifecycleMethodExecutor testLifecycleMethodExecutor = getTestLifecycleMethodExecutor(statement);
 
-        fire(new BeforeRules(test, testClass, statement, test.getClass().getMethod("verifyEnrichment"), testLifecycleMethodExecutor));
+        fire(new BeforeRules(test, testClass, statement, testMethod, testLifecycleMethodExecutor));
         testLifecycleMethodExecutor.invoke();
 
         verifyEventFired(2);
@@ -126,11 +128,12 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
     private void testMethodRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable
     {
         Statement invokeStatement = getInvokingStatement(test);
-
         Method testMethod = test.getClass().getMethod("verifyEnrichment");
-
         TestClass testClass = new TestClass(test.getClass());
         FrameworkMethod method = testClass.getAnnotatedMethods(Test.class).get(0);
+
+        fire(new RulesEnrichment(test, testClass, testMethod, LifecycleMethodExecutor.NO_OP));
+
         final Statement statement = test.getMethodRule().apply(invokeStatement, method, test);
 
         LifecycleMethodExecutor testLifecycleMethodExecutor = getTestLifecycleMethodExecutor(statement);

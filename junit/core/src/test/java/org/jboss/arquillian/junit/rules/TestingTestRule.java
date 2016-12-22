@@ -16,9 +16,12 @@
  */
 package org.jboss.arquillian.junit.rules;
 
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * An Implementation of TestRule
@@ -28,9 +31,13 @@ import org.junit.runners.model.Statement;
  */
 public class TestingTestRule implements TestRule
 {
+    @ArquillianResource
+    private ResourcesImpl ruleResources;
+
     @Override
     public Statement apply(Statement base, Description description)
     {
+        assertNotNull(ruleResources);
         return new TestingStatement(base);
     }
 

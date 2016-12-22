@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
+import org.jboss.arquillian.junit.event.RulesEnrichment;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -298,6 +299,10 @@ public class Arquillian extends BlockJUnit4ClassRunner
            Statement arounds = withBefores(method, test, statement);
            arounds = withAfters(method, test, arounds);
            final Statement stmtWithLifecycle = arounds;
+
+           adaptor.fireCustomLifecycle(
+               new RulesEnrichment(test, getTestClass(), method.getMethod(), LifecycleMethodExecutor.NO_OP));
+
            final Statement stmtWithRules = (Statement)withRules.invoke(this, method, test, arounds);
            return new Statement() {
 

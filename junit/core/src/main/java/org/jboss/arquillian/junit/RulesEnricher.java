@@ -29,6 +29,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.junit.event.BeforeRules;
+import org.jboss.arquillian.junit.event.RulesEnrichment;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.event.enrichment.AfterEnrichment;
 import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
@@ -47,23 +48,30 @@ import org.junit.rules.TestRule;
  */
 public class RulesEnricher
 {
+
+    private static Logger log = Logger.getLogger(RulesEnricher.class.getName());
+
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
     @Inject
     private Event<EnrichmentEvent> enrichmentEvent;
 
-    private static Logger log = Logger.getLogger(RulesEnricher.class.getName());
-
-    public void enrich(@Observes BeforeRules event) throws Exception
+    public void enrichRulesAndTestInstance(@Observes RulesEnrichment event) throws Exception
     {
-        List<Object> toEnrich = getRuleInstances(event);
+        Object testInstance = event.getTestInstance();
+        List<Object> toEnrich = getRuleInstances(testInstance);
         if (toEnrich == null)
         {
             return;
         }
+        toEnrich.add(testInstance);
+        enrichInstances(toEnrich);
+    }
 
-        toEnrich.add(event.getTestInstance());
+    public void enrichStatement(@Observes BeforeRules event) throws Exception
+    {
+        List<Object> toEnrich = new ArrayList<Object>();
 
         if (RunRules.class.isInstance(event.getStatementInstance()))
         {
@@ -72,7 +80,11 @@ public class RulesEnricher
         {
             toEnrich.add(event.getStatementInstance());
         }
+        enrichInstances(toEnrich);
+    }
 
+    public void enrichInstances(List<Object> toEnrich)
+    {
         Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
         for (Object instance : toEnrich)
         {
@@ -88,32 +100,32 @@ public class RulesEnricher
     /**
      * Retrieves instances of the TestRule and MethodRule classes
      */
-    private List<Object> getRuleInstances(BeforeRules event) throws Exception
+    private List<Object> getRuleInstances(Object testInstance) throws Exception
     {
-        Object testInstance = event.getTestInstance();
         List<Object> ruleInstances = new ArrayList<Object>();
 
-        List<Field> fieldsWithRuleAnnotation = SecurityActions.getFieldsWithAnnotation(testInstance.getClass(), Rule.class);
+        List<Field> fieldsWithRuleAnnotation =
+            SecurityActions.getFieldsWithAnnotation(testInstance.getClass(), Rule.class);
         if (fieldsWithRuleAnnotation.isEmpty())
         {
-            List<Method> methodsWithAnnotation = SecurityActions.getMethodsWithAnnotation(testInstance.getClass(), Rule.class);
+            List<Method> methodsWithAnnotation =
+                SecurityActions.getMethodsWithAnnotation(testInstance.getClass(), Rule.class);
             if (methodsWithAnnotation.isEmpty())
             {
                 // there isn't any rule in the test class
                 return null;
-            }
-            else
+            } else
             {
                 log.warning("Please note that methods annotated with @Rule are not fully supported in Arquillian. "
-                    + "Specificaly, if you want to enrich a field in your Rule implementation class.");
-                
+                                + "Specifically, if you want to enrich a field in your Rule implementation class.");
+
                 return ruleInstances;
             }
         } else
         {
             for (Field field : fieldsWithRuleAnnotation)
             {
-                Object fieldInstance = field.get(event.getTestInstance());
+                Object fieldInstance = field.get(testInstance);
                 if (isRule(fieldInstance))
                 {
                     ruleInstances.add(fieldInstance);
