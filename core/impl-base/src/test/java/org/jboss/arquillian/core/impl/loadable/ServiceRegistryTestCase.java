@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.core.impl.loadable;
 
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.arquillian.core.impl.loadable.util.FakeService;
@@ -35,7 +38,7 @@ public class ServiceRegistryTestCase
    @Test
    public void shouldBeAbleToAddImplementations() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(null);
+      ServiceRegistry registry = new ServiceRegistry(null, new HashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeExcluded.class);
       registry.addService(FakeService.class, ShouldBeIncluded.class);
       Set<Class<? extends FakeService>> serviceImpls = registry.getServiceImpls(FakeService.class);
@@ -48,7 +51,7 @@ public class ServiceRegistryTestCase
    @Test
    public void shouldBeAbleToRemoveImplementation() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(null);
+      ServiceRegistry registry = new ServiceRegistry(null, new HashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeExcluded.class);
       registry.addService(FakeService.class, ShouldBeIncluded.class);
       registry.removeService(FakeService.class, ShouldBeExcluded.class);
@@ -61,7 +64,7 @@ public class ServiceRegistryTestCase
    @Test
    public void shouldBeAbleToOverrideImplementation() throws Exception
    {
-      ServiceRegistry registry = new ServiceRegistry(null);
+      ServiceRegistry registry = new ServiceRegistry(null, new HashMap<Class<?>, Set<Class<?>>>());
       registry.addService(FakeService.class, ShouldBeExcluded.class);
       registry.overrideService(FakeService.class, ShouldBeExcluded.class, ShouldBeIncluded.class);
       registry.addService(FakeService.class, ShouldBeExcluded.class);
@@ -69,6 +72,23 @@ public class ServiceRegistryTestCase
       
       Assert.assertEquals("Unexpected number of service implementations registered", 1, serviceImpls.size());
       Assert.assertEquals("Should contain ShouldBeIncluded class", ShouldBeIncluded.class, serviceImpls.iterator().next());
+   }
+
+   @Test
+   public void shouldBeAbleToNotAddVetoedServices() throws Exception
+   {
+      final Map<Class<?>, Set<Class<?>>> vetoed = new HashMap<Class<?>, Set<Class<?>>>();
+      final Set<Class<?>> vetoedServiceImpls = new LinkedHashSet<Class<?>>();
+      vetoedServiceImpls.add(ShouldBeExcluded.class);
+      vetoed.put(FakeService.class, vetoedServiceImpls);
+
+      ServiceRegistry registry = new ServiceRegistry(null, vetoed);
+      registry.addService(FakeService.class, ShouldBeExcluded.class);
+      registry.addService(FakeService.class, ShouldBeIncluded.class);
+      Set<Class<? extends FakeService>> serviceImpls = registry.getServiceImpls(FakeService.class);
+
+      Assert.assertEquals("Unexpected number of service implementations registered", 1, serviceImpls.size());
+      Assert.assertTrue("Should contain ShouldBeIncluded class", serviceImpls.contains(ShouldBeIncluded.class));
    }
 
 }

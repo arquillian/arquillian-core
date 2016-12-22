@@ -17,7 +17,9 @@
 package org.jboss.arquillian.junit.rules;
 
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.impl.InjectorImpl;
@@ -62,7 +64,7 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
     public void prepare()
     {
         Injector injector = InjectorImpl.of(getManager());
-        ServiceRegistry registry = new ServiceRegistry(injector);
+        ServiceRegistry registry = new ServiceRegistry(injector, new LinkedHashMap<Class<?>, Set<Class<?>>>());
 
         registry.addService(ResourceProvider.class, ResourcesProvider.class);
         registry.addService(TestEnricher.class, ArquillianResourceTestEnricher.class);
