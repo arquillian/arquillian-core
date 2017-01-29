@@ -19,6 +19,7 @@ package org.jboss.arquillian.config.descriptor.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
@@ -74,6 +75,12 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
             properties.put(prop.getAttribute("name"), prop.getText());
         }
         return properties;
+    }
+
+    @Override
+    public String getProperty(String name) {
+        final Node value = protocol.getSingle("property@name=" + name);
+        return value != null ? value.getText() : null;
     }
 
     /* (non-Javadoc)

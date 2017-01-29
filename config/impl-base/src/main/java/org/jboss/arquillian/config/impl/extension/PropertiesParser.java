@@ -23,7 +23,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ContainerDef;
+import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
+import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 
 /**
  * Add/Override arquillian.xml based on SystemProperties.
@@ -43,11 +48,16 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
  * arq.defaultprotocol.[type].[property_name]
  * <p>
  * arq.engine.[property_name]
+ * <p>
+ * You can use special constant {@value #ORIGINAL_VALUE} to replace placeholder with previous value of property defined
+ * in arquillian.xml. For example:
+ * <p>
+ *     arq.container.[qualifier].configuration.[property_name]=[ORIGINAL] new-values
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class PropertiesParser {
+class PropertiesParser {
     private static String ARQ_PROPERTY = "arq\\..*";
 
     private static String ARQ_ENGINE_PROPERTY = "arq\\.engine\\.(.*)";
@@ -59,26 +69,28 @@ public class PropertiesParser {
     private static String ARQ_GROUP = "arq\\.group\\.(.*)\\.(.*)";
     private static String ARQ_GROUP_CONTAINER = "arq\\.group\\.(.*)\\.container\\.(.*)\\.(.*)";
     private static String ARQ_GROUP_CONTAINER_CONFIGURATION =
-        "arq\\.group\\.(.*)\\.container\\.(.*)\\.configuration\\.(.*)";
+            "arq\\.group\\.(.*)\\.container\\.(.*)\\.configuration\\.(.*)";
     private static String ARQ_GROUP_CONTAINER_PROTOCOL = "arq\\.group\\.(.*)\\.container\\.(.*)\\.protocol\\.(.*)\\.(.*)";
 
     private static String ARQ_DEFAULT_PROTOCOL = "arq\\.defaultprotocol\\.(.*)\\.(.*)";
     private static String ARQ_EXTENSION = "arq\\.extension\\.(.*)\\.(.*)";
 
-    private Handler[] handlers = new Handler[] {
-        new EngineProperty(ARQ_ENGINE_PROPERTY),
-        new ContainerConfiguration(ARQ_CONTAINER_CONFIGURATION),
-        new ContainerProtocol(ARQ_CONTAINER_PROTOCOL),
-        new Container(ARQ_CONTAINER),
-        new Extension(ARQ_EXTENSION),
-        new GroupContainerConfiguration(ARQ_GROUP_CONTAINER_CONFIGURATION),
-        new GroupContainerProtocol(ARQ_GROUP_CONTAINER_PROTOCOL),
-        new GroupContainer(ARQ_GROUP_CONTAINER),
-        new Group(ARQ_GROUP),
-        new DefaultProtocol(ARQ_DEFAULT_PROTOCOL)
+    private static String ORIGINAL_VALUE = "[ORIGINAL]";
+
+    private Handler[] handlers = new Handler[]{
+            new EngineProperty(ARQ_ENGINE_PROPERTY),
+            new ContainerConfiguration(ARQ_CONTAINER_CONFIGURATION),
+            new ContainerProtocol(ARQ_CONTAINER_PROTOCOL),
+            new Container(ARQ_CONTAINER),
+            new Extension(ARQ_EXTENSION),
+            new GroupContainerConfiguration(ARQ_GROUP_CONTAINER_CONFIGURATION),
+            new GroupContainerProtocol(ARQ_GROUP_CONTAINER_PROTOCOL),
+            new GroupContainer(ARQ_GROUP_CONTAINER),
+            new Group(ARQ_GROUP),
+            new DefaultProtocol(ARQ_DEFAULT_PROTOCOL)
     };
 
-    public void addProperties(ArquillianDescriptor descriptor, Properties properties) {
+    void addProperties(ArquillianDescriptor descriptor, Properties properties) {
         if (descriptor == null) {
             throw new IllegalArgumentException("Descriptor must be specified");
         }
@@ -113,7 +125,7 @@ public class PropertiesParser {
      *******************************/
 
     private class DefaultProtocol extends Handler {
-        public DefaultProtocol(String expression) {
+        DefaultProtocol(String expression) {
             super(expression);
         }
 
@@ -122,12 +134,18 @@ public class PropertiesParser {
             String typeName = matcher.group(1);
             String propertyName = matcher.group(2);
 
-            descriptor.defaultProtocol(typeName).property(propertyName, value);
+            final DefaultProtocolDef defaultProtocolDef = descriptor.defaultProtocol(typeName);
+            final String originalValue = defaultProtocolDef.getProperty(propertyName);
+            if (value.contains(ORIGINAL_VALUE)) {
+                defaultProtocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
+            } else {
+                defaultProtocolDef.property(propertyName, value);
+            }
         }
     }
 
     private class Group extends Handler {
-        public Group(String expression) {
+        Group(String expression) {
             super(expression);
         }
 
@@ -140,13 +158,13 @@ public class PropertiesParser {
                 descriptor.group(groupName).setGroupDefault();
             } else {
                 throw new RuntimeException(
-                    "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
+                        "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
             }
         }
     }
 
     private class GroupContainer extends Handler {
-        public GroupContainer(String expression) {
+        GroupContainer(String expression) {
             super(expression);
         }
 
@@ -162,13 +180,13 @@ public class PropertiesParser {
                 descriptor.group(groupName).container(containerName).setDefault();
             } else {
                 throw new RuntimeException(
-                    "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
+                        "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
             }
         }
     }
 
     private class GroupContainerProtocol extends Handler {
-        public GroupContainerProtocol(String expression) {
+        GroupContainerProtocol(String expression) {
             super(expression);
         }
 
@@ -179,12 +197,18 @@ public class PropertiesParser {
             String protocolName = matcher.group(3);
             String propertyName = matcher.group(4);
 
-            descriptor.group(groupName).container(containerName).protocol(protocolName).property(propertyName, value);
+            final ProtocolDef protocolDef = descriptor.group(groupName).container(containerName).protocol(protocolName);
+            final String originalValue = protocolDef.getProtocolProperty(propertyName);
+            if (value.contains(ORIGINAL_VALUE)) {
+                protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
+            } else {
+                protocolDef.property(propertyName, value);
+            }
         }
     }
 
     private class GroupContainerConfiguration extends Handler {
-        public GroupContainerConfiguration(String expression) {
+        GroupContainerConfiguration(String expression) {
             super(expression);
         }
 
@@ -194,7 +218,13 @@ public class PropertiesParser {
             String containerName = matcher.group(2);
             String propertyName = matcher.group(3);
 
-            descriptor.group(groupName).container(containerName).property(propertyName, value);
+            final ContainerDef containerDef = descriptor.group(groupName).container(containerName);
+            final String originalValue = containerDef.getContainerProperty(propertyName);
+            if (value.contains(ORIGINAL_VALUE)) {
+                containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
+            } else {
+                containerDef.property(propertyName, value);
+            }
         }
     }
 
@@ -208,7 +238,13 @@ public class PropertiesParser {
             String extensionName = matcher.group(1);
             String propertyName = matcher.group(2);
 
-            descriptor.extension(extensionName).property(propertyName, value);
+            final ExtensionDef extensionDef = descriptor.extension(extensionName);
+            final String originalValue = extensionDef.getExtensionProperty(propertyName);
+            if (value.contains(ORIGINAL_VALUE)) {
+                extensionDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
+            } else {
+                extensionDef.property(propertyName, value);
+            }
         }
     }
 
@@ -228,13 +264,13 @@ public class PropertiesParser {
                 descriptor.container(containerName).setDefault();
             } else {
                 throw new RuntimeException(
-                    "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
+                        "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
             }
         }
     }
 
     private class ContainerProtocol extends Handler {
-        public ContainerProtocol(String expression) {
+        ContainerProtocol(String expression) {
             super(expression);
         }
 
@@ -244,12 +280,18 @@ public class PropertiesParser {
             String protocolName = matcher.group(2);
             String propertyName = matcher.group(3);
 
-            descriptor.container(containerName).protocol(protocolName).property(propertyName, value);
+            final ProtocolDef protocolDef = descriptor.container(containerName).protocol(protocolName);
+            final String originalValue = protocolDef.getProtocolProperty(propertyName);
+            if (value.contains(ORIGINAL_VALUE)) {
+                protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
+            } else {
+                protocolDef.property(propertyName, value);
+            }
         }
     }
 
     private class ContainerConfiguration extends Handler {
-        public ContainerConfiguration(String expression) {
+        ContainerConfiguration(String expression) {
             super(expression);
         }
 
@@ -258,12 +300,18 @@ public class PropertiesParser {
             String containerName = matcher.group(1);
             String propertyName = matcher.group(2);
 
-            descriptor.container(containerName).property(propertyName, value);
+            final ContainerDef containerDef = descriptor.container(containerName);
+            final String originalValue = containerDef.getContainerProperty(propertyName);
+            if (value.contains(ORIGINAL_VALUE)) {
+                containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
+            } else {
+                containerDef.property(propertyName, value);
+            }
         }
     }
 
     private class EngineProperty extends Handler {
-        public EngineProperty(String expression) {
+        EngineProperty(String expression) {
             super(expression);
         }
 
@@ -276,7 +324,7 @@ public class PropertiesParser {
                 descriptor.engine().maxTestClassesBeforeRestart(Integer.parseInt(value));
             } else {
                 throw new RuntimeException(
-                    "Unknown arquillian engine property[" + propertyName + "] with value[" + value + "]");
+                        "Unknown arquillian engine property[" + propertyName + "] with value[" + value + "]");
             }
         }
     }
@@ -284,11 +332,11 @@ public class PropertiesParser {
     private abstract class Handler {
         private Pattern expression;
 
-        public Handler(String expression) {
+        Handler(String expression) {
             this.expression = Pattern.compile(expression);
         }
 
-        public boolean handle(String propertyName, String value, ArquillianDescriptor descriptor) {
+        boolean handle(String propertyName, String value, ArquillianDescriptor descriptor) {
             Matcher matcher = expression.matcher(propertyName);
             if (matcher.matches()) {
                 handle(matcher, value, descriptor);

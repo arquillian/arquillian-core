@@ -75,7 +75,7 @@ public final class StringPropertyReplacer {
 
     /**
      * Go through the input string and replace any occurance of ${p} with
-     * the System.getProperty(p) value. If there is no such property p defined,
+     * the System.getProtocolProperty(p) value. If there is no such property p defined,
      * then the ${p} reference will remain unchanged.
      * <p>
      * If the property reference is of the form ${p:v} and there is no such property p,
@@ -85,8 +85,8 @@ public final class StringPropertyReplacer {
      * the primary and the secondary properties will be tried in turn, before
      * returning either the unchanged input, or the default value.
      * <p>
-     * The property ${/} is replaced with System.getProperty("file.separator")
-     * value and the property ${:} is replaced with System.getProperty("path.separator").
+     * The property ${/} is replaced with System.getProtocolProperty("file.separator")
+     * value and the property ${:} is replaced with System.getProtocolProperty("path.separator").
      * <p>
      * Prior to resolving variables, environment variables are assigned to the
      * collection of properties. Each environment variable is prefixed with the
@@ -114,7 +114,7 @@ public final class StringPropertyReplacer {
 
     /**
      * Go through the input string and replace any occurrence of ${p} with
-     * the props.getProperty(p) value. If there is no such property p defined,
+     * the props.getProtocolProperty(p) value. If there is no such property p defined,
      * then the ${p} reference will remain unchanged.
      * <p>
      * If the property reference is of the form ${p:v} and there is no such property p,
@@ -124,13 +124,13 @@ public final class StringPropertyReplacer {
      * the primary and the secondary properties will be tried in turn, before
      * returning either the unchanged input, or the default value.
      * <p>
-     * The property ${/} is replaced with System.getProperty("file.separator")
-     * value and the property ${:} is replaced with System.getProperty("path.separator").
+     * The property ${/} is replaced with System.getProtocolProperty("file.separator")
+     * value and the property ${:} is replaced with System.getProtocolProperty("path.separator").
      *
      * @param string
      *     - the string with possible ${} references
      * @param props
-     *     - the source for ${x} property ref values, null means use System.getProperty()
+     *     - the source for ${x} property ref values, null means use System.getProtocolProperty()
      *
      * @return the input string with all property references replaced if any.
      * If there are no valid references the input string will be returned.

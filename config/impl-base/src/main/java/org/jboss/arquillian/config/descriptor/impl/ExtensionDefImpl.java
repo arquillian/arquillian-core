@@ -19,6 +19,7 @@ package org.jboss.arquillian.config.descriptor.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
@@ -73,6 +74,12 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
             properties.put(prop.getAttribute("name"), prop.getText());
         }
         return properties;
+    }
+
+    @Override
+    public String getExtensionProperty(String name) {
+        final Node value = extension.getSingle("property@name=" + name);
+        return value != null ? value.getText() : null;
     }
 
     /*

@@ -32,4 +32,6 @@ public interface ExtensionDef extends ArquillianDescriptor {
     ExtensionDef property(String name, String value);
 
     Map<String, String> getExtensionProperties();
+
+    String getExtensionProperty(String name);
 }

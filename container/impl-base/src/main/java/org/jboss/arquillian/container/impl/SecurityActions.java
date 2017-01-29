@@ -293,7 +293,7 @@ final class SecurityActions {
             } else if (t instanceof IllegalArgumentException) {
                 throw (IllegalArgumentException) t;
             } else {
-                // No other checked Exception thrown by System.getProperty
+                // No other checked Exception thrown by System.getProtocolProperty
                 try {
                     throw (RuntimeException) t;
                 }

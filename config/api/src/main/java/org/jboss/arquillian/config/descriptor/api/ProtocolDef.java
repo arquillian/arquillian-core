@@ -32,4 +32,6 @@ public interface ProtocolDef extends ContainerDef {
     ProtocolDef property(String name, String value);
 
     Map<String, String> getProtocolProperties();
+
+    String getProtocolProperty(String name);
 }
