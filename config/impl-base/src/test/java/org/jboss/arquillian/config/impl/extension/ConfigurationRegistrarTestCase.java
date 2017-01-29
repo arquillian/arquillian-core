@@ -293,6 +293,46 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
             });
     }
 
+    @Test
+    public void shouldBeAbleToOverrideToXMLWithPlaceholderReplace() throws Exception {
+        validate(
+                ConfigurationRegistrar.ARQUILLIAN_XML_PROPERTY,
+                "registrar_tests/property_arquillian.xml",
+                new AssertCallback() {
+                    @Override
+                    public void validate() {
+                        ConfigurationRegistrarTestCase.validate(
+                                ConfigurationRegistrar.ARQUILLIAN_PROP_PROPERTY,
+                                "registrar_tests/property_arquillian.properties",
+                                new AssertCallback() {
+                                    @Override
+                                    public void validate() {
+                                        registrar.loadConfiguration(new ManagerStarted());
+                                        ArquillianDescriptor desc = descInst.get();
+
+                                        Assert.assertNotNull(desc.getDefaultProtocol());
+                                        Assert.assertEquals("X BBB X", desc.getDefaultProtocol().getProperty("bbb"));
+
+                                        Assert.assertEquals(1, desc.getContainers().size());
+                                        Assert.assertNotNull(desc.getContainers().get(0));
+                                        Assert.assertNotNull("Y AAA Y", desc.getContainers().get(0).getProperty("aaa"));
+
+                                        Assert.assertEquals(1, desc.getExtensions().size());
+                                        Assert.assertNotNull(desc.getExtensions().get(0));
+                                        Assert.assertNotNull("Z DDD Z", desc.getExtensions().get(0).getProperty("ddd"));
+
+                                        Assert.assertEquals(1, desc.getGroups().size());
+                                        Assert.assertNotNull(desc.getGroups().get(0));
+                                        Assert.assertEquals(1, desc.getGroups().get(0).getGroupContainers().size());
+                                        Assert.assertEquals("T EEE T", desc.getGroups().get(0).getGroupContainers().get(0).getProperty("eee"));
+                                        Assert.assertEquals(1, desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().size());
+                                        Assert.assertEquals("R FFF R", desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProperty("fff"));
+                                    }
+                                });
+                    }
+                });
+    }
+
     public interface AssertCallback {
         void validate();
     }

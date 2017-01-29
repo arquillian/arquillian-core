@@ -80,6 +80,12 @@ public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef {
         return properties;
     }
 
+    @Override
+    public String getProperty(String name) {
+        final Node value = protocol.getSingle("property@name=" + name);
+        return value != null ? value.getText() : null;
+    }
+
     /* (non-Javadoc)
      * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
      */

@@ -158,6 +158,20 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
         return properties;
     }
 
+    @Override
+    public String getProperty(String name) {
+        Node props = container.getSingle("configuration");
+        if (props != null)
+        {
+            final Node value = props.getSingle("property@name=" + name);
+            return value != null ? value.getText() : null;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.jboss.arquillian.impl.configuration.api.ContainerDef#getProtcols()
      */

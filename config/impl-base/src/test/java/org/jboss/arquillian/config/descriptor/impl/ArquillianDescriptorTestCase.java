@@ -156,6 +156,7 @@ public class ArquillianDescriptorTestCase {
         Assert.assertNotNull(descriptor.getDefaultProtocol());
         Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getDefaultProtocol().getType());
         Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getDefaultProtocol().getProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getDefaultProtocol().getProperty(PROPERTY_NAME_1));
     }
 
     @Test
@@ -184,6 +185,7 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getDefaultProtocol().getType());
         Assert.assertEquals(1, descriptor.getDefaultProtocol().getProperties().size());
         Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getDefaultProtocol().getProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getDefaultProtocol().getProperty(PROPERTY_NAME_1));
     }
 
     @Test
@@ -248,9 +250,13 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getContainers().get(0).getProtocols().get(0).getType());
         Assert.assertEquals(PROPERTY_VALUE_1,
             descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_1, 
+            descriptor.getContainers().get(0).getProtocols().get(0).getProperty(PROPERTY_NAME_1));
         Assert.assertEquals(PROTOCOL_TYPE_2, descriptor.getContainers().get(0).getProtocols().get(1).getType());
         Assert.assertEquals(PROPERTY_VALUE_2,
             descriptor.getContainers().get(0).getProtocols().get(1).getProtocolProperties().get(PROPERTY_NAME_2));
+        Assert.assertEquals(PROPERTY_VALUE_2, 
+            descriptor.getContainers().get(0).getProtocols().get(1).getProperty(PROPERTY_NAME_2));
     }
 
     @Test
@@ -274,6 +280,8 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getContainers().get(0).getProtocols().get(0).getType());
         Assert.assertEquals(PROPERTY_VALUE_2,
             descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2, 
+            descriptor.getContainers().get(0).getProtocols().get(0).getProperty(PROPERTY_NAME_1));
     }
 
     @Test
@@ -299,9 +307,13 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
         Assert.assertEquals(PROPERTY_VALUE_1,
             descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_1,
+            descriptor.getContainers().get(0).getProperty(PROPERTY_NAME_1));
         Assert.assertEquals(CONTAINER_NAME_2, descriptor.getContainers().get(1).getContainerName());
         Assert.assertEquals(PROPERTY_VALUE_2,
             descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_2));
+        Assert.assertEquals(PROPERTY_VALUE_2, 
+            descriptor.getContainers().get(1).getProperty(PROPERTY_NAME_2));
     }
 
     @Test
@@ -323,6 +335,8 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(1, descriptor.getContainers().get(0).getContainerProperties().size());
         Assert.assertEquals(PROPERTY_VALUE_2,
             descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getContainers().get(0).getProperty(PROPERTY_NAME_1));
     }
 
     @Test
@@ -397,11 +411,17 @@ public class ArquillianDescriptorTestCase {
             descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
         Assert.assertEquals(PROPERTY_VALUE_2,
             descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_2));
+        Assert.assertEquals(PROPERTY_VALUE_1, 
+            descriptor.getExtensions().get(0).getProperty(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2, 
+            descriptor.getExtensions().get(0).getProperty(PROPERTY_NAME_2));
 
         Assert.assertEquals(EXTENSION_NAME_2, descriptor.getExtensions().get(1).getExtensionName());
         Assert.assertEquals(1, descriptor.getExtensions().get(1).getExtensionProperties().size());
         Assert.assertEquals(PROPERTY_VALUE_3,
             descriptor.getExtensions().get(1).getExtensionProperties().get(PROPERTY_NAME_3));
+        Assert.assertEquals(PROPERTY_VALUE_3, 
+            descriptor.getExtensions().get(1).getProperty(PROPERTY_NAME_3));
     }
 
     @Test
@@ -421,6 +441,8 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(1, descriptor.getExtensions().get(0).getExtensionProperties().size());
         Assert.assertEquals(PROPERTY_VALUE_1,
             descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+       Assert.assertEquals(PROPERTY_VALUE_1, 
+            descriptor.getExtensions().get(0).getProperty(PROPERTY_NAME_1));
     }
 
     @Test
@@ -441,6 +463,8 @@ public class ArquillianDescriptorTestCase {
         Assert.assertEquals(1, descriptor.getExtensions().get(0).getExtensionProperties().size());
         Assert.assertEquals(PROPERTY_VALUE_2,
             descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2, 
+            descriptor.getExtensions().get(0).getProperty(PROPERTY_NAME_1));
     }
 
     @Test

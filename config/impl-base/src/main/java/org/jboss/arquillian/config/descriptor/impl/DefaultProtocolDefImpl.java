@@ -76,6 +76,12 @@ public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements 
         return properties;
     }
 
+    @Override
+    public String getProperty(String name) {
+        final Node value = protocol.getSingle("property@name=" + name);
+        return value != null ? value.getText() : null;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

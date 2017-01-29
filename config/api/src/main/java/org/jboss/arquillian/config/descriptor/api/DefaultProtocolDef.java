@@ -32,4 +32,6 @@ public interface DefaultProtocolDef extends ArquillianDescriptor {
     DefaultProtocolDef property(String name, String value);
 
     Map<String, String> getProperties();
+
+    String getProperty(String name);
 }

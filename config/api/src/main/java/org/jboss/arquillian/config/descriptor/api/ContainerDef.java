@@ -46,6 +46,8 @@ public interface ContainerDef extends ArquillianDescriptor {
 
     Map<String, String> getContainerProperties();
 
+    String getProperty(String name);
+
     ProtocolDef protocol(String type);
 
     List<ProtocolDef> getProtocols();

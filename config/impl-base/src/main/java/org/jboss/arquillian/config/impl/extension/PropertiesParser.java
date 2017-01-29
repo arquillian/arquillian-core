@@ -24,6 +24,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.descriptor.api.ContainerDef;
+import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
+import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
+import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 
 /**
  * Add/Override arquillian.xml based on SystemProperties.
@@ -43,6 +47,8 @@ import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
  * arq.defaultprotocol.[type].[property_name]
  * <p>
  * arq.engine.[property_name]
+ * <p>
+ * You can use magic constant {@value #ORIGINAL_VALUE} to replace placeholder with previous value of properties.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -64,6 +70,8 @@ public class PropertiesParser {
 
     private static String ARQ_DEFAULT_PROTOCOL = "arq\\.defaultprotocol\\.(.*)\\.(.*)";
     private static String ARQ_EXTENSION = "arq\\.extension\\.(.*)\\.(.*)";
+
+    private static String ORIGINAL_VALUE = "[ORIGINAL]";
 
     private Handler[] handlers = new Handler[] {
         new EngineProperty(ARQ_ENGINE_PROPERTY),
@@ -122,9 +130,18 @@ public class PropertiesParser {
             String typeName = matcher.group(1);
             String propertyName = matcher.group(2);
 
-            descriptor.defaultProtocol(typeName).property(propertyName, value);
-        }
-    }
+         final DefaultProtocolDef defaultProtocolDef = descriptor.defaultProtocol(typeName);
+         final String originalValue = defaultProtocolDef.getProperty(propertyName);
+         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         {
+            defaultProtocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+         }
+         else
+         {
+            defaultProtocolDef.property(propertyName, value);
+         }
+      }
+   }
 
     private class Group extends Handler {
         public Group(String expression) {
@@ -179,9 +196,18 @@ public class PropertiesParser {
             String protocolName = matcher.group(3);
             String propertyName = matcher.group(4);
 
-            descriptor.group(groupName).container(containerName).protocol(protocolName).property(propertyName, value);
-        }
-    }
+         final ProtocolDef protocolDef = descriptor.group(groupName).container(containerName).protocol(protocolName);
+         final String originalValue = protocolDef.getProperty(propertyName);
+         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         {
+            protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+         }
+         else
+         {
+            protocolDef.property(propertyName, value);
+         }         
+      }
+   }
 
     private class GroupContainerConfiguration extends Handler {
         public GroupContainerConfiguration(String expression) {
@@ -194,9 +220,18 @@ public class PropertiesParser {
             String containerName = matcher.group(2);
             String propertyName = matcher.group(3);
 
-            descriptor.group(groupName).container(containerName).property(propertyName, value);
-        }
-    }
+         final ContainerDef containerDef = descriptor.group(groupName).container(containerName);
+         final String originalValue = containerDef.getProperty(propertyName);
+         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         {
+            containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+         }
+         else
+         {
+            containerDef.property(propertyName, value);
+         }
+      }
+   }
 
     private class Extension extends Handler {
         public Extension(String expression) {
@@ -208,9 +243,18 @@ public class PropertiesParser {
             String extensionName = matcher.group(1);
             String propertyName = matcher.group(2);
 
-            descriptor.extension(extensionName).property(propertyName, value);
-        }
-    }
+         final ExtensionDef extensionDef = descriptor.extension(extensionName);         
+         final String originalValue = extensionDef.getProperty(propertyName);
+         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         {
+            extensionDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+         }
+         else
+         {
+            extensionDef.property(propertyName, value);
+         }
+      }
+   }
 
     private class Container extends Handler {
         public Container(String expression) {
@@ -244,9 +288,18 @@ public class PropertiesParser {
             String protocolName = matcher.group(2);
             String propertyName = matcher.group(3);
 
-            descriptor.container(containerName).protocol(protocolName).property(propertyName, value);
-        }
-    }
+         final ProtocolDef protocolDef = descriptor.container(containerName).protocol(protocolName);         
+         final String originalValue = protocolDef.getProperty(propertyName);
+         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         {
+            protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+         }
+         else
+         {
+            protocolDef.property(propertyName, value);
+         }
+      }
+   }
 
     private class ContainerConfiguration extends Handler {
         public ContainerConfiguration(String expression) {
@@ -258,9 +311,18 @@ public class PropertiesParser {
             String containerName = matcher.group(1);
             String propertyName = matcher.group(2);
 
-            descriptor.container(containerName).property(propertyName, value);
-        }
-    }
+         final ContainerDef containerDef = descriptor.container(containerName);
+         final String originalValue = containerDef.getProperty(propertyName);
+         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         {
+            containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+         }
+         else
+         {
+            containerDef.property(propertyName, value);
+         }
+      }
+   }
 
     private class EngineProperty extends Handler {
         public EngineProperty(String expression) {

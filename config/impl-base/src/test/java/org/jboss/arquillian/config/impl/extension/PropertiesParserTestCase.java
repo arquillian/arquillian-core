@@ -40,10 +40,14 @@ public class PropertiesParserTestCase {
 
     private static final String CONTAINER_PROP_CONFIGURATION_1 =
         "arq.container.jboss.configuration." + CONFIGURATION_PROP_1;
+    private static final String CONTAINER_VAL_CONFIGURATION_2 = "ccc";
+    private static final String CONTAINER_VAL_CONFIGURATION_REPLACE = "c [ORIGINAL] c";
     private static final String CONTAINER_VAL_CONFIGURATION_1 = "target/jboss-as";
     private static final String CONTAINER_PROP_PROTOCOL_1 =
         "arq.container.jboss.protocol.Servlet 3.0." + CONFIGURATION_PROP_1;
     private static final String CONTAINER_VAL_PROTOCOL_1 = "192.0.0.1";
+    private static final String CONTAINER_VAL_PROTOCOL_2 = "www";
+    private static final String CONTAINER_VAL_PROTOCOL_REPLACE = "w [ORIGINAL] w";
 
     private static final String CONTAINER_PROP_1 = "arq.container.jboss.mode";
     private static final String CONTAINER_VAL_1 = "suite";
@@ -51,9 +55,13 @@ public class PropertiesParserTestCase {
     private static final String GROUP_PROP_CONTAINER_CONFIGURATION_1 =
         "arq.group.cluster.container.jboss.configuration." + CONFIGURATION_PROP_1;
     private static final String GROUP_VAL_CONTAINER_CONFIGURATION_1 = CONTAINER_VAL_1;
+    private static final String GROUP_VAL_CONTAINER_CONFIGURATION_2 = "yyy";
+    private static final String GROUP_VAL_CONTAINER_CONFIGURATION_REPLACE = "y [ORIGINAL] y";
     private static final String GROUP_PROP_CONTAINER_PROTOCOL_1 =
         "arq.group.Cluster 1.container.JBoss AS 7.protocol.Servlet 3.0." + CONFIGURATION_PROP_1;
     private static final String GROUP_VAL_CONTAINER_PROTOCOL_1 = CONTAINER_VAL_1;
+    private static final String GROUP_VAL_CONTAINER_PROTOCOL_2 = "xxx";
+    private static final String GROUP_VAL_CONTAINER_PROTOCOL_REPLACE = "x [ORIGINAL] x";
 
     private static final String GROUP_PROP_CONTAINER_1 = "arq.group.cluster.container.jboss.mode";
     private static final String GROUP_VAL_CONTAINER_1 = "suite";
@@ -63,9 +71,13 @@ public class PropertiesParserTestCase {
 
     private static final String DEFAULT_PROTOCOL_PROP_1 = "arq.defaultprotocol.Servlet 3.0." + CONFIGURATION_PROP_1;
     private static final String DEFAULT_PROTOCOL_VAL_1 = "true";
+    private static final String DEFAULT_PROTOCOL_VAL_2 = "foo";
+    private static final String DEFAULT_PROTOCOL_VAL_REPLACE = "bar [ORIGINAL]";
 
     private static final String EXTENSION_PROP_1 = "arq.extension.extension-1." + CONFIGURATION_PROP_1;
     private static final String EXTENSION_VAL_1 = "suite";
+    private static final String EXTENSION_VAL_2 = "aaa";
+    private static final String EXTENSION_VAL_REPLACE = "a [ORIGINAL] a";
 
     private ArquillianDescriptor desc;
 
@@ -116,6 +128,44 @@ public class PropertiesParserTestCase {
     }
 
     @Test
+    public void shouldBeAbleToOverrideContainerConfiguration()
+    {
+        validate(CONTAINER_PROP_CONFIGURATION_1, CONTAINER_VAL_CONFIGURATION_1, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(CONTAINER_PROP_CONFIGURATION_1, CONTAINER_VAL_CONFIGURATION_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToOverrideContainerConfigurationWithPlaceholderReplace()
+    {
+        validate(CONTAINER_PROP_CONFIGURATION_1, CONTAINER_VAL_CONFIGURATION_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(CONTAINER_PROP_CONFIGURATION_1, CONTAINER_VAL_CONFIGURATION_REPLACE, "c ccc c", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
     public void shouldBeAbleToAddContainerProtocol() {
         validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_1, new ValueCallback() {
             @Override
@@ -126,6 +176,44 @@ public class PropertiesParserTestCase {
                     .get(0)
                     .getProtocolProperties()
                     .get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToOverrideContainerProtocol()
+    {
+        validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_1, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToOverrideContainerProtocolWithPlaceholderReplace()
+    {
+        validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_REPLACE, "w www w", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
             }
         });
     }
@@ -166,7 +254,45 @@ public class PropertiesParserTestCase {
     }
 
     @Test
-    public void shouldBeAbleToAddGroupContianerProtocol() {
+    public void shouldBeAbleToOverrideGroupContainerConfiguration()
+    {
+        validate(GROUP_PROP_CONTAINER_CONFIGURATION_1, GROUP_VAL_CONTAINER_CONFIGURATION_1, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(GROUP_PROP_CONTAINER_CONFIGURATION_1, GROUP_VAL_CONTAINER_CONFIGURATION_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToOverrideGroupContainerConfigurationWithPlaceholderReplace()
+    {
+        validate(GROUP_PROP_CONTAINER_CONFIGURATION_1, GROUP_VAL_CONTAINER_CONFIGURATION_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(GROUP_PROP_CONTAINER_CONFIGURATION_1, GROUP_VAL_CONTAINER_CONFIGURATION_REPLACE, "y yyy y", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToAddGroupContainerProtocol() {
         validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_1, new ValueCallback() {
             @Override
             public String get() {
@@ -183,10 +309,88 @@ public class PropertiesParserTestCase {
     }
 
     @Test
+    public void shouldBeAbleToOverrideGroupContainerProtocol()
+    {
+        validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_1, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToAddGroupContainerProtocolWithPlaceholderReplace()
+    {
+        validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_REPLACE, "x xxx x", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
     public void shouldBeAbleToAddDefaultProtocol() {
         validate(DEFAULT_PROTOCOL_PROP_1, DEFAULT_PROTOCOL_VAL_1, new ValueCallback() {
             @Override
             public String get() {
+                return desc.getDefaultProtocol().getProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToOverrideDefaultProtocol()
+    {
+        validate(DEFAULT_PROTOCOL_PROP_1, DEFAULT_PROTOCOL_VAL_1, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getDefaultProtocol().getProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+
+        validate(DEFAULT_PROTOCOL_PROP_1, DEFAULT_PROTOCOL_VAL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getDefaultProtocol().getProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToAddDefaultProtocolWithPlaceholderReplace()
+    {
+        validate(DEFAULT_PROTOCOL_PROP_1, DEFAULT_PROTOCOL_VAL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getDefaultProtocol().getProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+
+        validate(DEFAULT_PROTOCOL_PROP_1, DEFAULT_PROTOCOL_VAL_REPLACE, "bar foo", new ValueCallback() {
+            @Override
+            public String get()
+            {
                 return desc.getDefaultProtocol().getProperties().get(CONFIGURATION_PROP_1);
             }
         });
@@ -202,13 +406,55 @@ public class PropertiesParserTestCase {
         });
     }
 
+    @Test
+    public void shouldBeAbleToOverrideExtension()
+    {
+        validate(EXTENSION_PROP_1, EXTENSION_VAL_1, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getExtensions().get(0).getExtensionProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(EXTENSION_PROP_1, EXTENSION_VAL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getExtensions().get(0).getExtensionProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToOverrideExtensionWithPlaceholderReplace()
+    {
+        validate(EXTENSION_PROP_1, EXTENSION_VAL_2, new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getExtensions().get(0).getExtensionProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+        validate(EXTENSION_PROP_1, EXTENSION_VAL_REPLACE, "a aaa a", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getExtensions().get(0).getExtensionProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
     private void validate(String property, String value, ValueCallback callback) {
+        validate(property, value, value, callback);
+    }
+
+    private void validate(String property, String value, String expectedValue, ValueCallback callback) {
         try {
             System.setProperty(property, value);
 
             new PropertiesParser().addProperties(desc, System.getProperties());
 
-            Assert.assertEquals(value, callback.get());
+            Assert.assertEquals(expectedValue, callback.get());
         } finally {
             System.clearProperty(property);
         }
