@@ -166,6 +166,18 @@ public class PropertiesParserTestCase {
     }
 
     @Test
+    public void shouldBeAbleToAddContainerConfigurationWithoutOriginalValue()
+    {
+        validate(CONTAINER_PROP_CONFIGURATION_1, CONTAINER_VAL_CONFIGURATION_REPLACE, "c  c", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
     public void shouldBeAbleToAddContainerProtocol() {
         validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_1, new ValueCallback() {
             @Override
@@ -210,6 +222,18 @@ public class PropertiesParserTestCase {
             }
         });
         validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_REPLACE, "w www w", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToAddContainerProtocolWithoutOriginalValue()
+    {
+        validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_REPLACE, "w  w", new ValueCallback() {
             @Override
             public String get()
             {
@@ -292,6 +316,18 @@ public class PropertiesParserTestCase {
     }
 
     @Test
+    public void shouldBeAbleToAddGroupContainerConfigurationWithoutOriginalValue()
+    {
+        validate(GROUP_PROP_CONTAINER_CONFIGURATION_1, GROUP_VAL_CONTAINER_CONFIGURATION_REPLACE, "y  y", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
     public void shouldBeAbleToAddGroupContainerProtocol() {
         validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_1, new ValueCallback() {
             @Override
@@ -338,6 +374,18 @@ public class PropertiesParserTestCase {
             }
         });
         validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_REPLACE, "x xxx x", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToAddGroupContainerProtocolWithoutOriginalValue()
+    {
+        validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_REPLACE, "x  x", new ValueCallback() {
             @Override
             public String get()
             {
@@ -397,6 +445,18 @@ public class PropertiesParserTestCase {
     }
 
     @Test
+    public void shouldBeAbleToAddDefaultProtocolWithoutOriginalValue()
+    {
+        validate(DEFAULT_PROTOCOL_PROP_1, DEFAULT_PROTOCOL_VAL_REPLACE, "bar ", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getDefaultProtocol().getProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
     public void shouldBeAbleToAddExtension() {
         validate(EXTENSION_PROP_1, EXTENSION_VAL_1, new ValueCallback() {
             @Override
@@ -436,6 +496,18 @@ public class PropertiesParserTestCase {
             }
         });
         validate(EXTENSION_PROP_1, EXTENSION_VAL_REPLACE, "a aaa a", new ValueCallback() {
+            @Override
+            public String get()
+            {
+                return desc.getExtensions().get(0).getExtensionProperties().get(CONFIGURATION_PROP_1);
+            }
+        });
+    }
+
+    @Test
+    public void shouldBeAbleToAddExtensionWithoutOriginalValue()
+    {
+        validate(EXTENSION_PROP_1, EXTENSION_VAL_REPLACE, "a  a", new ValueCallback() {
             @Override
             public String get()
             {

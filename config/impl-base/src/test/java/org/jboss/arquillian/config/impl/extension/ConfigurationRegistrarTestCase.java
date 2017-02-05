@@ -312,21 +312,29 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
 
                                         Assert.assertNotNull(desc.getDefaultProtocol());
                                         Assert.assertEquals("X BBB X", desc.getDefaultProtocol().getProperty("bbb"));
+                                        Assert.assertEquals("X  X", desc.getDefaultProtocol().getProperty("bbb2"));
 
                                         Assert.assertEquals(1, desc.getContainers().size());
                                         Assert.assertNotNull(desc.getContainers().get(0));
                                         Assert.assertNotNull("Y AAA Y", desc.getContainers().get(0).getProperty("aaa"));
+                                        Assert.assertNotNull("Y  Y", desc.getContainers().get(0).getProperty("aaa2"));
 
                                         Assert.assertEquals(1, desc.getExtensions().size());
                                         Assert.assertNotNull(desc.getExtensions().get(0));
                                         Assert.assertNotNull("Z DDD Z", desc.getExtensions().get(0).getProperty("ddd"));
+                                        Assert.assertNotNull("Z  Z", desc.getExtensions().get(0).getProperty("ddd2"));
 
-                                        Assert.assertEquals(1, desc.getGroups().size());
+                                        Assert.assertEquals(2, desc.getGroups().size());
                                         Assert.assertNotNull(desc.getGroups().get(0));
                                         Assert.assertEquals(1, desc.getGroups().get(0).getGroupContainers().size());
                                         Assert.assertEquals("T EEE T", desc.getGroups().get(0).getGroupContainers().get(0).getProperty("eee"));
+                                        Assert.assertEquals("T  T", desc.getGroups().get(0).getGroupContainers().get(0).getProperty("eee2"));
                                         Assert.assertEquals(1, desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().size());
                                         Assert.assertEquals("R FFF R", desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProperty("fff"));
+                                        Assert.assertEquals("R  R", desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProperty("fff2"));
+                                        Assert.assertNotNull(desc.getGroups().get(1));
+                                        Assert.assertEquals(1, desc.getGroups().get(1).getGroupContainers().size());
+                                        Assert.assertEquals("WITHOUT ", desc.getGroups().get(1).getGroupContainers().get(0).getProtocols().get(0).getProperty("foo"));
                                     }
                                 });
                     }

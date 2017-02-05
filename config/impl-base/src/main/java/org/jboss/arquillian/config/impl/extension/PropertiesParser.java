@@ -132,9 +132,9 @@ public class PropertiesParser {
 
          final DefaultProtocolDef defaultProtocolDef = descriptor.defaultProtocol(typeName);
          final String originalValue = defaultProtocolDef.getProperty(propertyName);
-         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         if (value.contains(ORIGINAL_VALUE))
          {
-            defaultProtocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+            defaultProtocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
          }
          else
          {
@@ -198,9 +198,9 @@ public class PropertiesParser {
 
          final ProtocolDef protocolDef = descriptor.group(groupName).container(containerName).protocol(protocolName);
          final String originalValue = protocolDef.getProperty(propertyName);
-         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         if (value.contains(ORIGINAL_VALUE))
          {
-            protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+            protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
          }
          else
          {
@@ -222,9 +222,9 @@ public class PropertiesParser {
 
          final ContainerDef containerDef = descriptor.group(groupName).container(containerName);
          final String originalValue = containerDef.getProperty(propertyName);
-         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         if (value.contains(ORIGINAL_VALUE))
          {
-            containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+            containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
          }
          else
          {
@@ -245,9 +245,9 @@ public class PropertiesParser {
 
          final ExtensionDef extensionDef = descriptor.extension(extensionName);         
          final String originalValue = extensionDef.getProperty(propertyName);
-         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         if (value.contains(ORIGINAL_VALUE))
          {
-            extensionDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+            extensionDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
          }
          else
          {
@@ -290,9 +290,9 @@ public class PropertiesParser {
 
          final ProtocolDef protocolDef = descriptor.container(containerName).protocol(protocolName);         
          final String originalValue = protocolDef.getProperty(propertyName);
-         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         if (value.contains(ORIGINAL_VALUE))
          {
-            protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+            protocolDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
          }
          else
          {
@@ -313,9 +313,9 @@ public class PropertiesParser {
 
          final ContainerDef containerDef = descriptor.container(containerName);
          final String originalValue = containerDef.getProperty(propertyName);
-         if (originalValue != null && value.contains(ORIGINAL_VALUE))
+         if (value.contains(ORIGINAL_VALUE))
          {
-            containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue));
+            containerDef.property(propertyName, value.replace(ORIGINAL_VALUE, originalValue != null ? originalValue : ""));
          }
          else
          {
