@@ -32,7 +32,7 @@ import org.junit.Test;
 public class ManagerProcessingTestCase
 {
    static {
-      ManagerImpl.DEBUG = true;
+      RuntimeLogger.DEBUG = true;
    }
    
    @Test

@@ -38,6 +38,7 @@ public class EventContextImpl<T> implements EventContext<T>
    private List<ObserverMethod> interceptors;
    private List<ObserverMethod> observers;
    private NonManagedObserver<T> nonManagedObserver;
+   private RuntimeLogger runtimeLogger;
    
    private T event;
    
@@ -51,19 +52,22 @@ public class EventContextImpl<T> implements EventContext<T>
     * @param observers List of Observers, @Observes T
     * @param nonManagedObserver a NonManagedObserver of type T
     * @param event The event
+    * @param runtimeLogger to use to log events.
     * @throws IllegalArgumentException if Manager is null
     * @throws IllegalArgumentException if Event is null 
     */
-   public EventContextImpl(ManagerImpl manager, List<ObserverMethod> interceptors, List<ObserverMethod> observers, NonManagedObserver<T> nonManagedObserver, T event)
+   public EventContextImpl(ManagerImpl manager, List<ObserverMethod> interceptors, List<ObserverMethod> observers, NonManagedObserver<T> nonManagedObserver, T event, RuntimeLogger runtimeLogger)
    {
       Validate.notNull(manager, "Manager must be specified");
       Validate.notNull(event, "Event must be specified");
+      Validate.notNull(runtimeLogger, "Runtime logger must be specified");
       
       this.manager = manager;
       this.interceptors = interceptors == null ? new ArrayList<ObserverMethod>():interceptors;
       this.observers = observers == null ? new ArrayList<ObserverMethod>():observers;
       this.nonManagedObserver = nonManagedObserver;
       this.event = event;
+      this.runtimeLogger = runtimeLogger;
    }
 
    @Override
@@ -84,7 +88,7 @@ public class EventContextImpl<T> implements EventContext<T>
       else
       {
          ObserverMethod interceptor = interceptors.get(currentInterceptor++);
-         manager.debug(interceptor, true);
+         runtimeLogger.debug(interceptor, true);
          interceptor.invoke(manager, this);
       }
    }
@@ -95,7 +99,7 @@ public class EventContextImpl<T> implements EventContext<T>
       {
          try
          {
-            manager.debug(observer, false);
+            runtimeLogger.debug(observer, false);
             observer.invoke(manager, event);
          } 
          catch (InvocationException e) 

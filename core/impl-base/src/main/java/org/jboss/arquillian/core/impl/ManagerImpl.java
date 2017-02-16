@@ -58,11 +58,7 @@ public class ManagerImpl implements Manager
    //-------------------------------------------------------------------------------------||
    // Instance Members -------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
-   public static final String ARQUILLIAN_DEBUG_PROPERTY = "arquillian.debug";
-   public static Boolean DEBUG = Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DEBUG_PROPERTY));
-   
-   private ThreadLocal<Stack<Object>> eventStack;
-   
+
    /*
     * Hack: 
     * Events can be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling. 
@@ -77,7 +73,8 @@ public class ManagerImpl implements Manager
          return new HashSet<Class<? extends Throwable>>();
       }
    }; 
-   
+
+   private final RuntimeLogger runtimeLogger;
    private final List<Context> contexts;
    private final List<Extension> extensions;
    
@@ -86,6 +83,8 @@ public class ManagerImpl implements Manager
    {
       this.contexts = new ArrayList<Context>();
       this.extensions = new ArrayList<Extension>();
+      this.runtimeLogger = new RuntimeLogger();
+
       try
       {
          List<Extension> createdExtensions = createExtensions(extensionClasses);
@@ -124,7 +123,7 @@ public class ManagerImpl implements Manager
    {
       Validate.notNull(event, "Event must be specified");
       
-      debug(event, true);
+      runtimeLogger.debug(event, true);
       // we start fresh pr new event
       handledThrowables.get().clear();
       
@@ -142,7 +141,7 @@ public class ManagerImpl implements Manager
             context.activate();
             activatedApplicationContext = true;
          }
-         new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event).proceed();
+         new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event, runtimeLogger).proceed();
       } 
       catch (Exception e) 
       {
@@ -162,7 +161,7 @@ public class ManagerImpl implements Manager
       }
       finally
       {
-         debug(event, false);
+         runtimeLogger.debug(event, false);
          if(activatedApplicationContext && context.isActive()) {
             context.deactivate();
          }
@@ -322,10 +321,7 @@ public class ManagerImpl implements Manager
          contexts.clear();
          extensions.clear();
 
-         if(eventStack != null)
-         {
-            eventStack.remove();
-         }
+         runtimeLogger.cleanStack();
          
          handledThrowables.remove();
       }
@@ -384,7 +380,7 @@ public class ManagerImpl implements Manager
    
    void fireException(Throwable event)
    {
-      debug(event, true);
+      runtimeLogger.debug(event, true);
       try
       {
          List<ObserverMethod> observers = resolveObservers(event.getClass());
@@ -397,7 +393,7 @@ public class ManagerImpl implements Manager
             ObserverMethod observer = observers.get(i);
             try
             {
-               debug(observer, false);
+               runtimeLogger.debug(observer, false);
                observer.invoke(this, event);
             }
             catch (Exception e) 
@@ -425,7 +421,7 @@ public class ManagerImpl implements Manager
       }
       finally
       {
-         debug(event, false);
+         runtimeLogger.debug(event, false);
       }
    }
 
@@ -441,7 +437,7 @@ public class ManagerImpl implements Manager
          Extension extension = ExtensionImpl.of(Reflections.createInstance(extensionClass));
          inject(extension);
          created.add(extension);
-         debugExtension(extensionClass);
+         runtimeLogger.debugExtension(extensionClass);
       }
       return created;
    }
@@ -591,73 +587,4 @@ public class ManagerImpl implements Manager
       return null;
    }
    
-   void debug(ObserverMethod method, boolean interceptor)
-   {
-      if(DEBUG)
-      {
-         System.out.println(calcDebugPrefix() + "(" + (interceptor ? "I":"O") + ") " +method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
-      }
-   }
-
-   private void debugExtension(Class<?> extension)
-   {
-      if (DEBUG)
-      {
-         System.out.println(calcDebugPrefix() + "(X) " + extension.getName());
-      }
-   }
-
-   private void debug(Object event, boolean push)
-   {
-      if(DEBUG)
-      {
-         if(push)
-         {
-            System.out.println(calcDebugPrefix() + "(E) " + getEventName(event));
-            eventStack.get().push(event);
-         }
-         else
-         {
-            if(!eventStack.get().isEmpty())
-            {
-               eventStack.get().pop();
-            }
-         }
-      }
-   }
-   
-   private String getEventName(Object object)
-   {
-      Class<?> eventClass = object.getClass();
-      // Print the Interface name of Anonymous classes to show the defined interface, not creation point.
-      if(eventClass.isAnonymousClass() && eventClass.getInterfaces().length == 1 && !eventClass.getInterfaces()[0].getName().startsWith("java"))
-      {
-         return eventClass.getInterfaces()[0].getSimpleName();
-      }
-      return eventClass.getSimpleName();
-   }
-   
-   private String calcDebugPrefix()
-   {
-
-      if(eventStack == null)
-      {
-         eventStack = new ThreadLocal<Stack<Object>>()
-         {
-            @Override
-            protected Stack<Object> initialValue()
-            {
-               return new Stack<Object>();
-            }
-         };
-      }
-
-      final int size = eventStack.get().size();
-      StringBuilder sb = new StringBuilder();
-      for(int i = 0; i < size; i++)
-      {
-         sb.append("\t");
-      }
-      return sb.toString();
-   }
 }
