@@ -603,19 +603,6 @@ public class ManagerImpl implements Manager
    {
       if (DEBUG)
       {
-
-         if(eventStack == null)
-         {
-            eventStack = new ThreadLocal<Stack<Object>>()
-            {
-               @Override
-               protected Stack<Object> initialValue()
-               {
-                  return new Stack<Object>();
-               }
-            };
-         }
-
          System.out.println(calcDebugPrefix() + "(X) " + extension.getName());
       }
    }
@@ -624,17 +611,6 @@ public class ManagerImpl implements Manager
    {
       if(DEBUG)
       {
-         if(eventStack == null)
-         {
-            eventStack = new ThreadLocal<Stack<Object>>() 
-            {
-               @Override
-               protected Stack<Object> initialValue()
-               {
-                  return new Stack<Object>();
-               } 
-            };
-         }
          if(push)
          {
             System.out.println(calcDebugPrefix() + "(E) " + getEventName(event));
@@ -664,8 +640,19 @@ public class ManagerImpl implements Manager
    private String calcDebugPrefix()
    {
 
-      final Stack<Object> objects = eventStack.get();
-      int size = objects.size();
+      if(eventStack == null)
+      {
+         eventStack = new ThreadLocal<Stack<Object>>()
+         {
+            @Override
+            protected Stack<Object> initialValue()
+            {
+               return new Stack<Object>();
+            }
+         };
+      }
+
+      final int size = eventStack.get().size();
       StringBuilder sb = new StringBuilder();
       for(int i = 0; i < size; i++)
       {
