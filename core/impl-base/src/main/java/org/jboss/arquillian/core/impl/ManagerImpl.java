@@ -374,6 +374,7 @@ public class ManagerImpl implements Manager
       
       this.extensions.addAll(createExtensions(extensions));
       this.contexts.addAll(createContexts(contexts));
+
    }
    
    boolean isExceptionHandled(Throwable e)
@@ -440,6 +441,7 @@ public class ManagerImpl implements Manager
          Extension extension = ExtensionImpl.of(Reflections.createInstance(extensionClass));
          inject(extension);
          created.add(extension);
+         debugExtension(extensionClass);
       }
       return created;
    }
@@ -597,6 +599,27 @@ public class ManagerImpl implements Manager
       }
    }
 
+   private void debugExtension(Class<?> extension)
+   {
+      if (DEBUG)
+      {
+
+         if(eventStack == null)
+         {
+            eventStack = new ThreadLocal<Stack<Object>>()
+            {
+               @Override
+               protected Stack<Object> initialValue()
+               {
+                  return new Stack<Object>();
+               }
+            };
+         }
+
+         System.out.println(calcDebugPrefix() + "(X) " + extension.getName());
+      }
+   }
+
    private void debug(Object event, boolean push)
    {
       if(DEBUG)
@@ -640,7 +663,9 @@ public class ManagerImpl implements Manager
    
    private String calcDebugPrefix()
    {
-      int size = eventStack.get().size();
+
+      final Stack<Object> objects = eventStack.get();
+      int size = objects.size();
       StringBuilder sb = new StringBuilder();
       for(int i = 0; i < size; i++)
       {
