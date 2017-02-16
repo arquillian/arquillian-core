@@ -6,14 +6,14 @@ import java.util.Stack;
 
 public class RuntimeLogger {
 
-    public static final String ARQUILLIAN_DEBUG_PROPERTY = "arquillian.debug";
-    public static Boolean DEBUG = Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DEBUG_PROPERTY));
+    private static final String ARQUILLIAN_DEBUG_PROPERTY = "arquillian.debug";
+    static Boolean DEBUG = Boolean.valueOf(SecurityActions.getProperty(ARQUILLIAN_DEBUG_PROPERTY));
 
     private ThreadLocal<Stack<Object>> eventStack;
 
-    void cleanStack()
+    void clear()
     {
-        if(eventStack != null)
+        if (eventStack != null)
         {
             eventStack.remove();
         }
@@ -21,9 +21,9 @@ public class RuntimeLogger {
 
     void debug(ObserverMethod method, boolean interceptor)
     {
-        if(DEBUG)
+        if (DEBUG)
         {
-            System.out.println(calcDebugPrefix() + "(" + (interceptor ? "I":"O") + ") " +method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
+            System.out.println(indent() + "(" + (interceptor ? "I" : "O") + ") " +method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
         }
     }
 
@@ -31,22 +31,22 @@ public class RuntimeLogger {
     {
         if (DEBUG)
         {
-            System.out.println(calcDebugPrefix() + "(X) " + extension.getName());
+            System.out.println(indent() + "(X) " + extension.getName());
         }
     }
 
     void debug(Object event, boolean push)
     {
-        if(DEBUG)
+        if (DEBUG)
         {
-            if(push)
+            if (push)
             {
-                System.out.println(calcDebugPrefix() + "(E) " + getEventName(event));
+                System.out.println(indent() + "(E) " + getEventName(event));
                 eventStack.get().push(event);
             }
             else
             {
-                if(!eventStack.get().isEmpty())
+                if (!eventStack.get().isEmpty())
                 {
                     eventStack.get().pop();
                 }
@@ -58,17 +58,17 @@ public class RuntimeLogger {
     {
         Class<?> eventClass = object.getClass();
         // Print the Interface name of Anonymous classes to show the defined interface, not creation point.
-        if(eventClass.isAnonymousClass() && eventClass.getInterfaces().length == 1 && !eventClass.getInterfaces()[0].getName().startsWith("java"))
+        if (eventClass.isAnonymousClass() && eventClass.getInterfaces().length == 1 && !eventClass.getInterfaces()[0].getName().startsWith("java"))
         {
             return eventClass.getInterfaces()[0].getSimpleName();
         }
         return eventClass.getSimpleName();
     }
 
-    private String calcDebugPrefix()
+    private String indent()
     {
 
-        if(eventStack == null)
+        if (eventStack == null)
         {
             eventStack = new ThreadLocal<Stack<Object>>()
             {
@@ -81,7 +81,7 @@ public class RuntimeLogger {
         }
 
         final int size = eventStack.get().size();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(size * 2);
         for(int i = 0; i < size; i++)
         {
             sb.append("\t");
