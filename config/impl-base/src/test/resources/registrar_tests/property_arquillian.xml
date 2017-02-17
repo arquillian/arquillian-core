@@ -20,6 +20,12 @@
             </configuration>
             <protocol type="P1">
                 <property name="fff">FFF</property>
+                <property name="ggg1">${env.ENV1}</property>
+                <property name="ggg2">${env.ENV2}</property>
+                <property name="ggg3">${env.ENV1}</property>
+                <property name="hhh1">${env.ENV3} HHH</property>
+                <property name="hhh2">${env.ENV4} HHH</property>
+                <property name="hhh3">${env.ENV1} HHH</property>
             </protocol>
         </container>
     </group>

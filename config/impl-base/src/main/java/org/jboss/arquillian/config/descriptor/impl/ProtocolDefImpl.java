@@ -19,6 +19,7 @@ package org.jboss.arquillian.config.descriptor.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
