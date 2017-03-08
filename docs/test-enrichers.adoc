@@ -1,0 +1,174 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Test Enrichers
+:icons: font
+
+
+* <<dependency-injection, Dependency Injection>>
+* <<test-case-injection-points, Test Case Injection Points>>
+* <<default-enrichers, Default Enrichers>>
+** <<resource-injection, Resource Injection>>
+** <<ejb-injection, EJB Injection (without CDI support)>>
+** <<cdi-injection, CDI Injection>>
+* <<active-scopes, Active Scopes>>
+
+When you use a unit testing framework like JUnit or TestNG, your test
+case lives in a world on its own. That makes integration testing pretty
+difficult because it means the environment in which the business logic
+executes must be self-contained within the scope of the test case
+(whether at the suite, class or method level). The bonus of setting up
+this environment in the test falls on the developer's shoulders.
+
+With Arquillian, you no longer have to worry about setting up the
+execution environment because that is all handled for you. The test will
+either be running in a container or a local CDI environment. But you
+still need some way to hook your test into this environment.
+
+A key part of in-container integration testing is getting access to the
+container-managed components that you plan to test. Using the Java's new
+operator to instantiate the business class is not suitable in this
+testing scenario because it leaves out the declaratives services that
+get applied to the component at runtime. We want the real deal.
+Arquillian uses test enrichment to give us access to the real deal. The
+visible result of test enrichment is injection of container resources
+and beans directly into the test class.
+
+[[dependency-injection]]
+==== Dependency Injection
+
+Before Arquillian negotiates the execution of the test, it enriches the
+test class by satisfying injection points specified declaratively using
+annotations.
+
+[[test-case-injection-points]]
+===== Test Case Injection Points
+
+Injection points are recognized in the following two locations:
+
+1.  Field (any visibility)
+2.  `@Test` method argument
+
+Here's an example of a field injection in a test class:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class GreeterTestCase {
+    @Inject
+    private Greeter greeter;
+
+    ...
+}
+----
+
+Here's an example of a method argument injection in a test method:
+
+[source,java]
+----
+@Test
+public void testGreeting(Greeter greeter) {
+  ...
+}
+----
+
+Note that the `@Inject` annotation is not required when injecting into a
+method argument.
+
+[[default-enrichers]]
+===== Default Enrichers
+
+There are three injection-based enrichers provided by Arquillian out of
+the box:
+
+* `@Resource` - Java EE resource injections
+* `@EJB` - EJB session bean reference injections
+* `@Inject`, `@Resource`, `@EJB`, `@PersistenceContext` and
+`@PersistenceUnit` - CDI-supported injections
+
+The first two enrichers use JNDI to lookup the instance to inject. The
+CDI injections are handled by treating the test class as a bean capable
+of receiving standard CDI injections (non-contextual injection). Since
+CDI requires containers to satisfy all Java EE injection points on a CDI
+bean, the `@Resource`, `@EJB`, `@PersistenceContext` and
+`@PersistenceUnit` injections are supported transitively by the CDI
+enricher. In fact, because of CDI's tight integration with the
+container, `@EJB` injections in the test class are satisfied according
+to specification when the CDI enricher is available.
+
+[[resource-injection]]
+====== Resource Injection
+
+The `@Resource` annotation gives you access to any object which is
+available via JNDI. It follows the standard rules for `@Resource` (as
+defined in the Section 2.3 of the Common Annotations for the Java
+Platform specification).
+
+[[ejb-injection]]
+====== EJB Injection (without CDI support)
+
+The `@EJB` annotation performs a JNDI lookup for the EJB session bean
+reference using the following equation in the specified order:
+
+[source,java]
+----
+"java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
+"java:global/test.ear/test/" + fieldType.getSimpleName(),
+"java:global/test/" + fieldType.getSimpleName(),
+"java:global/test/" + fieldType.getSimpleName() + "Bean",
+"java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+"test/" + unqualified interface name + "Bean/local",
+"test/" + unqualified interface name + "Bean/remote",
+"test/" + unqualified interface name + "/no-interface",
+unqualified interface name + "Bean/local",
+unqualified interface name + "Bean/remote",
+unqualified interface name + "/no-interface"
+----
+
+If no matching beans were found in those locations the injection will
+fail.
+
+At the moment, the lookup for an EJB session reference relies on some
+common naming convention of EJB beans. In the future the lookup will
+rely on the standard JNDI naming conventions established in Java EE 6.
+
+[[cdi-injection]]
+====== CDI Injection
+
+In order for CDI injections to work, the test archive defined with
+ShrinkWrap must be in a bean archive. That means adding beans.xml to the
+META-INF directory. Here's a `@Deployment` method that shows one way to
+add a beans.xml to the archive:
+
+[source,java]
+----
+@Deployment
+public static JavaArchive createTestArchive() {
+   return ShrinkWrap.create(JavaArchive.class, "test.jar")
+      .addClass(NameOfClassUnderTest.class)
+      .addAsManifestResource(EmptyAsset.INSTANCE, Paths.create("beans.xml"))
+----
+
+In an application that takes full advantage of CDI, you can likely get
+by only using injections defined with the `@Inject` annotation.
+Regardless, the other two types of injection come in handy from
+time-to-time.
+
+[[active-scopes]]
+==== Active Scopes
+
+When running your tests the embedded Weld EE container, Arquillian
+activates scopes as follows:
+
+* Application scope - Active for all methods in a test class
+* Session scope - Active for all methods in a test class
+* Request scope - Active for a single test method
+
+Scope control is experimental at this point and may be altered in a
+future release of Arquillian.
