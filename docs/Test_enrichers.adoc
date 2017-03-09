@@ -1,8 +1,5 @@
-Test Enrichers - Arquillian
-===========================
-
 Test Enrichers
---------------
+==============
 
 When you use a unit testing framework like JUnit or TestNG, your test
 case lives in a world on its own. That makes integration testing pretty

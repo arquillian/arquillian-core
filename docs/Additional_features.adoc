@@ -1,10 +1,7 @@
-:icons:
+:icons: font
 
-Additional features - Arquillian
-================================
-
-Additional features
--------------------
+Additional Features
+===================
 
 This chapter walks through additional features that Arquillian provides
 to address more advanced use cases. These features may even allow you to
@@ -150,8 +147,6 @@ this in your test, Arquillian provides something we call
 `@ArquillianResource` injection. Via this injection point we can expose
 multiple internal objects.
 
-//image:images/author/images/icons/emoticons/warning.gif[images/author/images/icons/emoticons/warning.gif]
-
 WARNING: Note that `@ArquillianResource` injection of URLs is only supported
 for in-container tests since Arquillian version 1.1.9.Final
 (see https://issues.jboss.org/browse/ARQ-540[ARQ-540]).
@@ -187,8 +182,6 @@ private void shouldDoX(@ArquillianResource(MyServlet.class) URL baseURL)
 {
 }
 ----
-
-//image:images/author/images/icons/emoticons/information.gif[images/author/images/icons/emoticons/information.gif]
 
 NOTE: Note that this version does not return the request URI to the given
 servlet, e.g. "http://localhost:8080/test2/MyServlet", but again just

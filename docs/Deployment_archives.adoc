@@ -1,8 +1,5 @@
-Deployment Archives - Arquillian
-================================
-
 Deployment Archives
--------------------
+===================
 
 Each Arquillian test is associated with at least one deployment. The
 deployment is configured using a static method annotated with

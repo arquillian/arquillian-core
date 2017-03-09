@@ -1,8 +1,5 @@
-Build Integration - Arquillian
-==============================
-
 Build Integration
------------------
+=================
 
 Just because the Arquillian project uses Maven doesn't mean you have to
 use it to run your Arquillian tests. Arquillian is designed to have

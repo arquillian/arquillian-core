@@ -1,8 +1,5 @@
-Protocols - Arquillian
-======================
-
 Protocols
----------
+=========
 
 In order to support running the same test locally and in remote
 containers, Arquillian uses an SPI that controls which protocol is used

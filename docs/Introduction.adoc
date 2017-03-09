@@ -1,5 +1,5 @@
-Introduction - Arquillian
-=========================
+Introduction
+============
 
 We believe that integration and functional testing should be no more
 complex or daunting than unit testing. We created Arquillian to make

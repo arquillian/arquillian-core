@@ -20,24 +20,10 @@ Arquillian brings the test to the runtime so you don’t have to manage the runt
 
 To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
 
-==== Guiding Principles
-
-The Arquillian project adheres to three core principles:
-
-Tests should be portable to any supported container::
-Keeping container-specific APIs out of the tests enables developers to verify application portability by running tests in a variety of containers. It also means that lightweight containers can be used as a substitute for full containers during development.
-
-Tests should be executable from both the IDE and the build tool::
-By leveraging the IDE, the developer can skip the build for a faster turnaround and has a familiar environment for debugging. These benefits shouldn’t sacrifice the ability to run the tests in continuous integration using a build tool.
-
-The platform should extend or integrate existing test frameworks::
-An extensible architecture encourages reuse of existing software and fosters a unified Java testing ecosystem.
-
-Regardless of how complex it becomes, executing an Arquillian test is as simple as selecting “Run As > Test” in the IDE or executing the “test” goal from the build tool.
-
 === Documentation
 
-Documentation for Arquillian is located in the Docs.
+For complete coverage and in depth understanding of different features of Arquillian to best leverage
+it for all your testing needs, check out the documentation section comprising, the below mentioned topics.
 
 1. Introduction touches upon the following aspects of Arquillian:
 
@@ -49,9 +35,9 @@ Documentation for Arquillian is located in the Docs.
 
 3. Deployment Archive explains how deployments can be configured using ShrinkWrap for Arquillian tests.
 
-4. Containers elaborates upon the selection and configuration of different containers.
+4. Containers elaborates upon the selection and configuration of different containers for use with Arquillian.
 
-5. Test Enrichers throws light on different injection points and injection-enrichers.
+5. Test Enrichers throw light on different injection points and injection-enrichers.
 
 6. Additional Features Supported in Arquillian include the following
 

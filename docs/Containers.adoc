@@ -1,8 +1,5 @@
-Containers - Arquillian
-=======================
-
 Containers
-----------
+==========
 
 Arquillian's forte is not only its ease of use, but also its
 extensibility. Good integration testing is not just about testing in
