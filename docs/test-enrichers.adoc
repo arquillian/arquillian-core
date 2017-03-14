@@ -1,5 +1,14 @@
-Test Enrichers
-==============
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+= Test Enrichers
+:icons: font
 
 When you use a unit testing framework like JUnit or TestNG, your test
 case lives in a world on its own. That makes integration testing pretty
@@ -22,15 +31,13 @@ Arquillian uses test enrichment to give us access to the real deal. The
 visible result of test enrichment is injection of container resources
 and beans directly into the test class.
 
-Dependency Injection
---------------------
+== Dependency Injection
 
 Before Arquillian negotiates the execution of the test, it enriches the
 test class by satisfying injection points specified declaratively using
 annotations.
 
-Test Case Injection Points
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Test Case Injection Points
 
 Injection points are recognized in the following two locations:
 
@@ -63,8 +70,7 @@ public void testGreeting(Greeter greeter) {
 Note that the `@Inject` annotation is not required when injecting into a
 method argument.
 
-Default Enrichers
-~~~~~~~~~~~~~~~~~
+=== Default Enrichers
 
 There are three injection-based enrichers provided by Arquillian out of
 the box:
@@ -84,16 +90,14 @@ enricher. In fact, because of CDI's tight integration with the
 container, `@EJB` injections in the test class are satisfied according
 to specification when the CDI enricher is available.
 
-Resource Injection
-^^^^^^^^^^^^^^^^^^
+==== Resource Injection
 
 The `@Resource` annotation gives you access to any object which is
 available via JNDI. It follows the standard rules for `@Resource` (as
 defined in the Section 2.3 of the Common Annotations for the Java
 Platform specification).
 
-EJB Injection (without CDI support)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== EJB Injection (without CDI support)
 
 The `@EJB` annotation performs a JNDI lookup for the EJB session bean
 reference using the following equation in the specified order:
@@ -120,8 +124,7 @@ At the moment, the lookup for an EJB session reference relies on some
 common naming convention of EJB beans. In the future the lookup will
 rely on the standard JNDI naming conventions established in Java EE 6.
 
-CDI Injection
-^^^^^^^^^^^^^
+==== CDI Injection
 
 In order for CDI injections to work, the test archive defined with
 ShrinkWrap must be in a bean archive. That means adding beans.xml to the
@@ -142,8 +145,7 @@ by only using injections defined with the `@Inject` annotation.
 Regardless, the other two types of injection come in handy from
 time-to-time.
 
-Active scopes
--------------
+== Active scopes
 
 When running your tests the embedded Weld EE container, Arquillian
 activates scopes as follows:

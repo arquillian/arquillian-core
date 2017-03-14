@@ -1,5 +1,14 @@
-Deployment Archives
-===================
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+= Deployment Archives
+:icons: font
 
 Each Arquillian test is associated with at least one deployment. The
 deployment is configured using a static method annotated with
@@ -32,12 +41,12 @@ The deployment archive is more than just a means to an end (getting code
 inside the container). There are several critical benefits to defining a
 deployment:
 
-1.  It allows you to isolate the classpath of the test – only those
+.  It allows you to isolate the classpath of the test – only those
 classes and resources inside the deployment are visible to the test.
-2.  You can emulate or replicate a deployment scenario, which often
+.  You can emulate or replicate a deployment scenario, which often
 triggers behavior (e.g., framework activation) that you cannot otherwise
 test.
-3.  We can skip the build. Since the archive is assembled in Java, we're
+.  We can skip the build. Since the archive is assembled in Java, we're
 able to leverage the incremental compilation provided by IDEs.
 
 In summary, the strategy of using ShrinkWrap-based deployments gives you

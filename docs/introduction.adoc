@@ -1,5 +1,14 @@
-Introduction
-============
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+= Introduction
+:icons: font
 
 We believe that integration and functional testing should be no more
 complex or daunting than unit testing. We created Arquillian to make
@@ -19,8 +28,7 @@ Arquillian, you can focus on the test, not the plumbing.
 In short, Arquillian aims to make integration and functional testing a
 breeze.
 
-Core Principles
----------------
+== Core Principles
 
 The Arquillian project adheres to three core principles:
 
@@ -44,13 +52,14 @@ logic neatly into the platform an its extensions. As a result, executing
 an Arquillian test is as simple as selecting "Run As > Test" in the IDE
 or executing the "test" goal from the build tool.
 
-How It Works
-------------
+== How It Works
 
 Using Arquillian, you write a basic test case and annotate it with
 declarative behavior that says, "`@RunWith` Arquillian". This
 declaration tells Arquillian to take over execution of the test when
-it's launched. __That's when the real magic happens__.
+it's launched.
+
+__That's when the real magic happens__.
 
 Launching an Arquillian test is as simple as right-clicking the test
 class in the IDE and selecting _Run As > Test (e.g., JUnit, TestNG,
@@ -73,8 +82,7 @@ Aside from a few extra declarations (i.e., `@RunWith` and
 launched like any other unit test.
 
 
-Integration Testing In Java EE
-------------------------------
+== Integration Testing In Java EE
 
 Integration testing is very important in Java EE. The reason is
 two-fold:
@@ -103,8 +111,7 @@ that the infrastructure services are applied correctly and that the
 business logic functions properly within that context, justifying the
 second reason that integration testing is important in Java EE.
 
-Testing The Real Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Testing The Real Component
 
 ...or, *what you test is what you run.*
 
@@ -124,8 +131,7 @@ inject the container-managed instance of the component directly into
 your test class (or you can look it up in JNDI) so that you are testing
 the actual component, just as it runs inside the application.
 
-Finding A Happy Medium
-~~~~~~~~~~~~~~~~~~~~~~
+=== Finding A Happy Medium
 
 _Do you really need to run the test in a real container when a Java SE
 CDI environment would do?_
@@ -150,8 +156,7 @@ integration testing being accomplished without involving every class in
 the application? That's the benefit that ShrinkWrap brings to
 Arquillian.
 
-Controlling The Test Classpath
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Controlling The Test Classpath
 
 One huge advantage ShrinkWrap brings to Arquillian is classpath control.
 The classpath of a test run has traditionally been a kitchen sink of all

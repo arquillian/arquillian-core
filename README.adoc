@@ -1,4 +1,14 @@
 == Arquillian - So you can rule your code. Not the bugs.
+:asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-core/master/docs
+:numbered:
+:sectlink:
+:sectanchors:
+:sectid:
+:source-language: java
+:source-highlighter: coderay
+:sectnums:
+:icons: font
+:toc: left
 
 Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to
 easily create automated integration, functional and acceptance tests for Java middleware.
@@ -25,21 +35,21 @@ To avoid introducing unnecessary complexity into the developer’s build environ
 For complete coverage and in depth understanding of different features of Arquillian to best leverage
 it for all your testing needs, check out the documentation section comprising, the below mentioned topics.
 
-1. Introduction touches upon the following aspects of Arquillian:
+1. link:{asciidoctor-source}/introduction.adoc[Introduction] touches upon the following aspects of Arquillian:
 
 * Core Principles
 * How It Works
 * Integration Testing in Java EE
 
-2. Getting Started guide gets you started with Arquillian tests with sample examples.
+2. link:{asciidoctor-source}/getting-started.adoc[Getting Started] guide gets you started with Arquillian tests with sample examples.
 
-3. Deployment Archive explains how deployments can be configured using ShrinkWrap for Arquillian tests.
+3. link:{asciidoctor-source}/deployment-archive.adoc[Deployment Archive] explains how deployments can be configured using ShrinkWrap for Arquillian tests.
 
-4. Containers elaborates upon the selection and configuration of different containers for use with Arquillian.
+4. link:{asciidoctor-source}/containers.adoc[Containers] elaborates upon the selection and configuration of different containers for use with Arquillian.
 
-5. Test Enrichers throw light on different injection points and injection-enrichers.
+5. link:{asciidoctor-source}/test-enrichers.adoc[Test Enrichers] throw light on different injection points and injection-enrichers.
 
-6. Additional Features Supported in Arquillian include the following
+6. link:{asciidoctor-source}/additional-features.adoc[Additional Features] Supported in Arquillian include the following
 
 * Test Run Modes
 * Descriptor Deployments
@@ -49,9 +59,9 @@ it for all your testing needs, check out the documentation section comprising, t
 * Protocol Selection
 * Enabling Assertions
 
-7. Protocols details the different protocols that Arquillian provides.
+7. link:{asciidoctor-source}/protocols.adoc[Protocols] details the different protocols that Arquillian provides.
 
-8. Build Integration shows how Arquillian integrates with different Build Tools such as Gradle.
+8. link:{asciidoctor-source}/build-integration.adoc[Build Integration] shows how Arquillian integrates with different Build Tools such as Gradle.
 
 === Contents of distribution
 
