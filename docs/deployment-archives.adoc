@@ -7,7 +7,8 @@ ifdef::env-github,env-browser[]
 :outfilesuffix: .adoc
 endif::[]
 
-= Deployment Archives
+[[deployment-archives]]
+=== Deployment Archives
 :icons: font
 
 Each Arquillian test is associated with at least one deployment. The

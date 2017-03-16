@@ -7,7 +7,7 @@ ifdef::env-github,env-browser[]
 :outfilesuffix: .adoc
 endif::[]
 
-= Protocols
+=== Protocols
 :icons: font
 
 In order to support running the same test locally and in remote
@@ -16,7 +16,12 @@ to negotiate execution of the test. This appendix details the default
 protocols that Arquillian provides, when they are used and how they can
 be configured.
 
-== Local
+* <<local, Local>>
+* <<servlet-2.5, Servlet 2.5>>
+* <<servlet-3.0, Servlet 3.0>>
+
+[[local]]
+==== Local
 
 The Local Protocol implementation is used by most EE5 compliant
 containers. It does nothing to the deployment. The Local Protocol is also
@@ -41,7 +46,7 @@ used when executing in run mode `as client`.
 |Does nothing.
 |===
 
-=== Configuration
+===== Configuration
 
 *Protocol Configuration Options*
 
@@ -50,7 +55,8 @@ used when executing in run mode `as client`.
 |Name |Type |Default |Description
 |===
 
-== Servlet 2.5
+[[servlet-2.5]]
+==== Servlet 2.5
 
 The Servlet 2.5 Protocol implementation is used by most EE5 compliant
 containers. It will attempt to add a war to the deployment.
@@ -79,7 +85,7 @@ containers. It will attempt to add a war to the deployment.
  `EnterpriseArchive` instead of creating a new.
 |===
 
-=== Configuration
+===== Configuration
 
 *Protocol Configuration Options*
 
@@ -103,7 +109,8 @@ containers. It will attempt to add a war to the deployment.
 |Used to override the Deployments default contextRoot.
 |===
 
-== Servlet 3.0
+[[servlet-3.0]]
+==== Servlet 3.0
 
 The Servlet 3.0 Protocol implementation is used by most EE6 compliant
 containers. It will attempt to add a web-fragment to the deployment.
@@ -131,7 +138,7 @@ containers. It will attempt to add a web-fragment to the deployment.
  found, a exception is thrown.
 |===
 
-=== Configuration
+===== Configuration
 
 *Protocol Configuration Options*
 

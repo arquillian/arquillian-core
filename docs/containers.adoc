@@ -7,8 +7,13 @@ ifdef::env-github,env-browser[]
 :outfilesuffix: .adoc
 endif::[]
 
-= Containers
+=== Containers
 :icons: font
+
+* <<container-selection, Container Selection>>
+* <<container-configuration, Container Configuration>>
+* <<supported-containers, Supported Containers>>
+* <<container-config-runtime-selection, Container Config Runtime Selection>>
 
 Arquillian's forte is not only its ease of use, but also its
 extensibility. Good integration testing is not just about testing in
@@ -58,7 +63,8 @@ container you are using isn't supported, Arquillian provides an SPI that
 allows you to introduce any additional container to the default
 collection.
 
-== Container Selection
+[[container-selection]]
+==== Container Selection
 
 _How can a single Arquillian test be executed in different containers?
 How does Arquillian decide which container to target? And how are both
@@ -108,7 +114,8 @@ detail.
 So far we've covered how a container adapter is selected. It's also
 possible to configure the container adapter, which we'll look at next.
 
-== Container Configuration
+[[container-configuration]]
+==== Container Configuration
 
 We've covered how a container gets selected, but how does Arquillian
 know how to locate or communicate with the container? That's where
@@ -168,7 +175,8 @@ options, see the
 https://docs.jboss.org/author/display/ARQ/Container+adapters[container
 adapters] appendix.
 
-== Supported Containers
+[[supported-containers]]
+==== Supported Containers
 
 // TODO Fix the Link
 Please see the
@@ -176,7 +184,8 @@ https://docs.jboss.org/author/display/ARQ/Container+adapters[container
 adapters] appendix for a list of supported containers, including details
 for how to use and configure them.
 
-== Container Config Runtime Selection
+[[container-config-runtime-selection]]
+==== Container Config Runtime Selection
 
 During execution of your Arquillian test-suite, you may have configured
 one or more containers with which you need to execute the test suite.
@@ -186,7 +195,7 @@ target container. This is where you will need to specify configurations
 in your arquillian.xml file, and also activate those configurations
 using Java system properties.
 
-=== Example arquillian.xml with two container configurations:
+===== Example arquillian.xml with two container configurations:
 
 [source,xml]
 ----
@@ -213,14 +222,14 @@ using Java system properties.
 </arquillian>
 ----
 
-=== Activating a configuration via the command line
+===== Activating a configuration via the command line
 
 The -Darquillian.launch system property is what controls arquillian.xml
 configuration selection. If you are running tests from Eclipse or
 directly from the command like, you should add the -D system property to
 your launch configuration or command.
 
-=== Activating a configuration via Maven
+===== Activating a configuration via Maven
 
 These configurations may be activated in the maven profile using the
 Surefire plugin configuration in your container's maven profile to set

@@ -7,19 +7,20 @@ ifdef::env-github,env-browser[]
 :outfilesuffix: .adoc
 endif::[]
 
-= Build Integration
+=== Build Integration
 :icons: font
+
 
 Just because the Arquillian project uses Maven doesn't mean you have to
 use it to run your Arquillian tests. Arquillian is designed to have
 seamless integration with JUnit and TestNG without any necessary test
 framework configuration. That means you can use any build system that
 has a JUnit or TestNG task to execute your Arquillian test cases. Since
-most of this guide focuses on using Arquillian in a Maven build, this
-chapter is going to be about alternative build systems, namely Gradle
-and Ant.
+most of this guide focuses on using Arquillian in a <<maven, Maven>> build, this
+chapter is going to be about alternative build systems, namely <<gradle, Gradle>>
+and <<ant, Ant>>.
 
-== Active Build Ingredient
+==== Active Build Ingredient
 
 The secret ingredient required to activate the Arquillian test runner is
 getting the correct libraries on the classpath. (Often easier said than
@@ -59,14 +60,16 @@ in this chapter. Gradle can also emulate the Maven profile strategy
 through the use of build fragment imports. We'll also show an example of
 that approach for contrast.
 
-== Maven
+[[maven]]
+==== Maven
 
 The community has gravitated towards Maven as the preferred build tool
 for projects that use Arquillian. Details on how to setup Arquillian in
 a Maven project is covered in detail in the
 http://arquillian.org/guides/[Arquillian Guides].
 
-== Gradle
+[[gradle]]
+==== Gradle
 
 http://gradle.org[Gradle] is a build tool that allows you to create
 declarative, maintainable, concise and highly-performing builds. More
@@ -91,7 +94,7 @@ feedback if you find a better way (or another way worth documenting).
 Let's get the common build stuff out of the way, then dive into the two
 strategies listed above.
 
-=== apply from: common
+===== apply from: common
 
 The simplest Gradle build for a Java project is a sparse one line.
 
@@ -236,7 +239,7 @@ elements to your existing Gradle build), we are ready to configuring the
 container-specific test tasks. In the first approach, we'll create a
 unique dependency configuration and task for each container.
 
-=== Strategy #1: Container-Specific Test Tasks
+===== Strategy #1: Container-Specific Test Tasks
 
 Each project in Gradle is made up of one or more tasks. A task
 represents some atomic piece of work which a build performs. Examples
@@ -414,7 +417,7 @@ Pretty cool, huh?
 
 Now let's look at another way to solve this problem.
 
-=== Strategy #2: Test Profiles
+===== Strategy #2: Test Profiles
 
 Another way to approach integrating Arquillian into a Gradle build is to
 emulate the behavior of Maven profiles. In this case, we won't be adding
@@ -581,11 +584,13 @@ If you have a better idea of how to integrate an Arquillian test suite
 into a Gradle build, we'd love to hear it on the
 http://community.jboss.org/en/arquillian[Arquillian discussion forums].
 
-== Ant + Ivy
+[[ant-ivy]]
+==== Ant + Ivy
 
 WRITE ME
 
-== Ant
+[[ant]]
+==== Ant
 
 This guide will detail how to use Arquillian using ant. We will use
 maven to download all the required jars.

@@ -1,4 +1,4 @@
-== Arquillian - So you can rule your code. Not the bugs.
+= Arquillian - So you can rule your code. Not the bugs.
 :asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-core/master/docs
 :numbered:
 :sectlink:
@@ -10,14 +10,15 @@
 :icons: font
 :toc: left
 
+
 Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to
 easily create automated integration, functional and acceptance tests for Java middleware.
 
-=== What is it?
+== What is it?
 
 Picking up where unit tests leave off, Arquillian handles all the plumbing of container management, deployment and framework initialization so you can focus on the task at hand, writing your tests. Real tests. In short…
 
-==== Arquillian makes integration testing a breeze!
+=== Arquillian makes integration testing a breeze!
 
 Arquillian brings the test to the runtime so you don’t have to manage the runtime from the test (or the build). Arquillian eliminates this burden by covering all aspects of test execution, which entails:
 
@@ -30,48 +31,26 @@ Arquillian brings the test to the runtime so you don’t have to manage the runt
 
 To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
 
-=== Documentation
+== Documentation
 
-For complete coverage and in depth understanding of different features of Arquillian to best leverage
-it for all your testing needs, check out the documentation section comprising, the below mentioned topics.
+include::{asciidoctor-source}/introduction.adoc[]
+include::{asciidoctor-source}/getting-started.adoc[]
+include::{asciidoctor-source}/deployment-archives.adoc[]
+include::{asciidoctor-source}/containers.adoc[]
+include::{asciidoctor-source}/test-enrichers.adoc[]
+include::{asciidoctor-source}/additional-features.adoc[]
+include::{asciidoctor-source}/protocols.adoc[]
+include::{asciidoctor-source}/build-integration.adoc[]
 
-1. link:{asciidoctor-source}/introduction.adoc[Introduction] touches upon the following aspects of Arquillian:
-
-* Core Principles
-* How It Works
-* Integration Testing in Java EE
-
-2. link:{asciidoctor-source}/getting-started.adoc[Getting Started] guide gets you started with Arquillian tests with sample examples.
-
-3. link:{asciidoctor-source}/deployment-archive.adoc[Deployment Archive] explains how deployments can be configured using ShrinkWrap for Arquillian tests.
-
-4. link:{asciidoctor-source}/containers.adoc[Containers] elaborates upon the selection and configuration of different containers for use with Arquillian.
-
-5. link:{asciidoctor-source}/test-enrichers.adoc[Test Enrichers] throw light on different injection points and injection-enrichers.
-
-6. link:{asciidoctor-source}/additional-features.adoc[Additional Features] Supported in Arquillian include the following
-
-* Test Run Modes
-* Descriptor Deployments
-* Resource Injection
-* Multiple Deployments
-* Multiple Containers
-* Protocol Selection
-* Enabling Assertions
-
-7. link:{asciidoctor-source}/protocols.adoc[Protocols] details the different protocols that Arquillian provides.
-
-8. link:{asciidoctor-source}/build-integration.adoc[Build Integration] shows how Arquillian integrates with different Build Tools such as Gradle.
-
-=== Contents of distribution
+== Contents of distribution
 
 The Arquillian Core, Container Extension, Test Extension, Test integration for JUnit and TestNG, Common TestEnrichers and Common Protocols.
 
-=== Licensing
+== Licensing
 
 This distribution, as a whole, is licensed under the terms of the Apache License, Version 2.0 (see apl.txt).
 
-=== Arquillian URLs
+== Arquillian URLs
 
 * http://arquillian.org/guides[Guides]
 * http://arquillian.org[Project Site]

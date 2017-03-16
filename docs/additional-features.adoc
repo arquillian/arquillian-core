@@ -7,15 +7,27 @@ ifdef::env-github,env-browser[]
 :outfilesuffix: .adoc
 endif::[]
 
-= Additional Features
+=== Additional Features
 :icons: font
 
-This chapter walks through additional features that Arquillian provides
-to address more advanced use cases. These features may even allow you to
+This chapter walks through the following additional features that Arquillian
+provides to address more advanced use cases. These features may even allow you to
 write tests for scenarios you previously classified as too difficult to
 test.
 
-== Test Run Modes
+* <<test-run-modes, Test Run Modes>>
+** <<container-mode, Container Mode>>
+** <<client-mode, Client Mode>>
+** <<mixed-mode, Mixed Mode>>
+* <<descriptor-deployment, Descriptor Deployment>>
+* <<arquillian-resource-injection, Arquillian Resource Injection>>
+* <<multiple-deployments, Multiple Deployments>>
+* <<multiple-containers, Multiple Containers>>
+* <<protocol-selection, Protocol Selection>>
+* <<enabling-assertions, Enabling Assertions>>
+
+[[test-run-modes]]
+==== Test Run Modes
 
 So far, we've focused on testing your application internals, but we also
 want to test how others (people, or other programs) interact with the
@@ -31,7 +43,8 @@ This is why Arquillian comes with two run modes, `in container` and
 dive a bit deeper into the differences between the run modes and see how
 they effect your test execution and packaging.
 
-=== Container mode: @Deployment(testable = true)
+[[container-mode]]
+===== Container mode: @Deployment(testable = true)
 
 As we mentioned above, we need to repackage your `@Deployment`, adding
 some Arquillian support classes, to run in-container. This gives us the
@@ -43,7 +56,8 @@ _Arquillian uses this mode by default._
 See the Complete Protocol Reference for an overview of the expected
 output of the packaging process when you provide a `@Deployment`.
 
-=== Client mode: @Deployment(testable = false)
+[[client-mode]]
+===== Client mode: @Deployment(testable = false)
 
 Now this mode is the easy part. As opposed to in-container mode which
 repackages and overrides the test execution, the as-client mode does as
@@ -76,7 +90,8 @@ public class LocalRunServletTestCase {
 }
 ----
 
-=== Mixed mode
+[[mixed-mode]]
+===== Mixed mode
 
 It is also possible to mix the two run modes within the same test class.
 If you have defined the `Deployment` to be testable, you can specify the
@@ -113,8 +128,8 @@ your application and different use-cases, another is that you will miss
 the benefits of switching `DeployableContainers` and run the same tests
 suite against a remote server if you do.
 
-
-== Descriptor Deployment
+[[descriptor-deployment]]
+==== Descriptor Deployment
 
 We have previously seen Arquillian deploys ShrinkWrap Archives, but some
 times you need to deploy other items like a JMS Queue or a DataSource
@@ -137,7 +152,8 @@ public static WebArchive createDep2() {}
 public void testDataBase() {}
 ----
 
-== Arquillian Resource Injection
+[[arquillian-resource-injection]]
+==== Arquillian Resource Injection
 
 When dealing with multiple different environments and hidden dynamic
 container configuration you very soon come to a point where you need
@@ -188,7 +204,8 @@ NOTE: Note that this version does not return the request URI to the given
 servlet, e.g. "http://localhost:8080/test2/MyServlet", but again just
 the request URI up through the context path.
 
-== Multiple Deployments
+[[multiple-deployments]]
+==== Multiple Deployments
 
 Sometimes a single `Deployment` is not enough, and you need to specify
 more then one to get your test done.
@@ -218,7 +235,8 @@ public void testRunningInDep1() {}
 public void testRunningInDep2() {}
 ----
 
-== Multiple Containers
+[[multiple-containers]]
+==== Multiple Containers
 
 There are times when you need to involve multiple containers in the same
 test case, if you for instance want to test clustering. The first step
@@ -285,7 +303,8 @@ multiple instances within the same ClassLoader/JVM. Currently this only
 works with containers of type Remote or Managed as the adapter normally
 will connect to an isolated server started in its own JVM.
 
-== Protocol Selection
+[[protocol-selection]]
+==== Protocol Selection
 
 A protocol is how Arquillian talks and executes the tests inside the
 container. For ease of development and configuration a container defines
@@ -317,7 +336,8 @@ Arquillian only supports Servlet 2.5 and Servlet 3.0 at this time. EJB
 doing this, please see the Complete Protocol Reference for the better
 knowing what is currently supported.
 
-== Enabling Assertions
+[[enabling-assertions]]
+==== Enabling Assertions
 
 The first time you try Arquillian, you may find that assertions that use
 the Java assert keyword are not working. Keep in mind that the test is
@@ -329,7 +349,8 @@ container. You may want to consider specifying the package names of your
 test classes to avoid assertions to be enabled throughout the
 container's source code.
 
-=== Enabling Assertions In JBoss AS
+[[enabling-assertions-in-jboss-as]]
+===== Enabling Assertions In JBoss AS
 
 If you are using JBoss AS, the quickest way to setup debug mode is to
 add the following line to the end of $JBOSS_AS_HOME/bin/run.conf

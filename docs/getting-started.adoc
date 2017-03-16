@@ -1,4 +1,5 @@
-= Getting Started
+[[getting-started]]
+=== Getting Started
 
 We promised that integration and functional testing with Arquillian is
 no more complex than writing a unit test. Now it's time to prove it to
