@@ -1,0 +1,186 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Introduction
+:icons: font
+
+* <<core-principles, Core Principles>>
+* <<how-it-works, How It Works>>
+* <<integration-testing-in java-ee, Integration Testing In Java EE>>
+
+We believe that integration and functional testing should be no more
+complex or daunting than unit testing. We created Arquillian to make
+that vision a reality.
+
+*Arquillian is a revolutionary testing platform for Java and the JVM
+that enables developers to easily write and execute integration and
+functional tests for Java middleware, ranging from Java EE and beyond.*
+
+Arquillian picks up where unit tests leave off, focusing on the
+integration of application code inside a real runtime environment. Much
+the same way Java EE 5 simplified the server programming model by
+providing declarative services for POJOs, Arquillian equips tests with
+container lifecycle management and test case enrichment. Using
+Arquillian, you can focus on the test, not the plumbing.
+
+In short, Arquillian aims to make integration and functional testing a
+breeze.
+
+[[core-principles]]
+==== Core Principles
+
+The Arquillian project adheres to three core principles:
+
+1.  *Tests should be portable to any supported container* +
+By keeping container-specific APIs out of the tests, developers can
+verify application portability by running tests against a variety of
+containers. It also means that lightweight containers can be used as a
+substitute for full containers during development.
+2.  *Tests should be executable from both the IDE and the build tool* +
+By leveraging the IDE, the developer can skip the build for a faster
+turnaround and has a familiar environment for debugging. These benefits
+shouldn't sacrifice the ability to run the tests in continuous
+integration using a build tool.
+3.  *The platform should extend or integrate existing test frameworks* +
+An extensible architecture encourages reuse of existing software and
+fosters a unified Java testing ecosystem.
+
+Arquillian brings your test to the runtime so you don't have to manage
+the runtime from the test. Arquillian packs the necessary orchestration
+logic neatly into the platform an its extensions. As a result, executing
+an Arquillian test is as simple as selecting "Run As > Test" in the IDE
+or executing the "test" goal from the build tool.
+
+[[how-it-works]]
+==== How It Works
+
+Using Arquillian, you write a basic test case and annotate it with
+declarative behavior that says, "`@RunWith` Arquillian". This
+declaration tells Arquillian to take over execution of the test when
+it's launched.
+
+__That's when the real magic happens__.
+
+Launching an Arquillian test is as simple as right-clicking the test
+class in the IDE and selecting _Run As > Test (e.g., JUnit, TestNG,
+Spock, etc)_. Based on the classpath configuration, Arquillian starts or
+binds to the target container (JBoss AS, GlassFish, OpenEJB, etc) and
+deploys the test archive defined in the `@Deployment` method. The
+archive includes the test case along with the specified classes,
+resources and libraries. Your test then executes inside the container
+and enjoys all the same services as an application component. That means
+you get dependency and resource injection into the test, you can access
+EJBs, you can load a persistence unit, you can get a handle to a
+database connection, etc. Arquillian then captures the test results and
+transports them back to the test runner for reporting.
+
+NOTE: Arquillian also has a client run mode, which only deploys the test archive, not the test case.
+
+
+Aside from a few extra declarations (i.e., `@RunWith` and
+`@Deployment`), an Arquillian test looks like any other unit test and
+launched like any other unit test.
+
+[[integration-testing-in-java-ee]]
+==== Integration Testing In Java EE
+
+Integration testing is very important in Java EE. The reason is
+two-fold:
+
+* Business components often interact with resources or sub-system
+provided by the container
+* Many declarative services get applied to the business component at
+runtime
+
+The first reason is inherent in enterprise applications. For the
+application to perform any sort of meaningful work, it has to pull the
+strings on other components, resources (e.g., a database) or systems
+(e.g., a web service). Having to write any sort of test that requires an
+enterprise resource (database connection, entity manager, transaction,
+injection, etc) is a non-starter because the developer has no idea what
+to even use. Clearly there is a need for a simple solution, and
+Arquillian fills that void.
+
+Some might argue that, as of Java EE 5, the business logic performed by
+most Java EE components can now be tested outside of the container
+because they are POJOs. But let's not forget that in order to isolate
+the business logic in Java EE components from infrastructure services
+(transactions, security, etc), many of those services were pushed into
+declarative programming constructs. At some point you want to make sure
+that the infrastructure services are applied correctly and that the
+business logic functions properly within that context, justifying the
+second reason that integration testing is important in Java EE.
+
+[[testing-the-real-component]]
+===== Testing The Real Component
+
+...or, *what you test is what you run.*
+
+The reality is that you aren't really testing your component until you
+test it in situ. It's all to easy to create a test that puts on a good
+show but doesn't provide any real guarantee that the code under test
+functions properly in a production environment. The show typically
+involves mock components and/or bootstrapped environments that cater to
+the test. Such "unit tests" can't verify that the declarative services
+kick in as they should. While unit tests certainly have value in quickly
+testing algorithms and business calculations within methods, there still
+need to be tests that exercise the component as a complete service.
+
+Rather than instantiating component classes in the test using Java's new
+operator, which is customary in a unit test, Arquillian allows you to
+inject the container-managed instance of the component directly into
+your test class (or you can look it up in JNDI) so that you are testing
+the actual component, just as it runs inside the application.
+
+[[finding-a-happy-medium]]
+===== Finding A Happy Medium
+
+_Do you really need to run the test in a real container when a Java SE
+CDI environment would do?_
+
+It's true, some tests can work without a full container. For instance,
+you can run certain tests in a Java SE CDI environment with Arquillian.
+Let's call these "standalone" tests, whereas tests which do require a
+full container are called "integration" tests. Every standalone test can
+also be run as an integration test, but not the other way around. While
+the standalone tests don't need a full container, it's also important to
+run them as integration tests as a final check just to make sure that
+there is nothing they conflict with (or have side effects) when run in a
+real container.
+
+It might be a good strategy to make as many tests work in standalone
+mode as possible to ensure a quick test run, but ultimately you should
+consider running all of your tests in the target container. As a result,
+you'll likely enjoy a more robust code base.
+
+We've established that integration testing is important, but how can
+integration testing being accomplished without involving every class in
+the application? That's the benefit that ShrinkWrap brings to
+Arquillian.
+
+[[controlling-the-test-classpath]]
+===== Controlling The Test Classpath
+
+One huge advantage ShrinkWrap brings to Arquillian is classpath control.
+The classpath of a test run has traditionally been a kitchen sink of all
+production classes and resources with the test classes and resources
+layered on top. This can make the test run indeterministic, or it can
+just be hard to isolate test resources from the main resources.
+
+Arquillian uses ShrinkWrap to create "micro deployments" for each test,
+giving you fine-grained control over what you are testing and what
+resources are available at the time the test is executed. An archive can
+include classes, resources and libraries. This not only frees you from
+the classpath hell that typically haunts test runners (Eclipse, Maven),
+it also gives you the option to focus on the interaction between an
+subset of production classes, or to easily swap in alternative classes.
+Within that grouping you get the self-assembly of services provided by
+Java EE---the very integration which is being tested.
+
+Let's move on and consider some typical usage scenarios for Arquillian.

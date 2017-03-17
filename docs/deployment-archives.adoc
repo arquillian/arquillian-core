@@ -1,0 +1,59 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+[[deployment-archives]]
+=== Deployment Archives
+:icons: font
+
+Each Arquillian test is associated with at least one deployment. The
+deployment is configured using a static method annotated with
+`@Deployment` that returns a ShrinkWrap archive. Here's an example:
+
+[source,java]
+----
+@Deployment
+public static JavaArchive createDeployment() {
+    return ShrinkWrap.create(JavaArchive.class)
+        .addClass(Greeter.class)
+        .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+}
+----
+
+_Why is a deployment necessary?_
+
+If we want to be able to test inside the container, we need some way to
+get the code into the container. A container typically accepts some form
+of deployment. In most Java-based containers, these deployments are some
+sort of Java archive (jar).
+
+ShrinkWrap provides a way to define a deployment archive (e.g., jar,
+war, ear) in Java using a fluent API. You use this API to create an
+deployment that's associated with the test case, which we call a "micro
+deployment". Arquillian can then use this object to stream the contents
+to the server in the most efficient way available.
+
+The deployment archive is more than just a means to an end (getting code
+inside the container). There are several critical benefits to defining a
+deployment:
+
+.  It allows you to isolate the classpath of the test – only those
+classes and resources inside the deployment are visible to the test.
+.  You can emulate or replicate a deployment scenario, which often
+triggers behavior (e.g., framework activation) that you cannot otherwise
+test.
+.  We can skip the build. Since the archive is assembled in Java, we're
+able to leverage the incremental compilation provided by IDEs.
+
+In summary, the strategy of using ShrinkWrap-based deployments gives you
+tremendous control over the code you're testing and quicker turnaround.
+
+NOTE: Arquillian provides the SPI
+`org.jboss.arquillian.spi.client.deployment.DeploymentScenarioGenerator`
+to allow an alternate means of defining a deployment, including
+foregoing the use of a deployment altogether.
