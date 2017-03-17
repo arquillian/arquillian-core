@@ -1,0 +1,26 @@
+# Eclipse
+.project
+.classpath
+.settings/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea
+
+# Maven
+target/
+
+#Gradle
+.gradle
+
+# TestNG
+test-output/
+
+# JBoss AS
+transaction.log
+
+# Floobits
+.floo
+.flooignore
