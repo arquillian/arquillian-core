@@ -41,8 +41,7 @@ include::{asciidoctor-source}/build-integration.adoc[]
 
 == Useful URLs
 
-* http://arquillian.org/guides[Guides]
 * http://arquillian.org[Project Site]
-* http://community.jboss.org/community/arquillian[User Forums & Wiki]
-* http://community.jboss.org/community/arquillian/dev[Development Forums & Wiki]
+* http://arquillian.org/guides[Guides]
+* http://discuss.arquillian.org/[Forum]
 * https://jira.jboss.org/jira/browse/ARQ[Issue Tracker]
