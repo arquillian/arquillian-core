@@ -27,7 +27,7 @@ before_install:
       git fetch --unshallow origin gh-pages;
       git worktree add -b gh-pages gh-pages origin/gh-pages;
       GH_REF=$(git remote get-url origin | awk "{sub(/https:\/\//,\"https://${GH_TOKEN}@\")}; 1" | awk "{sub(/\.git/, \"\")} 1");
-      docker pull asciidoctor/docker-asciidoctor;
+      docker pull rochdev/alpine-asciidoctor:mini;
     fi'
 
 before_script: ./mvnw install -q -U -DskipTests=true
