@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<statistics>
+    <class name="FirstTestCase">
+        <test name="test1">
+            <passed>0</passed>
+            <failures>1</failures>
+        </test>
+        <test name="test2">
+            <passed>2</passed>
+            <failures>1</failures>
+        </test>
+    </class>
+    <class name="SecondTestCase">
+        <test name="test3">
+            <passed>1</passed>
+            <failures>2</failures>
+        </test>
+        <test name="test4">
+            <passed>1</passed>
+            <failures>0</failures>
+        </test>
+    </class>
+</statistics>
