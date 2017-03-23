@@ -237,7 +237,6 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.1</version>
                     <configuration>
                         <pushChanges>false</pushChanges>
                         <localCheckout>true</localCheckout>
