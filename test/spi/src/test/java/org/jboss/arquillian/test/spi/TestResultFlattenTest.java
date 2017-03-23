@@ -192,4 +192,33 @@ public class TestResultFlattenTest
             + LINE_SEPARATOR);
    }
 
+   @Test
+   public void should_ignore_null_entries_in_the_list_of_test_results() throws Exception
+   {
+      // given
+      final TestResult p1 = TestResult.passed("First test passed");
+      final TestResult f1 = failed(new RuntimeException("Exception"));
+      final List<TestResult> testResults = asList(p1, null, f1);
+
+      // when
+      final TestResult result = TestResult.flatten(testResults);
+
+      // then
+      assertThat(result.getStatus()).isEqualTo(TestResult.Status.FAILED);
+   }
+
+   @Test
+   public void should_ignore_null_entry_and_treat_result_as_success() throws Exception
+   {
+      // given
+      final TestResult p1 = TestResult.passed("First test passed");
+      final List<TestResult> testResults = asList(p1, null);
+
+      // when
+      final TestResult result = TestResult.flatten(testResults);
+
+      // then
+      assertThat(result.getStatus()).isEqualTo(TestResult.Status.PASSED);
+   }
+
 }

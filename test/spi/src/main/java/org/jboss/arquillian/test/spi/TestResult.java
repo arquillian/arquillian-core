@@ -72,6 +72,10 @@ public final class TestResult implements Serializable
 
       for (TestResult result : results)
       {
+         if (result == null)
+         {
+            continue;  // For some strange reason sometimes results contain null objects
+         }
          resultsPerStatus.put(result.getStatus(), result);
          if (result.getThrowable() != null)
          {
