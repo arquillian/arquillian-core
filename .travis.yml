@@ -35,7 +35,7 @@ before_script: ./mvnw install -q -U -DskipTests=true
 script:
   - ./mvnw clean install
   - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
-      docker run -v $TRAVIS_BUILD_DIR:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor /docs/README.adoc -a asciidoctor-source=/docs/docs -o /docs/gh-pages/index.html;
+      docker run -v $TRAVIS_BUILD_DIR:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor /docs/README.adoc -a generated-doc=true -a asciidoctor-source=/docs/docs -o /docs/gh-pages/index.html;
     fi'
 
 after_success:
