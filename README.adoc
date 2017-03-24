@@ -10,6 +10,11 @@
 :icons: font
 :toc: left
 
+ifndef::generated-doc[]
+To read complete documentation visit http://arquillian.org/arquillian-core/
+endif::generated-doc[]
+
+
 Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to
 easily create automated integration, functional and acceptance tests for Java middleware.
 
@@ -28,6 +33,7 @@ Arquillian brings the test to the runtime so you don’t have to manage the runt
 
 To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
 
+ifdef::generated-doc[]
 == Guide
 
 include::{asciidoctor-source}/introduction.adoc[]
@@ -38,6 +44,7 @@ include::{asciidoctor-source}/test-enrichers.adoc[]
 include::{asciidoctor-source}/additional-features.adoc[]
 include::{asciidoctor-source}/protocols.adoc[]
 include::{asciidoctor-source}/build-integration.adoc[]
+endif::generated-doc[]
 
 == Useful URLs
 
