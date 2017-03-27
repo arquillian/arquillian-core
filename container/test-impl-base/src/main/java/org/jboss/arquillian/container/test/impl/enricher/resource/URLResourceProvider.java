@@ -31,11 +31,13 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.api.Secured;
 
 /**
  * URLResourceProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
  * @version $Revision: $
  */
 public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
@@ -52,17 +54,19 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
    @Override
    public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
    {
-      return locateURL(resource, locateTargetQualification(qualifiers));
+      return locateURL(resource, qualifiers);
    }
 
-
-   private Object locateURL(ArquillianResource resource, TargetsContainer targets)
+   private Object locateURL(ArquillianResource resource, Annotation[] qualifiers)
    {
       ProtocolMetaData metaData = protocolMetadata.get();
       if(metaData == null)
       {
          return null;
       }
+
+      TargetsContainer targets = locateTargetQualification(qualifiers);
+      Secured secured = locateSecureQualification(qualifiers);
       if(metaData.hasContext(HTTPContext.class))
       {
          HTTPContext context = null;
@@ -88,16 +92,16 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
             {
                return null;
             }
-            return toURL(servlet);
+            return toURL(servlet, secured);
          }
          // TODO: evaluate, if all servlets are in the same context, and only one context exists, we can find the context         
          else if(allInSameContext(context.getServlets()))
          {
-            return toURL(context.getServlets().get(0));
+            return toURL(context.getServlets().get(0), secured);
          }
          else
          {
-            return toURL(context);
+            return toURL(context, secured);
          }
       }
       return null;
@@ -129,6 +133,18 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       return null;
    }
 
+   private Secured locateSecureQualification(Annotation[] qualifiers)
+   {
+      for(Annotation qualifier : qualifiers)
+      {
+         if(Secured.class.isAssignableFrom(qualifier.annotationType()))
+         {
+            return Secured.class.cast(qualifier);
+         }
+      }
+      return null;
+   }
+
    private boolean allInSameContext(List<Servlet> servlets)
    {
       Set<String> context = new HashSet<String>();
@@ -139,11 +155,14 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       return context.size() == 1;
    }
 
-   private URL toURL(Servlet servlet)
+   private URL toURL(Servlet servlet, Secured secured)
    {
       try
       {
-         return servlet.getBaseURI().toURL();
+         URI baseURI = servlet.getBaseURI();
+         return new URI((secured == null) ? "http" : secured.protocol(), baseURI.getUserInfo(), baseURI.getHost(),
+               (secured == null) ? baseURI.getPort() : secured.port(), baseURI.getPath(), baseURI.getQuery(),
+               baseURI.getFragment()).toURL();
       }
       catch (Exception e)
       {
@@ -151,11 +170,12 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider
       }
    }
 
-   private URL toURL(HTTPContext context)
+   private URL toURL(HTTPContext context, Secured secured)
    {
       try
       {
-         return new URI("http", null, context.getHost(), context.getPort(), null, null, null).toURL();
+         return new URI((secured == null) ? "http" : secured.protocol(), null, context.getHost(),
+               (secured == null) ? context.getPort() : secured.port(), null, null, null).toURL();
       }
       catch (Exception e)
       {
