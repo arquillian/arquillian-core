@@ -42,7 +42,6 @@ public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender
                               true, 
                               "junit", 
                               "org.junit",
-                              "org.hamcrest",
                               Arquillian.class.getPackage().getName())
                         .addAsServiceProvider(
                               TestRunner.class, 
