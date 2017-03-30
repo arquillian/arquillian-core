@@ -18,7 +18,6 @@
 package org.jboss.arquillian.testenricher.cdi;
 
 import javax.enterprise.context.spi.CreationalContext;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;

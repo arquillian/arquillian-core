@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
@@ -51,7 +50,6 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
     public Object doLookup(ArquillianResource resource, Annotation... qualifiers) {
         return locateURL(resource, locateTargetQualification(qualifiers));
     }
-
 
     private Object locateURL(ArquillianResource resource, TargetsContainer targets) {
         ProtocolMetaData metaData = protocolMetadata.get();
@@ -95,8 +93,8 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
             }
         }
         throw new IllegalArgumentException(
-                "Could not find named context " + value + " in metadata. " +
-                        "Please verify your @" + TargetsContainer.class.getName() + " definition");
+            "Could not find named context " + value + " in metadata. " +
+                "Please verify your @" + TargetsContainer.class.getName() + " definition");
     }
 
     private TargetsContainer locateTargetQualification(Annotation[] qualifiers) {

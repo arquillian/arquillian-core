@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -40,7 +39,8 @@ import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 
 /**
- * Enriches instance of the Rule that has been applied; of the Statement that is about to be taken; and of the Test that is
+ * Enriches instance of the Rule that has been applied; of the Statement that is about to be taken; and of the Test that
+ * is
  * about to be executed<br/>
  *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
@@ -95,16 +95,16 @@ public class RulesEnricher {
         List<Object> ruleInstances = new ArrayList<Object>();
 
         List<Field> fieldsWithRuleAnnotation =
-                SecurityActions.getFieldsWithAnnotation(testInstance.getClass(), Rule.class);
+            SecurityActions.getFieldsWithAnnotation(testInstance.getClass(), Rule.class);
         if (fieldsWithRuleAnnotation.isEmpty()) {
             List<Method> methodsWithAnnotation =
-                    SecurityActions.getMethodsWithAnnotation(testInstance.getClass(), Rule.class);
+                SecurityActions.getMethodsWithAnnotation(testInstance.getClass(), Rule.class);
             if (methodsWithAnnotation.isEmpty()) {
                 // there isn't any rule in the test class
                 return null;
             } else {
                 log.warning("Please note that methods annotated with @Rule are not fully supported in Arquillian. "
-                        + "Specifically, if you want to enrich a field in your Rule implementation class.");
+                    + "Specifically, if you want to enrich a field in your Rule implementation class.");
 
                 return ruleInstances;
             }

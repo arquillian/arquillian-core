@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -107,22 +106,22 @@ public abstract class AbstractManagerTestBase {
 
     public final void assertEventFired(Class<?> type) {
         Assert.assertNotNull(
-                "Event " + type.getName() + " should have been fired",
-                getRegister().getCount(type));
+            "Event " + type.getName() + " should have been fired",
+            getRegister().getCount(type));
     }
 
     public final void assertEventFired(Class<?> type, Integer count) {
         Assert.assertEquals(
-                "The event of exact type " + type.getName() + " should have been fired",
-                count,
-                getRegister().getCount(type));
+            "The event of exact type " + type.getName() + " should have been fired",
+            count,
+            getRegister().getCount(type));
     }
 
     public final void assertEventFiredTyped(Class<?> type, Integer count) {
         Assert.assertEquals(
-                "The event of assiganble type to " + type.getName() + " should have been fired",
-                count,
-                getRegister().getCountTyped(type));
+            "The event of assiganble type to " + type.getName() + " should have been fired",
+            count,
+            getRegister().getCountTyped(type));
     }
 
     public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext) {
@@ -135,15 +134,20 @@ public abstract class AbstractManagerTestBase {
 
     private void assertEventInContext(Class<?> type, Class<? extends Context> activeContext, Boolean active) {
         Assert.assertEquals(
-                "Event " + type.getName() + " should" + (active ? " " : " not") + " have been fired within context " + activeContext.getName(),
-                active,
-                getRegister().wasActive(type, activeContext));
+            "Event "
+                + type.getName()
+                + " should"
+                + (active ? " " : " not")
+                + " have been fired within context "
+                + activeContext.getName(),
+            active,
+            getRegister().wasActive(type, activeContext));
     }
 
     public final void assertEventFiredOnOtherThread(Class<?> type) {
         Assert.assertTrue(
-                "The event of type to " + type.getName() + " should have been fired on a different thread",
-                getRegister().wasExecutedOnNonMainThread(type));
+            "The event of type to " + type.getName() + " should have been fired on a different thread",
+            getRegister().wasExecutedOnNonMainThread(type));
     }
 
     private EventRegister getRegister() {
@@ -233,7 +237,9 @@ public abstract class AbstractManagerTestBase {
         /**
          * Get the count of a assignable count.
          *
-         * @param type The assignable event type
+         * @param type
+         *     The assignable event type
+         *
          * @return Number of times fired
          */
         public Integer getCountTyped(Class<?> type) {
@@ -249,7 +255,9 @@ public abstract class AbstractManagerTestBase {
         /**
          * Get the count of a specific type.
          *
-         * @param type The exact event type
+         * @param type
+         *     The exact event type
+         *
          * @return Number of times fired
          */
         public Integer getCount(Class<?> type) {
@@ -279,7 +287,6 @@ public abstract class AbstractManagerTestBase {
             }
             return true;
         }
-
     }
 
     private static class EventRecording {

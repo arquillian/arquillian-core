@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.container.spi.client.protocol;
 
-
 /**
  * A simple named reference to a {@link Protocol}.
  *
@@ -59,18 +58,23 @@ public class ProtocolDescription {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ProtocolDescription other = (ProtocolDescription) obj;
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         return true;
     }
 }

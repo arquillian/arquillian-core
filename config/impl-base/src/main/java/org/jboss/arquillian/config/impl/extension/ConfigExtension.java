@@ -30,5 +30,4 @@ public class ConfigExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.observer(ConfigurationRegistrar.class);
     }
-
 }

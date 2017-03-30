@@ -21,7 +21,6 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,7 +91,8 @@ public class EJBInjectionEnricherBase {
     /**
      * Exemplary implementation of the EJB's local interface.
      * <p>
-     * This class is here only to be sure that despite more than one implementation of the interface, only the one pointed by
+     * This class is here only to be sure that despite more than one implementation of the interface, only the one pointed
+     * by
      * <tt>beanName</tt> attribute of the {@link EJB} annotation will be used.
      *
      * @author PedroKowalski

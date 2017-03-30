@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.impl.client.container;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 
@@ -30,16 +29,53 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
  * @version $Revision: $
  */
 public class ContainerOperationResult<T> {
-    public enum Type
-
-    {
-        SETUP, START, STOP, DEPLOY, UNDEPLOY
-    }
-
     private List<Operation<T>> operations;
 
     public ContainerOperationResult() {
         operations = new ArrayList<Operation<T>>();
+    }
+
+    public static Operation<Void> setupSuccess(Container container) {
+        return new GenericOperation<Void>(Type.SETUP, container);
+    }
+
+    public static Operation<Void> setupFailure(Container container, Throwable exception) {
+        return new GenericOperation<Void>(Type.SETUP, container, exception);
+    }
+
+    public static Operation<Void> startSuccess(Container container) {
+        return new GenericOperation<Void>(Type.START, container);
+    }
+
+    public static Operation<Void> startFailure(Container container, Throwable exception) {
+        return new GenericOperation<Void>(Type.START, container, exception);
+    }
+
+    public static Operation<Void> stopSuccess(Container container) {
+        return new GenericOperation<Void>(Type.STOP, container);
+    }
+
+    public static Operation<Void> stopFailure(Container container, Throwable exception) {
+        return new GenericOperation<Void>(Type.STOP, container, exception);
+    }
+
+    public static Operation<DeploymentDescription> deploySuccess(Container container, DeploymentDescription deployment) {
+        return new GenericOperation<DeploymentDescription>(Type.DEPLOY, container, deployment);
+    }
+
+    public static Operation<DeploymentDescription> deployFailure(Container container, DeploymentDescription deployment,
+        Throwable exception) {
+        return new GenericOperation<DeploymentDescription>(Type.DEPLOY, container, exception, deployment);
+    }
+
+    public static Operation<DeploymentDescription> unDeploySuccess(Container container,
+        DeploymentDescription deployment) {
+        return new GenericOperation<DeploymentDescription>(Type.UNDEPLOY, container, deployment);
+    }
+
+    public static Operation<DeploymentDescription> unDeployFailure(Container container, DeploymentDescription deployment,
+        Throwable exception) {
+        return new GenericOperation<DeploymentDescription>(Type.UNDEPLOY, container, exception, deployment);
     }
 
     void add(Operation<T> operation) {
@@ -57,6 +93,10 @@ public class ContainerOperationResult<T> {
             }
         }
         return false;
+    }
+
+    public enum Type {
+        SETUP, START, STOP, DEPLOY, UNDEPLOY
     }
 
     public interface Operation<T> {
@@ -130,45 +170,5 @@ public class ContainerOperationResult<T> {
         public Type getType() {
             return type;
         }
-    }
-
-    public static Operation<Void> setupSuccess(Container container) {
-        return new GenericOperation<Void>(Type.SETUP, container);
-    }
-
-    public static Operation<Void> setupFailure(Container container, Throwable exception) {
-        return new GenericOperation<Void>(Type.SETUP, container, exception);
-    }
-
-    public static Operation<Void> startSuccess(Container container) {
-        return new GenericOperation<Void>(Type.START, container);
-    }
-
-    public static Operation<Void> startFailure(Container container, Throwable exception) {
-        return new GenericOperation<Void>(Type.START, container, exception);
-    }
-
-    public static Operation<Void> stopSuccess(Container container) {
-        return new GenericOperation<Void>(Type.STOP, container);
-    }
-
-    public static Operation<Void> stopFailure(Container container, Throwable exception) {
-        return new GenericOperation<Void>(Type.STOP, container, exception);
-    }
-
-    public static Operation<DeploymentDescription> deploySuccess(Container container, DeploymentDescription deployment) {
-        return new GenericOperation<DeploymentDescription>(Type.DEPLOY, container, deployment);
-    }
-
-    public static Operation<DeploymentDescription> deployFailure(Container container, DeploymentDescription deployment, Throwable exception) {
-        return new GenericOperation<DeploymentDescription>(Type.DEPLOY, container, exception, deployment);
-    }
-
-    public static Operation<DeploymentDescription> unDeploySuccess(Container container, DeploymentDescription deployment) {
-        return new GenericOperation<DeploymentDescription>(Type.UNDEPLOY, container, deployment);
-    }
-
-    public static Operation<DeploymentDescription> unDeployFailure(Container container, DeploymentDescription deployment, Throwable exception) {
-        return new GenericOperation<DeploymentDescription>(Type.UNDEPLOY, container, exception, deployment);
     }
 }

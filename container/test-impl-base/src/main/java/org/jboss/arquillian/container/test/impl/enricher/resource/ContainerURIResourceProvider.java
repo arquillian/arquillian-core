@@ -21,7 +21,6 @@ import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**

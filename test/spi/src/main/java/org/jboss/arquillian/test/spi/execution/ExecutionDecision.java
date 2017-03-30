@@ -29,27 +29,6 @@ public final class ExecutionDecision implements Serializable {
 
     private String reason;
 
-    public static ExecutionDecision execute() {
-        return new ExecutionDecision(Decision.EXECUTE);
-    }
-
-    public static ExecutionDecision execute(String reason) {
-        return new ExecutionDecision(Decision.EXECUTE, reason);
-    }
-
-    public static ExecutionDecision dontExecute(String reason) {
-        return new ExecutionDecision(Decision.DONT_EXECUTE, reason);
-    }
-
-    public enum Decision
-
-    {
-
-        EXECUTE,
-
-                DONT_EXECUTE;
-    }
-
     private ExecutionDecision() {
         this(null);
     }
@@ -63,11 +42,28 @@ public final class ExecutionDecision implements Serializable {
         this.reason = reason;
     }
 
+    public static ExecutionDecision execute() {
+        return new ExecutionDecision(Decision.EXECUTE);
+    }
+
+    public static ExecutionDecision execute(String reason) {
+        return new ExecutionDecision(Decision.EXECUTE, reason);
+    }
+
+    public static ExecutionDecision dontExecute(String reason) {
+        return new ExecutionDecision(Decision.DONT_EXECUTE, reason);
+    }
+
     public Decision getDecision() {
         return decision;
     }
 
     public String getReason() {
         return reason;
+    }
+
+    public enum Decision {
+        EXECUTE,
+        DONT_EXECUTE;
     }
 }

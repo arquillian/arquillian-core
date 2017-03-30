@@ -16,18 +16,9 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -43,6 +34,13 @@ import org.junit.runner.notification.RunListener;
 import org.mockito.internal.stubbing.answers.ThrowsException;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
@@ -122,7 +120,8 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
 
-        Result result = run(adaptor, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class);
+        Result result =
+            run(adaptor, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class);
         Assert.assertTrue(result.wasSuccessful());
 
         verify(adaptor, times(1)).beforeSuite();
@@ -279,12 +278,15 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
     public void shouldThrowMultipleExceptionIfFailureInBeforeAndAfterRule() throws Exception {
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 
-        doAnswer(new ThrowsException(new RuntimeException("AfterRuleException"))).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
+        doAnswer(new ThrowsException(new RuntimeException("AfterRuleException"))).when(adaptor)
+            .fireCustomLifecycle(isA(AfterRules.class));
         doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
         doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
         doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor)
+            .before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor)
+            .after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
 
         Result result = run(adaptor, ArquillianClass1WithExceptionInAfterAndAfterRule.class);

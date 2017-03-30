@@ -30,8 +30,10 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public interface ApplicationArchiveProcessor {
     /**
-     * @param applicationArchive The user defined deployment archive
-     * @param testClass          The users test class
+     * @param applicationArchive
+     *     The user defined deployment archive
+     * @param testClass
+     *     The users test class
      */
     void process(Archive<?> applicationArchive, TestClass testClass);
 }

@@ -17,7 +17,6 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
-
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

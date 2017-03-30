@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.core.spi.context;
 
-
 /**
  * IdBoundContext
  *

@@ -29,5 +29,4 @@ public class JUnitContainerExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.service(AuxiliaryArchiveAppender.class, JUnitDeploymentAppender.class);
     }
-
 }

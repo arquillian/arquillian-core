@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.spi.client.deployment;
 
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.test.spi.TestClass;
 
@@ -31,7 +30,9 @@ public interface DeploymentScenarioGenerator {
     /**
      * Extract all meta data related to a {@link TestClass}.
      *
-     * @param testClass Data to extract meta data based on.
+     * @param testClass
+     *     Data to extract meta data based on.
+     *
      * @return The given {@link TestClass}s {@link DeploymentDescription}s
      */
     List<DeploymentDescription> generate(TestClass testClass);

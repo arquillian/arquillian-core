@@ -19,7 +19,6 @@ package org.jboss.arquillian.test.spi;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-
 /**
  * Wraps a class to be run, providing method validation and annotation searching.
  *
@@ -30,8 +29,9 @@ public class TestClass {
     private Class<?> testClass;
 
     public TestClass(Class<?> testClass) {
-        if (testClass == null)
+        if (testClass == null) {
             throw new IllegalArgumentException("Null testClass");
+        }
 
         this.testClass = testClass;
     }

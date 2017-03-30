@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.spi.client.protocol;
 
 import java.io.File;
-
 import org.jboss.arquillian.container.spi.ConfigurationException;
 
 /**
@@ -35,9 +34,13 @@ final class Validate {
     /**
      * Checks that object is not null, throws exception if it is.
      *
-     * @param obj     The object to check
-     * @param message The exception message
-     * @throws IllegalArgumentException Thrown if obj is null
+     * @param obj
+     *     The object to check
+     * @param message
+     *     The exception message
+     *
+     * @throws IllegalArgumentException
+     *     Thrown if obj is null
      */
     public static void notNull(final Object obj, final String message) throws IllegalArgumentException {
         if (obj == null) {
@@ -49,9 +52,13 @@ final class Validate {
      * Checks that the specified String is not null or empty,
      * throws exception if it is.
      *
-     * @param string  The object to check
-     * @param message The exception message
-     * @throws IllegalArgumentException Thrown if obj is null
+     * @param string
+     *     The object to check
+     * @param message
+     *     The exception message
+     *
+     * @throws IllegalArgumentException
+     *     Thrown if obj is null
      */
     public static void notNullOrEmpty(final String string, final String message) throws IllegalArgumentException {
         if (string == null || string.length() == 0) {
@@ -62,9 +69,13 @@ final class Validate {
     /**
      * Checks that obj is not null, throws exception if it is.
      *
-     * @param obj     The object to check
-     * @param message The exception message
-     * @throws IllegalStateException Thrown if obj is null
+     * @param obj
+     *     The object to check
+     * @param message
+     *     The exception message
+     *
+     * @throws IllegalStateException
+     *     Thrown if obj is null
      */
     public static void stateNotNull(final Object obj, final String message) throws IllegalStateException {
         if (obj == null) {
@@ -75,14 +86,18 @@ final class Validate {
     /**
      * Checks that string is not null and not empty and it represents a path to a valid directory
      *
-     * @param string  The path to check
-     * @param message The exception message
-     * @throws ConfigurationException Thrown if string is empty, null or it does not represent a path the a valid directory
+     * @param string
+     *     The path to check
+     * @param message
+     *     The exception message
+     *
+     * @throws ConfigurationException
+     *     Thrown if string is empty, null or it does not represent a path the a valid directory
      */
-    public static void configurationDirectoryExists(final String string, final String message) throws ConfigurationException {
+    public static void configurationDirectoryExists(final String string, final String message)
+        throws ConfigurationException {
         if (string == null || string.length() == 0 || new File(string).isDirectory() == false) {
             throw new ConfigurationException(message);
         }
     }
-
 }

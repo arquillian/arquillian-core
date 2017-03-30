@@ -35,7 +35,7 @@ public class CDIEnricherRemoteExtension implements RemoteLoadableExtension {
         if (Validate.classExists("javax.enterprise.inject.spi.BeanManager")) {
             builder.service(TestEnricher.class, CDIInjectionEnricher.class);
             builder.observer(BeanManagerProducer.class)
-                    .observer(CreationalContextDestroyer.class);
+                .observer(CreationalContextDestroyer.class);
         }
     }
 }

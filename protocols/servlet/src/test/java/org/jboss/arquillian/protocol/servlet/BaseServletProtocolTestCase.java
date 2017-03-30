@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * ServletProtocolTestCase
@@ -43,7 +41,7 @@ public class BaseServletProtocolTestCase {
         ServletProtocolConfiguration config = new ServletProtocolConfiguration();
 
         HTTPContext testContext = new HTTPContext("127.0.0.1", 8080)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
 
         Method testMethod = getTestMethod("testNoAnnotations");
 
@@ -61,7 +59,7 @@ public class BaseServletProtocolTestCase {
         config.setPort(90);
 
         HTTPContext testContext = new HTTPContext("127.0.0.1", 8080)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
 
         Method testMethod = getTestMethod("testNoAnnotations");
 
@@ -76,10 +74,10 @@ public class BaseServletProtocolTestCase {
         ServletProtocolConfiguration config = new ServletProtocolConfiguration();
 
         HTTPContext testContextOne = new HTTPContext("Y", "127.0.0.1", 8080)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
 
         HTTPContext testContextTwo = new HTTPContext("X", "127.0.0.1", 8081)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
 
         Method testMethod = getTestMethod("testTargeted");
 
@@ -97,10 +95,10 @@ public class BaseServletProtocolTestCase {
         config.setPort(90);
 
         HTTPContext testContextOne = new HTTPContext("Y", "127.0.0.1", 8080)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "testY"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "testY"));
 
         HTTPContext testContextTwo = new HTTPContext("X", "127.0.0.1", 8081)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "testX"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "testX"));
 
         Method testMethod = getTestMethod("testTargeted");
 
@@ -115,7 +113,7 @@ public class BaseServletProtocolTestCase {
         ServletProtocolConfiguration config = new ServletProtocolConfiguration();
 
         HTTPContext testContextOne = new HTTPContext("Y", "127.0.0.1", 8080)
-                .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
+            .add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"));
 
         Method testMethod = getTestMethod("testTargeted");
 

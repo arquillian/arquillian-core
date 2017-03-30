@@ -37,6 +37,7 @@ public interface Protocol<T extends ProtocolConfiguration> {
      * {@link #getExecutor(ProtocolConfiguration, ProtocolMetaData)}
      *
      * @return The type used for configuration
+     *
      * @see ProtocolConfiguration
      */
     Class<T> getProtocolConfigurationClass();
@@ -47,6 +48,7 @@ public interface Protocol<T extends ProtocolConfiguration> {
      * <br/>
      *
      * @return The protocol name
+     *
      * @see org.jboss.arquillian.api.OverProtocol
      */
     ProtocolDescription getDescription();
@@ -54,16 +56,12 @@ public interface Protocol<T extends ProtocolConfiguration> {
     /**
      * Get the DeploymentPackager for this Protocol. <br/>
      * Used so the Protocol can bind it self to the users deployment.
-     *
-     * @return
      */
     DeploymentPackager getPackager();
 
     /**
-     * @param protocolConfiguration
-     * @param metaData
-     * @param callback              A Callback for each event received from the remote container.
-     * @return
+     * @param callback
+     *     A Callback for each event received from the remote container.
      */
     ContainerMethodExecutor getExecutor(T protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback);
 }

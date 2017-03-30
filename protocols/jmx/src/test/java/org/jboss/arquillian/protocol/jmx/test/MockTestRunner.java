@@ -18,7 +18,6 @@ package org.jboss.arquillian.protocol.jmx.test;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.protocol.jmx.JMXCommandService;
@@ -47,17 +46,17 @@ public class MockTestRunner implements TestRunner {
         wantedResults = wantedTestResult;
     }
 
+    public static void clear() {
+        wantedResults = null;
+        commands.clear();
+        commandResults.clear();
+    }
+
     public TestResult execute(Class<?> testClass, String methodName) {
         for (Command<?> command : commands) {
             commandResults.add(new JMXCommandService().execute(command));
         }
 
         return wantedResults;
-    }
-
-    public static void clear() {
-        wantedResults = null;
-        commands.clear();
-        commandResults.clear();
     }
 }

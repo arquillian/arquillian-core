@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.spi.event;
 
 import org.jboss.arquillian.container.spi.Container;
 
-
 /**
  * KillContainer
  *

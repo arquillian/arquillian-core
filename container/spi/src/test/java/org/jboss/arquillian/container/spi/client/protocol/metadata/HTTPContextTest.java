@@ -17,9 +17,9 @@
  */
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class HTTPContextTest {
     static final String TEST_HOST = "localhost";

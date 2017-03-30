@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.junit.event.RulesEnrichment;
@@ -92,10 +91,10 @@ public class Arquillian extends BlockJUnit4ClassRunner {
                 // failed on suite level, ignore children
                 //notifier.fireTestIgnored(getDescription());
                 notifier.fireTestFailure(
-                        new Failure(getDescription(),
-                                new RuntimeException(
-                                        "Arquillian has previously been attempted initialized, but failed. See cause for previous exception",
-                                        State.getInitializationException())));
+                    new Failure(getDescription(),
+                        new RuntimeException(
+                            "Arquillian has previously been attempted initialized, but failed. See cause for previous exception",
+                            State.getInitializationException())));
             } else {
                 try {
                     // ARQ-1742 If exceptions happen during boot
@@ -146,7 +145,8 @@ public class Arquillian extends BlockJUnit4ClassRunner {
      * Override to allow test methods with arguments
      */
     @Override
-    protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {
+    protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation, boolean isStatic,
+        List<Throwable> errors) {
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
         for (FrameworkMethod eachTestMethod : methods) {
             eachTestMethod.validatePublicVoid(isStatic, errors);
@@ -169,8 +169,8 @@ public class Arquillian extends BlockJUnit4ClassRunner {
             @Override
             public void evaluate() throws Throwable {
                 adaptor.beforeClass(
-                        Arquillian.this.getTestClass().getJavaClass(),
-                        new StatementLifecycleExecutor(onlyBefores));
+                    Arquillian.this.getTestClass().getJavaClass(),
+                    new StatementLifecycleExecutor(onlyBefores));
                 originalStatement.evaluate();
             }
         };
@@ -183,31 +183,32 @@ public class Arquillian extends BlockJUnit4ClassRunner {
             @Override
             public void evaluate() throws Throwable {
                 multiExecute
-                        (
-                                originalStatement,
-                                new Statement() {
-                                    @Override
-                                    public void evaluate() throws Throwable {
-                                        adaptor.afterClass(
-                                                Arquillian.this.getTestClass().getJavaClass(),
-                                                new StatementLifecycleExecutor(onlyAfters));
-                                    }
-                                }
-                        );
+                    (
+                        originalStatement,
+                        new Statement() {
+                            @Override
+                            public void evaluate() throws Throwable {
+                                adaptor.afterClass(
+                                    Arquillian.this.getTestClass().getJavaClass(),
+                                    new StatementLifecycleExecutor(onlyAfters));
+                            }
+                        }
+                    );
             }
         };
     }
 
     @Override
-    protected Statement withBefores(final FrameworkMethod method, final Object target, final Statement originalStatement) {
+    protected Statement withBefores(final FrameworkMethod method, final Object target,
+        final Statement originalStatement) {
         final Statement onlyBefores = super.withBefores(method, target, new EmptyStatement());
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 adaptor.before(
-                        target,
-                        method.getMethod(),
-                        new StatementLifecycleExecutor(onlyBefores));
+                    target,
+                    method.getMethod(),
+                    new StatementLifecycleExecutor(onlyBefores));
                 originalStatement.evaluate();
             }
         };
@@ -220,18 +221,18 @@ public class Arquillian extends BlockJUnit4ClassRunner {
             @Override
             public void evaluate() throws Throwable {
                 multiExecute
-                        (
-                                originalStatement,
-                                new Statement() {
-                                    @Override
-                                    public void evaluate() throws Throwable {
-                                        adaptor.after(
-                                                target,
-                                                method.getMethod(),
-                                                new StatementLifecycleExecutor(onlyAfters));
-                                    }
-                                }
-                        );
+                    (
+                        originalStatement,
+                        new Statement() {
+                            @Override
+                            public void evaluate() throws Throwable {
+                                adaptor.after(
+                                    target,
+                                    method.getMethod(),
+                                    new StatementLifecycleExecutor(onlyAfters));
+                            }
+                        }
+                    );
             }
         };
     }
@@ -253,7 +254,7 @@ public class Arquillian extends BlockJUnit4ClassRunner {
         final Object test = temp;
         try {
             Method withRules = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules",
-                    FrameworkMethod.class, Object.class, Statement.class);
+                FrameworkMethod.class, Object.class, Statement.class);
             withRules.setAccessible(true);
 
             Statement statement = methodInvoker(method, test);
@@ -265,7 +266,7 @@ public class Arquillian extends BlockJUnit4ClassRunner {
             final Statement stmtWithLifecycle = arounds;
 
             adaptor.fireCustomLifecycle(
-                    new RulesEnrichment(test, getTestClass(), method.getMethod(), LifecycleMethodExecutor.NO_OP));
+                new RulesEnrichment(test, getTestClass(), method.getMethod(), LifecycleMethodExecutor.NO_OP));
 
             final Statement stmtWithRules = (Statement) withRules.invoke(this, method, test, arounds);
             return new Statement() {
@@ -277,7 +278,8 @@ public class Arquillian extends BlockJUnit4ClassRunner {
                     List<Throwable> exceptions = new ArrayList<Throwable>();
 
                     try {
-                        adaptor.fireCustomLifecycle(new BeforeRules(test, getTestClass(), stmtWithRules, method.getMethod(),
+                        adaptor.fireCustomLifecycle(
+                            new BeforeRules(test, getTestClass(), stmtWithRules, method.getMethod(),
                                 new LifecycleMethodExecutor() {
                                     @Override
                                     public void invoke() throws Throwable {
@@ -299,7 +301,8 @@ public class Arquillian extends BlockJUnit4ClassRunner {
                         exceptions.add(t);
                     } finally {
                         try {
-                            adaptor.fireCustomLifecycle(new AfterRules(test, method.getMethod(), LifecycleMethodExecutor.NO_OP));
+                            adaptor.fireCustomLifecycle(
+                                new AfterRules(test, method.getMethod(), LifecycleMethodExecutor.NO_OP));
                         } catch (Throwable t) {
                             State.caughtExceptionAfterJunit(t);
                             exceptions.add(t);

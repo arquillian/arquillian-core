@@ -41,18 +41,17 @@ public class IntegrationTestCase {
     @Test
     public void shouldBeAbleToInjectAndFireEvents() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .context(ManagerTestContextImpl.class)
-                .context(ManagerTest2ContextImpl.class)
-                .extensions(
-                        TestObserverOne.class,
-                        TestObserverTwo.class,
-                        TestObserverTree.class).create();
+            .context(ManagerTestContextImpl.class)
+            .context(ManagerTest2ContextImpl.class)
+            .extensions(
+                TestObserverOne.class,
+                TestObserverTwo.class,
+                TestObserverTree.class).create();
 
         ManagerTestContext context = manager.getContext(ManagerTestContext.class);
         try {
             context.activate();
             context.getObjectStore().add(Object.class, new Object());
-
 
             manager.fire("some string event");
 
@@ -61,8 +60,8 @@ public class IntegrationTestCase {
             Assert.assertTrue(manager.getExtension(TestObserverTree.class).wasCalled);
 
             Assert.assertNotNull(
-                    "Verify instance was bound to context",
-                    context.getObjectStore().get(Object.class));
+                "Verify instance was bound to context",
+                context.getObjectStore().get(Object.class));
 
             ManagerTest2Context containerContext = manager.getContext(ManagerTest2Context.class);
             Assert.assertFalse(containerContext.isActive());
@@ -70,8 +69,8 @@ public class IntegrationTestCase {
             containerContext.activate("A");
             try {
                 Assert.assertNotNull(
-                        "Should have set a Double in container scope",
-                        containerContext.getObjectStore().get(Double.class));
+                    "Should have set a Double in container scope",
+                    containerContext.getObjectStore().get(Double.class));
             } finally {
                 containerContext.deactivate();
                 containerContext.destroy("A");
@@ -109,7 +108,6 @@ public class IntegrationTestCase {
 
     public static class TestObserverTwo {
         private boolean wasCalled = false;
-
 
         public void on(@Observes Integer integer) {
             wasCalled = true;

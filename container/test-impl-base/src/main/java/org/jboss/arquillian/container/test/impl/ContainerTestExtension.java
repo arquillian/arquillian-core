@@ -64,38 +64,37 @@ public class ContainerTestExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         // Start -> Copied from TestExtension
         builder.context(SuiteContextImpl.class)
-                .context(ClassContextImpl.class)
-                .context(TestContextImpl.class);
+            .context(ClassContextImpl.class)
+            .context(TestContextImpl.class);
 
         builder.observer(TestContextHandler.class)
-                .observer(ClientTestInstanceEnricher.class);
+            .observer(ClientTestInstanceEnricher.class);
 
         // End -> Copied from TestExtension
 
         builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
-                .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
-                .service(Protocol.class, LocalProtocol.class)
-                .service(CommandService.class, LocalCommandService.class)
-                .service(ResourceProvider.class, URLResourceProvider.class)
-                .service(ResourceProvider.class, URIResourceProvider.class)
-                .service(ResourceProvider.class, DeployerProvider.class)
-                .service(ResourceProvider.class, InitialContextProvider.class)
-                .service(ResourceProvider.class, ContainerControllerProvider.class);
+            .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
+            .service(Protocol.class, LocalProtocol.class)
+            .service(CommandService.class, LocalCommandService.class)
+            .service(ResourceProvider.class, URLResourceProvider.class)
+            .service(ResourceProvider.class, URIResourceProvider.class)
+            .service(ResourceProvider.class, DeployerProvider.class)
+            .service(ResourceProvider.class, InitialContextProvider.class)
+            .service(ResourceProvider.class, ContainerControllerProvider.class);
 
         builder.observer(ContainerEventController.class)
-                .observer(ContainerRestarter.class)
-                .observer(DeploymentGenerator.class)
-                .observer(ArchiveDeploymentToolingExporter.class)
-                .observer(ProtocolRegistryCreator.class)
-                .observer(ClientContainerControllerCreator.class)
-                .observer(ClientDeployerCreator.class)
-                .observer(ClientBeforeAfterLifecycleEventExecuter.class)
-                .observer(ClientTestExecuter.class)
-                .observer(LocalTestExecuter.class)
-                .observer(RemoteTestExecuter.class)
-                .observer(DeploymentCommandObserver.class)
-                .observer(ContainerCommandObserver.class)
-                .observer(RemoteResourceCommandObserver.class);
+            .observer(ContainerRestarter.class)
+            .observer(DeploymentGenerator.class)
+            .observer(ArchiveDeploymentToolingExporter.class)
+            .observer(ProtocolRegistryCreator.class)
+            .observer(ClientContainerControllerCreator.class)
+            .observer(ClientDeployerCreator.class)
+            .observer(ClientBeforeAfterLifecycleEventExecuter.class)
+            .observer(ClientTestExecuter.class)
+            .observer(LocalTestExecuter.class)
+            .observer(RemoteTestExecuter.class)
+            .observer(DeploymentCommandObserver.class)
+            .observer(ContainerCommandObserver.class)
+            .observer(RemoteResourceCommandObserver.class);
     }
-
 }

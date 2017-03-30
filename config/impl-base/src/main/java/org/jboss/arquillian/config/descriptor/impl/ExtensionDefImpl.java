@@ -19,7 +19,6 @@ package org.jboss.arquillian.config.descriptor.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
@@ -104,5 +103,4 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
     public String toString() {
         return extension.toString();
     }
-
 }

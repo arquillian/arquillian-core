@@ -37,5 +37,4 @@ public class TestingTestRule implements TestRule {
         assertNotNull(ruleResources);
         return new TestingStatement(base);
     }
-
 }

@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.spi.ExtensionLoader;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -90,8 +89,8 @@ public class RemoteExtensionLoader implements ExtensionLoader {
         Validate.notNull(serviceClass, "ServiceClass must be provided");
 
         return createInstances(
-                serviceClass,
-                load(serviceClass, classLoader));
+            serviceClass,
+            load(serviceClass, classLoader));
     }
 
     /**
@@ -125,9 +124,7 @@ public class RemoteExtensionLoader implements ExtensionLoader {
                         String serviceImpls = (String) entry.getValue();
 
                         addVetoedClasses(service, serviceImpls, classLoader, vetoed);
-
                     }
-
                 } finally {
                     if (inStream != null) {
                         inStream.close();
@@ -145,7 +142,8 @@ public class RemoteExtensionLoader implements ExtensionLoader {
     // Internal Helper Methods - Service Loading ------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    private void addVetoedClasses(String serviceName, String serviceImpls, ClassLoader classLoader, Map<Class<?>, Set<Class<?>>> vetoed) {
+    private void addVetoedClasses(String serviceName, String serviceImpls, ClassLoader classLoader,
+        Map<Class<?>, Set<Class<?>>> vetoed) {
         try {
             final Class<?> serviceClass = classLoader.loadClass(serviceName);
             final Set<Class<?>> classes = loadVetoedServiceImpl(serviceImpls, classLoader);
@@ -156,7 +154,6 @@ public class RemoteExtensionLoader implements ExtensionLoader {
             } else {
                 registeredVetoedClasses.addAll(classes);
             }
-
         } catch (ClassNotFoundException e) {
             // ignores since this is a veto that it is not applicable
         }
@@ -217,7 +214,7 @@ public class RemoteExtensionLoader implements ExtensionLoader {
                                 }
                             } catch (ClassCastException e) {
                                 throw new IllegalStateException("Service " + line + " does not implement expected type "
-                                        + serviceClass.getName());
+                                    + serviceClass.getName());
                             }
                         }
                         line = reader.readLine();
@@ -257,18 +254,24 @@ public class RemoteExtensionLoader implements ExtensionLoader {
      * <p>
      * Verifies that the found ServiceImpl implements Service.
      *
-     * @param <T>
-     * @param serviceType The Service interface
-     * @param className   The name of the implementation class
-     * @param loader      The ClassLoader to load the ServiceImpl from
+     * @param serviceType
+     *     The Service interface
+     * @param className
+     *     The name of the implementation class
+     * @param loader
+     *     The ClassLoader to load the ServiceImpl from
+     *
      * @return A new instance of the ServiceImpl
-     * @throws Exception If problems creating a new instance
+     *
+     * @throws Exception
+     *     If problems creating a new instance
      */
     private <T> T createInstance(Class<? extends T> serviceImplClass) {
         try {
             return SecurityActions.newInstance(serviceImplClass, new Class<?>[0], new Object[0]);
         } catch (Exception e) {
-            throw new RuntimeException("Could not create a new instance of Service implementation " + serviceImplClass.getName(), e);
+            throw new RuntimeException(
+                "Could not create a new instance of Service implementation " + serviceImplClass.getName(), e);
         }
     }
 }

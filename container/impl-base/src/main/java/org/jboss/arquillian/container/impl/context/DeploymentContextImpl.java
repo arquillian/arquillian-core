@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.impl.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;

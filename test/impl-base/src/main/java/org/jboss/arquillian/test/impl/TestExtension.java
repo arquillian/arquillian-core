@@ -34,13 +34,12 @@ public class TestExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.context(SuiteContextImpl.class)
-                .context(ClassContextImpl.class)
-                .context(TestContextImpl.class);
+            .context(ClassContextImpl.class)
+            .context(TestContextImpl.class);
 
         builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
 
         builder.observer(TestContextHandler.class)
-                .observer(TestInstanceEnricher.class);
+            .observer(TestInstanceEnricher.class);
     }
-
 }

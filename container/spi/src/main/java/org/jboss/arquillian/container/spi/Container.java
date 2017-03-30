@@ -66,14 +66,11 @@ public interface Container {
 
     State getState();
 
-    Throwable getFailureCause();
-
     void setState(State state);
 
-    public enum State
+    Throwable getFailureCause();
 
-    {
+    enum State {
         SETUP, SETUP_FAILED, STARTED, STARTED_FAILED, STOPPED, STOPPED_FAILED, KILLED, KILLED_FAILED;
     }
-
 }

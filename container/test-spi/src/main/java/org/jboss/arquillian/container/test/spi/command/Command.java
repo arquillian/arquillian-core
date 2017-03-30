@@ -28,7 +28,7 @@ public interface Command<T> {
 
     void setResult(T result);
 
-    void setThrowable(Throwable throwable);
-
     Throwable getThrowable();
+
+    void setThrowable(Throwable throwable);
 }

@@ -22,11 +22,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Logger;
-
 import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.NamingException;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -42,7 +40,6 @@ import org.jboss.arquillian.test.spi.TestEnricher;
 public class ResourceInjectionEnricher implements TestEnricher {
     private static final String RESOURCE_LOOKUP_PREFIX = "java:comp/env";
     private static final String ANNOTATION_NAME = "javax.annotation.Resource";
-
 
     private static final Logger log = Logger.getLogger(TestEnricher.class.getName());
 
@@ -69,11 +66,12 @@ public class ResourceInjectionEnricher implements TestEnricher {
     protected void injectClass(Object testCase) {
         try {
             ClassLoader classLoader = ResourceInjectionEnricher.class.getClassLoader();
-            Class<? extends Annotation> resourceAnnotation = (Class<? extends Annotation>) classLoader.loadClass(ANNOTATION_NAME);
+            Class<? extends Annotation> resourceAnnotation =
+                (Class<? extends Annotation>) classLoader.loadClass(ANNOTATION_NAME);
 
             List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(
-                    testCase.getClass(),
-                    resourceAnnotation);
+                testCase.getClass(),
+                resourceAnnotation);
 
             for (Field field : annotatedFields) {
             /*
@@ -86,14 +84,17 @@ public class ResourceInjectionEnricher implements TestEnricher {
                         Object resource = resolveResource(field);
                         field.set(testCase, resource);
                     } catch (Exception e) {
-                        log.fine("Could not lookup for " + field + ", other Enrichers might, move on. Exception: " + e.getMessage());
+                        log.fine("Could not lookup for "
+                            + field
+                            + ", other Enrichers might, move on. Exception: "
+                            + e.getMessage());
                     }
                 }
             }
 
             List<Method> methods = SecurityActions.getMethodsWithAnnotation(
-                    testCase.getClass(),
-                    resourceAnnotation);
+                testCase.getClass(),
+                resourceAnnotation);
 
             for (Method method : methods) {
                 if (method.getParameterTypes().length != 1) {
@@ -113,8 +114,11 @@ public class ResourceInjectionEnricher implements TestEnricher {
     /**
      * Looks up the JNDI resource for any given annotated element.
      *
-     * @param element any annotated element (field, method, etc.)
+     * @param element
+     *     any annotated element (field, method, etc.)
+     *
      * @return the located resource
+     *
      * @throws Exception
      */
     protected Object resolveResource(AnnotatedElement element) throws Exception {
@@ -132,7 +136,8 @@ public class ResourceInjectionEnricher implements TestEnricher {
         Class<?> type = field.getType();
         if (type.isPrimitive()) {
             if (isPrimitiveNull(currentValue)) {
-                log.fine("Primitive field " + field.getName() + " has been detected to have the default primitive value, " +
+                log.fine(
+                    "Primitive field " + field.getName() + " has been detected to have the default primitive value, " +
                         "can not determine if it has already been injected. Re-injecting field.");
                 return true;
             }
@@ -167,6 +172,7 @@ public class ResourceInjectionEnricher implements TestEnricher {
      * enrichers for each container to provide the correct context.
      *
      * @return the test context
+     *
      * @throws NamingException
      */
     protected Context getContainerContext() throws NamingException {

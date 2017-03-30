@@ -26,5 +26,4 @@ class JUnitCoreExtension implements LoadableExtension {
         builder.observer(UpdateTestResultBeforeAfter.class);
         builder.observer(RulesEnricher.class);
     }
-
 }

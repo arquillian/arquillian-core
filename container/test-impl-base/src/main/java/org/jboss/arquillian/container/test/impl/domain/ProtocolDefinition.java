@@ -18,13 +18,11 @@ package org.jboss.arquillian.container.test.impl.domain;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.impl.MapObject;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.core.spi.Validate;
-
 
 /**
  * ProtocolDefinition
@@ -90,7 +88,6 @@ public class ProtocolDefinition {
     /**
      * Create a new ProtocolConfiguration based on default configuration.
      *
-     * @return
      * @throws Exception
      */
     public ProtocolConfiguration createProtocolConfiguration() throws Exception {
@@ -100,7 +97,6 @@ public class ProtocolDefinition {
     /**
      * Create a new ProtocolConfiguration based on given configuration.
      *
-     * @return
      * @throws Exception
      */
     public ProtocolConfiguration createProtocolConfiguration(Map<String, String> configuration) throws Exception {

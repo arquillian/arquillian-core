@@ -18,7 +18,6 @@ package org.jboss.arquillian.core.impl.context;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.jboss.arquillian.core.spi.context.ObjectStore;
 import org.jboss.arquillian.core.test.context.ManagerTest2Context;
 import org.jboss.arquillian.core.test.context.ManagerTest2ContextImpl;
@@ -26,7 +25,6 @@ import org.jboss.arquillian.core.test.context.ManagerTestContext;
 import org.jboss.arquillian.core.test.context.ManagerTestContextImpl;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * ContextActivationTestCase
@@ -49,9 +47,9 @@ public class ContextActivationTestCase {
             store.add(Boolean.class, true);
 
             Assert.assertEquals(
-                    "Verify that we can get objects from a active context",
-                    Boolean.TRUE,
-                    store.get(Boolean.class));
+                "Verify that we can get objects from a active context",
+                Boolean.TRUE,
+                store.get(Boolean.class));
 
             context.deactivate();
             Assert.assertFalse(context.isActive());
@@ -66,14 +64,13 @@ public class ContextActivationTestCase {
             store = context.getObjectStore();
 
             Assert.assertEquals(
-                    "Verify that we can get objects from a active context",
-                    Boolean.TRUE,
-                    store.get(Boolean.class));
+                "Verify that we can get objects from a active context",
+                Boolean.TRUE,
+                store.get(Boolean.class));
         } finally {
             context.deactivate();
             context.destroy();
         }
-
     }
 
     @Test
@@ -115,16 +112,15 @@ public class ContextActivationTestCase {
             try {
                 context.activate("CHILD");
                 Assert.assertNull(
-                        "Should not be able to read from previously stacked context",
-                        context.getObjectStore().get(String.class));
-
+                    "Should not be able to read from previously stacked context",
+                    context.getObjectStore().get(String.class));
             } finally {
                 context.deactivate();
             }
 
             Assert.assertTrue(
-                    "Outer Context should still be active",
-                    context.isActive());
+                "Outer Context should still be active",
+                context.isActive());
         } finally {
             context.deactivate();
             context.clearAll();

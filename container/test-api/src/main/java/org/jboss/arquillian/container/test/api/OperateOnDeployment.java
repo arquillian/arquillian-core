@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Defines that the target should operate within the context of the referenced deployment.
@@ -88,6 +88,7 @@ public @interface OperateOnDeployment {
      * Refer to the deployment name this should operate on.
      *
      * @return The Deployment name this method operates on
+     *
      * @see Deployment#name()
      */
     String value();

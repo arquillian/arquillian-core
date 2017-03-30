@@ -18,10 +18,8 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;

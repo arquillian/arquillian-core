@@ -47,6 +47,15 @@ import java.util.Set;
 public class ServiceLoader<S> implements Iterable<S> {
 
     private static final String SERVICES = "META-INF/services";
+    private final String serviceFile;
+    private final ClassLoader loader;
+    private Class<S> expectedType;
+    private Set<S> providers;
+    private ServiceLoader(Class<S> service, ClassLoader loader) {
+        this.loader = loader;
+        this.serviceFile = SERVICES + "/" + service.getName();
+        this.expectedType = service;
+    }
 
     /**
      * Creates a new service loader for the given service type, using the current
@@ -61,7 +70,9 @@ public class ServiceLoader<S> implements Iterable<S> {
      * <code>ServiceLoader.load(service,
      * Thread.currentThread().getContextClassLoader())</code>
      *
-     * @param service The interface or abstract class representing the service
+     * @param service
+     *     The interface or abstract class representing the service
+     *
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> load(Class<S> service) {
@@ -71,10 +82,13 @@ public class ServiceLoader<S> implements Iterable<S> {
     /**
      * Creates a new service loader for the given service type and class loader.
      *
-     * @param service The interface or abstract class representing the service
-     * @param loader  The class loader to be used to load provider-configuration
-     *                files and provider classes, or null if the system class loader
-     *                (or, failing that, the bootstrap class loader) is to be used
+     * @param service
+     *     The interface or abstract class representing the service
+     * @param loader
+     *     The class loader to be used to load provider-configuration
+     *     files and provider classes, or null if the system class loader
+     *     (or, failing that, the bootstrap class loader) is to be used
+     *
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> load(Class<S> service, ClassLoader loader) {
@@ -102,23 +116,13 @@ public class ServiceLoader<S> implements Iterable<S> {
      * installed into the current Java virtual machine; providers on the
      * application's class path will be ignored.
      *
-     * @param service The interface or abstract class representing the service
+     * @param service
+     *     The interface or abstract class representing the service
+     *
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> loadInstalled(Class<S> service) {
         throw new UnsupportedOperationException();
-    }
-
-    private final String serviceFile;
-    private Class<S> expectedType;
-    private final ClassLoader loader;
-
-    private Set<S> providers;
-
-    private ServiceLoader(Class<S> service, ClassLoader loader) {
-        this.loader = loader;
-        this.serviceFile = SERVICES + "/" + service.getName();
-        this.expectedType = service;
     }
 
     /**
@@ -180,14 +184,15 @@ public class ServiceLoader<S> implements Iterable<S> {
     }
 
     public S createInstance(String line) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
-            NoClassDefFoundError, InstantiationException, IllegalAccessException {
+        NoClassDefFoundError, InstantiationException, IllegalAccessException {
         try {
             Class<?> clazz = loader.loadClass(line);
             Class<? extends S> serviceClass;
             try {
                 serviceClass = clazz.asSubclass(expectedType);
             } catch (ClassCastException e) {
-                throw new IllegalStateException("Service " + line + " does not implement expected type " + expectedType.getName());
+                throw new IllegalStateException(
+                    "Service " + line + " does not implement expected type " + expectedType.getName());
             }
             Constructor<? extends S> constructor = serviceClass.getConstructor();
             if (!constructor.isAccessible()) {
@@ -262,5 +267,4 @@ public class ServiceLoader<S> implements Iterable<S> {
     public String toString() {
         return "Services for " + serviceFile;
     }
-
 }

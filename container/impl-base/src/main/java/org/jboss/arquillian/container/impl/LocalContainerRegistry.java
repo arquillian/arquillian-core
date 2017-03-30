@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -54,27 +53,27 @@ public class LocalContainerRegistry implements ContainerRegistry {
 
         try {
             // TODO: this whole Classloading thing is a HACK and does not work. Need to split out into multiple JVMs for multi container testing
-//         ClassLoader containerClassLoader;
-//         if(definition.getDependencies().size() > 0)
-//         {
-//            final MavenDependencyResolver resolver = DependencyResolvers.use(MavenDependencyResolver.class).artifacts(
-//                  definition.getDependencies().toArray(new String[0]));
-//            
-//            URL[] resolvedURLs = MapObject.convert(resolver.resolveAsFiles());
-//
-//            containerClassLoader = new FilteredURLClassLoader(resolvedURLs, "org.jboss.(arquillian|shrinkwrap)..*");
-//         }
-//         else
-//         {
-//            containerClassLoader = LocalContainerRegistry.class.getClassLoader();
-//         }
-//            
+            //         ClassLoader containerClassLoader;
+            //         if(definition.getDependencies().size() > 0)
+            //         {
+            //            final MavenDependencyResolver resolver = DependencyResolvers.use(MavenDependencyResolver.class).artifacts(
+            //                  definition.getDependencies().toArray(new String[0]));
+            //
+            //            URL[] resolvedURLs = MapObject.convert(resolver.resolveAsFiles());
+            //
+            //            containerClassLoader = new FilteredURLClassLoader(resolvedURLs, "org.jboss.(arquillian|shrinkwrap)..*");
+            //         }
+            //         else
+            //         {
+            //            containerClassLoader = LocalContainerRegistry.class.getClassLoader();
+            //         }
+            //
             return addContainer(
-                    //before a Container is added to a collection of containers, inject into its injection point
-                    injector.inject(new ContainerImpl(
-                            definition.getContainerName(),
-                            loader.onlyOne(DeployableContainer.class),
-                            definition)));
+                //before a Container is added to a collection of containers, inject into its injection point
+                injector.inject(new ContainerImpl(
+                    definition.getContainerName(),
+                    loader.onlyOne(DeployableContainer.class),
+                    definition)));
         } catch (Exception e) {
             throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
         }

@@ -35,9 +35,8 @@ public class ResourceEnricherArchiveAppender extends CachedAuxilliaryArchiveAppe
     @Override
     protected Archive<?> buildArchive() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-resource.jar")
-                .addPackage(ResourceInjectionEnricher.class.getPackage())
-                .addClass(ResourceEnricherRemoteExtension.class)
-                .addAsServiceProvider(RemoteLoadableExtension.class, ResourceEnricherRemoteExtension.class);
+            .addPackage(ResourceInjectionEnricher.class.getPackage())
+            .addClass(ResourceEnricherRemoteExtension.class)
+            .addAsServiceProvider(RemoteLoadableExtension.class, ResourceEnricherRemoteExtension.class);
     }
-
 }

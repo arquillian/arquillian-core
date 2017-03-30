@@ -25,5 +25,4 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web;
 public interface InitParamDef extends WebAppDescriptor {
 
     InitParamDef initParam(String name, Object value);
-
 }

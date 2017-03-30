@@ -17,14 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.client.container;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
-
 import junit.framework.Assert;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.Container;
@@ -57,6 +51,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * ClientContainerControllerTestCase
  *
@@ -74,29 +72,23 @@ public class ClientContainerControllerTestCase extends AbstractContainerTestTest
     private static final String UNKNOWN_SERVER = "unknown";
 
     private static final String DEPLOYMENT_NAME = "DEPLOYMENT";
+    @Inject
+    private Instance<Injector> injector;
+    private ContainerRegistry registry;
+    @Inject
+    private Instance<ContainerController> controller;
+    @Inject
+    private Instance<DeploymentScenario> scenario;
+    @Mock
+    private ServiceLoader serviceLoader;
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private DeployableContainer deployableContainer;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ClientContainerControllerCreator.class);
     }
-
-    @Inject
-    private Instance<Injector> injector;
-
-    private ContainerRegistry registry;
-
-    @Inject
-    private Instance<ContainerController> controller;
-
-    @Inject
-    private Instance<DeploymentScenario> scenario;
-
-    @Mock
-    private ServiceLoader serviceLoader;
-
-    @Mock
-    @SuppressWarnings("rawtypes")
-    private DeployableContainer deployableContainer;
 
     @Before
     public void createSetup() {
@@ -264,7 +256,7 @@ public class ClientContainerControllerTestCase extends AbstractContainerTestTest
 
     private void setupAndExecuteDeployment(String containerName, boolean managed) {
         DeploymentDescription description = createDeploymentDescription(containerName)
-                .shouldBeManaged(managed);
+            .shouldBeManaged(managed);
 
         scenario.get().addDeployment(description);
         controller.get().start(containerName);
@@ -273,7 +265,7 @@ public class ClientContainerControllerTestCase extends AbstractContainerTestTest
 
     private void setupAndExecuteUnDeployment(String containerName, boolean managed) {
         DeploymentDescription description = createDeploymentDescription(containerName)
-                .shouldBeManaged(managed);
+            .shouldBeManaged(managed);
         scenario.get().addDeployment(description);
         controller.get().start(containerName);
         scenario.get().deployment(new DeploymentTargetDescription(DEPLOYMENT_NAME)).deployed();
@@ -283,6 +275,6 @@ public class ClientContainerControllerTestCase extends AbstractContainerTestTest
 
     private DeploymentDescription createDeploymentDescription(String targetName) {
         return new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class))
-                .setTarget(new TargetDescription(targetName));
+            .setTarget(new TargetDescription(targetName));
     }
 }

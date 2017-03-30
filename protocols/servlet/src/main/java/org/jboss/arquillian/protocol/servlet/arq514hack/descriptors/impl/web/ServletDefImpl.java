@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.ServletDef;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.ServletMappingDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
@@ -133,5 +132,4 @@ public class ServletDefImpl extends WebAppDescriptorImpl implements ServletDef {
     public Node getNode() {
         return servlet;
     }
-
 }

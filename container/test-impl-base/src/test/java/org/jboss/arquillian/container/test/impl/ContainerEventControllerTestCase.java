@@ -17,12 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
@@ -65,6 +61,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * ContainerBeforeAfterControllerTestCase
@@ -113,7 +112,8 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
 
         Archive<?> archive = ShrinkWrap.create(JavaArchive.class);
 
-        scenario.addDeployment(new DeploymentDescription(DEPLOYMENT_1_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
+        scenario.addDeployment(
+            new DeploymentDescription(DEPLOYMENT_1_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
 
         registry.create(container1, serviceLoader);
 

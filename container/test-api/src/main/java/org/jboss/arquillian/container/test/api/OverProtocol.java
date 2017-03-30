@@ -16,17 +16,18 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Defines how Arquillian should communicate with and prepare the @{@link Deployment} for in container testing.
  * <p>
- * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can override this behavior
+ * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can
+ * override this behavior
  * by using @OverProtocol on the @Deployment method.
  * <p>
  * <p>
@@ -62,8 +63,6 @@ import java.lang.annotation.Target;
 public @interface OverProtocol {
     /**
      * A String reference to the protocol name
-     *
-     * @return
      */
     String value();
 }

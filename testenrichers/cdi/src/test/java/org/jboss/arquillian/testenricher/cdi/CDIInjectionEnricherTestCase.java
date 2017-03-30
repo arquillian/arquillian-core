@@ -27,13 +27,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
@@ -57,7 +55,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
     private WeldBootstrap bootstrap;
     private WeldManager manager;
@@ -76,10 +73,10 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
         Deployment deployment = createDeployment(Service.class, Cat.class, CatService.class, Dog.class, DogService.class);
         bootstrap = new WeldBootstrap();
         bootstrap.startContainer(Environments.SE, deployment)
-                .startInitialization()
-                .deployBeans()
-                .validateBeans()
-                .endInitialization();
+            .startInitialization()
+            .deployBeans()
+            .validateBeans()
+            .endInitialization();
 
         manager = bootstrap.getManager(deployment.getBeanDeploymentArchives().iterator().next());
 
@@ -140,6 +137,77 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
         testMethod.invoke(testClass, resolvedBeans);
     }
 
+    private Deployment createDeployment(final Class<?>... classes) {
+        final BeanDeploymentArchive beanArchive = new BeanDeploymentArchive() {
+            private ServiceRegistry registry = new SimpleServiceRegistry();
+
+            public ServiceRegistry getServices() {
+                return registry;
+            }
+
+            public String getId() {
+                return "test.jar";
+            }
+
+            public Collection<EjbDescriptor<?>> getEjbs() {
+                return Collections.emptyList();
+            }
+
+            public BeansXml getBeansXml() {
+                try {
+                    Collection<URL> beansXmlPaths =
+                        Collections.singletonList(new URL(null, "archive://beans.xml", new URLStreamHandler() {
+                            @Override
+                            protected URLConnection openConnection(URL u) throws IOException {
+                                return new URLConnection(u) {
+                                    public void connect() throws IOException {
+                                    }
+
+                                    public InputStream getInputStream() throws IOException {
+                                        return new ByteArrayInputStream("<beans/>".getBytes());
+                                    }
+                                };
+                            }
+                        }));
+                    return bootstrap.parse(beansXmlPaths);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
+                return Collections.emptyList();
+            }
+
+            public Collection<String> getBeanClasses() {
+                Collection<String> beanClasses = new ArrayList<String>();
+                for (Class<?> c : classes) {
+                    beanClasses.add(c.getName());
+                }
+                return beanClasses;
+            }
+        };
+        final Deployment deployment = new Deployment() {
+            public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
+                return Collections.singletonList(beanArchive);
+            }
+
+            public ServiceRegistry getServices() {
+                return beanArchive.getServices();
+            }
+
+            public BeanDeploymentArchive loadBeanDeploymentArchive(
+                Class<?> beanClass) {
+                return beanArchive;
+            }
+
+            public Iterable<Metadata<Extension>> getExtensions() {
+                return Collections.emptyList();
+            }
+        };
+        return deployment;
+    }
+
     private static class TestClass {
         @Inject
         Service<Dog> dogService;
@@ -171,75 +239,5 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
             Assert.assertNotNull("Generic Instance should be injected as MethodArgument", dogEvent);
             Assert.assertNotNull("Generic Instance should be injected as MethodArgument", catEvent);
         }
-    }
-
-    private Deployment createDeployment(final Class<?>... classes) {
-        final BeanDeploymentArchive beanArchive = new BeanDeploymentArchive() {
-            private ServiceRegistry registry = new SimpleServiceRegistry();
-
-            public ServiceRegistry getServices() {
-                return registry;
-            }
-
-            public String getId() {
-                return "test.jar";
-            }
-
-            public Collection<EjbDescriptor<?>> getEjbs() {
-                return Collections.emptyList();
-            }
-
-            public BeansXml getBeansXml() {
-                try {
-                    Collection<URL> beansXmlPaths = Collections.singletonList(new URL(null, "archive://beans.xml", new URLStreamHandler() {
-                        @Override
-                        protected URLConnection openConnection(URL u) throws IOException {
-                            return new URLConnection(u) {
-                                public void connect() throws IOException {
-                                }
-
-                                public InputStream getInputStream() throws IOException {
-                                    return new ByteArrayInputStream("<beans/>".getBytes());
-                                }
-                            };
-                        }
-                    }));
-                    return bootstrap.parse(beansXmlPaths);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
-                return Collections.emptyList();
-            }
-
-            public Collection<String> getBeanClasses() {
-                Collection<String> beanClasses = new ArrayList<String>();
-                for (Class<?> c : classes) {
-                    beanClasses.add(c.getName());
-                }
-                return beanClasses;
-            }
-        };
-        final Deployment deployment = new Deployment() {
-            public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
-                return Collections.singletonList(beanArchive);
-            }
-
-            public ServiceRegistry getServices() {
-                return beanArchive.getServices();
-            }
-
-            public BeanDeploymentArchive loadBeanDeploymentArchive(
-                    Class<?> beanClass) {
-                return beanArchive;
-            }
-
-            public Iterable<Metadata<Extension>> getExtensions() {
-                return Collections.emptyList();
-            }
-        };
-        return deployment;
     }
 }

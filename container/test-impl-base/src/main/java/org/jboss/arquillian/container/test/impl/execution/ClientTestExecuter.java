@@ -42,9 +42,9 @@ public class ClientTestExecuter {
 
     public void execute(@Observes Test event) throws Exception {
         boolean runAsClient = RunModeUtils.isRunAsClientAndCheck(
-                this.deployment.get(),
-                event.getTestClass(),
-                event.getTestMethod());
+            this.deployment.get(),
+            event.getTestClass(),
+            event.getTestMethod());
 
         if (runAsClient) {
             executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));

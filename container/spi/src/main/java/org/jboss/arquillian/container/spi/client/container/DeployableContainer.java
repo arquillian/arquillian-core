@@ -48,5 +48,4 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
     void deploy(Descriptor descriptor) throws DeploymentException;
 
     void undeploy(Descriptor descriptor) throws DeploymentException;
-
 }

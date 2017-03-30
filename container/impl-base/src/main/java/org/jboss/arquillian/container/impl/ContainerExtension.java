@@ -37,14 +37,13 @@ public class ContainerExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.context(ContainerContextImpl.class)
-                .context(DeploymentContextImpl.class);
+            .context(DeploymentContextImpl.class);
 
         builder.observer(ContainerRegistryCreator.class)
-                .observer(ContainerDeploymentContextHandler.class)
-                .observer(ContainerLifecycleController.class)
-                .observer(ContainerDeployController.class)
-                .observer(ArchiveDeploymentExporter.class)
-                .observer(DeploymentExceptionHandler.class);
+            .observer(ContainerDeploymentContextHandler.class)
+            .observer(ContainerLifecycleController.class)
+            .observer(ContainerDeployController.class)
+            .observer(ArchiveDeploymentExporter.class)
+            .observer(DeploymentExceptionHandler.class);
     }
-
 }

@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.domain;
 
 import java.util.HashMap;
-
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
@@ -51,7 +50,7 @@ public class ProtocolRegistryTestCase {
     @Test
     public void shouldBeAbleToDefaultProtocolIfOnlyOneFound() throws Exception {
         ProtocolRegistry registry = createRegistry()
-                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
+            .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
 
         Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());
     }
@@ -64,9 +63,9 @@ public class ProtocolRegistryTestCase {
         Mockito.when(otherProtocol.getDescription()).thenReturn(new ProtocolDescription("other"));
 
         ProtocolRegistry registry = createRegistry()
-                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>(), true))
-                .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
-                .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
+            .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>(), true))
+            .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
+            .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
 
         Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());
     }
@@ -79,9 +78,9 @@ public class ProtocolRegistryTestCase {
         Mockito.when(otherProtocol.getDescription()).thenReturn(new ProtocolDescription("other"));
 
         ProtocolRegistry registry = createRegistry()
-                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
-                .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
-                .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
+            .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
+            .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
+            .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
 
         Assert.assertNull(registry.getProtocol(ProtocolDescription.DEFAULT));
     }
@@ -89,8 +88,8 @@ public class ProtocolRegistryTestCase {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfMultipleProtocolsWithTheSameDescription() {
         createRegistry()
-                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
-                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
+            .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
+            .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -115,17 +114,18 @@ public class ProtocolRegistryTestCase {
         private String property;
 
         /**
-         * @param property the property to set
-         */
-        public void setProperty(String property) {
-            this.property = property;
-        }
-
-        /**
          * @return the property
          */
         public String getProperty() {
             return property;
+        }
+
+        /**
+         * @param property
+         *     the property to set
+         */
+        public void setProperty(String property) {
+            this.property = property;
         }
     }
 }

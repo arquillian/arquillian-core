@@ -31,7 +31,8 @@ public class ThreadContext {
 
     public static void set(ClassLoader classLoader) {
         if (previousClassloader.get() != null) {
-            log.warning("Attempting to set a new Thread Context ClassLoader without the old one being reset: " + previousClassloader.get());
+            log.warning("Attempting to set a new Thread Context ClassLoader without the old one being reset: "
+                + previousClassloader.get());
         }
         previousClassloader.set(Thread.currentThread().getContextClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
@@ -45,5 +46,4 @@ public class ThreadContext {
             previousClassloader.set(null);
         }
     }
-
 }

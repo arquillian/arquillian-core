@@ -18,7 +18,6 @@ package org.jboss.arquillian.test.impl;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

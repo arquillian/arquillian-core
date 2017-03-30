@@ -19,7 +19,6 @@ package org.jboss.arquillian.testng.container;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-
 import org.testng.IAnnotationTransformer;
 import org.testng.annotations.ITestAnnotation;
 
@@ -40,5 +39,4 @@ public class RemoveDependsOnTransformer implements IAnnotationTransformer {
         annotation.setDependsOnGroups(new String[0]);
         annotation.setDependsOnMethods(new String[0]);
     }
-
 }

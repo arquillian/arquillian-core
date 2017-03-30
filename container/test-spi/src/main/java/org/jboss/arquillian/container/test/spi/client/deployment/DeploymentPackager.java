@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.spi.client.deployment;
 
 import java.util.Collection;
-
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -32,7 +31,9 @@ import org.jboss.shrinkwrap.api.Archive;
  */
 public interface DeploymentPackager {
     /**
-     * @param testDeployment Value object containing the application {@link Archive} and other auxiliary library {@link Archive}s.
+     * @param testDeployment
+     *     Value object containing the application {@link Archive} and other auxiliary library {@link Archive}s.
+     *
      * @return The prepared archive for deployment.
      */
     Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors);

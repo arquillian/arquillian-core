@@ -37,17 +37,16 @@ class WebUtils {
 
     static WebAppDescriptor getDefaultDescriptor() {
         return Descriptors.create(WebAppDescriptor.class)
-                .version("2.5")
-                .displayName("Arquillian Servlet 2.5 Protocol");
+            .version("2.5")
+            .displayName("Arquillian Servlet 2.5 Protocol");
     }
 
     static WebAppDescriptor mergeWithDescriptor(WebAppDescriptor descriptor) {
         // use String v. of desc.servlet(..) so we don't force Servlet API on classpath
         descriptor.servlet(
-                ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME,
-                "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner",
-                new String[]{ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING});
+            ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME,
+            "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner",
+            new String[] {ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING});
         return descriptor;
     }
-
 }

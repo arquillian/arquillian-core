@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.testenricher.ejb;
 
+import javax.ejb.EJB;
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-
-import javax.ejb.EJB;
-
-import org.junit.Test;
 
 /**
  * Tests for {@link EJBInjectionEnricher}.
@@ -78,5 +77,4 @@ public class EJBInjectionEnricher31TestCase extends EJBInjectionEnricherBase {
         @EJB(beanName = "any", lookup = "any")
         ExemplaryEJB lookupInjection;
     }
-
 }

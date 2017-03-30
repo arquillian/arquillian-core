@@ -33,13 +33,13 @@ public class EventImpl<T> implements Event<T> {
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public static <X> EventImpl<X> of(Class<X> type, Manager manager) {
-        return new EventImpl<X>(type, manager);
-    }
-
     EventImpl(Class<T> type, Manager manager) {
         this.type = type;
         this.manager = manager;
+    }
+
+    public static <X> EventImpl<X> of(Class<X> type, Manager manager) {
+        return new EventImpl<X>(type, manager);
     }
 
     //-------------------------------------------------------------------------------------||
@@ -61,5 +61,4 @@ public class EventImpl<T> implements Event<T> {
     public void fire(T event) {
         manager.fire(event);
     }
-
 }

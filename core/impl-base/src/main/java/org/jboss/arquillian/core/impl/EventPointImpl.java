@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.spi.EventPoint;
 import org.jboss.arquillian.core.spi.InvocationException;
@@ -38,13 +37,13 @@ public class EventPointImpl implements EventPoint {
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public static EventPointImpl of(Object target, Field field) {
-        return new EventPointImpl(target, field);
-    }
-
     EventPointImpl(Object target, Field field) {
         this.target = target;
         this.field = field;
+    }
+
+    public static EventPointImpl of(Object target, Field field) {
+        return new EventPointImpl(target, field);
     }
 
     //-------------------------------------------------------------------------------------||

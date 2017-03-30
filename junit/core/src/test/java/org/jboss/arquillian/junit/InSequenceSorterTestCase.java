@@ -17,11 +17,8 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -32,6 +29,8 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunListener;
 import org.junit.runners.MethodSorters;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * InOrderSorterTestCase
@@ -48,12 +47,12 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass {
 
         final List<String> runOrder = new ArrayList<String>();
         Result result = run(adaptor,
-                new RunListener() {
-                    @Override
-                    public void testStarted(Description description) throws Exception {
-                        runOrder.add(description.getMethodName());
-                    }
-                }, OrderedTestCase.class);
+            new RunListener() {
+                @Override
+                public void testStarted(Description description) throws Exception {
+                    runOrder.add(description.getMethodName());
+                }
+            }, OrderedTestCase.class);
 
         Assert.assertTrue(result.wasSuccessful());
 
@@ -69,16 +68,16 @@ public class InSequenceSorterTestCase extends JUnitTestBaseClass {
 
         final List<String> runOrder = new ArrayList<String>();
         Result result = run(adaptor,
-                new RunListener() {
-                    @Override
-                    public void testStarted(Description description) throws Exception {
-                        runOrder.add(description.getMethodName());
-                    }
-                }, UnOrderedTestCase.class);
+            new RunListener() {
+                @Override
+                public void testStarted(Description description) throws Exception {
+                    runOrder.add(description.getMethodName());
+                }
+            }, UnOrderedTestCase.class);
 
         Assert.assertTrue(result.wasSuccessful());
 
-        String[] ordered = new String[]{"Atree", "Btwo", "Cone"};
+        String[] ordered = new String[] {"Atree", "Btwo", "Cone"};
         boolean inOriginalOrder = true;
         for (int i = 0; i < ordered.length; i++) {
             if (!ordered[i].equals(runOrder.get(i))) {

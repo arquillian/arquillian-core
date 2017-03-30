@@ -17,7 +17,6 @@
  */
 package org.jboss.arquillian.container.spi.client.deployment;
 
-
 /**
  * Deployment
  *

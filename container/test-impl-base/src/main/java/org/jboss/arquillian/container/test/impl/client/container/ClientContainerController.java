@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.test.impl.client.container;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -74,7 +73,9 @@ public class ClientContainerController implements ContainerController {
         }
 
         if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
-            throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
+            throw new IllegalArgumentException("Could not start "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
         }
 
         List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
@@ -86,14 +87,15 @@ public class ClientContainerController implements ContainerController {
         event.fire(new StartContainer(container));
 
         for (Deployment d : managedDeployments) {
-            if (d.getDescription().managed() && "custom".equalsIgnoreCase(container.getContainerConfiguration().getMode())) {
+            if (d.getDescription().managed() && "custom".equalsIgnoreCase(
+                container.getContainerConfiguration().getMode())) {
                 throw new IllegalStateException(
-                        "Trying to deploy managed deployment " + d.getDescription().getName() +
-                                " to custom mode container " + container.getName());
+                    "Trying to deploy managed deployment " + d.getDescription().getName() +
+                        " to custom mode container " + container.getName());
             }
             if (!d.isDeployed()) {
                 log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() +
-                        " for the container with name " + container.getName());
+                    " for the container with name " + container.getName());
                 event.fire(new DeployDeployment(container, d));
             }
         }
@@ -116,7 +118,9 @@ public class ClientContainerController implements ContainerController {
         }
 
         if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
-            throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
+            throw new IllegalArgumentException("Could not start "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
         }
 
         List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
@@ -128,7 +132,7 @@ public class ClientContainerController implements ContainerController {
         }
 
         log.info("Manual starting of a server instance with overridden configuration. New configuration: " +
-                container.getContainerConfiguration().getContainerProperties());
+            container.getContainerConfiguration().getContainerProperties());
 
         event.fire(new SetupContainer(container));
         event.fire(new StartContainer(container));
@@ -136,7 +140,7 @@ public class ClientContainerController implements ContainerController {
         for (Deployment d : managedDeployments) {
             if (!d.isDeployed()) {
                 log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() +
-                        " for the container with name " + container.getName());
+                    " for the container with name " + container.getName());
                 event.fire(new DeployDeployment(container, d));
             }
         }
@@ -159,7 +163,9 @@ public class ClientContainerController implements ContainerController {
         }
 
         if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
-            throw new IllegalArgumentException("Could not stop " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
+            throw new IllegalArgumentException("Could not stop "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
         }
 
         Container container = registry.getContainer(new TargetDescription(containerQualifier));
@@ -169,7 +175,7 @@ public class ClientContainerController implements ContainerController {
         for (Deployment d : managedDeployments) {
             if (d.isDeployed()) {
                 log.info("Automatic undeploying of the managed deployment with name " + d.getDescription().getName() +
-                        " from the container with name " + container.getName());
+                    " from the container with name " + container.getName());
                 event.fire(new UnDeployDeployment(container, d));
             }
         }
@@ -191,7 +197,9 @@ public class ClientContainerController implements ContainerController {
         }
 
         if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
-            throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
+            throw new IllegalArgumentException("Could not start "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
         }
 
         Container container = registry.getContainer(new TargetDescription(containerQualifier));
@@ -229,7 +237,7 @@ public class ClientContainerController implements ContainerController {
         for (Container container : containers) {
             String contianerMode = container.getContainerConfiguration().getMode();
             if (container.getName().equals(containerQualifier) &&
-                    ("manual".equalsIgnoreCase(contianerMode) || "custom".equalsIgnoreCase(contianerMode))) {
+                ("manual".equalsIgnoreCase(contianerMode) || "custom".equalsIgnoreCase(contianerMode))) {
                 return true;
             }
         }

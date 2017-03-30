@@ -69,15 +69,6 @@ public class DeploymentDescription {
     }
 
     /**
-     * @param order the order to set
-     */
-    public DeploymentDescription setOrder(int order) {
-        this.order = order;
-        return this;
-    }
-
-
-    /**
      * @return the order
      */
     public int getOrder() {
@@ -85,11 +76,11 @@ public class DeploymentDescription {
     }
 
     /**
-     * @param target the target to set
+     * @param order
+     *     the order to set
      */
-    public DeploymentDescription setTarget(TargetDescription target) {
-        Validate.notNull(target, "TargetDescription must be specified");
-        this.target = target;
+    public DeploymentDescription setOrder(int order) {
+        this.order = order;
         return this;
     }
 
@@ -101,10 +92,12 @@ public class DeploymentDescription {
     }
 
     /**
-     * @param protocol the protocol to set
+     * @param target
+     *     the target to set
      */
-    public DeploymentDescription setProtocol(ProtocolDescription protocol) {
-        this.protocol = protocol;
+    public DeploymentDescription setTarget(TargetDescription target) {
+        Validate.notNull(target, "TargetDescription must be specified");
+        this.target = target;
         return this;
     }
 
@@ -113,6 +106,15 @@ public class DeploymentDescription {
      */
     public ProtocolDescription getProtocol() {
         return protocol;
+    }
+
+    /**
+     * @param protocol
+     *     the protocol to set
+     */
+    public DeploymentDescription setProtocol(ProtocolDescription protocol) {
+        this.protocol = protocol;
+        return this;
     }
 
     public DeploymentDescription shouldBeManaged(boolean startup) {
@@ -128,7 +130,8 @@ public class DeploymentDescription {
     }
 
     /**
-     * @param testable the testable to set
+     * @param testable
+     *     the testable to set
      */
     public DeploymentDescription shouldBeTestable(boolean testable) {
         if (!isArchiveDeployment()) {
@@ -145,7 +148,6 @@ public class DeploymentDescription {
         return testable;
     }
 
-
     /**
      * @return the testableArchive
      */
@@ -154,7 +156,8 @@ public class DeploymentDescription {
     }
 
     /**
-     * @param testableArchive the testableArchive to set
+     * @param testableArchive
+     *     the testableArchive to set
      */
     public DeploymentDescription setTestableArchive(Archive<?> testableArchive) {
         this.testableArchive = testableArchive;
@@ -169,7 +172,8 @@ public class DeploymentDescription {
     }
 
     /**
-     * @param expectedException the expectedException to set
+     * @param expectedException
+     *     the expectedException to set
      */
     public DeploymentDescription setExpectedException(Class<? extends Exception> expectedException) {
         this.expectedException = expectedException;

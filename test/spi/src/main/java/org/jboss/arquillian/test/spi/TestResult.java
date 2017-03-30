@@ -32,6 +32,59 @@ import java.util.Map;
  */
 public final class TestResult implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Status status;
+    private String description = "";
+    transient private Throwable throwable;
+    private ExceptionProxy exceptionProxy;
+    private long start;
+    private long end;
+
+    @Deprecated
+    public TestResult(Status status, String description) {
+        this(status);
+        this.description = description;
+    }
+
+    /**
+     * Create a empty result.<br/>
+     * <br/>
+     * Start time is set to Current Milliseconds.
+     */
+    @Deprecated
+    public TestResult() {
+        this(null);
+    }
+
+    /**
+     * Create a new TestResult.<br/>
+     * <br/>
+     * Start time is set to Current Milliseconds.
+     *
+     * @param status
+     *     The result status.
+     */
+    @Deprecated
+    public TestResult(Status status) {
+        this(status, (Throwable) null);
+    }
+
+    /**
+     * Create a new TestResult.<br/>
+     * <br/>
+     * Start time is set to Current Milliseconds.
+     *
+     * @param status
+     *     The result status.
+     * @param throwable
+     *     thrown exception if any
+     */
+    @Deprecated
+    public TestResult(Status status, Throwable throwable) {
+        this.status = status;
+        setThrowable(throwable);
+
+        this.start = System.currentTimeMillis();
+    }
 
     public static TestResult passed() {
         return new TestResult(Status.PASSED);
@@ -70,7 +123,8 @@ public final class TestResult implements Serializable {
             if (result.getThrowable() != null) {
                 allExceptions.add(result.getThrowable());
             }
-            combinedResult.addDescription(String.format("%s: '%s'%n", result.getStatus().name(), result.getDescription()));
+            combinedResult.addDescription(
+                String.format("%s: '%s'%n", result.getStatus().name(), result.getDescription()));
         }
 
         propagateTestResultStatus(combinedResult, resultsPerStatus);
@@ -99,84 +153,6 @@ public final class TestResult implements Serializable {
         } else if (resultsPerStatus.containsKey(Status.SKIPPED)) {
             combinedResult.setStatus(Status.SKIPPED);
         }
-    }
-
-    /**
-     * The test status
-     *
-     * @author Pete Muir
-     */
-    public enum Status
-
-    {
-        /**
-         * The test passed
-         */
-        PASSED,
-                /**
-                 * The test failed
-                 */
-                FAILED,
-                /**
-                 * The test was skipped due to some deployment problem
-                 */
-                SKIPPED;
-    }
-
-    private Status status;
-
-    private String description = "";
-
-    transient private Throwable throwable;
-
-    private ExceptionProxy exceptionProxy;
-
-    private long start;
-
-    private long end;
-
-    @Deprecated
-    public TestResult(Status status, String description) {
-        this(status);
-        this.description = description;
-    }
-
-    /**
-     * Create a empty result.<br/>
-     * <br/>
-     * Start time is set to Current Milliseconds.
-     */
-    @Deprecated
-    public TestResult() {
-        this(null);
-    }
-
-    /**
-     * Create a new TestResult.<br/>
-     * <br/>
-     * Start time is set to Current Milliseconds.
-     *
-     * @param status The result status.
-     */
-    @Deprecated
-    public TestResult(Status status) {
-        this(status, (Throwable) null);
-    }
-
-    /**
-     * Create a new TestResult.<br/>
-     * <br/>
-     * Start time is set to Current Milliseconds.
-     *
-     * @param status    The result status.
-     * @param throwable thrown exception if any
-     */
-    @Deprecated
-    public TestResult(Status status, Throwable throwable) {
-        this.status = status;
-        setThrowable(throwable);
-
-        this.start = System.currentTimeMillis();
     }
 
     /**
@@ -225,16 +201,6 @@ public final class TestResult implements Serializable {
     }
 
     /**
-     * Set the start time of the test.
-     *
-     * @param start Start time in milliseconds
-     */
-    public TestResult setStart(long start) {
-        this.start = start;
-        return this;
-    }
-
-    /**
      * Get the start time.
      *
      * @return Start time in milliseconds
@@ -244,12 +210,13 @@ public final class TestResult implements Serializable {
     }
 
     /**
-     * Set the end time of the test.
+     * Set the start time of the test.
      *
-     * @param end time in milliseconds
+     * @param start
+     *     Start time in milliseconds
      */
-    public TestResult setEnd(long end) {
-        this.end = end;
+    public TestResult setStart(long start) {
+        this.start = start;
         return this;
     }
 
@@ -262,6 +229,17 @@ public final class TestResult implements Serializable {
         return end;
     }
 
+    /**
+     * Set the end time of the test.
+     *
+     * @param end
+     *     time in milliseconds
+     */
+    public TestResult setEnd(long end) {
+        this.end = end;
+        return this;
+    }
+
     public ExceptionProxy getExceptionProxy() {
 
         return exceptionProxy;
@@ -271,5 +249,25 @@ public final class TestResult implements Serializable {
     public String toString() {
         long time = (end > 0 ? end - start : System.currentTimeMillis() - start);
         return "TestResult[status=" + status + ",time=" + time + "ms]";
+    }
+
+    /**
+     * The test status
+     *
+     * @author Pete Muir
+     */
+    public enum Status {
+        /**
+         * The test passed
+         */
+        PASSED,
+        /**
+         * The test failed
+         */
+        FAILED,
+        /**
+         * The test was skipped due to some deployment problem
+         */
+        SKIPPED;
     }
 }

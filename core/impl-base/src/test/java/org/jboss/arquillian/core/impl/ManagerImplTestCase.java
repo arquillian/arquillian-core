@@ -30,7 +30,6 @@ import org.jboss.arquillian.core.test.context.ManagerTestScoped;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * ManagerImplTestCase
  *
@@ -41,8 +40,8 @@ public class ManagerImplTestCase {
     @Test
     public void shouldBeAbleToRegisterContextAndExtensions() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .context(ManagerTestContextImpl.class)
-                .extension(TestExtension.class).create();
+            .context(ManagerTestContextImpl.class)
+            .extension(TestExtension.class).create();
 
         ManagerTestContext context = manager.getContext(ManagerTestContext.class);
         try {
@@ -53,7 +52,6 @@ public class ManagerImplTestCase {
             manager.fire("some string");
 
             Assert.assertTrue(manager.getExtension(TestExtension.class).wasCalled);
-
         } finally {
             context.deactivate();
             context.destroy();
@@ -63,8 +61,8 @@ public class ManagerImplTestCase {
     @Test
     public void shouldBindToTheScopedContext() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .context(ManagerTestContextImpl.class)
-                .context(ManagerTest2ContextImpl.class).create();
+            .context(ManagerTestContextImpl.class)
+            .context(ManagerTest2ContextImpl.class).create();
 
         ManagerTestContext suiteContext = manager.getContext(ManagerTestContext.class);
         ManagerTest2Context classContext = manager.getContext(ManagerTest2Context.class);
@@ -78,13 +76,13 @@ public class ManagerImplTestCase {
             manager.bind(ManagerTestScoped.class, Object.class, testObject);
 
             Assert.assertEquals(
-                    "Verify value was bound to the correct context",
-                    testObject,
-                    suiteContext.getObjectStore().get(Object.class));
+                "Verify value was bound to the correct context",
+                testObject,
+                suiteContext.getObjectStore().get(Object.class));
 
             Assert.assertNull(
-                    "Verify value was not bound to any other context",
-                    classContext.getObjectStore().get(Object.class));
+                "Verify value was not bound to any other context",
+                classContext.getObjectStore().get(Object.class));
         } finally {
             classContext.deactivate();
             classContext.destroy("A");
@@ -121,11 +119,11 @@ public class ManagerImplTestCase {
         manager.fire(testEvent, observer);
 
         Assert.assertNotNull(
-                "NonManagedObserver should have been called",
-                TestNonManagedObserver.firedEvent);
+            "NonManagedObserver should have been called",
+            TestNonManagedObserver.firedEvent);
         Assert.assertEquals(
-                "NonManagedObserver should have received fired event",
-                TestNonManagedObserver.firedEvent, testEvent);
+            "NonManagedObserver should have received fired event",
+            TestNonManagedObserver.firedEvent, testEvent);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -137,7 +135,7 @@ public class ManagerImplTestCase {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionOnBindWithNonActiveScopedContext() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .context(ManagerTestContextImpl.class).create();
+            .context(ManagerTestContextImpl.class).create();
 
         manager.bind(ManagerTestScoped.class, Object.class, new Object());
     }

@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.Assert;
@@ -28,6 +24,9 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.

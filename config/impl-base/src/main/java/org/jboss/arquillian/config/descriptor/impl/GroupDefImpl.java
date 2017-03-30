@@ -18,7 +18,6 @@ package org.jboss.arquillian.config.descriptor.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.GroupDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
@@ -80,7 +79,8 @@ public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef {
      */
     @Override
     public ContainerDef container(String name) {
-        return new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.getOrCreate("container@qualifier=" + name));
+        return new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group,
+            group.getOrCreate("container@qualifier=" + name));
     }
 
     /* (non-Javadoc)

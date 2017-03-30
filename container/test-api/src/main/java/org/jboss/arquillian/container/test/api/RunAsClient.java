@@ -16,17 +16,18 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * The run mode for a test method is determined by the @Deployment annotations member testable.
- * By default testable is true which tells Arquillian to execute the test methods in container. If testable is set to false,
+ * By default testable is true which tells Arquillian to execute the test methods in container. If testable is set to
+ * false,
  * Arquillian will execute the test methods on the client side.
  * <p>
  * <p>

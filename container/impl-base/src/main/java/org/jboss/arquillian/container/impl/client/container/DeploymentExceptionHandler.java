@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.impl.client.container;
 
 import java.util.Collection;
-
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.DeploymentExceptionTransformer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -31,7 +30,8 @@ import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
 /**
- * A exception handler that attempt to Veto a Exception during deployment if {@link ShouldThrowException} is defined for the {@link Deployment}.
+ * A exception handler that attempt to Veto a Exception during deployment if {@link ShouldThrowException} is defined for
+ * the {@link Deployment}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -48,8 +48,12 @@ public class DeploymentExceptionHandler {
             if (deployment.getExpectedException() != null) {
                 deploymentExceptionThrown = false;
                 throw new RuntimeException(
-                        "Expected exception of type " + deployment.getExpectedException().getName() + " during deployment of " +
-                                deployment.getName() + ", but no exception was thrown.");
+                    "Expected exception of type "
+                        + deployment.getExpectedException().getName()
+                        + " during deployment of "
+                        +
+                        deployment.getName()
+                        + ", but no exception was thrown.");
             }
         } catch (Exception e) {
             // if exception is not thrown from the deployment, rethrow it (we threw it).
@@ -94,7 +98,6 @@ public class DeploymentExceptionHandler {
             return true;
         }
 
-
         return containsType(transformedException.getCause(), expectedType);
     }
 
@@ -103,7 +106,8 @@ public class DeploymentExceptionHandler {
         if (exception instanceof DeploymentException) {
             toBeTransformed = exception.getCause();
         }
-        Collection<DeploymentExceptionTransformer> transformers = serviceLoader.get().all(DeploymentExceptionTransformer.class);
+        Collection<DeploymentExceptionTransformer> transformers =
+            serviceLoader.get().all(DeploymentExceptionTransformer.class);
         for (DeploymentExceptionTransformer transformer : transformers) {
             Throwable transformed = transformer.transform(toBeTransformed);
             if (transformed != null) {

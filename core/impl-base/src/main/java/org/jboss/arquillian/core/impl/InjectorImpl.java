@@ -33,12 +33,12 @@ public class InjectorImpl implements Injector {
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public static InjectorImpl of(Manager manager) {
-        return new InjectorImpl(manager);
-    }
-
     InjectorImpl(Manager manager) {
         this.manager = manager;
+    }
+
+    public static InjectorImpl of(Manager manager) {
+        return new InjectorImpl(manager);
     }
 
     //-------------------------------------------------------------------------------------||

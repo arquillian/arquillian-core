@@ -27,9 +27,9 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.applica
 public interface WebModule {
     String getUri();
 
-    String getContextRoot();
-
     void setUri(String uri);
+
+    String getContextRoot();
 
     void setContextRoot(String contextRoot);
 }

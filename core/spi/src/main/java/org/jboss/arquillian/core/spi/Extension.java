@@ -18,7 +18,6 @@ package org.jboss.arquillian.core.spi;
 
 import java.util.List;
 
-
 /**
  * Extension
  *

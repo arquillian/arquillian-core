@@ -36,13 +36,13 @@ public class ProtocolDeploymentAppenderTestCase {
         Archive<?> archive = new ProtocolDeploymentAppender().createAuxiliaryArchive();
 
         Assert.assertTrue(
-                "Should have added web.xml",
-                archive.contains(ArchivePaths.create("META-INF/web-fragment.xml"))
+            "Should have added web.xml",
+            archive.contains(ArchivePaths.create("META-INF/web-fragment.xml"))
         );
 
         Assert.assertTrue(
-                "Should have added " + RemoteLoadableExtension.class.getName(),
-                archive.contains(ArchivePaths.create("META-INF/services/" + RemoteLoadableExtension.class.getName()))
+            "Should have added " + RemoteLoadableExtension.class.getName(),
+            archive.contains(ArchivePaths.create("META-INF/services/" + RemoteLoadableExtension.class.getName()))
         );
 
         System.out.println(archive.toString(true));

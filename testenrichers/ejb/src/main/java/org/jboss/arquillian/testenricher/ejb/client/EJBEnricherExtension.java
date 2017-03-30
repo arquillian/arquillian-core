@@ -38,5 +38,4 @@ public class EJBEnricherExtension implements LoadableExtension {
             builder.service(TestEnricher.class, EJBInjectionEnricher.class);
         }
     }
-
 }

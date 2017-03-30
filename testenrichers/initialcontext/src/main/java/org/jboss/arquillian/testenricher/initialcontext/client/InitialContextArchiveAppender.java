@@ -35,9 +35,9 @@ public class InitialContextArchiveAppender extends CachedAuxilliaryArchiveAppend
     @Override
     protected Archive<?> buildArchive() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-initialcontext.jar")
-                .addClasses(
-                        InitialContextRemoteExtension.class,
-                        InitialContextProducer.class)
-                .addAsServiceProvider(RemoteLoadableExtension.class, InitialContextRemoteExtension.class);
+            .addClasses(
+                InitialContextRemoteExtension.class,
+                InitialContextProducer.class)
+            .addAsServiceProvider(RemoteLoadableExtension.class, InitialContextRemoteExtension.class);
     }
 }

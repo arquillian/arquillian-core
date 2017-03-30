@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.core.impl;
 
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -26,7 +25,6 @@ import org.jboss.arquillian.core.test.context.ManagerTestContextImpl;
 import org.jboss.arquillian.core.test.context.ManagerTestScoped;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * InstanceImplTestCase
@@ -38,7 +36,7 @@ public class InstanceImplTestCase {
     @Test
     public void shouldBeAbleToLookupInContext() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .context(ManagerTestContextImpl.class).create();
+            .context(ManagerTestContextImpl.class).create();
 
         Object testObject = new Object();
         ManagerTestContext context = manager.getContext(ManagerTestContext.class);
@@ -49,8 +47,8 @@ public class InstanceImplTestCase {
             Instance<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
 
             Assert.assertEquals(
-                    "Verify expected object was returned",
-                    testObject, instance.get());
+                "Verify expected object was returned",
+                testObject, instance.get());
         } finally {
             context.deactivate();
             context.destroy();
@@ -60,8 +58,8 @@ public class InstanceImplTestCase {
     @Test
     public void shouldFireEventOnSet() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .context(ManagerTestContextImpl.class)
-                .extension(TestObserver.class).create();
+            .context(ManagerTestContextImpl.class)
+            .extension(TestObserver.class).create();
 
         ManagerTestContext context = manager.getContext(ManagerTestContext.class);
         try {

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test;
 
 import java.util.List;
-
 import org.jboss.arquillian.container.impl.context.ContainerContextImpl;
 import org.jboss.arquillian.container.impl.context.DeploymentContextImpl;
 import org.jboss.arquillian.core.spi.context.Context;

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -44,7 +43,6 @@ import org.jboss.arquillian.core.spi.event.ManagerProcessing;
 public class LoadableExtensionLoader {
     private static Logger log = Logger.getLogger(LoadableExtensionLoader.class.getName());
     private static Level level = Level.FINER;
-
 
     @Inject
     private Instance<Injector> injector;
@@ -71,32 +69,34 @@ public class LoadableExtensionLoader {
         Collection<LoadableExtension> extensions = extensionLoader.load();
 
         for (LoadableExtension extension : extensions) {
-            log.log(level, "extension: {0}", new Object[]{extension.getClass().getSimpleName()});
+            log.log(level, "extension: {0}", new Object[] {extension.getClass().getSimpleName()});
             extension.register(new ExtensionBuilder() {
                 @Override
                 public <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl) {
-                    log.log(level, "\tservice: {0} - {1}", new Object[]{service, impl});
+                    log.log(level, "\tservice: {0} - {1}", new Object[] {service, impl});
                     registry.addService(service, impl);
                     return this;
                 }
 
                 @Override
-                public <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl) {
-                    log.log(level, "\toverride: {0} overrides {1} for {2}", new Object[]{newServiceImpl, oldServiceImpl, service});
+                public <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl,
+                    Class<? extends T> newServiceImpl) {
+                    log.log(level, "\toverride: {0} overrides {1} for {2}",
+                        new Object[] {newServiceImpl, oldServiceImpl, service});
                     registry.overrideService(service, oldServiceImpl, newServiceImpl);
                     return this;
                 }
 
                 @Override
                 public ExtensionBuilder observer(Class<?> handler) {
-                    log.log(level, "\tobserver: {0}", new Object[]{handler});
+                    log.log(level, "\tobserver: {0}", new Object[] {handler});
                     event.observer(handler);
                     return this;
                 }
 
                 @Override
                 public ExtensionBuilder context(Class<? extends Context> context) {
-                    log.log(level, "\tcontext: {0}", new Object[]{context});
+                    log.log(level, "\tcontext: {0}", new Object[] {context});
                     event.context(context);
                     return this;
                 }

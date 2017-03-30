@@ -24,5 +24,4 @@ class TestNGCoreExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.observer(UpdateTestResultBeforeAfter.class);
     }
-
 }

@@ -17,12 +17,10 @@
 package org.jboss.arquillian.config.descriptor.impl;
 
 import java.io.ByteArrayInputStream;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-
 import org.junit.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -48,31 +46,35 @@ public final class AssertXPath {
      * "ExpectedValue count should match found Node count" <br/>
      * "XPath content should match expected value" <br/>
      *
-     * @param xml           The XML to assert against
-     * @param expression    XPath expression to extract
-     * @param expectedValue The Expected values found by expression
-     * @throws Exception XML/XPath related parse exceptions
+     * @param xml
+     *     The XML to assert against
+     * @param expression
+     *     XPath expression to extract
+     * @param expectedValue
+     *     The Expected values found by expression
+     *
+     * @throws Exception
+     *     XML/XPath related parse exceptions
      */
     public static void assertXPath(String xml, String expression, Object... expectedValue)
-            throws Exception {
+        throws Exception {
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
-                new ByteArrayInputStream(xml.getBytes()));
+            new ByteArrayInputStream(xml.getBytes()));
 
         XPathExpression xPathExpression = XPathFactory.newInstance().newXPath().compile(expression);
 
         NodeList nodes = (NodeList) xPathExpression.evaluate(doc, XPathConstants.NODESET);
         Assert.assertEquals(
-                "ExpectedValue count should match found Node count",
-                expectedValue.length,
-                nodes.getLength());
+            "ExpectedValue count should match found Node count",
+            expectedValue.length,
+            nodes.getLength());
 
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Assert.assertEquals(
-                    "XPath content should match expected value",
-                    String.valueOf(expectedValue[i]),
-                    node.getTextContent());
+                "XPath content should match expected value",
+                String.valueOf(expectedValue[i]),
+                node.getTextContent());
         }
     }
-
 }

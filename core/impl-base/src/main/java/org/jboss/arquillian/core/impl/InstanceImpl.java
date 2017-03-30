@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.api.InstanceProducer;
 
 /**
@@ -35,14 +34,14 @@ public class InstanceImpl<T> implements InstanceProducer<T> {
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public static <X> InstanceImpl<X> of(Class<X> type, Class<? extends Annotation> scope, ManagerImpl manager) {
-        return new InstanceImpl<X>(type, scope, manager);
-    }
-
     InstanceImpl(Class<T> type, Class<? extends Annotation> scope, ManagerImpl manager) {
         this.type = type;
         this.scope = scope;
         this.manager = manager;
+    }
+
+    public static <X> InstanceImpl<X> of(Class<X> type, Class<? extends Annotation> scope, ManagerImpl manager) {
+        return new InstanceImpl<X>(type, scope, manager);
     }
 
     //-------------------------------------------------------------------------------------||

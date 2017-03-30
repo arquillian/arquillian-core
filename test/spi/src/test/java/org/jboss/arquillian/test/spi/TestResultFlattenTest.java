@@ -18,9 +18,8 @@
 
 package org.jboss.arquillian.test.spi;
 
-import org.junit.Test;
-
 import java.util.List;
+import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +54,8 @@ public class TestResultFlattenTest {
         final TestResult result = TestResult.flatten(testResults);
 
         // then
-        assertThat(result.getDescription()).isEqualTo(String.format("PASSED: 'First test passed'%nPASSED: 'Second test passed'%n"));
+        assertThat(result.getDescription()).isEqualTo(
+            String.format("PASSED: 'First test passed'%nPASSED: 'Second test passed'%n"));
     }
 
     @Test
@@ -84,7 +84,8 @@ public class TestResultFlattenTest {
         final TestResult result = TestResult.flatten(testResults);
 
         // then
-        assertThat(result.getDescription()).isEqualTo(String.format("SKIPPED: 'Not implemented yet'%nPASSED: 'First test passed'%n"));
+        assertThat(result.getDescription()).isEqualTo(
+            String.format("SKIPPED: 'Not implemented yet'%nPASSED: 'First test passed'%n"));
     }
 
     @Test
@@ -176,9 +177,9 @@ public class TestResultFlattenTest {
 
         // then
         assertThat(result.getThrowable().getMessage()).isEqualTo("Exception 1: '[java.lang.RuntimeException] Exception 2'"
-                + LINE_SEPARATOR
-                + "Exception 2: '[java.lang.RuntimeException] Exception 1'"
-                + LINE_SEPARATOR);
+            + LINE_SEPARATOR
+            + "Exception 2: '[java.lang.RuntimeException] Exception 1'"
+            + LINE_SEPARATOR);
     }
 
     @Test
@@ -207,5 +208,4 @@ public class TestResultFlattenTest {
         // then
         assertThat(result.getStatus()).isEqualTo(TestResult.Status.PASSED);
     }
-
 }

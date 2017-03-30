@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
@@ -44,18 +43,29 @@ public class EventContextImpl<T> implements EventContext<T> {
     private int currentInterceptor = 0;
 
     /**
-     * Create a new EventContext that will process all interceptors, observers and the non managed observer for a given event.
+     * Create a new EventContext that will process all interceptors, observers and the non managed observer for a given
+     * event.
      *
-     * @param manager            The manager instance to operate on
-     * @param interceptors       List of interceptor observers, @Observers of EventContext<T>
-     * @param observers          List of Observers, @Observes T
-     * @param nonManagedObserver a NonManagedObserver of type T
-     * @param event              The event
-     * @param runtimeLogger      to use to log events.
-     * @throws IllegalArgumentException if Manager is null
-     * @throws IllegalArgumentException if Event is null
+     * @param manager
+     *     The manager instance to operate on
+     * @param interceptors
+     *     List of interceptor observers, @Observers of EventContext<T>
+     * @param observers
+     *     List of Observers, @Observes T
+     * @param nonManagedObserver
+     *     a NonManagedObserver of type T
+     * @param event
+     *     The event
+     * @param runtimeLogger
+     *     to use to log events.
+     *
+     * @throws IllegalArgumentException
+     *     if Manager is null
+     * @throws IllegalArgumentException
+     *     if Event is null
      */
-    public EventContextImpl(ManagerImpl manager, List<ObserverMethod> interceptors, List<ObserverMethod> observers, NonManagedObserver<T> nonManagedObserver, T event, RuntimeLogger runtimeLogger) {
+    public EventContextImpl(ManagerImpl manager, List<ObserverMethod> interceptors, List<ObserverMethod> observers,
+        NonManagedObserver<T> nonManagedObserver, T event, RuntimeLogger runtimeLogger) {
         Validate.notNull(manager, "Manager must be specified");
         Validate.notNull(event, "Event must be specified");
         Validate.notNull(runtimeLogger, "Runtime logger must be specified");

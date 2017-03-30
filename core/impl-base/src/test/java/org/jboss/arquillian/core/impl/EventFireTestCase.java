@@ -16,14 +16,11 @@
  */
 package org.jboss.arquillian.core.impl;
 
-
 import java.io.IOException;
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * EventFireTestCase
@@ -35,7 +32,7 @@ public class EventFireTestCase {
     @Test
     public void shouldBeAbleToFireEventToAExtension() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .extension(ExtensionWithObservers.class).create();
+            .extension(ExtensionWithObservers.class).create();
 
         manager.fire(new Object());
 
@@ -45,7 +42,7 @@ public class EventFireTestCase {
     @Test
     public void shouldBeAbleToFireExceptionEventOnFailingObserver() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
+            .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
 
         manager.fire("should cause exception");
 
@@ -55,10 +52,9 @@ public class EventFireTestCase {
     @Test(expected = IOException.class)
     public void shouldBeAbleToDetectExceptionEventLoopAndThrowOriginalException() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .extensions(ExtensionObservingExceptionLoop.class).create();
+            .extensions(ExtensionObservingExceptionLoop.class).create();
 
         manager.fire(new IOException("should cause exception"));
-
     }
 
     private static class ExtensionWithObservers {

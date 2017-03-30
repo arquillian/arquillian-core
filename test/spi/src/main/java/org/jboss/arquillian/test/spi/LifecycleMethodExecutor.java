@@ -31,5 +31,4 @@ public interface LifecycleMethodExecutor {
     };
 
     void invoke() throws Throwable;
-
 }

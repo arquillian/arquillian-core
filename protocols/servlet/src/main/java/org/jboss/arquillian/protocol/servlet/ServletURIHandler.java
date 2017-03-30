@@ -20,7 +20,6 @@ package org.jboss.arquillian.protocol.servlet;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
-
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 
@@ -53,9 +52,9 @@ public class ServletURIHandler {
     public URI locateTestServlet(Method method) {
         HTTPContext context = locateHTTPContext(method);
         return ServletUtil.determineBaseURI(
-                config,
-                context,
-                ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
+            config,
+            context,
+            ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
     }
 
     protected HTTPContext locateHTTPContext(Method method) {
@@ -69,9 +68,9 @@ public class ServletURIHandler {
                 }
             }
             throw new IllegalArgumentException("Could not determin HTTPContext from ProtocolMetadata for target: "
-                    + targetName + ". Verify that the given target name in @" + TargetsContainer.class.getSimpleName()
-                    + " match a name returned by the deployment container");
+                + targetName + ". Verify that the given target name in @" + TargetsContainer.class.getSimpleName()
+                + " match a name returned by the deployment container");
         }
-        return contexts.toArray(new HTTPContext[]{})[0];
+        return contexts.toArray(new HTTPContext[] {})[0];
     }
 }

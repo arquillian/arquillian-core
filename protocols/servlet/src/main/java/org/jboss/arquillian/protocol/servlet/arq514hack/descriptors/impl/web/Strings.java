@@ -92,5 +92,4 @@ public class Strings {
         }
         return areEqual(left, right);
     }
-
 }

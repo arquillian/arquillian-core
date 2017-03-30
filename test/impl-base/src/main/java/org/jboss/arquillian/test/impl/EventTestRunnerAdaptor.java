@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
@@ -154,7 +153,8 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
         ExecutionDecision executionDecision = TestExecutionDecider.EXECUTE.decide(testMethod);
 
         if (serviceLoader != null) {
-            final List<TestExecutionDecider> deciders = new ArrayList<TestExecutionDecider>(serviceLoader.all(TestExecutionDecider.class));
+            final List<TestExecutionDecider> deciders =
+                new ArrayList<TestExecutionDecider>(serviceLoader.all(TestExecutionDecider.class));
 
             if (deciders.size() != 0) {
                 Collections.sort(deciders, new TestExecutionDeciderComparator());

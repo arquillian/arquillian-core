@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.test.spi;
 
 import java.util.Collection;
 import java.util.Map;
-
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
@@ -47,8 +46,11 @@ public class TestDeployment {
     private Archive<?> archiveForEnrichment;
 
     /**
-     * @param applicationArchive The user defined {@link Archive}
-     * @param auxiliaryArchives  All extra library {@link Archive}s defined by extensions / core / frameworks.
+     * @param applicationArchive
+     *     The user defined {@link Archive}
+     * @param auxiliaryArchives
+     *     All extra library {@link Archive}s defined by extensions / core / frameworks.
+     *
      * @deprecated
      */
     public TestDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives) {
@@ -56,12 +58,15 @@ public class TestDeployment {
     }
 
     /**
-     * @param deploymentDescription The deployment that backs this TestDeployment
-     * @param applicationArchive    The user defined {@link Archive}
-     * @param auxiliaryArchives     All extra library {@link Archive}s defined by extensions / core / frameworks.
+     * @param deploymentDescription
+     *     The deployment that backs this TestDeployment
+     * @param applicationArchive
+     *     The user defined {@link Archive}
+     * @param auxiliaryArchives
+     *     All extra library {@link Archive}s defined by extensions / core / frameworks.
      */
     public TestDeployment(DeploymentDescription deploymentDescription, Archive<?> applicationArchive,
-                          Collection<Archive<?>> auxiliaryArchives) {
+        Collection<Archive<?>> auxiliaryArchives) {
         if (applicationArchive == null) {
             throw new IllegalArgumentException("ApplicationArchive must be specified");
         }
@@ -102,7 +107,7 @@ public class TestDeployment {
                         if (Testable.isArchiveToTest(genericArchive)) {
                             if (archiveForEnrichment != null) {
                                 throw new UnsupportedOperationException("Multiple marked Archives found in "
-                                        + applicationArchive.getName() + ". Can not determine which to enrich");
+                                    + applicationArchive.getName() + ". Can not determine which to enrich");
                             }
                             archiveForEnrichment = genericArchive;
                         }

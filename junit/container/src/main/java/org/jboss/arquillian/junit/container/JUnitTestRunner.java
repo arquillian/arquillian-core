@@ -16,6 +16,8 @@
  */
 package org.jboss.arquillian.junit.container;
 
+import java.util.Collections;
+import java.util.List;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -27,9 +29,6 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * JUnitTestRunner

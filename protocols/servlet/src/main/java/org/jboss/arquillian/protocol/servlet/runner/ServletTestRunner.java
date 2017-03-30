@@ -22,13 +22,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.util.TestRunners;
@@ -47,23 +45,18 @@ import org.jboss.arquillian.test.spi.TestResult;
  * @version $Revision: $
  */
 public class ServletTestRunner extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
     public static final String PARA_METHOD_NAME = "methodName";
     public static final String PARA_CLASS_NAME = "className";
     public static final String PARA_OUTPUT_MODE = "outputMode";
     public static final String PARA_CMD_NAME = "cmd";
-
     public static final String OUTPUT_MODE_SERIALIZED = "serializedObject";
     public static final String OUTPUT_MODE_HTML = "html";
-
     public static final String CMD_NAME_TEST = "test";
     public static final String CMD_NAME_EVENT = "event";
-
-    private static ThreadLocal<ServletContext> currentServletContext;
-
+    private static final long serialVersionUID = 1L;
     static ConcurrentHashMap<String, Command<?>> events;
     static ThreadLocal<String> currentCall;
+    private static ThreadLocal<ServletContext> currentServletContext;
 
     public static ServletContext getCurrentServletContext() {
         return currentServletContext.get();
@@ -93,7 +86,8 @@ public class ServletTestRunner extends HttpServlet {
         execute(request, response);
     }
 
-    protected void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void execute(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         String outputMode = OUTPUT_MODE_HTML;
         String cmd = CMD_NAME_TEST;
         try {
@@ -126,7 +120,6 @@ public class ServletTestRunner extends HttpServlet {
             } else {
                 throw new RuntimeException("Unknown value for parameter" + PARA_CMD_NAME + ": " + cmd);
             }
-
         } catch (Exception e) {
             if (OUTPUT_MODE_SERIALIZED.equalsIgnoreCase(outputMode)) {
                 writeObject(createFailedResult(e), response);
@@ -140,7 +133,7 @@ public class ServletTestRunner extends HttpServlet {
     }
 
     public void executeTest(HttpServletResponse response, String outputMode, String className, String methodName)
-            throws ClassNotFoundException, IOException {
+        throws ClassNotFoundException, IOException {
         Class<?> testClass = SecurityActions.getThreadContextClassLoader().loadClass(className);
         TestRunner runner = TestRunners.getTestRunner();
         TestResult testResult = runner.execute(testClass, methodName);
@@ -172,8 +165,9 @@ public class ServletTestRunner extends HttpServlet {
         }
     }
 
-    public void executeEvent(HttpServletRequest request, HttpServletResponse response, String className, String methodName)
-            throws ClassNotFoundException, IOException {
+    public void executeEvent(HttpServletRequest request, HttpServletResponse response, String className,
+        String methodName)
+        throws ClassNotFoundException, IOException {
         String eventKey = className + methodName;
 
         if (request.getContentLength() > 0) {

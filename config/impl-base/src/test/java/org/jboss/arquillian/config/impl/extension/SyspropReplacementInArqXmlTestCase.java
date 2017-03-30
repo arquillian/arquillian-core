@@ -17,7 +17,6 @@
 package org.jboss.arquillian.config.impl.extension;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.impl.AssertXPath;
 import org.jboss.arquillian.core.api.Instance;
@@ -98,5 +97,4 @@ public class SyspropReplacementInArqXmlTestCase extends AbstractManagerTestBase 
         extensions.add(ConfigurationRegistrar.class);
         super.addExtensions(extensions);
     }
-
 }

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.testenricher.cdi.client;
 
 import java.util.Map;
-
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
@@ -32,7 +31,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * A {@link ProtocolArchiveProcessor} that will add beans.xml to the protocol unit if one is defined in the test deployment.
+ * A {@link ProtocolArchiveProcessor} that will add beans.xml to the protocol unit if one is defined in the test
+ * deployment.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

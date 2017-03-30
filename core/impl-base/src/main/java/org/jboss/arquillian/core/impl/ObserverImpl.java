@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.core.spi.Manager;
@@ -42,13 +41,13 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> 
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public static ObserverImpl of(Object extension, Method observerMethod) {
-        return new ObserverImpl(extension, observerMethod);
-    }
-
     ObserverImpl(Object target, Method method) {
         this.target = target;
         this.method = method;
+    }
+
+    public static ObserverImpl of(Object extension, Method observerMethod) {
+        return new ObserverImpl(extension, observerMethod);
     }
 
     //-------------------------------------------------------------------------------------||
@@ -125,10 +124,6 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> 
 
     /**
      * Resolve all Observer method arguments. Unresolved argument types wil be null.
-     *
-     * @param manager
-     * @param event
-     * @return
      */
     private Object[] resolveArguments(Manager manager, Object event) {
         Class<?>[] argumentTypes = getMethod().getParameterTypes();
@@ -143,7 +138,8 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> 
             Class<?> argumentType = argumentTypes[i];
             arguments[i] = manager.resolve(argumentType);
             if (arguments[i] == null) {
-                log.warning(String.format("Argument %d for %s.%s is null. It won't be invoked.", i, getMethod().getDeclaringClass().getSimpleName(), getMethod().getName()));
+                log.warning(String.format("Argument %d for %s.%s is null. It won't be invoked.", i,
+                    getMethod().getDeclaringClass().getSimpleName(), getMethod().getName()));
             }
         }
         return arguments;
@@ -151,9 +147,6 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> 
 
     /**
      * Check that all arguments were resolved. Do not invoke if not.
-     *
-     * @param arguments
-     * @return
      */
     private boolean containsNull(Object[] arguments) {
         for (Object argument : arguments) {

@@ -16,20 +16,23 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
- * The {@code @Deployment} is used to define which methods should be be considered as deployment producers. Arquillian support
+ * The {@code @Deployment} is used to define which methods should be be considered as deployment producers. Arquillian
+ * support
  * two types of deployment units, a {@link Archive} or a {@link Descriptor}.
  * <p>
- * A deployment represent the isolation level of your test, that being a single JavaArchive or a multi module EnterpriseArchive.
+ * A deployment represent the isolation level of your test, that being a single JavaArchive or a multi module
+ * EnterpriseArchive.
  * <p>
- * The deployment producer will be executed to create the deployment before the Test run, this to detect environment problems as soon as
+ * The deployment producer will be executed to create the deployment before the Test run, this to detect environment
+ * problems as soon as
  * possible.
  * <p>
  * <p>
@@ -54,7 +57,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Deployment {
     /**
-     * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or method is using @OperateOnDeployment
+     * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or method is using
+     * @OperateOnDeployment
      *
      * @return The name of this Deployment
      */
@@ -62,23 +66,18 @@ public @interface Deployment {
 
     /**
      * Describes whether or not this deployment should be deployed by Arquillian.
-     *
-     * @return
      */
     boolean managed() default true;
 
     /**
-     * If multiple deployments are specified against the same target and defined as startup, this control the order of which they
+     * If multiple deployments are specified against the same target and defined as startup, this control the order of
+     * which they
      * will be given to the Container.
-     *
-     * @return
      */
     int order() default -1;
 
     /**
      * Defines if this deployment should be wrapped up based on the protocol so the testcase can be executed incontainer.
-     *
-     * @return
      */
     boolean testable() default true;
 }

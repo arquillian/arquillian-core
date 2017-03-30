@@ -34,14 +34,14 @@ public class TestNGDeploymentAppenderTestCase {
         Archive<?> archive = new TestNGDeploymentAppender().createAuxiliaryArchive();
 
         Assert.assertTrue(
-                "Should have added TestRunner SPI",
-                archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
+            "Should have added TestRunner SPI",
+            archive.contains(
+                ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
 
         Assert.assertTrue(
-                "Should have added TestRunner Impl",
-                archive.contains(ArchivePaths.create("/org/jboss/arquillian/testng/container/TestNGTestRunner.class")));
+            "Should have added TestRunner Impl",
+            archive.contains(ArchivePaths.create("/org/jboss/arquillian/testng/container/TestNGTestRunner.class")));
 
         System.out.println(archive.toString(true));
-
     }
 }

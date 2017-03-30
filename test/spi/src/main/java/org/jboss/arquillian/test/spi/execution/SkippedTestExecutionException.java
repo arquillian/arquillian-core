@@ -38,5 +38,4 @@ public class SkippedTestExecutionException extends Exception {
     public SkippedTestExecutionException(Throwable cause) {
         super(cause);
     }
-
 }

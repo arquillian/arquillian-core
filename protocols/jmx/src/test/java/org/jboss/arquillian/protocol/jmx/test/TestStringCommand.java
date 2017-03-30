@@ -18,7 +18,6 @@
 package org.jboss.arquillian.protocol.jmx.test;
 
 import java.io.Serializable;
-
 import org.jboss.arquillian.container.test.spi.command.Command;
 
 /**

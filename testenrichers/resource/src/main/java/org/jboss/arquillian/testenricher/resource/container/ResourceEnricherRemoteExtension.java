@@ -35,5 +35,4 @@ public class ResourceEnricherRemoteExtension implements RemoteLoadableExtension 
             builder.service(TestEnricher.class, ResourceInjectionEnricher.class);
         }
     }
-
 }

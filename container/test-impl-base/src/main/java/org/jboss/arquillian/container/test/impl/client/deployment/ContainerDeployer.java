@@ -17,12 +17,9 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
-import static java.security.AccessController.doPrivileged;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.PrivilegedAction;
-
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.DeployDeploymentCommand;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.GetDeploymentCommand;
@@ -31,6 +28,8 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+
+import static java.security.AccessController.doPrivileged;
 
 /**
  * ContainerDeployer
@@ -67,8 +66,8 @@ public class ContainerDeployer implements Deployer {
         return doPrivileged(new PrivilegedAction<InputStream>() {
             public InputStream run() {
                 return new ByteArrayInputStream(
-                        getCommandService().execute(
-                                new GetDeploymentCommand(name)));
+                    getCommandService().execute(
+                        new GetDeploymentCommand(name)));
             }
         });
     }

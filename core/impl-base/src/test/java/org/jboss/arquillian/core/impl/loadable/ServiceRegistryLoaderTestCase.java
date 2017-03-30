@@ -20,7 +20,6 @@ package org.jboss.arquillian.core.impl.loadable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Set;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -52,13 +51,13 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
 
         Assert.assertNotNull(services);
         Assert.assertEquals(
-                "Verify both services were loaded",
-                2, services.size());
+            "Verify both services were loaded",
+            2, services.size());
 
         for (FakeService service : services) {
             Assert.assertTrue(
-                    "Verify that the services are of the expected types",
-                    (service instanceof ShouldBeExcluded) || (service instanceof ShouldBeIncluded));
+                "Verify that the services are of the expected types",
+                (service instanceof ShouldBeExcluded) || (service instanceof ShouldBeIncluded));
         }
     }
 
@@ -70,8 +69,8 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
 
         Assert.assertNotNull(services);
         Assert.assertEquals(
-                "Verify no services were loaded",
-                0, services.size());
+            "Verify no services were loaded",
+            0, services.size());
     }
 
     @Test
@@ -83,8 +82,8 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
 
         Assert.assertNotNull(service);
         Assert.assertTrue(
-                "Verify service is of expected type",
-                service instanceof ShouldBeIncluded);
+            "Verify service is of expected type",
+            service instanceof ShouldBeIncluded);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -106,8 +105,8 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
         FakeService service = registry.getServiceLoader().onlyOne(FakeService.class, ShouldBeIncluded.class);
         Assert.assertNotNull(service);
         Assert.assertTrue(
-                "Verify service is of expected type",
-                service instanceof ShouldBeIncluded);
+            "Verify service is of expected type",
+            service instanceof ShouldBeIncluded);
     }
 
     @Test
@@ -119,8 +118,8 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
 
         FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
         Assert.assertTrue(
-                "Verify service has been statically injected",
-                service.isValid());
+            "Verify service has been statically injected",
+            service.isValid());
     }
 
     /*
@@ -136,8 +135,8 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
 
         FakeService service = registry.getServiceLoader().onlyOne(FakeService.class, ShouldBeIncluded.class);
         Assert.assertTrue(
-                "Verify service has been statically injected",
-                service.isValid());
+            "Verify service has been statically injected",
+            service.isValid());
     }
 
     /*
@@ -148,7 +147,8 @@ public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
     public void shouldBeAbleToLoadProtectedServices() throws Exception {
         ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
         registry.addService(
-                FakeService.class, (Class<FakeService>) Class.forName("org.jboss.arquillian.core.impl.loadable.util.PackageProtectedService"));
+            FakeService.class,
+            (Class<FakeService>) Class.forName("org.jboss.arquillian.core.impl.loadable.util.PackageProtectedService"));
 
         FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
         Assert.assertNotNull("Could load package protected service", service);

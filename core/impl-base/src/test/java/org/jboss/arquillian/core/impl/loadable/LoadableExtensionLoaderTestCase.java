@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl.loadable;
 
 import org.junit.Test;
 
-
 /**
  * LoadableExtensionLoaderTestCase
  *
@@ -32,5 +31,4 @@ public class LoadableExtensionLoaderTestCase {
     public void shouldBeAbleTo() throws Exception {
 
     }
-
 }

@@ -25,9 +25,9 @@ import java.util.Map;
  * @version $Revision: $
  */
 public interface DefaultProtocolDef extends ArquillianDescriptor {
-    DefaultProtocolDef setType(String type);
-
     String getType();
+
+    DefaultProtocolDef setType(String type);
 
     DefaultProtocolDef property(String name, String value);
 

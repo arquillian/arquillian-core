@@ -27,22 +27,17 @@ import java.lang.reflect.Method;
 public interface TestMethodExecutor {
     /**
      * The method to invoke.
-     *
-     * @return
      */
     Method getMethod();
 
     /**
      * The current instance.
-     *
-     * @return
      */
     Object getInstance();
 
     /**
      * Invokes the Method on the Instance.
      *
-     * @param parameters
      * @throws Throwable
      */
     void invoke(Object... parameters) throws Throwable;

@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.core.spi.context;
 
-
 /**
  * IdBoundContext
  *
@@ -31,5 +30,4 @@ public interface IdBoundContext<T> extends Context {
     void destroy(T id);
 
     void deactivate();
-
 }

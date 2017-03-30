@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;

@@ -17,7 +17,6 @@
 package org.jboss.arquillian.test.impl.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;

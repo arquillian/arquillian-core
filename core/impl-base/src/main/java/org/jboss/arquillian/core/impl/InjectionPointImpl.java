@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.spi.InjectionPoint;
 import org.jboss.arquillian.core.spi.InvocationException;
@@ -40,14 +39,14 @@ public class InjectionPointImpl implements InjectionPoint {
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public static InjectionPointImpl of(Object target, Field field) {
-        return new InjectionPointImpl(target, field, Reflections.getScope(field));
-    }
-
     InjectionPointImpl(Object target, Field field, Class<? extends Annotation> scope) {
         this.target = target;
         this.field = field;
         this.scope = scope;
+    }
+
+    public static InjectionPointImpl of(Object target, Field field) {
+        return new InjectionPointImpl(target, field, Reflections.getScope(field));
     }
 
     //-------------------------------------------------------------------------------------||

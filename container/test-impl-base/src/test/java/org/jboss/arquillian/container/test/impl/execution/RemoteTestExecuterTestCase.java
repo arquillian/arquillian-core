@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
@@ -106,9 +105,9 @@ public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase {
         Mockito.when(protocolRegistry.getProtocol(Mockito.any(ProtocolDescription.class))).thenReturn(protocolDefinition);
         Mockito.when(protocolDefinition.getProtocol()).thenReturn(protocol);
         Mockito.when(protocol.getExecutor(
-                Mockito.any(ProtocolConfiguration.class),
-                Mockito.any(ProtocolMetaData.class),
-                Mockito.any(CommandCallback.class))).thenAnswer(new Answer<ContainerMethodExecutor>() {
+            Mockito.any(ProtocolConfiguration.class),
+            Mockito.any(ProtocolMetaData.class),
+            Mockito.any(CommandCallback.class))).thenAnswer(new Answer<ContainerMethodExecutor>() {
             @Override
             public ContainerMethodExecutor answer(InvocationOnMock invocation) throws Throwable {
                 return new TestContainerMethodExecutor((CommandCallback) invocation.getArguments()[2]);
@@ -117,7 +116,7 @@ public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase {
 
         Mockito.when(testExecutor.getInstance()).thenReturn(this);
         Mockito.when(testExecutor.getMethod()).thenReturn(
-                getTestMethod("shouldReactivePreviousContextsOnRemoteEvents"));
+            getTestMethod("shouldReactivePreviousContextsOnRemoteEvents"));
     }
 
     @Test

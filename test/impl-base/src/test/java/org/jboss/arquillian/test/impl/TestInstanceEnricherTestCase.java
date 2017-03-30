@@ -18,7 +18,6 @@ package org.jboss.arquillian.test.impl;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;

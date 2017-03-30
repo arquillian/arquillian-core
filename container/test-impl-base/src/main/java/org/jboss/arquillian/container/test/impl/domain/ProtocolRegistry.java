@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.test.impl.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.spi.Validate;
@@ -37,17 +36,28 @@ public class ProtocolRegistry {
     }
 
     /**
-     * @param protocol The Protocol to add
+     * @param protocol
+     *     The Protocol to add
+     *
      * @return this
-     * @throws IllegalArgumentException if a protocol with same name found
+     *
+     * @throws IllegalArgumentException
+     *     if a protocol with same name found
      */
     public ProtocolRegistry addProtocol(ProtocolDefinition protocolDefinition) {
         Validate.notNull(protocolDefinition, "ProtocolDefinition must be specified");
-        ProtocolDefinition protocolAllReadyRegistered = findSpecificProtocol(protocolDefinition.getProtocol().getDescription());
+        ProtocolDefinition protocolAllReadyRegistered =
+            findSpecificProtocol(protocolDefinition.getProtocol().getDescription());
         if (protocolAllReadyRegistered != null) {
             throw new IllegalArgumentException(
-                    "Protocol with description " + protocolDefinition.getProtocol().getDescription() + " allready registered. " +
-                            "Registered " + protocolAllReadyRegistered.getClass() + ", trying to register " + protocolDefinition.getProtocol().getClass());
+                "Protocol with description "
+                    + protocolDefinition.getProtocol().getDescription()
+                    + " allready registered. "
+                    +
+                    "Registered "
+                    + protocolAllReadyRegistered.getClass()
+                    + ", trying to register "
+                    + protocolDefinition.getProtocol().getClass());
         }
         protocols.add(protocolDefinition);
         return this;

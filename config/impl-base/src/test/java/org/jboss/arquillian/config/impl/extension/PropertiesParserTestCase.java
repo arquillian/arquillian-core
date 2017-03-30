@@ -38,17 +38,21 @@ public class PropertiesParserTestCase {
 
     private static final String CONFIGURATION_PROP_1 = "jbossHome";
 
-    private static final String CONTAINER_PROP_CONFIGURATION_1 = "arq.container.jboss.configuration." + CONFIGURATION_PROP_1;
+    private static final String CONTAINER_PROP_CONFIGURATION_1 =
+        "arq.container.jboss.configuration." + CONFIGURATION_PROP_1;
     private static final String CONTAINER_VAL_CONFIGURATION_1 = "target/jboss-as";
-    private static final String CONTAINER_PROP_PROTOCOL_1 = "arq.container.jboss.protocol.Servlet 3.0." + CONFIGURATION_PROP_1;
+    private static final String CONTAINER_PROP_PROTOCOL_1 =
+        "arq.container.jboss.protocol.Servlet 3.0." + CONFIGURATION_PROP_1;
     private static final String CONTAINER_VAL_PROTOCOL_1 = "192.0.0.1";
 
     private static final String CONTAINER_PROP_1 = "arq.container.jboss.mode";
     private static final String CONTAINER_VAL_1 = "suite";
 
-    private static final String GROUP_PROP_CONTAINER_CONFIGURATION_1 = "arq.group.cluster.container.jboss.configuration." + CONFIGURATION_PROP_1;
+    private static final String GROUP_PROP_CONTAINER_CONFIGURATION_1 =
+        "arq.group.cluster.container.jboss.configuration." + CONFIGURATION_PROP_1;
     private static final String GROUP_VAL_CONTAINER_CONFIGURATION_1 = CONTAINER_VAL_1;
-    private static final String GROUP_PROP_CONTAINER_PROTOCOL_1 = "arq.group.Cluster 1.container.JBoss AS 7.protocol.Servlet 3.0." + CONFIGURATION_PROP_1;
+    private static final String GROUP_PROP_CONTAINER_PROTOCOL_1 =
+        "arq.group.Cluster 1.container.JBoss AS 7.protocol.Servlet 3.0." + CONFIGURATION_PROP_1;
     private static final String GROUP_VAL_CONTAINER_PROTOCOL_1 = CONTAINER_VAL_1;
 
     private static final String GROUP_PROP_CONTAINER_1 = "arq.group.cluster.container.jboss.mode";
@@ -62,7 +66,6 @@ public class PropertiesParserTestCase {
 
     private static final String EXTENSION_PROP_1 = "arq.extension.extension-1." + CONFIGURATION_PROP_1;
     private static final String EXTENSION_VAL_1 = "suite";
-
 
     private ArquillianDescriptor desc;
 
@@ -117,7 +120,12 @@ public class PropertiesParserTestCase {
         validate(CONTAINER_PROP_PROTOCOL_1, CONTAINER_VAL_PROTOCOL_1, new ValueCallback() {
             @Override
             public String get() {
-                return desc.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+                return desc.getContainers()
+                    .get(0)
+                    .getProtocols()
+                    .get(0)
+                    .getProtocolProperties()
+                    .get(CONFIGURATION_PROP_1);
             }
         });
     }
@@ -147,7 +155,12 @@ public class PropertiesParserTestCase {
         validate(GROUP_PROP_CONTAINER_CONFIGURATION_1, GROUP_VAL_CONTAINER_CONFIGURATION_1, new ValueCallback() {
             @Override
             public String get() {
-                return desc.getGroups().get(0).getGroupContainers().get(0).getContainerProperties().get(CONFIGURATION_PROP_1);
+                return desc.getGroups()
+                    .get(0)
+                    .getGroupContainers()
+                    .get(0)
+                    .getContainerProperties()
+                    .get(CONFIGURATION_PROP_1);
             }
         });
     }
@@ -157,7 +170,14 @@ public class PropertiesParserTestCase {
         validate(GROUP_PROP_CONTAINER_PROTOCOL_1, GROUP_VAL_CONTAINER_PROTOCOL_1, new ValueCallback() {
             @Override
             public String get() {
-                return desc.getGroups().get(0).getGroupContainers().get(0).getProtocols().get(0).getProtocolProperties().get(CONFIGURATION_PROP_1);
+                return desc.getGroups()
+                    .get(0)
+                    .getGroupContainers()
+                    .get(0)
+                    .getProtocols()
+                    .get(0)
+                    .getProtocolProperties()
+                    .get(CONFIGURATION_PROP_1);
             }
         });
     }
@@ -194,11 +214,11 @@ public class PropertiesParserTestCase {
         }
     }
 
-    public interface ValueCallback {
-        String get();
-    }
-
     private ArquillianDescriptor create() {
         return Descriptors.create(ArquillianDescriptor.class);
+    }
+
+    public interface ValueCallback {
+        String get();
     }
 }

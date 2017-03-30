@@ -30,8 +30,11 @@ public interface TestRunner {
     /**
      * Run a single test method in a test class.
      *
-     * @param testClass  The test case class to execute
-     * @param methodName The method to execute
+     * @param testClass
+     *     The test case class to execute
+     * @param methodName
+     *     The method to execute
+     *
      * @return The result of the test
      */
     TestResult execute(Class<?> testClass, String methodName);

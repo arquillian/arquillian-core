@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.impl.client.deployment;
 
 import java.io.File;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -52,8 +51,11 @@ public class ArchiveDeploymentExporter {
 
         String systemExport = SecurityActions.getProperty("arquillian.deploymentExportPath");
         String systemExportExploded = SecurityActions.getProperty("arquillian.deploymentExportExploded");
-        String exportPath = (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath() : systemExport;
-        Boolean exportExploded = (systemExportExploded == null || systemExportExploded.length() == 0) ? engine.getDeploymentExportExploded() : Boolean.parseBoolean(systemExport);
+        String exportPath =
+            (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath() : systemExport;
+        Boolean exportExploded =
+            (systemExportExploded == null || systemExportExploded.length() == 0) ? engine.getDeploymentExportExploded()
+                : Boolean.parseBoolean(systemExport);
 
         if (exportPath != null && event.getDeployment().isArchiveDeployment()) {
             File exportDir = new File(exportPath);
@@ -74,11 +76,11 @@ public class ArchiveDeploymentExporter {
 
             if (exportExploded) {
                 deployment.as(ExplodedExporter.class).exportExploded(
-                        exportDir, createFileName(event.getDeployment(), deployment));
+                    exportDir, createFileName(event.getDeployment(), deployment));
             } else {
                 deployment.as(ZipExporter.class).exportTo(
-                        new File(exportDir, createFileName(event.getDeployment(), deployment)),
-                        true);
+                    new File(exportDir, createFileName(event.getDeployment(), deployment)),
+                    true);
             }
         }
     }

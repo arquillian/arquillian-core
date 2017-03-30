@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
-
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -36,14 +35,14 @@ public class ToolingDeploymentFormatterTestCase {
     @Test
     public void shouldBeAbleToExportArchive() throws Exception {
         String content = ShrinkWrap
-                .create(WebArchive.class, "test.jar")
-                .addAsResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
-                .addAsResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
-                .addAsResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(),
-                        ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
-                .addAsServiceProvider(Service.class, ServiceImpl.class)
-                .addAsLibrary(ShrinkWrap.create(JavaArchive.class, "test.jar").addClass(ToolingDeploymentFormatter.class))
-                .toString(new ToolingDeploymentFormatter(getClass()));
+            .create(WebArchive.class, "test.jar")
+            .addAsResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
+            .addAsResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
+            .addAsResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(),
+                ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
+            .addAsServiceProvider(Service.class, ServiceImpl.class)
+            .addAsLibrary(ShrinkWrap.create(JavaArchive.class, "test.jar").addClass(ToolingDeploymentFormatter.class))
+            .toString(new ToolingDeploymentFormatter(getClass()));
 
         // TODO: do some output Assertions..
         Assert.assertNotNull(content);

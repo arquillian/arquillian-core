@@ -17,7 +17,6 @@
 package org.jboss.arquillian.test.spi;
 
 import java.lang.reflect.Method;
-
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
 /**
@@ -49,8 +48,6 @@ public interface TestRunnerAdaptor {
      * Activate a new TestClass.<br/>
      * This will trigger the BeforeClass event.
      *
-     * @param testClass
-     * @param executor
      * @throws Exception
      */
     void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
@@ -59,8 +56,6 @@ public interface TestRunnerAdaptor {
      * Deactivate the TestClass.<br/>
      * This will trigger the AfterClass event.
      *
-     * @param testClass
-     * @param executor
      * @throws Exception
      */
     void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
@@ -69,9 +64,6 @@ public interface TestRunnerAdaptor {
      * Activate a new TestInstance.<br/>
      * This will trigger the Before event.
      *
-     * @param testInstance
-     * @param testMethod
-     * @param executor
      * @throws Exception
      */
     void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
@@ -80,9 +72,6 @@ public interface TestRunnerAdaptor {
      * Deactivate the TestInstance.<br/>
      * This will trigger the After event.
      *
-     * @param testInstance
-     * @param testMethod
-     * @param executor
      * @throws Exception
      */
     void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
@@ -91,8 +80,6 @@ public interface TestRunnerAdaptor {
      * Activate a TestMethod execution.<br/>
      * This will trigger the Test event.
      *
-     * @param testMethodExecutor
-     * @return
      * @throws Exception
      */
     TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
@@ -103,7 +90,9 @@ public interface TestRunnerAdaptor {
      * This can be used by a TestFramework to trigger e.g. additional Lifecycle
      * phases not described directly by the Test SPI.
      *
-     * @param event Any event
+     * @param event
+     *     Any event
+     *
      * @throws Exception
      */
     <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception;

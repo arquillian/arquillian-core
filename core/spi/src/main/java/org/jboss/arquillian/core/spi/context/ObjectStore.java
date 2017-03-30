@@ -30,5 +30,4 @@ public interface ObjectStore {
     <T> T get(Class<T> type);
 
     ObjectStore clear();
-
 }

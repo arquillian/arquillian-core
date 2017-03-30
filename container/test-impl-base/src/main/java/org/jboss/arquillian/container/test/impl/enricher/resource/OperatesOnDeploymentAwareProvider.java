@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -71,20 +70,28 @@ public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvi
                 context = deploymentContext.get();
                 scenario = deploymentScenario.get();
                 if (scenario == null) {
-                    throw new IllegalStateException("No " + DeploymentScenario.class.getSimpleName() + " found. " +
-                            "Possible cause, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side. (@" + RunAsClient.class.getSimpleName() + ")");
+                    throw new IllegalStateException("No "
+                        + DeploymentScenario.class.getSimpleName()
+                        + " found. "
+                        +
+                        "Possible cause, @"
+                        + OperateOnDeployment.class.getSimpleName()
+                        + " is currently only supported on the client side. (@"
+                        + RunAsClient.class.getSimpleName()
+                        + ")");
                 }
                 OperateOnDeployment operatesOn = getOperatesOnDeployment(qualifiers);
                 deployment = scenario.deployment(new DeploymentTargetDescription(operatesOn.value()));
                 if (deployment == null) {
                     throw new IllegalArgumentException(
-                            "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
-                                    "no deployment found with name: " + operatesOn.value());
+                        "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
+                            "no deployment found with name: " + operatesOn.value());
                 }
                 context.activate(deployment);
                 contextActivated = true;
             }
-            return runInContainerContext(deployment == null ? null : deployment.getDescription().getTarget(), resource, qualifiers);
+            return runInContainerContext(deployment == null ? null : deployment.getDescription().getTarget(), resource,
+                qualifiers);
         } finally {
             if (contextActivated) {
                 context.deactivate();
@@ -92,7 +99,8 @@ public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvi
         }
     }
 
-    private Object runInContainerContext(TargetDescription targetDescription, ArquillianResource resource, Annotation... qualifiers) {
+    private Object runInContainerContext(TargetDescription targetDescription, ArquillianResource resource,
+        Annotation... qualifiers) {
         ContainerContext context = null;
         ContainerRegistry registry = null;
         boolean activateContext = targetDescription != null;
@@ -102,14 +110,19 @@ public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvi
                 context = containerContext.get();
                 registry = containerRegistry.get();
                 if (registry == null) {
-                    throw new IllegalStateException("No " + ContainerRegistry.class.getSimpleName() + " found. " +
-                            "Possible problem is, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side.");
+                    throw new IllegalStateException("No "
+                        + ContainerRegistry.class.getSimpleName()
+                        + " found. "
+                        +
+                        "Possible problem is, @"
+                        + OperateOnDeployment.class.getSimpleName()
+                        + " is currently only supported on the client side.");
                 }
                 Container container = registry.getContainer(targetDescription);
                 if (container == null) {
                     throw new IllegalArgumentException(
-                            "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
-                                    "no container found with name: " + targetDescription);
+                        "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
+                            "no container found with name: " + targetDescription);
                 }
                 context.activate(container.getName());
                 contextActivated = true;

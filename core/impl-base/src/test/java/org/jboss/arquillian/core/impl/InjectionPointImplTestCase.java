@@ -22,7 +22,6 @@ import org.jboss.arquillian.core.spi.InjectionPoint;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * InjectionPointImplTestCase
  *

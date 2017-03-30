@@ -16,10 +16,10 @@
  */
 package org.jboss.arquillian.junit.rules;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.runners.model.Statement;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * An implementation of Statement

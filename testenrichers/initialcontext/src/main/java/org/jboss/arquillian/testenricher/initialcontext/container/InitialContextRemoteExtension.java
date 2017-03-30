@@ -31,5 +31,4 @@ public class InitialContextRemoteExtension implements RemoteLoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.observer(InitialContextProducer.class);
     }
-
 }

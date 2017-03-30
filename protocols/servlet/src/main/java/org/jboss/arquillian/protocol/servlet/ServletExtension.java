@@ -32,7 +32,7 @@ public class ServletExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol.class)
-                .service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_3.ServletProtocol.class);
+            .service(Protocol.class, org.jboss.arquillian.protocol.servlet.v_3.ServletProtocol.class);
 
         if (Validate.classExists("javax.servlet.ServletContext")) {
             builder.service(ResourceProvider.class, ServletContextResourceProvider.class);

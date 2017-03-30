@@ -16,14 +16,10 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import static org.jboss.arquillian.config.descriptor.impl.AssertXPath.assertXPath;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.After;
@@ -36,6 +32,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import static org.jboss.arquillian.config.descriptor.impl.AssertXPath.assertXPath;
 
 /**
  * Test cases to ensure that EL sysprop replacement
@@ -98,16 +95,17 @@ public class ArquillianDescriptorPropertiesTestCase {
 
         // add multiple times to see only one property added
         desc = create()
-                .engine()
-                .deploymentExportPath(setPropKey(KEY_PROPERTY_VALUE_1))
-                .deploymentExportPath(setPropKey(KEY_PROPERTY_VALUE_1))
-                .maxTestClassesBeforeRestart(PROPERTY_INT_VALUE_1)
-                .maxTestClassesBeforeRestart(PROPERTY_INT_VALUE_1);
+            .engine()
+            .deploymentExportPath(setPropKey(KEY_PROPERTY_VALUE_1))
+            .deploymentExportPath(setPropKey(KEY_PROPERTY_VALUE_1))
+            .maxTestClassesBeforeRestart(PROPERTY_INT_VALUE_1)
+            .maxTestClassesBeforeRestart(PROPERTY_INT_VALUE_1);
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
         assertXPath(descString, "/arquillian/engine/property[@name='deploymentExportPath']/text()", PROPERTY_VALUE_1);
-        assertXPath(descString, "/arquillian/engine/property[@name='maxTestClassesBeforeRestart']/text()", PROPERTY_INT_VALUE_1);
+        assertXPath(descString, "/arquillian/engine/property[@name='maxTestClassesBeforeRestart']/text()",
+            PROPERTY_INT_VALUE_1);
 
         ArquillianDescriptor descriptor = create(descString);
 
@@ -119,7 +117,7 @@ public class ArquillianDescriptorPropertiesTestCase {
     public void shouldReturnNullOnEnginePropertiesIfNotSet() throws Exception {
         // add multiple times to see only one property added
         desc = create()
-                .engine();
+            .engine();
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -129,15 +127,14 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertNull(descriptor.engine().getMaxTestClassesBeforeRestart());
     }
 
-
     @Test
     public void shouldBeAbleToAddContainer() throws Exception {
         System.setProperty(KEY_CONTAINER_NAME_1, CONTAINER_NAME_1);
         System.setProperty(KEY_CONTAINER_NAME_2, CONTAINER_NAME_2);
 
         desc = create()
-                .container(setPropKey(KEY_CONTAINER_NAME_1)).setDefault()
-                .container(setPropKey(KEY_CONTAINER_NAME_2));
+            .container(setPropKey(KEY_CONTAINER_NAME_1)).setDefault()
+            .container(setPropKey(KEY_CONTAINER_NAME_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -157,8 +154,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_CONTAINER_NAME_2, CONTAINER_NAME_2);
 
         desc = create()
-                .container(CONTAINER_NAME_1).setDefault()
-                .container(CONTAINER_NAME_1).setContainerName(setPropKey(KEY_CONTAINER_NAME_2));
+            .container(CONTAINER_NAME_1).setDefault()
+            .container(CONTAINER_NAME_1).setContainerName(setPropKey(KEY_CONTAINER_NAME_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -176,8 +173,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_PROPERTY_VALUE_1, PROPERTY_VALUE_1);
 
         desc = create()
-                .defaultProtocol(PROTOCOL_TYPE_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1));
+            .defaultProtocol(PROTOCOL_TYPE_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -191,16 +188,15 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getDefaultProtocol().getProperties().get(PROPERTY_NAME_1));
     }
 
-
     @Test
     public void shouldBeAbleToAddDefaultProtocolAndOverwriteProperty() throws Exception {
         System.setProperty(KEY_PROPERTY_VALUE_1, PROPERTY_VALUE_1);
         System.setProperty(KEY_PROPERTY_VALUE_2, PROPERTY_VALUE_2);
 
         desc = create()
-                .defaultProtocol(PROTOCOL_TYPE_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
+            .defaultProtocol(PROTOCOL_TYPE_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -222,9 +218,9 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_DEPENDENCY_2, DEPENDENCY_2);
 
         desc = create()
-                .container(CONTAINER_NAME_1)
-                .dependency(setPropKey(KEY_DEPENDENCY_1))
-                .dependency(setPropKey(KEY_DEPENDENCY_2));
+            .container(CONTAINER_NAME_1)
+            .dependency(setPropKey(KEY_DEPENDENCY_1))
+            .dependency(setPropKey(KEY_DEPENDENCY_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -244,9 +240,9 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_DEPENDENCY_1, DEPENDENCY_1);
 
         desc = create()
-                .container(CONTAINER_NAME_1)
-                .dependency(setPropKey(KEY_DEPENDENCY_1))
-                .dependency(setPropKey(KEY_DEPENDENCY_1));
+            .container(CONTAINER_NAME_1)
+            .dependency(setPropKey(KEY_DEPENDENCY_1))
+            .dependency(setPropKey(KEY_DEPENDENCY_1));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -265,11 +261,11 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_PROPERTY_VALUE_2, PROPERTY_VALUE_2);
 
         desc = create()
-                .container(CONTAINER_NAME_1)
-                .protocol(PROTOCOL_TYPE_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .protocol(PROTOCOL_TYPE_2)
-                .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2));
+            .container(CONTAINER_NAME_1)
+            .protocol(PROTOCOL_TYPE_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .protocol(PROTOCOL_TYPE_2)
+            .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -288,9 +284,11 @@ public class ArquillianDescriptorPropertiesTestCase {
 
         Assert.assertEquals(2, descriptor.getContainers().get(0).getProtocols().size());
         Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getContainers().get(0).getProtocols().get(0).getType());
-        Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_1,
+            descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
         Assert.assertEquals(PROTOCOL_TYPE_2, descriptor.getContainers().get(0).getProtocols().get(1).getType());
-        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(0).getProtocols().get(1).getProtocolProperties().get(PROPERTY_NAME_2));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getContainers().get(0).getProtocols().get(1).getProtocolProperties().get(PROPERTY_NAME_2));
     }
 
     @Test
@@ -299,11 +297,11 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_PROPERTY_VALUE_2, PROPERTY_VALUE_2);
 
         desc = create()
-                .container(CONTAINER_NAME_1)
-                .protocol(PROTOCOL_TYPE_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .protocol(PROTOCOL_TYPE_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
+            .container(CONTAINER_NAME_1)
+            .protocol(PROTOCOL_TYPE_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .protocol(PROTOCOL_TYPE_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -316,7 +314,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertEquals(1, descriptor.getContainers().size());
         Assert.assertEquals(1, descriptor.getContainers().get(0).getProtocols().size());
         Assert.assertEquals(PROTOCOL_TYPE_1, descriptor.getContainers().get(0).getProtocols().get(0).getType());
-        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getContainers().get(0).getProtocols().get(0).getProtocolProperties().get(PROPERTY_NAME_1));
     }
 
     @Test
@@ -327,11 +326,11 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_ENV_NAME_1, PROPERTY_VALUE_4);
 
         desc = create()
-                .container(CONTAINER_NAME_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .container(CONTAINER_NAME_2)
-                .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2))
-                .property(PROPERTY_NAME_4, setPropKey(KEY_ENV_NAME_1));
+            .container(CONTAINER_NAME_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .container(CONTAINER_NAME_2)
+            .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2))
+            .property(PROPERTY_NAME_4, setPropKey(KEY_ENV_NAME_1));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -349,10 +348,13 @@ public class ArquillianDescriptorPropertiesTestCase {
         ArquillianDescriptor descriptor = create(descString);
         Assert.assertEquals(2, descriptor.getContainers().size());
         Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
-        Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_1,
+            descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
         Assert.assertEquals(CONTAINER_NAME_2, descriptor.getContainers().get(1).getContainerName());
-        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_2));
-        Assert.assertEquals(PROPERTY_VALUE_4, descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_4));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_2));
+        Assert.assertEquals(PROPERTY_VALUE_4,
+            descriptor.getContainers().get(1).getContainerProperties().get(PROPERTY_NAME_4));
     }
 
     @Test
@@ -361,9 +363,9 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_PROPERTY_VALUE_2, PROPERTY_VALUE_2);
 
         desc = create()
-                .container(CONTAINER_NAME_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
+            .container(CONTAINER_NAME_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -376,7 +378,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertEquals(1, descriptor.getContainers().size());
         Assert.assertEquals(CONTAINER_NAME_1, descriptor.getContainers().get(0).getContainerName());
         Assert.assertEquals(1, descriptor.getContainers().get(0).getContainerProperties().size());
-        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getContainers().get(0).getContainerProperties().get(PROPERTY_NAME_1));
     }
 
     @Test
@@ -386,28 +389,32 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_CONTAINER_NAME_3, CONTAINER_NAME_3);
 
         desc = create()
-                .group(GROUP_NAME_1)
-                .setGroupDefault()
-                .container(setPropKey(KEY_CONTAINER_NAME_1))
-                .container(setPropKey(KEY_CONTAINER_NAME_2))
-                .group(GROUP_NAME_2)
-                .container(setPropKey(KEY_CONTAINER_NAME_3));
+            .group(GROUP_NAME_1)
+            .setGroupDefault()
+            .container(setPropKey(KEY_CONTAINER_NAME_1))
+            .container(setPropKey(KEY_CONTAINER_NAME_2))
+            .group(GROUP_NAME_2)
+            .container(setPropKey(KEY_CONTAINER_NAME_3));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
         assertXPath(descString, "/arquillian/group/@qualifier", GROUP_NAME_1, GROUP_NAME_2);
         assertXPath(descString, "/arquillian/group[1]/@default", true);
-        assertXPath(descString, "/arquillian/group/container/@qualifier", CONTAINER_NAME_1, CONTAINER_NAME_2, CONTAINER_NAME_3);
+        assertXPath(descString, "/arquillian/group/container/@qualifier", CONTAINER_NAME_1, CONTAINER_NAME_2,
+            CONTAINER_NAME_3);
 
         ArquillianDescriptor descriptor = create(descString);
         Assert.assertEquals(2, descriptor.getGroups().size());
         Assert.assertEquals(2, descriptor.getGroups().get(0).getGroupContainers().size());
         Assert.assertEquals(1, descriptor.getGroups().get(1).getGroupContainers().size());
         Assert.assertEquals(GROUP_NAME_1, descriptor.getGroups().get(0).getGroupName());
-        Assert.assertEquals(CONTAINER_NAME_1, descriptor.getGroups().get(0).getGroupContainers().get(0).getContainerName());
-        Assert.assertEquals(CONTAINER_NAME_2, descriptor.getGroups().get(0).getGroupContainers().get(1).getContainerName());
+        Assert.assertEquals(CONTAINER_NAME_1,
+            descriptor.getGroups().get(0).getGroupContainers().get(0).getContainerName());
+        Assert.assertEquals(CONTAINER_NAME_2,
+            descriptor.getGroups().get(0).getGroupContainers().get(1).getContainerName());
         Assert.assertEquals(GROUP_NAME_2, descriptor.getGroups().get(1).getGroupName());
-        Assert.assertEquals(CONTAINER_NAME_3, descriptor.getGroups().get(1).getGroupContainers().get(0).getContainerName());
+        Assert.assertEquals(CONTAINER_NAME_3,
+            descriptor.getGroups().get(1).getGroupContainers().get(0).getContainerName());
     }
 
     @Test
@@ -415,9 +422,9 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_CONTAINER_NAME_1, CONTAINER_NAME_1);
 
         desc = create()
-                .group(GROUP_NAME_1)
-                .container(setPropKey(KEY_CONTAINER_NAME_1))
-                .container(setPropKey(KEY_CONTAINER_NAME_1));
+            .group(GROUP_NAME_1)
+            .container(setPropKey(KEY_CONTAINER_NAME_1))
+            .container(setPropKey(KEY_CONTAINER_NAME_1));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -427,7 +434,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         ArquillianDescriptor descriptor = create(descString);
         Assert.assertEquals(1, descriptor.getGroups().size());
         Assert.assertEquals(1, descriptor.getGroups().get(0).getGroupContainers().size());
-        Assert.assertEquals(CONTAINER_NAME_1, descriptor.getGroups().get(0).getGroupContainers().get(0).getContainerName());
+        Assert.assertEquals(CONTAINER_NAME_1,
+            descriptor.getGroups().get(0).getGroupContainers().get(0).getContainerName());
     }
 
     @Test
@@ -437,11 +445,11 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_PROPERTY_VALUE_3, PROPERTY_VALUE_3);
 
         desc = create()
-                .extension(EXTENSION_NAME_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2))
-                .extension(EXTENSION_NAME_2)
-                .property(PROPERTY_NAME_3, setPropKey(KEY_PROPERTY_VALUE_3));
+            .extension(EXTENSION_NAME_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .property(PROPERTY_NAME_2, setPropKey(KEY_PROPERTY_VALUE_2))
+            .extension(EXTENSION_NAME_2)
+            .property(PROPERTY_NAME_3, setPropKey(KEY_PROPERTY_VALUE_3));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -458,21 +466,24 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertEquals(2, descriptor.getExtensions().size());
         Assert.assertEquals(EXTENSION_NAME_1, descriptor.getExtensions().get(0).getExtensionName());
         Assert.assertEquals(2, descriptor.getExtensions().get(0).getExtensionProperties().size());
-        Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
-        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_2));
+        Assert.assertEquals(PROPERTY_VALUE_1,
+            descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_2));
 
         Assert.assertEquals(EXTENSION_NAME_2, descriptor.getExtensions().get(1).getExtensionName());
         Assert.assertEquals(1, descriptor.getExtensions().get(1).getExtensionProperties().size());
-        Assert.assertEquals(PROPERTY_VALUE_3, descriptor.getExtensions().get(1).getExtensionProperties().get(PROPERTY_NAME_3));
+        Assert.assertEquals(PROPERTY_VALUE_3,
+            descriptor.getExtensions().get(1).getExtensionProperties().get(PROPERTY_NAME_3));
     }
 
     @Test
     public void shouldBeAbleToRenameExtension() throws Exception {
         desc = create()
-                .extension(EXTENSION_NAME_1)
-                .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
-                .extension(EXTENSION_NAME_1)
-                .setExtensionName(EXTENSION_NAME_2);
+            .extension(EXTENSION_NAME_1)
+            .property(PROPERTY_NAME_1, PROPERTY_VALUE_1)
+            .extension(EXTENSION_NAME_1)
+            .setExtensionName(EXTENSION_NAME_2);
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -482,7 +493,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertEquals(1, descriptor.getExtensions().size());
         Assert.assertEquals(EXTENSION_NAME_2, descriptor.getExtensions().get(0).getExtensionName());
         Assert.assertEquals(1, descriptor.getExtensions().get(0).getExtensionProperties().size());
-        Assert.assertEquals(PROPERTY_VALUE_1, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_1,
+            descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
     }
 
     @Test
@@ -491,9 +503,9 @@ public class ArquillianDescriptorPropertiesTestCase {
         System.setProperty(KEY_PROPERTY_VALUE_2, PROPERTY_VALUE_2);
 
         desc = create()
-                .extension(EXTENSION_NAME_1)
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
-                .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
+            .extension(EXTENSION_NAME_1)
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_1))
+            .property(PROPERTY_NAME_1, setPropKey(KEY_PROPERTY_VALUE_2));
         desc = ConfigurationSysPropResolver.resolveSystemProperties(desc);
         final String descString = desc.exportAsString();
 
@@ -505,7 +517,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         Assert.assertEquals(1, descriptor.getExtensions().size());
         Assert.assertEquals(EXTENSION_NAME_1, descriptor.getExtensions().get(0).getExtensionName());
         Assert.assertEquals(1, descriptor.getExtensions().get(0).getExtensionProperties().size());
-        Assert.assertEquals(PROPERTY_VALUE_2, descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
+        Assert.assertEquals(PROPERTY_VALUE_2,
+            descriptor.getExtensions().get(0).getExtensionProperties().get(PROPERTY_NAME_1));
     }
 
     //-------------------------------------------------------------------------------------||
@@ -527,8 +540,8 @@ public class ArquillianDescriptorPropertiesTestCase {
         dbf.setValidating(true);
         dbf.setNamespaceAware(true);
         dbf.setAttribute(
-                "http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                "http://www.w3.org/2001/XMLSchema");
+            "http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+            "http://www.w3.org/2001/XMLSchema");
         DocumentBuilder db = dbf.newDocumentBuilder();
         db.setErrorHandler(new ErrorHandler() {
             @Override

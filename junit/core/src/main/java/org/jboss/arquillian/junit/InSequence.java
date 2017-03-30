@@ -17,12 +17,12 @@
  */
 package org.jboss.arquillian.junit;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotation used to order the execution flow of the @Test methods defined in a JUnit test class.

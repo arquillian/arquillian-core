@@ -45,5 +45,4 @@ public interface ApplicationDescriptor extends Descriptor {
     ApplicationDescriptor securityRole(String roleName);
 
     ApplicationDescriptor securityRole(String roleName, String description);
-
 }

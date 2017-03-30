@@ -19,7 +19,6 @@ package org.jboss.arquillian.junit.standalone;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -49,9 +48,9 @@ public class LocalTestMethodExecutor {
         TestResult result = new TestResult();
         try {
             event.getTestMethodExecutor().invoke(
-                    enrichArguments(
-                            event.getTestMethod(),
-                            serviceLoader.get().all(TestEnricher.class)));
+                enrichArguments(
+                    event.getTestMethod(),
+                    serviceLoader.get().all(TestEnricher.class)));
             result.setStatus(Status.PASSED);
         } catch (Throwable e) {
             result.setStatus(Status.FAILED);
@@ -66,7 +65,6 @@ public class LocalTestMethodExecutor {
      * Enrich the method arguments of a method call.<br/>
      * The Object[] index will match the method parameterType[] index.
      *
-     * @param method
      * @return the argument values
      */
     private Object[] enrichArguments(Method method, Collection<TestEnricher> enrichers) {
@@ -86,7 +84,7 @@ public class LocalTestMethodExecutor {
         }
         if (values.length != resolvedValues.length) {
             throw new IllegalStateException("TestEnricher resolved wrong argument count, expected " +
-                    values.length + " returned " + resolvedValues.length);
+                values.length + " returned " + resolvedValues.length);
         }
         for (int i = 0; i < resolvedValues.length; i++) {
             Object resvoledValue = resolvedValues[i];

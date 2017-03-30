@@ -57,8 +57,11 @@ public class Servlet {
      * which most likely implies not adding this to a collection beforehand
      * either.
      *
-     * @param context the context to set
-     * @throws IllegalArgumentException if the context host is null
+     * @param context
+     *     the context to set
+     *
+     * @throws IllegalArgumentException
+     *     if the context host is null
      * @see {@link HTTPContext#add(Servlet)}
      */
     void setParent(HTTPContext context) {
@@ -106,7 +109,8 @@ public class Servlet {
     }
 
     /**
-     * @throws IllegalStateException if host is null
+     * @throws IllegalStateException
+     *     if host is null
      * @see {@link #setParent(HTTPContext)}
      * @see java.lang.Object#hashCode()
      */
@@ -124,7 +128,8 @@ public class Servlet {
     }
 
     /**
-     * @throws IllegalStateException if host is null
+     * @throws IllegalStateException
+     *     if host is null
      * @see {@link #setParent(HTTPContext)}
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -132,30 +137,40 @@ public class Servlet {
     public boolean equals(Object obj) {
         assertHostState();
 
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!(obj instanceof Servlet))
+        }
+        if (!(obj instanceof Servlet)) {
             return false;
+        }
         Servlet other = (Servlet) obj;
         if (contextRoot == null) {
-            if (other.contextRoot != null)
+            if (other.contextRoot != null) {
                 return false;
-        } else if (!contextRoot.equals(other.contextRoot))
+            }
+        } else if (!contextRoot.equals(other.contextRoot)) {
             return false;
+        }
         if (host == null) {
-            if (other.host != null)
+            if (other.host != null) {
                 return false;
-        } else if (!host.equals(other.host))
+            }
+        } else if (!host.equals(other.host)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
-        if (port != other.port)
+        }
+        if (port != other.port) {
             return false;
+        }
         return true;
     }
 

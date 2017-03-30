@@ -18,11 +18,9 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
-import org.jboss.arquillian.container.test.impl.client.deployment.tool.ArchiveDeploymentToolingExporter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -30,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  * ArchiveDeploymentToolingExporterTestCase
@@ -42,17 +39,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ArchiveDeploymentToolingExporterTestCase extends AbstractContainerTestTestBase {
     private static final String EXPORT_FOLDER = "target/";
+    @Mock
+    private DeployableContainer<?> deployableContainer;
+    @Mock
+    private DeploymentDescription deployment;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ArchiveDeploymentToolingExporter.class);
     }
-
-    @Mock
-    private DeployableContainer<?> deployableContainer;
-
-    @Mock
-    private DeploymentDescription deployment;
 
     @Test
     public void shouldThrowIllegalStateExceptionOnMissingDeploymentGenerator() throws Exception {
@@ -68,5 +63,4 @@ public class ArchiveDeploymentToolingExporterTestCase extends AbstractContainerT
 
         exportedFile.delete();
     }
-
 }

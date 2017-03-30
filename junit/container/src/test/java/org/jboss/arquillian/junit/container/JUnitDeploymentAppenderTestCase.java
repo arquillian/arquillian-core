@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.junit.container;
 
-import org.jboss.arquillian.junit.container.JUnitDeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.junit.Assert;
@@ -35,13 +34,12 @@ public class JUnitDeploymentAppenderTestCase {
         Archive<?> archive = new JUnitDeploymentAppender().createAuxiliaryArchive();
 
         Assert.assertTrue(
-                "Should have added Extension",
-                archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
+            "Should have added Extension",
+            archive.contains(
+                ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
 
         Assert.assertTrue(
-                "Should have added TestRunner Impl",
-                archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/container/JUnitTestRunner.class")));
-
-
+            "Should have added TestRunner Impl",
+            archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/container/JUnitTestRunner.class")));
     }
 }

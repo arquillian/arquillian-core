@@ -56,18 +56,18 @@ public class TestListener implements ITestListener {
     public TestResult getTestResult() {
         if (context.getFailedConfigurations().size() > 0) {
             return TestResult.failed(
-                    context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
+                context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
         } else if (context.getFailedTests().size() > 0) {
             return TestResult.failed(
-                    context.getFailedTests().getAllResults().iterator().next().getThrowable());
+                context.getFailedTests().getAllResults().iterator().next().getThrowable());
         } else if (context.getSkippedTests().size() > 0) {
             return TestResult.skipped();
         }
         if (context.getPassedTests().size() > 0) {
             return TestResult.passed().setThrowable(
-                    context.getPassedTests().getAllResults().iterator().next().getThrowable());
+                context.getPassedTests().getAllResults().iterator().next().getThrowable());
         }
         return TestResult.failed(
-                new RuntimeException("Unknown test result: " + context).fillInStackTrace());
+            new RuntimeException("Unknown test result: " + context).fillInStackTrace());
     }
 }

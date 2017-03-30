@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
-
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,11 +26,16 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
+import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
+
 /*
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
 public class ArquillianClass1WithExpectedExceptionRule {
+    @Rule
+    public ExpectedException e = ExpectedException.none();
+
     @BeforeClass
     public static void beforeClass() throws Throwable {
         wasCalled(Cycle.BEFORE_CLASS);
@@ -52,9 +55,6 @@ public class ArquillianClass1WithExpectedExceptionRule {
     public void after() throws Throwable {
         wasCalled(Cycle.AFTER);
     }
-
-    @Rule
-    public ExpectedException e = ExpectedException.none();
 
     @Test
     public void shouldBeInvoked() throws Throwable {

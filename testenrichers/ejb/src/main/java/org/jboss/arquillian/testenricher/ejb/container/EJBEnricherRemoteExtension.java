@@ -35,5 +35,4 @@ public class EJBEnricherRemoteExtension implements RemoteLoadableExtension {
             builder.service(TestEnricher.class, EJBInjectionEnricher.class);
         }
     }
-
 }

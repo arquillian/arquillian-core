@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
@@ -27,7 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  * ArquillianTestEnricherTestCase
@@ -79,32 +77,32 @@ public class InitialContextProviderTestCase extends OperatesOnDeploymentAwarePro
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnMissingContainerRegistry() throws Exception {
         execute(
-                false,
-                true,
-                InitialContextClassQualifed.class,
-                Context.class,
-                new InitialContext(),
-                new InitialContext());
+            false,
+            true,
+            InitialContextClassQualifed.class,
+            Context.class,
+            new InitialContext(),
+            new InitialContext());
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnMissingDeploymentScenario() throws Exception {
         execute(
-                true,
-                false,
-                InitialContextClassQualifed.class,
-                Context.class,
-                new InitialContext(),
-                new InitialContext());
+            true,
+            false,
+            InitialContextClassQualifed.class,
+            Context.class,
+            new InitialContext(),
+            new InitialContext());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionOnUnKnownDeployment() throws Exception {
         execute(
-                InitialContextClassQualifedMissing.class,
-                Context.class,
-                new InitialContext(),
-                new InitialContext());
+            InitialContextClassQualifedMissing.class,
+            Context.class,
+            new InitialContext(),
+            new InitialContext());
     }
 
     public static class ContextClass {

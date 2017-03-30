@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.test.impl.client.deployment.command.AbstractCommand;
 import org.jboss.arquillian.test.api.ArquillianResource;
 

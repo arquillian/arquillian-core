@@ -16,13 +16,13 @@
  */
 package org.jboss.arquillian.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Arquillian has support for multiple injection points like @EJB, @Resources and @Inject, but there are also

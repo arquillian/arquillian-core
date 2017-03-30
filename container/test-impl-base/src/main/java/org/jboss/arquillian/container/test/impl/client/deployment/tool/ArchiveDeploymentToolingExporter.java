@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
 import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Validate;

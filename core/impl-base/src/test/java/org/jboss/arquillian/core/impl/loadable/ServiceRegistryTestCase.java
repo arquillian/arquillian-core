@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.jboss.arquillian.core.impl.loadable.util.FakeService;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded;
@@ -55,7 +54,8 @@ public class ServiceRegistryTestCase {
         Set<Class<? extends FakeService>> serviceImpls = registry.getServiceImpls(FakeService.class);
 
         Assert.assertEquals("Unexpected number of service implementations registered", 1, serviceImpls.size());
-        Assert.assertEquals("Should contain ShouldBeIncluded class", ShouldBeIncluded.class, serviceImpls.iterator().next());
+        Assert.assertEquals("Should contain ShouldBeIncluded class", ShouldBeIncluded.class,
+            serviceImpls.iterator().next());
     }
 
     @Test
@@ -67,7 +67,8 @@ public class ServiceRegistryTestCase {
         Set<Class<? extends FakeService>> serviceImpls = registry.getServiceImpls(FakeService.class);
 
         Assert.assertEquals("Unexpected number of service implementations registered", 1, serviceImpls.size());
-        Assert.assertEquals("Should contain ShouldBeIncluded class", ShouldBeIncluded.class, serviceImpls.iterator().next());
+        Assert.assertEquals("Should contain ShouldBeIncluded class", ShouldBeIncluded.class,
+            serviceImpls.iterator().next());
     }
 
     @Test
@@ -85,5 +86,4 @@ public class ServiceRegistryTestCase {
         Assert.assertEquals("Unexpected number of service implementations registered", 1, serviceImpls.size());
         Assert.assertTrue("Should contain ShouldBeIncluded class", serviceImpls.contains(ShouldBeIncluded.class));
     }
-
 }

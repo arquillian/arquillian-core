@@ -18,7 +18,6 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import java.net.URI;
-
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.Servlet;
 import org.jboss.shrinkwrap.api.ArchivePath;
@@ -60,8 +59,8 @@ public final class ServletUtil {
             contextRoot = servlet.getContextRoot();
         } else {
             throw new IllegalArgumentException(
-                    servletName + " not found. " +
-                            "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
+                servletName + " not found. " +
+                    "Could not determine ContextRoot from ProtocolMetadata, please contact DeployableContainer developer.");
         }
         return URI.create(scheme + "://" + host + ":" + port + contextRoot);
     }

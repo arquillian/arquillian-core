@@ -31,5 +31,4 @@ public interface ContainerConfiguration {
      * properties are set and have correct values
      */
     void validate() throws ConfigurationException;
-
 }

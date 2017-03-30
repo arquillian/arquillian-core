@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -65,7 +64,9 @@ public class DeploymentScenario {
     /**
      * Get a {@link DeploymentDescription} with a specific name if it exists.
      *
-     * @param target The name of the {@link DeploymentDescription}
+     * @param target
+     *     The name of the {@link DeploymentDescription}
+     *
      * @return Defined Deployment or null if not found.
      */
     public Deployment deployment(DeploymentTargetDescription target) {
@@ -111,9 +112,12 @@ public class DeploymentScenario {
     }
 
     /**
-     * Get all {@link DeploymentDescription} defined to be deployed during Test startup for a specific {@link TargetDescription} ordered.
+     * Get all {@link DeploymentDescription} defined to be deployed during Test startup for a specific {@link
+     * TargetDescription} ordered.
      *
-     * @param target The Target to filter on
+     * @param target
+     *     The Target to filter on
+     *
      * @return A List of found {@link DeploymentDescription}. Will return a empty list if none are found.
      */
     public List<Deployment> startupDeploymentsFor(TargetDescription target) {
@@ -196,7 +200,9 @@ public class DeploymentScenario {
     /**
      * Filters the List of Deployments and returns the ones that are Managed deployments.
      *
-     * @param deployments List to filter
+     * @param deployments
+     *     List to filter
+     *
      * @return Filtered list
      */
     private List<Deployment> managedDeployments(List<Deployment> deployments) {
@@ -212,7 +218,9 @@ public class DeploymentScenario {
     /**
      * Filters the List of Deployments and returns the ones that are DEFAULT deployments.
      *
-     * @param deployments List to filter
+     * @param deployments
+     *     List to filter
+     *
      * @return Filtered list
      */
     private List<Deployment> defaultDeployments(List<Deployment> deployments) {
@@ -228,7 +236,9 @@ public class DeploymentScenario {
     /**
      * Filters the List of Deployments and returns the ones that are Archive deployments.
      *
-     * @param deployments List to filter
+     * @param deployments
+     *     List to filter
+     *
      * @return Filtered list
      */
     private List<Deployment> archiveDeployments(List<Deployment> deployments) {
@@ -243,9 +253,6 @@ public class DeploymentScenario {
 
     /**
      * Validation, names except DEFAULT should be unique. See constructor
-     *
-     * @param target
-     * @return
      */
     private Deployment findMatchingDeployment(DeploymentTargetDescription target) {
         List<Deployment> matching = findMatchingDeployments(target);
@@ -272,17 +279,15 @@ public class DeploymentScenario {
 
     /**
      * Validate that a deployment of same type is not already added
-     *
-     * @param deployment
      */
     private void validateNotSameNameAndTypeOfDeployment(DeploymentDescription deployment) {
         for (Deployment existing : deployments) {
             if (existing.getDescription().getName().equals(deployment.getName())) {
                 if (
-                        (existing.getDescription().isArchiveDeployment() && deployment.isArchiveDeployment()) ||
-                                (existing.getDescription().isDescriptorDeployment() && deployment.isDescriptorDeployment())) {
+                    (existing.getDescription().isArchiveDeployment() && deployment.isArchiveDeployment()) ||
+                        (existing.getDescription().isDescriptorDeployment() && deployment.isDescriptorDeployment())) {
                     throw new IllegalArgumentException("Can not add multiple " +
-                            Archive.class.getName() + " deployments with the same name: " + deployment.getName());
+                        Archive.class.getName() + " deployments with the same name: " + deployment.getName());
                 }
             }
         }
@@ -290,8 +295,6 @@ public class DeploymentScenario {
 
     /**
      * Validate that a deployment with a archive of the same name does not have the same taget
-     *
-     * @param deployment
      */
     private void validateNotSameArchiveAndSameTarget(DeploymentDescription deployment) {
         if (!deployment.isArchiveDeployment()) {
@@ -300,9 +303,14 @@ public class DeploymentScenario {
         for (Deployment existing : archiveDeployments(deployments)) {
             if (existing.getDescription().getArchive().getName().equals(deployment.getArchive().getName())) {
                 if (existing.getDescription().getTarget().equals(deployment.getTarget())) {
-                    throw new IllegalArgumentException("Can not add multiple " +
-                            Archive.class.getName() + " archive deployments with the same archive name " + deployment.getName() +
-                            " that target the same target " + deployment.getTarget());
+                    throw new IllegalArgumentException("Can not add multiple "
+                        +
+                        Archive.class.getName()
+                        + " archive deployments with the same archive name "
+                        + deployment.getName()
+                        +
+                        " that target the same target "
+                        + deployment.getTarget());
                 }
             }
         }

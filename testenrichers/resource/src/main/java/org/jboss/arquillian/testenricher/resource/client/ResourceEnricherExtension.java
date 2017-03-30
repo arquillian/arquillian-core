@@ -38,5 +38,4 @@ public class ResourceEnricherExtension implements LoadableExtension {
             builder.service(TestEnricher.class, ResourceInjectionEnricher.class);
         }
     }
-
 }

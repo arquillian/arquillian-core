@@ -17,10 +17,12 @@
  */
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
-import static org.junit.Assert.*;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ServletTest {
     private static final String TEST_SERVLET_NAME = "jsp";
@@ -28,12 +30,12 @@ public class ServletTest {
     private static final String TEST_CONTEXT_ROOT = "/test";
 
     private static final String ROOT_CONTEXT_ROOT_BASE_URI = Servlet.HTTP_SCHEME + HTTPContextTest.TEST_HOST + ":"
-            + HTTPContextTest.TEST_PORT + "/";
+        + HTTPContextTest.TEST_PORT + "/";
 
     private static final String TEST_CONTEXT_ROOT_BASE_URI = ROOT_CONTEXT_ROOT_BASE_URI + TEST_CONTEXT_ROOT + "/";
 
     private static final HTTPContext TEST_HTTP_CONTEXT = new HTTPContext(HTTPContextTest.TEST_HOST,
-            HTTPContextTest.TEST_PORT);
+        HTTPContextTest.TEST_PORT);
 
     private static Servlet servlet;
 

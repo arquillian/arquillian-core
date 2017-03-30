@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.spi.event.container;
 
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 
-
 /**
  * Event fired Before the DeployableContainer is stopped.
  *

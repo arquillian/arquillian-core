@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 
 /**
@@ -59,24 +58,24 @@ public class PropertiesParser {
 
     private static String ARQ_GROUP = "arq\\.group\\.(.*)\\.(.*)";
     private static String ARQ_GROUP_CONTAINER = "arq\\.group\\.(.*)\\.container\\.(.*)\\.(.*)";
-    private static String ARQ_GROUP_CONTAINER_CONFIGURATION = "arq\\.group\\.(.*)\\.container\\.(.*)\\.configuration\\.(.*)";
+    private static String ARQ_GROUP_CONTAINER_CONFIGURATION =
+        "arq\\.group\\.(.*)\\.container\\.(.*)\\.configuration\\.(.*)";
     private static String ARQ_GROUP_CONTAINER_PROTOCOL = "arq\\.group\\.(.*)\\.container\\.(.*)\\.protocol\\.(.*)\\.(.*)";
 
     private static String ARQ_DEFAULT_PROTOCOL = "arq\\.defaultprotocol\\.(.*)\\.(.*)";
     private static String ARQ_EXTENSION = "arq\\.extension\\.(.*)\\.(.*)";
 
-
-    private Handler[] handlers = new Handler[]{
-            new EngineProperty(ARQ_ENGINE_PROPERTY),
-            new ContainerConfiguration(ARQ_CONTAINER_CONFIGURATION),
-            new ContainerProtocol(ARQ_CONTAINER_PROTOCOL),
-            new Container(ARQ_CONTAINER),
-            new Extension(ARQ_EXTENSION),
-            new GroupContainerConfiguration(ARQ_GROUP_CONTAINER_CONFIGURATION),
-            new GroupContainerProtocol(ARQ_GROUP_CONTAINER_PROTOCOL),
-            new GroupContainer(ARQ_GROUP_CONTAINER),
-            new Group(ARQ_GROUP),
-            new DefaultProtocol(ARQ_DEFAULT_PROTOCOL)
+    private Handler[] handlers = new Handler[] {
+        new EngineProperty(ARQ_ENGINE_PROPERTY),
+        new ContainerConfiguration(ARQ_CONTAINER_CONFIGURATION),
+        new ContainerProtocol(ARQ_CONTAINER_PROTOCOL),
+        new Container(ARQ_CONTAINER),
+        new Extension(ARQ_EXTENSION),
+        new GroupContainerConfiguration(ARQ_GROUP_CONTAINER_CONFIGURATION),
+        new GroupContainerProtocol(ARQ_GROUP_CONTAINER_PROTOCOL),
+        new GroupContainer(ARQ_GROUP_CONTAINER),
+        new Group(ARQ_GROUP),
+        new DefaultProtocol(ARQ_DEFAULT_PROTOCOL)
     };
 
     public void addProperties(ArquillianDescriptor descriptor, Properties properties) {
@@ -106,7 +105,6 @@ public class PropertiesParser {
         }
         return filtered;
     }
-
 
     /*******************************
      *
@@ -141,7 +139,8 @@ public class PropertiesParser {
             if ("default".equals(attributeName)) {
                 descriptor.group(groupName).setGroupDefault();
             } else {
-                throw new RuntimeException("Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
+                throw new RuntimeException(
+                    "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
             }
         }
     }
@@ -162,7 +161,8 @@ public class PropertiesParser {
             } else if ("default".equals(attributeName)) {
                 descriptor.group(groupName).container(containerName).setDefault();
             } else {
-                throw new RuntimeException("Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
+                throw new RuntimeException(
+                    "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
             }
         }
     }
@@ -227,7 +227,8 @@ public class PropertiesParser {
             } else if ("default".equals(attributeName)) {
                 descriptor.container(containerName).setDefault();
             } else {
-                throw new RuntimeException("Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
+                throw new RuntimeException(
+                    "Unknown arquillian container attribute[" + attributeName + "] with value[" + value + "]");
             }
         }
     }
@@ -274,7 +275,8 @@ public class PropertiesParser {
             } else if ("maxTestClassesBeforeRestart".equals(propertyName)) {
                 descriptor.engine().maxTestClassesBeforeRestart(Integer.parseInt(value));
             } else {
-                throw new RuntimeException("Unknown arquillian engine property[" + propertyName + "] with value[" + value + "]");
+                throw new RuntimeException(
+                    "Unknown arquillian engine property[" + propertyName + "] with value[" + value + "]");
             }
         }
     }

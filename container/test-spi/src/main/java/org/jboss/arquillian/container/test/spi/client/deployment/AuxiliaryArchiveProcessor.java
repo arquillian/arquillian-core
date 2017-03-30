@@ -31,7 +31,8 @@ public interface AuxiliaryArchiveProcessor {
     /**
      * Called once for each found ArchiveAppender
      *
-     * @param auxiliaryArchive The system defined deployment archive
+     * @param auxiliaryArchive
+     *     The system defined deployment archive
      */
     void process(Archive<?> auxiliaryArchive);
 }

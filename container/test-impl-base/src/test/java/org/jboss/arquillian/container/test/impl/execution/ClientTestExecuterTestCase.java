@@ -17,12 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.execution;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -37,6 +33,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * ClientTestExecuterTestCase
@@ -121,19 +119,12 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         when(executor.getMethod()).thenReturn(method(testMethodName));
 
         return new org.jboss.arquillian.test.spi.event.suite.Test(
-                executor
+            executor
         );
     }
 
     private Method method(String name) throws Exception {
         return this.getClass().getDeclaredMethod(name);
-    }
-
-    private static class ClassLevelRunModeDefault {
-    }
-
-    @RunAsClient
-    private static class ClassLevelRunModeAsClient {
     }
 
     @SuppressWarnings("unused")
@@ -147,5 +138,12 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
     @SuppressWarnings("unused")
     @RunAsClient
     private void methodLevelRunModeAsClient() {
+    }
+
+    private static class ClassLevelRunModeDefault {
+    }
+
+    @RunAsClient
+    private static class ClassLevelRunModeAsClient {
     }
 }

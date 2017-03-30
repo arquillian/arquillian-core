@@ -55,20 +55,23 @@ public class DeploymentScenarioTestCase {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(deployment);
 
-        DeploymentDescription defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
+        DeploymentDescription defaultDeployment =
+            scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
 
         Assert.assertEquals(deployment, defaultDeployment);
     }
 
     @Test
     public void shouldDefaultToSingleDescriptor() {
-        DeploymentDescription deployment = new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class));
+        DeploymentDescription deployment =
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class));
         deployment.setTarget(TargetDescription.DEFAULT);
 
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(deployment);
 
-        DeploymentDescription defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
+        DeploymentDescription defaultDeployment =
+            scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
 
         Assert.assertEquals(deployment, defaultDeployment);
     }
@@ -77,14 +80,14 @@ public class DeploymentScenarioTestCase {
     public void shouldDefaultToArchiveWhenDescriptorIsPresent() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
 
-
-        DeploymentDescription defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
+        DeploymentDescription defaultDeployment =
+            scenario.deployment(DeploymentTargetDescription.DEFAULT).getDescription();
 
         Assert.assertEquals("A", defaultDeployment.getName());
     }
@@ -93,11 +96,11 @@ public class DeploymentScenarioTestCase {
     public void shouldNotDefaultWhenMultipleArchives() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         Deployment defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT);
 
@@ -108,14 +111,14 @@ public class DeploymentScenarioTestCase {
     public void shouldDefaultToDefaultWithMultipleDeployments() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         Deployment defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT);
         Assert.assertNotNull(defaultDeployment);
@@ -127,11 +130,11 @@ public class DeploymentScenarioTestCase {
     public void shouldNotDefaultWhenMultipleDescriptors() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         Deployment defaultDeployment = scenario.deployment(DeploymentTargetDescription.DEFAULT);
 
@@ -142,12 +145,11 @@ public class DeploymentScenarioTestCase {
     public void shouldNotGetDefaultWithNonDefaultName() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
-
+            new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         DeploymentDescription deployment = scenario.deployment(new DeploymentTargetDescription("B")).getDescription();
 
@@ -158,12 +160,11 @@ public class DeploymentScenarioTestCase {
     public void shouldNotGetWithUnknownName() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
-
+            new DeploymentDescription("B", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         Deployment deployment = scenario.deployment(new DeploymentTargetDescription("C"));
 
@@ -174,11 +175,11 @@ public class DeploymentScenarioTestCase {
     public void shouldAllowMultipleDeploymentWithSameNameOfDifferentType() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         Deployment deployment = scenario.deployment(new DeploymentTargetDescription("A"));
 
@@ -191,11 +192,11 @@ public class DeploymentScenarioTestCase {
     public void shouldAllowMultipleDeploymentWithSameNameOfDifferentTypeOrderIrrelevant() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("A", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
 
         Deployment deployment = scenario.deployment(new DeploymentTargetDescription("A"));
 
@@ -208,11 +209,11 @@ public class DeploymentScenarioTestCase {
     public void shouldAllowMultipleArchiveDeploymentsWithSameArchiveNameWithDifferentTargets() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class, "test.jar"))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class, "test.jar"))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class, "test.jar"))
-                        .setTarget(new TargetDescription("B")));
+            new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class, "test.jar"))
+                .setTarget(new TargetDescription("B")));
 
         Assert.assertEquals(2, scenario.deployments().size());
     }
@@ -221,32 +222,32 @@ public class DeploymentScenarioTestCase {
     public void shouldNotAllowMultipleArchiveDeploymentsWithSameName() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(TargetDescription.DEFAULT));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAllowMultipleArchiveDeploymentsWithSameArchiveName() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class, "test.jar"))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription(DEFAULT_NAME, ShrinkWrap.create(JavaArchive.class, "test.jar"))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class, "test.jar"))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription("B", ShrinkWrap.create(JavaArchive.class, "test.jar"))
+                .setTarget(TargetDescription.DEFAULT));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAllowMultipleDescriptorDeploymentsWithSameName() {
         DeploymentScenario scenario = new DeploymentScenario();
         scenario.addDeployment(
-                new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
         scenario.addDeployment(
-                new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
-                        .setTarget(TargetDescription.DEFAULT));
+            new DeploymentDescription(DEFAULT_NAME, Descriptors.create(BeansDescriptor.class))
+                .setTarget(TargetDescription.DEFAULT));
     }
 }

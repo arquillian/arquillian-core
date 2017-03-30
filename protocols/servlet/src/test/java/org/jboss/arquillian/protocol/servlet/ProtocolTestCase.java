@@ -17,7 +17,6 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import java.net.URL;
-
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
@@ -25,7 +24,6 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * ProtocolTestCase
@@ -43,13 +41,13 @@ public class ProtocolTestCase extends AbstractServerBase {
         TestResult result = executor.invoke(new MockTestExecutor());
 
         Assert.assertEquals(
-                "Should have returned a passed test",
-                MockTestRunner.wantedResults.getStatus(),
-                result.getStatus());
+            "Should have returned a passed test",
+            MockTestRunner.wantedResults.getStatus(),
+            result.getStatus());
 
         Assert.assertNull(
-                "No Exception should have been thrown",
-                result.getThrowable());
+            "No Exception should have been thrown",
+            result.getThrowable());
     }
 
     @Test
@@ -60,14 +58,13 @@ public class ProtocolTestCase extends AbstractServerBase {
         TestResult result = executor.invoke(new MockTestExecutor());
 
         Assert.assertEquals(
-                "Should have returned a passed test",
-                MockTestRunner.wantedResults.getStatus(),
-                result.getStatus());
+            "Should have returned a passed test",
+            MockTestRunner.wantedResults.getStatus(),
+            result.getStatus());
 
         Assert.assertNotNull(
-                "Exception should have been thrown",
-                result.getThrowable());
-
+            "Exception should have been thrown",
+            result.getThrowable());
     }
 
     @Test
@@ -76,13 +73,13 @@ public class ProtocolTestCase extends AbstractServerBase {
         TestResult result = (TestResult) TestUtil.execute(url);
 
         Assert.assertEquals(
-                "Should have returned a passed test",
-                Status.FAILED,
-                result.getStatus());
+            "Should have returned a passed test",
+            Status.FAILED,
+            result.getStatus());
 
         Assert.assertTrue(
-                "No Exception should have been thrown",
-                result.getThrowable() instanceof IllegalArgumentException);
+            "No Exception should have been thrown",
+            result.getThrowable() instanceof IllegalArgumentException);
     }
 
     @Test
@@ -91,13 +88,13 @@ public class ProtocolTestCase extends AbstractServerBase {
         TestResult result = (TestResult) TestUtil.execute(url);
 
         Assert.assertEquals(
-                "Should have returned a passed test",
-                Status.FAILED,
-                result.getStatus());
+            "Should have returned a passed test",
+            Status.FAILED,
+            result.getStatus());
 
         Assert.assertTrue(
-                "No Exception should have been thrown",
-                result.getThrowable() instanceof IllegalArgumentException);
+            "No Exception should have been thrown",
+            result.getThrowable() instanceof IllegalArgumentException);
     }
 
     @Test
@@ -106,19 +103,19 @@ public class ProtocolTestCase extends AbstractServerBase {
         TestResult result = (TestResult) TestUtil.execute(url);
 
         Assert.assertEquals(
-                "Should have returned a passed test",
-                Status.FAILED,
-                result.getStatus());
+            "Should have returned a passed test",
+            Status.FAILED,
+            result.getStatus());
 
         Assert.assertTrue(
-                "No Exception should have been thrown",
-                result.getThrowable() instanceof ClassNotFoundException);
+            "No Exception should have been thrown",
+            result.getThrowable() instanceof ClassNotFoundException);
     }
 
     protected ServletMethodExecutor createExecutor() {
         return new ServletMethodExecutor(
-                new ServletProtocolConfiguration(),
-                createContexts(),
-                new TestCommandCallback());
+            new ServletProtocolConfiguration(),
+            createContexts(),
+            new TestCommandCallback());
     }
 }

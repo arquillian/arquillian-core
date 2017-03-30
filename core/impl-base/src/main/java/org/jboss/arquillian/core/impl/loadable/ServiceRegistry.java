@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
@@ -45,8 +44,9 @@ public class ServiceRegistry {
 
     public <T> void addService(Class<T> service, Class<? extends T> serviceImpl) {
         synchronized (registry) {
-            if (isImplementationVetoed(service, serviceImpl))
+            if (isImplementationVetoed(service, serviceImpl)) {
                 return;
+            }
 
             Set<Class<?>> registeredImpls = registry.get(service);
             if (registeredImpls == null) {
@@ -60,18 +60,21 @@ public class ServiceRegistry {
     public <T> void removeService(Class<T> service, Class<? extends T> serviceImpl) {
         synchronized (registry) {
             Set<Class<?>> registeredImpls = registry.get(service);
-            if (registeredImpls == null)
+            if (registeredImpls == null) {
                 return;
+            }
 
             registeredImpls.remove(serviceImpl);
         }
     }
 
-    public <T> void overrideService(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl) {
+    public <T> void overrideService(Class<T> service, Class<? extends T> oldServiceImpl,
+        Class<? extends T> newServiceImpl) {
         synchronized (registry) {
 
-            if (isImplementationVetoed(service, newServiceImpl))
+            if (isImplementationVetoed(service, newServiceImpl)) {
                 return;
+            }
 
             Set<Class<?>> vetoedImpls = vetoed.get(service);
             if (vetoedImpls == null) {

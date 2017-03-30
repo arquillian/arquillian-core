@@ -23,7 +23,6 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedCallable;
@@ -113,6 +112,17 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint {
         return new ArgumentAnnotated<T>();
     }
 
+    private Type findTypeOrGenericType() {
+        if (method.getGenericParameterTypes().length > 0) {
+            return method.getGenericParameterTypes()[position];
+        }
+        return method.getParameterTypes()[position];
+    }
+
+    private static class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
+        private static final long serialVersionUID = 1L;
+    }
+
     private class ArgumentAnnotated<X> implements AnnotatedParameter<X> {
 
         /* (non-Javadoc)
@@ -171,16 +181,5 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint {
         public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
             return getAnnotation(annotationType) != null;
         }
-    }
-
-    private Type findTypeOrGenericType() {
-        if (method.getGenericParameterTypes().length > 0) {
-            return method.getGenericParameterTypes()[position];
-        }
-        return method.getParameterTypes()[position];
-    }
-
-    private static class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
-        private static final long serialVersionUID = 1L;
     }
 }

@@ -17,14 +17,9 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doAnswer;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -41,6 +36,10 @@ import org.junit.runner.notification.RunListener;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doAnswer;
+
 /**
  * JUnitTestBaseClass
  *
@@ -48,16 +47,6 @@ import org.mockito.stubbing.Answer;
  * @version $Revision: $
  */
 public class JUnitTestBaseClass {
-    public static enum Cycle
-
-    {
-        BEFORE_RULE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_RULE;
-
-        public static Cycle[] basics () {
-        return new Cycle[]{BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS};
-    }
-    }
-
     /*
      * Setup / Clear the static callback info.
      */
@@ -95,6 +84,64 @@ public class JUnitTestBaseClass {
     }
 
     /*
+     * Internal Helpers
+     */
+    protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception {
+        doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor)
+            .before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor)
+            .after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    public void assertCycle(int count, Cycle... cycles) {
+        for (Cycle cycle : cycles) {
+            Assert.assertEquals("Verify " + cycle + " called N times",
+                count, (int) callbackCount.get(cycle));
+        }
+    }
+
+    protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception {
+        return run(adaptor, null, classes);
+    }
+
+    protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
+        throws Exception {
+        try {
+            setAdaptor(adaptor);
+            JUnitCore core = new JUnitCore();
+            if (listener != null) {
+                core.addListener(listener);
+            }
+
+            return core.run(classes);
+        } finally {
+            setAdaptor(null);
+        }
+    }
+
+    // force set the TestRunnerAdaptor to use
+    private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception {
+        Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
+        method.setAccessible(true);
+        method.invoke(null, adaptor);
+    }
+
+    public static enum Cycle
+
+    {
+        BEFORE_RULE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_RULE;
+
+        public static Cycle[] basics() {
+            return new Cycle[] {BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS};
+        }
+    }
+
+    /*
      * Mockito Answers for invoking the LifeCycle callbacks.
      */
     public static class ExecuteLifecycle implements Answer<Object> {
@@ -125,51 +172,5 @@ public class JUnitTestBaseClass {
             super.answer(invocation);
             return result;
         }
-    }
-
-    /*
-     * Internal Helpers
-     */
-    protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception {
-        doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
-    }
-
-    public void assertCycle(int count, Cycle... cycles) {
-        for (Cycle cycle : cycles) {
-            Assert.assertEquals("Verify " + cycle + " called N times",
-                    count, (int) callbackCount.get(cycle));
-        }
-    }
-
-    protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception {
-        return run(adaptor, null, classes);
-    }
-
-    protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
-            throws Exception {
-        try {
-            setAdaptor(adaptor);
-            JUnitCore core = new JUnitCore();
-            if (listener != null) {
-                core.addListener(listener);
-            }
-
-            return core.run(classes);
-        } finally {
-            setAdaptor(null);
-        }
-    }
-
-    // force set the TestRunnerAdaptor to use
-    private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception {
-        Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
-        method.setAccessible(true);
-        method.invoke(null, adaptor);
     }
 }

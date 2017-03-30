@@ -20,7 +20,8 @@ package org.jboss.arquillian.core.spi;
 /**
  * A simple form of Observer that can be added runtime during event fire. <br/>
  * <p>
- * Can be used by the caller of {@link Manager#fire(Object, NonManagedObserver)} as a callback from the same context as the Event was fired in. <br/>
+ * Can be used by the caller of {@link Manager#fire(Object, NonManagedObserver)} as a callback from the same context as
+ * the Event was fired in. <br/>
  * The NonManagedObserver is executed inside the interceptor chain but after all other observers.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>

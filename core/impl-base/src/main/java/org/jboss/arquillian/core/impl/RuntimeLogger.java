@@ -1,8 +1,7 @@
 package org.jboss.arquillian.core.impl;
 
-import org.jboss.arquillian.core.spi.ObserverMethod;
-
 import java.util.Stack;
+import org.jboss.arquillian.core.spi.ObserverMethod;
 
 public class RuntimeLogger {
 
@@ -19,7 +18,13 @@ public class RuntimeLogger {
 
     void debug(ObserverMethod method, boolean interceptor) {
         if (DEBUG) {
-            System.out.println(indent() + "(" + (interceptor ? "I" : "O") + ") " + method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName());
+            System.out.println(indent()
+                + "("
+                + (interceptor ? "I" : "O")
+                + ") "
+                + method.getMethod().getDeclaringClass().getSimpleName()
+                + "."
+                + method.getMethod().getName());
         }
     }
 
@@ -45,7 +50,9 @@ public class RuntimeLogger {
     private String getEventName(Object object) {
         Class<?> eventClass = object.getClass();
         // Print the Interface name of Anonymous classes to show the defined interface, not creation point.
-        if (eventClass.isAnonymousClass() && eventClass.getInterfaces().length == 1 && !eventClass.getInterfaces()[0].getName().startsWith("java")) {
+        if (eventClass.isAnonymousClass()
+            && eventClass.getInterfaces().length == 1
+            && !eventClass.getInterfaces()[0].getName().startsWith("java")) {
             return eventClass.getInterfaces()[0].getSimpleName();
         }
         return eventClass.getSimpleName();
@@ -69,5 +76,4 @@ public class RuntimeLogger {
         }
         return sb.toString();
     }
-
 }

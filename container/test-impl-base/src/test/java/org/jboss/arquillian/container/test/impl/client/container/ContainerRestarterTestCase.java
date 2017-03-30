@@ -17,11 +17,9 @@
 package org.jboss.arquillian.container.test.impl.client.container;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
-import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -29,7 +27,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  * ContainerRestarterTestCase
@@ -47,7 +44,7 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase {
     @Test
     public void shouldNotRestartContainerOnStartOfSequence() throws Exception {
         ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
-                .engine().maxTestClassesBeforeRestart(5);
+            .engine().maxTestClassesBeforeRestart(5);
 
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 
@@ -62,7 +59,7 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase {
     @Test
     public void shouldRestartContainerForEveryX() throws Exception {
         ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
-                .engine().maxTestClassesBeforeRestart(5);
+            .engine().maxTestClassesBeforeRestart(5);
 
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 
@@ -77,7 +74,7 @@ public class ContainerRestarterTestCase extends AbstractContainerTestTestBase {
     @Test
     public void shouldNotForceRestartIfMaxDeploymentsNotSet() throws Exception {
         ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
-                .engine();
+            .engine();
 
         bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 

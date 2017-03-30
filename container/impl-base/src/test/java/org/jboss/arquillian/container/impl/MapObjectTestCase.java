@@ -18,9 +18,7 @@
 package org.jboss.arquillian.container.impl;
 
 import java.util.HashMap;
-
 import junit.framework.Assert;
-
 import org.jboss.arquillian.config.descriptor.api.Multiline;
 import org.junit.Test;
 
@@ -32,7 +30,8 @@ import org.junit.Test;
  */
 public class MapObjectTestCase {
     private static final String VAL_STRING = "test123";
-    private static final String VAL_MULTILINE_STRING = "\n\n\n\n\r\n\t\t\ttest123 \r\n\t\t\t\ttest123" + System.getProperty("line.separator");
+    private static final String VAL_MULTILINE_STRING =
+        "\n\n\n\n\r\n\t\t\ttest123 \r\n\t\t\t\ttest123" + System.getProperty("line.separator");
     private static final Integer VAL_INTEGER = 123;
     private static final Boolean VAL_BOOLEAN = true;
     private static final Double VAL_DOUBLE = 3.4;
@@ -93,15 +92,6 @@ public class MapObjectTestCase {
         return new ChainedMap().map(name, value);
     }
 
-    private class ChainedMap extends HashMap<String, String> {
-        private static final long serialVersionUID = 8237042898515778650L;
-
-        public ChainedMap map(String name, Object value) {
-            put(name, String.valueOf(value));
-            return this;
-        }
-    }
-
     public static class TestObject {
         private String s;
         private Integer i;
@@ -131,4 +121,12 @@ public class MapObjectTestCase {
         }
     }
 
+    private class ChainedMap extends HashMap<String, String> {
+        private static final long serialVersionUID = 8237042898515778650L;
+
+        public ChainedMap map(String name, Object value) {
+            put(name, String.valueOf(value));
+            return this;
+        }
+    }
 }

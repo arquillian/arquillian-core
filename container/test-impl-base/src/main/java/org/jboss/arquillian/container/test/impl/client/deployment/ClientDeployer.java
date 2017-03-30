@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -73,14 +72,15 @@ public class ClientDeployer implements Deployer {
         }
 
         if (deployment.getDescription().managed()) {
-            throw new IllegalArgumentException("Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
+            throw new IllegalArgumentException(
+                "Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
         }
 
         Container container = registry.getContainer(deployment.getDescription().getTarget());
 
         if (!container.getState().equals(State.STARTED)) {
             throw new IllegalArgumentException("Deployment with name " + name + " could not be deployed. Container " +
-                    container.getName() + " must be started first.");
+                container.getName() + " must be started first.");
         }
 
         event.fire(new DeployDeployment(container, deployment));
@@ -106,14 +106,15 @@ public class ClientDeployer implements Deployer {
         }
 
         if (deployment.getDescription().managed()) {
-            throw new IllegalArgumentException("Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
+            throw new IllegalArgumentException(
+                "Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
         }
 
         Container container = registry.getContainer(deployment.getDescription().getTarget());
 
         if (!container.getState().equals(State.STARTED)) {
             throw new IllegalArgumentException("Deployment with name " + name + " could not be undeployed. Container " +
-                    container.getName() + " must be still running.");
+                container.getName() + " must be still running.");
         }
 
         event.fire(new UnDeployDeployment(container, deployment));
@@ -138,5 +139,4 @@ public class ClientDeployer implements Deployer {
             return new ByteArrayInputStream(description.getDescriptor().exportAsString().getBytes());
         }
     }
-
 }

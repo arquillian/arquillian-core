@@ -17,7 +17,6 @@
 package org.jboss.arquillian.junit.rules;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 

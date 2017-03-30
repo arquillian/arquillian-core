@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.core.api.Instance;
@@ -42,41 +41,17 @@ public class DeploymentCommandObserver {
     @Inject
     private Instance<Deployer> deployerInst;
 
-    @SuppressWarnings({"rawtypes", "unchecked"}) // Generics not supported fully by core
-    public void onException(@Observes EventContext<Command> event) {
-        try {
-            event.proceed();
-        } catch (Exception e) {
-            event.getEvent().setResult("FAILED: " + e.getMessage());
-            event.getEvent().setThrowable(e);
-        }
-    }
-
-    public void deploy(@Observes DeployDeploymentCommand event) {
-        deployerInst.get().deploy(event.getDeploymentName());
-        event.setResult("SUCCESS");
-    }
-
-    public void undeploy(@Observes UnDeployDeploymentCommand event) {
-        deployerInst.get().undeploy(event.getDeploymentName());
-        event.setResult("SUCCESS");
-    }
-
-    public void getDeployment(@Observes GetDeploymentCommand event) {
-        byte[] deploymentContent = asByteArray(
-                deployerInst.get().getDeployment(
-                        event.getDeploymentName()));
-        event.setResult(deploymentContent);
-    }
-
-
     /**
      * Obtains the contents of the specified stream
      * as a byte array
      *
-     * @param in InputStream
+     * @param in
+     *     InputStream
+     *
      * @return the byte[] for the given InputStream
-     * @throws IllegalArgumentException If the stream was not specified
+     *
+     * @throws IllegalArgumentException
+     *     If the stream was not specified
      */
     static byte[] asByteArray(final InputStream in) throws IllegalArgumentException {
         // Precondition check
@@ -111,5 +86,32 @@ public class DeploymentCommandObserver {
 
         // Return
         return content;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"}) // Generics not supported fully by core
+    public void onException(@Observes EventContext<Command> event) {
+        try {
+            event.proceed();
+        } catch (Exception e) {
+            event.getEvent().setResult("FAILED: " + e.getMessage());
+            event.getEvent().setThrowable(e);
+        }
+    }
+
+    public void deploy(@Observes DeployDeploymentCommand event) {
+        deployerInst.get().deploy(event.getDeploymentName());
+        event.setResult("SUCCESS");
+    }
+
+    public void undeploy(@Observes UnDeployDeploymentCommand event) {
+        deployerInst.get().undeploy(event.getDeploymentName());
+        event.setResult("SUCCESS");
+    }
+
+    public void getDeployment(@Observes GetDeploymentCommand event) {
+        byte[] deploymentContent = asByteArray(
+            deployerInst.get().getDeployment(
+                event.getDeploymentName()));
+        event.setResult(deploymentContent);
     }
 }

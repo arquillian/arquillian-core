@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
+import javax.servlet.ServletContext;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
-
-import javax.servlet.ServletContext;
 
 public class ServletContextRegistrar {
 
@@ -33,5 +32,4 @@ public class ServletContextRegistrar {
     public void registerServletContext(@Observes ManagerStarted managerStarted) {
         servletContextInstanceProducer.set(ServletTestRunner.getCurrentServletContext());
     }
-
 }

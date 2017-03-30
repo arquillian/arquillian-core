@@ -41,18 +41,17 @@ public class WebModuleImpl implements WebModule {
     }
 
     @Override
-    public String getContextRoot() {
-        return contextRoot;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     @Override
-    public void setUri(String uri) {
-        this.uri = uri;
+    public String getContextRoot() {
+        return contextRoot;
     }
 
     @Override
     public void setContextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
     }
-
 }

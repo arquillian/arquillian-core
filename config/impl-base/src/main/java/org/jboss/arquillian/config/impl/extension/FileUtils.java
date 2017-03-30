@@ -58,7 +58,9 @@ class FileUtils {
         }
         // only throw Exception if configured (non default) could not be found
         if (stream == null && !resourceName.isDefault()) {
-            throw new IllegalArgumentException("Could not find configured filename as either classpath resource nor file resource: " + resourceName.getName());
+            throw new IllegalArgumentException(
+                "Could not find configured filename as either classpath resource nor file resource: "
+                    + resourceName.getName());
         }
         return stream;
     }

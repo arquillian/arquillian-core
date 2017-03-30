@@ -17,7 +17,6 @@
 package org.jboss.arquillian.junit.event;
 
 import java.lang.reflect.Method;
-
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 import org.junit.runners.model.TestClass;
@@ -32,13 +31,17 @@ public class RulesEnrichment extends BeforeTestLifecycleEvent {
     private TestClass testClassInstance;
 
     /**
-     * @param testInstance      The test case instance being tested
-     * @param testClassInstance The {@link TestClass} instance representing the test case
-     * @param testMethod        The test method that is about to be executed
-     * @param executor          A call back when the LifecycleMethod represented by this event should be invoked
+     * @param testInstance
+     *     The test case instance being tested
+     * @param testClassInstance
+     *     The {@link TestClass} instance representing the test case
+     * @param testMethod
+     *     The test method that is about to be executed
+     * @param executor
+     *     A call back when the LifecycleMethod represented by this event should be invoked
      */
     public RulesEnrichment(Object testInstance, TestClass testClassInstance, Method testMethod,
-                           LifecycleMethodExecutor executor) {
+        LifecycleMethodExecutor executor) {
         super(testInstance, testMethod, executor);
         this.testClassInstance = testClassInstance;
     }
@@ -46,5 +49,4 @@ public class RulesEnrichment extends BeforeTestLifecycleEvent {
     public TestClass getTestClassInstance() {
         return testClassInstance;
     }
-
 }

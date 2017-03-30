@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.spi.client.deployment;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -43,5 +42,4 @@ public abstract class CachedAuxilliaryArchiveAppender implements AuxiliaryArchiv
     }
 
     protected abstract Archive<?> buildArchive();
-
 }

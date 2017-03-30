@@ -28,7 +28,8 @@ public class Test extends TestEvent {
     private TestMethodExecutor testMethodExecutor;
 
     /**
-     * @param testMethodExecutor The executor responsible for executing the test method
+     * @param testMethodExecutor
+     *     The executor responsible for executing the test method
      */
     public Test(TestMethodExecutor testMethodExecutor) {
         // TODO: how to validate testMethodExecutor

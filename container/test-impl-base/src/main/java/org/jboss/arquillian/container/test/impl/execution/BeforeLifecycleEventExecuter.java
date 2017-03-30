@@ -22,7 +22,8 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 /**
  * Observer that executes the Before phase on the test case.
  * <p>
- * This is intended for In Container use, BeforeClass should only be executed on Client since the state between @Test is not kept In Container.
+ * This is intended for In Container use, BeforeClass should only be executed on Client since the state between @Test is
+ * not kept In Container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

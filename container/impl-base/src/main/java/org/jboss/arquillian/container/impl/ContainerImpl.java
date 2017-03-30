@@ -105,7 +105,7 @@ public class ContainerImpl implements Container {
     @Override
     public ContainerConfiguration createDeployableConfiguration() throws Exception {
         ContainerConfiguration config = SecurityActions.newInstance(
-                deployableContainer.getConfigurationClass(), new Class<?>[0], new Object[0]);
+            deployableContainer.getConfigurationClass(), new Class<?>[0], new Object[0]);
         MapObject.populate(config, containerConfiguration.getContainerProperties());
         config.validate();
         return config;
@@ -221,7 +221,7 @@ public class ContainerImpl implements Container {
         }
 
         ServerKillProcessor serverKillProcessor = serviceLoader.get().onlyOne(ServerKillProcessor.class,
-                DefaultServerKillProcessor.class);
+            DefaultServerKillProcessor.class);
         if (serverKillProcessor == null) {
             throw new IllegalStateException("No " + ServerKillProcessor.class.getName() + " found in context");
         }

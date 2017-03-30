@@ -65,6 +65,7 @@ public class State {
      * Surefire due to how groups are handled in Surefire.
      */
     private static boolean runningInEclipse = false;
+    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
     static {
         try {
@@ -82,8 +83,6 @@ public class State {
     public static boolean isNotRunningInEclipse() {
         return !runningInEclipse;
     }
-
-    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
     static void runnerStarted() {
         lastCreatedRunner.set(lastCreatedRunner.get() + 1);
@@ -161,5 +160,4 @@ public class State {
         caughtInitializationException.remove();
         caughtExceptionAfterJunit.remove();
     }
-
 }

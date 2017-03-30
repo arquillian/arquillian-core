@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.client.container;
 
 import java.util.Map;
-
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.impl.client.container.command.ContainerStartedCommand;
 import org.jboss.arquillian.container.test.impl.client.container.command.KillContainerCommand;

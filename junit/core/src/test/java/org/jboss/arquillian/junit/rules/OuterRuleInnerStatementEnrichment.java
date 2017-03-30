@@ -16,13 +16,13 @@
  */
 package org.jboss.arquillian.junit.rules;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Uses Rule as normal outer java class and Statement as inner anonymous class defined within the Rule
@@ -30,14 +30,12 @@ import org.junit.rules.TestRule;
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class OuterRuleInnerStatementEnrichment extends AbstractRuleStatementEnrichment {
-    @ArquillianResource
-    private ResourceStub resources;
-
     @Rule
     public TestingTestRuleInnerStatement testRuleInnerStatement = new TestingTestRuleInnerStatement();
-
     @Rule
     public TestingMethodRuleInnerStatement methodRuleInnerStatement = new TestingMethodRuleInnerStatement();
+    @ArquillianResource
+    private ResourceStub resources;
 
     public TestRule getTestRule() {
         return testRuleInnerStatement;

@@ -79,6 +79,23 @@ public class ExceptionProxy implements Externalizable {
     }
 
     /**
+     * Static method to create an exception proxy for the passed in
+     * {@link Throwable} class. If null is passed in, null is returned as the
+     * exception proxy
+     *
+     * @param throwable
+     *     Exception to proxy
+     *
+     * @return An ExceptionProxy representing the exception passed in
+     */
+    public static ExceptionProxy createForException(Throwable throwable) {
+        if (throwable == null) {
+            return null;
+        }
+        return new ExceptionProxy(throwable);
+    }
+
+    /**
      * Indicates whether this proxy wraps an exception
      *
      * @return Flag indicating an exception is wrapped.
@@ -102,7 +119,9 @@ public class ExceptionProxy implements Externalizable {
         }
 
         Throwable throwable = createProxyException(
-                "Original exception caused: " + (serializationProcessException != null ? serializationProcessException.getClass() + ": " + serializationProcessException.getMessage() : "Unknown serialization issue"));
+            "Original exception caused: " + (serializationProcessException != null
+                ? serializationProcessException.getClass() + ": " + serializationProcessException.getMessage()
+                : "Unknown serialization issue"));
         return throwable;
     }
 
@@ -110,21 +129,6 @@ public class ExceptionProxy implements Externalizable {
         ArquillianProxyException exception = new ArquillianProxyException(message, className, reason, getCause());
         exception.setStackTrace(trace);
         return exception;
-    }
-
-    /**
-     * Static method to create an exception proxy for the passed in
-     * {@link Throwable} class. If null is passed in, null is returned as the
-     * exception proxy
-     *
-     * @param throwable Exception to proxy
-     * @return An ExceptionProxy representing the exception passed in
-     */
-    public static ExceptionProxy createForException(Throwable throwable) {
-        if (throwable == null) {
-            return null;
-        }
-        return new ExceptionProxy(throwable);
     }
 
     /**
@@ -147,10 +151,13 @@ public class ExceptionProxy implements Externalizable {
      * <p>
      * If possible, we try to keep the original Exception form the Container side.
      * <p>
-     * If we can't load the Exception on the client side, return a ArquillianProxyException that keeps the original stack trace etc.
+     * If we can't load the Exception on the client side, return a ArquillianProxyException that keeps the original stack
+     * trace etc.
      * <p>
-     * We can't use in.readObject() on the Throwable cause, because if a ClassNotFoundException is thrown, the stream is marked with the exception
-     * and that stream is the same stream that is deserializing us, so we will fail outside of our control. Store the Throwable cause as a
+     * We can't use in.readObject() on the Throwable cause, because if a ClassNotFoundException is thrown, the stream is
+     * marked with the exception
+     * and that stream is the same stream that is deserializing us, so we will fail outside of our control. Store the
+     * Throwable cause as a
      * serialized byte array instead, so we can deserialize it outside of our own stream.
      */
     @Override
@@ -168,14 +175,14 @@ public class ExceptionProxy implements Externalizable {
             try {
                 ByteArrayInputStream originalIn = new ByteArrayInputStream(originalExceptionData);
                 ObjectInputStream input = new ObjectInputStream(originalIn);
-//           // Uncomment to run ExceptionProxySerializationTestCase            
-//            {
-//               @Override
-//               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
-//               {
-//                  return Class.forName(desc.getName(), false, Thread.currentThread().getContextClassLoader());
-//               }
-//            };
+                //           // Uncomment to run ExceptionProxySerializationTestCase
+                //            {
+                //               @Override
+                //               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+                //               {
+                //                  return Class.forName(desc.getName(), false, Thread.currentThread().getContextClassLoader());
+                //               }
+                //            };
                 original = (Throwable) input.readObject();
 
                 if (causeProxy != null) {

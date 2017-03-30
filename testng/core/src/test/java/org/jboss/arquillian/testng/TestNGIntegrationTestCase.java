@@ -16,12 +16,6 @@
  */
 package org.jboss.arquillian.testng;
 
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -33,6 +27,11 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.testng.TestListenerAdapter;
 
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
@@ -159,7 +158,8 @@ public class TestNGIntegrationTestCase extends TestNGTestBaseClass {
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
 
-        TestListenerAdapter result = run(new String[]{"non-arq"}, adaptor, NonArquillianClass1.class, ArquillianClass1.class);
+        TestListenerAdapter result =
+            run(new String[] {"non-arq"}, adaptor, NonArquillianClass1.class, ArquillianClass1.class);
         Assert.assertTrue(wasSuccessful(result));
 
         assertCycle(0, Cycle.values());
@@ -171,7 +171,8 @@ public class TestNGIntegrationTestCase extends TestNGTestBaseClass {
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
 
-        TestListenerAdapter result = run(new String[]{"arq"}, adaptor, NonArquillianClass1.class, ArquillianClass2.class);
+        TestListenerAdapter result =
+            run(new String[] {"arq"}, adaptor, NonArquillianClass1.class, ArquillianClass2.class);
         Assert.assertTrue(wasSuccessful(result));
 
         assertCycle(1, Cycle.values());
@@ -182,7 +183,8 @@ public class TestNGIntegrationTestCase extends TestNGTestBaseClass {
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
 
-        TestListenerAdapter result = run(new String[]{"arq", "arquillian"}, adaptor, NonArquillianClass1.class, ArquillianClass2.class);
+        TestListenerAdapter result =
+            run(new String[] {"arq", "arquillian"}, adaptor, NonArquillianClass1.class, ArquillianClass2.class);
         Assert.assertTrue(wasSuccessful(result));
 
         assertCycle(1, Cycle.values());

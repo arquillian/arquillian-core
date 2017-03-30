@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.impl.client.deployment;
 
 import java.io.File;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -59,16 +58,14 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
     private static final String ARCHIVE_NAME = "test.jar";
 
     private static final String EXPORT_PATH = "target/";
+    @Mock
+    private DeployableContainer<?> deployableContainer;
+    private DeploymentDescription deployment;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ArchiveDeploymentExporter.class);
     }
-
-    @Mock
-    private DeployableContainer<?> deployableContainer;
-
-    private DeploymentDescription deployment;
 
     @Before
     public void createDeployment() {
@@ -112,7 +109,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
     @Test
     public void shouldNotExportedIfDeploymentIsNotArchive() throws Exception {
         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
-                .deploymentExportPath(EXPORT_PATH));
+            .deploymentExportPath(EXPORT_PATH));
 
         deployment = new DeploymentDescription(DEPLOYMENT_NAME, Descriptors.create(WebAppDescriptor.class));
         deployment.setTarget(new TargetDescription(TARGET_NAME));
@@ -125,7 +122,7 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
     @Test
     public void shouldBeExportedWhenDeploymentExportPathIsSet() throws Exception {
         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
-                .deploymentExportPath(EXPORT_PATH));
+            .deploymentExportPath(EXPORT_PATH));
 
         fire(new BeforeDeploy(deployableContainer, deployment));
 
@@ -135,8 +132,8 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
     @Test
     public void shouldBeExportedExplodedWhenDeploymentExportExplodedIsSet() throws Exception {
         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
-                .deploymentExportPath(EXPORT_PATH)
-                .deploymentExportExploded(true));
+            .deploymentExportPath(EXPORT_PATH)
+            .deploymentExportExploded(true));
 
         fire(new BeforeDeploy(deployableContainer, deployment));
 
@@ -170,7 +167,6 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
         } finally {
             delete(file);
         }
-
     }
 
     private void directoryShouldExist() {

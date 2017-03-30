@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
-import org.jboss.arquillian.config.descriptor.api.Multiline;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -26,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 /**
  * MapObjectPopulator
@@ -53,17 +52,17 @@ public class MapObject {
                         clonedValues.put(propertyName, trimmed);
                     }
                     candidate.invoke(
-                            object,
-                            convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
+                        object,
+                        convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
                     clonedValues.remove(propertyName);
                 }
             }
         }
         if (!clonedValues.isEmpty()) {
             log.warning(
-                    "Configuration contain properties not supported by the backing object " + clazz.getName() + "\n" +
-                            "Unused property entries: " + clonedValues + "\n" +
-                            "Supported property names: " + candidates);
+                "Configuration contain properties not supported by the backing object " + clazz.getName() + "\n" +
+                    "Unused property entries: " + clonedValues + "\n" +
+                    "Supported property names: " + candidates);
         }
     }
 
@@ -81,8 +80,8 @@ public class MapObject {
 
     private static boolean isSetter(Method candidate) {
         return candidate.getName().matches("^set[A-Z].*") &&
-                candidate.getReturnType().equals(Void.TYPE) &&
-                candidate.getParameterTypes().length == 1;
+            candidate.getReturnType().equals(Void.TYPE) &&
+            candidate.getParameterTypes().length == 1;
     }
 
     private static boolean shouldBeTrimmed(Method candidate) {
@@ -91,10 +90,6 @@ public class MapObject {
 
     /**
      * Converts a String value to the specified class.
-     *
-     * @param clazz
-     * @param value
-     * @return
      */
     private static Object convert(Class<?> clazz, String value) {
       /* TODO create a new Converter class and move this method there for reuse */
@@ -111,5 +106,4 @@ public class MapObject {
 
         return value;
     }
-
 }

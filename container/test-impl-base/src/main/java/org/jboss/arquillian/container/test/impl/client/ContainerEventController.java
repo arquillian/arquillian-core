@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.client;
 
 import java.lang.reflect.Method;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -149,9 +148,21 @@ public class ContainerEventController {
         if (deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT) {
             // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
             throw new IllegalStateException(
-                    "No deployment found in " + DeploymentScenario.class.getSimpleName() + " for defined target: " + deploymentTarget.getName() + ". " +
-                            "Please verify that the @" + OperateOnDeployment.class.getSimpleName() + " annotation on method " + method.getName() + " match a defined " +
-                            "@" + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + ".name");
+                "No deployment found in "
+                    + DeploymentScenario.class.getSimpleName()
+                    + " for defined target: "
+                    + deploymentTarget.getName()
+                    + ". "
+                    +
+                    "Please verify that the @"
+                    + OperateOnDeployment.class.getSimpleName()
+                    + " annotation on method "
+                    + method.getName()
+                    + " match a defined "
+                    +
+                    "@"
+                    + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName()
+                    + ".name");
         }
         if (deployment != null) {
             Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());

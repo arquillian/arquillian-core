@@ -22,7 +22,6 @@
 package org.jboss.arquillian.container.impl;
 
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ServerKillProcessor;
 

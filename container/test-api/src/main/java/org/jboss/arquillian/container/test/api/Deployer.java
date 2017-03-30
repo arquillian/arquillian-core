@@ -23,7 +23,8 @@ import java.io.InputStream;
  * <p>
  * By default {@link Deployment}'s are managed by Arquillian, which mean Arquillian will perform the deploy and undeploy
  * operations for you automatically in the background. In some cases you might want a more fine grained control over the
- * deployment lifecycle. e.g. You might need to test some kind of auto discovery feature of your application that happens during startup?
+ * deployment lifecycle. e.g. You might need to test some kind of auto discovery feature of your application that happens
+ * during startup?
  * In this case you can define a {@link Deployment} to not be {@link Deployment#managed()} = false and
  * use the Deployer to manually deploy and undeploy them at your own will.
  * <p>
@@ -51,7 +52,8 @@ public interface Deployer {
      * Deploy the named deployment. <br/>
      * The operation will block until deploy is complete.
      * <p>
-     * NOTE: If you want to run a test in a container, you cannot deploy a deployment from this test on the same container that the test is
+     * NOTE: If you want to run a test in a container, you cannot deploy a deployment from this test on the same container
+     * that the test is
      * running in.
      * </p>
      * This is NOT correct for a test running in a container:<br/>
@@ -62,8 +64,10 @@ public interface Deployer {
      * }
      * </code></pre>
      * <p>
-     * If you run the test in this way for the very first deployment the test will be launched on the client side. If you try to redeploy
-     * a deployment from the container an exception will be thrown. In these cases please use the annotation {@link RunAsClient} either
+     * If you run the test in this way for the very first deployment the test will be launched on the client side. If you
+     * try to redeploy
+     * a deployment from the container an exception will be thrown. In these cases please use the annotation {@link
+     * RunAsClient} either
      * on the test method  or on the whole test class to be sure, that the test is running on the client side.
      * </p>
      * <p>
@@ -77,14 +81,17 @@ public interface Deployer {
      * }
      * </code></pre>
      *
-     * @param name The name of the deployment
+     * @param name
+     *     The name of the deployment
      */
     public void deploy(String name);
 
     /**
      * Get the Deployment byte content.
      *
-     * @param name The name of the Deployment as defined by Deployment
+     * @param name
+     *     The name of the Deployment as defined by Deployment
+     *
      * @return a Zipped Stream of the Archive
      */
     public InputStream getDeployment(String name);
@@ -93,7 +100,8 @@ public interface Deployer {
      * UnDeploy a named deployment.<br/>
      * The operation will block until deploy is complete.
      *
-     * @param name The name of the deployment
+     * @param name
+     *     The name of the deployment
      */
     public void undeploy(String name);
 }

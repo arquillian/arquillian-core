@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -71,7 +70,7 @@ public class DeploymentGenerator {
 
     public void generateDeployment(@Observes GenerateDeployment event) {
         DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
-                DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
+            DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
 
         DeploymentScenario scenario = new DeploymentScenario();
 
@@ -103,9 +102,16 @@ public class DeploymentGenerator {
             if ("custom".equalsIgnoreCase(container.getContainerConfiguration().getMode())) {
                 if (deployment.getDescription().managed()) {
                     throw new ValidationException(
-                            "Deployment " + deployment.getDescription().getName() + " is targeted against container " +
-                                    container.getName() + ". This container is set to mode custom which can not handle managed deployments. " +
-                                    "Please verify the @" + TargetsContainer.class.getName() + " annotation or container@mode in arquillian.xml");
+                        "Deployment "
+                            + deployment.getDescription().getName()
+                            + " is targeted against container "
+                            +
+                            container.getName()
+                            + ". This container is set to mode custom which can not handle managed deployments. "
+                            +
+                            "Please verify the @"
+                            + TargetsContainer.class.getName()
+                            + " annotation or container@mode in arquillian.xml");
                 }
             }
         }
@@ -118,10 +124,9 @@ public class DeploymentGenerator {
             ProtocolDefinition protocol = proReg.getProtocol(proDesc);
             if (protocol == null) {
                 throw new ValidationException(DeploymentScenario.class.getSimpleName()
-                        + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
+                    + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
             }
         }
-
     }
 
     //-------------------------------------------------------------------------------------||
@@ -147,7 +152,10 @@ public class DeploymentGenerator {
             ProtocolDefinition protocolDefinition = protoReg.getProtocol(description.getProtocol());
             if (protocolDefinition == null) {
                 protocolDefinition = protoReg.getProtocol(
-                        containerRegistry.get().getContainer(description.getTarget()).getDeployableContainer().getDefaultProtocol());
+                    containerRegistry.get()
+                        .getContainer(description.getTarget())
+                        .getDeployableContainer()
+                        .getDefaultProtocol());
             }
             Protocol<?> protocol = protocolDefinition.getProtocol();
             DeploymentPackager packager = protocol.getPackager();
@@ -171,9 +179,9 @@ public class DeploymentGenerator {
              */
             }
             description.setTestableArchive(
-                    packager.generateDeployment(
-                            new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
-                            serviceLoader.get().all(ProtocolArchiveProcessor.class)));
+                packager.generateDeployment(
+                    new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
+                    serviceLoader.get().all(ProtocolArchiveProcessor.class)));
         }
     }
 
@@ -217,18 +225,18 @@ public class DeploymentGenerator {
 
     private void throwNoContainerFound(TargetDescription target) {
         throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
-                + ") not matching any defined Container in the registry.\n"
-                + "Please include at least 1 Deployable Container on your Classpath.");
+            + ") not matching any defined Container in the registry.\n"
+            + "Please include at least 1 Deployable Container on your Classpath.");
     }
 
     private void throwNoMatchFound(ContainerRegistry conReg, TargetDescription target) {
         throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
-                + ") not matching any defined Container in the registry.\n" + "Possible causes are: None of the "
-                + conReg.getContainers().size() + " Containers are marked as default or you have defined a " + "@"
-                + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + " with a @"
-                + TargetsContainer.class.getSimpleName() + " of value (" + target.getName() + ") that "
-                + "does not match any found/configured Containers (" + toString(conReg)
-                + "), see arquillian.xml container@qualifier");
+            + ") not matching any defined Container in the registry.\n" + "Possible causes are: None of the "
+            + conReg.getContainers().size() + " Containers are marked as default or you have defined a " + "@"
+            + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + " with a @"
+            + TargetsContainer.class.getSimpleName() + " of value (" + target.getName() + ") that "
+            + "does not match any found/configured Containers (" + toString(conReg)
+            + "), see arquillian.xml container@qualifier");
     }
 
     private String toString(ContainerRegistry reg) {
@@ -241,5 +249,4 @@ public class DeploymentGenerator {
         }
         return sb.toString();
     }
-
 }

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.junit;
 
 import java.util.Comparator;
-
 import org.junit.runners.model.FrameworkMethod;
 
 /**

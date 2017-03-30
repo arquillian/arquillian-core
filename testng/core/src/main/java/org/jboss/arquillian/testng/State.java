@@ -17,7 +17,6 @@
  */
 package org.jboss.arquillian.testng;
 
-
 /**
  * State
  *
@@ -42,5 +41,4 @@ public class State {
     static void clean() {
         caughtExceptionAfter.remove();
     }
-
 }

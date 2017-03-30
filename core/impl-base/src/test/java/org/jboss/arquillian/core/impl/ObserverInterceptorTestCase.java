@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
@@ -80,5 +79,4 @@ public class ObserverInterceptorTestCase extends AbstractManagerTestBase {
             }
         }
     }
-
 }

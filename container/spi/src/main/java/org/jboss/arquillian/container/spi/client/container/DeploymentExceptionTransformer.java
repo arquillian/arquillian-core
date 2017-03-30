@@ -28,7 +28,9 @@ public interface DeploymentExceptionTransformer {
     /**
      * Transform from a Container specific deployment exception to the real cause.
      *
-     * @param exception The exception caught during deploy
+     * @param exception
+     *     The exception caught during deploy
+     *
      * @return The transformed Exception or null if exception is unknown/untransformable
      */
     Throwable transform(Throwable exception);

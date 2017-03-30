@@ -17,9 +17,7 @@
 package org.jboss.arquillian.protocol.jmx;
 
 import java.util.Map;
-
 import javax.management.NotificationBroadcaster;
-
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.test.spi.TestResult;
 
@@ -38,9 +36,13 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
     /**
      * Runs a test method on the given test class
      *
-     * @param className  the test class name
-     * @param methodName the test method name
+     * @param className
+     *     the test class name
+     * @param methodName
+     *     the test method name
+     *
      * @return a serialized {@link TestResult}
+     *
      * @deprecated
      */
     @Deprecated
@@ -49,9 +51,13 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
     /**
      * Runs a test method on the given test class
      *
-     * @param className  the test class name
-     * @param methodName the test method name
-     * @param protocol   configuration properties
+     * @param className
+     *     the test class name
+     * @param methodName
+     *     the test method name
+     * @param protocol
+     *     configuration properties
+     *
      * @return a serialized {@link TestResult}
      */
     public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps);
@@ -59,7 +65,8 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
     /**
      * Broadcast {@link Command} commands to any listeners
      *
-     * @param command Command object containing the request
+     * @param command
+     *     Command object containing the request
      */
     void send(Command<?> command);
 
@@ -73,8 +80,10 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
     /**
      * Client side to push a {@link Command} result back to container.
      *
-     * @param eventId used to correlate the result
-     * @param command Command object containing the result, serialized
+     * @param eventId
+     *     used to correlate the result
+     * @param command
+     *     Command object containing the result, serialized
      */
     void push(String eventId, byte[] command);
 }

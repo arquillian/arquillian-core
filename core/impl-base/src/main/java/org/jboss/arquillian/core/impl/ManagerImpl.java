@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
@@ -57,6 +56,9 @@ public class ManagerImpl implements Manager {
     // Instance Members -------------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
+    private final RuntimeLogger runtimeLogger;
+    private final List<Context> contexts;
+    private final List<Extension> extensions;
     /*
      * Hack:
      * Events can be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling.
@@ -64,17 +66,13 @@ public class ManagerImpl implements Manager {
      * the higher level event will get the exception and re-fire it on the bus. We need to keep track of which exceptions
      * has been handled in the call chain so we can re-throw without re-firing on a higher level.
      */
-    private ThreadLocal<Set<Class<? extends Throwable>>> handledThrowables = new ThreadLocal<Set<Class<? extends Throwable>>>() {
-        @Override
-        protected Set<Class<? extends Throwable>> initialValue() {
-            return new HashSet<Class<? extends Throwable>>();
-        }
-    };
-
-    private final RuntimeLogger runtimeLogger;
-    private final List<Context> contexts;
-    private final List<Extension> extensions;
-
+    private ThreadLocal<Set<Class<? extends Throwable>>> handledThrowables =
+        new ThreadLocal<Set<Class<? extends Throwable>>>() {
+            @Override
+            protected Set<Class<? extends Throwable>> initialValue() {
+                return new HashSet<Class<? extends Throwable>>();
+            }
+        };
 
     ManagerImpl(final Collection<Class<? extends Context>> contextClasses, final Collection<Class<?>> extensionClasses) {
         this.contexts = new ArrayList<Context>();
@@ -131,7 +129,8 @@ public class ManagerImpl implements Manager {
                 context.activate();
                 activatedApplicationContext = true;
             }
-            new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event, runtimeLogger).proceed();
+            new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event,
+                runtimeLogger).proceed();
         } catch (Exception e) {
             Throwable fireException = e;
             if (fireException instanceof InvocationException) {
@@ -298,8 +297,8 @@ public class ManagerImpl implements Manager {
             public ManagerProcessing observer(Class<?> observer) {
                 if (extensions.contains(observer)) {
                     throw new IllegalArgumentException(
-                            "Attempted to register the same Observer: " + observer.getName()
-                                    + " multiple times, please check classpath for conflicting jar versions");
+                        "Attempted to register the same Observer: " + observer.getName()
+                            + " multiple times, please check classpath for conflicting jar versions");
                 }
                 extensions.add(observer);
                 return this;
@@ -309,8 +308,8 @@ public class ManagerImpl implements Manager {
             public ManagerProcessing context(Class<? extends Context> context) {
                 if (contexts.contains(context)) {
                     throw new IllegalArgumentException(
-                            "Attempted to register the same " + Context.class.getSimpleName() + " : " + context.getName()
-                                    + " multiple times, please check classpath for conflicting jar versions");
+                        "Attempted to register the same " + Context.class.getSimpleName() + " : " + context.getName()
+                            + " multiple times, please check classpath for conflicting jar versions");
                 }
                 contexts.add(context);
                 return this;
@@ -319,7 +318,6 @@ public class ManagerImpl implements Manager {
 
         this.extensions.addAll(createExtensions(extensions));
         this.contexts.addAll(createContexts(contexts));
-
     }
 
     boolean isExceptionHandled(Throwable e) {
@@ -395,9 +393,9 @@ public class ManagerImpl implements Manager {
             @Override
             public Object call() throws Exception {
                 ManagerImpl.this.bind(
-                        ApplicationScoped.class, Injector.class, InjectorImpl.of(ManagerImpl.this));
+                    ApplicationScoped.class, Injector.class, InjectorImpl.of(ManagerImpl.this));
                 ManagerImpl.this.bind(
-                        ApplicationScoped.class, ExecutorService.class, new ThreadedExecutorService(ManagerImpl.this));
+                    ApplicationScoped.class, ExecutorService.class, new ThreadedExecutorService(ManagerImpl.this));
                 return null;
             }
         });
@@ -430,7 +428,8 @@ public class ManagerImpl implements Manager {
         List<ObserverMethod> observers = new ArrayList<ObserverMethod>();
         for (Extension extension : extensions) {
             for (ObserverMethod observer : extension.getObservers()) {
-                if (Reflections.getType(observer.getType()).isAssignableFrom(eventType) && !Reflections.isType(observer.getType(), EventContext.class)) {
+                if (Reflections.getType(observer.getType()).isAssignableFrom(eventType) && !Reflections.isType(
+                    observer.getType(), EventContext.class)) {
                     observers.add(observer);
                 }
             }
@@ -495,5 +494,4 @@ public class ManagerImpl implements Manager {
         }
         return null;
     }
-
 }

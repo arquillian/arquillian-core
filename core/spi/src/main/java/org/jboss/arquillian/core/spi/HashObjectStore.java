@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.spi;
 
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.jboss.arquillian.core.spi.context.ObjectStore;
 
 /**

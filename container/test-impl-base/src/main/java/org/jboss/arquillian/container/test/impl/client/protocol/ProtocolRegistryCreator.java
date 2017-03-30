@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.client.protocol;
 
 import java.util.Collection;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.DefaultProtocolDef;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
@@ -55,7 +54,8 @@ public class ProtocolRegistryCreator {
             defaultProtocol = findMatch(new ProtocolDescription(defaultProtcolDef.getType()), protocols);
             if (defaultProtocol == null) {
                 // TODO: add printout of found protocols
-                throw new IllegalStateException("Defined default protocol " + defaultProtcolDef.getType() + " can not be found on classpath");
+                throw new IllegalStateException(
+                    "Defined default protocol " + defaultProtcolDef.getType() + " can not be found on classpath");
             }
         }
         ProtocolRegistry registry = new ProtocolRegistry();
@@ -69,7 +69,8 @@ public class ProtocolRegistryCreator {
         registryInstance.set(registry);
     }
 
-    private Protocol<?> findMatch(ProtocolDescription description, @SuppressWarnings("rawtypes") Collection<Protocol> protocols) {
+    private Protocol<?> findMatch(ProtocolDescription description,
+        @SuppressWarnings("rawtypes") Collection<Protocol> protocols) {
         for (Protocol<?> protocol : protocols) {
             if (description.equals(protocol.getDescription())) {
                 return protocol;

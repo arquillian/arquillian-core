@@ -37,10 +37,10 @@ public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender {
     public WebArchive createAuxiliaryArchive() {
         // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
         return ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
-                .addPackage(ServletRemoteExtension.class.getPackage())
-                .setWebXML(new StringAsset(
-                        WebUtils.createNewDescriptor().exportAsString()
-                ))
-                .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
+            .addPackage(ServletRemoteExtension.class.getPackage())
+            .setWebXML(new StringAsset(
+                WebUtils.createNewDescriptor().exportAsString()
+            ))
+            .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
     }
 }

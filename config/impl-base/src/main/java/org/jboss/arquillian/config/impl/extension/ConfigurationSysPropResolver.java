@@ -43,17 +43,17 @@ class ConfigurationSysPropResolver {
      * sysprop EL expressions in the provided {@link ArquillianDescriptor} to real
      * values or defaults
      *
-     * @param descriptor The input to resolve, required
-     * @return
+     * @param descriptor
+     *     The input to resolve, required
+     *
      * @throws IllegalArgumentException
      */
     static ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         final String descrStr = descriptor.exportAsString();
         final ArquillianDescriptor newArqDescriptor = Descriptors.importAs(ArquillianDescriptor.class).fromString(
-                StringPropertyReplacer.replaceProperties(descrStr));
+            StringPropertyReplacer.replaceProperties(descrStr));
 
         return newArqDescriptor;
     }
-
 }

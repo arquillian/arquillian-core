@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
-
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
@@ -50,10 +49,10 @@ import org.junit.Test;
  */
 public class AnnotationDeploymentScenarioGeneratorTestCase {
 
+    private final static String expectedLogPartForArchiveWithUnexpectedFileExtension = "unexpected file extension";
     private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
     private static OutputStream logCapturingStream;
     private static StreamHandler customLogHandler;
-    private final static String expectedLogPartForArchiveWithUnexpectedFileExtension = "unexpected file extension";
 
     @Before
     public void attachLogCapturer() {
@@ -86,19 +85,19 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
 
         Assert.assertNotNull(scenario);
         Assert.assertEquals(
-                "Verify all deployments were found",
-                2, scenario.size());
+            "Verify all deployments were found",
+            2, scenario.size());
 
         for (DeploymentDescription deployment : scenario) {
             Assert.assertEquals(
-                    "Verify deployment has default target",
-                    TargetDescription.DEFAULT,
-                    deployment.getTarget());
+                "Verify deployment has default target",
+                TargetDescription.DEFAULT,
+                deployment.getTarget());
 
             Assert.assertEquals(
-                    "Verify deployment has default protocol",
-                    ProtocolDescription.DEFAULT,
-                    deployment.getProtocol());
+                "Verify deployment has default protocol",
+                ProtocolDescription.DEFAULT,
+                deployment.getProtocol());
 
             Assert.assertEquals(-1, deployment.getOrder());
             Assert.assertEquals(true, deployment.managed());
@@ -112,22 +111,21 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
 
         Assert.assertNotNull(scenario);
         Assert.assertEquals(
-                "Verify all deployments were found",
-                2, scenario.size());
-
+            "Verify all deployments were found",
+            2, scenario.size());
 
         for (DeploymentDescription deploymentDesc : scenario) {
 
             if (deploymentDesc.getOrder() == 1) {
                 Assert.assertEquals(
-                        "Verify deployment has specified target",
-                        new TargetDescription("target-first"),
-                        deploymentDesc.getTarget());
+                    "Verify deployment has specified target",
+                    new TargetDescription("target-first"),
+                    deploymentDesc.getTarget());
 
                 Assert.assertEquals(
-                        "Verify deployment has specified protocol",
-                        new ProtocolDescription("protocol-first"),
-                        deploymentDesc.getProtocol());
+                    "Verify deployment has specified protocol",
+                    new ProtocolDescription("protocol-first"),
+                    deploymentDesc.getProtocol());
 
                 Assert.assertEquals(1, deploymentDesc.getOrder());
                 Assert.assertEquals(false, deploymentDesc.managed());
@@ -136,13 +134,13 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
                 Assert.assertNull(deploymentDesc.getExpectedException());
             } else {
                 Assert.assertEquals(
-                        "Verify deployment has specified target",
-                        new TargetDescription("target-second"),
-                        deploymentDesc.getTarget());
+                    "Verify deployment has specified target",
+                    new TargetDescription("target-second"),
+                    deploymentDesc.getTarget());
                 Assert.assertEquals(
-                        "Verify deployment has specified protocol",
-                        new ProtocolDescription("protocol-second"),
-                        deploymentDesc.getProtocol());
+                    "Verify deployment has specified protocol",
+                    new ProtocolDescription("protocol-second"),
+                    deploymentDesc.getProtocol());
 
                 Assert.assertEquals(2, deploymentDesc.getOrder());
                 Assert.assertEquals(false, deploymentDesc.managed());
@@ -159,19 +157,18 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
 
         Assert.assertNotNull(scenario);
         Assert.assertEquals(
-                "Verify all deployments were found",
-                3, scenario.size());
+            "Verify all deployments were found",
+            3, scenario.size());
 
         Assert.assertTrue(
-                "Deployments are not sorted by order",
-                scenario.get(0).getOrder() < scenario.get(1).getOrder()
+            "Deployments are not sorted by order",
+            scenario.get(0).getOrder() < scenario.get(1).getOrder()
         );
         Assert.assertTrue(
-                "Deployments are not sorted by order",
-                scenario.get(1).getOrder() < scenario.get(2).getOrder()
+            "Deployments are not sorted by order",
+            scenario.get(1).getOrder() < scenario.get(2).getOrder()
         );
     }
-
 
     @Test
     public void shouldReadExpectedAndOverrideDeployment() {
@@ -179,8 +176,8 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
 
         Assert.assertNotNull(scenario);
         Assert.assertEquals(
-                "Verify all deployments were found",
-                1, scenario.size());
+            "Verify all deployments were found",
+            1, scenario.size());
 
         DeploymentDescription deploymentOne = scenario.get(0);
 
@@ -216,19 +213,19 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionOnDeploymentNotStatic() throws Exception {
         new AnnotationDeploymentScenarioGenerator().generate(
-                new TestClass(DeploymentNotStatic.class));
+            new TestClass(DeploymentNotStatic.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionOnDeploymentWrongReturnType() throws Exception {
         new AnnotationDeploymentScenarioGenerator().generate(
-                new TestClass(DeploymentWrongReturnType.class));
+            new TestClass(DeploymentWrongReturnType.class));
     }
 
     @Test
     public void shouldLogWarningForMismatchingArchiveTypeAndFileExtension() throws Exception {
         new AnnotationDeploymentScenarioGenerator().generate(
-                new TestClass(DeploymentWithMismatchingTypeAndFileExtension.class));
+            new TestClass(DeploymentWithMismatchingTypeAndFileExtension.class));
 
         String capturedLog = getTestCapturedLog();
         Assert.assertTrue(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
@@ -237,7 +234,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
     @Test
     public void shouldNotLogWarningForMatchingArchiveTypeAndFileExtension() throws Exception {
         new AnnotationDeploymentScenarioGenerator().generate(
-                new TestClass(DeploymentWithSpecifiedFileExtension.class));
+            new TestClass(DeploymentWithSpecifiedFileExtension.class));
 
         String capturedLog = getTestCapturedLog();
         Assert.assertFalse(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
@@ -246,7 +243,7 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
     @Test
     public void shouldLogWarningForDeploymentWithMissingFileExtension() throws Exception {
         new AnnotationDeploymentScenarioGenerator().generate(
-                new TestClass(DeploymentWithMissingFileExtension.class));
+            new TestClass(DeploymentWithMissingFileExtension.class));
 
         String capturedLog = getTestCapturedLog();
         Assert.assertTrue(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
@@ -255,10 +252,14 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
     @Test // should not log warning when using the default archive name
     public void shouldNotLogWarningForDeploymentWithoutSpecifiedName() throws Exception {
         new AnnotationDeploymentScenarioGenerator().generate(
-                new TestClass(DeploymentWithoutSpecifiedName.class));
+            new TestClass(DeploymentWithoutSpecifiedName.class));
 
         String capturedLog = getTestCapturedLog();
         Assert.assertFalse(capturedLog.contains(expectedLogPartForArchiveWithUnexpectedFileExtension));
+    }
+
+    private List<DeploymentDescription> generate(Class<?> testClass) {
+        return new AnnotationDeploymentScenarioGenerator().generate(new TestClass(testClass));
     }
 
     @SuppressWarnings("unused")
@@ -389,10 +390,6 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
         public static WebArchive test() {
             return ShrinkWrap.create(WebArchive.class);
         }
-    }
-
-    private List<DeploymentDescription> generate(Class<?> testClass) {
-        return new AnnotationDeploymentScenarioGenerator().generate(new TestClass(testClass));
     }
 }
 

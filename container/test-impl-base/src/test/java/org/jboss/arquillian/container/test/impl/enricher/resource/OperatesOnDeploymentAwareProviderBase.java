@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
 import org.jboss.arquillian.container.impl.ContainerImpl;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -48,7 +47,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  * OperatesOnDeploymentAwareProviderTestCase
@@ -104,7 +102,8 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
         return execute(true, true, enrichType, contextualType, outerType, innerType);
     }
 
-    protected <X, T> X execute(boolean reigsterRegistry, boolean registerScenario, Class<X> enrichType, Class<T> contextualType, T outerType, T innerType) throws Exception {
+    protected <X, T> X execute(boolean reigsterRegistry, boolean registerScenario, Class<X> enrichType,
+        Class<T> contextualType, T outerType, T innerType) throws Exception {
         if (reigsterRegistry) {
             bind(ApplicationScoped.class, ContainerRegistry.class, registry);
         }
@@ -113,14 +112,16 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
         }
 
         Mockito.when(registry.getContainer(
-                new TargetDescription("X"))).thenReturn(new ContainerImpl("X", deployableContainer, new ContainerDefImpl("X")));
+            new TargetDescription("X")))
+            .thenReturn(new ContainerImpl("X", deployableContainer, new ContainerDefImpl("X")));
         Mockito.when(registry.getContainer(
-                new TargetDescription("Z"))).thenReturn(new ContainerImpl("Z", deployableContainer, new ContainerDefImpl("Z")));
+            new TargetDescription("Z")))
+            .thenReturn(new ContainerImpl("Z", deployableContainer, new ContainerDefImpl("Z")));
 
         Deployment deploymentZ = new Deployment(new DeploymentDescription("Z", ShrinkWrap.create(JavaArchive.class))
-                .setTarget(new TargetDescription("Z")));
+            .setTarget(new TargetDescription("Z")));
         Deployment deploymentX = new Deployment(new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
-                .setTarget(new TargetDescription("X")));
+            .setTarget(new TargetDescription("X")));
 
         Mockito.when(scenario.deployment(new DeploymentTargetDescription("Z"))).thenReturn(deploymentZ);
         Mockito.when(scenario.deployment(new DeploymentTargetDescription("X"))).thenReturn(deploymentX);
@@ -154,13 +155,17 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
             if (deploymentContext.isActive()) {
                 Deployment activeContext = deploymentContext.getActiveId();
                 if (!"Z".equals(activeContext.getDescription().getName())) {
-                    Assert.fail("Wrong deployment context active, potential leak in Enricher. Active context was " + activeContext.getDescription().getName());
+                    Assert.fail(
+                        "Wrong deployment context active, potential leak in Enricher. Active context was " + activeContext
+                            .getDescription()
+                            .getName());
                 }
             }
             if (containerContext.isActive()) {
                 String activeContext = containerContext.getActiveId();
                 if (!"TEST".equalsIgnoreCase(activeContext)) {
-                    Assert.fail("Wrong container context active, potential leak in Enricher. Active context was " + activeContext);
+                    Assert.fail("Wrong container context active, potential leak in Enricher. Active context was "
+                        + activeContext);
                 }
             }
         }

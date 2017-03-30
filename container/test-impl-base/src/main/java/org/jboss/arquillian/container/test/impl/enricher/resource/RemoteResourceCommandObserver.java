@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.util.Collection;
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
@@ -31,7 +30,8 @@ public class RemoteResourceCommandObserver {
             if (resourceProvider.canProvide(type)) {
                 Object value = resourceProvider.lookup(command.getResource(), command.getAnnotations());
                 if (value == null) {
-                    throw new RuntimeException("Provider for type " + type + " returned a null value: " + resourceProvider);
+                    throw new RuntimeException(
+                        "Provider for type " + type + " returned a null value: " + resourceProvider);
                 }
                 command.setResult(value);
                 return;

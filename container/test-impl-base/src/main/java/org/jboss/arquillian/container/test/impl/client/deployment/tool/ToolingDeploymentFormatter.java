@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
-
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -50,9 +49,9 @@ public class ToolingDeploymentFormatter implements Formatter {
         StringBuilder xml = new StringBuilder();
 
         xml.append("<?xml version=\"1.0\"?>\n<deployment")
-                .append(" name=\"").append(archive.getName()).append("\"")
-                .append(" testclass=\"").append(testClass.getName()).append("\"")
-                .append(">\n");
+            .append(" name=\"").append(archive.getName()).append("\"")
+            .append(" testclass=\"").append(testClass.getName()).append("\"")
+            .append(">\n");
 
         formatNode(archive.get(ArchivePaths.root()), xml);
 
@@ -65,8 +64,8 @@ public class ToolingDeploymentFormatter implements Formatter {
             String source = findResourceLocation(node.getAsset());
 
             xml.append("\t<asset")
-                    .append(" type=\"").append(node.getAsset().getClass().getSimpleName()).append("\"")
-                    .append(" path=\"").append(node.getPath().get()).append("\"");
+                .append(" type=\"").append(node.getAsset().getClass().getSimpleName()).append("\"")
+                .append(" path=\"").append(node.getPath().get()).append("\"");
             if (source != null) {
                 xml.append(" source=\"").append(source).append("\"");
             }
@@ -75,13 +74,12 @@ public class ToolingDeploymentFormatter implements Formatter {
                 xml.append(">");
                 xml.append("\n");
                 formatNode(
-                        ((ArchiveAsset) node.getAsset()).getArchive().get(ArchivePaths.root()),
-                        xml);
+                    ((ArchiveAsset) node.getAsset()).getArchive().get(ArchivePaths.root()),
+                    xml);
                 xml.append("</asset>").append("\n");
             } else {
                 xml.append("/>").append("\n");
             }
-
         } else {
             xml.append("\t<asset type=\"Directory\" path=\"").append(node.getPath().get()).append("\"/>\n");
         }
@@ -120,23 +118,23 @@ public class ToolingDeploymentFormatter implements Formatter {
         }
     }
 
-//   private static class Deployment 
-//   {
-//      
-//   }
-//   
-//   private static class Node 
-//   {
-//      
-//   }
-//   
-//   private static class Source 
-//   {
-//      
-//   }
-//   
-//   private static class Content 
-//   {
-//      
-//   }
+    //   private static class Deployment
+    //   {
+    //
+    //   }
+    //
+    //   private static class Node
+    //   {
+    //
+    //   }
+    //
+    //   private static class Source
+    //   {
+    //
+    //   }
+    //
+    //   private static class Content
+    //   {
+    //
+    //   }
 }

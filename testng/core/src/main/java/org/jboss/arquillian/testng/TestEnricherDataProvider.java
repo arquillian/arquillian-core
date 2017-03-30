@@ -17,7 +17,6 @@
 package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
-
 import org.testng.annotations.DataProvider;
 
 /**

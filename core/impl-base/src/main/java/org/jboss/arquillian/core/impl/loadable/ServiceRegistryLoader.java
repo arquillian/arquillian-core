@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
@@ -64,11 +63,11 @@ public class ServiceRegistryLoader implements ServiceLoader {
             return all.iterator().next();
         }
         if (all.size() > 1) {
-            throw new IllegalStateException("Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
+            throw new IllegalStateException(
+                "Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
         }
         return null;
     }
-
 
     /* (non-Javadoc)
      * @see org.jboss.arquillian.core.spi.ServiceLoader#onlyOne(java.lang.Class, java.lang.Class)
@@ -87,12 +86,11 @@ public class ServiceRegistryLoader implements ServiceLoader {
         return one;
     }
 
-
     private <T> T createServiceInstance(Class<T> service) {
         T serviceInst = SecurityActions.newInstance(
-                service,
-                new Class<?>[]{},
-                new Object[]{});
+            service,
+            new Class<?>[] {},
+            new Object[] {});
 
         injector.inject(serviceInst);
         return serviceInst;
@@ -105,5 +103,4 @@ public class ServiceRegistryLoader implements ServiceLoader {
         }
         return sb.subSequence(0, sb.length() - 2).toString();
     }
-
 }

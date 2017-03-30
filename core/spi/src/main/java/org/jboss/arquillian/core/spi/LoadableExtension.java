@@ -28,11 +28,11 @@ import org.jboss.arquillian.core.spi.context.Context;
 public interface LoadableExtension {
     public void register(ExtensionBuilder builder);
 
-
     public interface ExtensionBuilder {
         <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl);
 
-        <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl);
+        <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl,
+            Class<? extends T> newServiceImpl);
 
         ExtensionBuilder observer(Class<?> handler);
 

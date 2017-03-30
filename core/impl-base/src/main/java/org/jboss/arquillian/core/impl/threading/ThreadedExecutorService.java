@@ -23,7 +23,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.threading.ContextSnapshot;
 import org.jboss.arquillian.core.impl.ManagerImpl;
@@ -95,6 +94,12 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
 
     public static class ContextualStateSnapshot implements ContextSnapshot {
 
+        private Map<Context, Object> activeContexts;
+
+        private ContextualStateSnapshot(Map<Context, Object> activeContexts) {
+            this.activeContexts = activeContexts;
+        }
+
         @SuppressWarnings("unchecked")
         private static ContextSnapshot from(ManagerImpl manager) {
             List<Context> contexts = manager.getContexts();
@@ -109,12 +114,6 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
                 }
             }
             return new ContextualStateSnapshot(activeContexts);
-        }
-
-        private Map<Context, Object> activeContexts;
-
-        private ContextualStateSnapshot(Map<Context, Object> activeContexts) {
-            this.activeContexts = activeContexts;
         }
 
         @SuppressWarnings("unchecked")

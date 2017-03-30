@@ -54,7 +54,8 @@ public class CombinedException extends Exception {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < causes.size(); i++) {
             final Throwable cause = causes.get(i);
-            builder.append(String.format("Exception %d: '[%s] %s'%n", i + 1, cause.getClass().getName(), cause.getMessage()));
+            builder.append(
+                String.format("Exception %d: '[%s] %s'%n", i + 1, cause.getClass().getName(), cause.getMessage()));
         }
         return builder.toString();
     }

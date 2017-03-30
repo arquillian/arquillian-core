@@ -37,7 +37,8 @@ public final class Testable {
     }
 
     /**
-     * Mark the given archive as the archive under test so that the test are running in its context when using the Servlet protocol.
+     * Mark the given archive as the archive under test so that the test are running in its context when using the Servlet
+     * protocol.
      * <p>
      * <p>Usage Example:<br/>
      * <code><pre>
@@ -49,9 +50,6 @@ public final class Testable {
      *    return earArchive;
      * }
      * </pre></code>
-     *
-     * @param archive
-     * @return
      */
     public static <T extends Archive<T>> T archiveToTest(T archive) {
         return archive.add(EmptyAsset.INSTANCE, MARKER_FILE_PATH);

@@ -29,7 +29,6 @@ import org.jboss.arquillian.core.spi.ObserverMethod;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * ExtensionParseTestCase
  *
@@ -43,8 +42,8 @@ public class ExtensionParseTestCase {
         Extension extension = ExtensionImpl.of(target);
 
         Assert.assertEquals(
-                "Verify correct observer methods were found",
-                2, extension.getObservers().size());
+            "Verify correct observer methods were found",
+            2, extension.getObservers().size());
 
         for (ObserverMethod observer : extension.getObservers()) {
             observer.invoke(null, new String());
@@ -60,8 +59,8 @@ public class ExtensionParseTestCase {
         Extension extension = ExtensionImpl.of(target);
 
         Assert.assertEquals(
-                "Verify correct injection fields were found",
-                1, extension.getInjectionPoints().size());
+            "Verify correct injection fields were found",
+            1, extension.getInjectionPoints().size());
 
         Instance<Object> instance = new DummyInstanceImpl();
         for (InjectionPoint point : extension.getInjectionPoints()) {
@@ -79,8 +78,8 @@ public class ExtensionParseTestCase {
         Extension extension = ExtensionImpl.of(target);
 
         Assert.assertEquals(
-                "Verify correct event fields were found",
-                1, extension.getEventPoints().size());
+            "Verify correct event fields were found",
+            1, extension.getEventPoints().size());
 
         Assert.assertEquals(1, extension.getObservers().size());
 
@@ -92,8 +91,8 @@ public class ExtensionParseTestCase {
 
         Assert.assertTrue(target.methodOneWasCalled);
         Assert.assertEquals(
-                "Verify the Extensions Event was firable",
-                "some string", event.getString());
+            "Verify the Extensions Event was firable",
+            "some string", event.getString());
     }
 
     private static class DummyInstanceImpl implements InstanceProducer<Object> {

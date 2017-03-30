@@ -35,20 +35,20 @@ public class ArquillianDeploymentAppender extends CachedAuxilliaryArchiveAppende
     @Override
     protected Archive<?> buildArchive() {
         return ShrinkWrap.create(JavaArchive.class, "arquillian-core.jar")
-                .addPackages(
-                        true,
-                        "org.jboss.arquillian.core",
-                        //"org.jboss.arquillian.container.api",
-                        "org.jboss.arquillian.container.spi",
-                        "org.jboss.arquillian.container.impl",
-                        "org.jboss.arquillian.container.test.api",
-                        "org.jboss.arquillian.container.test.spi",
-                        "org.jboss.arquillian.container.test.impl",
-                        "org.jboss.arquillian.config",
-                        "org.jboss.arquillian.test",
-                        "org.jboss.shrinkwrap.api",
-                        "org.jboss.shrinkwrap.descriptor.api")
-                .addAsServiceProvider(RemoteLoadableExtension.class, ContainerTestRemoteExtension.class)
-                .addAsServiceProvider(ExtensionLoader.class, RemoteExtensionLoader.class);
+            .addPackages(
+                true,
+                "org.jboss.arquillian.core",
+                //"org.jboss.arquillian.container.api",
+                "org.jboss.arquillian.container.spi",
+                "org.jboss.arquillian.container.impl",
+                "org.jboss.arquillian.container.test.api",
+                "org.jboss.arquillian.container.test.spi",
+                "org.jboss.arquillian.container.test.impl",
+                "org.jboss.arquillian.config",
+                "org.jboss.arquillian.test",
+                "org.jboss.shrinkwrap.api",
+                "org.jboss.shrinkwrap.descriptor.api")
+            .addAsServiceProvider(RemoteLoadableExtension.class, ContainerTestRemoteExtension.class)
+            .addAsServiceProvider(ExtensionLoader.class, RemoteExtensionLoader.class);
     }
 }

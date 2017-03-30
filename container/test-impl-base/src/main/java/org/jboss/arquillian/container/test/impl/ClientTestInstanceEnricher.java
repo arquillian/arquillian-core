@@ -40,9 +40,9 @@ public class ClientTestInstanceEnricher extends TestInstanceEnricher {
     @Override
     public void enrich(Before event) throws Exception {
         boolean runAsClient = RunModeUtils.isRunAsClient(
-                this.deployment.get(),
-                event.getTestClass(),
-                event.getTestMethod());
+            this.deployment.get(),
+            event.getTestClass(),
+            event.getTestMethod());
 
         if (runAsClient || RunModeUtils.isLocalContainer(container.get())) {
             super.enrich(event);

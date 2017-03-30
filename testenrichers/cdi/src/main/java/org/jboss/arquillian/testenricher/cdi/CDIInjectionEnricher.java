@@ -18,11 +18,9 @@ package org.jboss.arquillian.testenricher.cdi;
 
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -89,7 +87,10 @@ public class CDIInjectionEnricher implements TestEnricher {
                 try {
                     values[i] = getInstanceByType(beanManager, i, method);
                 } catch (Exception e) {
-                    log.fine("CDIEnricher tried to lookup method parameter of type " + parameterTypes[i] + " but caught exception: " + e.getMessage());
+                    log.fine("CDIEnricher tried to lookup method parameter of type "
+                        + parameterTypes[i]
+                        + " but caught exception: "
+                        + e.getMessage());
                 }
             }
         }
@@ -109,7 +110,8 @@ public class CDIInjectionEnricher implements TestEnricher {
                 injectNonContextualInstance(beanManager, testCase);
             } else {
                 // Better would be to raise an exception if @Inject is present in class and BeanManager cannot be found
-                log.fine("BeanManager cannot be located in context. Either you are using an archive with no beans.xml or the BeanManager has not been produced.");
+                log.fine(
+                    "BeanManager cannot be located in context. Either you are using an archive with no beans.xml or the BeanManager has not been produced.");
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not inject members", e);
@@ -120,7 +122,7 @@ public class CDIInjectionEnricher implements TestEnricher {
     protected void injectNonContextualInstance(BeanManager manager, Object instance) {
         CreationalContext<Object> creationalContext = getCreationalContext();
         InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(manager
-                .createAnnotatedType(instance.getClass()));
+            .createAnnotatedType(instance.getClass()));
         injectionTarget.inject(instance, creationalContext);
     }
 }

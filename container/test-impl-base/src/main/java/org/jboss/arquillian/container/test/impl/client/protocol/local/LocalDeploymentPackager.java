@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.client.protocol.local;
 
 import java.util.Collection;
-
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
@@ -36,5 +35,4 @@ public class LocalDeploymentPackager implements DeploymentPackager {
     public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors) {
         return testDeployment.getApplicationArchive();
     }
-
 }

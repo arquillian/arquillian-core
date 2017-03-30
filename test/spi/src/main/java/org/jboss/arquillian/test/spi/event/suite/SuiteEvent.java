@@ -18,7 +18,6 @@ package org.jboss.arquillian.test.spi.event.suite;
 
 import org.jboss.arquillian.core.spi.event.Event;
 
-
 /**
  * Base for events fired in the Suite execution cycle.
  *

@@ -25,7 +25,6 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -52,13 +51,12 @@ public class ExceptionProxySerializationTestCase {
             proxy = ExceptionProxy.createForException(e);
         }
 
-
         out.writeObject(proxy);
         out.flush();
 
         ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
 
-        final URLClassLoader cl = new URLClassLoader(new URL[]{}) {
+        final URLClassLoader cl = new URLClassLoader(new URL[] {}) {
             @Override
             protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
                 if (UnknownException.class.getName().equals(name)) {

@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.lang.reflect.Field;
-
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
@@ -28,7 +27,7 @@ public class ClassPermissionTestCase {
     @Test
     public void shouldBeAbleToUseProtectedFieldsAndMethods() throws Exception {
         Class<?> observerClass = SecurityActions.loadClass(
-                this.getClass().getPackage().getName() + ".test.PrivateObserver");
+            this.getClass().getPackage().getName() + ".test.PrivateObserver");
         Manager manager = ManagerBuilder.from().extension(observerClass).create();
 
         manager.fire("Test");

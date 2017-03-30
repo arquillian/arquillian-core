@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -100,11 +99,10 @@ public class ArquillianResourceTestEnricher implements TestEnricher {
     }
 
     /**
-     * @param type
-     * @param resource
-     * @return
-     * @throws IllegalArgumentException If no ResourceProvider found for Type
-     * @throws RuntimeException         If ResourceProvider return null
+     * @throws IllegalArgumentException
+     *     If no ResourceProvider found for Type
+     * @throws RuntimeException
+     *     If ResourceProvider return null
      */
     private Object lookup(Class<?> type, ArquillianResource resource, List<Annotation> qualifiers) {
         Collection<ResourceProvider> resourceProviders = loader.get().all(ResourceProvider.class);
@@ -112,7 +110,8 @@ public class ArquillianResourceTestEnricher implements TestEnricher {
             if (resourceProvider.canProvide(type)) {
                 Object value = resourceProvider.lookup(resource, qualifiers.toArray(new Annotation[0]));
                 if (value == null) {
-                    throw new RuntimeException("Provider for type " + type + " returned a null value: " + resourceProvider);
+                    throw new RuntimeException(
+                        "Provider for type " + type + " returned a null value: " + resourceProvider);
                 }
                 return value;
             }
@@ -159,8 +158,9 @@ public class ArquillianResourceTestEnricher implements TestEnricher {
         }
 
         if (present) {
-            throw new IllegalStateException(String.format("You have put %s or its subclass on ArquillianResource injection point "
-                            + "with qualifiers '%s'. This annotation is not supposed to be used in your test case.",
+            throw new IllegalStateException(
+                String.format("You have put %s or its subclass on ArquillianResource injection point "
+                        + "with qualifiers '%s'. This annotation is not supposed to be used in your test case.",
                     scope.getName(), qualifiers.toString()));
         }
     }

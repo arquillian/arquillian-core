@@ -25,7 +25,8 @@ public class TestNGTestRunnerTestCase extends Arquillian {
     @Test
     public void shouldReturnPassedTest() throws Exception {
         TestNGTestRunner runner = new TestNGTestRunner();
-        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvidePassingTestToRunner");
+        TestResult result =
+            runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvidePassingTestToRunner");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
@@ -35,7 +36,8 @@ public class TestNGTestRunnerTestCase extends Arquillian {
     @Test
     public void shouldReturnFailedTest() throws Exception {
         TestNGTestRunner runner = new TestNGTestRunner();
-        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideFailingTestToRunner");
+        TestResult result =
+            runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideFailingTestToRunner");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
@@ -55,7 +57,8 @@ public class TestNGTestRunnerTestCase extends Arquillian {
     @Test
     public void shouldReturnExceptionOnPassedTest() throws Exception {
         TestNGTestRunner runner = new TestNGTestRunner();
-        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideExpectedExceptionToRunner");
+        TestResult result =
+            runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideExpectedExceptionToRunner");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
@@ -67,7 +70,8 @@ public class TestNGTestRunnerTestCase extends Arquillian {
     // TODO: this should me moved to new TestNG test suite
     public void shouldBeAbleToUseOtherDataProviders() throws Exception {
         TestNGTestRunner runner = new TestNGTestRunner();
-        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldBeAbleToUseOtherDataProviders");
+        TestResult result =
+            runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldBeAbleToUseOtherDataProviders");
 
         Assert.assertNotNull(result);
         Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());

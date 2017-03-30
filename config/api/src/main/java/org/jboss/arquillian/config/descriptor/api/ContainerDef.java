@@ -34,9 +34,9 @@ public interface ContainerDef extends ArquillianDescriptor {
 
     boolean isDefault();
 
-    ContainerDef setMode(String mode);
-
     String getMode();
+
+    ContainerDef setMode(String mode);
 
     ContainerDef dependency(String artifactId);
 

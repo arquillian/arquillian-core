@@ -32,5 +32,4 @@ public interface LifecycleEvent extends Event {
      * @return the executor
      */
     LifecycleMethodExecutor getExecutor();
-
 }

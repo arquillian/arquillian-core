@@ -16,12 +16,9 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
-
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -29,6 +26,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+
+import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
 
 /**
  * Configurator
@@ -58,8 +57,8 @@ public class ConfigurationRegistrar {
         //Second arquillian.properties file and system properties are applied
         final PropertiesParser propertiesParser = new PropertiesParser();
         propertiesParser.addProperties(
-                descriptor,
-                FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
+            descriptor,
+            FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
 
         //Fourth arquillian properties from system environment variables are applied
         Properties envProperties = new Properties();
@@ -77,7 +76,7 @@ public class ConfigurationRegistrar {
 
         if (input != null) {
             descriptor = Descriptors.importAs(ArquillianDescriptor.class)
-                    .fromStream(input);
+                .fromStream(input);
         } else {
             descriptor = Descriptors.create(ArquillianDescriptor.class);
         }

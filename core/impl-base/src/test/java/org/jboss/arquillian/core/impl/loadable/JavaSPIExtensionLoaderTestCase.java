@@ -20,7 +20,6 @@ package org.jboss.arquillian.core.impl.loadable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
 import org.jboss.arquillian.core.impl.loadable.util.FakeService;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded;
 import org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded;
@@ -45,7 +44,7 @@ public class JavaSPIExtensionLoaderTestCase {
     @Test
     public void shouldBeAbleToAddSelectedProvider() throws Exception {
         Collection<FakeService> all = new JavaSPIExtensionLoader().all(
-                JavaSPIExtensionLoaderTestCase.class.getClassLoader(), FakeService.class);
+            JavaSPIExtensionLoaderTestCase.class.getClassLoader(), FakeService.class);
 
         Assert.assertEquals("Unexpected number of provider loaded", 1, all.size());
         Assert.assertEquals("Wrong provider loaded", ShouldBeIncluded.class, all.iterator().next().getClass());
@@ -57,7 +56,8 @@ public class JavaSPIExtensionLoaderTestCase {
         Archive<JavaArchive> jarThatReplaceServiceImpl = createJarThatReplaceServiceImpl();
 
         ClassLoader emptyParent = null;
-        ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarThatReplaceServiceImpl, jarWithDefaultServiceImpl);
+        ShrinkWrapClassLoader swClassloader =
+            new ShrinkWrapClassLoader(emptyParent, jarThatReplaceServiceImpl, jarWithDefaultServiceImpl);
 
         ClassLoader emptyClassLoader = new ClassLoader(null) {
         };
@@ -107,38 +107,38 @@ public class JavaSPIExtensionLoaderTestCase {
 
         Assert.assertEquals("Unexpected number of vetoed services", 1, vetoed.size());
         Assert.assertEquals("Unexpected number of vetoed services impl", 2, vetoed.get(service).size());
-
     }
 
     private Archive<JavaArchive> createJarWithVetoedServices() {
-        StringAsset exclusions = new StringAsset("" +
-                "org.jboss.arquillian.core.impl.loadable.util.FakeService=org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded, " +
-                "org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
+        StringAsset exclusions = new StringAsset(""
+            +
+            "org.jboss.arquillian.core.impl.loadable.util.FakeService=org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded, "
+            +
+            "org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
 
         Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(FakeService.class, ShouldBeIncluded.class, ShouldBeExcluded.class)
-                .addAsManifestResource(exclusions, "exclusions");
+            .addClasses(FakeService.class, ShouldBeIncluded.class, ShouldBeExcluded.class)
+            .addAsManifestResource(exclusions, "exclusions");
 
         return archive;
     }
 
     private Archive<JavaArchive> createJarWithDefaultServiceImpl() {
         Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(FakeService.class, ShouldBeExcluded.class)
-                .addAsServiceProvider(FakeService.class, ShouldBeExcluded.class);
+            .addClasses(FakeService.class, ShouldBeExcluded.class)
+            .addAsServiceProvider(FakeService.class, ShouldBeExcluded.class);
         return archive;
     }
 
     private Archive<JavaArchive> createJarThatReplaceServiceImpl() {
         StringAsset serviceConfig = new StringAsset(
-                "!org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded"
-                        + NEW_LINE +
-                        "org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
+            "!org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded"
+                + NEW_LINE +
+                "org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
 
         Archive<JavaArchive> archive2 = ShrinkWrap.create(JavaArchive.class)
-                .addClasses(ShouldBeIncluded.class)
-                .addAsManifestResource(serviceConfig, "/services/org.jboss.arquillian.core.impl.loadable.util.FakeService");
+            .addClasses(ShouldBeIncluded.class)
+            .addAsManifestResource(serviceConfig, "/services/org.jboss.arquillian.core.impl.loadable.util.FakeService");
         return archive2;
     }
-
 }

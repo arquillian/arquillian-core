@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.spi.event.container;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 
-
 /**
  * Event fired Before DeployableContainer deployment.
  *

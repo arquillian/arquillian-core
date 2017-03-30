@@ -25,13 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ObjectName;
-
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.util.TestRunners;
@@ -44,29 +42,18 @@ import org.jboss.arquillian.test.spi.TestResult.Status;
  * @author thomas.diesler@jboss.com
  */
 public class JMXTestRunner extends NotificationBroadcasterSupport implements JMXTestRunnerMBean {
-    // Provide logging
-    private static Logger log = Logger.getLogger(JMXTestRunner.class.getName());
-
     // package shared MBeanServer with JMXCommandService
     static MBeanServer localMBeanServer;
-
+    // Provide logging
+    private static Logger log = Logger.getLogger(JMXTestRunner.class.getName());
+    private final String objectName;
     private ConcurrentHashMap<String, Command<?>> events;
-
     private ThreadLocal<String> currentCall;
-
     // Notification Sequence number
     private AtomicInteger integer = new AtomicInteger();
-
     // TestRunner to used for testing
     private TestRunner mockTestRunner;
-
     private TestClassLoader testClassLoader;
-
-    private final String objectName;
-
-    public interface TestClassLoader {
-        Class<?> loadTestClass(String className) throws ClassNotFoundException;
-    }
 
     public JMXTestRunner(TestClassLoader classLoader) {
         this(classLoader, JMXTestRunnerMBean.OBJECT_NAME);
@@ -154,20 +141,22 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
             result.setThrowable(th);
         } finally {
             log.fine("Result: " + result);
-            if (result.getStatus() == Status.FAILED)
+            if (result.getStatus() == Status.FAILED) {
                 log.log(Level.SEVERE, "Failed: " + className + "." + methodName, result.getThrowable());
+            }
         }
         return result;
     }
 
-    protected TestResult doRunTestMethod(TestRunner runner, Class<?> testClass, String methodName, Map<String, String> protocolProps) {
+    protected TestResult doRunTestMethod(TestRunner runner, Class<?> testClass, String methodName,
+        Map<String, String> protocolProps) {
         return runner.execute(testClass, methodName);
     }
 
     @Override
     public void send(Command<?> command) {
         Notification notification = new Notification("arquillian-command", this, integer.incrementAndGet(),
-                currentCall.get());
+            currentCall.get());
         notification.setUserData(Serializer.toByteArray(command));
         sendNotification(notification);
     }
@@ -182,10 +171,6 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
         events.put(eventId, Serializer.toObject(Command.class, command));
     }
 
-   /*
-    * Internal Helpers for Test
-    */
-
     /**
      * @return the currentCall
      */
@@ -193,11 +178,19 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
         return currentCall.get();
     }
 
+   /*
+    * Internal Helpers for Test
+    */
+
     protected void setCurrentCall(String current) {
         currentCall.set(current);
     }
 
     void setExposedTestRunnerForTest(TestRunner mockTestRunner) {
         this.mockTestRunner = mockTestRunner;
+    }
+
+    public interface TestClassLoader {
+        Class<?> loadTestClass(String className) throws ClassNotFoundException;
     }
 }

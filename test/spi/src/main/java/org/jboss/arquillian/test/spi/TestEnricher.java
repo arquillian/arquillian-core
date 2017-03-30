@@ -30,7 +30,8 @@ public interface TestEnricher {
      * <br/>
      * IE. Instance field injection
      *
-     * @param testCase The test case instance
+     * @param testCase
+     *     The test case instance
      */
     void enrich(Object testCase);
 
@@ -43,7 +44,6 @@ public interface TestEnricher {
      * The return value Object[] must match the Field[] indexes.
      * Leave Object[] index as null if it can't be handled by this {@link TestEnricher}.
      *
-     * @param method
      * @return A Object[] of Arguments
      */
     Object[] resolve(Method method);

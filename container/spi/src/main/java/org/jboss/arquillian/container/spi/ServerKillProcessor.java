@@ -21,7 +21,6 @@
  */
 package org.jboss.arquillian.container.spi;
 
-
 /**
  * ServerKillProcessor
  * <p>
@@ -36,10 +35,6 @@ public interface ServerKillProcessor {
 
     /**
      * Kill a server instance via a specific implementation.
-     *
-     * @param container
-     * @return
      */
     void kill(Container container) throws Exception;
-
 }

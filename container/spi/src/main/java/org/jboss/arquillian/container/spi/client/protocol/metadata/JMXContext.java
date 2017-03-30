@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -40,7 +39,7 @@ public class JMXContext extends NamedContext {
     private static final Logger log = Logger.getLogger(JMXContext.class.getName());
 
     private static Set<Reference<MBeanServerConnection>> jmxConnectorRefs =
-            Collections.synchronizedSet(new HashSet<Reference<MBeanServerConnection>>());
+        Collections.synchronizedSet(new HashSet<Reference<MBeanServerConnection>>());
 
     /*
      * The Host and Port of a Remote MBean Server

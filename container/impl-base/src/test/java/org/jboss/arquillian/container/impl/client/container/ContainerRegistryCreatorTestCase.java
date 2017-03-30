@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.impl.client.container;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -72,8 +71,8 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     @Test
     public void shouldRegisterDefaultContainer() {
         fire(
-                Descriptors.create(ArquillianDescriptor.class)
-                        .container(CONTAINER_1)); // not set as default
+            Descriptors.create(ArquillianDescriptor.class)
+                .container(CONTAINER_1)); // not set as default
 
         verifyRegistry("default");
     }
@@ -81,9 +80,9 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     @Test
     public void shouldRegisterContainerMarkedDefault() {
         fire(
-                Descriptors.create(ArquillianDescriptor.class)
-                        .container(CONTAINER_1)
-                        .setDefault());
+            Descriptors.create(ArquillianDescriptor.class)
+                .container(CONTAINER_1)
+                .setDefault());
 
         verifyRegistry(CONTAINER_1);
     }
@@ -91,10 +90,10 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     @Test
     public void shouldRegisterContainerMarkedDefaultWhenMultipleDefined() {
         fire(
-                Descriptors.create(ArquillianDescriptor.class)
-                        .container(CONTAINER_1)
-                        .setDefault()
-                        .container(CONTAINER_2));
+            Descriptors.create(ArquillianDescriptor.class)
+                .container(CONTAINER_1)
+                .setDefault()
+                .container(CONTAINER_2));
 
         verifyRegistry(CONTAINER_1);
     }
@@ -102,10 +101,10 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     @Test
     public void shouldRegisterGroupMarkedDefault() {
         fire(
-                Descriptors.create(ArquillianDescriptor.class)
-                        .group(GROUP_1)
-                        .setGroupDefault()
-                        .container(CONTAINER_1));
+            Descriptors.create(ArquillianDescriptor.class)
+                .group(GROUP_1)
+                .setGroupDefault()
+                .container(CONTAINER_1));
 
         verifyRegistry(CONTAINER_1);
     }
@@ -115,11 +114,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
         System.setProperty(ContainerRegistryCreator.ARQUILLIAN_LAUNCH_PROPERTY, CONTAINER_1);
         try {
             fire(
-                    Descriptors.create(ArquillianDescriptor.class)
-                            .container(CONTAINER_1)
-                            .group(GROUP_1)
-                            .setGroupDefault()
-                            .container(CONTAINER_2));
+                Descriptors.create(ArquillianDescriptor.class)
+                    .container(CONTAINER_1)
+                    .group(GROUP_1)
+                    .setGroupDefault()
+                    .container(CONTAINER_2));
 
             verifyRegistry(CONTAINER_1);
         } finally {
@@ -132,11 +131,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
         System.setProperty(ContainerRegistryCreator.ARQUILLIAN_LAUNCH_PROPERTY, GROUP_1);
         try {
             fire(
-                    Descriptors.create(ArquillianDescriptor.class)
-                            .container(CONTAINER_1)
-                            .setDefault()
-                            .group(GROUP_1)
-                            .container(CONTAINER_2));
+                Descriptors.create(ArquillianDescriptor.class)
+                    .container(CONTAINER_1)
+                    .setDefault()
+                    .group(GROUP_1)
+                    .container(CONTAINER_2));
 
             verifyRegistry(CONTAINER_2);
         } finally {
@@ -148,11 +147,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     public void shouldThrowExceptionIfMultipleContainersSetAsDefault() throws IllegalStateException {
         try {
             fire(
-                    Descriptors.create(ArquillianDescriptor.class)
-                            .container(CONTAINER_1)
-                            .setDefault()
-                            .container(CONTAINER_2)
-                            .setDefault());
+                Descriptors.create(ArquillianDescriptor.class)
+                    .container(CONTAINER_1)
+                    .setDefault()
+                    .container(CONTAINER_2)
+                    .setDefault());
         } catch (IllegalStateException e) {
             Assert.assertTrue(e.getMessage().startsWith("Multiple Containers defined as default"));
             throw e;
@@ -163,11 +162,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     public void shouldThrowExceptionIfMultipleGroupsSetAsDefault() throws IllegalStateException {
         try {
             fire(
-                    Descriptors.create(ArquillianDescriptor.class)
-                            .group(GROUP_1)
-                            .setGroupDefault()
-                            .group(GROUP_2)
-                            .setGroupDefault());
+                Descriptors.create(ArquillianDescriptor.class)
+                    .group(GROUP_1)
+                    .setGroupDefault()
+                    .group(GROUP_2)
+                    .setGroupDefault());
         } catch (IllegalStateException e) {
             Assert.assertTrue(e.getMessage().startsWith("Multiple Groups defined as default"));
             throw e;
@@ -178,11 +177,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     public void shouldThrowExceptionIfMultipleGroupsOrContainersSetAsDefault() throws IllegalStateException {
         try {
             fire(
-                    Descriptors.create(ArquillianDescriptor.class)
-                            .container(CONTAINER_1)
-                            .setDefault()
-                            .group(GROUP_1)
-                            .setGroupDefault());
+                Descriptors.create(ArquillianDescriptor.class)
+                    .container(CONTAINER_1)
+                    .setDefault()
+                    .group(GROUP_1)
+                    .setGroupDefault());
         } catch (IllegalStateException e) {
             Assert.assertTrue(e.getMessage().startsWith("Multiple Containers/Groups defined as default"));
             throw e;
@@ -193,11 +192,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     public void shouldThrowExceptionIfMultipleContainersInGroupSetAsDefault() throws IllegalStateException {
         try {
             fire(Descriptors.create(ArquillianDescriptor.class)
-                    .group(GROUP_1)
-                    .container(CONTAINER_1)
-                    .setDefault()
-                    .container(CONTAINER_2)
-                    .setDefault());
+                .group(GROUP_1)
+                .container(CONTAINER_1)
+                .setDefault()
+                .container(CONTAINER_2)
+                .setDefault());
         } catch (IllegalStateException e) {
             Assert.assertTrue(e.getMessage().startsWith("Multiple Containers within Group defined as default"));
             throw e;
@@ -209,7 +208,7 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
         System.setProperty(ContainerRegistryCreator.ARQUILLIAN_LAUNCH_PROPERTY, CONTAINER_1);
         try {
             fire(Descriptors.create(ArquillianDescriptor.class)
-                    .container(CONTAINER_2));
+                .container(CONTAINER_2));
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(e.getMessage().startsWith("No container or group found that match given qualifier"));
             throw e;
@@ -224,7 +223,7 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfMultipleDeployableContainersFoundOnClassapth() {
         Mockito.when(serviceLoader.onlyOne(DeployableContainer.class))
-                .thenThrow(new IllegalStateException("Multiple service implementations found for ..."));
+            .thenThrow(new IllegalStateException("Multiple service implementations found for ..."));
 
         try {
             fire(Descriptors.create(ArquillianDescriptor.class));
@@ -237,7 +236,7 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfFailedToCreateDefaultDeployableContainerInstance() {
         Mockito.when(serviceLoader.onlyOne(DeployableContainer.class))
-                .thenThrow(new RuntimeException("Class yatta yatta not found..."));
+            .thenThrow(new RuntimeException("Class yatta yatta not found..."));
 
         try {
             fire(Descriptors.create(ArquillianDescriptor.class));
@@ -251,17 +250,17 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase 
         ContainerRegistry registry = regInst.get();
 
         Assert.assertNotNull(
-                "Verify Containers registered",
-                registry.getContainers());
+            "Verify Containers registered",
+            registry.getContainers());
         Assert.assertEquals(
-                "Verify " + containerNames.length + " Container(s) registrered",
-                containerNames.length, registry.getContainers().size());
+            "Verify " + containerNames.length + " Container(s) registrered",
+            containerNames.length, registry.getContainers().size());
 
         for (int i = 0; i < containerNames.length; i++) {
             String containerName = containerNames[i];
             Assert.assertEquals(
-                    "Verify correct Container registrered",
-                    containerName, registry.getContainers().get(i).getName());
+                "Verify correct Container registrered",
+                containerName, registry.getContainers().get(i).getName());
         }
     }
 }

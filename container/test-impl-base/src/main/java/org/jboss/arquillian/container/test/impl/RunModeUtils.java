@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl;
 
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -43,11 +42,6 @@ public final class RunModeUtils {
      * Returns if the given test should run as client.
      * <p>
      * Verify @Deployment.testable vs @RunAsClient on Class or Method level
-     *
-     * @param deployment
-     * @param testClass
-     * @param testMethod
-     * @return
      */
     public static boolean isRunAsClient(Deployment deployment, TestClass testClass, Method testMethod) {
         boolean runAsClient = true;
@@ -67,11 +61,6 @@ public final class RunModeUtils {
     /**
      * Returns if the given test should run as client and also checks for a confusing use case, when the test is not
      * intended to be run as a client test - in this case logs a warning. see: ARQ-1937
-     *
-     * @param deployment
-     * @param testClass
-     * @param testMethod
-     * @return
      */
     public static boolean isRunAsClientAndCheck(Deployment deployment, TestClass testClass, Method testMethod) {
         boolean runAsClient = isRunAsClient(deployment, testClass, testMethod);
@@ -79,19 +68,25 @@ public final class RunModeUtils {
         if (runAsClient && deployment == null) {
             Method[] methods = testClass.getMethods(org.jboss.arquillian.container.test.api.Deployment.class);
             if (methods.length > 0) {
-                if (!testMethod.isAnnotationPresent(RunAsClient.class) && !testClass.isAnnotationPresent(RunAsClient.class)) {
+                if (!testMethod.isAnnotationPresent(RunAsClient.class) && !testClass.isAnnotationPresent(
+                    RunAsClient.class)) {
                     OperateOnDeployment onDeployment = testClass.getAnnotation(OperateOnDeployment.class);
                     String deploymentName = onDeployment == null ? "_DEFAULT_" : onDeployment.value();
 
                     for (Method m : methods) {
                         org.jboss.arquillian.container.test.api.Deployment deploymentAnnotation =
-                                m.getAnnotation(org.jboss.arquillian.container.test.api.Deployment.class);
+                            m.getAnnotation(org.jboss.arquillian.container.test.api.Deployment.class);
 
                         if (deploymentAnnotation.name().equals(deploymentName) && deploymentAnnotation.testable()) {
                             log.warning(
-                                    "The test method " + testClass.getJavaClass().getCanonicalName() + "#" + testMethod.getName()
-                                            + " will run on the client side,because the " + deploymentName + " deployment is not deployed."
-                                            + " Please deploy the deployment or mark the test as a client test");
+                                "The test method "
+                                    + testClass.getJavaClass().getCanonicalName()
+                                    + "#"
+                                    + testMethod.getName()
+                                    + " will run on the client side,because the "
+                                    + deploymentName
+                                    + " deployment is not deployed."
+                                    + " Please deploy the deployment or mark the test as a client test");
                         }
                     }
                 }
@@ -105,14 +100,13 @@ public final class RunModeUtils {
      * <p>
      * Hack to get around ARQ-391
      *
-     * @param container
      * @return true if DeployableContianer.getDefaultProtocol == Local
      */
     public static boolean isLocalContainer(Container container) {
         if (
-                container == null ||
-                        container.getDeployableContainer() == null ||
-                        container.getDeployableContainer().getDefaultProtocol() == null) {
+            container == null ||
+                container.getDeployableContainer() == null ||
+                container.getDeployableContainer().getDefaultProtocol() == null) {
             return false;
         }
         if (LocalProtocol.NAME.equals(container.getDeployableContainer().getDefaultProtocol().getName())) {

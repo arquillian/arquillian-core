@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.spi;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -41,5 +40,4 @@ public interface ContainerRegistry {
     List<Container> getContainers();
 
     Container getContainer(TargetDescription target);
-
 }

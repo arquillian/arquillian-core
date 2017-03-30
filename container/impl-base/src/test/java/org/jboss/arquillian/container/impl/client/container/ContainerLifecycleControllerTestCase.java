@@ -17,20 +17,11 @@
  */
 package org.jboss.arquillian.container.impl.client.container;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
-
 import junit.framework.Assert;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
-import org.jboss.arquillian.container.impl.client.container.ContainerLifecycleController;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -63,6 +54,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * ContainerLifecycleControllerTestCase

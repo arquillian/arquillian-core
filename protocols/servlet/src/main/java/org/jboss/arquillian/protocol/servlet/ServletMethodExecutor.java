@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.command.Command;
@@ -42,12 +41,9 @@ import org.jboss.arquillian.test.spi.TestResult;
  * @version $Revision: $
  */
 public class ServletMethodExecutor implements ContainerMethodExecutor {
-    private static final Logger log = Logger.getLogger(ContainerMethodExecutor.class.getName());
-
     public static final String ARQUILLIAN_SERVLET_NAME = "ArquillianServletRunner";
-
     public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
-
+    private static final Logger log = Logger.getLogger(ContainerMethodExecutor.class.getName());
     protected ServletURIHandler uriHandler;
     protected CommandCallback callback;
     protected ServletProtocolConfiguration config;
@@ -55,7 +51,8 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
     protected ServletMethodExecutor() {
     }
 
-    public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts, final CommandCallback callback) {
+    public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts,
+        final CommandCallback callback) {
         if (config == null) {
             throw new IllegalArgumentException("ServletProtocolConfiguration must be specified");
         }
@@ -79,12 +76,12 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
 
         Class<?> testClass = testMethodExecutor.getInstance().getClass();
         final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
-                + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-                + testMethodExecutor.getMethod().getName();
+            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+            + testMethodExecutor.getMethod().getName();
 
         final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
-                + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-                + testMethodExecutor.getMethod().getName() + "&cmd=event";
+            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+            + testMethodExecutor.getMethod().getName() + "&cmd=event";
 
         Timer eventTimer = null;
         try {
@@ -92,7 +89,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
             return executeWithRetry(url, TestResult.class);
         } catch (Exception e) {
             throw new IllegalStateException("Error launching test " + testClass.getName() + " "
-                    + testMethodExecutor.getMethod(), e);
+                + testMethodExecutor.getMethod(), e);
         } finally {
             if (eventTimer != null) {
                 eventTimer.cancel();
@@ -167,15 +164,16 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
                 }
 
                 if (!returnType.isInstance(o)) {
-                    throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got " + o);
+                    throw new IllegalStateException(
+                        "Error reading results, expected a " + returnType.getName() + " but got " + o);
                 }
                 return returnType.cast(o);
             } else if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
                 return null;
             } else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                 throw new IllegalStateException(
-                        "Error launching test at " + url + ". " +
-                                "Got " + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
+                    "Error launching test at " + url + ". " +
+                        "Got " + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
             }
         } finally {
             httpConnection.disconnect();
@@ -190,9 +188,9 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
     protected Timer createCommandServicePullTimer(final String eventUrl) {
         if (config.getPullInMilliSeconds() == null || config.getPullInMilliSeconds() <= 0) {
             log.warning("The Servlet Protocol has been configured with a pullInMilliSeconds interval of " +
-                    config.getPullInMilliSeconds() + ". The effect of this is that the Command Service has been disabled." +
-                    " Depending on which features you use, this might cause serious delays. Be on high alert for " +
-                    " possible timeout runtime exceptions.");
+                config.getPullInMilliSeconds() + ". The effect of this is that the Command Service has been disabled." +
+                " Depending on which features you use, this might cause serious delays. Be on high alert for " +
+                " possible timeout runtime exceptions.");
             return null;
         }
         Timer eventTimer = new Timer();
@@ -208,7 +206,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
                             execute(eventUrl, Object.class, command);
                         } else {
                             throw new RuntimeException("Recived a non " + Command.class.getName()
-                                    + " object on event channel");
+                                + " object on event channel");
                         }
                     }
                 } catch (Exception e) {

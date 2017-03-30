@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.junit.container;
 
-
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.After;

@@ -52,5 +52,4 @@ public interface ServletDef extends WebAppDescriptor {
     boolean isAsyncSupported();
 
     int getLoadOnStartup();
-
 }

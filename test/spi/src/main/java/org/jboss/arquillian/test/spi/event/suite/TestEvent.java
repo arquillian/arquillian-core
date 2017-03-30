@@ -29,10 +29,15 @@ public class TestEvent extends ClassEvent {
     private Method testMethod;
 
     /**
-     * @param testInstance The test case instance
-     * @param testMethod   The test method
-     * @throws IllegalArgumentException if testInstance is null
-     * @throws IllegalArgumentException if testMethod is null
+     * @param testInstance
+     *     The test case instance
+     * @param testMethod
+     *     The test method
+     *
+     * @throws IllegalArgumentException
+     *     if testInstance is null
+     * @throws IllegalArgumentException
+     *     if testMethod is null
      */
     public TestEvent(Object testInstance, Method testMethod) {
         super(validateAndExtractClass(testInstance, testMethod));

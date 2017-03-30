@@ -35,11 +35,16 @@ public interface ExecutorService {
      * The contextual information of the caller is preserved onto the
      * new thread used to execute the Callable.
      *
-     * @param task the task to submit
+     * @param task
+     *     the task to submit
+     *
      * @return a Future representing pending completion of the task
-     * @throws RejectedExecutionException if the task cannot be
-     *                                    scheduled for execution
-     * @throws NullPointerException       if the task is null
+     *
+     * @throws RejectedExecutionException
+     *     if the task cannot be
+     *     scheduled for execution
+     * @throws NullPointerException
+     *     if the task is null
      */
     <T> Future<T> submit(Callable<T> task);
 

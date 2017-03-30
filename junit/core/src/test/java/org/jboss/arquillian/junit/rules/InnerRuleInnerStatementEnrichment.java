@@ -85,7 +85,7 @@ public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnri
     }
 
     private void performStatementAssertion(ResourceStub testResources, ResourceStub ruleResources,
-                                           ResourceStub statementResources) {
+        ResourceStub statementResources) {
         performRuleAssertion(testResources, ruleResources);
         ResourceAssertion.assertNotNullAndNotEqual(testResources, statementResources);
         ResourceAssertion.assertNotNullAndNotEqual(statementResources, ruleResources);

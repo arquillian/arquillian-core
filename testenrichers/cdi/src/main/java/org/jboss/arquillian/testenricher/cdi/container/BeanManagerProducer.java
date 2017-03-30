@@ -18,10 +18,8 @@
 package org.jboss.arquillian.testenricher.cdi.container;
 
 import java.util.logging.Logger;
-
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
-
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -42,7 +40,7 @@ public class BeanManagerProducer {
     private static final String JBOSSAS_BEAN_MANAGER_JNDI_NAME = "BeanManager";
 
     private static final String[] BEAN_MANAGER_JNDI_NAMES =
-            {STANDARD_BEAN_MANAGER_JNDI_NAME, SERVLET_BEAN_MANAGER_JNDI_NAME, JBOSSAS_BEAN_MANAGER_JNDI_NAME};
+        {STANDARD_BEAN_MANAGER_JNDI_NAME, SERVLET_BEAN_MANAGER_JNDI_NAME, JBOSSAS_BEAN_MANAGER_JNDI_NAME};
 
     private static final Logger log = Logger.getLogger(BeanManagerProducer.class.getName());
 
@@ -63,7 +61,7 @@ public class BeanManagerProducer {
                 return (BeanManager) context.lookup(beanManagerJndiName);
             } catch (Exception e) {
                 log.fine("Tried to lookup the BeanManager with name " + beanManagerJndiName + " but caught exception: "
-                        + e.getMessage());
+                    + e.getMessage());
             }
         }
 

@@ -28,9 +28,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
 
 /**
@@ -64,11 +62,11 @@ public class ExceptionProxyTestCase {
 
         Assert.assertEquals(ArquillianProxyException.class, t.getClass());
         Assert.assertTrue(
-                "Verify Proxy message contain root exception of serialization problem",
-                t.getMessage().contains("java.io.NotSerializableException"));
+            "Verify Proxy message contain root exception of serialization problem",
+            t.getMessage().contains("java.io.NotSerializableException"));
         Assert.assertTrue(
-                "Verify Proxy message contain root cause of serialization problem",
-                t.getMessage().contains("BufferedInputStream"));
+            "Verify Proxy message contain root cause of serialization problem",
+            t.getMessage().contains("BufferedInputStream"));
         Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
     }
 
@@ -79,18 +77,18 @@ public class ExceptionProxyTestCase {
 
         Assert.assertEquals(ArquillianProxyException.class, t.getClass());
         Assert.assertTrue(
-                "Verify Proxy message contain root exception of deserialization problem",
-                t.getMessage().contains("NonDeserializableExtension"));
+            "Verify Proxy message contain root exception of deserialization problem",
+            t.getMessage().contains("NonDeserializableExtension"));
         Assert.assertTrue(
-                "Verify Proxy message contain root cause of deserialization problem",
-                t.getMessage().contains("Could not de-serialize"));
+            "Verify Proxy message contain root cause of deserialization problem",
+            t.getMessage().contains("Could not de-serialize"));
         Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
     }
 
     @Test
     public void shouldRecreateInvocationTargetExceptions() throws Exception {
         ExceptionProxy proxy = serialize(ExceptionProxy.createForException(
-                new InvocationTargetException(new RuntimeException(new ClassNotFoundException()))));
+            new InvocationTargetException(new RuntimeException(new ClassNotFoundException()))));
         Throwable t = proxy.createException();
 
         Assert.assertEquals(InvocationTargetException.class, t.getClass());

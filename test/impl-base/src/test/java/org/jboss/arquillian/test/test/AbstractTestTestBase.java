@@ -18,7 +18,6 @@
 package org.jboss.arquillian.test.test;
 
 import java.util.List;
-
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;

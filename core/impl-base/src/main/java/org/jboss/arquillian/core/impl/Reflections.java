@@ -24,7 +24,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -163,7 +162,12 @@ final class Reflections {
                     return true;
                 } else {
                     // TODO: join extension validation points.
-                    throw new RuntimeException("A InjectionPoint of type " + InstanceProducer.class.getName() + " must define a " + Scope.class.getName() + " annotation, bad definition for field: " + field);
+                    throw new RuntimeException("A InjectionPoint of type "
+                        + InstanceProducer.class.getName()
+                        + " must define a "
+                        + Scope.class.getName()
+                        + " annotation, bad definition for field: "
+                        + field);
                 }
             }
         }

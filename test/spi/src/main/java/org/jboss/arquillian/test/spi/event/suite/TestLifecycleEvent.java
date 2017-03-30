@@ -16,9 +16,8 @@
  */
 package org.jboss.arquillian.test.spi.event.suite;
 
-import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
-
 import java.lang.reflect.Method;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 
 /**
  * A TestLifeCycleEvent is a type of TestEvent used for e.g. @Before/@After operations on the
@@ -35,8 +34,10 @@ public class TestLifecycleEvent extends TestEvent implements LifecycleEvent {
      * <br/>
      * This will use a NO_OP LifecycleMethodExecutor.
      *
-     * @param testInstance The Test instance
-     * @param testMethod   The Test Method being executed
+     * @param testInstance
+     *     The Test instance
+     * @param testMethod
+     *     The Test Method being executed
      */
     public TestLifecycleEvent(Object testInstance, Method testMethod) {
         this(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
@@ -45,9 +46,12 @@ public class TestLifecycleEvent extends TestEvent implements LifecycleEvent {
     /**
      * Create a new TestLifecycleEvent for a specific testInstance executing a specific testMethod. <br/>
      *
-     * @param testInstance The Test instance
-     * @param testMethod   The Test Method being executed
-     * @param executor     A call back when the LifecycleMethod represented by this event should be invoked
+     * @param testInstance
+     *     The Test instance
+     * @param testMethod
+     *     The Test Method being executed
+     * @param executor
+     *     A call back when the LifecycleMethod represented by this event should be invoked
      */
     public TestLifecycleEvent(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) {
         super(testInstance, testMethod);

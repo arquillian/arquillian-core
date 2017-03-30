@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.core.spi;
 
-
 /**
  * Exception for Invocation errors during execution of e.g.  {@link ObserverMethod#invoke(Object)} or
  * {@link InjectionPoint#set(Instance)}

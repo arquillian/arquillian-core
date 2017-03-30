@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
@@ -118,10 +117,10 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
     @Override
     public ProtocolDef protocol(String type) {
         return new ProtocolDefImpl(
-                getDescriptorName(),
-                getRootNode(),
-                container,
-                container.getOrCreate("protocol@type=" + type));
+            getDescriptorName(),
+            getRootNode(),
+            container,
+            container.getOrCreate("protocol@type=" + type));
     }
 
     /* (non-Javadoc)

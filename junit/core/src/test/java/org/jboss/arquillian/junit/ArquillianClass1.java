@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
-
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -25,6 +23,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
  * Predfined TestClass 

@@ -79,7 +79,6 @@ public class RemoteTestExecuter {
     @Inject
     private Instance<ExecutorService> executorService;
 
-
     public void execute(@Observes RemoteExecutionEvent event) throws Exception {
         Container container = this.container.get();
         DeploymentDescription deployment = this.deployment.get();
@@ -96,7 +95,7 @@ public class RemoteTestExecuter {
 
         if (container.hasProtocolConfiguration(protocol.getProtocolDescription())) {
             protocolConfiguration = protocol.createProtocolConfiguration(
-                    container.getProtocolConfiguration(protocol.getProtocolDescription()).getProtocolProperties());
+                container.getProtocolConfiguration(protocol.getProtocolDescription()).getProtocolProperties());
         } else {
             protocolConfiguration = protocol.createProtocolConfiguration();
         }
@@ -106,22 +105,23 @@ public class RemoteTestExecuter {
 
     // TODO: cast to raw type to get away from generic issue..
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol, ProtocolConfiguration protocolConfiguration) {
+    public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol,
+        ProtocolConfiguration protocolConfiguration) {
         final ContextSnapshot state = executorService.get().createSnapshotContext();
 
         ContainerMethodExecutor executor = ((Protocol) protocol.getProtocol()).getExecutor(
-                protocolConfiguration,
-                protocolMetadata.get(), new CommandCallback() {
-                    @Override
-                    public void fired(Command<?> event) {
-                        state.activate();
-                        try {
-                            remoteEvent.fire(event);
-                        } finally {
-                            state.deactivate();
-                        }
+            protocolConfiguration,
+            protocolMetadata.get(), new CommandCallback() {
+                @Override
+                public void fired(Command<?> event) {
+                    state.activate();
+                    try {
+                        remoteEvent.fire(event);
+                    } finally {
+                        state.deactivate();
                     }
-                });
+                }
+            });
         return executor;
     }
 }

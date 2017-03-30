@@ -21,10 +21,9 @@
   */
 package org.jboss.arquillian.config.impl.extension;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Properties;
-import java.io.File;
-
 
 /**
  * A utility class for replacing properties in strings.
@@ -95,7 +94,9 @@ public final class StringPropertyReplacer {
      * environment variable, the system property is honored as an override
      * (primarily for testing).
      *
-     * @param string - the string with possible ${} references
+     * @param string
+     *     - the string with possible ${} references
+     *
      * @return the input string with all property references replaced if any.
      * If there are no valid references the input string will be returned.
      */
@@ -126,8 +127,11 @@ public final class StringPropertyReplacer {
      * The property ${/} is replaced with System.getProperty("file.separator")
      * value and the property ${:} is replaced with System.getProperty("path.separator").
      *
-     * @param string - the string with possible ${} references
-     * @param props  - the source for ${x} property ref values, null means use System.getProperty()
+     * @param string
+     *     - the string with possible ${} references
+     * @param props
+     *     - the source for ${x} property ref values, null means use System.getProperty()
+     *
      * @return the input string with all property references replaced if any.
      * If there are no valid references the input string will be returned.
      */
@@ -141,10 +145,11 @@ public final class StringPropertyReplacer {
             char c = chars[i];
 
             // Dollar sign outside brackets
-            if (c == '$' && state != IN_BRACKET)
+            if (c == '$' && state != IN_BRACKET) {
                 state = SEEN_DOLLAR;
+            }
 
-                // Open bracket immediately after dollar
+            // Open bracket immediately after dollar
             else if (c == '{' && state == SEEN_DOLLAR) {
                 buffer.append(string.substring(start, i - 1));
                 state = IN_BRACKET;
@@ -152,10 +157,11 @@ public final class StringPropertyReplacer {
             }
 
             // No open bracket after dollar
-            else if (state == SEEN_DOLLAR)
+            else if (state == SEEN_DOLLAR) {
                 state = NORMAL;
+            }
 
-                // Closed bracket after open bracket
+            // Closed bracket after open bracket
             else if (c == '}' && state == IN_BRACKET) {
                 // No content
                 if (start + 2 == i) {
@@ -173,28 +179,31 @@ public final class StringPropertyReplacer {
                         value = PATH_SEPARATOR;
                     } else {
                         // check from the properties
-                        if (props != null)
+                        if (props != null) {
                             value = props.getProperty(key);
-                        else
+                        } else {
                             value = System.getProperty(key);
+                        }
 
                         if (value == null) {
                             // Check for a default value ${key:default}
                             int colon = key.indexOf(':');
                             if (colon > 0) {
                                 String realKey = key.substring(0, colon);
-                                if (props != null)
+                                if (props != null) {
                                     value = props.getProperty(realKey);
-                                else
+                                } else {
                                     value = System.getProperty(realKey);
+                                }
 
                                 if (value == null) {
                                     // Check for a composite key, "key1,key2"
                                     value = resolveCompositeKey(realKey, props);
 
                                     // Not a composite key either, use the specified default
-                                    if (value == null)
+                                    if (value == null) {
                                         value = key.substring(colon + 1);
+                                    }
                                 }
                             } else {
                                 // No default, check for a composite key, "key1,key2"
@@ -211,7 +220,6 @@ public final class StringPropertyReplacer {
                         buffer.append(key);
                         buffer.append('}');
                     }
-
                 }
                 start = i + 1;
                 state = NORMAL;
@@ -219,12 +227,14 @@ public final class StringPropertyReplacer {
         }
 
         // No properties
-        if (properties == false)
+        if (properties == false) {
             return string;
+        }
 
         // Collect the trailing characters
-        if (start != chars.length)
+        if (start != chars.length) {
             buffer.append(string.substring(start, chars.length));
+        }
 
         // Done
         return buffer.toString();
@@ -237,8 +247,11 @@ public final class StringPropertyReplacer {
      * <p>
      * It also accepts "key1," and ",key2".
      *
-     * @param key   the key to resolve
-     * @param props the properties to use
+     * @param key
+     *     the key to resolve
+     * @param props
+     *     the properties to use
+     *
      * @return the resolved key or null
      */
     private static String resolveCompositeKey(String key, Properties props) {
@@ -251,18 +264,20 @@ public final class StringPropertyReplacer {
             if (comma > 0) {
                 // Check the first part
                 String key1 = key.substring(0, comma);
-                if (props != null)
+                if (props != null) {
                     value = props.getProperty(key1);
-                else
+                } else {
                     value = System.getProperty(key1);
+                }
             }
             // Check the second part, if there is one and first lookup failed
             if (value == null && comma < key.length() - 1) {
                 String key2 = key.substring(comma + 1);
-                if (props != null)
+                if (props != null) {
                     value = props.getProperty(key2);
-                else
+                } else {
                     value = System.getProperty(key2);
+                }
             }
         }
         // Return whatever we've found or null

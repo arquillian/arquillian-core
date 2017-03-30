@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.impl.InjectorImpl;
 import org.jboss.arquillian.core.impl.loadable.ServiceRegistry;

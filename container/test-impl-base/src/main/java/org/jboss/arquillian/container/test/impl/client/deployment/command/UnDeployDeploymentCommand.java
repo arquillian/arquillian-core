@@ -17,7 +17,6 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
-
 /**
  * DeployDeployment
  *

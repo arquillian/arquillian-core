@@ -26,15 +26,18 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
  */
 public class AfterClass extends ClassLifecycleEvent {
     /**
-     * @param testClass The source for this AfterClass event
+     * @param testClass
+     *     The source for this AfterClass event
      */
     public AfterClass(Class<?> testClass) {
         super(testClass);
     }
 
     /**
-     * @param testClass The source for this AfterClass event
-     * @param executor  A call back when the LifecycleMethod represented by this event should be invoked
+     * @param testClass
+     *     The source for this AfterClass event
+     * @param executor
+     *     A call back when the LifecycleMethod represented by this event should be invoked
      */
     public AfterClass(Class<?> testClass, LifecycleMethodExecutor executor) {
         super(testClass, executor);

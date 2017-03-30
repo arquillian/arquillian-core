@@ -34,7 +34,8 @@ public class ClassLifecycleEvent extends ClassEvent implements LifecycleEvent {
      * <br/>
      * This will use a NO_OP LifecycleMethodExecutor.
      *
-     * @param testClass The source for this ClassEvent
+     * @param testClass
+     *     The source for this ClassEvent
      */
     public ClassLifecycleEvent(Class<?> testClass) {
         this(testClass, LifecycleMethodExecutor.NO_OP);
@@ -45,7 +46,8 @@ public class ClassLifecycleEvent extends ClassEvent implements LifecycleEvent {
      * <br/>
      * This will use a NO_OP LifecycleMethodExecutor.
      *
-     * @param testClass The source for this ClassEvent
+     * @param testClass
+     *     The source for this ClassEvent
      */
     public ClassLifecycleEvent(TestClass testClass) {
         this(testClass, LifecycleMethodExecutor.NO_OP);
@@ -54,8 +56,10 @@ public class ClassLifecycleEvent extends ClassEvent implements LifecycleEvent {
     /**
      * Create a new ClassLifecycleEvent for a specific Class. <br/>
      *
-     * @param testClass The source for this ClassEvent
-     * @param executor  A call back when the LifecycleMethod represented by this event should be invoked
+     * @param testClass
+     *     The source for this ClassEvent
+     * @param executor
+     *     A call back when the LifecycleMethod represented by this event should be invoked
      */
     public ClassLifecycleEvent(Class<?> testClass, LifecycleMethodExecutor executor) {
         super(testClass);
@@ -67,8 +71,10 @@ public class ClassLifecycleEvent extends ClassEvent implements LifecycleEvent {
     /**
      * Create a new ClassLifecycleEvent for a specific Class. <br/>
      *
-     * @param testClass The source for this ClassEvent
-     * @param executor  A call back when the LifecycleMethod represented by this event should be invoked
+     * @param testClass
+     *     The source for this ClassEvent
+     * @param executor
+     *     A call back when the LifecycleMethod represented by this event should be invoked
      */
     public ClassLifecycleEvent(TestClass testClass, LifecycleMethodExecutor executor) {
         super(testClass);

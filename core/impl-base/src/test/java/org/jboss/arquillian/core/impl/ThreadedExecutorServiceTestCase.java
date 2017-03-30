@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -35,15 +34,15 @@ import org.junit.Test;
 
 public class ThreadedExecutorServiceTestCase extends AbstractManagerTestBase {
 
+    @Inject
+    private Instance<ExecutorService> serviceInst;
+
     @Override
     protected void addContexts(List<Class<? extends Context>> contexts) {
         super.addContexts(contexts);
         contexts.add(ManagerTestContextImpl.class);
         contexts.add(ManagerTest2ContextImpl.class);
     }
-
-    @Inject
-    private Instance<ExecutorService> serviceInst;
 
     @Test
     public void shouldReplicateContextualInformationToNewThread() throws Exception {

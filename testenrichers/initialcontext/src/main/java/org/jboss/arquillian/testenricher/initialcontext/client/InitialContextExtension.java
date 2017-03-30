@@ -31,5 +31,4 @@ public class InitialContextExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.service(AuxiliaryArchiveAppender.class, InitialContextArchiveAppender.class);
     }
-
 }

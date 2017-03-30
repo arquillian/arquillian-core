@@ -31,6 +31,16 @@ import java.security.PrivilegedAction;
  * @version $Revision: 2787 $
  */
 class SysPropertyActions {
+    public static String getProperty(String name, String defaultValue) {
+        String prop;
+        if (System.getSecurityManager() == null) {
+            prop = SysProps.NON_PRIVILEDGED.getProperty(name, defaultValue);
+        } else {
+            prop = SysProps.PRIVILEDGED.getProperty(name, defaultValue);
+        }
+        return prop;
+    }
+
     interface SysProps {
         SysProps NON_PRIVILEDGED = new SysProps() {
             public String getProperty(final String name, final String defaultValue) {
@@ -49,14 +59,5 @@ class SysPropertyActions {
         };
 
         String getProperty(String name, String defaultValue);
-    }
-
-    public static String getProperty(String name, String defaultValue) {
-        String prop;
-        if (System.getSecurityManager() == null)
-            prop = SysProps.NON_PRIVILEDGED.getProperty(name, defaultValue);
-        else
-            prop = SysProps.PRIVILEDGED.getProperty(name, defaultValue);
-        return prop;
     }
 }

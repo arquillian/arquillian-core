@@ -18,7 +18,6 @@
 package org.jboss.arquillian.test.spi.event.enrichment;
 
 import java.lang.reflect.Method;
-
 import org.jboss.arquillian.core.spi.event.Event;
 
 /**

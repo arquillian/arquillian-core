@@ -53,7 +53,6 @@ public class ManagerProcessingTestCase {
         }
     }
 
-
     public static class Loader {
         public void add(@Observes ManagerProcessing event) {
             event.observer(Loaded.class);

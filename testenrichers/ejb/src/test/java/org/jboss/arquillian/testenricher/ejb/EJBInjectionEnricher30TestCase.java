@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.testenricher.ejb;
 
+import javax.ejb.EJB;
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-
-import javax.ejb.EJB;
-
-import org.junit.Test;
 
 /**
  * Tests for {@link EJBInjectionEnricher}.
@@ -61,13 +60,12 @@ public class EJBInjectionEnricher30TestCase extends EJBInjectionEnricherBase {
 
         // Expected: java:module/<bean-name>[!<fully-qualified-interface-name>]
         String expected = "java:module/" + ExemplaryEJBMockImpl.class.getSimpleName() + "!"
-                + fieldType.getName();
+            + fieldType.getName();
 
         assertThat(r, is(notNullValue()));
         assertThat(r.length, is(1));
         assertThat(r[0], is(expected));
     }
-
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnBeanAndMappedName() {
@@ -80,7 +78,8 @@ public class EJBInjectionEnricher30TestCase extends EJBInjectionEnricherBase {
     /**
      * Exemplary class with EJB annotations which will be tested for JNDI resolution.
      * <p>
-     * Note: As a field type this class uses the interface which has two implementations. Appropriate implementation injection
+     * Note: As a field type this class uses the interface which has two implementations. Appropriate implementation
+     * injection
      * should also be tested.
      *
      * @author PedroKowalski

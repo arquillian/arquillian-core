@@ -71,8 +71,8 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
         Container container = registry.getContainer(TargetDescription.DEFAULT);
 
         Assert.assertEquals(
-                "Verify that the only registered container is returned as default",
-                name, container.getName());
+            "Verify that the only registered container is returned as default",
+            name, container.getName());
     }
 
     @Test
@@ -86,8 +86,8 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
         Container container = registry.getContainer(TargetDescription.DEFAULT);
 
         Assert.assertEquals(
-                "Verify that the default registered container is returned as default",
-                name, container.getName());
+            "Verify that the default registered container is returned as default",
+            name, container.getName());
     }
 
     @Test
@@ -97,25 +97,26 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
 
         ContainerRegistry registry = new LocalContainerRegistry(injector.get());
         registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
-                .property("property", prop), serviceLoader);
+            .property("property", prop), serviceLoader);
 
         Container container = registry.getContainer(new TargetDescription(name));
 
         Assert.assertEquals(
-                "Verify that the only registered container is returned as default",
-                name, container.getName());
+            "Verify that the only registered container is returned as default",
+            name, container.getName());
 
         Assert.assertEquals(
-                "Verify that the configuration was populated",
-                prop,
-                ((DummyContainerConfiguration) container.createDeployableConfiguration()).getProperty());
+            "Verify that the configuration was populated",
+            prop,
+            ((DummyContainerConfiguration) container.createDeployableConfiguration()).getProperty());
     }
 
     @Test
     public void shouldBeAbleToCreatePrivateContainerConfiguration() throws Exception {
         // Override default configured class
         ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
-        DeployableContainer<PrivateDummyContainerConfiguration> deployableContainer = Mockito.mock(DeployableContainer.class);
+        DeployableContainer<PrivateDummyContainerConfiguration> deployableContainer =
+            Mockito.mock(DeployableContainer.class);
 
         Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
         Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(PrivateDummyContainerConfiguration.class);
@@ -125,18 +126,18 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
 
         ContainerRegistry registry = new LocalContainerRegistry(injector.get());
         registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
-                .property("property", prop), serviceLoader);
+            .property("property", prop), serviceLoader);
 
         Container container = registry.getContainer(new TargetDescription(name));
 
         Assert.assertEquals(
-                "Verify that the only registered container is returned as default",
-                name, container.getName());
+            "Verify that the only registered container is returned as default",
+            name, container.getName());
 
         Assert.assertEquals(
-                "Verify that the configuration was populated",
-                prop,
-                ((PrivateDummyContainerConfiguration) container.createDeployableConfiguration()).getProperty());
+            "Verify that the configuration was populated",
+            prop,
+            ((PrivateDummyContainerConfiguration) container.createDeployableConfiguration()).getProperty());
     }
 
     @Test
@@ -150,8 +151,8 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
         Container container = registry.getContainer(new TargetDescription(name));
 
         Assert.assertEquals(
-                "Verify that the specific registered container is returned",
-                name, container.getName());
+            "Verify that the specific registered container is returned",
+            name, container.getName());
     }
 
     @Test
@@ -165,26 +166,26 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
         Container container = registry.getContainer(name);
 
         Assert.assertEquals(
-                "Verify that the specific registered container is returned",
-                name, container.getName());
-
+            "Verify that the specific registered container is returned",
+            name, container.getName());
     }
 
     public static class DummyContainerConfiguration implements ContainerConfiguration {
         private String property;
 
         /**
-         * @param property the property to set
-         */
-        public void setProperty(String property) {
-            this.property = property;
-        }
-
-        /**
          * @return the property
          */
         public String getProperty() {
             return property;
+        }
+
+        /**
+         * @param property
+         *     the property to set
+         */
+        public void setProperty(String property) {
+            this.property = property;
         }
 
         @Override

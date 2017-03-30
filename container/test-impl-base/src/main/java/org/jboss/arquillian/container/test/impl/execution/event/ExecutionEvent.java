@@ -28,5 +28,4 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
 public interface ExecutionEvent extends Event {
 
     TestMethodExecutor getExecutor();
-
 }

@@ -33,9 +33,6 @@ import org.jboss.arquillian.test.spi.TestResult;
 public interface ContainerMethodExecutor {
     /**
      * Invoke a test method deployed in the container.
-     *
-     * @param testMethodExecutor
-     * @return
      */
     TestResult invoke(TestMethodExecutor testMethodExecutor);
 }

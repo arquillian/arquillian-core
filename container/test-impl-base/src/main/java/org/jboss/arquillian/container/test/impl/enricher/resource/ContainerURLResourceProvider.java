@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
 import java.net.URL;
-
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

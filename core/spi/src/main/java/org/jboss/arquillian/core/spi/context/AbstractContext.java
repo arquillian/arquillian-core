@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.spi.Validate;
 
 /**
@@ -114,7 +113,6 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T> {
     }
 
     protected abstract ObjectStore createNewObjectStore();
-
 
     //-------------------------------------------------------------------------------------||
     // Internal Helper Methods ------------------------------------------------------------||

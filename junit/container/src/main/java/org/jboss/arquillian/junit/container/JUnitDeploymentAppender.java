@@ -36,20 +36,19 @@ public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender {
     @Override
     protected Archive<?> buildArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
-                .addPackages(
-                        true,
-                        "junit",
-                        "org.junit",
-                        "org.hamcrest",
-                        Arquillian.class.getPackage().getName())
-                .addAsServiceProvider(
-                        TestRunner.class,
-                        JUnitTestRunner.class)
-                .addClass(JUnitRemoteExtension.class)
-                .addAsServiceProvider(
-                        RemoteLoadableExtension.class,
-                        JUnitRemoteExtension.class);
+            .addPackages(
+                true,
+                "junit",
+                "org.junit",
+                "org.hamcrest",
+                Arquillian.class.getPackage().getName())
+            .addAsServiceProvider(
+                TestRunner.class,
+                JUnitTestRunner.class)
+            .addClass(JUnitRemoteExtension.class)
+            .addAsServiceProvider(
+                RemoteLoadableExtension.class,
+                JUnitRemoteExtension.class);
         return archive;
     }
-
 }

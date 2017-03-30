@@ -34,7 +34,7 @@ public class CDIEnricherExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.service(AuxiliaryArchiveAppender.class, CDIEnricherArchiveAppender.class)
-                .service(ProtocolArchiveProcessor.class, BeansXMLProtocolProcessor.class);
+            .service(ProtocolArchiveProcessor.class, BeansXMLProtocolProcessor.class);
 
         // only load if BeanManager is on ClassPath
         if (Validate.classExists("javax.enterprise.inject.spi.BeanManager")) {
@@ -42,5 +42,4 @@ public class CDIEnricherExtension implements LoadableExtension {
             builder.observer(CreationalContextDestroyer.class);
         }
     }
-
 }

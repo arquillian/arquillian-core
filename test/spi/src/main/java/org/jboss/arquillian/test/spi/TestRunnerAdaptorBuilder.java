@@ -25,13 +25,13 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
  * @version $Revision: $
  */
 public class TestRunnerAdaptorBuilder {
-    private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
+    private static final String DEFAULT_EXTENSION_CLASS =
+        "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
     private static final String TEST_RUNNER_IMPL_CLASS = "org.jboss.arquillian.test.impl.EventTestRunnerAdaptor";
+    private static TestRunnerAdaptor testAdaptor;
 
     private TestRunnerAdaptorBuilder() {
     }
-
-    private static TestRunnerAdaptor testAdaptor;
 
     // Hidden from public, use reflection to invoke. Used for Test
     public static void set(TestRunnerAdaptor adaptor) {
@@ -44,12 +44,12 @@ public class TestRunnerAdaptorBuilder {
         }
 
         ManagerBuilder builder = ManagerBuilder.from()
-                .extension(SecurityActions.loadClass(DEFAULT_EXTENSION_CLASS));
+            .extension(SecurityActions.loadClass(DEFAULT_EXTENSION_CLASS));
 
         return SecurityActions.newInstance(
-                TEST_RUNNER_IMPL_CLASS,
-                new Class<?>[]{ManagerBuilder.class},
-                new Object[]{builder},
-                TestRunnerAdaptor.class);
+            TEST_RUNNER_IMPL_CLASS,
+            new Class<?>[] {ManagerBuilder.class},
+            new Object[] {builder},
+            TestRunnerAdaptor.class);
     }
 }

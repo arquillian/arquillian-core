@@ -16,11 +16,8 @@
  */
 package org.jboss.arquillian.container.test.impl.client.protocol;
 
-import static org.mockito.Mockito.when;
-
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
@@ -38,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.when;
 
 /**
  * ProtocolRegistryCreatorTestCase
@@ -62,7 +60,6 @@ public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBa
     public void setup() throws Exception {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
     }
-
 
     @Test
     public void shouldBindProtocolRegistryToContext() throws Exception {
@@ -111,12 +108,12 @@ public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBa
         ProtocolRegistry registry = getManager().resolve(ProtocolRegistry.class);
         ProtocolDefinition registeredProtocol = registry.getProtocol(new ProtocolDescription(protocolName));
         Assert.assertNotNull(
-                "Verify " + Protocol.class.getSimpleName() + " was registered",
-                registeredProtocol);
+            "Verify " + Protocol.class.getSimpleName() + " was registered",
+            registeredProtocol);
 
         Assert.assertEquals(
-                "Verify same protocol instance was registered",
-                protocol, registeredProtocol.getProtocol());
+            "Verify same protocol instance was registered",
+            protocol, registeredProtocol.getProtocol());
 
         return registeredProtocol;
     }

@@ -16,11 +16,11 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * When using multiple containers within the same test suite, you can use the @TargetsContainer annotation to specify

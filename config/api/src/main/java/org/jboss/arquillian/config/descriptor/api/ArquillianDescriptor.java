@@ -16,9 +16,8 @@
  */
 package org.jboss.arquillian.config.descriptor.api;
 
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
-
 import java.util.List;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * ArquillianDescriptor
@@ -44,5 +43,4 @@ public interface ArquillianDescriptor extends Descriptor {
     List<GroupDef> getGroups();
 
     List<ExtensionDef> getExtensions();
-
 }

@@ -23,11 +23,9 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.logging.Logger;
-
 import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.NamingException;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Validate;
@@ -76,14 +74,12 @@ public class EJBInjectionEnricher implements TestEnricher {
     /**
      * Obtains all field in the specified class which contain the specified annotation
      *
-     * @param clazz
-     * @param annotation
-     * @return
-     * @throws IllegalArgumentException If either argument is not specified
+     * @throws IllegalArgumentException
+     *     If either argument is not specified
      */
     // TODO Hack, this leaks out privileged operations outside the package. Extract out properly.
     protected List<Field> getFieldsWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotation)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         // Precondition checks
         if (clazz == null) {
             throw new IllegalArgumentException("clazz must be specified");
@@ -99,11 +95,12 @@ public class EJBInjectionEnricher implements TestEnricher {
     protected void injectClass(Object testCase) {
         try {
             @SuppressWarnings("unchecked")
-            Class<? extends Annotation> ejbAnnotation = (Class<? extends Annotation>) SecurityActions.getThreadContextClassLoader().loadClass(ANNOTATION_NAME);
+            Class<? extends Annotation> ejbAnnotation =
+                (Class<? extends Annotation>) SecurityActions.getThreadContextClassLoader().loadClass(ANNOTATION_NAME);
 
             List<Field> annotatedFields = SecurityActions.getFieldsWithAnnotation(
-                    testCase.getClass(),
-                    ejbAnnotation);
+                testCase.getClass(),
+                ejbAnnotation);
 
             for (Field field : annotatedFields) {
                 if (field.get(testCase) == null) // only try to lookup fields that are not already set
@@ -120,7 +117,7 @@ public class EJBInjectionEnricher implements TestEnricher {
                         field.set(testCase, ejb);
                     } catch (Exception e) {
                         log.fine("Could not lookup " + fieldAnnotation + ", other Enrichers might, move on. Exception: "
-                                + e.getMessage());
+                            + e.getMessage());
                     }
                 }
             }
@@ -156,14 +153,13 @@ public class EJBInjectionEnricher implements TestEnricher {
                 Object ejb = lookupEJB(jndiNames);
                 method.invoke(testCase, ejb);
             }
-
         } catch (Exception e) {
             throw new RuntimeException("Could not inject members", e);
         }
     }
 
     protected String attemptToGet31LookupField(EJB annotation) throws IllegalAccessException,
-            InvocationTargetException {
+        InvocationTargetException {
         String lookup = null;
         try {
             Method m = EJB.class.getMethod("lookup");
@@ -177,23 +173,30 @@ public class EJBInjectionEnricher implements TestEnricher {
     /**
      * Resolves the JNDI name of the given field.
      * <p>
-     * If <tt>mappedName</tt>, <tt>lookup</tt> or <tt>beanName</tt> are specified, they're used to resolve JNDI name. Otherwise, default policy
+     * If <tt>mappedName</tt>, <tt>lookup</tt> or <tt>beanName</tt> are specified, they're used to resolve JNDI name.
+     * Otherwise, default policy
      * applies.
      * <p>
-     * If more than one of the <tt>mappedName</tt>, <tt>lookup</tt> and <tt>beanName</tt> {@link EJB} annotation attributes is specified at the same time, an {@link IllegalStateException}
+     * If more than one of the <tt>mappedName</tt>, <tt>lookup</tt> and <tt>beanName</tt> {@link EJB} annotation
+     * attributes is specified at the same time, an {@link IllegalStateException}
      * will be thrown.
      *
-     * @param fieldType  annotated field which JNDI name should be resolved.
-     * @param mappedName Value of {@link EJB}'s <tt>mappedName</tt> attribute.
-     * @param beanName   Value of {@link EJB}'s <tt>beanName</tt> attribute.
-     * @param lookup     Value of {@link EJB}'s <tt>lookup</tt> attribute.
+     * @param fieldType
+     *     annotated field which JNDI name should be resolved.
+     * @param mappedName
+     *     Value of {@link EJB}'s <tt>mappedName</tt> attribute.
+     * @param beanName
+     *     Value of {@link EJB}'s <tt>beanName</tt> attribute.
+     * @param lookup
+     *     Value of {@link EJB}'s <tt>lookup</tt> attribute.
+     *
      * @return possible JNDI names which should be looked up to access the proper object.
      */
     protected String[] resolveJNDINames(Class<?> fieldType, String mappedName, String beanName, String lookup) {
 
         MessageFormat msg = new MessageFormat(
-                "Trying to resolve JNDI name for field \"{0}\" with mappedName=\"{1}\" and beanName=\"{2}\"");
-        log.finer(msg.format(new Object[]{fieldType, mappedName, beanName}));
+            "Trying to resolve JNDI name for field \"{0}\" with mappedName=\"{1}\" and beanName=\"{2}\"");
+        log.finer(msg.format(new Object[] {fieldType, mappedName, beanName}));
 
         Validate.notNull(fieldType, "EJB enriched field cannot to be null.");
 
@@ -203,21 +206,20 @@ public class EJBInjectionEnricher implements TestEnricher {
 
         if (isMoreThanOneValueTrue(isMappedNameSet, isBeanNameSet, isLookupSet)) {
             throw new IllegalStateException(
-                    "Only one of the @EJB annotation attributes 'mappedName', 'lookup' and 'beanName' can be specified at the same time.");
+                "Only one of the @EJB annotation attributes 'mappedName', 'lookup' and 'beanName' can be specified at the same time.");
         }
 
         String[] jndiNames;
 
         // If set, use only mapped name or bean name to lookup the EJB.
         if (isMappedNameSet) {
-            jndiNames = new String[]{mappedName};
+            jndiNames = new String[] {mappedName};
         } else if (isLookupSet) {
-            jndiNames = new String[]{lookup};
+            jndiNames = new String[] {lookup};
         } else if (isBeanNameSet) {
-            jndiNames = new String[]{"java:module/" + beanName + "!" + fieldType.getName()};
+            jndiNames = new String[] {"java:module/" + beanName + "!" + fieldType.getName()};
         } else {
             jndiNames = getJndiNamesForAnonymousEJB(fieldType);
-
         }
         return jndiNames;
     }
@@ -225,22 +227,22 @@ public class EJBInjectionEnricher implements TestEnricher {
     protected String[] getJndiNamesForAnonymousEJB(Class<?> fieldType) {
         String[] jndiNames;
         // TODO: These names are not spec compliant; fieldType needs to be a bean type here, but usually is just an interface of a bean. These seldom work.
-        jndiNames = new String[]{
-                "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
-                "java:global/test.ear/test/" + fieldType.getSimpleName(),
-                "java:global/test/" + fieldType.getSimpleName(),
-                "java:global/test/" + fieldType.getSimpleName() + "Bean",
-                "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
-                "test/" + fieldType.getSimpleName() + "Bean/local",
-                "test/" + fieldType.getSimpleName() + "Bean/remote",
-                "test/" + fieldType.getSimpleName() + "/no-interface",
-                fieldType.getSimpleName() + "Bean/local",
-                fieldType.getSimpleName() + "Bean/remote",
-                fieldType.getSimpleName() + "/no-interface",
-                // WebSphere Application Server Local EJB default binding
-                "ejblocal:" + fieldType.getCanonicalName(),
-                // WebSphere Application Server Remote EJB default binding
-                fieldType.getCanonicalName()};
+        jndiNames = new String[] {
+            "java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
+            "java:global/test.ear/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName(),
+            "java:global/test/" + fieldType.getSimpleName() + "Bean",
+            "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+            "test/" + fieldType.getSimpleName() + "Bean/local",
+            "test/" + fieldType.getSimpleName() + "Bean/remote",
+            "test/" + fieldType.getSimpleName() + "/no-interface",
+            fieldType.getSimpleName() + "Bean/local",
+            fieldType.getSimpleName() + "Bean/remote",
+            fieldType.getSimpleName() + "/no-interface",
+            // WebSphere Application Server Local EJB default binding
+            "ejblocal:" + fieldType.getCanonicalName(),
+            // WebSphere Application Server Remote EJB default binding
+            fieldType.getCanonicalName()};
         return jndiNames;
     }
 
@@ -275,7 +277,9 @@ public class EJBInjectionEnricher implements TestEnricher {
     /**
      * Helper method that checks if the given String has a non-empty value.
      *
-     * @param string String to be checked.
+     * @param string
+     *     String to be checked.
+     *
      * @return true if <tt>string</tt> is not null and has non-empty value; false otherwise.
      */
     private boolean hasValue(String string) {

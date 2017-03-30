@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.test.impl;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -23,7 +26,6 @@ import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
@@ -43,11 +45,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-
 /**
  * Verifies that the {@link EventTestRunnerAdaptor} creates and fires the proper events.
  *
@@ -56,6 +53,19 @@ import java.util.List;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase {
+
+    private static final TestExecutionDecider NEGATIVE_EXECUTION_DECIDER = new TestExecutionDecider() {
+
+        @Override
+        public ExecutionDecision decide(Method testMethod) {
+            return ExecutionDecision.dontExecute("Skipping execution of test method: " + testMethod.getName());
+        }
+
+        @Override
+        public int precedence() {
+            return 0;
+        }
+    };
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
@@ -137,7 +147,8 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase {
 
         verifyNoActiveContext(manager);
 
-        adaptor.fireCustomLifecycle(new BeforeTestLifecycleEvent(testInstance, testMethod, LifecycleMethodExecutor.NO_OP));
+        adaptor.fireCustomLifecycle(
+            new BeforeTestLifecycleEvent(testInstance, testMethod, LifecycleMethodExecutor.NO_OP));
         assertEventFired(BeforeTestLifecycleEvent.class, 0);
         assertEventNotFiredInContext(BeforeTestLifecycleEvent.class, ApplicationContext.class);
         assertEventNotFiredInContext(BeforeTestLifecycleEvent.class, SuiteContext.class);
@@ -245,30 +256,16 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase {
 
     private void verify(boolean application, boolean suite, boolean clazz, boolean test, Manager manager) {
         Assert.assertEquals(
-                "ApplicationContext should" + (!application ? " not" : "") + " be active",
-                application, manager.getContext(ApplicationContext.class).isActive());
+            "ApplicationContext should" + (!application ? " not" : "") + " be active",
+            application, manager.getContext(ApplicationContext.class).isActive());
         Assert.assertEquals(
-                "SuiteContext should" + (!suite ? " not" : "") + " be active",
-                suite, manager.getContext(SuiteContext.class).isActive());
+            "SuiteContext should" + (!suite ? " not" : "") + " be active",
+            suite, manager.getContext(SuiteContext.class).isActive());
         Assert.assertEquals(
-                "ClassContext should" + (!clazz ? " not" : "") + " be active",
-                clazz, manager.getContext(ClassContext.class).isActive());
+            "ClassContext should" + (!clazz ? " not" : "") + " be active",
+            clazz, manager.getContext(ClassContext.class).isActive());
         Assert.assertEquals(
-                "TestContext should" + (!test ? " not" : "") + " be active",
-                test, manager.getContext(TestContext.class).isActive());
+            "TestContext should" + (!test ? " not" : "") + " be active",
+            test, manager.getContext(TestContext.class).isActive());
     }
-
-    private static final TestExecutionDecider NEGATIVE_EXECUTION_DECIDER = new TestExecutionDecider() {
-
-        @Override
-        public ExecutionDecision decide(Method testMethod) {
-            return ExecutionDecision.dontExecute("Skipping execution of test method: " + testMethod.getName());
-        }
-
-        @Override
-        public int precedence() {
-            return 0;
-        }
-
-    };
 }

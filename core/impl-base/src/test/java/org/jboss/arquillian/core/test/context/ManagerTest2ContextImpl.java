@@ -18,7 +18,6 @@
 package org.jboss.arquillian.core.test.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;
@@ -45,5 +44,4 @@ public class ManagerTest2ContextImpl extends AbstractContext<String> implements 
     protected ObjectStore createNewObjectStore() {
         return new HashObjectStore();
     }
-
 }

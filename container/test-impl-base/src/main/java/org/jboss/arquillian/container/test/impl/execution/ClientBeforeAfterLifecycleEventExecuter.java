@@ -75,9 +75,9 @@ public class ClientBeforeAfterLifecycleEventExecuter {
 
     private boolean isRunAsClient(TestLifecycleEvent event) {
         return RunModeUtils.isRunAsClient(
-                deployment.get(),
-                event.getTestClass(),
-                event.getTestMethod());
+            deployment.get(),
+            event.getTestClass(),
+            event.getTestMethod());
     }
 
     private boolean isLocalContainer() {

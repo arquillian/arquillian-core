@@ -44,17 +44,16 @@ public class ContainerTestRemoteExtension extends TestExtension implements Remot
         super.register(builder);
 
         builder.service(ResourceProvider.class, ContainerURLResourceProvider.class)
-                .service(ResourceProvider.class, ContainerURIResourceProvider.class)
-                .service(ResourceProvider.class, DeployerProvider.class)
-                .service(ResourceProvider.class, InitialContextProvider.class)
-                .service(ResourceProvider.class, ContainerControllerProvider.class);
+            .service(ResourceProvider.class, ContainerURIResourceProvider.class)
+            .service(ResourceProvider.class, DeployerProvider.class)
+            .service(ResourceProvider.class, InitialContextProvider.class)
+            .service(ResourceProvider.class, ContainerControllerProvider.class);
 
         builder.observer(AfterLifecycleEventExecuter.class)
-                .observer(ContainerTestExecuter.class)
-                .observer(ContainerDeployerCreator.class)
-                .observer(ContainerContainerControllerCreator.class)
-                .observer(LocalTestExecuter.class)
-                .observer(BeforeLifecycleEventExecuter.class);
+            .observer(ContainerTestExecuter.class)
+            .observer(ContainerDeployerCreator.class)
+            .observer(ContainerContainerControllerCreator.class)
+            .observer(LocalTestExecuter.class)
+            .observer(BeforeLifecycleEventExecuter.class);
     }
-
 }

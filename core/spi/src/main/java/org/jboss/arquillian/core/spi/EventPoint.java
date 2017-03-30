@@ -18,7 +18,6 @@ package org.jboss.arquillian.core.spi;
 
 import org.jboss.arquillian.core.api.Event;
 
-
 /**
  * EventPoint
  *

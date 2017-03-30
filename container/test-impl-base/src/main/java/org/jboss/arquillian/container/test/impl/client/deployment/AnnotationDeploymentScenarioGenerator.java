@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
@@ -68,15 +67,27 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
 
     private void validate(Method deploymentMethod) {
         if (!Modifier.isStatic(deploymentMethod.getModifiers())) {
-            throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " is not static. " + deploymentMethod);
-        }
-        if (!Archive.class.isAssignableFrom(deploymentMethod.getReturnType()) && !Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
             throw new IllegalArgumentException(
-                    "Method annotated with " + Deployment.class.getName() +
-                            " must have return type " + Archive.class.getName() + " or " + Descriptor.class.getName() + ". " + deploymentMethod);
+                "Method annotated with " + Deployment.class.getName() + " is not static. " + deploymentMethod);
+        }
+        if (!Archive.class.isAssignableFrom(deploymentMethod.getReturnType()) && !Descriptor.class.isAssignableFrom(
+            deploymentMethod.getReturnType())) {
+            throw new IllegalArgumentException(
+                "Method annotated with "
+                    + Deployment.class.getName()
+                    +
+                    " must have return type "
+                    + Archive.class.getName()
+                    + " or "
+                    + Descriptor.class.getName()
+                    + ". "
+                    + deploymentMethod);
         }
         if (deploymentMethod.getParameterTypes().length != 0) {
-            throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " can not accept parameters. " + deploymentMethod);
+            throw new IllegalArgumentException("Method annotated with "
+                + Deployment.class.getName()
+                + " can not accept parameters. "
+                + deploymentMethod);
         }
     }
 
@@ -95,7 +106,8 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
             logWarningIfArchiveHasUnexpectedFileExtension(deployment);
             deployment.shouldBeTestable(deploymentAnnotation.testable());
         } else if (Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
+            deployment =
+                new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
             //deployment.shouldBeTestable(false);
         }
         deployment.shouldBeManaged(deploymentAnnotation.managed());
@@ -118,9 +130,9 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
     private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment) {
         if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive())) {
             log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
-                    + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
-                    + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
-                    + " rely on the given file extension, the archive type is only a description of a certain structure.");
+                + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
+                + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
+                + " rely on the given file extension, the archive type is only a description of a certain structure.");
         }
     }
 

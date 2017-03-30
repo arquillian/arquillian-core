@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.core.spi.EventPoint;
 import org.jboss.arquillian.core.spi.Extension;
 import org.jboss.arquillian.core.spi.InjectionPoint;
@@ -44,13 +43,21 @@ public class ExtensionImpl implements Extension {
     // Public Factory Methods -------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
+    ExtensionImpl(Object target, List<InjectionPoint> injectionPoints, List<EventPoint> eventPoints,
+        List<ObserverMethod> observers) {
+        this.target = target;
+        this.injectionPoints = injectionPoints;
+        this.eventPoints = eventPoints;
+        this.observers = observers;
+    }
+
     public static ExtensionImpl of(Object target) {
         Validate.notNull(target, "Extension must be specified");
         return new ExtensionImpl(
-                target,
-                injections(target, Reflections.getFieldInjectionPoints(target.getClass())),
-                events(target, Reflections.getEventPoints(target.getClass())),
-                observers(target, Reflections.getObserverMethods(target.getClass())));
+            target,
+            injections(target, Reflections.getFieldInjectionPoints(target.getClass())),
+            events(target, Reflections.getEventPoints(target.getClass())),
+            observers(target, Reflections.getObserverMethods(target.getClass())));
     }
 
     private static List<ObserverMethod> observers(Object extension, List<Method> observerMethods) {
@@ -75,14 +82,6 @@ public class ExtensionImpl implements Extension {
             result.add(EventPointImpl.of(extension, method));
         }
         return result;
-    }
-
-
-    ExtensionImpl(Object target, List<InjectionPoint> injectionPoints, List<EventPoint> eventPoints, List<ObserverMethod> observers) {
-        this.target = target;
-        this.injectionPoints = injectionPoints;
-        this.eventPoints = eventPoints;
-        this.observers = observers;
     }
 
     /**

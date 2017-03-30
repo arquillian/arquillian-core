@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.impl.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.spi.HashObjectStore;

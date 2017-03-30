@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.test;
 
 import java.util.List;
-
 import org.jboss.arquillian.container.impl.context.ContainerContextImpl;
 import org.jboss.arquillian.container.impl.context.DeploymentContextImpl;
 import org.jboss.arquillian.core.spi.Manager;
@@ -30,7 +29,6 @@ import org.jboss.arquillian.test.impl.context.TestContextImpl;
 import org.jboss.arquillian.test.spi.context.ClassContext;
 import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.jboss.arquillian.test.spi.context.TestContext;
-
 
 /**
  * AbstractTestTestBase
@@ -55,5 +53,4 @@ public abstract class AbstractContainerTestTestBase extends AbstractManagerTestB
         manager.getContext(ClassContext.class).activate(super.getClass());
         manager.getContext(TestContext.class).activate(this);
     }
-
 }

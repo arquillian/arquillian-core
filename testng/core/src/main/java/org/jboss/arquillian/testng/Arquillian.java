@@ -18,14 +18,13 @@ package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
 import java.util.Stack;
-
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
-import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
+import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.IInvokedMethod;
@@ -50,15 +49,7 @@ import org.testng.annotations.Listeners;
 @Listeners(Arquillian.UpdateResultListener.class)
 public abstract class Arquillian implements IHookable {
     public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
-
-    private static enum Cycle
-
-    {
-        BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
-    }
-
     private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
-
     private static ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
         protected java.util.Stack<Cycle> initialValue() {
             return new Stack<Cycle>();
@@ -224,6 +215,12 @@ public abstract class Arquillian implements IHookable {
         if (deployableTest.get() == null) {
             throw new IllegalStateException("No TestRunnerAdaptor found, @BeforeSuite has not been called");
         }
+    }
+
+    private static enum Cycle
+
+    {
+        BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
     }
 
     public static final class UpdateResultListener implements IInvokedMethodListener {

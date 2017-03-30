@@ -17,7 +17,6 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import java.net.URI;
-
 import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 
 /**
@@ -42,7 +41,8 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration {
     }
 
     /**
-     * @param scheme the scheme to set
+     * @param scheme
+     *     the scheme to set
      */
     public void setScheme(String scheme) {
         this.scheme = scheme;
@@ -56,7 +56,8 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration {
     }
 
     /**
-     * @param host the host to set
+     * @param host
+     *     the host to set
      */
     public void setHost(String host) {
         this.host = host;
@@ -70,7 +71,8 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration {
     }
 
     /**
-     * @param port the port to set
+     * @param port
+     *     the port to set
      */
     public void setPort(Integer port) {
         this.port = port;
@@ -84,7 +86,8 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration {
     }
 
     /**
-     * @param context the context to set
+     * @param context
+     *     the context to set
      */
     public void setContextRoot(String context) {
         this.contextRoot = context;
@@ -109,8 +112,6 @@ public class ServletProtocolConfiguration implements ProtocolConfiguration {
      * and client. Used by e.g. The InContianer Deployment.
      * <p>
      * Set the given pull interval time in milliseconds.
-     *
-     * @param pullInMilliSeconds
      */
     public void setPullInMilliSeconds(Integer pullInMilliSeconds) {
         this.pullInMilliSeconds = pullInMilliSeconds;

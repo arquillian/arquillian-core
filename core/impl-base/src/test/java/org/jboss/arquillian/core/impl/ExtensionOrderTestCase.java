@@ -18,7 +18,6 @@ package org.jboss.arquillian.core.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -27,7 +26,6 @@ import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * Tests the execution order of Observers of same type
@@ -43,7 +41,7 @@ public class ExtensionOrderTestCase {
     @Test
     public void shouldExecuteProducersOnSameEventBeforeConsumers() throws Exception {
         Manager manager = ManagerBuilder.from()
-                .extensions(ConsumerOne.class, ProducerOne.class, ProducerTwo.class).create();
+            .extensions(ConsumerOne.class, ProducerOne.class, ProducerTwo.class).create();
 
         manager.fire("test");
 
@@ -75,8 +73,8 @@ public class ExtensionOrderTestCase {
     }
 
     public static class ConsumerOne {
-//      @Inject
-//      private Instance<ValueOne> value;
+        //      @Inject
+        //      private Instance<ValueOne> value;
 
         public void exec(@Observes String ba) {
             callOrder.add(this.getClass().getSimpleName());

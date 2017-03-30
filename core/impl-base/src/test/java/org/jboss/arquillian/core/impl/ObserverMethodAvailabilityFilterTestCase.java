@@ -18,7 +18,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.util.List;
-
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
@@ -46,12 +45,12 @@ public class ObserverMethodAvailabilityFilterTestCase extends AbstractManagerTes
         ObserverMultiArgument extension = getManager().getExtension(ObserverMultiArgument.class);
 
         Assert.assertTrue(
-                "Non filtered method should have been called",
-                extension.wasCalled);
+            "Non filtered method should have been called",
+            extension.wasCalled);
 
         Assert.assertTrue(
-                "Filtered method should not have been called, filter not in context",
-                extension.filteredWasCalled);
+            "Filtered method should not have been called, filter not in context",
+            extension.filteredWasCalled);
     }
 
     @Test
@@ -61,12 +60,12 @@ public class ObserverMethodAvailabilityFilterTestCase extends AbstractManagerTes
         ObserverMultiArgument extension = getManager().getExtension(ObserverMultiArgument.class);
 
         Assert.assertTrue(
-                "Non filtered method should have been called",
-                extension.wasCalled);
+            "Non filtered method should have been called",
+            extension.wasCalled);
 
         Assert.assertFalse(
-                "Filtered method should not have been called, filter not in context",
-                extension.filteredWasCalled);
+            "Filtered method should not have been called, filter not in context",
+            extension.filteredWasCalled);
     }
 
     public static class ObserverMultiArgument {

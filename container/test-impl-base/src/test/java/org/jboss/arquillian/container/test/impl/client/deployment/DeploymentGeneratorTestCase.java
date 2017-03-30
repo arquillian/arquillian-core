@@ -17,12 +17,6 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.Container;
@@ -70,6 +63,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 /**
  * DeploymentGeneratorTestCase
  *
@@ -82,46 +81,38 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     public static final String PROTOCOL_NAME_2 = "TEST_DEFAULT_2";
     public static final String CONTAINER_NAME_1 = "CONTAINER_NAME_1";
     public static final String CONTAINER_NAME_2 = "CONTAINER_NAME_2";
-
+    @Inject
+    private Instance<Injector> injectorInst;
+    @Mock
+    private ServiceLoader serviceLoader;
+    private ContainerRegistry containerRegistry;
+    private ProtocolRegistry protocolRegistry;
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private DeployableContainer deployableContainer;
+    @Mock
+    private DeploymentPackager packager;
 
     @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(DeploymentGenerator.class);
     }
 
-    @Inject
-    private Instance<Injector> injectorInst;
-
-    @Mock
-    private ServiceLoader serviceLoader;
-
-    private ContainerRegistry containerRegistry;
-
-    private ProtocolRegistry protocolRegistry;
-
-    @Mock
-    @SuppressWarnings("rawtypes")
-    private DeployableContainer deployableContainer;
-
-    @Mock
-    private DeploymentPackager packager;
-
-
     @Before
     public void prepare() {
         Injector injector = injectorInst.get();
 
         when(serviceLoader.onlyOne(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class))
-                .thenReturn(new AnnotationDeploymentScenarioGenerator());
+            .thenReturn(new AnnotationDeploymentScenarioGenerator());
         when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
         when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription(PROTOCOL_NAME_1));
 
         when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
-                .thenReturn(create(AuxiliaryArchiveAppender.class, injector.inject(new TestAuxiliaryArchiveAppender())));
+            .thenReturn(create(AuxiliaryArchiveAppender.class, injector.inject(new TestAuxiliaryArchiveAppender())));
         when(serviceLoader.all(eq(AuxiliaryArchiveProcessor.class)))
-                .thenReturn(create(AuxiliaryArchiveProcessor.class, injector.inject(new TestAuxiliaryArchiveProcessor())));
+            .thenReturn(create(AuxiliaryArchiveProcessor.class, injector.inject(new TestAuxiliaryArchiveProcessor())));
         when(serviceLoader.all(eq(ApplicationArchiveProcessor.class)))
-                .thenReturn(create(ApplicationArchiveProcessor.class, injector.inject(new TestApplicationArchiveAppender())));
+            .thenReturn(create(ApplicationArchiveProcessor.class, injector.inject(new TestApplicationArchiveAppender())));
 
         containerRegistry = new LocalContainerRegistry(injector);
         protocolRegistry = new ProtocolRegistry();
@@ -207,7 +198,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     @SuppressWarnings("unchecked")
     public void shouldFilterNullAuxiliaryArchiveAppenderResulsts() throws Exception {
         when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
-                .thenReturn(create(AuxiliaryArchiveAppender.class, injectorInst.get().inject(new NullAuxiliaryArchiveAppender())));
+            .thenReturn(
+                create(AuxiliaryArchiveAppender.class, injectorInst.get().inject(new NullAuxiliaryArchiveAppender())));
 
         addContainer(CONTAINER_NAME_1);
         addProtocol(PROTOCOL_NAME_1, true);
@@ -231,7 +223,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         try {
             fire(createEvent(DeploymentWithContainerReference.class));
         } catch (Exception e) {
-            Assert.assertTrue("Validate correct error message", e.getMessage().contains("Please include at least 1 Deployable Container on your Classpath"));
+            Assert.assertTrue("Validate correct error message",
+                e.getMessage().contains("Please include at least 1 Deployable Container on your Classpath"));
             throw e;
         }
     }
@@ -242,7 +235,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         try {
             fire(createEvent(DeploymentWithContainerReference.class));
         } catch (Exception e) {
-            Assert.assertTrue("Validate correct error message", e.getMessage().contains("does not match any found/configured Containers"));
+            Assert.assertTrue("Validate correct error message",
+                e.getMessage().contains("does not match any found/configured Containers"));
             throw e;
         }
     }
@@ -253,7 +247,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         try {
             fire(createEvent(DeploymentWithProtocolReference.class));
         } catch (Exception e) {
-            Assert.assertTrue("Validate correct error message", e.getMessage().contains("not maching any defined Protocol"));
+            Assert.assertTrue("Validate correct error message",
+                e.getMessage().contains("not maching any defined Protocol"));
             throw e;
         }
     }
@@ -284,7 +279,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         try {
             fire(createEvent(DeploymentManagedWithCustomContainerReference.class));
         } catch (Exception e) {
-            Assert.assertTrue("Validate correct error message", e.getMessage().contains("This container is set to mode custom "));
+            Assert.assertTrue("Validate correct error message",
+                e.getMessage().contains("This container is set to mode custom "));
             throw e;
         }
     }
@@ -298,7 +294,8 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         }
     }
 
-    private void contains(Collection<org.jboss.arquillian.container.spi.client.deployment.Deployment> deployments, String name) {
+    private void contains(Collection<org.jboss.arquillian.container.spi.client.deployment.Deployment> deployments,
+        String name) {
         if (deployments == null || deployments.size() == 0) {
             Assert.fail("No deployment by name " + name + " found in scenario. Scenario is empty");
         }
@@ -312,9 +309,9 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
 
     private Container addContainer(String name) {
         return containerRegistry.create(
-                new ContainerDefImpl("arquillian.xml")
-                        .container(name),
-                serviceLoader);
+            new ContainerDefImpl("arquillian.xml")
+                .container(name),
+            serviceLoader);
     }
 
     private ProtocolDefinition addProtocol(String name, boolean shouldBeDefault) {
@@ -324,13 +321,17 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
 
         Map<String, String> config = Collections.emptyMap();
         return protocolRegistry.addProtocol(new ProtocolDefinition(protocol, config, shouldBeDefault))
-                .getProtocol(new ProtocolDescription(name));
+            .getProtocol(new ProtocolDescription(name));
     }
 
     private <T> Collection<T> create(Class<T> type, T... instances) {
         List<T> list = new ArrayList<T>();
         Collections.addAll(list, instances);
         return list;
+    }
+
+    private GenerateDeployment createEvent(Class<?> testClass) {
+        return new GenerateDeployment(new TestClass(testClass));
     }
 
     private static class DeploymentWithDefaults {
@@ -427,10 +428,6 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         public static JavaArchive deploy() {
             return ShrinkWrap.create(JavaArchive.class);
         }
-    }
-
-    private GenerateDeployment createEvent(Class<?> testClass) {
-        return new GenerateDeployment(new TestClass(testClass));
     }
 
     private static class CallMap {

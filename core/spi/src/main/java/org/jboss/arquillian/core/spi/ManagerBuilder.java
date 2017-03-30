@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.spi;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.jboss.arquillian.core.spi.context.Context;
 
 /**
@@ -34,13 +33,13 @@ public class ManagerBuilder {
     private Set<Class<? extends Context>> contexts;
     private Set<Class<?>> extensions;
 
-    public static ManagerBuilder from() {
-        return new ManagerBuilder();
-    }
-
     private ManagerBuilder() {
         contexts = new HashSet<Class<? extends Context>>();
         extensions = new HashSet<Class<?>>();
+    }
+
+    public static ManagerBuilder from() {
+        return new ManagerBuilder();
     }
 
     public ManagerBuilder context(Class<? extends Context> context) {
@@ -67,9 +66,9 @@ public class ManagerBuilder {
 
     public Manager create() {
         return SecurityActions.newInstance(
-                MANAGER_IMPL_CLASS,
-                new Class<?>[]{Collection.class, Collection.class},
-                new Object[]{contexts, extensions},
-                Manager.class);
+            MANAGER_IMPL_CLASS,
+            new Class<?>[] {Collection.class, Collection.class},
+            new Object[] {contexts, extensions},
+            Manager.class);
     }
 }

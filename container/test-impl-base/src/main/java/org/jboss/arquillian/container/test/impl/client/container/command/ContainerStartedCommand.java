@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.client.container.command;
 
 import org.jboss.arquillian.container.test.impl.client.deployment.command.AbstractCommand;
 
-
 /**
  * StartContainerCommand
  *

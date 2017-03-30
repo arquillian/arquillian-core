@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.impl.client.container;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -50,8 +49,10 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * Controller for handling all Deployment related operations. <br/>
  * <br/>
  * <p>
- * Fires DeployDeployment events for each deployment that should be deployed during startup. This so the Cores exception handling
- * will be triggered if Deployment fails inside the context of the deployment and container. This lets extensions listen for Exceptions types
+ * Fires DeployDeployment events for each deployment that should be deployed during startup. This so the Cores exception
+ * handling
+ * will be triggered if Deployment fails inside the context of the deployment and container. This lets extensions listen
+ * for Exceptions types
  * and handle them inside the same context.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -70,7 +71,6 @@ public class ContainerDeployController {
     /**
      * Deploy all deployments marked as managed = true.
      *
-     * @param event
      * @throws Exception
      */
     public void deployManaged(@Observes DeployManagedDeployments event) throws Exception {
@@ -84,7 +84,10 @@ public class ContainerDeployController {
                 //once the container is manually started, not now
                 if (!"manual".equals(container.getContainerConfiguration().getMode())) {
                     if (container.getState() != State.STARTED) {
-                        throw new IllegalStateException("Trying to deploy a managed deployment " + deployment.getDescription().getName() + " to a non started managed container " + container.getName());
+                        throw new IllegalStateException("Trying to deploy a managed deployment "
+                            + deployment.getDescription().getName()
+                            + " to a non started managed container "
+                            + container.getName());
                     }
                     event.fire(new DeployDeployment(container, deployment));
                 }
@@ -95,7 +98,6 @@ public class ContainerDeployController {
     /**
      * Undeploy all deployments marked as managed, and all manually deployed.
      *
-     * @param event
      * @throws Exception
      */
     public void undeployManaged(@Observes UnDeployManagedDeployments event) throws Exception {
@@ -147,7 +149,8 @@ public class ContainerDeployController {
                 try {
                     if (deploymentDescription.isArchiveDeployment()) {
                         protocolMetadata.set(deployableContainer.deploy(
-                                deploymentDescription.getTestableArchive() != null ? deploymentDescription.getTestableArchive() : deploymentDescription.getArchive()));
+                            deploymentDescription.getTestableArchive() != null
+                                ? deploymentDescription.getTestableArchive() : deploymentDescription.getArchive()));
                     } else {
                         deployableContainer.deploy(deploymentDescription.getDescriptor());
                     }
@@ -181,7 +184,8 @@ public class ContainerDeployController {
                     if (deployment.getDescription().isArchiveDeployment()) {
                         try {
                             deployableContainer.undeploy(
-                                    description.getTestableArchive() != null ? description.getTestableArchive() : description.getArchive());
+                                description.getTestableArchive() != null ? description.getTestableArchive()
+                                    : description.getArchive());
                         } catch (Exception e) {
                             if (!deployment.hasDeploymentError()) {
                                 throw e;
@@ -216,7 +220,8 @@ public class ContainerDeployController {
         forEachDeployment(scenario.deployedDeploymentsInUnDeployOrder(), operation);
     }
 
-    private void forEachDeployment(List<Deployment> deployments, Operation<Container, Deployment> operation) throws Exception {
+    private void forEachDeployment(List<Deployment> deployments, Operation<Container, Deployment> operation)
+        throws Exception {
         injector.get().inject(operation);
         ContainerRegistry containerRegistry = this.containerRegistry.get();
         if (containerRegistry == null) {
@@ -229,7 +234,7 @@ public class ContainerDeployController {
     }
 
     private void executeOperation(Callable<Void> operation)
-            throws Exception {
+        throws Exception {
         injector.get().inject(operation);
         operation.call();
     }

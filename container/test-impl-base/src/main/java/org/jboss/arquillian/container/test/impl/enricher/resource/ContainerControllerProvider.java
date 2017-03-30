@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;

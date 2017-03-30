@@ -18,9 +18,7 @@
 package org.jboss.arquillian.container.test.impl.client.container.command;
 
 import java.util.Map;
-
 import org.jboss.arquillian.container.test.impl.client.deployment.command.AbstractCommand;
-
 
 /**
  * StartContainerCommand

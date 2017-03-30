@@ -44,10 +44,10 @@ public class WebAppDescriptorImpl extends NodeDescriptorImplBase implements WebA
 
     public WebAppDescriptorImpl(String descriptorName) {
         this(descriptorName, new Node("web-app")
-                .attribute("xmlns", "http://java.sun.com/xml/ns/javaee")
-                .attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
-                .attribute("xsi:schemaLocation",
-                        "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"));
+            .attribute("xmlns", "http://java.sun.com/xml/ns/javaee")
+            .attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+            .attribute("xsi:schemaLocation",
+                "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"));
         version("3.0");
     }
 
@@ -66,8 +66,8 @@ public class WebAppDescriptorImpl extends NodeDescriptorImplBase implements WebA
             throw new IllegalArgumentException("Version must be specified");
         }
         model.attribute("xsi:schemaLocation",
-                "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_" + version.replace(".", "_")
-                        + ".xsd");
+            "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_" + version.replace(".", "_")
+                + ".xsd");
         model.attribute("version", version);
         return this;
     }

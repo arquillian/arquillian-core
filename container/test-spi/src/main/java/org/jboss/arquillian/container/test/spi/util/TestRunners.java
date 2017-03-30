@@ -35,7 +35,9 @@ public final class TestRunners {
      * Dynamically loads an instance of a test runner.
      *
      * @return A Initialized TestRunner
-     * @throws IllegalStateException if multiple TestRunners found in classpath.
+     *
+     * @throws IllegalStateException
+     *     if multiple TestRunners found in classpath.
      */
     public static TestRunner getTestRunner() {
         return getTestRunner(SecurityActions.getThreadContextClassLoader());
@@ -45,13 +47,16 @@ public final class TestRunners {
      * Dynamically loads an instance of a test runner.
      *
      * @return A Initialized TestRunner
-     * @throws IllegalStateException if multiple TestRunners found in classpath.
+     *
+     * @throws IllegalStateException
+     *     if multiple TestRunners found in classpath.
      */
     public static TestRunner getTestRunner(ClassLoader classLoader) {
         ServiceLoader<TestRunner> serviceLoader = ServiceLoader.load(TestRunner.class, classLoader);
 
-        if (serviceLoader.getProviders().size() > 1)
+        if (serviceLoader.getProviders().size() > 1) {
             throw new IllegalStateException("Multiple TestRunners found, only one allowed. Check your classpath");
+        }
 
         return serviceLoader.iterator().next();
     }

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
 import java.io.Serializable;
-
 import org.jboss.arquillian.container.test.spi.command.Command;
 
 /**
@@ -33,18 +32,13 @@ public abstract class AbstractCommand<T> implements Command<T>, Serializable {
     private T result;
     private Throwable throwable;
 
-    public void setResult(T result) {
-        this.result = result;
-    }
-
     @Override
     public T getResult() {
         return result;
     }
 
-    @Override
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    public void setResult(T result) {
+        this.result = result;
     }
 
     /**
@@ -53,5 +47,10 @@ public abstract class AbstractCommand<T> implements Command<T>, Serializable {
     @Override
     public Throwable getThrowable() {
         return throwable;
+    }
+
+    @Override
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
     }
 }

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;

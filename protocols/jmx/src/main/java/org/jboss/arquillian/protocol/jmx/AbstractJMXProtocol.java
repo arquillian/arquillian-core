@@ -22,9 +22,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.management.MBeanServerConnection;
-
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.JMXContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
@@ -74,9 +72,9 @@ public abstract class AbstractJMXProtocol<T extends JMXProtocolConfiguration> im
             return new JMXMethodExecutor(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME, protocolProps);
         } else {
             throw new IllegalStateException(
-                    "No " + JMXContext.class.getName() + " was found in " + ProtocolMetaData.class.getName() +
-                            ". The JMX Protocol can not be used without a connection, " +
-                            "please verify your protocol configuration or contact the DeployableContainer developer");
+                "No " + JMXContext.class.getName() + " was found in " + ProtocolMetaData.class.getName() +
+                    ". The JMX Protocol can not be used without a connection, " +
+                    "please verify your protocol configuration or contact the DeployableContainer developer");
         }
     }
 }

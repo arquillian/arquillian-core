@@ -43,5 +43,4 @@ public class LocalCommandService implements CommandService {
         }
         return command.getResult();
     }
-
 }

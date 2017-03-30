@@ -22,7 +22,6 @@
 package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.impl.web;
 
 import java.util.List;
-
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.ServletMappingDef;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 

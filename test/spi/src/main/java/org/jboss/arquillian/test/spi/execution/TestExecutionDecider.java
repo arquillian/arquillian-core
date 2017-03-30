@@ -37,14 +37,16 @@ public interface TestExecutionDecider {
         public int precedence() {
             return 0;
         }
-
     };
 
     /**
      * This method will be called individually for each event(before/test/after), but
      * should return the same result for each to behave consistently.
      *
-     * @param testMethod test method to resolve a test execution on. This is always the @Test method regardless of the current phase before or after.
+     * @param testMethod
+     *     test method to resolve a test execution on. This is always the @Test method regardless of the current phase
+     *     before or after.
+     *
      * @return execution decision telling if a test method is going to be executed or not
      */
     ExecutionDecision decide(Method testMethod);

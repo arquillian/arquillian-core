@@ -25,19 +25,19 @@ import javax.enterprise.inject.spi.Extension;
 public class CDIExtension implements Extension {
     private static BeanManager beanManager;
 
-    void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeBeanDiscovery, BeanManager beanManager) {
-        setBeanManager(beanManager);
-    }
-
-    void beforeShutdown(@Observes BeforeShutdown beforeShutdown) {
-        setBeanManager(null);
-    }
-
     public static BeanManager getBeanManager() {
         return beanManager;
     }
 
     private static void setBeanManager(BeanManager beanManager) {
         CDIExtension.beanManager = beanManager;
+    }
+
+    void beforeBeanDiscovery(@Observes BeforeBeanDiscovery beforeBeanDiscovery, BeanManager beanManager) {
+        setBeanManager(beanManager);
+    }
+
+    void beforeShutdown(@Observes BeforeShutdown beforeShutdown) {
+        setBeanManager(null);
     }
 }

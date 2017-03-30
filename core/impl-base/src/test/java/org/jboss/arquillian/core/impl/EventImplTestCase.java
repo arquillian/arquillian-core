@@ -16,13 +16,11 @@
  */
 package org.jboss.arquillian.core.impl;
 
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 /**
  * EventImplTestCase
@@ -34,7 +32,7 @@ public class EventImplTestCase {
     @Test
     public void shouldBeAbleToFireEvent() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
-                .extensions(TestObserver.class).create();
+            .extensions(TestObserver.class).create();
 
         EventImpl<Object> event = EventImpl.of(Object.class, manager);
 
@@ -45,8 +43,12 @@ public class EventImplTestCase {
         Assert.assertTrue(observer.wasCalled);
         Assert.assertTrue(observer.observerWasCalled);
         Assert.assertEquals(
-                "Verify same object was observed",
-                testObject, observer.getObject());
+            "Verify same object was observed",
+            testObject, observer.getObject());
+    }
+
+    private interface Command<T> {
+
     }
 
     private static class TestObserver {
@@ -70,10 +72,6 @@ public class EventImplTestCase {
         public Object getObject() {
             return object;
         }
-    }
-
-    private interface Command<T> {
-
     }
 
     private class TestCommand implements Command<String> {
