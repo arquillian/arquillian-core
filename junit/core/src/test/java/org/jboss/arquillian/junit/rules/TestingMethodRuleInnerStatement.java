@@ -25,28 +25,23 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * An Implementation of MethodRule with Statement declared as inner anonymous class
- * 
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class TestingMethodRuleInnerStatement implements MethodRule
-{
+public class TestingMethodRuleInnerStatement implements MethodRule {
     @ArquillianResource
     private ResourceStub ruleResources;
 
     @Override
-    public Statement apply(final Statement base, FrameworkMethod method, Object target)
-    {
+    public Statement apply(final Statement base, FrameworkMethod method, Object target) {
         assertNotNull(ruleResources);
 
-        return new Statement()
-        {
+        return new Statement() {
             @ArquillianResource
             private ResourceStub statementResources;
-            
+
             @Override
-            public void evaluate() throws Throwable
-            {
+            public void evaluate() throws Throwable {
                 ResourceAssertion.assertNotNullAndNotEqual(statementResources, ruleResources);
                 base.evaluate();
             }

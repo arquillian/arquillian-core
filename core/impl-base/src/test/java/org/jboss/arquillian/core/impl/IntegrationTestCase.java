@@ -37,110 +37,95 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class IntegrationTestCase
-{
-   @Test
-   public void shouldBeAbleToInjectAndFireEvents() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .context(ManagerTestContextImpl.class)
-         .context(ManagerTest2ContextImpl.class)
-         .extensions(
-               TestObserverOne.class, 
-               TestObserverTwo.class, 
-               TestObserverTree.class).create();
-      
-      ManagerTestContext context = manager.getContext(ManagerTestContext.class);
-      try
-      {
-         context.activate();
-         context.getObjectStore().add(Object.class, new Object());
-         
-         
-         manager.fire("some string event");
+public class IntegrationTestCase {
+    @Test
+    public void shouldBeAbleToInjectAndFireEvents() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .context(ManagerTestContextImpl.class)
+                .context(ManagerTest2ContextImpl.class)
+                .extensions(
+                        TestObserverOne.class,
+                        TestObserverTwo.class,
+                        TestObserverTree.class).create();
 
-         Assert.assertTrue(manager.getExtension(TestObserverOne.class).wasCalled);
-         Assert.assertTrue(manager.getExtension(TestObserverTwo.class).wasCalled);
-         Assert.assertTrue(manager.getExtension(TestObserverTree.class).wasCalled);
-         
-         Assert.assertNotNull(
-               "Verify instance was bound to context",
-               context.getObjectStore().get(Object.class));
-         
-         ManagerTest2Context containerContext = manager.getContext(ManagerTest2Context.class);
-         Assert.assertFalse(containerContext.isActive());
-         
-         containerContext.activate("A");
-         try
-         {
+        ManagerTestContext context = manager.getContext(ManagerTestContext.class);
+        try {
+            context.activate();
+            context.getObjectStore().add(Object.class, new Object());
+
+
+            manager.fire("some string event");
+
+            Assert.assertTrue(manager.getExtension(TestObserverOne.class).wasCalled);
+            Assert.assertTrue(manager.getExtension(TestObserverTwo.class).wasCalled);
+            Assert.assertTrue(manager.getExtension(TestObserverTree.class).wasCalled);
+
             Assert.assertNotNull(
-                  "Should have set a Double in container scope",
-                  containerContext.getObjectStore().get(Double.class));
-         }
-         finally
-         {
-            containerContext.deactivate();
-            containerContext.destroy("A");
-         }
-      }
-      finally
-      {
-         context.deactivate();
-         context.destroy();
-      }
-   }
-   
-   public static class TestObserverOne 
-   {
-      private boolean wasCalled = false;
-      
-      @Inject @ManagerTestScoped
-      private InstanceProducer<Float> object;
-      
-      @Inject
-      private Event<Integer> event;
-      
-      @Inject 
-      private Instance<ManagerTest2Context> context;
-      
-      public void on(@Observes String name)
-      {
-         try
-         {
-            context.get().activate("A");
-            object.set(new Float(2.2));
-            event.fire(new Integer(100));
-         }
-         finally
-         {
-            context.get().deactivate();
-         }
-         wasCalled = true;
-      }
-   }
-   
-   public static class TestObserverTwo 
-   {
-      private boolean wasCalled = false;
-    
-      
-      public void on(@Observes Integer integer)
-      {
-         wasCalled = true;
-      }
-   }
+                    "Verify instance was bound to context",
+                    context.getObjectStore().get(Object.class));
 
-   public static class TestObserverTree 
-   {
-      private boolean wasCalled = false;
-      
-      @Inject @ManagerTest2Scoped
-      private InstanceProducer<Double> doub;
-    
-      public void on(@Observes Float integer)
-      {
-         doub.set(new Double(2.0));
-         wasCalled = true;
-      }
-   }
+            ManagerTest2Context containerContext = manager.getContext(ManagerTest2Context.class);
+            Assert.assertFalse(containerContext.isActive());
+
+            containerContext.activate("A");
+            try {
+                Assert.assertNotNull(
+                        "Should have set a Double in container scope",
+                        containerContext.getObjectStore().get(Double.class));
+            } finally {
+                containerContext.deactivate();
+                containerContext.destroy("A");
+            }
+        } finally {
+            context.deactivate();
+            context.destroy();
+        }
+    }
+
+    public static class TestObserverOne {
+        private boolean wasCalled = false;
+
+        @Inject
+        @ManagerTestScoped
+        private InstanceProducer<Float> object;
+
+        @Inject
+        private Event<Integer> event;
+
+        @Inject
+        private Instance<ManagerTest2Context> context;
+
+        public void on(@Observes String name) {
+            try {
+                context.get().activate("A");
+                object.set(new Float(2.2));
+                event.fire(new Integer(100));
+            } finally {
+                context.get().deactivate();
+            }
+            wasCalled = true;
+        }
+    }
+
+    public static class TestObserverTwo {
+        private boolean wasCalled = false;
+
+
+        public void on(@Observes Integer integer) {
+            wasCalled = true;
+        }
+    }
+
+    public static class TestObserverTree {
+        private boolean wasCalled = false;
+
+        @Inject
+        @ManagerTest2Scoped
+        private InstanceProducer<Double> doub;
+
+        public void on(@Observes Float integer) {
+            doub.set(new Double(2.0));
+            wasCalled = true;
+        }
+    }
 }

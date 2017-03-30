@@ -25,31 +25,30 @@ import java.util.Map;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerDef extends ArquillianDescriptor
-{
-   String getContainerName();
-   
-   ContainerDef setContainerName(String name);
-   
-   ContainerDef setDefault();
-   
-   boolean isDefault();
-   
-   ContainerDef setMode(String mode);
-   
-   String getMode();
-   
-   ContainerDef dependency(String artifactId);
-   
-   ContainerDef property(String name, String value);
-   
-   ContainerDef overrideProperty(String name, String value);
-   
-   Map<String, String> getContainerProperties();
-   
-   ProtocolDef protocol(String type);
-   
-   List<ProtocolDef> getProtocols();
-   
-   List<String> getDependencies();
+public interface ContainerDef extends ArquillianDescriptor {
+    String getContainerName();
+
+    ContainerDef setContainerName(String name);
+
+    ContainerDef setDefault();
+
+    boolean isDefault();
+
+    ContainerDef setMode(String mode);
+
+    String getMode();
+
+    ContainerDef dependency(String artifactId);
+
+    ContainerDef property(String name, String value);
+
+    ContainerDef overrideProperty(String name, String value);
+
+    Map<String, String> getContainerProperties();
+
+    ProtocolDef protocol(String type);
+
+    List<ProtocolDef> getProtocols();
+
+    List<String> getDependencies();
 }

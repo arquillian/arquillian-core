@@ -29,9 +29,9 @@ import java.lang.annotation.Target;
  * <p>
  * A deployment represent the isolation level of your test, that being a single JavaArchive or a multi module EnterpriseArchive.
  * <p>
- * The deployment producer will be executed to create the deployment before the Test run, this to detect environment problems as soon as 
+ * The deployment producer will be executed to create the deployment before the Test run, this to detect environment problems as soon as
  * possible.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -45,40 +45,40 @@ import java.lang.annotation.Target;
  *      return Descriptors.create(HornetQDescriptor.class);
  * }
  * </code></pre>
+ *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Deployment 
-{
-   /**
-    * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or method is using @OperateOnDeployment
-    * 
-    * @return The name of this Deployment
-    */
-   String name() default "_DEFAULT_";
-   
-   /**
-    * Describes whether or not this deployment should be deployed by Arquillian.
-    * 
-    * @return
-    */
-   boolean managed() default true;
-   
-   /**
-    * If multiple deployments are specified against the same target and defined as startup, this control the order of which they
-    * will be given to the Container.
-    * 
-    * @return
-    */
-   int order() default -1;
-   
-   /**
-    * Defines if this deployment should be wrapped up based on the protocol so the testcase can be executed incontainer. 
-    * 
-    * @return
-    */
-   boolean testable() default true;
+public @interface Deployment {
+    /**
+     * Name the deployment so you can reference it using the {@link Deployer} API if managed is false or method is using @OperateOnDeployment
+     *
+     * @return The name of this Deployment
+     */
+    String name() default "_DEFAULT_";
+
+    /**
+     * Describes whether or not this deployment should be deployed by Arquillian.
+     *
+     * @return
+     */
+    boolean managed() default true;
+
+    /**
+     * If multiple deployments are specified against the same target and defined as startup, this control the order of which they
+     * will be given to the Container.
+     *
+     * @return
+     */
+    int order() default -1;
+
+    /**
+     * Defines if this deployment should be wrapped up based on the protocol so the testcase can be executed incontainer.
+     *
+     * @return
+     */
+    boolean testable() default true;
 }

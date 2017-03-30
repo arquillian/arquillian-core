@@ -24,13 +24,12 @@ import java.lang.annotation.Annotation;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Context
-{
-   Class<? extends Annotation> getScope();
-   
-   boolean isActive();
-   
-   ObjectStore getObjectStore();
-   
-   void clearAll();
+public interface Context {
+    Class<? extends Annotation> getScope();
+
+    boolean isActive();
+
+    ObjectStore getObjectStore();
+
+    void clearAll();
 }

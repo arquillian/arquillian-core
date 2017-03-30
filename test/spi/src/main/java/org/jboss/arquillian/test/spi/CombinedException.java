@@ -21,49 +21,41 @@ package org.jboss.arquillian.test.spi;
 import java.util.Collections;
 import java.util.List;
 
-public class CombinedException extends Exception
-{
+public class CombinedException extends Exception {
 
-   private final List<Throwable> causes;
+    private final List<Throwable> causes;
 
-   public CombinedException(String message, List<Throwable> causes)
-   {
-      super(message);
-      this.causes = Collections.unmodifiableList(causes);
-   }
+    public CombinedException(String message, List<Throwable> causes) {
+        super(message);
+        this.causes = Collections.unmodifiableList(causes);
+    }
 
-   public CombinedException(String message)
-   {
-      super(message);
-      this.causes = Collections.emptyList();
-   }
+    public CombinedException(String message) {
+        super(message);
+        this.causes = Collections.emptyList();
+    }
 
-   public CombinedException(String message, Throwable cause)
-   {
-      super(message, cause);
-      this.causes = Collections.singletonList(cause);
-   }
+    public CombinedException(String message, Throwable cause) {
+        super(message, cause);
+        this.causes = Collections.singletonList(cause);
+    }
 
-   public CombinedException(Throwable cause)
-   {
-      super(cause);
-      this.causes = Collections.singletonList(cause);
-   }
+    public CombinedException(Throwable cause) {
+        super(cause);
+        this.causes = Collections.singletonList(cause);
+    }
 
-   public List<Throwable> getCauses()
-   {
-      return causes;
-   }
+    public List<Throwable> getCauses() {
+        return causes;
+    }
 
-   @Override
-   public String getMessage()
-   {
-      final StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < causes.size(); i++)
-      {
-         final Throwable cause = causes.get(i);
-         builder.append(String.format("Exception %d: '[%s] %s'%n", i + 1, cause.getClass().getName(), cause.getMessage()));
-      }
-      return builder.toString();
-   }
+    @Override
+    public String getMessage() {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < causes.size(); i++) {
+            final Throwable cause = causes.get(i);
+            builder.append(String.format("Exception %d: '[%s] %s'%n", i + 1, cause.getClass().getName(), cause.getMessage()));
+        }
+        return builder.toString();
+    }
 }

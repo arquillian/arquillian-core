@@ -21,17 +21,15 @@ import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 
 /**
  * Observer that executes the After phase on the test case.
- * 
+ * <p>
  * This is intended for In Container use, AfterClass should only be executed on Client since the state between @Test is not kept In Container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  * @see BeforeLifecycleEventExecuter
  */
-public class AfterLifecycleEventExecuter
-{
-   public void on(@Observes(precedence = 100) AfterTestLifecycleEvent event) throws Throwable
-   {
-      event.getExecutor().invoke();
-   }
+public class AfterLifecycleEventExecuter {
+    public void on(@Observes(precedence = 100) AfterTestLifecycleEvent event) throws Throwable {
+        event.getExecutor().invoke();
+    }
 }

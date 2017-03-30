@@ -38,63 +38,50 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerDeployer implements Deployer
-{
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
-   
-   @Override
-   public void deploy(final String name)
-   {
-      doPrivileged(new PrivilegedAction<Void>()
-      {
-         public Void run()
-         {
-            getCommandService().execute(new DeployDeploymentCommand(name));
-            return null;
-         }
-      });
-   }
+public class ContainerDeployer implements Deployer {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   @Override
-   public void undeploy(final String name)
-   {
-      doPrivileged(new PrivilegedAction<Void>()
-      {
-         public Void run()
-         {
-            getCommandService().execute(new UnDeployDeploymentCommand(name));
-            return null;
-         }
-      });
-   }
+    @Override
+    public void deploy(final String name) {
+        doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
+                getCommandService().execute(new DeployDeploymentCommand(name));
+                return null;
+            }
+        });
+    }
 
-   @Override
-   public InputStream getDeployment(final String name)
-   {
-      return doPrivileged(new PrivilegedAction<InputStream>()
-      {
-         public InputStream run()
-         {
-            return new ByteArrayInputStream(
-               getCommandService().execute(
-                     new GetDeploymentCommand(name)));
-         }
-      });
-   }
-   
-   private CommandService getCommandService()
-   {
-      ServiceLoader loader = serviceLoader.get();
-      if(loader == null)
-      {
-         throw new IllegalStateException("No " + ServiceLoader.class.getName() + " found in context");
-      }
-      CommandService service = loader.onlyOne(CommandService.class);
-      if(service == null)
-      {
-         throw new IllegalStateException("No " + CommandService.class.getName() + " found in context");
-      }
-      return service;
-   }
+    @Override
+    public void undeploy(final String name) {
+        doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
+                getCommandService().execute(new UnDeployDeploymentCommand(name));
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public InputStream getDeployment(final String name) {
+        return doPrivileged(new PrivilegedAction<InputStream>() {
+            public InputStream run() {
+                return new ByteArrayInputStream(
+                        getCommandService().execute(
+                                new GetDeploymentCommand(name)));
+            }
+        });
+    }
+
+    private CommandService getCommandService() {
+        ServiceLoader loader = serviceLoader.get();
+        if (loader == null) {
+            throw new IllegalStateException("No " + ServiceLoader.class.getName() + " found in context");
+        }
+        CommandService service = loader.onlyOne(CommandService.class);
+        if (service == null) {
+            throw new IllegalStateException("No " + CommandService.class.getName() + " found in context");
+        }
+        return service;
+    }
 }

@@ -47,7 +47,7 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
                     return manager.resolve(Injector.class);
                 }
             });
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -63,7 +63,7 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
     }
 
     private ExecutorService executor() {
-        if(this.service == null) {
+        if (this.service == null) {
             this.service = Executors.newCachedThreadPool();
         }
         return this.service;
@@ -87,8 +87,7 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
             try {
                 state.activate();
                 return delegate.call();
-            }
-            finally {
+            } finally {
                 state.deactivate();
             }
         }
@@ -100,13 +99,12 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
         private static ContextSnapshot from(ManagerImpl manager) {
             List<Context> contexts = manager.getContexts();
             Map<Context, Object> activeContexts = new HashMap<Context, Object>();
-            for(Context context : contexts) {
-                if(context.isActive()) {
-                    if(context instanceof NonIdBoundContext) {
+            for (Context context : contexts) {
+                if (context.isActive()) {
+                    if (context instanceof NonIdBoundContext) {
                         activeContexts.put(context, null);
-                    }
-                    else {
-                        activeContexts.put(context, ((IdBoundContext<Object>)context).getActiveId());
+                    } else {
+                        activeContexts.put(context, ((IdBoundContext<Object>) context).getActiveId());
                     }
                 }
             }
@@ -121,22 +119,22 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
 
         @SuppressWarnings("unchecked")
         public void activate() {
-            for(Map.Entry<Context, Object> entry : activeContexts.entrySet()) {
-                if(entry.getKey() instanceof NonIdBoundContext) {
-                    ((NonIdBoundContext)entry.getKey()).activate();
+            for (Map.Entry<Context, Object> entry : activeContexts.entrySet()) {
+                if (entry.getKey() instanceof NonIdBoundContext) {
+                    ((NonIdBoundContext) entry.getKey()).activate();
                 } else if (entry.getKey() instanceof IdBoundContext) {
-                    ((IdBoundContext<Object>)entry.getKey()).activate(entry.getValue());
+                    ((IdBoundContext<Object>) entry.getKey()).activate(entry.getValue());
                 }
             }
         }
 
         @SuppressWarnings("unchecked")
         public void deactivate() {
-            for(Map.Entry<Context, Object> entry : activeContexts.entrySet()) {
-                if(entry.getKey() instanceof NonIdBoundContext) {
-                    ((NonIdBoundContext)entry.getKey()).deactivate();
+            for (Map.Entry<Context, Object> entry : activeContexts.entrySet()) {
+                if (entry.getKey() instanceof NonIdBoundContext) {
+                    ((NonIdBoundContext) entry.getKey()).deactivate();
                 } else if (entry.getKey() instanceof IdBoundContext) {
-                    ((IdBoundContext<Object>)entry.getKey()).deactivate();
+                    ((IdBoundContext<Object>) entry.getKey()).deactivate();
                 }
             }
         }

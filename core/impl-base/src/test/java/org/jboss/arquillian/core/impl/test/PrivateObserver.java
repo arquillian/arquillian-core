@@ -21,16 +21,17 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
 class PrivateObserver {
-   
-   public static boolean wasCalled = false;
-   
-   @Inject 
-   private Event<Integer> fireEvent;
-   
-   PrivateObserver() {}
-   
-   public void test(@Observes String event) {
-      wasCalled=true;
-      fireEvent.fire(100);
-   }
+
+    public static boolean wasCalled = false;
+
+    @Inject
+    private Event<Integer> fireEvent;
+
+    PrivateObserver() {
+    }
+
+    public void test(@Observes String event) {
+        wasCalled = true;
+        fireEvent.fire(100);
+    }
 }

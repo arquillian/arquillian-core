@@ -26,51 +26,45 @@ import org.jboss.arquillian.core.api.InstanceProducer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InstanceImpl<T> implements InstanceProducer<T>
-{
-   private ManagerImpl manager;
-   private Class<T> type;
-   private Class<? extends Annotation> scope;
-   
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class InstanceImpl<T> implements InstanceProducer<T> {
+    private ManagerImpl manager;
+    private Class<T> type;
+    private Class<? extends Annotation> scope;
 
-   public static <X> InstanceImpl<X> of(Class<X> type, Class<? extends Annotation> scope, ManagerImpl manager)
-   {
-      return new InstanceImpl<X>(type, scope, manager);
-   }
-   
-   InstanceImpl(Class<T> type, Class<? extends Annotation> scope, ManagerImpl manager)
-   {
-      this.type = type;
-      this.scope = scope;
-      this.manager = manager;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Instance ------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Instance#get()
-    */
-   @Override
-   public T get()
-   {
-      return manager.resolve(type);
-   }
+    public static <X> InstanceImpl<X> of(Class<X> type, Class<? extends Annotation> scope, ManagerImpl manager) {
+        return new InstanceImpl<X>(type, scope, manager);
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Instance#set(java.lang.Object)
-    */
-   @Override
-   public void set(T value)
-   {
-      if(scope == null)
-      {
-         throw new IllegalStateException("Value can not be set, instance has no Scope defined: " + value);
-      }
-      manager.bindAndFire(scope, type, value);
-   }
+    InstanceImpl(Class<T> type, Class<? extends Annotation> scope, ManagerImpl manager) {
+        this.type = type;
+        this.scope = scope;
+        this.manager = manager;
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Instance ------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Instance#get()
+     */
+    @Override
+    public T get() {
+        return manager.resolve(type);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Instance#set(java.lang.Object)
+     */
+    @Override
+    public void set(T value) {
+        if (scope == null) {
+            throw new IllegalStateException("Value can not be set, instance has no Scope defined: " + value);
+        }
+        manager.bindAndFire(scope, type, value);
+    }
 }

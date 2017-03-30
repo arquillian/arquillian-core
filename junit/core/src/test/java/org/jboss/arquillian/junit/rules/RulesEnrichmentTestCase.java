@@ -48,21 +48,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RulesEnrichmentTestCase extends AbstractTestTestBase
-{
+public class RulesEnrichmentTestCase extends AbstractTestTestBase {
 
     @Override
-    protected void addExtensions(List<Class<?>> extensions)
-    {
+    protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(RulesEnricher.class);
     }
 
     @Before
-    public void prepare()
-    {
+    public void prepare() {
         Injector injector = InjectorImpl.of(getManager());
         ServiceRegistry registry = new ServiceRegistry(injector, new LinkedHashMap<Class<?>, Set<Class<?>>>());
 
@@ -74,43 +70,36 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
     }
 
     @Test
-    public void shouldEnrichInnerTestRuleInnerStatement() throws Throwable
-    {
+    public void shouldEnrichInnerTestRuleInnerStatement() throws Throwable {
         testTestRuleEnrichment(new InnerRuleInnerStatementEnrichment());
     }
 
     @Test
-    public void shouldEnrichInnerMethodRuleInnerStatement() throws Throwable
-    {
+    public void shouldEnrichInnerMethodRuleInnerStatement() throws Throwable {
         testMethodRuleEnrichment(new InnerRuleInnerStatementEnrichment());
     }
 
     @Test
-    public void shouldEnrichOuterTestRuleInnerStatement() throws Throwable
-    {
+    public void shouldEnrichOuterTestRuleInnerStatement() throws Throwable {
         testTestRuleEnrichment(new OuterRuleInnerStatementEnrichment());
     }
 
     @Test
-    public void shouldEnrichOuterMethodRuleInnerStatement() throws Throwable
-    {
+    public void shouldEnrichOuterMethodRuleInnerStatement() throws Throwable {
         testMethodRuleEnrichment(new OuterRuleInnerStatementEnrichment());
     }
-    
+
     @Test
-    public void shouldEnrichOuterTestRuleOuterStatement() throws Throwable
-    {
+    public void shouldEnrichOuterTestRuleOuterStatement() throws Throwable {
         testTestRuleEnrichment(new OuterRuleOuterStatementEnrichment());
     }
 
     @Test
-    public void shouldEnrichOuterMethodRuleOuterStatement() throws Throwable
-    {
+    public void shouldEnrichOuterMethodRuleOuterStatement() throws Throwable {
         testMethodRuleEnrichment(new OuterRuleOuterStatementEnrichment());
     }
 
-    private void testTestRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable
-    {
+    private void testTestRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable {
         Statement invokeStatement = getInvokingStatement(test);
         TestClass testClass = new TestClass(test.getClass());
         Method testMethod = test.getClass().getMethod("verifyEnrichment");
@@ -127,8 +116,7 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
         verifyEventFired(2);
     }
 
-    private void testMethodRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable
-    {
+    private void testMethodRuleEnrichment(AbstractRuleStatementEnrichment test) throws Throwable {
         Statement invokeStatement = getInvokingStatement(test);
         Method testMethod = test.getClass().getMethod("verifyEnrichment");
         TestClass testClass = new TestClass(test.getClass());
@@ -146,32 +134,25 @@ public class RulesEnrichmentTestCase extends AbstractTestTestBase
         verifyEventFired(2);
     }
 
-    private void verifyEventFired(int numberOfRules)
-    {
+    private void verifyEventFired(int numberOfRules) {
         // +2 since the StatementInstance and TestInstance is included
         assertEventFired(BeforeEnrichment.class, numberOfRules + 2);
         assertEventFired(AfterEnrichment.class, numberOfRules + 2);
     }
 
-    private Statement getInvokingStatement(final AbstractRuleStatementEnrichment test)
-    {
-        return new Statement()
-        {
+    private Statement getInvokingStatement(final AbstractRuleStatementEnrichment test) {
+        return new Statement() {
             @Override
-            public void evaluate() throws Throwable
-            {
+            public void evaluate() throws Throwable {
                 test.verifyEnrichment();
             }
         };
     }
 
-    private LifecycleMethodExecutor getTestLifecycleMethodExecutor(final Statement statement)
-    {
-        return new LifecycleMethodExecutor()
-        {
+    private LifecycleMethodExecutor getTestLifecycleMethodExecutor(final Statement statement) {
+        return new LifecycleMethodExecutor() {
             @Override
-            public void invoke() throws Throwable
-            {
+            public void invoke() throws Throwable {
                 statement.evaluate();
             }
         };

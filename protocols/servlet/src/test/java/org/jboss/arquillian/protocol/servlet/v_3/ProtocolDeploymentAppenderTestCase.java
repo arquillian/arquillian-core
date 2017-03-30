@@ -24,28 +24,27 @@ import org.junit.Test;
 
 /**
  * ProtocolDeploymentAppenderTestCase
- * 
+ *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDeploymentAppenderTestCase
-{
+public class ProtocolDeploymentAppenderTestCase {
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception {
-      
-      Archive<?> archive = new ProtocolDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added web.xml",
-            archive.contains(ArchivePaths.create("META-INF/web-fragment.xml"))
-      );
-      
-      Assert.assertTrue(
-            "Should have added " + RemoteLoadableExtension.class.getName(),
-            archive.contains(ArchivePaths.create("META-INF/services/" + RemoteLoadableExtension.class.getName()))
-      );
-      
-      System.out.println(archive.toString(true));
-   }
+    @Test
+    public void shouldGenerateDependencies() throws Exception {
+
+        Archive<?> archive = new ProtocolDeploymentAppender().createAuxiliaryArchive();
+
+        Assert.assertTrue(
+                "Should have added web.xml",
+                archive.contains(ArchivePaths.create("META-INF/web-fragment.xml"))
+        );
+
+        Assert.assertTrue(
+                "Should have added " + RemoteLoadableExtension.class.getName(),
+                archive.contains(ArchivePaths.create("META-INF/services/" + RemoteLoadableExtension.class.getName()))
+        );
+
+        System.out.println(archive.toString(true));
+    }
 }

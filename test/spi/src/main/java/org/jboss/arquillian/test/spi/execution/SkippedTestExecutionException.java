@@ -18,30 +18,24 @@ package org.jboss.arquillian.test.spi.execution;
 
 /**
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
- *
  */
-public class SkippedTestExecutionException extends Exception
-{
+public class SkippedTestExecutionException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public SkippedTestExecutionException()
-    {
+    public SkippedTestExecutionException() {
         super();
     }
 
-    public SkippedTestExecutionException(String message, Throwable cause)
-    {
+    public SkippedTestExecutionException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public SkippedTestExecutionException(String message)
-    {
+    public SkippedTestExecutionException(String message) {
         super(message);
     }
 
-    public SkippedTestExecutionException(Throwable cause)
-    {
+    public SkippedTestExecutionException(Throwable cause) {
         super(cause);
     }
 

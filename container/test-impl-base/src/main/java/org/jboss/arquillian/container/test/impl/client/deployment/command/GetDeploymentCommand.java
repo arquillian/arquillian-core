@@ -19,26 +19,22 @@ package org.jboss.arquillian.container.test.impl.client.deployment.command;
 
 
 /**
- *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class GetDeploymentCommand extends AbstractCommand<byte[]>
-{
-   private static final long serialVersionUID = 1L;
+public class GetDeploymentCommand extends AbstractCommand<byte[]> {
+    private static final long serialVersionUID = 1L;
 
-   private String deploymentName;
-   
-   public GetDeploymentCommand(String deploymentName)
-   {
-      this.deploymentName = deploymentName;
-   }
-   
-   /**
-    * @return the deploymentName
-    */
-   public String getDeploymentName()
-   {
-      return deploymentName;
-   }
+    private String deploymentName;
+
+    public GetDeploymentCommand(String deploymentName) {
+        this.deploymentName = deploymentName;
+    }
+
+    /**
+     * @return the deploymentName
+     */
+    public String getDeploymentName() {
+        return deploymentName;
+    }
 }

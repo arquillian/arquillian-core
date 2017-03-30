@@ -24,25 +24,22 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Test extends TestEvent
-{
-   private TestMethodExecutor testMethodExecutor;
-   
-   /**
-    * @param testMethodExecutor The executor responsible for executing the test method
-    */
-   public Test(TestMethodExecutor testMethodExecutor)
-   {
-      // TODO: how to validate testMethodExecutor
-      super(testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
-      
-      //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
-      
-      this.testMethodExecutor = testMethodExecutor;
-   }
-   
-   public TestMethodExecutor getTestMethodExecutor()
-   {
-      return testMethodExecutor;
-   }
+public class Test extends TestEvent {
+    private TestMethodExecutor testMethodExecutor;
+
+    /**
+     * @param testMethodExecutor The executor responsible for executing the test method
+     */
+    public Test(TestMethodExecutor testMethodExecutor) {
+        // TODO: how to validate testMethodExecutor
+        super(testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
+
+        //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
+
+        this.testMethodExecutor = testMethodExecutor;
+    }
+
+    public TestMethodExecutor getTestMethodExecutor() {
+        return testMethodExecutor;
+    }
 }

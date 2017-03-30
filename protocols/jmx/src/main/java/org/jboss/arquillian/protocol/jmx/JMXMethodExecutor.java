@@ -116,8 +116,8 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
             callback.fired(command);
 
             try {
-                mbeanServer.invoke(serviceName, "push", new Object[] { eventMessage, Serializer.toByteArray(command) }, new String[] { String.class.getName(),
-                        byte[].class.getName() });
+                mbeanServer.invoke(serviceName, "push", new Object[]{eventMessage, Serializer.toByteArray(command)}, new String[]{String.class.getName(),
+                        byte[].class.getName()});
             } catch (Exception e) {
                 throw new RuntimeException("Could not return command result for command " + command, e);
             }

@@ -48,233 +48,195 @@ import org.testng.annotations.Listeners;
  * @version $Revision: $
  */
 @Listeners(Arquillian.UpdateResultListener.class)
-public abstract class Arquillian implements IHookable
-{
-   public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
-   
-   private static enum Cycle { BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS, AFTER_SUITE }
+public abstract class Arquillian implements IHookable {
+    public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
 
-   private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
+    private static enum Cycle
 
-   private static ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
-      protected java.util.Stack<Cycle> initialValue() {
-         return new Stack<Cycle>();
-      };
-   };
+    {
+        BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
+    }
 
-   @BeforeSuite(groups = "arquillian", inheritGroups = true)
-   public void arquillianBeforeSuite() throws Exception
-   {
-      if(deployableTest.get() == null)
-      {
-         TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
-         adaptor.beforeSuite(); 
-         deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
-         cycleStack.get().push(Cycle.BEFORE_SUITE);
-      }
-   }
+    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
-   @AfterSuite(groups = "arquillian", inheritGroups = true, alwaysRun = true)
-   public void arquillianAfterSuite() throws Exception
-   {
-      if (deployableTest.get() == null) 
-      {
-         return; // beforeSuite failed
-      }
-      if(cycleStack.get().empty())
-      {
-         return;
-      }
-      if(cycleStack.get().peek() != Cycle.BEFORE_SUITE)
-      {
-         return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_SUITE
-      }
-      else
-      {
-         cycleStack.get().pop();
-      }
-      deployableTest.get().afterSuite();
-      deployableTest.get().shutdown();
-      deployableTest.set(null);
-      deployableTest.remove();
-      cycleStack.set(null);
-      cycleStack.remove();
-   }
+    private static ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
+        protected java.util.Stack<Cycle> initialValue() {
+            return new Stack<Cycle>();
+        }
 
-   @BeforeClass(groups = "arquillian", inheritGroups = true)
-   public void arquillianBeforeClass() throws Exception
-   {
-      verifyTestRunnerAdaptorHasBeenSet();
-      cycleStack.get().push(Cycle.BEFORE_CLASS);
-      deployableTest.get().beforeClass(getClass(), LifecycleMethodExecutor.NO_OP);
-   }
+        ;
+    };
 
-   @AfterClass(groups = "arquillian", inheritGroups = true, alwaysRun = true)
-   public void arquillianAfterClass() throws Exception
-   {
-      if(cycleStack.get().empty())
-      {
-         return;
-      }
-      if(cycleStack.get().peek() != Cycle.BEFORE_CLASS)
-      {
-         return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_CLASS
-      }
-      else
-      {
-         cycleStack.get().pop();
-      }
-      verifyTestRunnerAdaptorHasBeenSet();
-      deployableTest.get().afterClass(getClass(), LifecycleMethodExecutor.NO_OP);
-   }
-   
-   @BeforeMethod(groups = "arquillian", inheritGroups = true)
-   public void arquillianBeforeTest(Method testMethod) throws Exception 
-   {
-      verifyTestRunnerAdaptorHasBeenSet();
-      cycleStack.get().push(Cycle.BEFORE);
-      deployableTest.get().before(this, testMethod, LifecycleMethodExecutor.NO_OP);
-   }
+    @BeforeSuite(groups = "arquillian", inheritGroups = true)
+    public void arquillianBeforeSuite() throws Exception {
+        if (deployableTest.get() == null) {
+            TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
+            adaptor.beforeSuite();
+            deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
+            cycleStack.get().push(Cycle.BEFORE_SUITE);
+        }
+    }
 
-   @AfterMethod(groups = "arquillian", inheritGroups = true, alwaysRun = true)
-   public void arquillianAfterTest(Method testMethod) throws Exception 
-   {
-      if(cycleStack.get().empty())
-      {
-         return;
-      }
-      if(cycleStack.get().peek() != Cycle.BEFORE)
-      {
-         return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_CLASS
-      }
-      else
-      {
-         cycleStack.get().pop();
-      }
-      verifyTestRunnerAdaptorHasBeenSet();
-      deployableTest.get().after(this, testMethod, LifecycleMethodExecutor.NO_OP);
-   }
+    @AfterSuite(groups = "arquillian", inheritGroups = true, alwaysRun = true)
+    public void arquillianAfterSuite() throws Exception {
+        if (deployableTest.get() == null) {
+            return; // beforeSuite failed
+        }
+        if (cycleStack.get().empty()) {
+            return;
+        }
+        if (cycleStack.get().peek() != Cycle.BEFORE_SUITE) {
+            return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_SUITE
+        } else {
+            cycleStack.get().pop();
+        }
+        deployableTest.get().afterSuite();
+        deployableTest.get().shutdown();
+        deployableTest.set(null);
+        deployableTest.remove();
+        cycleStack.set(null);
+        cycleStack.remove();
+    }
 
-   public void run(final IHookCallBack callback, final ITestResult testResult)
-   {
-      verifyTestRunnerAdaptorHasBeenSet();
-      TestResult result;
-      try
-      {
-         result = deployableTest.get().test(new TestMethodExecutor()
-         {
-            public void invoke(Object... parameters) throws Throwable
-            {
+    @BeforeClass(groups = "arquillian", inheritGroups = true)
+    public void arquillianBeforeClass() throws Exception {
+        verifyTestRunnerAdaptorHasBeenSet();
+        cycleStack.get().push(Cycle.BEFORE_CLASS);
+        deployableTest.get().beforeClass(getClass(), LifecycleMethodExecutor.NO_OP);
+    }
+
+    @AfterClass(groups = "arquillian", inheritGroups = true, alwaysRun = true)
+    public void arquillianAfterClass() throws Exception {
+        if (cycleStack.get().empty()) {
+            return;
+        }
+        if (cycleStack.get().peek() != Cycle.BEFORE_CLASS) {
+            return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_CLASS
+        } else {
+            cycleStack.get().pop();
+        }
+        verifyTestRunnerAdaptorHasBeenSet();
+        deployableTest.get().afterClass(getClass(), LifecycleMethodExecutor.NO_OP);
+    }
+
+    @BeforeMethod(groups = "arquillian", inheritGroups = true)
+    public void arquillianBeforeTest(Method testMethod) throws Exception {
+        verifyTestRunnerAdaptorHasBeenSet();
+        cycleStack.get().push(Cycle.BEFORE);
+        deployableTest.get().before(this, testMethod, LifecycleMethodExecutor.NO_OP);
+    }
+
+    @AfterMethod(groups = "arquillian", inheritGroups = true, alwaysRun = true)
+    public void arquillianAfterTest(Method testMethod) throws Exception {
+        if (cycleStack.get().empty()) {
+            return;
+        }
+        if (cycleStack.get().peek() != Cycle.BEFORE) {
+            return; // Arquillian lifecycle called out of order, expected " + Cycle.BEFORE_CLASS
+        } else {
+            cycleStack.get().pop();
+        }
+        verifyTestRunnerAdaptorHasBeenSet();
+        deployableTest.get().after(this, testMethod, LifecycleMethodExecutor.NO_OP);
+    }
+
+    public void run(final IHookCallBack callback, final ITestResult testResult) {
+        verifyTestRunnerAdaptorHasBeenSet();
+        TestResult result;
+        try {
+            result = deployableTest.get().test(new TestMethodExecutor() {
+                public void invoke(Object... parameters) throws Throwable {
                /*
                 *  The parameters are stored in the InvocationHandler, so we can't set them on the test result directly.
                 *  Copy the Arquillian found parameters to the InvocationHandlers parameters
                 */
-               copyParameters(parameters, callback.getParameters());
-               callback.runTestMethod(testResult);
-               
-               // Parameters can be contextual, so extract information 
-               swapWithClassNames(callback.getParameters());
-               testResult.setParameters(callback.getParameters());
-               if (testResult.getThrowable() != null) {
-                   throw testResult.getThrowable();
-               }
-            }
-            
-            private void copyParameters(Object[] source, Object[] target)
-            {
-               for(int i = 0; i < source.length; i++)
-               {
-                  if(source[i] != null)
-                  {
-                     target[i] = source[i];
-                  }
-               }
-            }
-            
-            private void swapWithClassNames(Object[] source)
-            {
-               // clear parameters. they can be contextual and might fail TestNG during the report writing.
-               for(int i = 0; source != null && i < source.length; i++)
-               {
-                  Object parameter = source[i];
-                  if(parameter != null)
-                  {
-                     source[i] = parameter.toString();
-                  }
-                  else
-                  {
-                     source[i] = "null";
-                  }
-               }
-            }
-            
-            public Method getMethod()
-            {
-               return testResult.getMethod().getMethod();
-            }
-            
-            public Object getInstance()
-            {
-               return Arquillian.this;
-            }
-         });
-         Throwable throwable = result.getThrowable();
-         if(throwable != null)
-         {
-            if (result.getStatus() == Status.SKIPPED)
-            {
-                if (throwable instanceof SkippedTestExecutionException)
-                {
-                    result.setThrowable(new SkipException(throwable.getMessage()));
+                    copyParameters(parameters, callback.getParameters());
+                    callback.runTestMethod(testResult);
+
+                    // Parameters can be contextual, so extract information
+                    swapWithClassNames(callback.getParameters());
+                    testResult.setParameters(callback.getParameters());
+                    if (testResult.getThrowable() != null) {
+                        throw testResult.getThrowable();
+                    }
                 }
+
+                private void copyParameters(Object[] source, Object[] target) {
+                    for (int i = 0; i < source.length; i++) {
+                        if (source[i] != null) {
+                            target[i] = source[i];
+                        }
+                    }
+                }
+
+                private void swapWithClassNames(Object[] source) {
+                    // clear parameters. they can be contextual and might fail TestNG during the report writing.
+                    for (int i = 0; source != null && i < source.length; i++) {
+                        Object parameter = source[i];
+                        if (parameter != null) {
+                            source[i] = parameter.toString();
+                        } else {
+                            source[i] = "null";
+                        }
+                    }
+                }
+
+                public Method getMethod() {
+                    return testResult.getMethod().getMethod();
+                }
+
+                public Object getInstance() {
+                    return Arquillian.this;
+                }
+            });
+            Throwable throwable = result.getThrowable();
+            if (throwable != null) {
+                if (result.getStatus() == Status.SKIPPED) {
+                    if (throwable instanceof SkippedTestExecutionException) {
+                        result.setThrowable(new SkipException(throwable.getMessage()));
+                    }
+                }
+                testResult.setThrowable(result.getThrowable());
             }
-            testResult.setThrowable(result.getThrowable());
-         }
 
-         // calculate test end time. this is overwritten in the testng invoker.. 
-         testResult.setEndMillis( (result.getStart() - result.getEnd()) + testResult.getStartMillis());
-      } 
-      catch (Exception e)
-      {
-         testResult.setThrowable(e);
-      }
-   }
-   
-   @DataProvider(name = Arquillian.ARQUILLIAN_DATA_PROVIDER)
-   public Object[][] arquillianArgumentProvider(Method method) 
-   {
-      Object[][] values = new Object[1][method.getParameterTypes().length];
-      
-      if (deployableTest.get() == null)
-      {
-         return values;
-      }
+            // calculate test end time. this is overwritten in the testng invoker..
+            testResult.setEndMillis((result.getStart() - result.getEnd()) + testResult.getStartMillis());
+        } catch (Exception e) {
+            testResult.setThrowable(e);
+        }
+    }
 
-      Object[] parameterValues = new Object[method.getParameterTypes().length]; 
-      values[0] = parameterValues; 
-      
-      return values;
-   }
+    @DataProvider(name = Arquillian.ARQUILLIAN_DATA_PROVIDER)
+    public Object[][] arquillianArgumentProvider(Method method) {
+        Object[][] values = new Object[1][method.getParameterTypes().length];
 
-   private void verifyTestRunnerAdaptorHasBeenSet()
-   {
-      if(deployableTest.get() == null)
-      {
-         throw new IllegalStateException("No TestRunnerAdaptor found, @BeforeSuite has not been called");
-      }
-   }
+        if (deployableTest.get() == null) {
+            return values;
+        }
 
-   public static final class UpdateResultListener implements IInvokedMethodListener {
+        Object[] parameterValues = new Object[method.getParameterTypes().length];
+        values[0] = parameterValues;
 
-       @Override
-       public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-           if(method.isTestMethod() && testResult.getStatus() != ITestResult.SUCCESS) {
-               State.caughtExceptionAfter(testResult.getThrowable());
-           }
-       }
+        return values;
+    }
 
-       @Override
-       public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-       }
-   }
+    private void verifyTestRunnerAdaptorHasBeenSet() {
+        if (deployableTest.get() == null) {
+            throw new IllegalStateException("No TestRunnerAdaptor found, @BeforeSuite has not been called");
+        }
+    }
+
+    public static final class UpdateResultListener implements IInvokedMethodListener {
+
+        @Override
+        public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+            if (method.isTestMethod() && testResult.getStatus() != ITestResult.SUCCESS) {
+                State.caughtExceptionAfter(testResult.getThrowable());
+            }
+        }
+
+        @Override
+        public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        }
+    }
 }

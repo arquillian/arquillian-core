@@ -30,23 +30,20 @@ import org.jboss.arquillian.test.spi.context.TestContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestContextImpl extends AbstractContext<Object> implements TestContext
-{
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return TestScoped.class;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+public class TestContextImpl extends AbstractContext<Object> implements TestContext {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return TestScoped.class;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }

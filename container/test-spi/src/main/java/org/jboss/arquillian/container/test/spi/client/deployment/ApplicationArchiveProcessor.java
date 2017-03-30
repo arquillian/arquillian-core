@@ -21,20 +21,17 @@ import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * Extension point for client side deployment enhancements.
- * 
+ * <p>
  * Example:
- * - Annotations to help define meta data for the deployment 
+ * - Annotations to help define meta data for the deployment
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ApplicationArchiveProcessor
-{
-   /**
-    * 
-    * 
-    * @param applicationArchive The user defined deployment archive
-    * @param testClass The users test class
-    */
-   void process(Archive<?> applicationArchive, TestClass testClass);
+public interface ApplicationArchiveProcessor {
+    /**
+     * @param applicationArchive The user defined deployment archive
+     * @param testClass          The users test class
+     */
+    void process(Archive<?> applicationArchive, TestClass testClass);
 }

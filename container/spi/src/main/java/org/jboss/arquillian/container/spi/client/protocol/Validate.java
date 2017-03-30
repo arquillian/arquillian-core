@@ -22,76 +22,67 @@ import org.jboss.arquillian.container.spi.ConfigurationException;
 
 /**
  * Validate
- * 
+ * <p>
  * Validation utility
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-final class Validate
-{
-   private Validate()
-   {
-   }
+final class Validate {
+    private Validate() {
+    }
 
-   /**
-    * Checks that object is not null, throws exception if it is.
-    * 
-    * @param obj The object to check
-    * @param message The exception message
-    * @throws IllegalArgumentException Thrown if obj is null 
-    */
-   public static void notNull(final Object obj, final String message) throws IllegalArgumentException
-   {
-      if (obj == null)
-      {
-         throw new IllegalArgumentException(message);
-      }
-   }
+    /**
+     * Checks that object is not null, throws exception if it is.
+     *
+     * @param obj     The object to check
+     * @param message The exception message
+     * @throws IllegalArgumentException Thrown if obj is null
+     */
+    public static void notNull(final Object obj, final String message) throws IllegalArgumentException {
+        if (obj == null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 
-   /**
-    * Checks that the specified String is not null or empty, 
-    * throws exception if it is.
-    * 
-    * @param string The object to check
-    * @param message The exception message
-    * @throws IllegalArgumentException Thrown if obj is null 
-    */
-   public static void notNullOrEmpty(final String string, final String message) throws IllegalArgumentException
-   {
-      if (string == null || string.length() == 0)
-      {
-         throw new IllegalArgumentException(message);
-      }
-   }
-   
-   /**
-    * Checks that obj is not null, throws exception if it is.
-    * 
-    * @param obj The object to check
-    * @param message The exception message
-    * @throws IllegalStateException Thrown if obj is null
-    */
-   public static void stateNotNull(final Object obj, final String message) throws IllegalStateException
-   {
-      if(obj == null)
-      {
-         throw new IllegalStateException(message);
-      }
-   }
-   
-   /**
-    * Checks that string is not null and not empty and it represents a path to a valid directory
-    * @param string The path to check
-    * @param message The exception message
-    * @throws ConfigurationException Thrown if string is empty, null or it does not represent a path the a valid directory
-    */
-   public static void configurationDirectoryExists(final String string, final String message) throws ConfigurationException
-   {
-      if (string == null || string.length() == 0 || new File(string).isDirectory() == false)
-      {
-         throw new ConfigurationException(message);
-      }
-   }  
+    /**
+     * Checks that the specified String is not null or empty,
+     * throws exception if it is.
+     *
+     * @param string  The object to check
+     * @param message The exception message
+     * @throws IllegalArgumentException Thrown if obj is null
+     */
+    public static void notNullOrEmpty(final String string, final String message) throws IllegalArgumentException {
+        if (string == null || string.length() == 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Checks that obj is not null, throws exception if it is.
+     *
+     * @param obj     The object to check
+     * @param message The exception message
+     * @throws IllegalStateException Thrown if obj is null
+     */
+    public static void stateNotNull(final Object obj, final String message) throws IllegalStateException {
+        if (obj == null) {
+            throw new IllegalStateException(message);
+        }
+    }
+
+    /**
+     * Checks that string is not null and not empty and it represents a path to a valid directory
+     *
+     * @param string  The path to check
+     * @param message The exception message
+     * @throws ConfigurationException Thrown if string is empty, null or it does not represent a path the a valid directory
+     */
+    public static void configurationDirectoryExists(final String string, final String message) throws ConfigurationException {
+        if (string == null || string.length() == 0 || new File(string).isDirectory() == false) {
+            throw new ConfigurationException(message);
+        }
+    }
 
 }

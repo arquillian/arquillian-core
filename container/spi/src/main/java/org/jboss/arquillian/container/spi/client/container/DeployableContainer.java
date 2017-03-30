@@ -27,27 +27,26 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeployableContainer<T extends ContainerConfiguration>
-{
-   // ControllableContainer
-   Class<T> getConfigurationClass();
-   
-   void setup(T configuration);
-   
-   void start() throws LifecycleException;
+public interface DeployableContainer<T extends ContainerConfiguration> {
+    // ControllableContainer
+    Class<T> getConfigurationClass();
 
-   void stop() throws LifecycleException;
+    void setup(T configuration);
 
-   // DeployableContainer
-   ProtocolDescription getDefaultProtocol();
+    void start() throws LifecycleException;
 
-   ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException;
-   
-   void undeploy(Archive<?> archive) throws DeploymentException;
+    void stop() throws LifecycleException;
 
-   // Admin ?
-   void deploy(Descriptor descriptor) throws DeploymentException;
-   
-   void undeploy(Descriptor descriptor) throws DeploymentException;
+    // DeployableContainer
+    ProtocolDescription getDefaultProtocol();
+
+    ProtocolMetaData deploy(Archive<?> archive) throws DeploymentException;
+
+    void undeploy(Archive<?> archive) throws DeploymentException;
+
+    // Admin ?
+    void deploy(Descriptor descriptor) throws DeploymentException;
+
+    void undeploy(Descriptor descriptor) throws DeploymentException;
 
 }

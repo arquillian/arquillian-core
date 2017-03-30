@@ -55,31 +55,28 @@ public abstract class AbstractJMXProtocol<T extends JMXProtocolConfiguration> im
 
     @Override
     public ContainerMethodExecutor getExecutor(T config, ProtocolMetaData metaData, CommandCallback callback) {
-        if(metaData.hasContext(JMXContext.class))
-        {
-           MBeanServerConnection mbeanServer = metaData.getContext(JMXContext.class).getConnection();
+        if (metaData.hasContext(JMXContext.class)) {
+            MBeanServerConnection mbeanServer = metaData.getContext(JMXContext.class).getConnection();
 
-           Map<String, String> protocolProps = new HashMap<String, String>();
-           try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(config.getClass());
-			   for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-			       String key = propertyDescriptor.getName();
-			       Object value = propertyDescriptor.getReadMethod().invoke(config);
-			       if (value != null) {
-			    	   protocolProps.put(key, "" + value);
-			       }
-			   }
-		} catch (Exception ex) {
-			throw new IllegalStateException("Cannot obtain protocol config");
-		}
-           return new JMXMethodExecutor(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME, protocolProps);
-        }
-        else
-        {
-           throw new IllegalStateException(
-                 "No " + JMXContext.class.getName() + " was found in " + ProtocolMetaData.class.getName() +
-                 ". The JMX Protocol can not be used without a connection, " +
-                 "please verify your protocol configuration or contact the DeployableContainer developer");
+            Map<String, String> protocolProps = new HashMap<String, String>();
+            try {
+                BeanInfo beanInfo = Introspector.getBeanInfo(config.getClass());
+                for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+                    String key = propertyDescriptor.getName();
+                    Object value = propertyDescriptor.getReadMethod().invoke(config);
+                    if (value != null) {
+                        protocolProps.put(key, "" + value);
+                    }
+                }
+            } catch (Exception ex) {
+                throw new IllegalStateException("Cannot obtain protocol config");
+            }
+            return new JMXMethodExecutor(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME, protocolProps);
+        } else {
+            throw new IllegalStateException(
+                    "No " + JMXContext.class.getName() + " was found in " + ProtocolMetaData.class.getName() +
+                            ". The JMX Protocol can not be used without a connection, " +
+                            "please verify your protocol configuration or contact the DeployableContainer developer");
         }
     }
 }

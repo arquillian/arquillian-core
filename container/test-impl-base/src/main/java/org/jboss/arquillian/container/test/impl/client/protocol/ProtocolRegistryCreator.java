@@ -37,54 +37,44 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolRegistryCreator
-{
-   @Inject 
-   private Instance<ServiceLoader> serviceLoader;
-   
-   @Inject @ApplicationScoped
-   private InstanceProducer<ProtocolRegistry> registryInstance;
-   
-   public void createRegistry(@Observes ArquillianDescriptor event) throws Exception
-   {
-      @SuppressWarnings("rawtypes")
-      Collection<Protocol> protocols = serviceLoader.get().all(Protocol.class); 
+public class ProtocolRegistryCreator {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-      Protocol<?> defaultProtocol = null;
-      DefaultProtocolDef defaultProtcolDef = event.getDefaultProtocol();
-      if(defaultProtcolDef != null)
-      {
-         defaultProtocol = findMatch(new ProtocolDescription(defaultProtcolDef.getType()), protocols);
-         if(defaultProtocol == null)
-         {
-            // TODO: add printout of found protocols
-            throw new IllegalStateException("Defined default protocol " + defaultProtcolDef.getType() + " can not be found on classpath");
-         }
-      }
-      ProtocolRegistry registry = new ProtocolRegistry();
-      for(Protocol<?> protocol : protocols)
-      {
-         if(defaultProtocol != null && protocol.equals(defaultProtocol))
-         {
-            registry.addProtocol(new ProtocolDefinition(protocol, defaultProtcolDef.getProperties(), true));   
-         }
-         else
-         {
-            registry.addProtocol(new ProtocolDefinition(protocol));            
-         }
-      }
-      registryInstance.set(registry);
-   }
-   
-   private Protocol<?> findMatch(ProtocolDescription description, @SuppressWarnings("rawtypes") Collection<Protocol> protocols)
-   {
-      for(Protocol<?> protocol : protocols)
-      {
-         if(description.equals(protocol.getDescription()))
-         {
-            return protocol;
-         }
-      }
-      return null;
-   }
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ProtocolRegistry> registryInstance;
+
+    public void createRegistry(@Observes ArquillianDescriptor event) throws Exception {
+        @SuppressWarnings("rawtypes")
+        Collection<Protocol> protocols = serviceLoader.get().all(Protocol.class);
+
+        Protocol<?> defaultProtocol = null;
+        DefaultProtocolDef defaultProtcolDef = event.getDefaultProtocol();
+        if (defaultProtcolDef != null) {
+            defaultProtocol = findMatch(new ProtocolDescription(defaultProtcolDef.getType()), protocols);
+            if (defaultProtocol == null) {
+                // TODO: add printout of found protocols
+                throw new IllegalStateException("Defined default protocol " + defaultProtcolDef.getType() + " can not be found on classpath");
+            }
+        }
+        ProtocolRegistry registry = new ProtocolRegistry();
+        for (Protocol<?> protocol : protocols) {
+            if (defaultProtocol != null && protocol.equals(defaultProtocol)) {
+                registry.addProtocol(new ProtocolDefinition(protocol, defaultProtcolDef.getProperties(), true));
+            } else {
+                registry.addProtocol(new ProtocolDefinition(protocol));
+            }
+        }
+        registryInstance.set(registry);
+    }
+
+    private Protocol<?> findMatch(ProtocolDescription description, @SuppressWarnings("rawtypes") Collection<Protocol> protocols) {
+        for (Protocol<?> protocol : protocols) {
+            if (description.equals(protocol.getDescription())) {
+                return protocol;
+            }
+        }
+        return null;
+    }
 }

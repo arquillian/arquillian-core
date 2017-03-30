@@ -38,128 +38,119 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase
-{
-   @Inject
-   private Instance<Injector> injector;
-   
-   @Test
-   public void shouldBeAbleToLoadAll() throws Exception
-   {
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      registry.addService(FakeService.class, ShouldBeExcluded.class);
-      registry.addService(FakeService.class, ShouldBeIncluded.class);
-      
-      Collection<FakeService> services = registry.getServiceLoader().all(FakeService.class);
-      
-      Assert.assertNotNull(services);
-      Assert.assertEquals(
-            "Verify both services were loaded", 
-            2, services.size());
-      
-      for(FakeService service : services)
-      {
-         Assert.assertTrue(
-               "Verify that the services are of the expected types", 
-               (service instanceof ShouldBeExcluded) || (service instanceof ShouldBeIncluded));
-      }
-   }
+public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
+    @Inject
+    private Instance<Injector> injector;
 
-   @Test
-   public void shouldBeAbleToLoadAllEvenIfNonRegistered() throws Exception
-   {
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      
-      Collection<FakeService> services = registry.getServiceLoader().all(FakeService.class);
-      
-      Assert.assertNotNull(services);
-      Assert.assertEquals(
-            "Verify no services were loaded", 
-            0, services.size());
-   }
+    @Test
+    public void shouldBeAbleToLoadAll() throws Exception {
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+        registry.addService(FakeService.class, ShouldBeExcluded.class);
+        registry.addService(FakeService.class, ShouldBeIncluded.class);
 
-   @Test
-   public void shouldBeAbleToLoadOnlyOne() throws Exception
-   {
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      registry.addService(FakeService.class, ShouldBeIncluded.class);
-      
-      FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
-      
-      Assert.assertNotNull(service);
-      Assert.assertTrue(
-            "Verify service is of expected type", 
-            service instanceof ShouldBeIncluded);
-   }
+        Collection<FakeService> services = registry.getServiceLoader().all(FakeService.class);
 
-   @Test(expected = IllegalStateException.class)
-   public void shouldThrowExceptionIfMultipleFoundWhenTryingOnlyOne() throws Exception
-   {
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      registry.addService(FakeService.class, ShouldBeIncluded.class);
-      registry.addService(FakeService.class, ShouldBeExcluded.class);
-      
-      // throws exception
-      registry.getServiceLoader().onlyOne(FakeService.class);
-   }
+        Assert.assertNotNull(services);
+        Assert.assertEquals(
+                "Verify both services were loaded",
+                2, services.size());
 
-   @Test
-   public void shouldBeAbleToLoadDefaultIfNoneFound() throws Exception
-   {
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      
-      Assert.assertNull(registry.getServiceLoader().onlyOne(FakeService.class));
-      
-      FakeService service = registry.getServiceLoader().onlyOne(FakeService.class, ShouldBeIncluded.class);
-      Assert.assertNotNull(service);
-      Assert.assertTrue(
-            "Verify service is of expected type", 
-            service instanceof ShouldBeIncluded);
-   }
+        for (FakeService service : services) {
+            Assert.assertTrue(
+                    "Verify that the services are of the expected types",
+                    (service instanceof ShouldBeExcluded) || (service instanceof ShouldBeIncluded));
+        }
+    }
 
-   @Test
-   public void loadedServicesShouldBeStaticallyInjected() throws Exception
-   {
-      bind(ApplicationScoped.class, String.class, "TEST");
-      
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      registry.addService(FakeService.class, ShouldBeIncluded.class);
-      
-      FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
-      Assert.assertTrue(
-            "Verify service has been statically injected", 
-            service.isValid());
-   }
+    @Test
+    public void shouldBeAbleToLoadAllEvenIfNonRegistered() throws Exception {
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
 
-   /*
-    * ARQ-528: Default services should also be statically injected
-    */
-   @Test
-   public void loadedDefaultServicesShouldBeStaticallyInjected() throws Exception
-   {
-      bind(ApplicationScoped.class, String.class, "TEST");
-      
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+        Collection<FakeService> services = registry.getServiceLoader().all(FakeService.class);
 
-      Assert.assertNull(registry.getServiceLoader().onlyOne(FakeService.class));
+        Assert.assertNotNull(services);
+        Assert.assertEquals(
+                "Verify no services were loaded",
+                0, services.size());
+    }
 
-      FakeService service = registry.getServiceLoader().onlyOne(FakeService.class, ShouldBeIncluded.class);
-      Assert.assertTrue(
-            "Verify service has been statically injected",
-            service.isValid());
-   }
-   
-   /*
-    * ARQ-1024: Protected services should be loadable
-    */
-   @SuppressWarnings("unchecked")
-   @Test
-   public void shouldBeAbleToLoadProtectedServices() throws Exception {
-      ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
-      registry.addService(
-            FakeService.class, (Class<FakeService>)Class.forName("org.jboss.arquillian.core.impl.loadable.util.PackageProtectedService"));
-   
-      FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
-      Assert.assertNotNull("Could load package protected service", service);
-   }
+    @Test
+    public void shouldBeAbleToLoadOnlyOne() throws Exception {
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+        registry.addService(FakeService.class, ShouldBeIncluded.class);
+
+        FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
+
+        Assert.assertNotNull(service);
+        Assert.assertTrue(
+                "Verify service is of expected type",
+                service instanceof ShouldBeIncluded);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionIfMultipleFoundWhenTryingOnlyOne() throws Exception {
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+        registry.addService(FakeService.class, ShouldBeIncluded.class);
+        registry.addService(FakeService.class, ShouldBeExcluded.class);
+
+        // throws exception
+        registry.getServiceLoader().onlyOne(FakeService.class);
+    }
+
+    @Test
+    public void shouldBeAbleToLoadDefaultIfNoneFound() throws Exception {
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+
+        Assert.assertNull(registry.getServiceLoader().onlyOne(FakeService.class));
+
+        FakeService service = registry.getServiceLoader().onlyOne(FakeService.class, ShouldBeIncluded.class);
+        Assert.assertNotNull(service);
+        Assert.assertTrue(
+                "Verify service is of expected type",
+                service instanceof ShouldBeIncluded);
+    }
+
+    @Test
+    public void loadedServicesShouldBeStaticallyInjected() throws Exception {
+        bind(ApplicationScoped.class, String.class, "TEST");
+
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+        registry.addService(FakeService.class, ShouldBeIncluded.class);
+
+        FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
+        Assert.assertTrue(
+                "Verify service has been statically injected",
+                service.isValid());
+    }
+
+    /*
+     * ARQ-528: Default services should also be statically injected
+     */
+    @Test
+    public void loadedDefaultServicesShouldBeStaticallyInjected() throws Exception {
+        bind(ApplicationScoped.class, String.class, "TEST");
+
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+
+        Assert.assertNull(registry.getServiceLoader().onlyOne(FakeService.class));
+
+        FakeService service = registry.getServiceLoader().onlyOne(FakeService.class, ShouldBeIncluded.class);
+        Assert.assertTrue(
+                "Verify service has been statically injected",
+                service.isValid());
+    }
+
+    /*
+     * ARQ-1024: Protected services should be loadable
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldBeAbleToLoadProtectedServices() throws Exception {
+        ServiceRegistry registry = new ServiceRegistry(injector.get(), new LinkedHashMap<Class<?>, Set<Class<?>>>());
+        registry.addService(
+                FakeService.class, (Class<FakeService>) Class.forName("org.jboss.arquillian.core.impl.loadable.util.PackageProtectedService"));
+
+        FakeService service = registry.getServiceLoader().onlyOne(FakeService.class);
+        Assert.assertNotNull("Could load package protected service", service);
+    }
 }

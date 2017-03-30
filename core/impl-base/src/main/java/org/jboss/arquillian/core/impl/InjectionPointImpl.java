@@ -31,72 +31,59 @@ import org.jboss.arquillian.core.spi.InvocationException;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectionPointImpl implements InjectionPoint
-{
-   private Object target;
-   private Field field;
-   private Class<? extends Annotation> scope;
+public class InjectionPointImpl implements InjectionPoint {
+    private Object target;
+    private Field field;
+    private Class<? extends Annotation> scope;
 
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
-   
-   public static InjectionPointImpl of(Object target, Field field)
-   {
-      return new InjectionPointImpl(target, field, Reflections.getScope(field));
-   }
-   
-   InjectionPointImpl(Object target, Field field, Class<? extends Annotation> scope)
-   {
-      this.target = target;
-      this.field = field;
-      this.scope = scope;
-   }
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - InjectionPoint ------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    public static InjectionPointImpl of(Object target, Field field) {
+        return new InjectionPointImpl(target, field, Reflections.getScope(field));
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Typed#getType()
-    */
-   @Override
-   public Type getType()
-   {
-      ParameterizedType type = (ParameterizedType) field.getGenericType();
-      if(type.getActualTypeArguments()[0] instanceof ParameterizedType)
-      {
-         ParameterizedType first = (ParameterizedType)type.getActualTypeArguments()[0];
-         return first.getRawType();
-      }
-      else
-      {
-         return type.getActualTypeArguments()[0];
-      }
-   }
-   
-   public Class<? extends Annotation> getScope()
-   {
-      return scope;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
-    */
-   @Override
-   public void set(Instance<?> value) throws InvocationException
-   {
-      try
-      {
-         if(!field.isAccessible())
-         {
-            field.setAccessible(true);
-         }
-         field.set(target, value);
-      }
-      catch (Exception e) 
-      {
-         throw new InvocationException(e.getCause());
-      }
-   }
+    InjectionPointImpl(Object target, Field field, Class<? extends Annotation> scope) {
+        this.target = target;
+        this.field = field;
+        this.scope = scope;
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - InjectionPoint ------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Typed#getType()
+     */
+    @Override
+    public Type getType() {
+        ParameterizedType type = (ParameterizedType) field.getGenericType();
+        if (type.getActualTypeArguments()[0] instanceof ParameterizedType) {
+            ParameterizedType first = (ParameterizedType) type.getActualTypeArguments()[0];
+            return first.getRawType();
+        } else {
+            return type.getActualTypeArguments()[0];
+        }
+    }
+
+    public Class<? extends Annotation> getScope() {
+        return scope;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
+     */
+    @Override
+    public void set(Instance<?> value) throws InvocationException {
+        try {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            field.set(target, value);
+        } catch (Exception e) {
+            throw new InvocationException(e.getCause());
+        }
+    }
 }

@@ -25,10 +25,8 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterStop extends ContainerEvent
-{
-   public AfterStop(DeployableContainer<?> deployableContainer)
-   {
-      super(deployableContainer);
-   }
+public class AfterStop extends ContainerEvent {
+    public AfterStop(DeployableContainer<?> deployableContainer) {
+        super(deployableContainer);
+    }
 }

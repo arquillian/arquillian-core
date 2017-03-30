@@ -25,13 +25,13 @@ import java.lang.annotation.Target;
 
 /**
  * <pre>
- * {@code 
+ * {@code
  * public void listen(@Observes SomeEvent event) {
  *     // do something..
  * }
  * }
  * </pre>
- *
+ * <p>
  * In case more observers observe the same event, they are ordered as they appear on classpath.
  * If you need to reorder them, you can use {@code precedence} value. The higher the {@code precedence} is,
  * the sooner the observer is executed.
@@ -44,5 +44,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Observes {
 
-   int precedence() default 0;
+    int precedence() default 0;
 }

@@ -51,260 +51,253 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class JUnitIntegrationTestCase extends JUnitTestBaseClass 
-{
-   @Test
-   public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception 
-   {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
-      
-      Result result = run(adaptor, ArquillianClass1.class);
+public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
+    @Test
+    public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
 
-      Assert.assertTrue(result.wasSuccessful());
-      assertCycle(0, Cycle.basics());
-      
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
-   
-   @Test
-   public void shouldCallAllMethods() throws Exception
-   {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      executeAllLifeCycles(adaptor);
-      
-      Result result = run(adaptor, ArquillianClass1.class);
-      
-      Assert.assertTrue(result.wasSuccessful());
-      assertCycle(1, Cycle.basics());
+        Result result = run(adaptor, ArquillianClass1.class);
 
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+        Assert.assertTrue(result.wasSuccessful());
+        assertCycle(0, Cycle.basics());
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
-   
-   @Test
-   public void shouldCallAfterClassWhenBeforeThrowsException() throws Exception
-   {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      executeAllLifeCycles(adaptor);
-      
-      throwException(Cycle.BEFORE_CLASS, new Throwable());
-      
-      Result result = run(adaptor, ArquillianClass1.class);
-      Assert.assertFalse(result.wasSuccessful());
-      
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
-      assertCycle(0, Cycle.BEFORE, Cycle.AFTER, Cycle.TEST);
-   
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-   @Test
-   public void shouldCallAfterWhenBeforeThrowsException() throws Exception
-   {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      executeAllLifeCycles(adaptor);
-      
-      throwException(Cycle.BEFORE, new Throwable());
-      
-      Result result = run(adaptor, ArquillianClass1.class);
-      Assert.assertFalse(result.wasSuccessful());
-      
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS, Cycle.BEFORE, Cycle.AFTER);
-      assertCycle(0, Cycle.TEST);
+    @Test
+    public void shouldCallAllMethods() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
-   
-   @Test
-   public void shouldOnlyCallBeforeAfterSuiteOnce() throws Exception
-   {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      executeAllLifeCycles(adaptor);
-      
-      Result result = run(adaptor, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class);
-      Assert.assertTrue(result.wasSuccessful());
+        Result result = run(adaptor, ArquillianClass1.class);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
-   
-   /*
-    * ARQ-391, After not called when Error's are thrown, e.g. AssertionError
-    */
-   @Test
-   public void shouldCallAllWhenTestThrowsException() throws Exception
-   {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      executeAllLifeCycles(adaptor);
+        Assert.assertTrue(result.wasSuccessful());
+        assertCycle(1, Cycle.basics());
 
-      throwException(Cycle.TEST, new Throwable());
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
 
-      Result result = run(adaptor, ArquillianClass1.class);
-      Assert.assertFalse(result.wasSuccessful());
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      assertCycle(1, Cycle.basics());
+    @Test
+    public void shouldCallAfterClassWhenBeforeThrowsException() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        throwException(Cycle.BEFORE_CLASS, new Throwable());
 
-   @Test
-   public void shouldWorkWithTimeout() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        Result result = run(adaptor, ArquillianClass1.class);
+        Assert.assertFalse(result.wasSuccessful());
 
-      executeAllLifeCycles(adaptor);
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
+        assertCycle(0, Cycle.BEFORE, Cycle.AFTER, Cycle.TEST);
 
-      Result result = run(adaptor, ArquillianClass1WithTimeout.class);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      Assert.assertFalse(result.wasSuccessful());
-      Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+    @Test
+    public void shouldCallAfterWhenBeforeThrowsException() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        throwException(Cycle.BEFORE, new Throwable());
 
-   @Test
-   public void shouldWorkWithExpectedExceptionRule() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        Result result = run(adaptor, ArquillianClass1.class);
+        Assert.assertFalse(result.wasSuccessful());
 
-      executeAllLifeCycles(adaptor);
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS, Cycle.BEFORE, Cycle.AFTER);
+        assertCycle(0, Cycle.TEST);
 
-      Result result = run(adaptor, ArquillianClass1WithExpectedExceptionRule.class);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      Assert.assertTrue(result.wasSuccessful());
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
+    @Test
+    public void shouldOnlyCallBeforeAfterSuiteOnce() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        Result result = run(adaptor, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class, ArquillianClass1.class);
+        Assert.assertTrue(result.wasSuccessful());
 
-   @Test
-   public void shouldWorkWithExpectedException() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      executeAllLifeCycles(adaptor);
+    /*
+     * ARQ-391, After not called when Error's are thrown, e.g. AssertionError
+     */
+    @Test
+    public void shouldCallAllWhenTestThrowsException() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass1WithExpectedException.class);
+        throwException(Cycle.TEST, new Throwable());
 
-      Assert.assertTrue(result.wasSuccessful());
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
+        Result result = run(adaptor, ArquillianClass1.class);
+        Assert.assertFalse(result.wasSuccessful());
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        assertCycle(1, Cycle.basics());
 
-   @Test
-   public void shouldWorkWithAssume() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      executeAllLifeCycles(adaptor);
-      final List<Failure> assumptionFailure = new ArrayList<Failure>();
-      Result result = run(adaptor, new RunListener() {
-          @Override
-        public void testAssumptionFailure(Failure failure) {
-              assumptionFailure.add(failure);
-        }
-      }, ArquillianClass1WithAssume.class);
+    @Test
+    public void shouldWorkWithTimeout() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 
-      Assert.assertEquals(1, assumptionFailure.size());
-      Assert.assertTrue(result.wasSuccessful());
-      Assert.assertEquals(0, result.getFailureCount());
-      Assert.assertEquals(0, result.getIgnoreCount());
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        Result result = run(adaptor, ArquillianClass1WithTimeout.class);
 
-   @Test
-   public void shouldThrowMultipleExceptionsWhenBeforeAndAfterThrowException() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        Assert.assertFalse(result.wasSuccessful());
+        Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
 
-      executeAllLifeCycles(adaptor);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      Result result = run(adaptor, ArquillianClass1ExceptionInBeforeAndAfter.class);
+    @Test
+    public void shouldWorkWithExpectedExceptionRule() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 
-      Assert.assertFalse(result.wasSuccessful());
-      Assert.assertEquals(2,  result.getFailureCount());
-      Assert.assertTrue(result.getFailures().get(0).getMessage().equals("BeforeException"));
-      Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterException"));
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
-      assertCycle(0, Cycle.TEST);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        Result result = run(adaptor, ArquillianClass1WithExpectedExceptionRule.class);
 
-   @Test
-   public void shouldCallAfterRuleIfFailureInBeforeRule() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        Assert.assertTrue(result.wasSuccessful());
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
 
-      executeAllLifeCycles(adaptor);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      Result result = run(adaptor, ArquillianClass1WithExceptionInBeforeRule.class);
+    @Test
+    public void shouldWorkWithExpectedException() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 
-      Assert.assertFalse(result.wasSuccessful());
-      Assert.assertEquals(1,  result.getFailureCount());
-      Assert.assertTrue(result.getFailures().get(0).getMessage().equals("BeforeRuleException"));
-      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
-      assertCycle(0, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER);
+        executeAllLifeCycles(adaptor);
 
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        Result result = run(adaptor, ArquillianClass1WithExpectedException.class);
 
-   @Test
-   public void shouldCallAfterRuleIfFailureInAfterRule() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        Assert.assertTrue(result.wasSuccessful());
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
 
-      executeAllLifeCycles(adaptor);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      Result result = run(adaptor, ArquillianClass1WithExceptionInAfterRule.class);
+    @Test
+    public void shouldWorkWithAssume() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 
-      Assert.assertFalse(result.wasSuccessful());
-      Assert.assertEquals(1,  result.getFailureCount());
-      Assert.assertTrue(result.getFailures().get(0).getMessage().equals("AfterRuleException"));
-      assertCycle(1, Cycle.basics());
+        executeAllLifeCycles(adaptor);
+        final List<Failure> assumptionFailure = new ArrayList<Failure>();
+        Result result = run(adaptor, new RunListener() {
+            @Override
+            public void testAssumptionFailure(Failure failure) {
+                assumptionFailure.add(failure);
+            }
+        }, ArquillianClass1WithAssume.class);
 
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        Assert.assertEquals(1, assumptionFailure.size());
+        Assert.assertTrue(result.wasSuccessful());
+        Assert.assertEquals(0, result.getFailureCount());
+        Assert.assertEquals(0, result.getIgnoreCount());
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
 
-   @Test
-   public void shouldThrowMultipleExceptionIfFailureInBeforeAndAfterRule() throws Exception {
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 
-      doAnswer(new ThrowsException(new RuntimeException("AfterRuleException"))).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+    @Test
+    public void shouldThrowMultipleExceptionsWhenBeforeAndAfterThrowException() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
 
-      Result result = run(adaptor, ArquillianClass1WithExceptionInAfterAndAfterRule.class);
+        executeAllLifeCycles(adaptor);
 
-      Assert.assertFalse(result.wasSuccessful());
-      Assert.assertEquals(2,  result.getFailureCount());
-      Assert.assertTrue(result.getFailures().get(0).getMessage().equals("AfterException"));
-      Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterRuleException"));
-      assertCycle(1, Cycle.basics());
+        Result result = run(adaptor, ArquillianClass1ExceptionInBeforeAndAfter.class);
 
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        Assert.assertFalse(result.wasSuccessful());
+        Assert.assertEquals(2, result.getFailureCount());
+        Assert.assertTrue(result.getFailures().get(0).getMessage().equals("BeforeException"));
+        Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterException"));
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+        assertCycle(0, Cycle.TEST);
+
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
+
+    @Test
+    public void shouldCallAfterRuleIfFailureInBeforeRule() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+        executeAllLifeCycles(adaptor);
+
+        Result result = run(adaptor, ArquillianClass1WithExceptionInBeforeRule.class);
+
+        Assert.assertFalse(result.wasSuccessful());
+        Assert.assertEquals(1, result.getFailureCount());
+        Assert.assertTrue(result.getFailures().get(0).getMessage().equals("BeforeRuleException"));
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
+        assertCycle(0, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER);
+
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
+
+    @Test
+    public void shouldCallAfterRuleIfFailureInAfterRule() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+        executeAllLifeCycles(adaptor);
+
+        Result result = run(adaptor, ArquillianClass1WithExceptionInAfterRule.class);
+
+        Assert.assertFalse(result.wasSuccessful());
+        Assert.assertEquals(1, result.getFailureCount());
+        Assert.assertTrue(result.getFailures().get(0).getMessage().equals("AfterRuleException"));
+        assertCycle(1, Cycle.basics());
+
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
+
+    @Test
+    public void shouldThrowMultipleExceptionIfFailureInBeforeAndAfterRule() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+        doAnswer(new ThrowsException(new RuntimeException("AfterRuleException"))).when(adaptor).fireCustomLifecycle(isA(AfterRules.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(isA(BeforeRules.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+
+        Result result = run(adaptor, ArquillianClass1WithExceptionInAfterAndAfterRule.class);
+
+        Assert.assertFalse(result.wasSuccessful());
+        Assert.assertEquals(2, result.getFailureCount());
+        Assert.assertTrue(result.getFailures().get(0).getMessage().equals("AfterException"));
+        Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterRuleException"));
+        assertCycle(1, Cycle.basics());
+
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+        verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 }

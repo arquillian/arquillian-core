@@ -27,13 +27,12 @@ import org.jboss.arquillian.test.spi.TestClass;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentScenarioGenerator
-{
-   /**
-    * Extract all meta data related to a {@link TestClass}.
-    *  
-    * @param testClass Data to extract meta data based on.
-    * @return The given {@link TestClass}s {@link DeploymentDescription}s
-    */
-   List<DeploymentDescription> generate(TestClass testClass);
+public interface DeploymentScenarioGenerator {
+    /**
+     * Extract all meta data related to a {@link TestClass}.
+     *
+     * @param testClass Data to extract meta data based on.
+     * @return The given {@link TestClass}s {@link DeploymentDescription}s
+     */
+    List<DeploymentDescription> generate(TestClass testClass);
 }

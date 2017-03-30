@@ -57,149 +57,143 @@ import org.mockito.stubbing.Answer;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase
-{
-   @Mock
-   private ContainerMethodExecutor executor;
+public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase {
+    @Mock
+    private ContainerMethodExecutor executor;
 
-   @Mock
-   private Container container;
+    @Mock
+    private Container container;
 
-   @Mock
-   private TestMethodExecutor testExecutor;
+    @Mock
+    private TestMethodExecutor testExecutor;
 
-   @Mock
-   private DeploymentDescription deploymentDescription;
+    @Mock
+    private DeploymentDescription deploymentDescription;
 
-   @Mock
-   @SuppressWarnings("rawtypes")
-   private Protocol protocol;
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private Protocol protocol;
 
-   @Mock
-   private ProtocolDefinition protocolDefinition;
+    @Mock
+    private ProtocolDefinition protocolDefinition;
 
-   @Mock
-   private ProtocolRegistry protocolRegistry;
+    @Mock
+    private ProtocolRegistry protocolRegistry;
 
-   @Mock
-   private ProtocolMetaData protocolMetaData;
+    @Mock
+    private ProtocolMetaData protocolMetaData;
 
-   @Override
-   protected void addContexts(List<Class<? extends Context>> contexts) {
-       super.addContexts(contexts);
-       contexts.add(ManagerTestContextImpl.class);
-   }
+    @Override
+    protected void addContexts(List<Class<? extends Context>> contexts) {
+        super.addContexts(contexts);
+        contexts.add(ManagerTestContextImpl.class);
+    }
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(RemoteTestExecuter.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(RemoteTestExecuter.class);
+    }
 
-   @SuppressWarnings("unchecked")
-   @Before
-   public void setup() throws Exception {
-      bind(ApplicationScoped.class, Container.class, container);
-      bind(ApplicationScoped.class, DeploymentDescription.class, deploymentDescription);
-      bind(ApplicationScoped.class, ProtocolMetaData.class, protocolMetaData);
-      bind(ApplicationScoped.class, ProtocolRegistry.class, protocolRegistry);
+    @SuppressWarnings("unchecked")
+    @Before
+    public void setup() throws Exception {
+        bind(ApplicationScoped.class, Container.class, container);
+        bind(ApplicationScoped.class, DeploymentDescription.class, deploymentDescription);
+        bind(ApplicationScoped.class, ProtocolMetaData.class, protocolMetaData);
+        bind(ApplicationScoped.class, ProtocolRegistry.class, protocolRegistry);
 
-      Mockito.when(deploymentDescription.getProtocol()).thenReturn(new ProtocolDescription("TEST"));
-      Mockito.when(protocolRegistry.getProtocol(Mockito.any(ProtocolDescription.class))).thenReturn(protocolDefinition);
-      Mockito.when(protocolDefinition.getProtocol()).thenReturn(protocol);
-      Mockito.when(protocol.getExecutor(
-         Mockito.any(ProtocolConfiguration.class),
-         Mockito.any(ProtocolMetaData.class),
-         Mockito.any(CommandCallback.class))).thenAnswer(new Answer<ContainerMethodExecutor>() {
+        Mockito.when(deploymentDescription.getProtocol()).thenReturn(new ProtocolDescription("TEST"));
+        Mockito.when(protocolRegistry.getProtocol(Mockito.any(ProtocolDescription.class))).thenReturn(protocolDefinition);
+        Mockito.when(protocolDefinition.getProtocol()).thenReturn(protocol);
+        Mockito.when(protocol.getExecutor(
+                Mockito.any(ProtocolConfiguration.class),
+                Mockito.any(ProtocolMetaData.class),
+                Mockito.any(CommandCallback.class))).thenAnswer(new Answer<ContainerMethodExecutor>() {
             @Override
             public ContainerMethodExecutor answer(InvocationOnMock invocation) throws Throwable {
-               return new TestContainerMethodExecutor((CommandCallback)invocation.getArguments()[2]);
+                return new TestContainerMethodExecutor((CommandCallback) invocation.getArguments()[2]);
             }
-         });
+        });
 
-      Mockito.when(testExecutor.getInstance()).thenReturn(this);
-      Mockito.when(testExecutor.getMethod()).thenReturn(
-         getTestMethod("shouldReactivePreviousContextsOnRemoteEvents"));
-   }
+        Mockito.when(testExecutor.getInstance()).thenReturn(this);
+        Mockito.when(testExecutor.getMethod()).thenReturn(
+                getTestMethod("shouldReactivePreviousContextsOnRemoteEvents"));
+    }
 
-   @Test
-   public void shouldReactivePreviousContextsOnRemoteEvents() throws Exception {
-      getManager().getContext(ManagerTestContext.class).activate();
-      fire(new RemoteExecutionEvent(testExecutor));
-      assertEventFiredInContext(TestStringCommand.class, ManagerTestContext.class);
-   }
+    @Test
+    public void shouldReactivePreviousContextsOnRemoteEvents() throws Exception {
+        getManager().getContext(ManagerTestContext.class).activate();
+        fire(new RemoteExecutionEvent(testExecutor));
+        assertEventFiredInContext(TestStringCommand.class, ManagerTestContext.class);
+    }
 
-   private Method getTestMethod(String name) throws Exception
-   {
-      return this.getClass().getMethod(name);
-   }
+    private Method getTestMethod(String name) throws Exception {
+        return this.getClass().getMethod(name);
+    }
 
-   public class TestContainerMethodExecutor implements ContainerMethodExecutor {
-       private CommandCallback callback;
+    public class TestContainerMethodExecutor implements ContainerMethodExecutor {
+        private CommandCallback callback;
 
-       public TestContainerMethodExecutor(CommandCallback callback) {
-           this.callback = callback;
-       }
+        public TestContainerMethodExecutor(CommandCallback callback) {
+            this.callback = callback;
+        }
 
-       @Override
-       public TestResult invoke(TestMethodExecutor testMethodExecutor) {
-          final CountDownLatch latch = new CountDownLatch(1);
+        @Override
+        public TestResult invoke(TestMethodExecutor testMethodExecutor) {
+            final CountDownLatch latch = new CountDownLatch(1);
 
-          Thread remote = new Thread() {
-             public void run() {
-                callback.fired(new TestStringCommand());
-                latch.countDown();
-             };
-          };
-          remote.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-             @Override
-             public void uncaughtException(Thread t, Throwable e) {
+            Thread remote = new Thread() {
+                public void run() {
+                    callback.fired(new TestStringCommand());
+                    latch.countDown();
+                }
+
+                ;
+            };
+            remote.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            remote.start();
+
+            try {
+                if (!latch.await(200, TimeUnit.MILLISECONDS)) {
+                    throw new RuntimeException("Latch never reached");
+                }
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
-             }
-          });
-          remote.start();
+            }
 
-          try {
-             if(!latch.await(200, TimeUnit.MILLISECONDS)) {
-                throw new RuntimeException("Latch never reached");
-             }
-          } catch (InterruptedException e) {
-               throw new RuntimeException(e);
-          }
+            return TestResult.passed();
+        }
+    }
 
-          return TestResult.passed();
-       }
-   }
+    public class TestStringCommand implements Command<String>, Serializable {
+        private static final long serialVersionUID = 1L;
 
-   public class TestStringCommand implements Command<String>, Serializable
-   {
-      private static final long serialVersionUID = 1L;
+        private String result;
+        private Throwable throwable;
 
-      private String result;
-      private Throwable throwable;
+        @Override
+        public String getResult() {
+            return result;
+        }
 
-      @Override
-      public String getResult()
-      {
-         return result;
-      }
+        @Override
+        public void setResult(String result) {
+            this.result = result;
+        }
 
-      @Override
-      public void setResult(String result)
-      {
-         this.result = result;
-      }
+        @Override
+        public Throwable getThrowable() {
+            return throwable;
+        }
 
-      @Override
-      public Throwable getThrowable()
-      {
-         return throwable;
-      }
-
-      @Override
-      public void setThrowable(Throwable throwable)
-      {
-         this.throwable = throwable;
-      }
-   }
+        @Override
+        public void setThrowable(Throwable throwable) {
+            this.throwable = throwable;
+        }
+    }
 }

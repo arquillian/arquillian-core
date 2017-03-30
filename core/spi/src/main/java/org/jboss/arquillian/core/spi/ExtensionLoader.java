@@ -27,8 +27,8 @@ import java.util.Set;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ExtensionLoader
-{
-   Collection<LoadableExtension> load();
-   Map<Class<?>, Set<Class<?>>> loadVetoed();
+public interface ExtensionLoader {
+    Collection<LoadableExtension> load();
+
+    Map<Class<?>, Set<Class<?>>> loadVetoed();
 }

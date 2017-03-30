@@ -38,212 +38,167 @@ import org.jboss.arquillian.core.api.annotation.Scope;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-final class Reflections
-{
-   private Reflections() {}
-   
-   public static List<Method> getObserverMethods(Class<?> clazz)
-   {
-      List<Method> observerMethods = new ArrayList<Method>();
-      if(clazz == null)
-      {
-         return observerMethods;
-      }
-      for(Method method : clazz.getDeclaredMethods())
-      {
-         if(isObserverMethod(method))
-         {
-            observerMethods.add(method);
-         }
-      }
-      observerMethods.addAll(getObserverMethods(clazz.getSuperclass()));
-      return observerMethods;
-   }
+final class Reflections {
+    private Reflections() {
+    }
 
-   /**
-    * @param class1
-    * @return
-    */
-   public static List<Field> getFieldInjectionPoints(Class<?> clazz)
-   {
-      List<Field> injectionPoints = new ArrayList<Field>();
-      if(clazz == null)
-      {
-         return injectionPoints;
-      }
-      for(Field field : clazz.getDeclaredFields())
-      {
-         if(isInjectionPoint(field))
-         {
-            injectionPoints.add(field);
-         }
-      }
-      injectionPoints.addAll(getFieldInjectionPoints(clazz.getSuperclass()));
-      return injectionPoints;
-   }
-
-   /**
-    * @param class1
-    * @return
-    */
-   public static List<Field> getEventPoints(Class<?> clazz)
-   {
-      List<Field> eventPoints = new ArrayList<Field>();
-      if(clazz == null)
-      {
-         return eventPoints;
-      }
-      for(Field field : clazz.getDeclaredFields())
-      {
-         if(isEventPoint(field))
-         {
-            eventPoints.add(field);
-         }
-      }
-      eventPoints.addAll(getEventPoints(clazz.getSuperclass()));
-      return eventPoints;
-   }
-
-   public static Class<? extends Annotation> getScope(Field field)
-   {
-      for(Annotation annotation : field.getAnnotations())
-      {
-         Class<? extends Annotation> annotationType = annotation.annotationType();
-         if(annotationType.isAnnotationPresent(Scope.class))
-         {
-            return annotationType;
-         }
-      }
-      return null;
-   }
-   
-   public static <T> T createInstance(Class<T> clazz) throws Exception
-   {
-      return SecurityActions.newInstance(clazz, new Class<?>[0], new Object[0]);
-   }
-
-   public static boolean isType(Type type, Class<?> clazz)
-   {
-      if(type instanceof Class<?>)
-      {
-         return type == clazz;
-      }
-      else if(type instanceof ParameterizedType)
-      {
-         return ((ParameterizedType)type).getRawType() == clazz;
-      }
-      return false;
-   }
-   
-   public static Class<?> getType(Type type)
-   {
-      if(type instanceof Class<?>)
-      {
-         return (Class<?>)type;
-      }
-      else if(type instanceof ParameterizedType)
-      {
-         return getType(((ParameterizedType)type).getActualTypeArguments()[0]);
-      }
-      else if(type instanceof WildcardType)
-      {
-         for(Type wildType : ((WildcardType)type).getUpperBounds())
-         {
-            Type upperType = getType(wildType);
-            if(upperType != null)
-            {
-               return getType(upperType);
+    public static List<Method> getObserverMethods(Class<?> clazz) {
+        List<Method> observerMethods = new ArrayList<Method>();
+        if (clazz == null) {
+            return observerMethods;
+        }
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (isObserverMethod(method)) {
+                observerMethods.add(method);
             }
-         }
-         for(Type wildType : ((WildcardType)type).getLowerBounds())
-         {
-            Type lowerType = getType(wildType);
-            if(lowerType != null)
-            {
-               return getType(lowerType);
+        }
+        observerMethods.addAll(getObserverMethods(clazz.getSuperclass()));
+        return observerMethods;
+    }
+
+    /**
+     * @param class1
+     * @return
+     */
+    public static List<Field> getFieldInjectionPoints(Class<?> clazz) {
+        List<Field> injectionPoints = new ArrayList<Field>();
+        if (clazz == null) {
+            return injectionPoints;
+        }
+        for (Field field : clazz.getDeclaredFields()) {
+            if (isInjectionPoint(field)) {
+                injectionPoints.add(field);
             }
-         }
-      }
-      return null;
-   }
+        }
+        injectionPoints.addAll(getFieldInjectionPoints(clazz.getSuperclass()));
+        return injectionPoints;
+    }
 
-   //-------------------------------------------------------------------------------------||
-   // Internal Helper Methods ------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    /**
+     * @param class1
+     * @return
+     */
+    public static List<Field> getEventPoints(Class<?> clazz) {
+        List<Field> eventPoints = new ArrayList<Field>();
+        if (clazz == null) {
+            return eventPoints;
+        }
+        for (Field field : clazz.getDeclaredFields()) {
+            if (isEventPoint(field)) {
+                eventPoints.add(field);
+            }
+        }
+        eventPoints.addAll(getEventPoints(clazz.getSuperclass()));
+        return eventPoints;
+    }
 
-   /**
-    * @param field
-    * @return
-    */
-   private static boolean isEventPoint(Field field)
-   {
-      return field.isAnnotationPresent(Inject.class) && field.getType() == Event.class;
-   }
+    public static Class<? extends Annotation> getScope(Field field) {
+        for (Annotation annotation : field.getAnnotations()) {
+            Class<? extends Annotation> annotationType = annotation.annotationType();
+            if (annotationType.isAnnotationPresent(Scope.class)) {
+                return annotationType;
+            }
+        }
+        return null;
+    }
 
-   /**
-    * @param field
-    * @return
-    */
-   private static boolean isInjectionPoint(Field field)
-   {
-      if(field.isAnnotationPresent(Inject.class))
-      {
-         if(field.getType() == Instance.class)
-         {
+    public static <T> T createInstance(Class<T> clazz) throws Exception {
+        return SecurityActions.newInstance(clazz, new Class<?>[0], new Object[0]);
+    }
+
+    public static boolean isType(Type type, Class<?> clazz) {
+        if (type instanceof Class<?>) {
+            return type == clazz;
+        } else if (type instanceof ParameterizedType) {
+            return ((ParameterizedType) type).getRawType() == clazz;
+        }
+        return false;
+    }
+
+    public static Class<?> getType(Type type) {
+        if (type instanceof Class<?>) {
+            return (Class<?>) type;
+        } else if (type instanceof ParameterizedType) {
+            return getType(((ParameterizedType) type).getActualTypeArguments()[0]);
+        } else if (type instanceof WildcardType) {
+            for (Type wildType : ((WildcardType) type).getUpperBounds()) {
+                Type upperType = getType(wildType);
+                if (upperType != null) {
+                    return getType(upperType);
+                }
+            }
+            for (Type wildType : ((WildcardType) type).getLowerBounds()) {
+                Type lowerType = getType(wildType);
+                if (lowerType != null) {
+                    return getType(lowerType);
+                }
+            }
+        }
+        return null;
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Internal Helper Methods ------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /**
+     * @param field
+     * @return
+     */
+    private static boolean isEventPoint(Field field) {
+        return field.isAnnotationPresent(Inject.class) && field.getType() == Event.class;
+    }
+
+    /**
+     * @param field
+     * @return
+     */
+    private static boolean isInjectionPoint(Field field) {
+        if (field.isAnnotationPresent(Inject.class)) {
+            if (field.getType() == Instance.class) {
+                return true;
+            }
+            if (field.getType() == InstanceProducer.class) {
+                if (Reflections.getScope(field) != null) {
+                    return true;
+                } else {
+                    // TODO: join extension validation points.
+                    throw new RuntimeException("A InjectionPoint of type " + InstanceProducer.class.getName() + " must define a " + Scope.class.getName() + " annotation, bad definition for field: " + field);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param method
+     * @return
+     */
+    private static boolean isObserverMethod(Method method) {
+        if (method.getParameterTypes().length < 1 || method.getParameterAnnotations().length < 1) {
+            return false;
+        }
+
+        if (method.isBridge()) {
+            return false;
+        }
+
+        if (containsAnnotation(Observes.class, method.getParameterAnnotations()[0])) {
             return true;
-         }
-         if(field.getType() == InstanceProducer.class)
-         {
-            if(Reflections.getScope(field) != null)
-            {
-               return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param annotations
+     * @return
+     */
+    private static boolean containsAnnotation(Class<? extends Annotation> match, Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType() == match) {
+                return true;
             }
-            else
-            {
-               // TODO: join extension validation points.
-               throw new RuntimeException("A InjectionPoint of type " + InstanceProducer.class.getName() + " must define a " + Scope.class.getName() + " annotation, bad definition for field: " + field);
-            }
-         }
-      }
-      return false;
-   }
-
-   /**
-    * @param method
-    * @return
-    */
-   private static boolean isObserverMethod(Method method)
-   {
-      if(method.getParameterTypes().length < 1 || method.getParameterAnnotations().length < 1)
-      {
-         return false;
-      }
-
-      if (method.isBridge())
-      {
-         return false;
-      }
-
-      if(containsAnnotation(Observes.class, method.getParameterAnnotations()[0]))
-      {
-         return true;
-      }
-      return false;
-   }
-
-   /**
-    * @param annotations
-    * @return
-    */
-   private static boolean containsAnnotation(Class<? extends Annotation> match, Annotation[] annotations)
-   {
-      for(Annotation annotation : annotations)
-      {
-         if(annotation.annotationType() == match)
-         {
-            return true;
-         }
-      }
-      return false;
-   }
+        }
+        return false;
+    }
 }

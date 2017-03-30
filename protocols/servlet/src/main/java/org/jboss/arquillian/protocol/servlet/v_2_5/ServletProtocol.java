@@ -25,22 +25,19 @@ import org.jboss.arquillian.protocol.servlet.BaseServletProtocol;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletProtocol extends BaseServletProtocol
-{
-   private static final String PROTOCOL_NAME = "Servlet 2.5";
+public class ServletProtocol extends BaseServletProtocol {
+    private static final String PROTOCOL_NAME = "Servlet 2.5";
 
-   @Override
-   protected String getProtcolName()
-   {
-      return PROTOCOL_NAME;
-   }
+    @Override
+    protected String getProtcolName() {
+        return PROTOCOL_NAME;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
-    */
-   @Override
-   public DeploymentPackager getPackager()
-   {
-      return new ServletProtocolDeploymentPackager();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
+     */
+    @Override
+    public DeploymentPackager getPackager() {
+        return new ServletProtocolDeploymentPackager();
+    }
 }

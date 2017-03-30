@@ -37,158 +37,138 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ManagerImplTestCase
-{
-   @Test
-   public void shouldBeAbleToRegisterContextAndExtensions() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .context(ManagerTestContextImpl.class)
-         .extension(TestExtension.class).create();
+public class ManagerImplTestCase {
+    @Test
+    public void shouldBeAbleToRegisterContextAndExtensions() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .context(ManagerTestContextImpl.class)
+                .extension(TestExtension.class).create();
 
-      ManagerTestContext context = manager.getContext(ManagerTestContext.class);
-      try
-      {
-         context.activate();
-         // bind something to the context so our Instance<Object> is resolved
-         context.getObjectStore().add(Object.class, new Object());
-         
-         manager.fire("some string");
-         
-         Assert.assertTrue(manager.getExtension(TestExtension.class).wasCalled);
-         
-      } 
-      finally
-      {
-         context.deactivate();
-         context.destroy();
-      }
-   }
+        ManagerTestContext context = manager.getContext(ManagerTestContext.class);
+        try {
+            context.activate();
+            // bind something to the context so our Instance<Object> is resolved
+            context.getObjectStore().add(Object.class, new Object());
 
-   @Test
-   public void shouldBindToTheScopedContext() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .context(ManagerTestContextImpl.class)
-         .context(ManagerTest2ContextImpl.class).create();
+            manager.fire("some string");
 
-      ManagerTestContext suiteContext = manager.getContext(ManagerTestContext.class);
-      ManagerTest2Context classContext = manager.getContext(ManagerTest2Context.class);
+            Assert.assertTrue(manager.getExtension(TestExtension.class).wasCalled);
 
-      try
-      {
-         suiteContext.activate();
-         classContext.activate("A");
-         
-         Object testObject = new Object();
-         
-         manager.bind(ManagerTestScoped.class, Object.class, testObject);
-         
-         Assert.assertEquals(
-               "Verify value was bound to the correct context",
-               testObject, 
-               suiteContext.getObjectStore().get(Object.class));
+        } finally {
+            context.deactivate();
+            context.destroy();
+        }
+    }
 
-         Assert.assertNull(
-               "Verify value was not bound to any other context",
-               classContext.getObjectStore().get(Object.class));
-      }
-      finally
-      {
-         classContext.deactivate();
-         classContext.destroy("A");
-         suiteContext.deactivate();
-         suiteContext.destroy();
-      }
-   }
-   
-   @Test
-   public void shouldResolveToNullIfNoActiveContexts() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from().create();
-      Assert.assertNull(manager.resolve(Object.class));
-   }
-   
-   @Test
-   public void shouldResolveToNullContextIfNotFound() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from().create();
-      Assert.assertNull(manager.getContext(ManagerTestContext.class));
-   }
+    @Test
+    public void shouldBindToTheScopedContext() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .context(ManagerTestContextImpl.class)
+                .context(ManagerTest2ContextImpl.class).create();
 
-   @Test
-   public void shouldResolveToNullExtensionIfNotFound() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from().create();
-      Assert.assertNull(manager.getExtension(ManagerTestContextImpl.class));
-   }
+        ManagerTestContext suiteContext = manager.getContext(ManagerTestContext.class);
+        ManagerTest2Context classContext = manager.getContext(ManagerTest2Context.class);
 
-   @Test
-   public void shouldCallNonManagedObserver() throws Exception
-   {
-      final String testEvent = "test";
-      
-      TestNonManagedObserver observer = new TestNonManagedObserver();
-      
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from().create();
-      manager.fire(testEvent, observer);
-      
-      Assert.assertNotNull(
-            "NonManagedObserver should have been called", 
-            TestNonManagedObserver.firedEvent);
-      Assert.assertEquals(
-            "NonManagedObserver should have received fired event",
-            TestNonManagedObserver.firedEvent, testEvent);
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnBindWithNoFoundScopedContext() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from().create();
-      manager.bind(ManagerTestScoped.class, Object.class, new Object());
-   }
+        try {
+            suiteContext.activate();
+            classContext.activate("A");
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnBindWithNonActiveScopedContext() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .context(ManagerTestContextImpl.class).create();
+            Object testObject = new Object();
 
-      manager.bind(ManagerTestScoped.class, Object.class, new Object());
-   }
-   
-   private static class TestExtension 
-   {
-      private boolean wasCalled = false;
-      
-      @Inject
-      private Instance<Object> value;
-      
-      @SuppressWarnings("unused")
-      public void on(@Observes String object)
-      {
-         Assert.assertNotNull("Verify event is not null", object);
-         Assert.assertNotNull("Verify InjectionPoint is not null", value);
-         Assert.assertNotNull("Verify InjectionPoint value is not null", value.get());
-         wasCalled = true;
-      }
-   }
-   
-   private static class TestNonManagedObserver implements NonManagedObserver<String>
-   {
-      private static String firedEvent = null;
-      
-      @Inject
-      private Instance<ApplicationContext> applicationContext;
-      
-      @Override
-      public void fired(String event)
-      {
-         firedEvent = event;
-         if(applicationContext == null)
-         {
-            throw new IllegalStateException("ApplicationContext should have been injected, but was null");
-         }
-      }
-   }
+            manager.bind(ManagerTestScoped.class, Object.class, testObject);
+
+            Assert.assertEquals(
+                    "Verify value was bound to the correct context",
+                    testObject,
+                    suiteContext.getObjectStore().get(Object.class));
+
+            Assert.assertNull(
+                    "Verify value was not bound to any other context",
+                    classContext.getObjectStore().get(Object.class));
+        } finally {
+            classContext.deactivate();
+            classContext.destroy("A");
+            suiteContext.deactivate();
+            suiteContext.destroy();
+        }
+    }
+
+    @Test
+    public void shouldResolveToNullIfNoActiveContexts() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from().create();
+        Assert.assertNull(manager.resolve(Object.class));
+    }
+
+    @Test
+    public void shouldResolveToNullContextIfNotFound() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from().create();
+        Assert.assertNull(manager.getContext(ManagerTestContext.class));
+    }
+
+    @Test
+    public void shouldResolveToNullExtensionIfNotFound() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from().create();
+        Assert.assertNull(manager.getExtension(ManagerTestContextImpl.class));
+    }
+
+    @Test
+    public void shouldCallNonManagedObserver() throws Exception {
+        final String testEvent = "test";
+
+        TestNonManagedObserver observer = new TestNonManagedObserver();
+
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from().create();
+        manager.fire(testEvent, observer);
+
+        Assert.assertNotNull(
+                "NonManagedObserver should have been called",
+                TestNonManagedObserver.firedEvent);
+        Assert.assertEquals(
+                "NonManagedObserver should have received fired event",
+                TestNonManagedObserver.firedEvent, testEvent);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnBindWithNoFoundScopedContext() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from().create();
+        manager.bind(ManagerTestScoped.class, Object.class, new Object());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnBindWithNonActiveScopedContext() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .context(ManagerTestContextImpl.class).create();
+
+        manager.bind(ManagerTestScoped.class, Object.class, new Object());
+    }
+
+    private static class TestExtension {
+        private boolean wasCalled = false;
+
+        @Inject
+        private Instance<Object> value;
+
+        @SuppressWarnings("unused")
+        public void on(@Observes String object) {
+            Assert.assertNotNull("Verify event is not null", object);
+            Assert.assertNotNull("Verify InjectionPoint is not null", value);
+            Assert.assertNotNull("Verify InjectionPoint value is not null", value.get());
+            wasCalled = true;
+        }
+    }
+
+    private static class TestNonManagedObserver implements NonManagedObserver<String> {
+        private static String firedEvent = null;
+
+        @Inject
+        private Instance<ApplicationContext> applicationContext;
+
+        @Override
+        public void fired(String event) {
+            firedEvent = event;
+            if (applicationContext == null) {
+                throw new IllegalStateException("ApplicationContext should have been injected, but was null");
+            }
+        }
+    }
 }

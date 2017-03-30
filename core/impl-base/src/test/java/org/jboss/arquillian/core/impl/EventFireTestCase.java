@@ -31,77 +31,65 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventFireTestCase
-{
-   @Test
-   public void shouldBeAbleToFireEventToAExtension() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .extension(ExtensionWithObservers.class).create();
-      
-      manager.fire(new Object());
-      
-      Assert.assertTrue(manager.getExtension(ExtensionWithObservers.class).methodOneWasCalled);
-   }
-   
-   @Test
-   public void shouldBeAbleToFireExceptionEventOnFailingObserver() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
-      
-      manager.fire("should cause exception");
-      
-      Assert.assertTrue(manager.getExtension(ExtensionObservingException.class).methodOneWasCalled);
-   }
+public class EventFireTestCase {
+    @Test
+    public void shouldBeAbleToFireEventToAExtension() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .extension(ExtensionWithObservers.class).create();
 
-   @Test(expected = IOException.class)
-   public void shouldBeAbleToDetectExceptionEventLoopAndThrowOriginalException() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .extensions(ExtensionObservingExceptionLoop.class).create();
-      
-      manager.fire(new IOException("should cause exception"));
-      
-  }
+        manager.fire(new Object());
 
-   private static class ExtensionWithObservers 
-   {
-      private boolean methodOneWasCalled = false;
+        Assert.assertTrue(manager.getExtension(ExtensionWithObservers.class).methodOneWasCalled);
+    }
 
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes Object object)
-      {
-         methodOneWasCalled = true;
-      }
-   }
+    @Test
+    public void shouldBeAbleToFireExceptionEventOnFailingObserver() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .extensions(ExtensionWithExceptionObserver.class, ExtensionObservingException.class).create();
 
-   private static class ExtensionWithExceptionObserver 
-   {
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes String object)
-      {
-         throw new IllegalStateException("Illegal state");
-      }
-   }
+        manager.fire("should cause exception");
 
-   private static class ExtensionObservingException 
-   {
-      private boolean methodOneWasCalled = false;
+        Assert.assertTrue(manager.getExtension(ExtensionObservingException.class).methodOneWasCalled);
+    }
 
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes IllegalStateException exception)
-      {
-         methodOneWasCalled = true;
-      }
-   }
+    @Test(expected = IOException.class)
+    public void shouldBeAbleToDetectExceptionEventLoopAndThrowOriginalException() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .extensions(ExtensionObservingExceptionLoop.class).create();
 
-   private static class ExtensionObservingExceptionLoop 
-   {
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes IOException exception) throws IOException
-      {
-         throw new IOException();
-      }
-   }
+        manager.fire(new IOException("should cause exception"));
+
+    }
+
+    private static class ExtensionWithObservers {
+        private boolean methodOneWasCalled = false;
+
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes Object object) {
+            methodOneWasCalled = true;
+        }
+    }
+
+    private static class ExtensionWithExceptionObserver {
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes String object) {
+            throw new IllegalStateException("Illegal state");
+        }
+    }
+
+    private static class ExtensionObservingException {
+        private boolean methodOneWasCalled = false;
+
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes IllegalStateException exception) {
+            methodOneWasCalled = true;
+        }
+    }
+
+    private static class ExtensionObservingExceptionLoop {
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes IOException exception) throws IOException {
+            throw new IOException();
+        }
+    }
 }

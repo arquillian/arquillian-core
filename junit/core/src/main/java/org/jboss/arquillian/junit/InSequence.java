@@ -34,5 +34,5 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
 public @interface InSequence {
-   int value() default 0;
+    int value() default 0;
 }

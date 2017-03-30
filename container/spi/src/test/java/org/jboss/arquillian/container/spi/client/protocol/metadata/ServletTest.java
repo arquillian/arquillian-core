@@ -22,105 +22,88 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ServletTest
-{
-   private static final String TEST_SERVLET_NAME = "jsp";
+public class ServletTest {
+    private static final String TEST_SERVLET_NAME = "jsp";
 
-   private static final String TEST_CONTEXT_ROOT = "/test";
+    private static final String TEST_CONTEXT_ROOT = "/test";
 
-   private static final String ROOT_CONTEXT_ROOT_BASE_URI = Servlet.HTTP_SCHEME + HTTPContextTest.TEST_HOST + ":"
-         + HTTPContextTest.TEST_PORT + "/";
+    private static final String ROOT_CONTEXT_ROOT_BASE_URI = Servlet.HTTP_SCHEME + HTTPContextTest.TEST_HOST + ":"
+            + HTTPContextTest.TEST_PORT + "/";
 
-   private static final String TEST_CONTEXT_ROOT_BASE_URI = ROOT_CONTEXT_ROOT_BASE_URI + TEST_CONTEXT_ROOT + "/";
+    private static final String TEST_CONTEXT_ROOT_BASE_URI = ROOT_CONTEXT_ROOT_BASE_URI + TEST_CONTEXT_ROOT + "/";
 
-   private static final HTTPContext TEST_HTTP_CONTEXT = new HTTPContext(HTTPContextTest.TEST_HOST,
-         HTTPContextTest.TEST_PORT);
+    private static final HTTPContext TEST_HTTP_CONTEXT = new HTTPContext(HTTPContextTest.TEST_HOST,
+            HTTPContextTest.TEST_PORT);
 
-   private static Servlet servlet;
+    private static Servlet servlet;
 
-   private static Servlet servletWithParent;
+    private static Servlet servletWithParent;
 
-   private static Servlet rootContextServletWithParent;
+    private static Servlet rootContextServletWithParent;
 
-   @BeforeClass
-   public static void before()
-   {
-      servlet = new Servlet(TEST_SERVLET_NAME, TEST_CONTEXT_ROOT);
-      servletWithParent = new Servlet(TEST_SERVLET_NAME, TEST_CONTEXT_ROOT);
-      servletWithParent.setParent(TEST_HTTP_CONTEXT);
-      rootContextServletWithParent = new Servlet(TEST_SERVLET_NAME, Servlet.ROOT_CONTEXT);
-      rootContextServletWithParent.setParent(TEST_HTTP_CONTEXT);
-   }
+    @BeforeClass
+    public static void before() {
+        servlet = new Servlet(TEST_SERVLET_NAME, TEST_CONTEXT_ROOT);
+        servletWithParent = new Servlet(TEST_SERVLET_NAME, TEST_CONTEXT_ROOT);
+        servletWithParent.setParent(TEST_HTTP_CONTEXT);
+        rootContextServletWithParent = new Servlet(TEST_SERVLET_NAME, Servlet.ROOT_CONTEXT);
+        rootContextServletWithParent.setParent(TEST_HTTP_CONTEXT);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void testServletForNullName()
-   {
-      new Servlet(null, TEST_CONTEXT_ROOT);
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void testServletForNullName() {
+        new Servlet(null, TEST_CONTEXT_ROOT);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void testServletForNullContextRoot()
-   {
-      new Servlet(TEST_SERVLET_NAME, null);
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void testServletForNullContextRoot() {
+        new Servlet(TEST_SERVLET_NAME, null);
+    }
 
-   @Test
-   public void testGetBaseURIForTestContext()
-   {
-      final String actualBaseUri = servletWithParent.getBaseURI().toString();
-      assertEquals(TEST_CONTEXT_ROOT_BASE_URI, actualBaseUri);
-   }
+    @Test
+    public void testGetBaseURIForTestContext() {
+        final String actualBaseUri = servletWithParent.getBaseURI().toString();
+        assertEquals(TEST_CONTEXT_ROOT_BASE_URI, actualBaseUri);
+    }
 
-   /**
-    * ARQ-554
-    */
-   @Test
-   public void testGetBaseURIForRootContext()
-   {
-      final String actualBaseUri = rootContextServletWithParent.getBaseURI().toString();
-      assertEquals(ROOT_CONTEXT_ROOT_BASE_URI, actualBaseUri);
-   }
+    /**
+     * ARQ-554
+     */
+    @Test
+    public void testGetBaseURIForRootContext() {
+        final String actualBaseUri = rootContextServletWithParent.getBaseURI().toString();
+        assertEquals(ROOT_CONTEXT_ROOT_BASE_URI, actualBaseUri);
+    }
 
-   @Test(expected = IllegalStateException.class)
-   public void testEqualsObjectForNullHost()
-   {
-      servlet.equals(null);
-   }
+    @Test(expected = IllegalStateException.class)
+    public void testEqualsObjectForNullHost() {
+        servlet.equals(null);
+    }
 
-   @Test
-   public void testEqualsObjectForNonNullHost()
-   {
-      try
-      {
-         assertTrue(servletWithParent.equals(servletWithParent));
-      }
-      catch (IllegalStateException e)
-      {
-         failOnUnexpectedException(e);
-      }
-   }
+    @Test
+    public void testEqualsObjectForNonNullHost() {
+        try {
+            assertTrue(servletWithParent.equals(servletWithParent));
+        } catch (IllegalStateException e) {
+            failOnUnexpectedException(e);
+        }
+    }
 
-   @Test(expected = IllegalStateException.class)
-   public void testHashCodeForNullHost()
-   {
-      servlet.hashCode();
-   }
+    @Test(expected = IllegalStateException.class)
+    public void testHashCodeForNullHost() {
+        servlet.hashCode();
+    }
 
-   @Test
-   public void testHashCodeForNonNullHost()
-   {
-      try
-      {
-         servletWithParent.hashCode();
-      }
-      catch (IllegalStateException e)
-      {
-         failOnUnexpectedException(e);
-      }
-   }
+    @Test
+    public void testHashCodeForNonNullHost() {
+        try {
+            servletWithParent.hashCode();
+        } catch (IllegalStateException e) {
+            failOnUnexpectedException(e);
+        }
+    }
 
-   private void failOnUnexpectedException(Exception e)
-   {
-      fail(e.getClass().getSimpleName() + " was not expected: " + e.getMessage());
-   }
+    private void failOnUnexpectedException(Exception e) {
+        fail(e.getClass().getSimpleName() + " was not expected: " + e.getMessage());
+    }
 }

@@ -22,12 +22,10 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ValidationException extends RuntimeException
-{
-   private static final long serialVersionUID = 1L;
+public class ValidationException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-   public ValidationException(String message)
-   {
-      super(message);
-   }
+    public ValidationException(String message) {
+        super(message);
+    }
 }

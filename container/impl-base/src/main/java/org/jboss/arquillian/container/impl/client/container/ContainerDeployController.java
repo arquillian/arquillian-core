@@ -48,8 +48,8 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 
 /**
  * Controller for handling all Deployment related operations. <br/>
- * <br/> 
- * 
+ * <br/>
+ * <p>
  * Fires DeployDeployment events for each deployment that should be deployed during startup. This so the Cores exception handling
  * will be triggered if Deployment fails inside the context of the deployment and container. This lets extensions listen for Exceptions types
  * and handle them inside the same context.
@@ -57,222 +57,184 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerDeployController
-{
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
-   
-   @Inject
-   private Instance<DeploymentScenario> deploymentScenario;
+public class ContainerDeployController {
+    @Inject
+    private Instance<ContainerRegistry> containerRegistry;
 
-   @Inject
-   private Instance<Injector> injector;
+    @Inject
+    private Instance<DeploymentScenario> deploymentScenario;
 
-   /**
-    * Deploy all deployments marked as managed = true.
-    * 
-    * @param event
-    * @throws Exception
-    */
-   public void deployManaged(@Observes DeployManagedDeployments event) throws Exception
-   {
-      forEachManagedDeployment(new Operation<Container, Deployment>()
-      {
-         @Inject 
-         private Event<DeploymentEvent> event;
-         
-         @Override
-         public void perform(Container container, Deployment deployment) throws Exception
-         {
-            //when a container is manually controlled, the deployment is deployed automatically
-            //once the container is manually started, not now
-            if (! "manual".equals(container.getContainerConfiguration().getMode()))
-            {
-                if(container.getState() != State.STARTED)
-                {
-                    throw new IllegalStateException("Trying to deploy a managed deployment " + deployment.getDescription().getName() + " to a non started managed container " + container.getName());
+    @Inject
+    private Instance<Injector> injector;
+
+    /**
+     * Deploy all deployments marked as managed = true.
+     *
+     * @param event
+     * @throws Exception
+     */
+    public void deployManaged(@Observes DeployManagedDeployments event) throws Exception {
+        forEachManagedDeployment(new Operation<Container, Deployment>() {
+            @Inject
+            private Event<DeploymentEvent> event;
+
+            @Override
+            public void perform(Container container, Deployment deployment) throws Exception {
+                //when a container is manually controlled, the deployment is deployed automatically
+                //once the container is manually started, not now
+                if (!"manual".equals(container.getContainerConfiguration().getMode())) {
+                    if (container.getState() != State.STARTED) {
+                        throw new IllegalStateException("Trying to deploy a managed deployment " + deployment.getDescription().getName() + " to a non started managed container " + container.getName());
+                    }
+                    event.fire(new DeployDeployment(container, deployment));
                 }
-                event.fire(new DeployDeployment(container, deployment));
             }
-         }
-      });
-   }
+        });
+    }
 
-   /**
-    * Undeploy all deployments marked as managed, and all manually deployed. 
-    * 
-    * @param event
-    * @throws Exception
-    */
-   public void undeployManaged(@Observes UnDeployManagedDeployments event) throws Exception
-   {
-      forEachDeployedDeployment(new Operation<Container, Deployment>()
-      {
-         @Inject 
-         private Event<DeploymentEvent> event;
-         
-         @Override
-         public void perform(Container container, Deployment deployment) throws Exception
-         {
-            if (container.getState().equals(Container.State.STARTED) && deployment.isDeployed()) 
-            {
-               event.fire(new UnDeployDeployment(container, deployment));
+    /**
+     * Undeploy all deployments marked as managed, and all manually deployed.
+     *
+     * @param event
+     * @throws Exception
+     */
+    public void undeployManaged(@Observes UnDeployManagedDeployments event) throws Exception {
+        forEachDeployedDeployment(new Operation<Container, Deployment>() {
+            @Inject
+            private Event<DeploymentEvent> event;
+
+            @Override
+            public void perform(Container container, Deployment deployment) throws Exception {
+                if (container.getState().equals(Container.State.STARTED) && deployment.isDeployed()) {
+                    event.fire(new UnDeployDeployment(container, deployment));
+                }
             }
-         }
-      });
-   }
+        });
+    }
 
-   public void deploy(@Observes final DeployDeployment event) throws Exception
-   {
-      executeOperation(new Callable<Void>()
-      {
-         @Inject
-         private Event<DeployerEvent> deployEvent;
-         
-         @Inject @DeploymentScoped
-         private InstanceProducer<DeploymentDescription> deploymentDescriptionProducer;
+    public void deploy(@Observes final DeployDeployment event) throws Exception {
+        executeOperation(new Callable<Void>() {
+            @Inject
+            private Event<DeployerEvent> deployEvent;
 
-         @Inject @DeploymentScoped
-         private InstanceProducer<Deployment> deploymentProducer;
-         
-         @Inject @DeploymentScoped
-         private InstanceProducer<ProtocolMetaData> protocolMetadata;
+            @Inject
+            @DeploymentScoped
+            private InstanceProducer<DeploymentDescription> deploymentDescriptionProducer;
 
-         @Override
-         public Void call() throws Exception
-         {
-            DeployableContainer<?> deployableContainer = event.getDeployableContainer();
-            Deployment deployment = event.getDeployment();
-            DeploymentDescription deploymentDescription = deployment.getDescription();
+            @Inject
+            @DeploymentScoped
+            private InstanceProducer<Deployment> deploymentProducer;
+
+            @Inject
+            @DeploymentScoped
+            private InstanceProducer<ProtocolMetaData> protocolMetadata;
+
+            @Override
+            public Void call() throws Exception {
+                DeployableContainer<?> deployableContainer = event.getDeployableContainer();
+                Deployment deployment = event.getDeployment();
+                DeploymentDescription deploymentDescription = deployment.getDescription();
             
             /*
              * TODO: should the DeploymentDescription producer some how be automatically registered ?
              * Or should we just 'know' who is the first one to create the context
              */
-            deploymentDescriptionProducer.set(deploymentDescription);
-            deploymentProducer.set(deployment);
-            
-            deployEvent.fire(new BeforeDeploy(deployableContainer, deploymentDescription));
+                deploymentDescriptionProducer.set(deploymentDescription);
+                deploymentProducer.set(deployment);
 
-            try
-            {
-               if(deploymentDescription.isArchiveDeployment())
-               {
-                  protocolMetadata.set(deployableContainer.deploy(
-                        deploymentDescription.getTestableArchive() != null ? deploymentDescription.getTestableArchive():deploymentDescription.getArchive()));
-               }
-               else
-               {
-                  deployableContainer.deploy(deploymentDescription.getDescriptor());
-               }
-               deployment.deployed();
+                deployEvent.fire(new BeforeDeploy(deployableContainer, deploymentDescription));
+
+                try {
+                    if (deploymentDescription.isArchiveDeployment()) {
+                        protocolMetadata.set(deployableContainer.deploy(
+                                deploymentDescription.getTestableArchive() != null ? deploymentDescription.getTestableArchive() : deploymentDescription.getArchive()));
+                    } else {
+                        deployableContainer.deploy(deploymentDescription.getDescriptor());
+                    }
+                    deployment.deployed();
+                } catch (Exception e) {
+                    deployment.deployedWithError(e);
+                    throw e;
+                }
+
+                deployEvent.fire(new AfterDeploy(deployableContainer, deploymentDescription));
+                return null;
             }
-            catch (Exception e) 
-            {
-               deployment.deployedWithError(e);
-               throw e;
+        });
+    }
+
+    public void undeploy(@Observes final UnDeployDeployment event) throws Exception {
+        executeOperation(new Callable<Void>() {
+            @Inject
+            private Event<DeployerEvent> deployEvent;
+
+            @Override
+            public Void call() throws Exception {
+                DeployableContainer<?> deployableContainer = event.getDeployableContainer();
+                Deployment deployment = event.getDeployment();
+                DeploymentDescription description = deployment.getDescription();
+
+                deployEvent.fire(new BeforeUnDeploy(deployableContainer, description));
+
+                try {
+
+                    if (deployment.getDescription().isArchiveDeployment()) {
+                        try {
+                            deployableContainer.undeploy(
+                                    description.getTestableArchive() != null ? description.getTestableArchive() : description.getArchive());
+                        } catch (Exception e) {
+                            if (!deployment.hasDeploymentError()) {
+                                throw e;
+                            }
+                        }
+                    } else {
+                        deployableContainer.undeploy(description.getDescriptor());
+                    }
+                } finally {
+                    deployment.undeployed();
+                }
+
+                deployEvent.fire(new AfterUnDeploy(deployableContainer, description));
+                return null;
             }
-            
-            deployEvent.fire(new AfterDeploy(deployableContainer, deploymentDescription));
-            return null;
-         }
-      });
-   }
-   
-   public void undeploy(@Observes final UnDeployDeployment event) throws Exception
-   {
-      executeOperation(new Callable<Void>()
-      {
-         @Inject
-         private Event<DeployerEvent> deployEvent;
+        });
+    }
 
-         @Override
-         public Void call() throws Exception
-         {
-            DeployableContainer<?> deployableContainer = event.getDeployableContainer();
-            Deployment deployment = event.getDeployment();
-            DeploymentDescription description = deployment.getDescription();
-            
-            deployEvent.fire(new BeforeUnDeploy(deployableContainer, description));
+    private void forEachManagedDeployment(Operation<Container, Deployment> operation) throws Exception {
+        DeploymentScenario scenario = this.deploymentScenario.get();
+        if (scenario == null) {
+            return;
+        }
+        forEachDeployment(scenario.managedDeploymentsInDeployOrder(), operation);
+    }
 
-            try
-            {
-               
-               if(deployment.getDescription().isArchiveDeployment())
-               {
-                  try
-                  {
-                     deployableContainer.undeploy(
-                           description.getTestableArchive() != null ? description.getTestableArchive():description.getArchive());
-                  }
-                  catch (Exception e) 
-                  {
-                     if(!deployment.hasDeploymentError())
-                     {
-                        throw e;
-                     }
-                  }
-               }
-               else
-               {
-                  deployableContainer.undeploy(description.getDescriptor());
-               }
-            }
-            finally
-            {
-               deployment.undeployed();
-            }
-            
-            deployEvent.fire(new AfterUnDeploy(deployableContainer, description));
-            return null;
-         }
-      });
-   }
-   
-   private void forEachManagedDeployment(Operation<Container, Deployment> operation) throws Exception
-   {
-      DeploymentScenario scenario = this.deploymentScenario.get();
-      if(scenario == null)
-      {
-         return;
-      }
-      forEachDeployment(scenario.managedDeploymentsInDeployOrder(), operation);
-   }
+    private void forEachDeployedDeployment(Operation<Container, Deployment> operation) throws Exception {
+        DeploymentScenario scenario = this.deploymentScenario.get();
+        if (scenario == null) {
+            return;
+        }
+        forEachDeployment(scenario.deployedDeploymentsInUnDeployOrder(), operation);
+    }
 
-   private void forEachDeployedDeployment(Operation<Container, Deployment> operation) throws Exception
-   {
-      DeploymentScenario scenario = this.deploymentScenario.get();
-      if(scenario == null)
-      {
-         return;
-      }
-      forEachDeployment(scenario.deployedDeploymentsInUnDeployOrder(), operation);
-   }
+    private void forEachDeployment(List<Deployment> deployments, Operation<Container, Deployment> operation) throws Exception {
+        injector.get().inject(operation);
+        ContainerRegistry containerRegistry = this.containerRegistry.get();
+        if (containerRegistry == null) {
+            return;
+        }
+        for (Deployment deployment : deployments) {
+            Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
+            operation.perform(container, deployment);
+        }
+    }
 
-   private void forEachDeployment(List<Deployment> deployments, Operation<Container, Deployment> operation) throws Exception
-   {
-      injector.get().inject(operation);
-      ContainerRegistry containerRegistry = this.containerRegistry.get();
-      if(containerRegistry == null)
-      {
-         return;
-      }
-      for(Deployment deployment: deployments)
-      {
-         Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
-         operation.perform(container, deployment);
-      }
-   }
-   
-   private void executeOperation(Callable<Void> operation)
-      throws Exception
-   {
-      injector.get().inject(operation);
-      operation.call();
-   }
+    private void executeOperation(Callable<Void> operation)
+            throws Exception {
+        injector.get().inject(operation);
+        operation.call();
+    }
 
-   public interface Operation<T, X>
-   {
-      void perform(T container, X deployment) throws Exception;
-   }
+    public interface Operation<T, X> {
+        void perform(T container, X deployment) throws Exception;
+    }
 }

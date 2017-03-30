@@ -24,20 +24,18 @@ import org.jboss.shrinkwrap.api.Archive;
  * Used by enrichers to add Enricher specific information to the Protocols archive. <br/>
  * <br/>
  * Example:
- *  A BeanManager is only available if the caller is a BeanArchive. For Enterprise archives where the EJB module
- *  is a BeanArchive, the Protocol WAR is added without a beans.xml. The result is that the Protocol can't see the EJBs BeanManager.
- * 
- *  This extension point allowed the CDI enricher to add a beans.xml to the protocol.
+ * A BeanManager is only available if the caller is a BeanArchive. For Enterprise archives where the EJB module
+ * is a BeanArchive, the Protocol WAR is added without a beans.xml. The result is that the Protocol can't see the EJBs BeanManager.
+ * <p>
+ * This extension point allowed the CDI enricher to add a beans.xml to the protocol.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ProtocolArchiveProcessor
-{
-   /**
-    *  
-    * @param testDeployment The user defined deployment + auxilliary archives
-    * @param protocolArchive The archive where the protocol is bundled. 
-    */
-   void process(TestDeployment testDeployment, Archive<?> protocolArchive);
+public interface ProtocolArchiveProcessor {
+    /**
+     * @param testDeployment  The user defined deployment + auxilliary archives
+     * @param protocolArchive The archive where the protocol is bundled.
+     */
+    void process(TestDeployment testDeployment, Archive<?> protocolArchive);
 }

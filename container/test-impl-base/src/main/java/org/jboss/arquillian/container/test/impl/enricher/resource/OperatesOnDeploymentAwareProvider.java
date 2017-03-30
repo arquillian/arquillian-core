@@ -40,123 +40,100 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvider
-{
-   @Inject
-   private Instance<ContainerContext> containerContext;
+public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvider {
+    @Inject
+    private Instance<ContainerContext> containerContext;
 
-   @Inject
-   private Instance<DeploymentContext> deploymentContext;
+    @Inject
+    private Instance<DeploymentContext> deploymentContext;
 
-   @Inject
-   private Instance<DeploymentScenario> deploymentScenario;
+    @Inject
+    private Instance<DeploymentScenario> deploymentScenario;
 
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
+    @Inject
+    private Instance<ContainerRegistry> containerRegistry;
 
-   public abstract Object doLookup(ArquillianResource resource, Annotation... qualifiers);
+    public abstract Object doLookup(ArquillianResource resource, Annotation... qualifiers);
 
-   @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      return runInDeploymentContext(resource, qualifiers);
-   }
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return runInDeploymentContext(resource, qualifiers);
+    }
 
-   private Object runInDeploymentContext(ArquillianResource resource, Annotation... qualifiers)
-   {
-      DeploymentContext context = null;
-      DeploymentScenario scenario = null;
-      boolean activateContext = containsOperatesOnDeployment(qualifiers);
-      boolean contextActivated = false;
-      try
-      {
-         Deployment deployment = null;
-         if(activateContext)
-         {
-            context = deploymentContext.get();
-            scenario = deploymentScenario.get();
-            if(scenario == null)
-            {
-               throw new IllegalStateException("No " + DeploymentScenario.class.getSimpleName() + " found. " +
-                     "Possible cause, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side. (@" + RunAsClient.class.getSimpleName() + ")");
+    private Object runInDeploymentContext(ArquillianResource resource, Annotation... qualifiers) {
+        DeploymentContext context = null;
+        DeploymentScenario scenario = null;
+        boolean activateContext = containsOperatesOnDeployment(qualifiers);
+        boolean contextActivated = false;
+        try {
+            Deployment deployment = null;
+            if (activateContext) {
+                context = deploymentContext.get();
+                scenario = deploymentScenario.get();
+                if (scenario == null) {
+                    throw new IllegalStateException("No " + DeploymentScenario.class.getSimpleName() + " found. " +
+                            "Possible cause, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side. (@" + RunAsClient.class.getSimpleName() + ")");
+                }
+                OperateOnDeployment operatesOn = getOperatesOnDeployment(qualifiers);
+                deployment = scenario.deployment(new DeploymentTargetDescription(operatesOn.value()));
+                if (deployment == null) {
+                    throw new IllegalArgumentException(
+                            "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
+                                    "no deployment found with name: " + operatesOn.value());
+                }
+                context.activate(deployment);
+                contextActivated = true;
             }
-            OperateOnDeployment operatesOn = getOperatesOnDeployment(qualifiers);
-            deployment = scenario.deployment(new DeploymentTargetDescription(operatesOn.value()));
-            if(deployment == null)
-            {
-               throw new IllegalArgumentException(
-                     "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
-                     "no deployment found with name: " + operatesOn.value());
+            return runInContainerContext(deployment == null ? null : deployment.getDescription().getTarget(), resource, qualifiers);
+        } finally {
+            if (contextActivated) {
+                context.deactivate();
             }
-            context.activate(deployment);
-            contextActivated = true;
-         }
-         return runInContainerContext(deployment == null ? null:deployment.getDescription().getTarget(), resource, qualifiers);
-      }
-      finally
-      {
-         if(contextActivated)
-         {
-            context.deactivate();
-         }
-      }
-   }
+        }
+    }
 
-   private Object runInContainerContext(TargetDescription targetDescription, ArquillianResource resource, Annotation... qualifiers)
-   {
-      ContainerContext context = null;
-      ContainerRegistry registry = null;
-      boolean activateContext = targetDescription != null;
-      boolean contextActivated = false;
-      try
-      {
-         if(activateContext)
-         {
-            context = containerContext.get();
-            registry = containerRegistry.get();
-            if(registry == null)
-            {
-               throw new IllegalStateException("No " + ContainerRegistry.class.getSimpleName() + " found. " +
-                     "Possible problem is, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side.");
+    private Object runInContainerContext(TargetDescription targetDescription, ArquillianResource resource, Annotation... qualifiers) {
+        ContainerContext context = null;
+        ContainerRegistry registry = null;
+        boolean activateContext = targetDescription != null;
+        boolean contextActivated = false;
+        try {
+            if (activateContext) {
+                context = containerContext.get();
+                registry = containerRegistry.get();
+                if (registry == null) {
+                    throw new IllegalStateException("No " + ContainerRegistry.class.getSimpleName() + " found. " +
+                            "Possible problem is, @" + OperateOnDeployment.class.getSimpleName() + " is currently only supported on the client side.");
+                }
+                Container container = registry.getContainer(targetDescription);
+                if (container == null) {
+                    throw new IllegalArgumentException(
+                            "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
+                                    "no container found with name: " + targetDescription);
+                }
+                context.activate(container.getName());
+                contextActivated = true;
             }
-            Container container = registry.getContainer(targetDescription);
-            if(container == null)
-            {
-               throw new IllegalArgumentException(
-                     "Could not operate on deployment (@" + OperateOnDeployment.class.getSimpleName() + "), " +
-                     "no container found with name: " + targetDescription);
+            return doLookup(resource, qualifiers);
+        } finally {
+            if (contextActivated) {
+                context.deactivate();
             }
-            context.activate(container.getName());
-            contextActivated = true;
-         }
-         return doLookup(resource, qualifiers);
-      }
-      finally
-      {
-         if(contextActivated)
-         {
-            context.deactivate();
-         }
-      }
-   }
+        }
+    }
 
-   public boolean containsOperatesOnDeployment(Annotation[] qualifiers)
-   {
-      return getOperatesOnDeployment(qualifiers) != null;
-   }
+    public boolean containsOperatesOnDeployment(Annotation[] qualifiers) {
+        return getOperatesOnDeployment(qualifiers) != null;
+    }
 
-   private OperateOnDeployment getOperatesOnDeployment(Annotation[] qualifiers)
-   {
-      if(qualifiers != null)
-      {
-         for(Annotation annotation : qualifiers)
-         {
-            if(annotation.annotationType() == OperateOnDeployment.class)
-            {
-               return OperateOnDeployment.class.cast(annotation);
+    private OperateOnDeployment getOperatesOnDeployment(Annotation[] qualifiers) {
+        if (qualifiers != null) {
+            for (Annotation annotation : qualifiers) {
+                if (annotation.annotationType() == OperateOnDeployment.class) {
+                    return OperateOnDeployment.class.cast(annotation);
+                }
             }
-         }
-      }
-      return null;
-   }
+        }
+        return null;
+    }
 }

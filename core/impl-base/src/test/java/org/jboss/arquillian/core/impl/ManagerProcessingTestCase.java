@@ -29,52 +29,42 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ManagerProcessingTestCase
-{
-   static {
-      RuntimeLogger.DEBUG = true;
-   }
-   
-   @Test
-   public void shouldBeAbleToAddObservers() throws Exception
-   {
-      ManagerImpl manager = null;
-      try
-      {
-         manager = (ManagerImpl)ManagerBuilder.from().extension(Loader.class).create();
-         manager.start();
-         Assert.assertNotNull(manager.getExtension(Loaded.class));
-         
-         manager.fire("testing testing");
-         Assert.assertNotNull(manager.getExtension(Loaded.class));         
-         
-         Assert.assertTrue(manager.getExtension(Loaded.class).wasCalled);
-      }
-      finally
-      {
-         if(manager != null)
-         {
-            manager.shutdown();
-         }
-      }
-   }
-   
-   
-   public static class Loader 
-   {
-      public void add(@Observes ManagerProcessing event)
-      {
-         event.observer(Loaded.class);
-      }
-   }
-   
-   public static class Loaded 
-   {
-      private boolean wasCalled = false;
-      
-      public void run(@Observes String event) 
-      {
-         wasCalled = true;
-      }
-   }
+public class ManagerProcessingTestCase {
+    static {
+        RuntimeLogger.DEBUG = true;
+    }
+
+    @Test
+    public void shouldBeAbleToAddObservers() throws Exception {
+        ManagerImpl manager = null;
+        try {
+            manager = (ManagerImpl) ManagerBuilder.from().extension(Loader.class).create();
+            manager.start();
+            Assert.assertNotNull(manager.getExtension(Loaded.class));
+
+            manager.fire("testing testing");
+            Assert.assertNotNull(manager.getExtension(Loaded.class));
+
+            Assert.assertTrue(manager.getExtension(Loaded.class).wasCalled);
+        } finally {
+            if (manager != null) {
+                manager.shutdown();
+            }
+        }
+    }
+
+
+    public static class Loader {
+        public void add(@Observes ManagerProcessing event) {
+            event.observer(Loaded.class);
+        }
+    }
+
+    public static class Loaded {
+        private boolean wasCalled = false;
+
+        public void run(@Observes String event) {
+            wasCalled = true;
+        }
+    }
 }

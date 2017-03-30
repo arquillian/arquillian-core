@@ -37,66 +37,54 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArchiveDeploymentExporter 
-{
-   private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());
+public class ArchiveDeploymentExporter {
+    private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());
 
-   @Inject
-   private Instance<ArquillianDescriptor> configuration;
-   
-   public void callback(@Observes BeforeDeploy event) throws Exception
-   {
-      ArquillianDescriptor descriptor = configuration.get();
-      if(descriptor == null)
-      {
-         return;
-      }
-      EngineDef engine = descriptor.engine();
+    @Inject
+    private Instance<ArquillianDescriptor> configuration;
 
-      String systemExport = SecurityActions.getProperty("arquillian.deploymentExportPath");
-      String systemExportExploded = SecurityActions.getProperty("arquillian.deploymentExportExploded");
-      String exportPath = (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath():systemExport;
-      Boolean exportExploded = (systemExportExploded == null || systemExportExploded.length() == 0) ? engine.getDeploymentExportExploded():Boolean.parseBoolean(systemExport);
-      
-      if(exportPath != null && event.getDeployment().isArchiveDeployment())
-      {
-         File exportDir = new File(exportPath);
-         if (exportDir.isFile())
-         {
-            log.warning("Deployment export disabled. Export path points to an existing file: " + exportPath);
+    public void callback(@Observes BeforeDeploy event) throws Exception {
+        ArquillianDescriptor descriptor = configuration.get();
+        if (descriptor == null) {
             return;
-         }
-         else if (!exportDir.isDirectory() && !exportDir.mkdirs())
-         {
-            log.warning("Deployment export directory could not be created: " + exportPath);
-            return;
-         }
+        }
+        EngineDef engine = descriptor.engine();
 
-         Archive<?> deployment;
-         if(event.getDeployment().testable())
-         {
-            deployment = event.getDeployment().getTestableArchive();
-         }
-         else
-         {
-            deployment = event.getDeployment().getArchive();
-         }
-         
-         if(exportExploded) {
-            deployment.as(ExplodedExporter.class).exportExploded(
-                  exportDir, createFileName(event.getDeployment(), deployment));
-         }
-         else {
-            deployment.as(ZipExporter.class).exportTo(
-                  new File(exportDir, createFileName(event.getDeployment(), deployment)),
-                  true);
-         }
-      }
-   }
-   
-   private String createFileName(DeploymentDescription deployment, Archive<?> archive)
-   {
-      // TODO: where do we get TestClass name from ? 
-      return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + archive.getName();
-   }
+        String systemExport = SecurityActions.getProperty("arquillian.deploymentExportPath");
+        String systemExportExploded = SecurityActions.getProperty("arquillian.deploymentExportExploded");
+        String exportPath = (systemExport == null || systemExport.length() == 0) ? engine.getDeploymentExportPath() : systemExport;
+        Boolean exportExploded = (systemExportExploded == null || systemExportExploded.length() == 0) ? engine.getDeploymentExportExploded() : Boolean.parseBoolean(systemExport);
+
+        if (exportPath != null && event.getDeployment().isArchiveDeployment()) {
+            File exportDir = new File(exportPath);
+            if (exportDir.isFile()) {
+                log.warning("Deployment export disabled. Export path points to an existing file: " + exportPath);
+                return;
+            } else if (!exportDir.isDirectory() && !exportDir.mkdirs()) {
+                log.warning("Deployment export directory could not be created: " + exportPath);
+                return;
+            }
+
+            Archive<?> deployment;
+            if (event.getDeployment().testable()) {
+                deployment = event.getDeployment().getTestableArchive();
+            } else {
+                deployment = event.getDeployment().getArchive();
+            }
+
+            if (exportExploded) {
+                deployment.as(ExplodedExporter.class).exportExploded(
+                        exportDir, createFileName(event.getDeployment(), deployment));
+            } else {
+                deployment.as(ZipExporter.class).exportTo(
+                        new File(exportDir, createFileName(event.getDeployment(), deployment)),
+                        true);
+            }
+        }
+    }
+
+    private String createFileName(DeploymentDescription deployment, Archive<?> archive) {
+        // TODO: where do we get TestClass name from ?
+        return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + archive.getName();
+    }
 }

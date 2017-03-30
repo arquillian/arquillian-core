@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * Define that a Deployment should cause a exception during deployment. If the Container does not throw a exception,
  * or the exception is of the wrong type, a RuntimeException will be thrown and the test failed.
  * If the correct exception is thrown the test will execute as normal.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  *      return ShrinkWrap.create(WebArchive.class);
  * }
  * </code></pre>
- *
+ * <p>
  * Adding the @ShouldThrowException annotation will force the @{@link Deployment} to be testable = false which again
  * will force a @{@link RunAsClient} test run mode.
  *
@@ -46,7 +46,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ShouldThrowException
-{
-   Class<? extends Exception> value() default Exception.class;
+public @interface ShouldThrowException {
+    Class<? extends Exception> value() default Exception.class;
 }

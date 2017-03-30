@@ -23,25 +23,21 @@ import org.junit.runners.model.Statement;
 
 /**
  * An implementation of Statement
- * 
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class TestingStatement extends Statement
-{
+public class TestingStatement extends Statement {
     @ArquillianResource
     private ResourceStub resources;
 
     private Statement base;
 
-    public TestingStatement(Statement base)
-    {
+    public TestingStatement(Statement base) {
         this.base = base;
     }
 
     @Override
-    public void evaluate() throws Throwable
-    {
+    public void evaluate() throws Throwable {
         assertNotNull(resources);
         base.evaluate();
     }

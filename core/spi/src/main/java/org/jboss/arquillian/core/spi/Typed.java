@@ -24,7 +24,6 @@ import java.lang.reflect.Type;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Typed
-{
-   Type getType();
+public interface Typed {
+    Type getType();
 }

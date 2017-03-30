@@ -25,9 +25,8 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ObserverMethod extends Typed, Comparable<ObserverMethod>
-{
-   boolean invoke(Manager manager, Object object) throws InvocationException;
-   
-   Method getMethod();
+public interface ObserverMethod extends Typed, Comparable<ObserverMethod> {
+    boolean invoke(Manager manager, Object object) throws InvocationException;
+
+    Method getMethod();
 }

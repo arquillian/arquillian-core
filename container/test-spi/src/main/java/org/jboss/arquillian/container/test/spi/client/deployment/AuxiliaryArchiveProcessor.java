@@ -20,19 +20,18 @@ import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * Extension point to alter system defined deployments.
- * 
+ * <p>
  * Example:
  * - Add beans.xml to EE modules
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface AuxiliaryArchiveProcessor
-{
-   /**
-    * Called once for each found ArchiveAppender
-    * 
-    * @param auxiliaryArchive The system defined deployment archive
-    */
-   void process(Archive<?> auxiliaryArchive);
+public interface AuxiliaryArchiveProcessor {
+    /**
+     * Called once for each found ArchiveAppender
+     *
+     * @param auxiliaryArchive The system defined deployment archive
+     */
+    void process(Archive<?> auxiliaryArchive);
 }

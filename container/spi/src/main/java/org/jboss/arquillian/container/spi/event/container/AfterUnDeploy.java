@@ -26,10 +26,8 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterUnDeploy extends DeployerEvent
-{
-   public AfterUnDeploy(DeployableContainer<?> deployableContainer, DeploymentDescription deployment)
-   {
-      super(deployableContainer, deployment);
-   }
+public class AfterUnDeploy extends DeployerEvent {
+    public AfterUnDeploy(DeployableContainer<?> deployableContainer, DeploymentDescription deployment) {
+        super(deployableContainer, deployment);
+    }
 }

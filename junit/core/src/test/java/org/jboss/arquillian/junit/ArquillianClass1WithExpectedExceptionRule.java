@@ -32,40 +32,34 @@ import org.junit.runner.RunWith;
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithExpectedExceptionRule
-{
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+public class ArquillianClass1WithExpectedExceptionRule {
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
 
-   @Rule
-   public ExpectedException e = ExpectedException.none();
+    @Rule
+    public ExpectedException e = ExpectedException.none();
 
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-      e.expect(IllegalArgumentException.class);
-      throw new IllegalArgumentException();
-   }
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+        e.expect(IllegalArgumentException.class);
+        throw new IllegalArgumentException();
+    }
 }

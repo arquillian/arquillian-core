@@ -19,18 +19,17 @@ package org.jboss.arquillian.container.spi.client.container;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 
 /**
- * Container configuration that can be validated 
+ * Container configuration that can be validated
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
  * @version $Revision: $
  */
-public interface ContainerConfiguration
-{
+public interface ContainerConfiguration {
 
-   /**
-    * Validates if current configuration is valid, that is if all required
-    * properties are set and have correct values
-    */
-   void validate() throws ConfigurationException;
-   
+    /**
+     * Validates if current configuration is valid, that is if all required
+     * properties are set and have correct values
+     */
+    void validate() throws ConfigurationException;
+
 }

@@ -31,65 +31,62 @@ import org.junit.Test;
 
 /**
  * Tests the execution order of Observers of same type
- * 
+ * <p>
  * TODO: this should be implemented looking at Producers and Consumers, but currently a simple precedence is used.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExtensionOrderTestCase
-{
-   private static List<String> callOrder = new ArrayList<String>();
+public class ExtensionOrderTestCase {
+    private static List<String> callOrder = new ArrayList<String>();
 
-   @Test
-   public void shouldExecuteProducersOnSameEventBeforeConsumers() throws Exception
-   {
-      Manager manager = ManagerBuilder.from()
-                  .extensions(ConsumerOne.class, ProducerOne.class, ProducerTwo.class).create();
-      
-      manager.fire("test");
-      
-      Assert.assertEquals("ProducerOne", callOrder.get(0));
-      Assert.assertEquals("ProducerTwo", callOrder.get(1));
-      Assert.assertEquals("ConsumerOne", callOrder.get(2));
-   }
-   
-   public static class ProducerOne 
-   {
-      @Inject @ApplicationScoped
-      private InstanceProducer<ValueOne> value;
-      
-      public void exec(@Observes(precedence = 20) String ba) 
-      { 
-         callOrder.add(this.getClass().getSimpleName());
-         value.set(new ValueOne());
-      }
-   }
-   
-   public static class ProducerTwo
-   {
-      @Inject @ApplicationScoped
-      private InstanceProducer<ValueTwo> value;
-      
-      public void exec(@Observes(precedence = 10) String ba) 
-      { 
-         callOrder.add(this.getClass().getSimpleName());
-         value.set(new ValueTwo());
-      }
-   }
+    @Test
+    public void shouldExecuteProducersOnSameEventBeforeConsumers() throws Exception {
+        Manager manager = ManagerBuilder.from()
+                .extensions(ConsumerOne.class, ProducerOne.class, ProducerTwo.class).create();
 
-   public static class ConsumerOne
-   {
+        manager.fire("test");
+
+        Assert.assertEquals("ProducerOne", callOrder.get(0));
+        Assert.assertEquals("ProducerTwo", callOrder.get(1));
+        Assert.assertEquals("ConsumerOne", callOrder.get(2));
+    }
+
+    public static class ProducerOne {
+        @Inject
+        @ApplicationScoped
+        private InstanceProducer<ValueOne> value;
+
+        public void exec(@Observes(precedence = 20) String ba) {
+            callOrder.add(this.getClass().getSimpleName());
+            value.set(new ValueOne());
+        }
+    }
+
+    public static class ProducerTwo {
+        @Inject
+        @ApplicationScoped
+        private InstanceProducer<ValueTwo> value;
+
+        public void exec(@Observes(precedence = 10) String ba) {
+            callOrder.add(this.getClass().getSimpleName());
+            value.set(new ValueTwo());
+        }
+    }
+
+    public static class ConsumerOne {
 //      @Inject
 //      private Instance<ValueOne> value;
-      
-      public void exec(@Observes String ba) 
-      { 
-         callOrder.add(this.getClass().getSimpleName());
-         //System.out.println(value.get());
-      }
-   }
-   
-   private static class ValueOne { }
-   private static class ValueTwo { }
+
+        public void exec(@Observes String ba) {
+            callOrder.add(this.getClass().getSimpleName());
+            //System.out.println(value.get());
+        }
+    }
+
+    private static class ValueOne {
+    }
+
+    private static class ValueTwo {
+    }
 }

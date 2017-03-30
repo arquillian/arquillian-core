@@ -25,10 +25,8 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeforeSetup extends ContainerEvent
-{
-   public BeforeSetup(DeployableContainer<?> deployableContainer)
-   {
-      super(deployableContainer);
-   }
+public class BeforeSetup extends ContainerEvent {
+    public BeforeSetup(DeployableContainer<?> deployableContainer) {
+        super(deployableContainer);
+    }
 }

@@ -38,118 +38,107 @@ import org.junit.Test;
  * @author Davide D'Alto
  * @version $Revision: $
  */
-public class JavaSPIExtensionLoaderTestCase
-{
+public class JavaSPIExtensionLoaderTestCase {
 
-   private static final String NEW_LINE = System.getProperty("line.separator");
-   
-   @Test
-   public void shouldBeAbleToAddSelectedProvider() throws Exception
-   {
-      Collection<FakeService> all = new JavaSPIExtensionLoader().all(
-            JavaSPIExtensionLoaderTestCase.class.getClassLoader(), FakeService.class);
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
-      Assert.assertEquals("Unexpected number of provider loaded", 1, all.size());
-      Assert.assertEquals("Wrong provider loaded", ShouldBeIncluded.class, all.iterator().next().getClass());
-   }
+    @Test
+    public void shouldBeAbleToAddSelectedProvider() throws Exception {
+        Collection<FakeService> all = new JavaSPIExtensionLoader().all(
+                JavaSPIExtensionLoaderTestCase.class.getClassLoader(), FakeService.class);
 
-   @Test
-   public void shouldBeAbleToAddSelectedProviderFromClassLoader() throws Exception
-   {
-      Archive<JavaArchive> jarWithDefaultServiceImpl = createJarWithDefaultServiceImpl();
-      Archive<JavaArchive> jarThatReplaceServiceImpl = createJarThatReplaceServiceImpl();
+        Assert.assertEquals("Unexpected number of provider loaded", 1, all.size());
+        Assert.assertEquals("Wrong provider loaded", ShouldBeIncluded.class, all.iterator().next().getClass());
+    }
 
-      ClassLoader emptyParent = null;
-      ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarThatReplaceServiceImpl, jarWithDefaultServiceImpl);
+    @Test
+    public void shouldBeAbleToAddSelectedProviderFromClassLoader() throws Exception {
+        Archive<JavaArchive> jarWithDefaultServiceImpl = createJarWithDefaultServiceImpl();
+        Archive<JavaArchive> jarThatReplaceServiceImpl = createJarThatReplaceServiceImpl();
 
-      ClassLoader emptyClassLoader = new ClassLoader(null){};
-      ClassLoader originalClassLoader = SecurityActions.getThreadContextClassLoader();
+        ClassLoader emptyParent = null;
+        ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarThatReplaceServiceImpl, jarWithDefaultServiceImpl);
 
-      Collection<?> providers = null;
-      Class<?> expectedImplClass = null;
-      try
-      {
-         Thread.currentThread().setContextClassLoader(emptyClassLoader);
-         
-         Class<?> serviceClass = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.FakeService");
-         expectedImplClass = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
-         
-         providers = new JavaSPIExtensionLoader().all(swClassloader, serviceClass);
-      }
-      finally
-      {
-         Thread.currentThread().setContextClassLoader(originalClassLoader);
-      }
+        ClassLoader emptyClassLoader = new ClassLoader(null) {
+        };
+        ClassLoader originalClassLoader = SecurityActions.getThreadContextClassLoader();
 
-      Assert.assertEquals("Unexpected number of providers loaded", 1, providers.size());
-      Assert.assertEquals("Wrong provider loaded", expectedImplClass, providers.iterator().next().getClass());
-   }
+        Collection<?> providers = null;
+        Class<?> expectedImplClass = null;
+        try {
+            Thread.currentThread().setContextClassLoader(emptyClassLoader);
 
-   @Test
-   public void shouldBeAbleToLoadVetoedClasses() throws Exception
-   {
-      Archive<JavaArchive> jarWithVetoedServiceImpl = createJarWithVetoedServices();
+            Class<?> serviceClass = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.FakeService");
+            expectedImplClass = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
 
-      ClassLoader emptyParent = null;
-      ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarWithVetoedServiceImpl);
+            providers = new JavaSPIExtensionLoader().all(swClassloader, serviceClass);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
 
-      ClassLoader emptyClassLoader = new ClassLoader(null){};
-      ClassLoader originalClassLoader = SecurityActions.getThreadContextClassLoader();
+        Assert.assertEquals("Unexpected number of providers loaded", 1, providers.size());
+        Assert.assertEquals("Wrong provider loaded", expectedImplClass, providers.iterator().next().getClass());
+    }
 
-      Map<Class<?>, Set<Class<?>>> vetoed = null;
-      Class<?> service;
-      try
-      {
-         Thread.currentThread().setContextClassLoader(emptyClassLoader);
+    @Test
+    public void shouldBeAbleToLoadVetoedClasses() throws Exception {
+        Archive<JavaArchive> jarWithVetoedServiceImpl = createJarWithVetoedServices();
 
-         service = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.FakeService");
-         swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
-         swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
+        ClassLoader emptyParent = null;
+        ShrinkWrapClassLoader swClassloader = new ShrinkWrapClassLoader(emptyParent, jarWithVetoedServiceImpl);
 
-         vetoed = new JavaSPIExtensionLoader().loadVetoed(swClassloader);
-      }
-      finally
-      {
-         Thread.currentThread().setContextClassLoader(originalClassLoader);
-      }
+        ClassLoader emptyClassLoader = new ClassLoader(null) {
+        };
+        ClassLoader originalClassLoader = SecurityActions.getThreadContextClassLoader();
 
-      Assert.assertEquals("Unexpected number of vetoed services", 1, vetoed.size());
-      Assert.assertEquals("Unexpected number of vetoed services impl", 2, vetoed.get(service).size());
+        Map<Class<?>, Set<Class<?>>> vetoed = null;
+        Class<?> service;
+        try {
+            Thread.currentThread().setContextClassLoader(emptyClassLoader);
 
-   }
+            service = swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.FakeService");
+            swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
+            swClassloader.loadClass("org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
 
-   private Archive<JavaArchive> createJarWithVetoedServices()
-   {
-      StringAsset exclusions = new StringAsset("" +
-              "org.jboss.arquillian.core.impl.loadable.util.FakeService=org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded, " +
-              "org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
+            vetoed = new JavaSPIExtensionLoader().loadVetoed(swClassloader);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
 
-      Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
-              .addClasses(FakeService.class, ShouldBeIncluded.class, ShouldBeExcluded.class)
-              .addAsManifestResource(exclusions, "exclusions");
+        Assert.assertEquals("Unexpected number of vetoed services", 1, vetoed.size());
+        Assert.assertEquals("Unexpected number of vetoed services impl", 2, vetoed.get(service).size());
 
-      return archive;
-   }
+    }
 
-   private Archive<JavaArchive> createJarWithDefaultServiceImpl()
-   {
-      Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(FakeService.class, ShouldBeExcluded.class)
-            .addAsServiceProvider(FakeService.class, ShouldBeExcluded.class);
-      return archive;
-   }
-   
-   private Archive<JavaArchive> createJarThatReplaceServiceImpl()
-   {
-      StringAsset serviceConfig = new StringAsset(
-            "!org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded" 
-               + NEW_LINE +
-            "org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
-      
-      Archive<JavaArchive> archive2 = ShrinkWrap.create(JavaArchive.class)
-            .addClasses(ShouldBeIncluded.class)
-            .addAsManifestResource(serviceConfig, "/services/org.jboss.arquillian.core.impl.loadable.util.FakeService");
-      return archive2;
-   }
+    private Archive<JavaArchive> createJarWithVetoedServices() {
+        StringAsset exclusions = new StringAsset("" +
+                "org.jboss.arquillian.core.impl.loadable.util.FakeService=org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded, " +
+                "org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded");
+
+        Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
+                .addClasses(FakeService.class, ShouldBeIncluded.class, ShouldBeExcluded.class)
+                .addAsManifestResource(exclusions, "exclusions");
+
+        return archive;
+    }
+
+    private Archive<JavaArchive> createJarWithDefaultServiceImpl() {
+        Archive<JavaArchive> archive = ShrinkWrap.create(JavaArchive.class)
+                .addClasses(FakeService.class, ShouldBeExcluded.class)
+                .addAsServiceProvider(FakeService.class, ShouldBeExcluded.class);
+        return archive;
+    }
+
+    private Archive<JavaArchive> createJarThatReplaceServiceImpl() {
+        StringAsset serviceConfig = new StringAsset(
+                "!org.jboss.arquillian.core.impl.loadable.util.ShouldBeExcluded"
+                        + NEW_LINE +
+                        "org.jboss.arquillian.core.impl.loadable.util.ShouldBeIncluded");
+
+        Archive<JavaArchive> archive2 = ShrinkWrap.create(JavaArchive.class)
+                .addClasses(ShouldBeIncluded.class)
+                .addAsManifestResource(serviceConfig, "/services/org.jboss.arquillian.core.impl.loadable.util.FakeService");
+        return archive2;
+    }
 
 }

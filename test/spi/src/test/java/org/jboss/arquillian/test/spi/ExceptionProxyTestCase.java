@@ -39,219 +39,189 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExceptionProxyTestCase
-{
-   public static String MSG = "_TEST_";
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldProxyIllegalArgumentException() throws Throwable 
-   {
-      proxy(new IllegalArgumentException(MSG));
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldProxyExtendedIllegalArgumentException() throws Throwable 
-   {
-      proxy(new ExtendedIllegalArgumentException(new Exception(MSG)));
-   }
+public class ExceptionProxyTestCase {
+    public static String MSG = "_TEST_";
 
-   @Test(expected = UnsatisfiedResolutionException.class)
-   public void shouldProxyUnsatisfiedResolutionException() throws Throwable 
-   {
-      proxy(new UnsatisfiedResolutionException(new Exception(MSG)));
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldProxyIllegalArgumentException() throws Throwable {
+        proxy(new IllegalArgumentException(MSG));
+    }
 
-   @Test
-   public void shouldSerializeNonSerializableExceptions() throws Exception
-   {
-      ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonSerializableException()));
-      Throwable t = proxy.createException();
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldProxyExtendedIllegalArgumentException() throws Throwable {
+        proxy(new ExtendedIllegalArgumentException(new Exception(MSG)));
+    }
 
-      Assert.assertEquals(ArquillianProxyException.class, t.getClass());
-      Assert.assertTrue(
-              "Verify Proxy message contain root exception of serialization problem",
-              t.getMessage().contains("java.io.NotSerializableException"));
-      Assert.assertTrue(
-              "Verify Proxy message contain root cause of serialization problem",
-              t.getMessage().contains("BufferedInputStream"));
-      Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
-   }
+    @Test(expected = UnsatisfiedResolutionException.class)
+    public void shouldProxyUnsatisfiedResolutionException() throws Throwable {
+        proxy(new UnsatisfiedResolutionException(new Exception(MSG)));
+    }
 
-   @Test
-   public void shouldSerializeNonDeSerializableExceptions() throws Exception
-   {
-      ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonDeserializableExtension("Test")));
-      Throwable t = proxy.createException();
+    @Test
+    public void shouldSerializeNonSerializableExceptions() throws Exception {
+        ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonSerializableException()));
+        Throwable t = proxy.createException();
 
-      Assert.assertEquals(ArquillianProxyException.class, t.getClass());
-      Assert.assertTrue(
-              "Verify Proxy message contain root exception of deserialization problem",
-              t.getMessage().contains("NonDeserializableExtension"));
-      Assert.assertTrue(
-              "Verify Proxy message contain root cause of deserialization problem",
-              t.getMessage().contains("Could not de-serialize"));
-      Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
-   }
+        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+        Assert.assertTrue(
+                "Verify Proxy message contain root exception of serialization problem",
+                t.getMessage().contains("java.io.NotSerializableException"));
+        Assert.assertTrue(
+                "Verify Proxy message contain root cause of serialization problem",
+                t.getMessage().contains("BufferedInputStream"));
+        Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+    }
 
-   @Test
-   public void shouldRecreateInvocationTargetExceptions() throws Exception
-   {
-      ExceptionProxy proxy = serialize(ExceptionProxy.createForException(
-              new InvocationTargetException(new RuntimeException(new ClassNotFoundException()))));
-      Throwable t = proxy.createException();
+    @Test
+    public void shouldSerializeNonDeSerializableExceptions() throws Exception {
+        ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonDeserializableExtension("Test")));
+        Throwable t = proxy.createException();
 
-      Assert.assertEquals(InvocationTargetException.class, t.getClass());
-      Assert.assertEquals(RuntimeException.class, t.getCause().getClass());
-      Assert.assertEquals(ClassNotFoundException.class, t.getCause().getCause().getClass());
-   }
+        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+        Assert.assertTrue(
+                "Verify Proxy message contain root exception of deserialization problem",
+                t.getMessage().contains("NonDeserializableExtension"));
+        Assert.assertTrue(
+                "Verify Proxy message contain root cause of deserialization problem",
+                t.getMessage().contains("Could not de-serialize"));
+        Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+    }
 
-   private ExceptionProxy serialize(ExceptionProxy proxy) throws Exception
-   {
-      ByteArrayOutputStream output = new ByteArrayOutputStream();
-      ObjectOutputStream out = new ObjectOutputStream(output);
-      out.writeObject(proxy);
+    @Test
+    public void shouldRecreateInvocationTargetExceptions() throws Exception {
+        ExceptionProxy proxy = serialize(ExceptionProxy.createForException(
+                new InvocationTargetException(new RuntimeException(new ClassNotFoundException()))));
+        Throwable t = proxy.createException();
 
-      ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(output.toByteArray()));
-      return (ExceptionProxy)in.readObject();
-   }
+        Assert.assertEquals(InvocationTargetException.class, t.getClass());
+        Assert.assertEquals(RuntimeException.class, t.getCause().getClass());
+        Assert.assertEquals(ClassNotFoundException.class, t.getCause().getCause().getClass());
+    }
 
-   private void proxy(Throwable throwable) throws Throwable
-   {
-      //printConstructors(throwable);
-      
-      throw ExceptionProxy.createForException(throwable).createException();
-   }
+    private ExceptionProxy serialize(ExceptionProxy proxy) throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(output);
+        out.writeObject(proxy);
 
-   /**
-    * @param throwable
-    */
-   @SuppressWarnings("unused")
-   private void printConstructors(Throwable throwable) throws Exception
-   {
-      System.out.println("Declared-Constructors for: " + throwable.getClass());
-      for(Constructor<?> constructor : throwable.getClass().getDeclaredConstructors())
-      {
-         System.out.println(constructor);
-      }
-   }
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(output.toByteArray()));
+        return (ExceptionProxy) in.readObject();
+    }
 
-   // Simulate org.jboss.weld.exceptions.IllegalArgumentException
-   private static class ExtendedIllegalArgumentException extends IllegalArgumentException
-   {
-      private static final long serialVersionUID = 1L;
+    private void proxy(Throwable throwable) throws Throwable {
+        //printConstructors(throwable);
 
-      public ExtendedIllegalArgumentException(Exception throwable)
-      {
-         super(throwable);
-      }
-   }
-   
-   // simulate javax.enterprise.inject
-   public static class UnsatisfiedResolutionException extends ResolutionException
-   {
-      private static final long serialVersionUID = 5350603312442756709L;
+        throw ExceptionProxy.createForException(throwable).createException();
+    }
 
-      public UnsatisfiedResolutionException()
-      {
-         super();
-      }
+    /**
+     * @param throwable
+     */
+    @SuppressWarnings("unused")
+    private void printConstructors(Throwable throwable) throws Exception {
+        System.out.println("Declared-Constructors for: " + throwable.getClass());
+        for (Constructor<?> constructor : throwable.getClass().getDeclaredConstructors()) {
+            System.out.println(constructor);
+        }
+    }
 
-      public UnsatisfiedResolutionException(String message, Throwable throwable)
-      {
-         super(message, throwable);
-      }
+    // Simulate org.jboss.weld.exceptions.IllegalArgumentException
+    private static class ExtendedIllegalArgumentException extends IllegalArgumentException {
+        private static final long serialVersionUID = 1L;
 
-      public UnsatisfiedResolutionException(String message)
-      {
-         super(message);
-      }
+        public ExtendedIllegalArgumentException(Exception throwable) {
+            super(throwable);
+        }
+    }
 
-      public UnsatisfiedResolutionException(Throwable throwable)
-      {
-         super(throwable);
-      }
-   }
+    // simulate javax.enterprise.inject
+    public static class UnsatisfiedResolutionException extends ResolutionException {
+        private static final long serialVersionUID = 5350603312442756709L;
 
-   public static class ResolutionException extends InjectionException 
-   {
-      private static final long serialVersionUID = -6280627846071966243L;
+        public UnsatisfiedResolutionException() {
+            super();
+        }
 
-      public ResolutionException()
-      {
-         super();
-      }
+        public UnsatisfiedResolutionException(String message, Throwable throwable) {
+            super(message, throwable);
+        }
 
-      public ResolutionException(String message, Throwable cause)
-      {
-         super(message, cause);
-      }
+        public UnsatisfiedResolutionException(String message) {
+            super(message);
+        }
 
-      public ResolutionException(String message)
-      {
-         super(message);
-      }
+        public UnsatisfiedResolutionException(Throwable throwable) {
+            super(throwable);
+        }
+    }
 
-      public ResolutionException(Throwable cause)
-      {
-         super(cause);
-      }
-   }
+    public static class ResolutionException extends InjectionException {
+        private static final long serialVersionUID = -6280627846071966243L;
 
-   public static class InjectionException extends RuntimeException
-   {
-      private static final long serialVersionUID = -2132733164534544788L;
+        public ResolutionException() {
+            super();
+        }
 
-      public InjectionException()
-      {
-      }
-      
-      public InjectionException(String message, Throwable throwable)
-      {
-         super(message, throwable);
-      }
-      
-      public InjectionException(String message)
-      {
-         super(message);
-      }
-      
-      public InjectionException(Throwable throwable)
-      {
-         super(throwable);
-      }
-   }
+        public ResolutionException(String message, Throwable cause) {
+            super(message, cause);
+        }
 
-   public static class NonSerializableException extends RuntimeException
-   {
-      private static final long serialVersionUID = 1L;
+        public ResolutionException(String message) {
+            super(message);
+        }
 
-      @SuppressWarnings("unused")
-      private InputStream input;
+        public ResolutionException(Throwable cause) {
+            super(cause);
+        }
+    }
 
-      public NonSerializableException()
-      {
-         super(new UnsupportedOperationException());
-         input = System.in;
-      }
-   }
+    public static class InjectionException extends RuntimeException {
+        private static final long serialVersionUID = -2132733164534544788L;
 
-   public static class NonDeserializableExtension extends RuntimeException implements Externalizable {
+        public InjectionException() {
+        }
 
-      public NonDeserializableExtension() {
-      }
+        public InjectionException(String message, Throwable throwable) {
+            super(message, throwable);
+        }
 
-      public NonDeserializableExtension(String message) {
-          super(message, new UnsupportedOperationException());
-      }
+        public InjectionException(String message) {
+            super(message);
+        }
 
-      @Override
-      public void writeExternal(ObjectOutput out) throws IOException {
-          out.writeChars(getMessage());
-      }
+        public InjectionException(Throwable throwable) {
+            super(throwable);
+        }
+    }
 
-      @Override
-      public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-          throw new RuntimeException("Could not de-serialize");
-      }
-   }
+    public static class NonSerializableException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        @SuppressWarnings("unused")
+        private InputStream input;
+
+        public NonSerializableException() {
+            super(new UnsupportedOperationException());
+            input = System.in;
+        }
+    }
+
+    public static class NonDeserializableExtension extends RuntimeException implements Externalizable {
+
+        public NonDeserializableExtension() {
+        }
+
+        public NonDeserializableExtension(String message) {
+            super(message, new UnsupportedOperationException());
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeChars(getMessage());
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            throw new RuntimeException("Could not de-serialize");
+        }
+    }
 }

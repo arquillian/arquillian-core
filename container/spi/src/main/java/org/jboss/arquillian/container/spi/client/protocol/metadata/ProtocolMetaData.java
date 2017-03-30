@@ -27,77 +27,62 @@ import java.util.List;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolMetaData
-{
-   private List<Object> contexts = new ArrayList<Object>();
-   
-   public boolean hasContext(Class<?> clazz)
-   {
-      for(Object obj: contexts)
-      {
-         if(clazz.isInstance(obj))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
-   
-   @Deprecated
-   public <T> T getContext(Class<T> clazz)
-   {
-      for(Object obj: contexts)
-      {
-         if(clazz.isInstance(obj))
-         {
-            return clazz.cast(obj);
-         }
-      }
-      return null;
-   }
-   
-   public <T> Collection<T> getContexts(Class<T> clazz)
-   {
-      List<T> filteredContexts = new ArrayList<T>();
-      for(Object obj: contexts)
-      {
-         if(clazz.isInstance(obj))
-         {
-             filteredContexts.add(clazz.cast(obj));
-         }
-      }
-      return filteredContexts;
-   }
+public class ProtocolMetaData {
+    private List<Object> contexts = new ArrayList<Object>();
 
-   public ProtocolMetaData addContext(Object obj)
-   {
-      contexts.add(obj);
-      return this;
-   }
+    public boolean hasContext(Class<?> clazz) {
+        for (Object obj : contexts) {
+            if (clazz.isInstance(obj)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-   /**
-    * @return unmodifiable list of contexts
-    */
-   public List<Object> getContexts() {
-       return Collections.unmodifiableList(contexts);
-   }
+    @Deprecated
+    public <T> T getContext(Class<T> clazz) {
+        for (Object obj : contexts) {
+            if (clazz.isInstance(obj)) {
+                return clazz.cast(obj);
+            }
+        }
+        return null;
+    }
 
-   @Override
-   public String toString()
-   {
-      return "ProtocolMetaData [contexts=" + toString(contexts) + "]";
-   }
-   
-   private String toString(List<Object> contexts) 
-   {
-      StringBuilder sb = new StringBuilder();
-      if(contexts != null)
-      {
-         for(Object obj : contexts)
-         {
-            sb.append('\n').append(obj);
-         }
-      }
-      return sb.toString();
-   }
+    public <T> Collection<T> getContexts(Class<T> clazz) {
+        List<T> filteredContexts = new ArrayList<T>();
+        for (Object obj : contexts) {
+            if (clazz.isInstance(obj)) {
+                filteredContexts.add(clazz.cast(obj));
+            }
+        }
+        return filteredContexts;
+    }
+
+    public ProtocolMetaData addContext(Object obj) {
+        contexts.add(obj);
+        return this;
+    }
+
+    /**
+     * @return unmodifiable list of contexts
+     */
+    public List<Object> getContexts() {
+        return Collections.unmodifiableList(contexts);
+    }
+
+    @Override
+    public String toString() {
+        return "ProtocolMetaData [contexts=" + toString(contexts) + "]";
+    }
+
+    private String toString(List<Object> contexts) {
+        StringBuilder sb = new StringBuilder();
+        if (contexts != null) {
+            for (Object obj : contexts) {
+                sb.append('\n').append(obj);
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -30,43 +30,38 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ApplicationContextImpl extends AbstractContext<String> implements ApplicationContext
-{
-   private static final String APP_CONTEXT_ID = "app";
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return ApplicationScoped.class;
-   }
+public class ApplicationContextImpl extends AbstractContext<String> implements ApplicationContext {
+    private static final String APP_CONTEXT_ID = "app";
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.context.AbstractContext#activate(java.lang.Object)
-    */
-   @Override
-   public void activate()
-   {
-      super.activate(APP_CONTEXT_ID);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.context.AbstractContext#destroy(java.lang.Object)
-    */
-   @Override
-   public void destroy()
-   {
-      super.destroy(APP_CONTEXT_ID);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.impl.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return ApplicationScoped.class;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.context.AbstractContext#activate(java.lang.Object)
+     */
+    @Override
+    public void activate() {
+        super.activate(APP_CONTEXT_ID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.context.AbstractContext#destroy(java.lang.Object)
+     */
+    @Override
+    public void destroy() {
+        super.destroy(APP_CONTEXT_ID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.impl.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }

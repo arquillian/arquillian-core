@@ -24,13 +24,12 @@ import org.jboss.shrinkwrap.api.Archive;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface AuxiliaryArchiveAppender
-{
-   /**
-    * Create a archive containing the needed resources for this extension 
-    * to run in-container.
-    * 
-    * @return A Archive of any type
-    */
-   Archive<?> createAuxiliaryArchive();
+public interface AuxiliaryArchiveAppender {
+    /**
+     * Create a archive containing the needed resources for this extension
+     * to run in-container.
+     *
+     * @return A Archive of any type
+     */
+    Archive<?> createAuxiliaryArchive();
 }

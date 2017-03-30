@@ -45,187 +45,158 @@ import org.testng.xml.XmlTest;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGTestBaseClass
-{
-   public static enum Cycle { BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS, AFTER_SUITE }
+public class TestNGTestBaseClass {
+    public static enum Cycle
 
-   /*
-    * Setup / Clear the static callback info.
-    */
-   private static Map<Cycle, Integer> callbackCount = new HashMap<Cycle, Integer>();
-   private static Map<Cycle, Throwable> callbackException = new HashMap<Cycle, Throwable>();
-   static
-   {
-      for(Cycle tmp : Cycle.values())
-      {
-         callbackCount.put(tmp, 0);
-      }
-   }
+    {
+        BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
+    }
 
-   public static void throwException(Cycle cycle, Throwable exception)
-   {
-      callbackException.put(cycle, exception);
-   }
+    /*
+     * Setup / Clear the static callback info.
+     */
+    private static Map<Cycle, Integer> callbackCount = new HashMap<Cycle, Integer>();
+    private static Map<Cycle, Throwable> callbackException = new HashMap<Cycle, Throwable>();
 
-   public static void wasCalled(Cycle cycle) throws Throwable
-   {
-      System.out.println("called: " + cycle);
-      if(callbackCount.containsKey(cycle))
-      {
-         callbackCount.put(cycle, callbackCount.get(cycle) + 1);
-      }
-      else
-      {
-         throw new RuntimeException("Unknown callback: " + cycle);
-      }
-      if(callbackException.containsKey(cycle))
-      {
-         throw callbackException.remove(cycle);
-      }
-   }
+    static {
+        for (Cycle tmp : Cycle.values()) {
+            callbackCount.put(tmp, 0);
+        }
+    }
 
-   @After
-   public void clearCallbacks()
-   {
-      callbackCount.clear();
-      for(Cycle tmp : Cycle.values())
-      {
-         callbackCount.put(tmp, 0);
-      }
-      callbackException.clear();
-   }
+    public static void throwException(Cycle cycle, Throwable exception) {
+        callbackException.put(cycle, exception);
+    }
 
-   /*
-    * Mockito Answers for invoking the LifeCycle callbacks.
-    */
-   public static class ExecuteLifecycle implements Answer<Object>
-   {
-      private Cycle cycle;
+    public static void wasCalled(Cycle cycle) throws Throwable {
+        System.out.println("called: " + cycle);
+        if (callbackCount.containsKey(cycle)) {
+            callbackCount.put(cycle, callbackCount.get(cycle) + 1);
+        } else {
+            throw new RuntimeException("Unknown callback: " + cycle);
+        }
+        if (callbackException.containsKey(cycle)) {
+            throw callbackException.remove(cycle);
+        }
+    }
 
-      public ExecuteLifecycle(Cycle cycle)
-      {
-         this.cycle = cycle;
-      }
+    @After
+    public void clearCallbacks() {
+        callbackCount.clear();
+        for (Cycle tmp : Cycle.values()) {
+            callbackCount.put(tmp, 0);
+        }
+        callbackException.clear();
+    }
 
-      @Override
-      public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable
-      {
-         wasCalled(cycle);
-         for(Object argument : invocation.getArguments())
-         {
-            if(argument instanceof LifecycleMethodExecutor)
-            {
-               ((LifecycleMethodExecutor)argument).invoke();
+    /*
+     * Mockito Answers for invoking the LifeCycle callbacks.
+     */
+    public static class ExecuteLifecycle implements Answer<Object> {
+        private Cycle cycle;
+
+        public ExecuteLifecycle(Cycle cycle) {
+            this.cycle = cycle;
+        }
+
+        @Override
+        public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable {
+            wasCalled(cycle);
+            for (Object argument : invocation.getArguments()) {
+                if (argument instanceof LifecycleMethodExecutor) {
+                    ((LifecycleMethodExecutor) argument).invoke();
+                } else if (argument instanceof TestMethodExecutor) {
+                    ((TestMethodExecutor) argument).invoke();
+                }
             }
-            else if(argument instanceof TestMethodExecutor)
-            {
-               ((TestMethodExecutor)argument).invoke();
-            }
-         }
-         return null;
-      }
-   }
+            return null;
+        }
+    }
 
-   public static class TestExecuteLifecycle extends ExecuteLifecycle
-   {
-      private TestResult result;
+    public static class TestExecuteLifecycle extends ExecuteLifecycle {
+        private TestResult result;
 
-      public TestExecuteLifecycle(TestResult result)
-      {
-         super(Cycle.TEST);
-         this.result = result;
-      }
+        public TestExecuteLifecycle(TestResult result) {
+            super(Cycle.TEST);
+            this.result = result;
+        }
 
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable
-      {
-         super.answer(invocation);
-         return result;
-      }
-   }
+        @Override
+        public Object answer(InvocationOnMock invocation) throws Throwable {
+            super.answer(invocation);
+            return result;
+        }
+    }
 
-   /*
-    * Internal Helpers
-    */
-   protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception
-   {
-      doAnswer(new ExecuteLifecycle(Cycle.BEFORE_SUITE)).when(adaptor).beforeSuite();
-      doAnswer(new ExecuteLifecycle(Cycle.AFTER_SUITE)).when(adaptor).afterSuite();
-      doAnswer(new ExecuteLifecycle(Cycle.BEFORE_CLASS)).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle(Cycle.AFTER_CLASS)).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle(Cycle.BEFORE)).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle(Cycle.AFTER)).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor).test(any(TestMethodExecutor.class));
-   }
+    /*
+     * Internal Helpers
+     */
+    protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception {
+        doAnswer(new ExecuteLifecycle(Cycle.BEFORE_SUITE)).when(adaptor).beforeSuite();
+        doAnswer(new ExecuteLifecycle(Cycle.AFTER_SUITE)).when(adaptor).afterSuite();
+        doAnswer(new ExecuteLifecycle(Cycle.BEFORE_CLASS)).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle(Cycle.AFTER_CLASS)).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle(Cycle.BEFORE)).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle(Cycle.AFTER)).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor).test(any(TestMethodExecutor.class));
+    }
 
-   public void assertCycle(int count, Cycle... cycles)
-   {
-      for(Cycle cycle : cycles)
-      {
-         Assert.assertEquals("Verify " + cycle +  " called N times",
-               count, (int)callbackCount.get(cycle));
-      }
-   }
+    public void assertCycle(int count, Cycle... cycles) {
+        for (Cycle cycle : cycles) {
+            Assert.assertEquals("Verify " + cycle + " called N times",
+                    count, (int) callbackCount.get(cycle));
+        }
+    }
 
-   protected TestListenerAdapter run(TestRunnerAdaptor adaptor, Class<?>... classes)
-      throws Exception
-   {
-      return run(null, adaptor, classes);
-   }
+    protected TestListenerAdapter run(TestRunnerAdaptor adaptor, Class<?>... classes)
+            throws Exception {
+        return run(null, adaptor, classes);
+    }
 
-   protected TestListenerAdapter run(String[] groups, TestRunnerAdaptor adaptor, Class<?>... classes)
-      throws Exception
-   {
-      try
-      {
-         setAdaptor(adaptor);
+    protected TestListenerAdapter run(String[] groups, TestRunnerAdaptor adaptor, Class<?>... classes)
+            throws Exception {
+        try {
+            setAdaptor(adaptor);
 
-         TestListenerAdapter listener = new TestListenerAdapter();
-         TestNG runner = new TestNG(false);
-         runner.addListener(listener);
-         runner.setXmlSuites(Collections.singletonList(createSuite(groups, classes)));
+            TestListenerAdapter listener = new TestListenerAdapter();
+            TestNG runner = new TestNG(false);
+            runner.addListener(listener);
+            runner.setXmlSuites(Collections.singletonList(createSuite(groups, classes)));
 
-         runner.run();
-         return listener;
-      }
-      finally
-      {
-         setAdaptor(null);
-      }
-   }
+            runner.run();
+            return listener;
+        } finally {
+            setAdaptor(null);
+        }
+    }
 
-   protected boolean wasSuccessful(TestListenerAdapter adapter)
-   {
-      return adapter.getFailedTests().size() == 0 && adapter.getSkippedTests().size() == 0;
-   }
+    protected boolean wasSuccessful(TestListenerAdapter adapter) {
+        return adapter.getFailedTests().size() == 0 && adapter.getSkippedTests().size() == 0;
+    }
 
-   private XmlSuite createSuite(String[] groups, Class<?>... classes)
-   {
-      XmlSuite suite = new XmlSuite();
-      suite.setName("Arquillian - TEST");
+    private XmlSuite createSuite(String[] groups, Class<?>... classes) {
+        XmlSuite suite = new XmlSuite();
+        suite.setName("Arquillian - TEST");
 
-      suite.setConfigFailurePolicy("continue");
-      XmlTest test = new XmlTest(suite);
-      if(groups != null)
-      {
-         test.setIncludedGroups(Arrays.asList(groups));
-      }
-      test.setName("Arquillian - TEST");
-      List<XmlClass> testClasses = new ArrayList<XmlClass>();
-      for(Class<?> clazz : classes)
-      {
-         XmlClass testClass = new XmlClass(clazz);
-         testClasses.add(testClass);
-      }
-      test.setXmlClasses(testClasses);
-      return suite;
-   }
+        suite.setConfigFailurePolicy("continue");
+        XmlTest test = new XmlTest(suite);
+        if (groups != null) {
+            test.setIncludedGroups(Arrays.asList(groups));
+        }
+        test.setName("Arquillian - TEST");
+        List<XmlClass> testClasses = new ArrayList<XmlClass>();
+        for (Class<?> clazz : classes) {
+            XmlClass testClass = new XmlClass(clazz);
+            testClasses.add(testClass);
+        }
+        test.setXmlClasses(testClasses);
+        return suite;
+    }
 
-   // force set the TestRunnerAdaptor to use
-   private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception
-   {
-      Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
-      method.setAccessible(true);
-      method.invoke(null, adaptor);
-   }
+    // force set the TestRunnerAdaptor to use
+    private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception {
+        Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
+        method.setAccessible(true);
+        method.invoke(null, adaptor);
+    }
 }

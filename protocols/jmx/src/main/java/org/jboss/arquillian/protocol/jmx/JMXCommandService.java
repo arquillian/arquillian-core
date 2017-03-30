@@ -25,7 +25,7 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
 
 /**
  * JMXCommandService
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -38,11 +38,11 @@ public class JMXCommandService implements CommandService {
         MBeanServer server = JMXTestRunner.localMBeanServer;
         try {
             ObjectName runner = new ObjectName(JMXTestRunner.OBJECT_NAME);
-            server.invoke(runner, "send", new Object[] { command }, new String[] { Command.class.getName() });
+            server.invoke(runner, "send", new Object[]{command}, new String[]{Command.class.getName()});
 
             long timeoutTime = System.currentTimeMillis() + TIMEOUT;
             while (timeoutTime > System.currentTimeMillis()) {
-                Command<?> newCommand = (Command<?>) server.invoke(runner, "receive", new Object[] {}, new String[] {});
+                Command<?> newCommand = (Command<?>) server.invoke(runner, "receive", new Object[]{}, new String[]{});
                 if (newCommand != null) {
                     if (newCommand.getThrowable() != null) {
                         throw new RuntimeException(newCommand.getThrowable());

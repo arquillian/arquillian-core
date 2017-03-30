@@ -32,41 +32,36 @@ import org.jboss.arquillian.container.test.spi.command.CommandCallback;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class BaseServletProtocol implements Protocol<ServletProtocolConfiguration>
-{
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
-    */
-   @Override
-   public Class<ServletProtocolConfiguration> getProtocolConfigurationClass()
-   {
-      return ServletProtocolConfiguration.class;
-   }
+public abstract class BaseServletProtocol implements Protocol<ServletProtocolConfiguration> {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
+     */
+    @Override
+    public Class<ServletProtocolConfiguration> getProtocolConfigurationClass() {
+        return ServletProtocolConfiguration.class;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getDescription()
-    */
-   @Override
-   public ProtocolDescription getDescription()
-   {
-      return new ProtocolDescription(getProtcolName());
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getDescription()
+     */
+    @Override
+    public ProtocolDescription getDescription() {
+        return new ProtocolDescription(getProtcolName());
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getExecutor(org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration, org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData)
-    */
-   @Override
-   public ServletMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback)
-   {
-      Collection<HTTPContext> contexts = metaData.getContexts(HTTPContext.class);
-      if(contexts.size() == 0)
-      {
-          throw new IllegalArgumentException(
-                   "No " + HTTPContext.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
-                   "Servlet protocol can not be used");
-      }
-      return new ServletMethodExecutor(protocolConfiguration, contexts, callback);
-   }
-   
-   protected abstract String getProtcolName();
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getExecutor(org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration, org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData)
+     */
+    @Override
+    public ServletMethodExecutor getExecutor(ServletProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback) {
+        Collection<HTTPContext> contexts = metaData.getContexts(HTTPContext.class);
+        if (contexts.size() == 0) {
+            throw new IllegalArgumentException(
+                    "No " + HTTPContext.class.getName() + " found in " + ProtocolMetaData.class.getName() + ". " +
+                            "Servlet protocol can not be used");
+        }
+        return new ServletMethodExecutor(protocolConfiguration, contexts, callback);
+    }
+
+    protected abstract String getProtcolName();
 }

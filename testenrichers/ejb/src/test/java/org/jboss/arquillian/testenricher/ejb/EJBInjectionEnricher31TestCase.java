@@ -26,63 +26,57 @@ import org.junit.Test;
 
 /**
  * Tests for {@link EJBInjectionEnricher}.
- *
+ * <p>
  * These tests doesn't use embedded container, as they're just simple unit tests.
  *
  * @author PedroKowalski
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- *
  */
-public class EJBInjectionEnricher31TestCase extends EJBInjectionEnricherBase
-{
+public class EJBInjectionEnricher31TestCase extends EJBInjectionEnricherBase {
 
-   @Test
-   public void testResolveJNDINameLookupSpecified()
-   {
-      cut.enrich(new EJBEnrichedLookupClass());
+    @Test
+    public void testResolveJNDINameLookupSpecified() {
+        cut.enrich(new EJBEnrichedLookupClass());
 
-      String expected = EJBEnrichedLookupClass.class.getDeclaredFields()[0].getAnnotation(EJB.class).lookup();
+        String expected = EJBEnrichedLookupClass.class.getDeclaredFields()[0].getAnnotation(EJB.class).lookup();
 
       /*
        * When 'lookup' is set, the only JNDI name to check is the exact value specified in the annotation.
        */
-      assertThat(resolvedJndiName, is(notNullValue()));
-      assertThat(resolvedJndiName.length, is(1));
-      assertThat(resolvedJndiName[0], is(expected));
-   }
+        assertThat(resolvedJndiName, is(notNullValue()));
+        assertThat(resolvedJndiName.length, is(1));
+        assertThat(resolvedJndiName[0], is(expected));
+    }
 
-   @Test(expected = IllegalStateException.class)
-   public void shouldThrowExceptionOnMappedNameAndLookup() {
-      cut.enrich(new EJBInvalidMappedNameAndLookupClass());
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnMappedNameAndLookup() {
+        cut.enrich(new EJBInvalidMappedNameAndLookupClass());
 
-      assertThat(caughtResolveException, notNullValue());
-      throw caughtResolveException;
-   }
+        assertThat(caughtResolveException, notNullValue());
+        throw caughtResolveException;
+    }
 
-   @Test(expected = IllegalStateException.class)
-   public void shouldThrowExceptionOnBeanNameAndLookup() {
-      cut.enrich(new EJBInvalidBeanNameAndLookupClass());
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnBeanNameAndLookup() {
+        cut.enrich(new EJBInvalidBeanNameAndLookupClass());
 
-      assertThat(caughtResolveException, notNullValue());
-      throw caughtResolveException;
-   }
+        assertThat(caughtResolveException, notNullValue());
+        throw caughtResolveException;
+    }
 
-   public static final class EJBEnrichedLookupClass
-   {
-      @EJB(lookup = "java:global/org/arquillian/Test")
-      ExemplaryEJB lookupInjection;
-   }
+    public static final class EJBEnrichedLookupClass {
+        @EJB(lookup = "java:global/org/arquillian/Test")
+        ExemplaryEJB lookupInjection;
+    }
 
-   public static final class EJBInvalidMappedNameAndLookupClass
-   {
-      @EJB(mappedName= "any", lookup = "any")
-      ExemplaryEJB lookupInjection;
-   }
+    public static final class EJBInvalidMappedNameAndLookupClass {
+        @EJB(mappedName = "any", lookup = "any")
+        ExemplaryEJB lookupInjection;
+    }
 
-   public static final class EJBInvalidBeanNameAndLookupClass
-   {
-      @EJB(beanName= "any", lookup = "any")
-      ExemplaryEJB lookupInjection;
-   }
+    public static final class EJBInvalidBeanNameAndLookupClass {
+        @EJB(beanName = "any", lookup = "any")
+        ExemplaryEJB lookupInjection;
+    }
 
 }

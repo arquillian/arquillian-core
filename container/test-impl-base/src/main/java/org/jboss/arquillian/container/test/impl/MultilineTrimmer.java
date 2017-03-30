@@ -16,18 +16,14 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
-class MultilineTrimmer
-{
-   static String trim(String toTrim)
-   {
-      final StringBuilder builder = new StringBuilder(toTrim.length());
-      for (String token : toTrim.split("\\s+"))
-      {
-         if (token != null && !"".equals(token.trim()))
-         {
-            builder.append(token.trim()).append(' ');
-         }
-      }
-      return builder.toString().trim();
-   }
+class MultilineTrimmer {
+    static String trim(String toTrim) {
+        final StringBuilder builder = new StringBuilder(toTrim.length());
+        for (String token : toTrim.split("\\s+")) {
+            if (token != null && !"".equals(token.trim())) {
+                builder.append(token.trim()).append(' ');
+            }
+        }
+        return builder.toString().trim();
+    }
 }

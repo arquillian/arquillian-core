@@ -30,43 +30,38 @@ import org.jboss.arquillian.test.spi.context.SuiteContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SuiteContextImpl extends AbstractContext<String> implements SuiteContext
-{
-   private static final String SUITE_CONTEXT_ID = "suite";
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return SuiteScoped.class;
-   }
-   
-   /**
-    * There can only one Suite active, so we hard code the id to "Suite".
-    */
-   @Override
-   public void activate()
-   {
-      super.activate(SUITE_CONTEXT_ID);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.impl.context.AbstractContext#destroy(java.lang.Object)
-    */
-   @Override
-   public void destroy()
-   {
-      super.destroy(SUITE_CONTEXT_ID);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+public class SuiteContextImpl extends AbstractContext<String> implements SuiteContext {
+    private static final String SUITE_CONTEXT_ID = "suite";
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return SuiteScoped.class;
+    }
+
+    /**
+     * There can only one Suite active, so we hard code the id to "Suite".
+     */
+    @Override
+    public void activate() {
+        super.activate(SUITE_CONTEXT_ID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.impl.context.AbstractContext#destroy(java.lang.Object)
+     */
+    @Override
+    public void destroy() {
+        super.destroy(SUITE_CONTEXT_ID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }

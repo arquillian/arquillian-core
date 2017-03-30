@@ -21,22 +21,21 @@ import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * RemoteMethodExecutor
- * 
+ * <p>
  * A Generic way to execute a in-container/remotely deployed test case.
- * 
- * Implementations should handle the protocol used for communication 
+ * <p>
+ * Implementations should handle the protocol used for communication
  * ie http/servlet, jmx, rmi etc.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerMethodExecutor
-{
-   /**
-    * Invoke a test method deployed in the container.
-    * 
-    * @param testMethodExecutor 
-    * @return
-    */
-   TestResult invoke(TestMethodExecutor testMethodExecutor);
+public interface ContainerMethodExecutor {
+    /**
+     * Invoke a test method deployed in the container.
+     *
+     * @param testMethodExecutor
+     * @return
+     */
+    TestResult invoke(TestMethodExecutor testMethodExecutor);
 }

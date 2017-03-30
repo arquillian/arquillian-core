@@ -33,28 +33,23 @@ import org.jboss.arquillian.test.spi.event.suite.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClientTestExecuter
-{
-   @Inject
-   private Event<ExecutionEvent> executionEvent;
-   
-   @Inject
-   private Instance<Deployment> deployment;
+public class ClientTestExecuter {
+    @Inject
+    private Event<ExecutionEvent> executionEvent;
 
-   public void execute(@Observes Test event) throws Exception
-   {
-      boolean runAsClient = RunModeUtils.isRunAsClientAndCheck(
-          this.deployment.get(),
-          event.getTestClass(),
-          event.getTestMethod());
+    @Inject
+    private Instance<Deployment> deployment;
 
-      if(runAsClient) 
-      {
-         executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
-      }
-      else
-      {
-         executionEvent.fire(new RemoteExecutionEvent(event.getTestMethodExecutor()));
-      }
-   }
+    public void execute(@Observes Test event) throws Exception {
+        boolean runAsClient = RunModeUtils.isRunAsClientAndCheck(
+                this.deployment.get(),
+                event.getTestClass(),
+                event.getTestMethod());
+
+        if (runAsClient) {
+            executionEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
+        } else {
+            executionEvent.fire(new RemoteExecutionEvent(event.getTestMethodExecutor()));
+        }
+    }
 }

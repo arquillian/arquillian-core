@@ -30,57 +30,48 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletURIHandler
-{
+public class ServletURIHandler {
 
-   private ServletProtocolConfiguration config;
+    private ServletProtocolConfiguration config;
 
-   private Collection<HTTPContext> contexts;
+    private Collection<HTTPContext> contexts;
 
-   /**
-    * 
-    */
-   public ServletURIHandler(ServletProtocolConfiguration config, Collection<HTTPContext> contexts)
-   {
-      if (config == null)
-      {
-         throw new IllegalArgumentException("ServletProtocolConfiguration must be specified");
-      }
-      if (contexts == null || contexts.size() == 0)
-      {
-         throw new IllegalArgumentException("HTTPContext must be specified");
-      }
-      this.config = config;
-      this.contexts = contexts;
-   }
+    /**
+     *
+     */
+    public ServletURIHandler(ServletProtocolConfiguration config, Collection<HTTPContext> contexts) {
+        if (config == null) {
+            throw new IllegalArgumentException("ServletProtocolConfiguration must be specified");
+        }
+        if (contexts == null || contexts.size() == 0) {
+            throw new IllegalArgumentException("HTTPContext must be specified");
+        }
+        this.config = config;
+        this.contexts = contexts;
+    }
 
-   public URI locateTestServlet(Method method)
-   {
-      HTTPContext context = locateHTTPContext(method);
-      return ServletUtil.determineBaseURI(
-               config, 
-               context, 
-               ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
-   }
+    public URI locateTestServlet(Method method) {
+        HTTPContext context = locateHTTPContext(method);
+        return ServletUtil.determineBaseURI(
+                config,
+                context,
+                ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME);
+    }
 
-   protected HTTPContext locateHTTPContext(Method method)
-   {
-      TargetsContainer targetContainer = method.getAnnotation(TargetsContainer.class);
-      if (targetContainer != null)
-      {
-         String targetName = targetContainer.value();
+    protected HTTPContext locateHTTPContext(Method method) {
+        TargetsContainer targetContainer = method.getAnnotation(TargetsContainer.class);
+        if (targetContainer != null) {
+            String targetName = targetContainer.value();
 
-         for (HTTPContext context : contexts)
-         {
-            if (targetName.equals(context.getName()))
-            {
-               return context;
+            for (HTTPContext context : contexts) {
+                if (targetName.equals(context.getName())) {
+                    return context;
+                }
             }
-         }
-         throw new IllegalArgumentException("Could not determin HTTPContext from ProtocolMetadata for target: "
-               + targetName + ". Verify that the given target name in @" + TargetsContainer.class.getSimpleName()
-               + " match a name returned by the deployment container");
-      }
-      return contexts.toArray(new HTTPContext[]{})[0];
-   }
+            throw new IllegalArgumentException("Could not determin HTTPContext from ProtocolMetadata for target: "
+                    + targetName + ". Verify that the given target name in @" + TargetsContainer.class.getSimpleName()
+                    + " match a name returned by the deployment container");
+        }
+        return contexts.toArray(new HTTPContext[]{})[0];
+    }
 }

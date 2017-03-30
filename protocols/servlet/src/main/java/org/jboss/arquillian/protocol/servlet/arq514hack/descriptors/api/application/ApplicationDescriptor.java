@@ -20,31 +20,30 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * DSL Grammar to construct / alter Application XML Descriptors
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ApplicationDescriptor extends Descriptor
-{
+public interface ApplicationDescriptor extends Descriptor {
 
-   ApplicationDescriptor version(String version);
+    ApplicationDescriptor version(String version);
 
-   ApplicationDescriptor displayName(String displayName);
+    ApplicationDescriptor displayName(String displayName);
 
-   ApplicationDescriptor description(String description);
+    ApplicationDescriptor description(String description);
 
-   ApplicationDescriptor libraryDirectory(String libraryDirectory);
+    ApplicationDescriptor libraryDirectory(String libraryDirectory);
 
-   ApplicationDescriptor webModule(String uri, String contextRoot);
+    ApplicationDescriptor webModule(String uri, String contextRoot);
 
-   ApplicationDescriptor ejbModule(String uri);
+    ApplicationDescriptor ejbModule(String uri);
 
-   ApplicationDescriptor javaModule(String uri);
+    ApplicationDescriptor javaModule(String uri);
 
-   ApplicationDescriptor connectorModule(String uri);
+    ApplicationDescriptor connectorModule(String uri);
 
-   ApplicationDescriptor securityRole(String roleName);
+    ApplicationDescriptor securityRole(String roleName);
 
-   ApplicationDescriptor securityRole(String roleName, String description);
+    ApplicationDescriptor securityRole(String roleName, String description);
 
 }

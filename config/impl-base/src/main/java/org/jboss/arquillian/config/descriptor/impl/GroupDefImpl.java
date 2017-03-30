@@ -29,87 +29,77 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef
-{
-   private Node group;
-   
-   public GroupDefImpl(String descirptorName, Node model, Node group)
-   {
-      super(descirptorName, model);
-      this.group = group;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - ProtocolDescriptor --------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef {
+    private Node group;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#setName(java.lang.String)
-    */
-   @Override
-   public GroupDef setGroupName(String name)
-   {
-      group.attribute("qualifier", name);
-      return this;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupName()
-    */
-   @Override
-   public String getGroupName()
-   {
-      return group.getAttribute("qualifier");
-   }
+    public GroupDefImpl(String descirptorName, Node model, Node group) {
+        super(descirptorName, model);
+        this.group = group;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#setGroupDefault()
-    */
-   @Override
-   public GroupDef setGroupDefault()
-   {
-      group.attribute("default", true);
-      return this;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#isGroupDefault()
-    */
-   @Override
-   public boolean isGroupDefault()
-   {
-      return Boolean.parseBoolean(group.getAttribute("default"));
-   }
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - ProtocolDescriptor --------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
-    */
-   @Override
-   public ContainerDef container(String name)
-   {
-      return new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.getOrCreate("container@qualifier=" + name));
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.GroupDef#setName(java.lang.String)
+     */
+    @Override
+    public GroupDef setGroupName(String name) {
+        group.attribute("qualifier", name);
+        return this;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupContainers()
-    */
-   @Override
-   public List<ContainerDef> getGroupContainers()
-   {
-      List<ContainerDef> containers = new ArrayList<ContainerDef>();
-      for(Node container : group.get("container"))
-      {
-         containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
-      }
-      return containers;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupName()
+     */
+    @Override
+    public String getGroupName() {
+        return group.getAttribute("qualifier");
+    }
 
-   /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
-   @Override
-   public String toString()
-   {
-      return group.toString(true);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.config.descriptor.api.GroupDef#setGroupDefault()
+     */
+    @Override
+    public GroupDef setGroupDefault() {
+        group.attribute("default", true);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.config.descriptor.api.GroupDef#isGroupDefault()
+     */
+    @Override
+    public boolean isGroupDefault() {
+        return Boolean.parseBoolean(group.getAttribute("default"));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
+     */
+    @Override
+    public ContainerDef container(String name) {
+        return new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, group.getOrCreate("container@qualifier=" + name));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupContainers()
+     */
+    @Override
+    public List<ContainerDef> getGroupContainers() {
+        List<ContainerDef> containers = new ArrayList<ContainerDef>();
+        for (Node container : group.get("container")) {
+            containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
+        }
+        return containers;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return group.toString(true);
+    }
 }

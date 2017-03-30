@@ -25,18 +25,15 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * An implementation of MethodRule
- * 
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class TestingMethodRule implements MethodRule
-{
+public class TestingMethodRule implements MethodRule {
     @ArquillianResource
     private ResourceStub ruleResources;
 
     @Override
-    public Statement apply(Statement base, FrameworkMethod method, Object target)
-    {
+    public Statement apply(Statement base, FrameworkMethod method, Object target) {
         assertNotNull(ruleResources);
         return new TestingStatement(base);
     }

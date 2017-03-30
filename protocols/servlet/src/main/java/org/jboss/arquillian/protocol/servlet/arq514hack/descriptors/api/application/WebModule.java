@@ -23,15 +23,13 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.applica
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public interface WebModule
-{
-   String getUri();
+public interface WebModule {
+    String getUri();
 
-   String getContextRoot();
+    String getContextRoot();
 
-   void setUri(String uri);
+    void setUri(String uri);
 
-   void setContextRoot(String contextRoot);
+    void setContextRoot(String contextRoot);
 }

@@ -24,15 +24,12 @@ package org.jboss.arquillian.test.spi;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface LifecycleMethodExecutor
-{
-   public static final LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor()
-   {
-      public void invoke() throws Throwable
-      {
-      }
-   };
-   
-   void invoke() throws Throwable;
+public interface LifecycleMethodExecutor {
+    public static final LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor() {
+        public void invoke() throws Throwable {
+        }
+    };
+
+    void invoke() throws Throwable;
 
 }

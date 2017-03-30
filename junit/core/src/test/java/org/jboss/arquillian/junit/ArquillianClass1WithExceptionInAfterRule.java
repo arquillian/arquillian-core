@@ -34,49 +34,43 @@ import org.junit.runners.model.Statement;
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithExceptionInAfterRule
-{
-   @Rule
-   public MethodRule rule = new MethodRule() {
-      @Override
-      public Statement apply(final Statement base, FrameworkMethod method, Object target) {
-         return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                base.evaluate();
-                throw new RuntimeException("AfterRuleException");
-            }
-        };
-      }
-   };
+public class ArquillianClass1WithExceptionInAfterRule {
+    @Rule
+    public MethodRule rule = new MethodRule() {
+        @Override
+        public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    base.evaluate();
+                    throw new RuntimeException("AfterRuleException");
+                }
+            };
+        }
+    };
 
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
 
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-   }
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+    }
 }

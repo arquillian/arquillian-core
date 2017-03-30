@@ -32,16 +32,15 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerDeployerCreator
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<Deployer> deployer;
-   
-   @Inject 
-   private Instance<Injector> injector;
+public class ContainerDeployerCreator {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<Deployer> deployer;
 
-   public void createClientSideDeployer(@Observes BeforeSuite event)
-   {
-      deployer.set(injector.get().inject(new ContainerDeployer()));
-   }
+    @Inject
+    private Instance<Injector> injector;
+
+    public void createClientSideDeployer(@Observes BeforeSuite event) {
+        deployer.set(injector.get().inject(new ContainerDeployer()));
+    }
 }

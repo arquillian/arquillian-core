@@ -29,33 +29,28 @@ import java.util.Map;
  * properties which should be overridden in the existing Arquillian
  * configuration. It holds a map of properties that can be retrieved via
  * {@link Config#map()} and the results should be passed e.g. to
- * {@link ContainerController#start(String, Map)} 
- * 
+ * {@link ContainerController#start(String, Map)}
+ *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class Config
-{
-   private Map<String, String> props;
+public class Config {
+    private Map<String, String> props;
 
-   public Config()
-   {
-      this.props = new HashMap<String, String>();
-   }
+    public Config() {
+        this.props = new HashMap<String, String>();
+    }
 
-   public Map<String, String> getProperties()
-   {
-      return props;
-   }
+    public Map<String, String> getProperties() {
+        return props;
+    }
 
-   public Config add(String name, String value)
-   {
-      props.put(name, value);
-      return this;
-   }
+    public Config add(String name, String value) {
+        props.put(name, value);
+        return this;
+    }
 
-   public Map<String, String> map()
-   {
-      return props;
-   }
+    public Map<String, String> map() {
+        return props;
+    }
 }

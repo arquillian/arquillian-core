@@ -33,33 +33,29 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerURLResourceProvider implements ResourceProvider
-{
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
+public class ContainerURLResourceProvider implements ResourceProvider {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   @Override
-   public boolean canProvide(Class<?> type) {
-      return type.isAssignableFrom(URL.class);
-   }
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(URL.class);
+    }
 
-   @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
-      return getCommandService().execute(new RemoteResourceCommand(URL.class, resource, qualifiers));
-   }
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return getCommandService().execute(new RemoteResourceCommand(URL.class, resource, qualifiers));
+    }
 
-   protected CommandService getCommandService()
-   {
-      ServiceLoader loader = serviceLoader.get();
-      if(loader == null)
-      {
-         throw new IllegalStateException("No " + ServiceLoader.class.getName() + " found in context");
-      }
-      CommandService service = loader.onlyOne(CommandService.class);
-      if(service == null)
-      {
-         throw new IllegalStateException("No " + CommandService.class.getName() + " found in context");
-      }
-      return service;
-   }
+    protected CommandService getCommandService() {
+        ServiceLoader loader = serviceLoader.get();
+        if (loader == null) {
+            throw new IllegalStateException("No " + ServiceLoader.class.getName() + " found in context");
+        }
+        CommandService service = loader.onlyOne(CommandService.class);
+        if (service == null) {
+            throw new IllegalStateException("No " + CommandService.class.getName() + " found in context");
+        }
+        return service;
+    }
 }

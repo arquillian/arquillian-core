@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.testenricher.cdi.beans;
 
-public class Cat
-{
+public class Cat {
 
 }

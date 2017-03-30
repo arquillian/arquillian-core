@@ -25,9 +25,8 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ExecutionEvent extends Event
-{
+public interface ExecutionEvent extends Event {
 
-   TestMethodExecutor getExecutor();
-   
+    TestMethodExecutor getExecutor();
+
 }

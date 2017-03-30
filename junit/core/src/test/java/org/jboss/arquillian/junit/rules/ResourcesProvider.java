@@ -23,21 +23,18 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * Provides to test class an instance of the class {@link ResourceStub}.
- * 
+ *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class ResourcesProvider implements ResourceProvider
-{
+public class ResourcesProvider implements ResourceProvider {
 
     @Override
-    public boolean canProvide(Class<?> type)
-    {
+    public boolean canProvide(Class<?> type) {
         return type.equals(ResourceStub.class);
     }
 
     @Override
-    public Object lookup(ArquillianResource resource, Annotation... qualifiers)
-    {
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
         return new ResourceStub();
     }
 }

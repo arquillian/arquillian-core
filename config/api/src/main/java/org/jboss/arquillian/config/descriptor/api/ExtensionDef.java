@@ -24,13 +24,12 @@ import java.util.Map;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ExtensionDef extends ArquillianDescriptor
-{
-   String getExtensionName();
-   
-   ExtensionDef setExtensionName(String name);
-   
-   ExtensionDef property(String name, String value);
-   
-   Map<String, String> getExtensionProperties();   
+public interface ExtensionDef extends ArquillianDescriptor {
+    String getExtensionName();
+
+    ExtensionDef setExtensionName(String name);
+
+    ExtensionDef property(String name, String value);
+
+    Map<String, String> getExtensionProperties();
 }

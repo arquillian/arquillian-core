@@ -28,90 +28,75 @@ import org.junit.Test;
 
 /**
  * TestCase to ensure a nested observes Exception is only handled once within the call chain.
- * 
+ * <p>
  * - TestEventFire
- *   - TestExceptionThrower
- *     - throws Exception
- *       - TestExceptionHandler
- *         - re throw
- *         
+ * - TestExceptionThrower
+ * - throws Exception
+ * - TestExceptionHandler
+ * - re throw
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExceptionHandlingTestCase extends AbstractManagerTestBase
-{
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(TestEventFire.class);
-      extensions.add(TestExceptionThrower.class);
-      extensions.add(TestExceptionHandler.class);
-   }
-   
-   @Test
-   public void shouldOnlyFireSameExceptionOnce() throws Exception
-   {
-      try
-      {
-         fire(new Double(0.0));
-      }
-      catch (Exception e) 
-      {
-         if(!(e instanceof TestException))
-         {
-            Assert.fail("Wrong Exception thrown " + e);
-         }
-      }
-      
-      Assert.assertEquals(new Integer(1), TestEventFire.called);
-      Assert.assertEquals(new Integer(1), TestExceptionThrower.called);
-      Assert.assertEquals(new Integer(1), TestExceptionHandler.called);
-   }
-   
-   public static class TestEventFire 
-   {
-      public static Integer called = 0;
-      
-      @Inject
-      private Event<Integer> integer;
-      
-      public void handle(@Observes Double event) throws Exception
-      {
-         called++;
-         integer.fire(new Integer(10));
-      }
-   }
-   
-   public static class TestExceptionThrower
-   {
-      public static Integer called = 0;
-      
-      public void handle(@Observes Integer event) throws Exception
-      {
-         called++;
-         throw new TestException("_TEST_");
-      }
-   }
-   
-   public static class TestExceptionHandler
-   {
-      public static Integer called = 0;
-      
-      public void handle(@Observes TestException event) throws Exception
-      {
-         called++;
-         // Handles exception but re-throws it to specify it's a IllegalException
-         throw event;
-      }
-   }
-   
-   public static class TestException extends Exception
-   {
-      private static final long serialVersionUID = 1L;
+public class ExceptionHandlingTestCase extends AbstractManagerTestBase {
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(TestEventFire.class);
+        extensions.add(TestExceptionThrower.class);
+        extensions.add(TestExceptionHandler.class);
+    }
 
-      public TestException(String message)
-      {
-         super(message);
-      }
-   }
+    @Test
+    public void shouldOnlyFireSameExceptionOnce() throws Exception {
+        try {
+            fire(new Double(0.0));
+        } catch (Exception e) {
+            if (!(e instanceof TestException)) {
+                Assert.fail("Wrong Exception thrown " + e);
+            }
+        }
+
+        Assert.assertEquals(new Integer(1), TestEventFire.called);
+        Assert.assertEquals(new Integer(1), TestExceptionThrower.called);
+        Assert.assertEquals(new Integer(1), TestExceptionHandler.called);
+    }
+
+    public static class TestEventFire {
+        public static Integer called = 0;
+
+        @Inject
+        private Event<Integer> integer;
+
+        public void handle(@Observes Double event) throws Exception {
+            called++;
+            integer.fire(new Integer(10));
+        }
+    }
+
+    public static class TestExceptionThrower {
+        public static Integer called = 0;
+
+        public void handle(@Observes Integer event) throws Exception {
+            called++;
+            throw new TestException("_TEST_");
+        }
+    }
+
+    public static class TestExceptionHandler {
+        public static Integer called = 0;
+
+        public void handle(@Observes TestException event) throws Exception {
+            called++;
+            // Handles exception but re-throws it to specify it's a IllegalException
+            throw event;
+        }
+    }
+
+    public static class TestException extends Exception {
+        private static final long serialVersionUID = 1L;
+
+        public TestException(String message) {
+            super(message);
+        }
+    }
 }

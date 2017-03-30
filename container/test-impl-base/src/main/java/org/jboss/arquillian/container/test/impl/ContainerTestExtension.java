@@ -53,51 +53,49 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * ContainerTestExtension
- * 
+ * <p>
  * This Extension Overrides the original TestExtension. Needed to change the behavior of TestEnricher to be RunMode aware
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerTestExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      // Start -> Copied from TestExtension
-      builder.context(SuiteContextImpl.class)
-             .context(ClassContextImpl.class)
-             .context(TestContextImpl.class);
+public class ContainerTestExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        // Start -> Copied from TestExtension
+        builder.context(SuiteContextImpl.class)
+                .context(ClassContextImpl.class)
+                .context(TestContextImpl.class);
 
-      builder.observer(TestContextHandler.class)
-             .observer(ClientTestInstanceEnricher.class);
+        builder.observer(TestContextHandler.class)
+                .observer(ClientTestInstanceEnricher.class);
 
-      // End -> Copied from TestExtension
-      
-      builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
-             .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
-             .service(Protocol.class, LocalProtocol.class)
-             .service(CommandService.class, LocalCommandService.class)
-             .service(ResourceProvider.class, URLResourceProvider.class)
-             .service(ResourceProvider.class, URIResourceProvider.class)
-             .service(ResourceProvider.class, DeployerProvider.class)
-             .service(ResourceProvider.class, InitialContextProvider.class)
-             .service(ResourceProvider.class, ContainerControllerProvider.class);
-      
-      builder.observer(ContainerEventController.class)
-             .observer(ContainerRestarter.class)
-             .observer(DeploymentGenerator.class)
-             .observer(ArchiveDeploymentToolingExporter.class)
-             .observer(ProtocolRegistryCreator.class)
-             .observer(ClientContainerControllerCreator.class)
-             .observer(ClientDeployerCreator.class)
-             .observer(ClientBeforeAfterLifecycleEventExecuter.class)
-             .observer(ClientTestExecuter.class)
-             .observer(LocalTestExecuter.class)
-             .observer(RemoteTestExecuter.class)
-             .observer(DeploymentCommandObserver.class)
-             .observer(ContainerCommandObserver.class)
-             .observer(RemoteResourceCommandObserver.class);
-   }
+        // End -> Copied from TestExtension
+
+        builder.service(AuxiliaryArchiveAppender.class, ArquillianDeploymentAppender.class)
+                .service(TestEnricher.class, ArquillianResourceTestEnricher.class)
+                .service(Protocol.class, LocalProtocol.class)
+                .service(CommandService.class, LocalCommandService.class)
+                .service(ResourceProvider.class, URLResourceProvider.class)
+                .service(ResourceProvider.class, URIResourceProvider.class)
+                .service(ResourceProvider.class, DeployerProvider.class)
+                .service(ResourceProvider.class, InitialContextProvider.class)
+                .service(ResourceProvider.class, ContainerControllerProvider.class);
+
+        builder.observer(ContainerEventController.class)
+                .observer(ContainerRestarter.class)
+                .observer(DeploymentGenerator.class)
+                .observer(ArchiveDeploymentToolingExporter.class)
+                .observer(ProtocolRegistryCreator.class)
+                .observer(ClientContainerControllerCreator.class)
+                .observer(ClientDeployerCreator.class)
+                .observer(ClientBeforeAfterLifecycleEventExecuter.class)
+                .observer(ClientTestExecuter.class)
+                .observer(LocalTestExecuter.class)
+                .observer(RemoteTestExecuter.class)
+                .observer(DeploymentCommandObserver.class)
+                .observer(ContainerCommandObserver.class)
+                .observer(RemoteResourceCommandObserver.class);
+    }
 
 }

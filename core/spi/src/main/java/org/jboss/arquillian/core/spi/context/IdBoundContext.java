@@ -23,14 +23,13 @@ package org.jboss.arquillian.core.spi.context;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface IdBoundContext<T> extends Context
-{
-   T getActiveId();
-   
-   void activate(T id);
+public interface IdBoundContext<T> extends Context {
+    T getActiveId();
 
-   void destroy(T id);
+    void activate(T id);
 
-   void deactivate();
+    void destroy(T id);
+
+    void deactivate();
 
 }

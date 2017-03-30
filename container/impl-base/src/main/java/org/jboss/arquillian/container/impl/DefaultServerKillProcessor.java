@@ -32,14 +32,12 @@ import org.jboss.arquillian.container.spi.ServerKillProcessor;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class DefaultServerKillProcessor implements ServerKillProcessor 
-{
-   private final Logger log = Logger.getLogger(DefaultServerKillProcessor.class.getName());
-   
-   @Override
-   public void kill(Container container) throws Exception 
-   {
-      log.warning("Triggering default implementation of a server kill() command => using stop() internally");
-      container.getDeployableContainer().stop();
-   }
+public class DefaultServerKillProcessor implements ServerKillProcessor {
+    private final Logger log = Logger.getLogger(DefaultServerKillProcessor.class.getName());
+
+    @Override
+    public void kill(Container container) throws Exception {
+        log.warning("Triggering default implementation of a server kill() command => using stop() internally");
+        container.getDeployableContainer().stop();
+    }
 }

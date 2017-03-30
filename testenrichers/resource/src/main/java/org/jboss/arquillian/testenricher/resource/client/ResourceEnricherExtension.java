@@ -28,18 +28,15 @@ import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ResourceEnricherExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(AuxiliaryArchiveAppender.class, ResourceEnricherArchiveAppender.class);
-      
-      // only load if Resource is on ClassPath
-      if(Validate.classExists("javax.annotation.Resource"))
-      {
-         builder.service(TestEnricher.class, ResourceInjectionEnricher.class);
-      }
-   }
+public class ResourceEnricherExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(AuxiliaryArchiveAppender.class, ResourceEnricherArchiveAppender.class);
+
+        // only load if Resource is on ClassPath
+        if (Validate.classExists("javax.annotation.Resource")) {
+            builder.service(TestEnricher.class, ResourceInjectionEnricher.class);
+        }
+    }
 
 }

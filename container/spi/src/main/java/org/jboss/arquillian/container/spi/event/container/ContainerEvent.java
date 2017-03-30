@@ -26,21 +26,18 @@ import org.jboss.arquillian.core.spi.event.Event;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerEvent implements Event
-{
-   private DeployableContainer<?> deployableContainer;
-   
-   public ContainerEvent(DeployableContainer<?> deployableContainer)
-   {
-      Validate.notNull(deployableContainer, "DeployableContainer must be specified");
-      this.deployableContainer = deployableContainer;
-   }
-   
-   /**
-    * @return the deployableContainer
-    */
-   public DeployableContainer<?> getDeployableContainer()
-   {
-      return deployableContainer;
-   }
+public class ContainerEvent implements Event {
+    private DeployableContainer<?> deployableContainer;
+
+    public ContainerEvent(DeployableContainer<?> deployableContainer) {
+        Validate.notNull(deployableContainer, "DeployableContainer must be specified");
+        this.deployableContainer = deployableContainer;
+    }
+
+    /**
+     * @return the deployableContainer
+     */
+    public DeployableContainer<?> getDeployableContainer() {
+        return deployableContainer;
+    }
 }

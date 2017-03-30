@@ -24,12 +24,10 @@ package org.jboss.arquillian.core.spi;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InvocationException extends RuntimeException
-{
-   private static final long serialVersionUID = -3326267058243382414L;
+public class InvocationException extends RuntimeException {
+    private static final long serialVersionUID = -3326267058243382414L;
 
-   public InvocationException(Throwable cause)
-   {
-      super(cause);
-   }
+    public InvocationException(Throwable cause) {
+        super(cause);
+    }
 }

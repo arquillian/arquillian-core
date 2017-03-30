@@ -25,32 +25,28 @@ import org.jboss.arquillian.test.spi.TestClass;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClassEvent extends SuiteEvent
-{
-   private TestClass testClass;
-   
-   /**
-    * @param testClass The Test case {@link Class}
-    * @throws IllegalArgumentException if testCase is null 
-    */
-   public ClassEvent(Class<?> testClass)
-   {
-      this(new TestClass(testClass));
-   }
-   
-   /**
-    * @param testClass The Test case {@link Class}
-    * @throws IllegalArgumentException if testCase is null 
-    */
-   public ClassEvent(TestClass testClass)
-   {
-      Validate.notNull(testClass, "TestClass must be specified");
-      
-      this.testClass = testClass;
-   }
-   
-   public TestClass getTestClass()
-   {
-      return testClass;
-   }
+public class ClassEvent extends SuiteEvent {
+    private TestClass testClass;
+
+    /**
+     * @param testClass The Test case {@link Class}
+     * @throws IllegalArgumentException if testCase is null
+     */
+    public ClassEvent(Class<?> testClass) {
+        this(new TestClass(testClass));
+    }
+
+    /**
+     * @param testClass The Test case {@link Class}
+     * @throws IllegalArgumentException if testCase is null
+     */
+    public ClassEvent(TestClass testClass) {
+        Validate.notNull(testClass, "TestClass must be specified");
+
+        this.testClass = testClass;
+    }
+
+    public TestClass getTestClass() {
+        return testClass;
+    }
 }

@@ -31,7 +31,7 @@ import java.util.Map;
  * &#64;Deployment
  * public static WebArchive create() {
  *      return ShrinkWrap.create(WebArchive.class)
-
+ *
  * }
  *
  * &#64;ArquillianResource
@@ -42,7 +42,7 @@ import java.util.Map;
  *      controller.start("X")
  * }
  * </code></pre>
- *
+ * <p>
  * <pre><code>
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
  * &lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -55,21 +55,20 @@ import java.util.Map;
  *      &lt;/group&gt;
  * &lt;/arquillian&gt;
  * </code></pre>
- *
+ * <p>
  * Only containers configured to be in mode manual or custom can be controlled via the ContainerController.
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public interface ContainerController 
-{
-   void start(String containerQualifier);
-   
-   void start(String containerQualifier, Map<String, String> config);
-   
-   void stop(String containerQualifier);
-   
-   void kill(String containerQualifier);
+public interface ContainerController {
+    void start(String containerQualifier);
 
-   boolean isStarted(String containerQualifier);
+    void start(String containerQualifier, Map<String, String> config);
+
+    void stop(String containerQualifier);
+
+    void kill(String containerQualifier);
+
+    boolean isStarted(String containerQualifier);
 }

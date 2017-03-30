@@ -22,95 +22,94 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
 /**
  * TestRunnerAdaptor
- * 
+ * <p>
  * Need to be Thread-safe
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestRunnerAdaptor
-{
-   /**
-    * Activate a new TestSuite.<br/> 
-    * This will trigger the BeforeSuite event.
-    * 
-    * @throws Exception
-    */
-   void beforeSuite() throws Exception; 
-   
-   /**
-    * Deactivate the TestSuite.<br/>
-    * This will trigger the AfterSuite event.
-    * 
-    * @throws Exception
-    */
-   void afterSuite() throws Exception;
+public interface TestRunnerAdaptor {
+    /**
+     * Activate a new TestSuite.<br/>
+     * This will trigger the BeforeSuite event.
+     *
+     * @throws Exception
+     */
+    void beforeSuite() throws Exception;
 
-   /**
-    * Activate a new TestClass.<br/>
-    * This will trigger the BeforeClass event.
-    * 
-    * @param testClass
-    * @param executor
-    * @throws Exception
-    */
-   void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
-   
-   /**
-    * Deactivate the TestClass.<br/>
-    * This will trigger the AfterClass event.
-    * 
-    * @param testClass
-    * @param executor
-    * @throws Exception
-    */
-   void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
-   
-   /**
-    * Activate a new TestInstance.<br/>
-    * This will trigger the Before event.
-    * 
-    * @param testInstance
-    * @param testMethod
-    * @param executor
-    * @throws Exception
-    */
-   void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
-   
-   /**
-    * Deactivate the TestInstance.<br/>
-    * This will trigger the After event.
-    * 
-    * @param testInstance
-    * @param testMethod
-    * @param executor
-    * @throws Exception
-    */
-   void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+    /**
+     * Deactivate the TestSuite.<br/>
+     * This will trigger the AfterSuite event.
+     *
+     * @throws Exception
+     */
+    void afterSuite() throws Exception;
 
-   /**
-    * Activate a TestMethod execution.<br/>
-    * This will trigger the Test event.
-    * 
-    * @param testMethodExecutor
-    * @return
-    * @throws Exception
-    */
-   TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
-   
-   /**
-    * Fire any custom Test Lifecycle event.<br/>
-    * <br/>
-    * This can be used by a TestFramework to trigger e.g. additional Lifecycle
-    * phases not described directly by the Test SPI.
-    *
-    * @param event Any event
-    * @throws Exception
-    */
-   <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception;
+    /**
+     * Activate a new TestClass.<br/>
+     * This will trigger the BeforeClass event.
+     *
+     * @param testClass
+     * @param executor
+     * @throws Exception
+     */
+    void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
 
-   /**
-    * Shutdown Arquillian cleanly.  
-    */
-   void shutdown();
+    /**
+     * Deactivate the TestClass.<br/>
+     * This will trigger the AfterClass event.
+     *
+     * @param testClass
+     * @param executor
+     * @throws Exception
+     */
+    void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception;
+
+    /**
+     * Activate a new TestInstance.<br/>
+     * This will trigger the Before event.
+     *
+     * @param testInstance
+     * @param testMethod
+     * @param executor
+     * @throws Exception
+     */
+    void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+
+    /**
+     * Deactivate the TestInstance.<br/>
+     * This will trigger the After event.
+     *
+     * @param testInstance
+     * @param testMethod
+     * @param executor
+     * @throws Exception
+     */
+    void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception;
+
+    /**
+     * Activate a TestMethod execution.<br/>
+     * This will trigger the Test event.
+     *
+     * @param testMethodExecutor
+     * @return
+     * @throws Exception
+     */
+    TestResult test(TestMethodExecutor testMethodExecutor) throws Exception;
+
+    /**
+     * Fire any custom Test Lifecycle event.<br/>
+     * <br/>
+     * This can be used by a TestFramework to trigger e.g. additional Lifecycle
+     * phases not described directly by the Test SPI.
+     *
+     * @param event Any event
+     * @throws Exception
+     */
+    <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception;
+
+    /**
+     * Shutdown Arquillian cleanly.
+     */
+    void shutdown();
 }

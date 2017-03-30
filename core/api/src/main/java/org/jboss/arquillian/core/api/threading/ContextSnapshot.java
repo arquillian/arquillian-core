@@ -18,9 +18,8 @@ package org.jboss.arquillian.core.api.threading;
 
 /**
  * Holds the contextual state from a previous call.
- *
+ * <p>
  * Used to replicate Contextual information across threads.
- *
  */
 public interface ContextSnapshot {
 
@@ -28,7 +27,7 @@ public interface ContextSnapshot {
      * Activate all previously active Contexts.
      */
     void activate();
-    
+
     /**
      * Deactivate all previously active Contexts.
      */

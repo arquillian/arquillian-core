@@ -24,13 +24,12 @@ import java.util.Map;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DefaultProtocolDef extends ArquillianDescriptor
-{
-   DefaultProtocolDef setType(String type);
-   
-   String getType();
-   
-   DefaultProtocolDef property(String name, String value);
-   
-   Map<String, String> getProperties();
+public interface DefaultProtocolDef extends ArquillianDescriptor {
+    DefaultProtocolDef setType(String type);
+
+    String getType();
+
+    DefaultProtocolDef property(String name, String value);
+
+    Map<String, String> getProperties();
 }

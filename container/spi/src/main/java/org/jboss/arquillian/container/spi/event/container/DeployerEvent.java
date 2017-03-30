@@ -26,22 +26,19 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeployerEvent extends ContainerEvent
-{
-   private DeploymentDescription deployment;
-   
-   public DeployerEvent(DeployableContainer<?> deployableContainer, DeploymentDescription deployment)
-   {
-      super(deployableContainer);
-      Validate.notNull(deployment, "Deployment must be specified");
-      this.deployment = deployment;
-   }
-   
-   /**
-    * @return the deployments
-    */
-   public DeploymentDescription getDeployment()
-   {
-      return deployment;
-   }
+public class DeployerEvent extends ContainerEvent {
+    private DeploymentDescription deployment;
+
+    public DeployerEvent(DeployableContainer<?> deployableContainer, DeploymentDescription deployment) {
+        super(deployableContainer);
+        Validate.notNull(deployment, "Deployment must be specified");
+        this.deployment = deployment;
+    }
+
+    /**
+     * @return the deployments
+     */
+    public DeploymentDescription getDeployment() {
+        return deployment;
+    }
 }

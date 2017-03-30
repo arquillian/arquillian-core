@@ -29,90 +29,80 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef
-{
-   private Node group;
+public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef {
+    private Node group;
 
-   public GroupContainerDefImpl(String descirptorName, Node model, Node group, Node container)
-   {
-      super(descirptorName, model, container);
-      this.group = group;
-   }
+    public GroupContainerDefImpl(String descirptorName, Node model, Node group, Node container) {
+        super(descirptorName, model, container);
+        this.group = group;
+    }
 
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - GroupDescriptor -----------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - GroupDescriptor -----------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.ContainerDefImpl#setName(java.lang.String)
-    */
-   @Override
-   public GroupDef setGroupName(String name)
-   {
-      group.attribute("qualifier", name);
-      return this;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.ContainerDefImpl#setName(java.lang.String)
+     */
+    @Override
+    public GroupDef setGroupName(String name) {
+        group.attribute("qualifier", name);
+        return this;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupName()
-    */
-   @Override
-   public String getGroupName()
-   {
-      return group.getAttribute("qualifier");
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupName()
+     */
+    @Override
+    public String getGroupName() {
+        return group.getAttribute("qualifier");
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#setGroupDefault()
-    */
-   @Override
-   public GroupDef setGroupDefault()
-   {
-      group.attribute("default", true);
-      return this;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.config.descriptor.api.GroupDef#setGroupDefault()
+     */
+    @Override
+    public GroupDef setGroupDefault() {
+        group.attribute("default", true);
+        return this;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.config.descriptor.api.GroupDef#isGroupDefault()
-    */
-   @Override
-   public boolean isGroupDefault()
-   {
-      return Boolean.parseBoolean(group.getAttribute("default"));
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.config.descriptor.api.GroupDef#isGroupDefault()
+     */
+    @Override
+    public boolean isGroupDefault() {
+        return Boolean.parseBoolean(group.getAttribute("default"));
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
-    */
-   @Override
-   public ContainerDef container(String name)
-   {
-      GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group,
-            group.getOrCreate("container@qualifier=" + name));
-      contianer.setContainerName(name);
-      return contianer;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.ArquillianDescriptorImpl#container(java.lang.String)
+     */
+    @Override
+    public ContainerDef container(String name) {
+        GroupContainerDefImpl contianer = new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group,
+                group.getOrCreate("container@qualifier=" + name));
+        contianer.setContainerName(name);
+        return contianer;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupContainers()
-    */
-   @Override
-   public List<ContainerDef> getGroupContainers()
-   {
-      List<ContainerDef> containers = new ArrayList<ContainerDef>();
-      for (Node container : group.get("container"))
-      {
-         containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
-      }
-      return containers;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.GroupDef#getGroupContainers()
+     */
+    @Override
+    public List<ContainerDef> getGroupContainers() {
+        List<ContainerDef> containers = new ArrayList<ContainerDef>();
+        for (Node container : group.get("container")) {
+            containers.add(new GroupContainerDefImpl(getDescriptorName(), getRootNode(), group, container));
+        }
+        return containers;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
-    */
-   @Override
-   public String toString()
-   {
-      return group.toString(true);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
+     */
+    @Override
+    public String toString() {
+        return group.toString(true);
+    }
 }

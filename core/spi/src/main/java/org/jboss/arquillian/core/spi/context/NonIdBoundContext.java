@@ -23,11 +23,10 @@ package org.jboss.arquillian.core.spi.context;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface NonIdBoundContext extends Context
-{
-   void activate();
+public interface NonIdBoundContext extends Context {
+    void activate();
 
-   void destroy();  
-   
-   void deactivate();
+    void destroy();
+
+    void deactivate();
 }

@@ -21,62 +21,56 @@ import org.jboss.arquillian.testng.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestNGTestRunnerTestCase extends Arquillian
-{
-   @Test
-   public void shouldReturnPassedTest() throws Exception
-   {
-      TestNGTestRunner runner = new TestNGTestRunner();
-      TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvidePassingTestToRunner");
+public class TestNGTestRunnerTestCase extends Arquillian {
+    @Test
+    public void shouldReturnPassedTest() throws Exception {
+        TestNGTestRunner runner = new TestNGTestRunner();
+        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvidePassingTestToRunner");
 
-      Assert.assertNotNull(result);
-      Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
-      Assert.assertNull(result.getThrowable());
-   }
+        Assert.assertNotNull(result);
+        Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
+        Assert.assertNull(result.getThrowable());
+    }
 
-   @Test
-   public void shouldReturnFailedTest() throws Exception
-   {
-      TestNGTestRunner runner = new TestNGTestRunner();
-      TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideFailingTestToRunner");
+    @Test
+    public void shouldReturnFailedTest() throws Exception {
+        TestNGTestRunner runner = new TestNGTestRunner();
+        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideFailingTestToRunner");
 
-      Assert.assertNotNull(result);
-      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
-      Assert.assertEquals(AssertionError.class, result.getThrowable().getClass());
-   }
+        Assert.assertNotNull(result);
+        Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+        Assert.assertEquals(AssertionError.class, result.getThrowable().getClass());
+    }
 
-   @Test
-   public void shouldReturnFailedTestAfterConfigurationError() throws Exception
-   {
-      TestNGTestRunner runner = new TestNGTestRunner();
-      TestResult result = runner.execute(ShouldProvideConfigurationFailureToTestRunner.class, "successfulTest");
+    @Test
+    public void shouldReturnFailedTestAfterConfigurationError() throws Exception {
+        TestNGTestRunner runner = new TestNGTestRunner();
+        TestResult result = runner.execute(ShouldProvideConfigurationFailureToTestRunner.class, "successfulTest");
 
-      Assert.assertNotNull(result);
-      Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
-      Assert.assertEquals(ClassNotFoundException.class, result.getThrowable().getClass());
-   }
+        Assert.assertNotNull(result);
+        Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
+        Assert.assertEquals(ClassNotFoundException.class, result.getThrowable().getClass());
+    }
 
-   @Test
-   public void shouldReturnExceptionOnPassedTest() throws Exception
-   {
-      TestNGTestRunner runner = new TestNGTestRunner();
-      TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideExpectedExceptionToRunner");
+    @Test
+    public void shouldReturnExceptionOnPassedTest() throws Exception {
+        TestNGTestRunner runner = new TestNGTestRunner();
+        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideExpectedExceptionToRunner");
 
-      Assert.assertNotNull(result);
-      Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
-      Assert.assertNotNull(result.getThrowable());
-      Assert.assertEquals(IllegalArgumentException.class, result.getThrowable().getClass());
-   }
+        Assert.assertNotNull(result);
+        Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
+        Assert.assertNotNull(result.getThrowable());
+        Assert.assertEquals(IllegalArgumentException.class, result.getThrowable().getClass());
+    }
 
-   @Test
-   // TODO: this should me moved to new TestNG test suite
-   public void shouldBeAbleToUseOtherDataProviders() throws Exception
-   {
-      TestNGTestRunner runner = new TestNGTestRunner();
-      TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldBeAbleToUseOtherDataProviders");
+    @Test
+    // TODO: this should me moved to new TestNG test suite
+    public void shouldBeAbleToUseOtherDataProviders() throws Exception {
+        TestNGTestRunner runner = new TestNGTestRunner();
+        TestResult result = runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldBeAbleToUseOtherDataProviders");
 
-      Assert.assertNotNull(result);
-      Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
-      Assert.assertNull(result.getThrowable());
-   }
+        Assert.assertNotNull(result);
+        Assert.assertEquals(TestResult.Status.PASSED, result.getStatus());
+        Assert.assertNull(result.getThrowable());
+    }
 }

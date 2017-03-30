@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 /**
  * Defines how Arquillian should communicate with and prepare the @{@link Deployment} for in container testing.
  * <p>
- * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can override this behavior 
+ * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can override this behavior
  * by using @OverProtocol on the @Deployment method.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -37,10 +37,10 @@ import java.lang.annotation.Target;
  *      return ShrinkWrap.create(WebArchive.class);
  * }
  * </code></pre>
- *
+ * <p>
  * You can also override the default behavior on a global level using arquillian.xml. This will apply to
  * all containers and all deployments in your test suite.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -59,12 +59,11 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface OverProtocol 
-{
-   /**
-    * A String reference to the protocol name
-    * 
-    * @return
-    */
-   String value();
+public @interface OverProtocol {
+    /**
+     * A String reference to the protocol name
+     *
+     * @return
+     */
+    String value();
 }

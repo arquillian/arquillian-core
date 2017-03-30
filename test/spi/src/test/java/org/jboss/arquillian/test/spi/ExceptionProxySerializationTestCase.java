@@ -35,74 +35,63 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExceptionProxySerializationTestCase
-{
-   
-   @Test @Ignore // not ready for automation, uncomment ObjectInputStream override in ExceptionProxy.readExternal to run
-   public void shouldBeAbleToDeserialize() throws Exception
-   {
-      ByteArrayOutputStream output = new ByteArrayOutputStream();
-      
-      ObjectOutputStream out = new ObjectOutputStream(output);
+public class ExceptionProxySerializationTestCase {
 
-      ExceptionProxy proxy;
-      
-      try
-      {
-         throw new RuntimeException("Test", new UnknownException(null));
-      }
-      catch (Exception e) {
-         proxy = ExceptionProxy.createForException(e);
-      }
-      
-      
-      out.writeObject(proxy);
-      out.flush();
-      
-      ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
-      
-      final URLClassLoader cl = new URLClassLoader(new URL[]{}) 
-      {
-         @Override
-         protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
-         {
-            if(UnknownException.class.getName().equals(name))
-            {
-               return null;
+    @Test
+    @Ignore // not ready for automation, uncomment ObjectInputStream override in ExceptionProxy.readExternal to run
+    public void shouldBeAbleToDeserialize() throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        ObjectOutputStream out = new ObjectOutputStream(output);
+
+        ExceptionProxy proxy;
+
+        try {
+            throw new RuntimeException("Test", new UnknownException(null));
+        } catch (Exception e) {
+            proxy = ExceptionProxy.createForException(e);
+        }
+
+
+        out.writeObject(proxy);
+        out.flush();
+
+        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+
+        final URLClassLoader cl = new URLClassLoader(new URL[]{}) {
+            @Override
+            protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                if (UnknownException.class.getName().equals(name)) {
+                    return null;
+                }
+                if (UnknownObject.class.getName().equals(name)) {
+                    throw new NoClassDefFoundError(name);
+                }
+                return super.loadClass(name, resolve);
             }
-            if(UnknownObject.class.getName().equals(name))
-            {
-               throw new NoClassDefFoundError(name);
+        };
+        Thread.currentThread().setContextClassLoader(cl);
+
+        ObjectInputStream in = new ObjectInputStream(input) {
+
+            @Override
+            protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
+                return super.resolveProxyClass(interfaces);
             }
-            return super.loadClass(name, resolve);
-         }
-      };
-      Thread.currentThread().setContextClassLoader(cl);
-      
-      ObjectInputStream in = new ObjectInputStream(input) 
-      {
-         
-         @Override
-         protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException
-         {
-            return super.resolveProxyClass(interfaces);
-         }
-         
-         @Override
-         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
-         {
-            return Class.forName(desc.getName(), false, cl);
-         }
-         
-         @Override
-         protected Object resolveObject(Object obj) throws IOException
-         {
-            return super.resolveObject(obj);
-         }
-      };
-      
-      ExceptionProxy readProxy = (ExceptionProxy)in.readObject();
-      
-      readProxy.createException().printStackTrace();
-   }
+
+            @Override
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                return Class.forName(desc.getName(), false, cl);
+            }
+
+            @Override
+            protected Object resolveObject(Object obj) throws IOException {
+                return super.resolveObject(obj);
+            }
+        };
+
+        ExceptionProxy readProxy = (ExceptionProxy) in.readObject();
+
+        readProxy.createException().printStackTrace();
+    }
 }

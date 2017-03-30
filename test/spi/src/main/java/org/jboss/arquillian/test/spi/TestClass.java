@@ -22,54 +22,45 @@ import java.lang.reflect.Method;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching.
- * 
+ *
  * @author thomas.diesler@jboss.com
  * @version $Revision: $
  */
-public class TestClass
-{
-   private Class<?> testClass;
+public class TestClass {
+    private Class<?> testClass;
 
-   public TestClass(Class<?> testClass)
-   {
-      if (testClass == null)
-         throw new IllegalArgumentException("Null testClass");
+    public TestClass(Class<?> testClass) {
+        if (testClass == null)
+            throw new IllegalArgumentException("Null testClass");
 
-      this.testClass = testClass;
-   }
+        this.testClass = testClass;
+    }
 
-   public Class<?> getJavaClass()
-   {
-      return testClass;
-   }
+    public Class<?> getJavaClass() {
+        return testClass;
+    }
 
-   public String getName()
-   {
-      return testClass.getName();
-   }
+    public String getName() {
+        return testClass.getName();
+    }
 
-   public boolean isAnnotationPresent(Class<? extends Annotation> annotation)
-   {
-      return testClass.isAnnotationPresent(annotation);
-   }
-   
-   public <A extends Annotation> A getAnnotation(Class<A> annotation)
-   {
-      return testClass.getAnnotation(annotation);
-   }
-   
-   public Method getMethod(Class<? extends Annotation> annotation)
-   {
-      Method[] methods = getMethods(annotation);
-      if(methods.length > 0)
-      {
-         return methods[0];
-      }
-      return null;
-   }
-   
-   public Method[] getMethods(Class<? extends Annotation> annotation)
-   {
-      return SecurityActions.getMethodsWithAnnotation(testClass, annotation).toArray(new Method[0]);
-   }
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotation) {
+        return testClass.isAnnotationPresent(annotation);
+    }
+
+    public <A extends Annotation> A getAnnotation(Class<A> annotation) {
+        return testClass.getAnnotation(annotation);
+    }
+
+    public Method getMethod(Class<? extends Annotation> annotation) {
+        Method[] methods = getMethods(annotation);
+        if (methods.length > 0) {
+            return methods[0];
+        }
+        return null;
+    }
+
+    public Method[] getMethods(Class<? extends Annotation> annotation) {
+        return SecurityActions.getMethodsWithAnnotation(testClass, annotation).toArray(new Method[0]);
+    }
 }

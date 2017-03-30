@@ -25,18 +25,20 @@ import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * An MBean to run test methods in container.
- * 
+ *
  * @author thomas.diesler@jboss.com
  */
 public interface JMXTestRunnerMBean extends NotificationBroadcaster {
-	
-    /** The ObjectName for this service: jboss.arquillian:service=jmx-test-runner */
+
+    /**
+     * The ObjectName for this service: jboss.arquillian:service=jmx-test-runner
+     */
     String OBJECT_NAME = "jboss.arquillian:service=jmx-test-runner";
 
     /**
      * Runs a test method on the given test class
      *
-     * @param className the test class name
+     * @param className  the test class name
      * @param methodName the test method name
      * @return a serialized {@link TestResult}
      * @deprecated
@@ -47,30 +49,30 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
     /**
      * Runs a test method on the given test class
      *
-     * @param className the test class name
+     * @param className  the test class name
      * @param methodName the test method name
-     * @param protocol configuration properties
+     * @param protocol   configuration properties
      * @return a serialized {@link TestResult}
      */
     public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps);
-    
+
     /**
      * Broadcast {@link Command} commands to any listeners
-     * 
+     *
      * @param command Command object containing the request
      */
     void send(Command<?> command);
 
     /**
      * Receive {@link Command} results
-     * 
+     *
      * @return command Command object containing the result, null if none received (yet)
      */
     Command<?> receive();
 
     /**
      * Client side to push a {@link Command} result back to container.
-     * 
+     *
      * @param eventId used to correlate the result
      * @param command Command object containing the result, serialized
      */

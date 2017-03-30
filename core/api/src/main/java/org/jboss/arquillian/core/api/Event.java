@@ -32,7 +32,6 @@ package org.jboss.arquillian.core.api;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Event<T> 
-{
-   void fire(T event);
+public interface Event<T> {
+    void fire(T event);
 }

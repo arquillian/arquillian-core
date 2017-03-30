@@ -29,14 +29,12 @@ import org.jboss.shrinkwrap.api.Archive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalDeploymentPackager implements DeploymentPackager
-{
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
-    */
-   public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors)
-   {
-      return testDeployment.getApplicationArchive();
-   }
+public class LocalDeploymentPackager implements DeploymentPackager {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.DeploymentPackager#generateDeployment(org.jboss.arquillian.spi.TestDeployment)
+     */
+    public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors) {
+        return testDeployment.getApplicationArchive();
+    }
 
 }

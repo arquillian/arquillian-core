@@ -43,96 +43,85 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
 /**
  * A Handler for executing the remote Test Method.<br/>
  * <br/>
- *  <b>Imports:</b><br/>
- *   {@link ProtocolMetaData}<br/>
- *   {@link DeploymentScenario}<br/>
- *   {@link ContainerRegistry}<br/>
- *   {@link ProtocolRegistry}<br/>
- *  <br/>
- *  <b>Exports:</b><br/>
- *   {@link TestResult}<br/>
+ * <b>Imports:</b><br/>
+ * {@link ProtocolMetaData}<br/>
+ * {@link DeploymentScenario}<br/>
+ * {@link ContainerRegistry}<br/>
+ * {@link ProtocolRegistry}<br/>
+ * <br/>
+ * <b>Exports:</b><br/>
+ * {@link TestResult}<br/>
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  * @see DeployableContainer
  */
-public class RemoteTestExecuter
-{
-   @Inject
-   private Instance<DeploymentDescription> deployment;
+public class RemoteTestExecuter {
+    @Inject
+    private Instance<DeploymentDescription> deployment;
 
-   @Inject
-   private Instance<Container> container;
+    @Inject
+    private Instance<Container> container;
 
-   @Inject
-   private Instance<ProtocolRegistry> protocolRegistry;
+    @Inject
+    private Instance<ProtocolRegistry> protocolRegistry;
 
-   @Inject
-   private Instance<ProtocolMetaData> protocolMetadata;
+    @Inject
+    private Instance<ProtocolMetaData> protocolMetadata;
 
-   @Inject
-   private Event<Object> remoteEvent;
+    @Inject
+    private Event<Object> remoteEvent;
 
-   @Inject @TestScoped
-   private InstanceProducer<TestResult> testResult;
+    @Inject
+    @TestScoped
+    private InstanceProducer<TestResult> testResult;
 
-   @Inject
-   private Instance<ExecutorService> executorService;
+    @Inject
+    private Instance<ExecutorService> executorService;
 
 
-   public void execute(@Observes RemoteExecutionEvent event) throws Exception
-   {
-      Container container = this.container.get();
-      DeploymentDescription deployment = this.deployment.get();
-      
-      ProtocolRegistry protoReg = protocolRegistry.get();
+    public void execute(@Observes RemoteExecutionEvent event) throws Exception {
+        Container container = this.container.get();
+        DeploymentDescription deployment = this.deployment.get();
 
-      // if no default marked or specific protocol defined in the registry, use the DeployableContainers defaultProtocol.
-      ProtocolDefinition protocol = protoReg.getProtocol(deployment.getProtocol());
-      if(protocol == null)
-      {
-         protocol = protoReg.getProtocol(container.getDeployableContainer().getDefaultProtocol());
-      }
-    
-      ProtocolConfiguration protocolConfiguration;
-      
-      if(container.hasProtocolConfiguration(protocol.getProtocolDescription()))
-      {
-         protocolConfiguration = protocol.createProtocolConfiguration(
-               container.getProtocolConfiguration(protocol.getProtocolDescription()).getProtocolProperties());
-      } 
-      else
-      {
-         protocolConfiguration = protocol.createProtocolConfiguration();
-      }
-      ContainerMethodExecutor executor = getContainerMethodExecutor(protocol, protocolConfiguration);
-      testResult.set(executor.invoke(event.getExecutor()));
-   }
+        ProtocolRegistry protoReg = protocolRegistry.get();
 
-   // TODO: cast to raw type to get away from generic issue..
-   @SuppressWarnings({"unchecked", "rawtypes"})
-   public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol, ProtocolConfiguration protocolConfiguration)
-   {
-      final ContextSnapshot state = executorService.get().createSnapshotContext();
-      
-      ContainerMethodExecutor executor = ((Protocol)protocol.getProtocol()).getExecutor(
-            protocolConfiguration, 
-            protocolMetadata.get(), new CommandCallback()
-            {
-               @Override
-               public void fired(Command<?> event)
-               {
-                  state.activate();
-                  try
-                  {
-                     remoteEvent.fire(event);
-                  }
-                  finally
-                  {
-                     state.deactivate();
-                  }
-               }
-            });
-      return executor;
-   }
+        // if no default marked or specific protocol defined in the registry, use the DeployableContainers defaultProtocol.
+        ProtocolDefinition protocol = protoReg.getProtocol(deployment.getProtocol());
+        if (protocol == null) {
+            protocol = protoReg.getProtocol(container.getDeployableContainer().getDefaultProtocol());
+        }
+
+        ProtocolConfiguration protocolConfiguration;
+
+        if (container.hasProtocolConfiguration(protocol.getProtocolDescription())) {
+            protocolConfiguration = protocol.createProtocolConfiguration(
+                    container.getProtocolConfiguration(protocol.getProtocolDescription()).getProtocolProperties());
+        } else {
+            protocolConfiguration = protocol.createProtocolConfiguration();
+        }
+        ContainerMethodExecutor executor = getContainerMethodExecutor(protocol, protocolConfiguration);
+        testResult.set(executor.invoke(event.getExecutor()));
+    }
+
+    // TODO: cast to raw type to get away from generic issue..
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public ContainerMethodExecutor getContainerMethodExecutor(ProtocolDefinition protocol, ProtocolConfiguration protocolConfiguration) {
+        final ContextSnapshot state = executorService.get().createSnapshotContext();
+
+        ContainerMethodExecutor executor = ((Protocol) protocol.getProtocol()).getExecutor(
+                protocolConfiguration,
+                protocolMetadata.get(), new CommandCallback() {
+                    @Override
+                    public void fired(Command<?> event) {
+                        state.activate();
+                        try {
+                            remoteEvent.fire(event);
+                        } finally {
+                            state.deactivate();
+                        }
+                    }
+                });
+        return executor;
+    }
 }

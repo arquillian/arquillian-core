@@ -33,42 +33,37 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalProtocol implements Protocol<LocalProtocolConfiguration>
-{
-   public static final String NAME = "Local";
-   
-   @Inject
-   private Instance<Injector> injector;
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
-    */
-   public Class<LocalProtocolConfiguration> getProtocolConfigurationClass()
-   {
-      return LocalProtocolConfiguration.class;
-   }
+public class LocalProtocol implements Protocol<LocalProtocolConfiguration> {
+    public static final String NAME = "Local";
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getDescription()
-    */
-   public ProtocolDescription getDescription()
-   {
-      return new ProtocolDescription(NAME);
-   }
+    @Inject
+    private Instance<Injector> injector;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
-    */
-   public DeploymentPackager getPackager()
-   {
-      return new LocalDeploymentPackager();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getProtocolConfigurationClass()
+     */
+    public Class<LocalProtocolConfiguration> getProtocolConfigurationClass() {
+        return LocalProtocolConfiguration.class;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getExecutor(org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration, org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData)
-    */
-   public ContainerMethodExecutor getExecutor(LocalProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback)
-   {
-      return injector.get().inject(new LocalContainerMethodExecutor());
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getDescription()
+     */
+    public ProtocolDescription getDescription() {
+        return new ProtocolDescription(NAME);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
+     */
+    public DeploymentPackager getPackager() {
+        return new LocalDeploymentPackager();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getExecutor(org.jboss.arquillian.spi.client.protocol.ProtocolConfiguration, org.jboss.arquillian.spi.client.protocol.metadata.ProtocolMetaData)
+     */
+    public ContainerMethodExecutor getExecutor(LocalProtocolConfiguration protocolConfiguration, ProtocolMetaData metaData, CommandCallback callback) {
+        return injector.get().inject(new LocalContainerMethodExecutor());
+    }
 }

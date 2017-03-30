@@ -27,43 +27,39 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestLifecycleEvent extends TestEvent implements LifecycleEvent
-{
-   private LifecycleMethodExecutor executor;
+public class TestLifecycleEvent extends TestEvent implements LifecycleEvent {
+    private LifecycleMethodExecutor executor;
 
-   /**
-    * Create a new TestLifecycleEvent for a specific testInstance executing a specific testMethod. <br/>
-    * <br/>
-    * This will use a NO_OP LifecycleMethodExecutor. 
- 
-    * @param testInstance The Test instance
-    * @param testMethod The Test Method being executed
-    */
-   public TestLifecycleEvent(Object testInstance, Method testMethod)
-   {
-      this(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
-   }
-   
-   /**
-    * Create a new TestLifecycleEvent for a specific testInstance executing a specific testMethod. <br/>
-    * 
-    * @param testInstance The Test instance
-    * @param testMethod The Test Method being executed
-    * @param executor A call back when the LifecycleMethod represented by this event should be invoked
-    */
-   public TestLifecycleEvent(Object testInstance, Method testMethod, LifecycleMethodExecutor executor)
-   {
-      super(testInstance, testMethod);
+    /**
+     * Create a new TestLifecycleEvent for a specific testInstance executing a specific testMethod. <br/>
+     * <br/>
+     * This will use a NO_OP LifecycleMethodExecutor.
+     *
+     * @param testInstance The Test instance
+     * @param testMethod   The Test Method being executed
+     */
+    public TestLifecycleEvent(Object testInstance, Method testMethod) {
+        this(testInstance, testMethod, LifecycleMethodExecutor.NO_OP);
+    }
 
-      Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
-      this.executor = executor;
-   }
+    /**
+     * Create a new TestLifecycleEvent for a specific testInstance executing a specific testMethod. <br/>
+     *
+     * @param testInstance The Test instance
+     * @param testMethod   The Test Method being executed
+     * @param executor     A call back when the LifecycleMethod represented by this event should be invoked
+     */
+    public TestLifecycleEvent(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) {
+        super(testInstance, testMethod);
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.event.suite.LifecycleEvent#getExecutor()
-    */
-   public LifecycleMethodExecutor getExecutor()
-   {
-      return executor;
-   }
+        Validate.notNull(executor, "LifecycleMethodExecutor must be specified");
+        this.executor = executor;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.event.suite.LifecycleEvent#getExecutor()
+     */
+    public LifecycleMethodExecutor getExecutor() {
+        return executor;
+    }
 }

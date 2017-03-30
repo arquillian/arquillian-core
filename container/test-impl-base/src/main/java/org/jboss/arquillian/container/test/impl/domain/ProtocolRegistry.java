@@ -29,79 +29,66 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolRegistry
-{
-   private List<ProtocolDefinition> protocols;
-   
-   public ProtocolRegistry()
-   {
-      protocols = new ArrayList<ProtocolDefinition>();
-   }
+public class ProtocolRegistry {
+    private List<ProtocolDefinition> protocols;
 
-   /**
-    * @param protocol The Protocol to add
-    * @return this
-    * @throws IllegalArgumentException if a protocol with same name found
-    */
-   public ProtocolRegistry addProtocol(ProtocolDefinition protocolDefinition)
-   {
-      Validate.notNull(protocolDefinition, "ProtocolDefinition must be specified");
-      ProtocolDefinition protocolAllReadyRegistered = findSpecificProtocol(protocolDefinition.getProtocol().getDescription());
-      if(protocolAllReadyRegistered != null)
-      {
-         throw new IllegalArgumentException(
-               "Protocol with description " + protocolDefinition.getProtocol().getDescription() + " allready registered. " +
-                "Registered " + protocolAllReadyRegistered.getClass() + ", trying to register " + protocolDefinition.getProtocol().getClass());
-      }
-      protocols.add(protocolDefinition);
-      return this;
-   }
+    public ProtocolRegistry() {
+        protocols = new ArrayList<ProtocolDefinition>();
+    }
 
-   /**
-    * @param protocolDescription
-    * @return
-    */
-   public ProtocolDefinition getProtocol(ProtocolDescription protocolDescription)
-   {
-      Validate.notNull(protocolDescription, "ProtocolDescription must be specified");
-      if(ProtocolDescription.DEFAULT.equals(protocolDescription))
-      {
-         return findDefaultProtocol();
-      }
-      return findSpecificProtocol(protocolDescription);
-   }
-   
-   /**
-    * @return
-    */
-   private ProtocolDefinition findDefaultProtocol()
-   {
-      for(ProtocolDefinition def : protocols)
-      {
-         if(def.isDefaultProtocol())
-         {
-            return def;
-         }
-      }
-      if(protocols.size() == 1)
-      {
-         return protocols.get(0);
-      }
-      return null;
-   }
+    /**
+     * @param protocol The Protocol to add
+     * @return this
+     * @throws IllegalArgumentException if a protocol with same name found
+     */
+    public ProtocolRegistry addProtocol(ProtocolDefinition protocolDefinition) {
+        Validate.notNull(protocolDefinition, "ProtocolDefinition must be specified");
+        ProtocolDefinition protocolAllReadyRegistered = findSpecificProtocol(protocolDefinition.getProtocol().getDescription());
+        if (protocolAllReadyRegistered != null) {
+            throw new IllegalArgumentException(
+                    "Protocol with description " + protocolDefinition.getProtocol().getDescription() + " allready registered. " +
+                            "Registered " + protocolAllReadyRegistered.getClass() + ", trying to register " + protocolDefinition.getProtocol().getClass());
+        }
+        protocols.add(protocolDefinition);
+        return this;
+    }
 
-   /**
-    * @return
-    */
-   private ProtocolDefinition findSpecificProtocol(ProtocolDescription protocolDescription)
-   {
-      for(ProtocolDefinition protocol : protocols)
-      {
-         if(protocolDescription.equals(protocol.getProtocol().getDescription()))
-         {
-            return protocol;
-         }
-      }
-      return null;
-   }
+    /**
+     * @param protocolDescription
+     * @return
+     */
+    public ProtocolDefinition getProtocol(ProtocolDescription protocolDescription) {
+        Validate.notNull(protocolDescription, "ProtocolDescription must be specified");
+        if (ProtocolDescription.DEFAULT.equals(protocolDescription)) {
+            return findDefaultProtocol();
+        }
+        return findSpecificProtocol(protocolDescription);
+    }
+
+    /**
+     * @return
+     */
+    private ProtocolDefinition findDefaultProtocol() {
+        for (ProtocolDefinition def : protocols) {
+            if (def.isDefaultProtocol()) {
+                return def;
+            }
+        }
+        if (protocols.size() == 1) {
+            return protocols.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    private ProtocolDefinition findSpecificProtocol(ProtocolDescription protocolDescription) {
+        for (ProtocolDefinition protocol : protocols) {
+            if (protocolDescription.equals(protocol.getProtocol().getDescription())) {
+                return protocol;
+            }
+        }
+        return null;
+    }
 }

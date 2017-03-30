@@ -22,18 +22,15 @@ package org.jboss.arquillian.container.spi.client.container;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LifecycleException extends Exception
-{
-   private static final long serialVersionUID = 1L;
+public class LifecycleException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-   public LifecycleException(String message)
-   {
-      super(message);
-   }
-   
-   public LifecycleException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
+    public LifecycleException(String message) {
+        super(message);
+    }
+
+    public LifecycleException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

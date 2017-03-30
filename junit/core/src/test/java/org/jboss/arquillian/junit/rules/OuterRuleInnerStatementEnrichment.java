@@ -26,12 +26,10 @@ import org.junit.rules.TestRule;
 
 /**
  * Uses Rule as normal outer java class and Statement as inner anonymous class defined within the Rule
- * 
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  *
+ * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public class OuterRuleInnerStatementEnrichment extends AbstractRuleStatementEnrichment
-{
+public class OuterRuleInnerStatementEnrichment extends AbstractRuleStatementEnrichment {
     @ArquillianResource
     private ResourceStub resources;
 
@@ -41,19 +39,16 @@ public class OuterRuleInnerStatementEnrichment extends AbstractRuleStatementEnri
     @Rule
     public TestingMethodRuleInnerStatement methodRuleInnerStatement = new TestingMethodRuleInnerStatement();
 
-    public TestRule getTestRule()
-    {
+    public TestRule getTestRule() {
         return testRuleInnerStatement;
     }
 
-    public MethodRule getMethodRule()
-    {
+    public MethodRule getMethodRule() {
         return methodRuleInnerStatement;
     }
 
     @Test
-    public void verifyEnrichment()
-    {
+    public void verifyEnrichment() {
         assertNotNull(resources);
     }
 }

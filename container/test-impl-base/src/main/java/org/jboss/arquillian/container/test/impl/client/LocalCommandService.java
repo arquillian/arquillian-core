@@ -28,23 +28,20 @@ import org.jboss.arquillian.core.api.annotation.Inject;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalCommandService implements CommandService
-{
-   @Inject
-   private Event<Object> commandEvent;
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.command.CommandService#execute(org.jboss.arquillian.spi.command.Command)
-    */
-   @Override
-   public <T> T execute(Command<T> command)
-   {
-      commandEvent.fire(command);
-      if (command.getThrowable() != null) 
-      {
-         throw new RuntimeException(command.getThrowable());
-      }
-      return command.getResult();
-   }
+public class LocalCommandService implements CommandService {
+    @Inject
+    private Event<Object> commandEvent;
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.command.CommandService#execute(org.jboss.arquillian.spi.command.Command)
+     */
+    @Override
+    public <T> T execute(Command<T> command) {
+        commandEvent.fire(command);
+        if (command.getThrowable() != null) {
+            throw new RuntimeException(command.getThrowable());
+        }
+        return command.getResult();
+    }
 
 }

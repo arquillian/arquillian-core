@@ -41,112 +41,97 @@ import org.jboss.arquillian.core.spi.event.ManagerProcessing;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LoadableExtensionLoader
-{
-   private static Logger log = Logger.getLogger(LoadableExtensionLoader.class.getName());
-   private static Level level = Level.FINER;
-   
-   
-   @Inject
-   private Instance<Injector> injector;
-   
-   @Inject @ApplicationScoped
-   private InstanceProducer<ServiceLoader> serviceLoaderProducer;
- 
-   private JavaSPIExtensionLoader serviceLoader;
-   
-   public LoadableExtensionLoader()
-   {
-      this(new JavaSPIExtensionLoader());
-   }
-   
-   LoadableExtensionLoader(JavaSPIExtensionLoader serviceLoader)
-   {
-      this.serviceLoader = serviceLoader;
-   }
+public class LoadableExtensionLoader {
+    private static Logger log = Logger.getLogger(LoadableExtensionLoader.class.getName());
+    private static Level level = Level.FINER;
 
-   public void load(@Observes final ManagerProcessing event)
-   {
-      ExtensionLoader extensionLoader = locateExtensionLoader();
-      
-      final ServiceRegistry registry = new ServiceRegistry(injector.get(), extensionLoader.loadVetoed());
-      
-      Collection<LoadableExtension> extensions = extensionLoader.load();
 
-      for(LoadableExtension extension : extensions)
-      {
-         log.log(level, "extension: {0}", new Object[]{extension.getClass().getSimpleName()});
-         extension.register(new ExtensionBuilder()
-         {
-            @Override
-            public <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl)
-            {
-               log.log(level, "\tservice: {0} - {1}", new Object[]{service, impl});
-               registry.addService(service, impl);
-               return this;
-            }
+    @Inject
+    private Instance<Injector> injector;
 
-            @Override
-            public <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl)
-            {
-               log.log(level, "\toverride: {0} overrides {1} for {2}", new Object[]{newServiceImpl, oldServiceImpl, service});
-               registry.overrideService(service, oldServiceImpl, newServiceImpl);
-               return this;
-            }
-            
-            @Override
-            public ExtensionBuilder observer(Class<?> handler)
-            {
-               log.log(level, "\tobserver: {0}", new Object[]{handler});
-               event.observer(handler);
-               return this;
-            }
-            
-            @Override
-            public ExtensionBuilder context(Class<? extends Context> context)
-            {
-               log.log(level, "\tcontext: {0}", new Object[]{context});
-               event.context(context);
-               return this;
-            }
-         });
-      }
-      serviceLoaderProducer.set(registry.getServiceLoader());
-   }
-   
-   /**
-    * Some environments need to handle their own ExtensionLoading and can't rely on Java's META-INF/services approach. 
-    * 
-    * @return configured ExtensionLoader if found or defaults to JavaSPIServiceLoader
-    */
-   private ExtensionLoader locateExtensionLoader()
-   {
-      Collection<ExtensionLoader> loaders = Collections.emptyList();
-      if (SecurityActions.getThreadContextClassLoader() != null) {
-          loaders = serviceLoader.all(SecurityActions.getThreadContextClassLoader(), ExtensionLoader.class);
-      }
-      if(loaders.size() == 0)
-      {
-         loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);
-      }
-      if(loaders.size() > 1)
-      {
-         throw new RuntimeException("Multiple ExtensionLoader's found on classpath: " + toString(loaders));
-      }
-      if(loaders.size() == 1)
-      {
-         return loaders.iterator().next();
-      }
-      return serviceLoader;
-   }
-   
-   private String toString(Collection<ExtensionLoader> loaders)
-   {
-      StringBuilder sb = new StringBuilder();
-      for(ExtensionLoader loader : loaders)
-      {
-         sb.append(loader.getClass().getName()).append(", ");
-      }
-      return sb.toString();
-   }
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ServiceLoader> serviceLoaderProducer;
+
+    private JavaSPIExtensionLoader serviceLoader;
+
+    public LoadableExtensionLoader() {
+        this(new JavaSPIExtensionLoader());
+    }
+
+    LoadableExtensionLoader(JavaSPIExtensionLoader serviceLoader) {
+        this.serviceLoader = serviceLoader;
+    }
+
+    public void load(@Observes final ManagerProcessing event) {
+        ExtensionLoader extensionLoader = locateExtensionLoader();
+
+        final ServiceRegistry registry = new ServiceRegistry(injector.get(), extensionLoader.loadVetoed());
+
+        Collection<LoadableExtension> extensions = extensionLoader.load();
+
+        for (LoadableExtension extension : extensions) {
+            log.log(level, "extension: {0}", new Object[]{extension.getClass().getSimpleName()});
+            extension.register(new ExtensionBuilder() {
+                @Override
+                public <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl) {
+                    log.log(level, "\tservice: {0} - {1}", new Object[]{service, impl});
+                    registry.addService(service, impl);
+                    return this;
+                }
+
+                @Override
+                public <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl) {
+                    log.log(level, "\toverride: {0} overrides {1} for {2}", new Object[]{newServiceImpl, oldServiceImpl, service});
+                    registry.overrideService(service, oldServiceImpl, newServiceImpl);
+                    return this;
+                }
+
+                @Override
+                public ExtensionBuilder observer(Class<?> handler) {
+                    log.log(level, "\tobserver: {0}", new Object[]{handler});
+                    event.observer(handler);
+                    return this;
+                }
+
+                @Override
+                public ExtensionBuilder context(Class<? extends Context> context) {
+                    log.log(level, "\tcontext: {0}", new Object[]{context});
+                    event.context(context);
+                    return this;
+                }
+            });
+        }
+        serviceLoaderProducer.set(registry.getServiceLoader());
+    }
+
+    /**
+     * Some environments need to handle their own ExtensionLoading and can't rely on Java's META-INF/services approach.
+     *
+     * @return configured ExtensionLoader if found or defaults to JavaSPIServiceLoader
+     */
+    private ExtensionLoader locateExtensionLoader() {
+        Collection<ExtensionLoader> loaders = Collections.emptyList();
+        if (SecurityActions.getThreadContextClassLoader() != null) {
+            loaders = serviceLoader.all(SecurityActions.getThreadContextClassLoader(), ExtensionLoader.class);
+        }
+        if (loaders.size() == 0) {
+            loaders = serviceLoader.all(LoadableExtensionLoader.class.getClassLoader(), ExtensionLoader.class);
+        }
+        if (loaders.size() > 1) {
+            throw new RuntimeException("Multiple ExtensionLoader's found on classpath: " + toString(loaders));
+        }
+        if (loaders.size() == 1) {
+            return loaders.iterator().next();
+        }
+        return serviceLoader;
+    }
+
+    private String toString(Collection<ExtensionLoader> loaders) {
+        StringBuilder sb = new StringBuilder();
+        for (ExtensionLoader loader : loaders) {
+            sb.append(loader.getClass().getName()).append(", ");
+        }
+        return sb.toString();
+    }
 }

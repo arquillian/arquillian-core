@@ -29,52 +29,45 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 /**
  * A Handler for restarting the containers for every X test class.<br/>
  * <br/>
- *  <b>Fires:</b><br/>
- *   {@link StopSuiteContainers}<br/>
- *   {@link StartSuiteContainers}<br/>
+ * <b>Fires:</b><br/>
+ * {@link StopSuiteContainers}<br/>
+ * {@link StartSuiteContainers}<br/>
  * <br/>
- *  <b>Imports:</b><br/>
- *   {@link ArquillianDescriptor}<br/>
- *   
+ * <b>Imports:</b><br/>
+ * {@link ArquillianDescriptor}<br/>
+ *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerRestarter 
-{
-   private int testClassesCount = 0;
-   
-   @Inject
-   private Event<ContainerMultiControlEvent> controlEvent;
-   
-   @Inject
-   private Instance<ArquillianDescriptor> configuration;
+public class ContainerRestarter {
+    private int testClassesCount = 0;
 
-   public void restart(@Observes BeforeClass event) throws Exception
-   {
-      if(shouldRestart())
-      {
-         controlEvent.fire(new StopSuiteContainers());
-         controlEvent.fire(new StartSuiteContainers());
-      }
-   }
-   
-   private boolean shouldRestart()
-   {
-      ArquillianDescriptor descriptor = configuration.get(); 
-      Integer maxTestClasses = descriptor.engine().getMaxTestClassesBeforeRestart();
-      if(maxTestClasses == null)
-      {
-         return false;
-      }
-      if(maxTestClasses > 0)
-      {
-         if(maxTestClasses == testClassesCount)
-         {
-            testClassesCount = 1;
-            return true;
-         }
-      }
-      testClassesCount++;
-      return false;
-   }
+    @Inject
+    private Event<ContainerMultiControlEvent> controlEvent;
+
+    @Inject
+    private Instance<ArquillianDescriptor> configuration;
+
+    public void restart(@Observes BeforeClass event) throws Exception {
+        if (shouldRestart()) {
+            controlEvent.fire(new StopSuiteContainers());
+            controlEvent.fire(new StartSuiteContainers());
+        }
+    }
+
+    private boolean shouldRestart() {
+        ArquillianDescriptor descriptor = configuration.get();
+        Integer maxTestClasses = descriptor.engine().getMaxTestClassesBeforeRestart();
+        if (maxTestClasses == null) {
+            return false;
+        }
+        if (maxTestClasses > 0) {
+            if (maxTestClasses == testClassesCount) {
+                testClassesCount = 1;
+                return true;
+            }
+        }
+        testClassesCount++;
+        return false;
+    }
 }

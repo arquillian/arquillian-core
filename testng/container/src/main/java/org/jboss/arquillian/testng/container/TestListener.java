@@ -27,62 +27,47 @@ import org.testng.ITestResult;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestListener implements ITestListener
-{
+public class TestListener implements ITestListener {
 
-   private ITestContext context;
+    private ITestContext context;
 
-   public void onFinish(ITestContext paramITestContext)
-   {
-      context = paramITestContext;
-   }
+    public void onFinish(ITestContext paramITestContext) {
+        context = paramITestContext;
+    }
 
-   public void onStart(ITestContext paramITestContext)
-   {
-   }
+    public void onStart(ITestContext paramITestContext) {
+    }
 
-   public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult)
-   {
-   }
+    public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult) {
+    }
 
-   public void onTestFailure(ITestResult paramITestResult)
-   {
-   }
+    public void onTestFailure(ITestResult paramITestResult) {
+    }
 
-   public void onTestSkipped(ITestResult paramITestResult)
-   {
-   }
+    public void onTestSkipped(ITestResult paramITestResult) {
+    }
 
-   public void onTestStart(ITestResult paramITestResult)
-   {
-   }
+    public void onTestStart(ITestResult paramITestResult) {
+    }
 
-   public void onTestSuccess(ITestResult paramITestResult)
-   {
-   }
+    public void onTestSuccess(ITestResult paramITestResult) {
+    }
 
-   public TestResult getTestResult()
-   {
-      if (context.getFailedConfigurations().size() > 0)
-      {
-         return TestResult.failed(
-               context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
-      }
-      else if (context.getFailedTests().size() > 0)
-      {
-         return TestResult.failed(
-               context.getFailedTests().getAllResults().iterator().next().getThrowable());
-      }
-      else if (context.getSkippedTests().size() > 0)
-      {
-         return TestResult.skipped();
-      }
-      if (context.getPassedTests().size() > 0)
-      {
-         return TestResult.passed().setThrowable(
-               context.getPassedTests().getAllResults().iterator().next().getThrowable());
-      }
-      return TestResult.failed(
-            new RuntimeException("Unknown test result: " + context).fillInStackTrace());
-   }
+    public TestResult getTestResult() {
+        if (context.getFailedConfigurations().size() > 0) {
+            return TestResult.failed(
+                    context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
+        } else if (context.getFailedTests().size() > 0) {
+            return TestResult.failed(
+                    context.getFailedTests().getAllResults().iterator().next().getThrowable());
+        } else if (context.getSkippedTests().size() > 0) {
+            return TestResult.skipped();
+        }
+        if (context.getPassedTests().size() > 0) {
+            return TestResult.passed().setThrowable(
+                    context.getPassedTests().getAllResults().iterator().next().getThrowable());
+        }
+        return TestResult.failed(
+                new RuntimeException("Unknown test result: " + context).fillInStackTrace());
+    }
 }

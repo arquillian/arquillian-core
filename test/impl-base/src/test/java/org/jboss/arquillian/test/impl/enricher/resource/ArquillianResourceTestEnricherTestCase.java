@@ -56,241 +56,230 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
-{
-   @Inject
-   private Instance<Injector> injector;
+public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase {
+    @Inject
+    private Instance<Injector> injector;
 
-   @Mock
-   private ServiceLoader serviceLoader;
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Mock
-   private ResourceProvider resourceProvider;
+    @Mock
+    private ResourceProvider resourceProvider;
 
-   @Mock
-   private Object resource;
+    @Mock
+    private Object resource;
 
-   @Before
-   public void addServiceLoader() throws Exception
-   {
-      List<ResourceProvider> resourceProviders = Arrays.asList(resourceProvider);
-      Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
-      Mockito.when(resourceProvider.canProvide(Object.class)).thenReturn(true);
+    @Before
+    public void addServiceLoader() throws Exception {
+        List<ResourceProvider> resourceProviders = Arrays.asList(resourceProvider);
+        Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
+        Mockito.when(resourceProvider.canProvide(Object.class)).thenReturn(true);
 
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-   }
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+    }
 
-   @Test
-   public void shouldBeAbleToInjectBaseContext() throws Exception
-   {
-      Mockito.when(resourceProvider.lookup(
-                  (ArquillianResource) Mockito.any(),
-                  Mockito.argThat(new ClassInjectionAnnotationMatcher())))
-              .thenReturn(resource);
-
-      TestEnricher enricher = new ArquillianResourceTestEnricher();
-      injector.get().inject(enricher);
-
-      ObjectClass test = new ObjectClass();
-      enricher.enrich(test);
-
-      Assert.assertEquals(resource, test.resource);
-   }
-
-   @Test
-   public void shouldBeAbleToInjectBaseContextOnMethod() throws Exception
-   {
-      Method resourceMethod = ObjectClass.class.getMethod("test", Object.class);
-
-      Mockito.when(
-            resourceProvider.lookup(
-                    (ArquillianResource) Mockito.any(),
-                    Mockito.argThat(new MethodInjectionAnnotationMatcher())))
+    @Test
+    public void shouldBeAbleToInjectBaseContext() throws Exception {
+        Mockito.when(resourceProvider.lookup(
+                (ArquillianResource) Mockito.any(),
+                Mockito.argThat(new ClassInjectionAnnotationMatcher())))
                 .thenReturn(resource);
 
-      TestEnricher enricher = new ArquillianResourceTestEnricher();
-      injector.get().inject(enricher);
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-      Object[] result = enricher.resolve(resourceMethod);
+        ObjectClass test = new ObjectClass();
+        enricher.enrich(test);
 
-      Assert.assertEquals(resource, result[0]);
-   }
+        Assert.assertEquals(resource, test.resource);
+    }
 
-   @Test
-   public void shouldBeAbleToInjectBaseContextWithQualifier() throws Exception
-   {
-      Field resource2Field = ObjectClass2.class.getField("resource2");
+    @Test
+    public void shouldBeAbleToInjectBaseContextOnMethod() throws Exception {
+        Method resourceMethod = ObjectClass.class.getMethod("test", Object.class);
 
-      Mockito.when(
-          resourceProvider.lookup(
-                  (ArquillianResource) Mockito.any(),
-                  Mockito.argThat(
-                      new CustomAnnotationMatcher(
-                          resource2Field.getAnnotation(ArquillianTestQualifier.class),
-                          ResourceProvider.ClassInjection.class))))
-          .thenReturn(resource);
+        Mockito.when(
+                resourceProvider.lookup(
+                        (ArquillianResource) Mockito.any(),
+                        Mockito.argThat(new MethodInjectionAnnotationMatcher())))
+                .thenReturn(resource);
 
-      TestEnricher enricher = new ArquillianResourceTestEnricher();
-      injector.get().inject(enricher);
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-      ObjectClass2 test = new ObjectClass2();
-      enricher.enrich(test);
+        Object[] result = enricher.resolve(resourceMethod);
 
-      Assert.assertEquals(resource, test.resource2);
-   }
+        Assert.assertEquals(resource, result[0]);
+    }
 
-   @Test
-   public void shouldBeAbleToInjectBaseContextOnMethodWithQualifier() throws Exception
-   {
-      Method resourceMethod = ObjectClass.class.getMethod("testWithQualifier", Object.class);
+    @Test
+    public void shouldBeAbleToInjectBaseContextWithQualifier() throws Exception {
+        Field resource2Field = ObjectClass2.class.getField("resource2");
 
-      Mockito.when(
-          resourceProvider.lookup(
-                  (ArquillianResource) Mockito.any(),
-                  Mockito.argThat(
-                      new CustomAnnotationMatcher(
-                          resourceMethod.getParameterAnnotations()[0][1],
-                          ResourceProvider.MethodInjection.class))))
-          .thenReturn(resource);
+        Mockito.when(
+                resourceProvider.lookup(
+                        (ArquillianResource) Mockito.any(),
+                        Mockito.argThat(
+                                new CustomAnnotationMatcher(
+                                        resource2Field.getAnnotation(ArquillianTestQualifier.class),
+                                        ResourceProvider.ClassInjection.class))))
+                .thenReturn(resource);
 
-      TestEnricher enricher = new ArquillianResourceTestEnricher();
-      injector.get().inject(enricher);
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-      Object[] result = enricher.resolve(resourceMethod);
+        ObjectClass2 test = new ObjectClass2();
+        enricher.enrich(test);
 
-      Assert.assertEquals(resource, result[0]);
-   }
+        Assert.assertEquals(resource, test.resource2);
+    }
 
-   @Test
-   public void shouldThrowExceptionWhenUsedMethodScopeInjectionOnArquillianResource() throws Exception
-   {
-       Method resourceMethod = ObjectClass3.class.getMethod("testWithInjectionQualifier", Object.class);
+    @Test
+    public void shouldBeAbleToInjectBaseContextOnMethodWithQualifier() throws Exception {
+        Method resourceMethod = ObjectClass.class.getMethod("testWithQualifier", Object.class);
 
-       Mockito.when(
-           resourceProvider.lookup(
-                   (ArquillianResource) Mockito.any(),
-                   Mockito.argThat(
-                       new CustomAnnotationMatcher(
-                           resourceMethod.getParameterAnnotations()[0][1],
-                           ResourceProvider.MethodInjection.class))))
-           .thenReturn(resource);
+        Mockito.when(
+                resourceProvider.lookup(
+                        (ArquillianResource) Mockito.any(),
+                        Mockito.argThat(
+                                new CustomAnnotationMatcher(
+                                        resourceMethod.getParameterAnnotations()[0][1],
+                                        ResourceProvider.MethodInjection.class))))
+                .thenReturn(resource);
 
-       TestEnricher enricher = new ArquillianResourceTestEnricher();
-       injector.get().inject(enricher);
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-       Throwable cause = null;
+        Object[] result = enricher.resolve(resourceMethod);
 
-       try {
-           enricher.resolve(resourceMethod);
-       } catch (Exception ex) {
-           cause = ex;
-       }
+        Assert.assertEquals(resource, result[0]);
+    }
 
-       Assert.assertEquals(IllegalStateException.class, cause.getClass());
-   }
+    @Test
+    public void shouldThrowExceptionWhenUsedMethodScopeInjectionOnArquillianResource() throws Exception {
+        Method resourceMethod = ObjectClass3.class.getMethod("testWithInjectionQualifier", Object.class);
 
-   @Test
-   public void shouldThrowExceptionWhenUsedClassScopeInjectionOnArquillianResource() {
+        Mockito.when(
+                resourceProvider.lookup(
+                        (ArquillianResource) Mockito.any(),
+                        Mockito.argThat(
+                                new CustomAnnotationMatcher(
+                                        resourceMethod.getParameterAnnotations()[0][1],
+                                        ResourceProvider.MethodInjection.class))))
+                .thenReturn(resource);
 
-       Mockito.when(
-           resourceProvider.lookup(
-               (ArquillianResource) Mockito.any(),
-               Mockito.argThat(
-                   new ClassInjectionAnnotationMatcher())))
-           .thenReturn(resource);
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-       TestEnricher enricher = new ArquillianResourceTestEnricher();
-       injector.get().inject(enricher);
+        Throwable cause = null;
 
-       ObjectClass3 test = new ObjectClass3();
+        try {
+            enricher.resolve(resourceMethod);
+        } catch (Exception ex) {
+            cause = ex;
+        }
 
-       Throwable cause = null;
+        Assert.assertEquals(IllegalStateException.class, cause.getClass());
+    }
 
-       try {
-           enricher.enrich(test);
-       } catch (RuntimeException ex) {
-           cause = ex.getCause();
-       }
+    @Test
+    public void shouldThrowExceptionWhenUsedClassScopeInjectionOnArquillianResource() {
 
-       Assert.assertEquals(IllegalStateException.class, cause.getClass());
-   }
+        Mockito.when(
+                resourceProvider.lookup(
+                        (ArquillianResource) Mockito.any(),
+                        Mockito.argThat(
+                                new ClassInjectionAnnotationMatcher())))
+                .thenReturn(resource);
 
-   public class ObjectClass
-   {
-      @ArquillianResource
-      public Object resource;
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-      public void test(@ArquillianResource Object resource) {}
+        ObjectClass3 test = new ObjectClass3();
 
-      public void testWithQualifier(@ArquillianResource @ArquillianTestQualifier Object resource) {}
-   }
+        Throwable cause = null;
 
-   public class ObjectClass2
-   {
-      @ArquillianResource @ArquillianTestQualifier
-      public Object resource2;
-   }
+        try {
+            enricher.enrich(test);
+        } catch (RuntimeException ex) {
+            cause = ex.getCause();
+        }
 
-   public class ObjectClass3
-   {
-       @ArquillianResource @ResourceProvider.ClassInjection
-       public Object resource;
+        Assert.assertEquals(IllegalStateException.class, cause.getClass());
+    }
 
-       public void testWithInjectionQualifier(@ArquillianResource @ResourceProvider.MethodInjection Object resource) {}
-   }
+    public class ObjectClass {
+        @ArquillianResource
+        public Object resource;
 
-   @Retention(RUNTIME)
-   @Target({ElementType.FIELD, ElementType.PARAMETER})
-   public @interface ArquillianTestQualifier { }
+        public void test(@ArquillianResource Object resource) {
+        }
 
-   private class ClassInjectionAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher
-   {
-       private static final long serialVersionUID = 7468313136186740343L;
+        public void testWithQualifier(@ArquillianResource @ArquillianTestQualifier Object resource) {
+        }
+    }
 
-       @Override
-       public boolean matches(Object varargArgument)
-       {
-           Class<?> qualifier = ((Annotation) varargArgument).annotationType();
+    public class ObjectClass2 {
+        @ArquillianResource
+        @ArquillianTestQualifier
+        public Object resource2;
+    }
 
-           return qualifier.equals(ResourceProvider.ClassInjection.class);
-       }
-   }
+    public class ObjectClass3 {
+        @ArquillianResource
+        @ResourceProvider.ClassInjection
+        public Object resource;
 
-   private class MethodInjectionAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher
-   {
-       private static final long serialVersionUID = 7468313136186740343L;
+        public void testWithInjectionQualifier(@ArquillianResource @ResourceProvider.MethodInjection Object resource) {
+        }
+    }
 
-       @Override
-       public boolean matches(Object varargArgument)
-       {
-           Class<?> qualifier = ((Annotation) varargArgument).annotationType();
+    @Retention(RUNTIME)
+    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    public @interface ArquillianTestQualifier {
+    }
 
-           return qualifier.equals(ResourceProvider.MethodInjection.class);
-       }
-   }
+    private class ClassInjectionAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher {
+        private static final long serialVersionUID = 7468313136186740343L;
 
-   private class CustomAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher
-   {
-       private static final long serialVersionUID = 7468313136186740343L;
+        @Override
+        public boolean matches(Object varargArgument) {
+            Class<?> qualifier = ((Annotation) varargArgument).annotationType();
 
-       private Annotation additionalQualifier;
+            return qualifier.equals(ResourceProvider.ClassInjection.class);
+        }
+    }
 
-       private Class<? extends Annotation> injectionScope;
+    private class MethodInjectionAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher {
+        private static final long serialVersionUID = 7468313136186740343L;
 
-       public CustomAnnotationMatcher(Annotation additionalQualifier, Class<? extends Annotation> injectionScope)
-       {
-           this.additionalQualifier = additionalQualifier;
-           this.injectionScope = injectionScope;
-       }
+        @Override
+        public boolean matches(Object varargArgument) {
+            Class<?> qualifier = ((Annotation) varargArgument).annotationType();
 
-       @Override
-       public boolean matches(Object varargArgument)
-       {
-           Annotation[] annotations = (Annotation[]) varargArgument;
+            return qualifier.equals(ResourceProvider.MethodInjection.class);
+        }
+    }
 
-           return annotations.length == 2
-               && annotations[0].annotationType().equals(additionalQualifier.annotationType())
-               && annotations[1].annotationType().equals(injectionScope);
-       }
-   }
+    private class CustomAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher {
+        private static final long serialVersionUID = 7468313136186740343L;
+
+        private Annotation additionalQualifier;
+
+        private Class<? extends Annotation> injectionScope;
+
+        public CustomAnnotationMatcher(Annotation additionalQualifier, Class<? extends Annotation> injectionScope) {
+            this.additionalQualifier = additionalQualifier;
+            this.injectionScope = injectionScope;
+        }
+
+        @Override
+        public boolean matches(Object varargArgument) {
+            Annotation[] annotations = (Annotation[]) varargArgument;
+
+            return annotations.length == 2
+                    && annotations[0].annotationType().equals(additionalQualifier.annotationType())
+                    && annotations[1].annotationType().equals(injectionScope);
+        }
+    }
 }

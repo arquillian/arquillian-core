@@ -36,62 +36,56 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ConfigurationRegistrar
-{
-   public static final String ARQUILLIAN_XML_PROPERTY = "arquillian.xml";
-   public static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
+public class ConfigurationRegistrar {
+    public static final String ARQUILLIAN_XML_PROPERTY = "arquillian.xml";
+    public static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
 
-   public static final String ARQUILLIAN_PROP_PROPERTY = "arquillian.properties";
-   public static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
+    public static final String ARQUILLIAN_PROP_PROPERTY = "arquillian.properties";
+    public static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
 
-   private Map<String, String> systemEnvironmentVars = System.getenv();
+    private Map<String, String> systemEnvironmentVars = System.getenv();
 
-   @Inject @ApplicationScoped
-   private InstanceProducer<ArquillianDescriptor> descriptorInst;
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ArquillianDescriptor> descriptorInst;
 
-   public void loadConfiguration(@Observes ManagerStarted event)
-   {
-      final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
+    public void loadConfiguration(@Observes ManagerStarted event) {
+        final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
 
-      //First arquillian.xml is resolved
-      final ArquillianDescriptor descriptor = resolveDescriptor(input);
+        //First arquillian.xml is resolved
+        final ArquillianDescriptor descriptor = resolveDescriptor(input);
 
-      //Second arquillian.properties file and system properties are applied
-      final PropertiesParser propertiesParser = new PropertiesParser();
-      propertiesParser.addProperties(
-              descriptor,
-              FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
+        //Second arquillian.properties file and system properties are applied
+        final PropertiesParser propertiesParser = new PropertiesParser();
+        propertiesParser.addProperties(
+                descriptor,
+                FileUtils.loadArquillianProperties(ARQUILLIAN_PROP_PROPERTY, ARQUILLIAN_PROP_DEFAULT));
 
-      //Fourth arquillian properties from system environment variables are applied
-      Properties envProperties = new Properties();
-      envProperties.putAll(systemEnvironmentVars);
-      propertiesParser.addProperties(descriptor, envProperties);
+        //Fourth arquillian properties from system environment variables are applied
+        Properties envProperties = new Properties();
+        envProperties.putAll(systemEnvironmentVars);
+        propertiesParser.addProperties(descriptor, envProperties);
 
-      //Placeholder resolver
-      final ArquillianDescriptor resolvedDesc = resolveSystemProperties(descriptor);
+        //Placeholder resolver
+        final ArquillianDescriptor resolvedDesc = resolveSystemProperties(descriptor);
 
-      descriptorInst.set(resolvedDesc);
-   }
+        descriptorInst.set(resolvedDesc);
+    }
 
-   private ArquillianDescriptor resolveDescriptor(final InputStream input)
-   {
-      final ArquillianDescriptor descriptor;
+    private ArquillianDescriptor resolveDescriptor(final InputStream input) {
+        final ArquillianDescriptor descriptor;
 
-      if(input != null)
-      {
-         descriptor = Descriptors.importAs(ArquillianDescriptor.class)
-                                          .fromStream(input);
-      }
-      else
-      {
-         descriptor = Descriptors.create(ArquillianDescriptor.class);
-      }
-      return descriptor;
-   }
+        if (input != null) {
+            descriptor = Descriptors.importAs(ArquillianDescriptor.class)
+                    .fromStream(input);
+        } else {
+            descriptor = Descriptors.create(ArquillianDescriptor.class);
+        }
+        return descriptor;
+    }
 
-   //testing purposes
-   void setEnvironmentVariables(Map<String, String> variables)
-   {
-      this.systemEnvironmentVars = variables;
-   }
+    //testing purposes
+    void setEnvironmentVariables(Map<String, String> variables) {
+        this.systemEnvironmentVars = variables;
+    }
 }

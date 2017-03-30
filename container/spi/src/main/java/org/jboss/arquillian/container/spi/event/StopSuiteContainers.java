@@ -24,7 +24,6 @@ package org.jboss.arquillian.container.spi.event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class StopSuiteContainers implements ContainerMultiControlEvent
-{
+public class StopSuiteContainers implements ContainerMultiControlEvent {
 
 }

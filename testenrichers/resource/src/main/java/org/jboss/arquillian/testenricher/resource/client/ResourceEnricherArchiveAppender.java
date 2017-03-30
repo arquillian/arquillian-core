@@ -31,15 +31,13 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ResourceEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender
-{
-   @Override
-   protected Archive<?> buildArchive()
-   {
-      return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-resource.jar")
-                     .addPackage(ResourceInjectionEnricher.class.getPackage())
-                     .addClass(ResourceEnricherRemoteExtension.class)
-                     .addAsServiceProvider(RemoteLoadableExtension.class, ResourceEnricherRemoteExtension.class);
-   }
+public class ResourceEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender {
+    @Override
+    protected Archive<?> buildArchive() {
+        return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-resource.jar")
+                .addPackage(ResourceInjectionEnricher.class.getPackage())
+                .addClass(ResourceEnricherRemoteExtension.class)
+                .addAsServiceProvider(RemoteLoadableExtension.class, ResourceEnricherRemoteExtension.class);
+    }
 
 }

@@ -45,312 +45,266 @@ import org.junit.Before;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class AbstractManagerTestBase
-{
-   private static ManagerImpl manager;
-   private static List<Class<? extends Context>> contexts;
-   
-   @Before
-   public final void create() throws Exception
-   {
-      contexts = new ArrayList<Class<? extends Context>>();
-      ManagerBuilder builder = ManagerBuilder.from();
+public abstract class AbstractManagerTestBase {
+    private static ManagerImpl manager;
+    private static List<Class<? extends Context>> contexts;
 
-      addContexts(contexts);
-      for(Class<? extends Context> context : contexts)
-      {
-         builder.context(context);
-      }
+    @Before
+    public final void create() throws Exception {
+        contexts = new ArrayList<Class<? extends Context>>();
+        ManagerBuilder builder = ManagerBuilder.from();
 
-      // Add ApplicationContext, it's internal to Manager, but needs to be registered as a context so EventRecorder will pick up on it 
-      contexts.add(0, ApplicationContextImpl.class);
-      
-      builder.extension(EventRegisterObserver.class);
-      
-      List<Class<?>> extensions = new ArrayList<Class<?>>();
-      addExtensions(extensions);
-      for(Class<?> extension : extensions)
-      {
-         builder.extension(extension);
-      }
-      
-      manager = (ManagerImpl)builder.create();
-      manager.start();
-      
-      executeInApplicationScope(new Callable<Void>() {
-        @Override
-        public Void call() throws Exception {
-            manager.resolve(Injector.class).inject(AbstractManagerTestBase.this);
-            return null;
+        addContexts(contexts);
+        for (Class<? extends Context> context : contexts) {
+            builder.context(context);
         }
-      });
-      startContexts(manager);
-   }
-   
-   @After
-   public final void destory()
-   {
-      manager.shutdown();
-      manager = null;
-   }
-   
-   public ManagerImpl getManager()
-   {
-      return manager;
-   }
 
-   //-------------------------------------------------------------------------------------||
-   // Assertions and Helper operations ----------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+        // Add ApplicationContext, it's internal to Manager, but needs to be registered as a context so EventRecorder will pick up on it
+        contexts.add(0, ApplicationContextImpl.class);
 
-   public final void fire(Object event)
-   {
-      manager.fire(event);
-   }
-   
-   public final <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance)
-   {
-      manager.bind(scope, type, instance);
-   }
+        builder.extension(EventRegisterObserver.class);
 
-   public final void assertEventFired(Class<?> type)
-   {
-      Assert.assertNotNull(
-            "Event " + type.getName() + " should have been fired", 
-            getRegister().getCount(type));
-   }
+        List<Class<?>> extensions = new ArrayList<Class<?>>();
+        addExtensions(extensions);
+        for (Class<?> extension : extensions) {
+            builder.extension(extension);
+        }
 
-   public final void assertEventFired(Class<?> type, Integer count)
-   {
-      Assert.assertEquals(
-            "The event of exact type " + type.getName() + " should have been fired",
-            count,
-            getRegister().getCount(type));
-   }
+        manager = (ManagerImpl) builder.create();
+        manager.start();
 
-   public final void assertEventFiredTyped(Class<?> type, Integer count)
-   {
-      Assert.assertEquals(
-            "The event of assiganble type to " + type.getName() + " should have been fired",
-            count,
-            getRegister().getCountTyped(type));
-   }
-
-   public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext)
-   {
-      assertEventInContext(type, activeContext, true);
-   }
-
-   public final void assertEventNotFiredInContext(Class<?> type, Class<? extends Context> activeContext)
-   {
-      assertEventInContext(type, activeContext, false);
-   }
-
-   private void assertEventInContext(Class<?> type, Class<? extends Context> activeContext, Boolean active)
-   {
-         Assert.assertEquals(
-               "Event " + type.getName() + " should" + (active ? " ":" not") + " have been fired within context " + activeContext.getName(),
-               active,
-               getRegister().wasActive(type, activeContext));
-   }
-
-   public final void assertEventFiredOnOtherThread(Class<?> type)
-   {
-       Assert.assertTrue(
-               "The event of type to " + type.getName() + " should have been fired on a different thread",
-               getRegister().wasExecutedOnNonMainThread(type));
-   }
-
-   private EventRegister getRegister() {
-       try
-       {
-           return executeInApplicationScope(new Callable<EventRegister>() {
-              @Override
-              public EventRegister call() throws Exception {
-                 return manager.resolve(EventRegister.class);
-              }
-           });
-       } catch(Exception e) {
-           throw new RuntimeException(e);
-       }
-   }
-
-   //-------------------------------------------------------------------------------------||
-   // Extendables ------------------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
-
-   protected void addExtensions(List<Class<?>> extensions) 
-   {
-   }
-
-   protected void addContexts(List<Class<? extends Context>> contexts) 
-   { 
-   }
-
-   protected void startContexts(Manager manager)
-   {
-       manager.getContext(ApplicationContext.class).activate();
-   }
-
-   //-------------------------------------------------------------------------------------||
-   // Internal Helpers - Track events ----------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
-
-   public <T> T executeInApplicationScope(Callable<T> op) throws Exception {
-       return manager.executeInApplicationContext(op);
-   }
-
-   public static class EventRegisterObserver 
-   {
-      @Inject @ApplicationScoped
-      private InstanceProducer<EventRegister> register;
-
-      @SuppressWarnings("unchecked")
-      public synchronized void register(@Observes Object event)
-      {
-         if(register.get() == null)
-         {
-            register.set(new EventRegister());
-         }
-         
-         // TODO: looking up the static manager is a hack get to the Contexts dynamically. Manager can be null since events are fired during Manager creation 
-         if(manager == null)
-         {
-            return;
-         }
-         EventRegister reg = register.get();
-         
-         EventRecording rec = new EventRecording();
-         
-         for(Class<? extends Context> context : contexts)
-         {
-            Class<? extends Context> contextInterface = (Class<? extends Context>)context.getInterfaces()[0];
-            
-            rec.add(contextInterface, manager.getContext(contextInterface).isActive());
-         }
-         reg.add(event.getClass(), rec);
-         if(event instanceof Throwable)
-         {
-            // we are listening to Object which is not really a good thing, so throw exceptions if found.
-            UncheckedThrow.throwUnchecked((Throwable)event);
-         }
-      }
-   }
- 
-   public static class EventRegister 
-   {
-      private Map<Class<?>, List<EventRecording>> events;
-      
-      public EventRegister()
-      {
-         events = new HashMap<Class<?>, List<EventRecording>>();
-      }
-      
-      public void add(Class<?> type, EventRecording recording)
-      {
-         if(events.get(type) == null)
-         {
-            List<EventRecording> recordings = new ArrayList<EventRecording>();
-            recordings.add(recording);
-            events.put(type, recordings);
-         }
-         else
-         {
-            events.get(type).add(recording);
-         }
-      }
-      
-      /**
-       * Get the count of a assignable count.
-       * 
-       * @param type The assignable event type
-       * @return Number of times fired
-       */
-      public Integer getCountTyped(Class<?> type)
-      {
-         int count = 0;
-         for(Map.Entry<Class<?>, List<EventRecording>> recordingEntry : events.entrySet())
-         {
-            if(type.isAssignableFrom(recordingEntry.getKey())) 
-            {
-               count += recordingEntry.getValue().size();
+        executeInApplicationScope(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                manager.resolve(Injector.class).inject(AbstractManagerTestBase.this);
+                return null;
             }
-         }
-         return count;
-      }
-      
-      /**
-       * Get the count of a specific type.
-       * 
-       * @param type The exact event type
-       * @return Number of times fired
-       */
-      public Integer getCount(Class<?> type)
-      {
-         return events.containsKey(type) ? events.get(type).size():0;
-      }
+        });
+        startContexts(manager);
+    }
 
-      public Boolean wasExecutedOnNonMainThread(Class<?> type) {
-          if(getCount(type) == 0)
-          {
-             return false;
-          }
-          for(EventRecording recording : events.get(type))
-          {
-             if("main".equalsIgnoreCase(recording.getThreadName()))
-             {
+    @After
+    public final void destory() {
+        manager.shutdown();
+        manager = null;
+    }
+
+    public ManagerImpl getManager() {
+        return manager;
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Assertions and Helper operations ----------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    public final void fire(Object event) {
+        manager.fire(event);
+    }
+
+    public final <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance) {
+        manager.bind(scope, type, instance);
+    }
+
+    public final void assertEventFired(Class<?> type) {
+        Assert.assertNotNull(
+                "Event " + type.getName() + " should have been fired",
+                getRegister().getCount(type));
+    }
+
+    public final void assertEventFired(Class<?> type, Integer count) {
+        Assert.assertEquals(
+                "The event of exact type " + type.getName() + " should have been fired",
+                count,
+                getRegister().getCount(type));
+    }
+
+    public final void assertEventFiredTyped(Class<?> type, Integer count) {
+        Assert.assertEquals(
+                "The event of assiganble type to " + type.getName() + " should have been fired",
+                count,
+                getRegister().getCountTyped(type));
+    }
+
+    public final void assertEventFiredInContext(Class<?> type, Class<? extends Context> activeContext) {
+        assertEventInContext(type, activeContext, true);
+    }
+
+    public final void assertEventNotFiredInContext(Class<?> type, Class<? extends Context> activeContext) {
+        assertEventInContext(type, activeContext, false);
+    }
+
+    private void assertEventInContext(Class<?> type, Class<? extends Context> activeContext, Boolean active) {
+        Assert.assertEquals(
+                "Event " + type.getName() + " should" + (active ? " " : " not") + " have been fired within context " + activeContext.getName(),
+                active,
+                getRegister().wasActive(type, activeContext));
+    }
+
+    public final void assertEventFiredOnOtherThread(Class<?> type) {
+        Assert.assertTrue(
+                "The event of type to " + type.getName() + " should have been fired on a different thread",
+                getRegister().wasExecutedOnNonMainThread(type));
+    }
+
+    private EventRegister getRegister() {
+        try {
+            return executeInApplicationScope(new Callable<EventRegister>() {
+                @Override
+                public EventRegister call() throws Exception {
+                    return manager.resolve(EventRegister.class);
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Extendables ------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    protected void addExtensions(List<Class<?>> extensions) {
+    }
+
+    protected void addContexts(List<Class<? extends Context>> contexts) {
+    }
+
+    protected void startContexts(Manager manager) {
+        manager.getContext(ApplicationContext.class).activate();
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Internal Helpers - Track events ----------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    public <T> T executeInApplicationScope(Callable<T> op) throws Exception {
+        return manager.executeInApplicationContext(op);
+    }
+
+    public static class EventRegisterObserver {
+        @Inject
+        @ApplicationScoped
+        private InstanceProducer<EventRegister> register;
+
+        @SuppressWarnings("unchecked")
+        public synchronized void register(@Observes Object event) {
+            if (register.get() == null) {
+                register.set(new EventRegister());
+            }
+
+            // TODO: looking up the static manager is a hack get to the Contexts dynamically. Manager can be null since events are fired during Manager creation
+            if (manager == null) {
+                return;
+            }
+            EventRegister reg = register.get();
+
+            EventRecording rec = new EventRecording();
+
+            for (Class<? extends Context> context : contexts) {
+                Class<? extends Context> contextInterface = (Class<? extends Context>) context.getInterfaces()[0];
+
+                rec.add(contextInterface, manager.getContext(contextInterface).isActive());
+            }
+            reg.add(event.getClass(), rec);
+            if (event instanceof Throwable) {
+                // we are listening to Object which is not really a good thing, so throw exceptions if found.
+                UncheckedThrow.throwUnchecked((Throwable) event);
+            }
+        }
+    }
+
+    public static class EventRegister {
+        private Map<Class<?>, List<EventRecording>> events;
+
+        public EventRegister() {
+            events = new HashMap<Class<?>, List<EventRecording>>();
+        }
+
+        public void add(Class<?> type, EventRecording recording) {
+            if (events.get(type) == null) {
+                List<EventRecording> recordings = new ArrayList<EventRecording>();
+                recordings.add(recording);
+                events.put(type, recordings);
+            } else {
+                events.get(type).add(recording);
+            }
+        }
+
+        /**
+         * Get the count of a assignable count.
+         *
+         * @param type The assignable event type
+         * @return Number of times fired
+         */
+        public Integer getCountTyped(Class<?> type) {
+            int count = 0;
+            for (Map.Entry<Class<?>, List<EventRecording>> recordingEntry : events.entrySet()) {
+                if (type.isAssignableFrom(recordingEntry.getKey())) {
+                    count += recordingEntry.getValue().size();
+                }
+            }
+            return count;
+        }
+
+        /**
+         * Get the count of a specific type.
+         *
+         * @param type The exact event type
+         * @return Number of times fired
+         */
+        public Integer getCount(Class<?> type) {
+            return events.containsKey(type) ? events.get(type).size() : 0;
+        }
+
+        public Boolean wasExecutedOnNonMainThread(Class<?> type) {
+            if (getCount(type) == 0) {
                 return false;
-             }
-          }
-          return true;
-      }
-
-      public Boolean wasActive(Class<?> type, Class<? extends Context> context)
-      {
-         if(getCount(type) == 0)
-         {
-            return false;
-         }
-         for(EventRecording recording : events.get(type))
-         {
-            if(!recording.wasActive(context))
-            {
-               return false;
             }
-         }
-         return true;
-      }
+            for (EventRecording recording : events.get(type)) {
+                if ("main".equalsIgnoreCase(recording.getThreadName())) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-   }
+        public Boolean wasActive(Class<?> type, Class<? extends Context> context) {
+            if (getCount(type) == 0) {
+                return false;
+            }
+            for (EventRecording recording : events.get(type)) {
+                if (!recording.wasActive(context)) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-   private static class EventRecording 
-   {
-      private Map<Class<? extends Context>, Boolean> activeContexts;
-      private String threadName;
+    }
 
-      public EventRecording()
-      {
-         threadName = Thread.currentThread().getName();
-         activeContexts = new HashMap<Class<? extends Context>, Boolean>();
-      }
+    private static class EventRecording {
+        private Map<Class<? extends Context>, Boolean> activeContexts;
+        private String threadName;
 
-      public String getThreadName() {
-         return threadName;
-      }
+        public EventRecording() {
+            threadName = Thread.currentThread().getName();
+            activeContexts = new HashMap<Class<? extends Context>, Boolean>();
+        }
 
-      public EventRecording add(Class<? extends Context> context, Boolean isActive)
-      {
-         activeContexts.put(context, isActive);
-         return this;
-      }
-      
-      public Boolean wasActive(Class<? extends Context> context)
-      {
-         if(activeContexts.get(context) != null)
-         {
-            return activeContexts.get(context);
-         }
-         return false;
-      }
-   }
+        public String getThreadName() {
+            return threadName;
+        }
+
+        public EventRecording add(Class<? extends Context> context, Boolean isActive) {
+            activeContexts.put(context, isActive);
+            return this;
+        }
+
+        public Boolean wasActive(Class<? extends Context> context) {
+            if (activeContexts.get(context) != null) {
+                return activeContexts.get(context);
+            }
+            return false;
+        }
+    }
 }

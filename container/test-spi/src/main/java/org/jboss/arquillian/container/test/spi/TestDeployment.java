@@ -31,119 +31,97 @@ import org.jboss.shrinkwrap.api.Node;
 
 /**
  * Value object that contains the {@link Archive}s needed for deployment. <br/>
- * 
- * With convenience methods for working / manipulating the Archives.  
+ * <p>
+ * With convenience methods for working / manipulating the Archives.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestDeployment
-{
-   private DeploymentDescription deploymentDescription;
+public class TestDeployment {
+    private DeploymentDescription deploymentDescription;
 
-   private Archive<?> applicationArchive;
+    private Archive<?> applicationArchive;
 
-   private Collection<Archive<?>> auxiliaryArchives;
+    private Collection<Archive<?>> auxiliaryArchives;
 
-   private Archive<?> archiveForEnrichment;
+    private Archive<?> archiveForEnrichment;
 
-   /**
-    * @param applicationArchive The user defined {@link Archive}
-    * @param auxiliaryArchives All extra library {@link Archive}s defined by extensions / core / frameworks.
-    *
-    *  @deprecated
-    */
-   public TestDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives)
-   {
-      this(null, applicationArchive, auxiliaryArchives);
-   }
+    /**
+     * @param applicationArchive The user defined {@link Archive}
+     * @param auxiliaryArchives  All extra library {@link Archive}s defined by extensions / core / frameworks.
+     * @deprecated
+     */
+    public TestDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives) {
+        this(null, applicationArchive, auxiliaryArchives);
+    }
 
-   /**
-    * @param deploymentDescription The deployment that backs this TestDeployment
-    * @param applicationArchive The user defined {@link Archive}
-    * @param auxiliaryArchives All extra library {@link Archive}s defined by extensions / core / frameworks.
-    *
-    */
-   public TestDeployment(DeploymentDescription deploymentDescription, Archive<?> applicationArchive,
-         Collection<Archive<?>> auxiliaryArchives)
-   {
-      if (applicationArchive == null)
-      {
-         throw new IllegalArgumentException("ApplicationArchive must be specified");
-      }
-      if (auxiliaryArchives == null)
-      {
-         throw new IllegalArgumentException("AuxiliaryArchives must be specified");
-      }
+    /**
+     * @param deploymentDescription The deployment that backs this TestDeployment
+     * @param applicationArchive    The user defined {@link Archive}
+     * @param auxiliaryArchives     All extra library {@link Archive}s defined by extensions / core / frameworks.
+     */
+    public TestDeployment(DeploymentDescription deploymentDescription, Archive<?> applicationArchive,
+                          Collection<Archive<?>> auxiliaryArchives) {
+        if (applicationArchive == null) {
+            throw new IllegalArgumentException("ApplicationArchive must be specified");
+        }
+        if (auxiliaryArchives == null) {
+            throw new IllegalArgumentException("AuxiliaryArchives must be specified");
+        }
 
-      this.deploymentDescription = deploymentDescription;
-      this.applicationArchive = applicationArchive;
-      this.auxiliaryArchives = auxiliaryArchives;
-   }
+        this.deploymentDescription = deploymentDescription;
+        this.applicationArchive = applicationArchive;
+        this.auxiliaryArchives = auxiliaryArchives;
+    }
 
-   public TargetDescription getTargetDescription()
-   {
-      return deploymentDescription == null ? null : deploymentDescription.getTarget();
-   }
+    public TargetDescription getTargetDescription() {
+        return deploymentDescription == null ? null : deploymentDescription.getTarget();
+    }
 
-   public ProtocolDescription getProtocolDescription()
-   {
-      return deploymentDescription == null ? null : deploymentDescription.getProtocol();
-   }
+    public ProtocolDescription getProtocolDescription() {
+        return deploymentDescription == null ? null : deploymentDescription.getProtocol();
+    }
 
-   public String getDeploymentName()
-   {
-      return deploymentDescription == null ? null : deploymentDescription.getName();
-   }
+    public String getDeploymentName() {
+        return deploymentDescription == null ? null : deploymentDescription.getName();
+    }
 
-   /**
-    * Convenience method to lookup the user tagged archive for enriching.
-    * @return The tagged Archive or ApplicationArchive if none are tagged
-    */
-   public Archive<?> getArchiveForEnrichment()
-   {
-      if (archiveForEnrichment == null)
-      {
-         // TODO: Extend to EJBs once they are supported
-         Map<ArchivePath, Node> nested = applicationArchive.getContent(Filters.include(".*\\.war"));
-         if (!nested.isEmpty())
-         {
-            for (ArchivePath path : nested.keySet())
-            {
-               try
-               {
-                  GenericArchive genericArchive = applicationArchive.getAsType(GenericArchive.class, path);
-                  if (Testable.isArchiveToTest(genericArchive))
-                  {
-                     if (archiveForEnrichment != null)
-                     {
-                        throw new UnsupportedOperationException("Multiple marked Archives found in "
-                              + applicationArchive.getName() + ". Can not determine which to enrich");
-                     }
-                     archiveForEnrichment = genericArchive;
-                  }
-               }
-               catch (IllegalArgumentException e)
-               {
-                  // no-op, Nested archive is not a ShrinkWrap archive.
-               }
+    /**
+     * Convenience method to lookup the user tagged archive for enriching.
+     *
+     * @return The tagged Archive or ApplicationArchive if none are tagged
+     */
+    public Archive<?> getArchiveForEnrichment() {
+        if (archiveForEnrichment == null) {
+            // TODO: Extend to EJBs once they are supported
+            Map<ArchivePath, Node> nested = applicationArchive.getContent(Filters.include(".*\\.war"));
+            if (!nested.isEmpty()) {
+                for (ArchivePath path : nested.keySet()) {
+                    try {
+                        GenericArchive genericArchive = applicationArchive.getAsType(GenericArchive.class, path);
+                        if (Testable.isArchiveToTest(genericArchive)) {
+                            if (archiveForEnrichment != null) {
+                                throw new UnsupportedOperationException("Multiple marked Archives found in "
+                                        + applicationArchive.getName() + ". Can not determine which to enrich");
+                            }
+                            archiveForEnrichment = genericArchive;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // no-op, Nested archive is not a ShrinkWrap archive.
+                    }
+                }
             }
-         }
-      }
-      else
-      {
-         archiveForEnrichment = applicationArchive;
-      }
-      return archiveForEnrichment;
-   }
+        } else {
+            archiveForEnrichment = applicationArchive;
+        }
+        return archiveForEnrichment;
+    }
 
-   public Archive<?> getApplicationArchive()
-   {
-      return applicationArchive;
-   }
+    public Archive<?> getApplicationArchive() {
+        return applicationArchive;
+    }
 
-   public Collection<Archive<?>> getAuxiliaryArchives()
-   {
-      return auxiliaryArchives;
-   }
+    public Collection<Archive<?>> getAuxiliaryArchives() {
+        return auxiliaryArchives;
+    }
 }

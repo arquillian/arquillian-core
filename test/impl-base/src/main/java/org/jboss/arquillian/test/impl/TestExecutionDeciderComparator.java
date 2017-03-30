@@ -22,7 +22,6 @@ import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 
 /**
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
- *
  */
 public class TestExecutionDeciderComparator implements Comparator<TestExecutionDecider> {
 

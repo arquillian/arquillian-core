@@ -28,22 +28,18 @@ import org.jboss.shrinkwrap.api.Archive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Processor 
-{
-   private TestDeployment deployment;
-   private Collection<ProtocolArchiveProcessor> processors;
-   
-   public Processor(TestDeployment deployment, Collection<ProtocolArchiveProcessor> processors)
-   {
-      this.deployment = deployment;
-      this.processors = processors;
-   }
-   
-   public void process(Archive<?> protocol)
-   {
-      for(ProtocolArchiveProcessor processor : processors)
-      {
-         processor.process(deployment, protocol);
-      }
-   }
+public class Processor {
+    private TestDeployment deployment;
+    private Collection<ProtocolArchiveProcessor> processors;
+
+    public Processor(TestDeployment deployment, Collection<ProtocolArchiveProcessor> processors) {
+        this.deployment = deployment;
+        this.processors = processors;
+    }
+
+    public void process(Archive<?> protocol) {
+        for (ProtocolArchiveProcessor processor : processors) {
+            processor.process(deployment, protocol);
+        }
+    }
 }

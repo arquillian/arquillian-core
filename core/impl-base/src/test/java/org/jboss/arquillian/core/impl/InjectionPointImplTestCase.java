@@ -29,51 +29,44 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectionPointImplTestCase
-{
-   @SuppressWarnings("unused")
-   private Instance<InjectionPointImplTestCase> instance;
+public class InjectionPointImplTestCase {
+    @SuppressWarnings("unused")
+    private Instance<InjectionPointImplTestCase> instance;
 
-   @ApplicationScoped
-   @SuppressWarnings("unused")
-   private Instance<InjectionPointImplTestCase> suiteInstance;
+    @ApplicationScoped
+    @SuppressWarnings("unused")
+    private Instance<InjectionPointImplTestCase> suiteInstance;
 
-   @SuppressWarnings("unused")
-   private Instance<GenericWildCard<?>> genericWildCardInstance;
-   
-   @Test
-   public void shouldBeAbleToDetermineType() throws Exception
-   {
-      InjectionPoint point = InjectionPointImpl.of(this, this.getClass().getDeclaredField("instance"));
-      
-      Assert.assertEquals(InjectionPointImplTestCase.class, point.getType());
-   }
+    @SuppressWarnings("unused")
+    private Instance<GenericWildCard<?>> genericWildCardInstance;
 
-   @Test
-   public void shouldBeAbleToDetermineScope() throws Exception
-   {
-      InjectionPoint point = InjectionPointImpl.of(this, this.getClass().getDeclaredField("suiteInstance"));
-      
-      Assert.assertEquals(ApplicationScoped.class, point.getScope());
-   }
-   
-   @Test
-   public void shouldBeAbleToFindRawTypeForGenericWildCard() throws Exception
-   {
-      InjectionPoint point = InjectionPointImpl.of(this, this.getClass().getDeclaredField("genericWildCardInstance"));
-      
-      try
-      {
-         Assert.assertEquals(GenericWildCard.class, point.getType());
-      }
-      catch (Exception e) {
-         //e.printStackTrace();
-         throw e;
-      }
-   }
-   
-   public static class GenericWildCard<T> 
-   {
-      
-   }
+    @Test
+    public void shouldBeAbleToDetermineType() throws Exception {
+        InjectionPoint point = InjectionPointImpl.of(this, this.getClass().getDeclaredField("instance"));
+
+        Assert.assertEquals(InjectionPointImplTestCase.class, point.getType());
+    }
+
+    @Test
+    public void shouldBeAbleToDetermineScope() throws Exception {
+        InjectionPoint point = InjectionPointImpl.of(this, this.getClass().getDeclaredField("suiteInstance"));
+
+        Assert.assertEquals(ApplicationScoped.class, point.getScope());
+    }
+
+    @Test
+    public void shouldBeAbleToFindRawTypeForGenericWildCard() throws Exception {
+        InjectionPoint point = InjectionPointImpl.of(this, this.getClass().getDeclaredField("genericWildCardInstance"));
+
+        try {
+            Assert.assertEquals(GenericWildCard.class, point.getType());
+        } catch (Exception e) {
+            //e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static class GenericWildCard<T> {
+
+    }
 }

@@ -26,32 +26,30 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
  * JUnitDeploymentAppender
- * 
+ * <p>
  * Package up the JUnit / Arquillian JUnit related dependencies.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender
-{
-   @Override
-   protected Archive<?> buildArchive()
-   {
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
-                        .addPackages(
-                              true, 
-                              "junit", 
-                              "org.junit",
-                              "org.hamcrest",
-                              Arquillian.class.getPackage().getName())
-                        .addAsServiceProvider(
-                              TestRunner.class, 
-                              JUnitTestRunner.class)
-                        .addClass(JUnitRemoteExtension.class)
-                        .addAsServiceProvider(
-                              RemoteLoadableExtension.class,
-                              JUnitRemoteExtension.class);
-      return archive;
-   }
+public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender {
+    @Override
+    protected Archive<?> buildArchive() {
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
+                .addPackages(
+                        true,
+                        "junit",
+                        "org.junit",
+                        "org.hamcrest",
+                        Arquillian.class.getPackage().getName())
+                .addAsServiceProvider(
+                        TestRunner.class,
+                        JUnitTestRunner.class)
+                .addClass(JUnitRemoteExtension.class)
+                .addAsServiceProvider(
+                        RemoteLoadableExtension.class,
+                        JUnitRemoteExtension.class);
+        return archive;
+    }
 
 }

@@ -18,19 +18,18 @@
 package org.jboss.arquillian.container.spi.client.container;
 
 /**
- * A utility SPI for use with @Excpected. Not all containers have a simple cause chain when it comes to 
- * deployment exceptions. This should transform from the container specific exception to the real cause. 
+ * A utility SPI for use with @Excpected. Not all containers have a simple cause chain when it comes to
+ * deployment exceptions. This should transform from the container specific exception to the real cause.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentExceptionTransformer
-{
-   /**
-    * Transform from a Container specific deployment exception to the real cause.
-    * 
-    * @param exception The exception caught during deploy
-    * @return The transformed Exception or null if exception is unknown/untransformable
-    */
-   Throwable transform(Throwable exception);
+public interface DeploymentExceptionTransformer {
+    /**
+     * Transform from a Container specific deployment exception to the real cause.
+     *
+     * @param exception The exception caught during deploy
+     * @return The transformed Exception or null if exception is unknown/untransformable
+     */
+    Throwable transform(Throwable exception);
 }

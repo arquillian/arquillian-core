@@ -50,161 +50,145 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBase
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<ServiceLoader> serviceProducer;
-   
-   @Mock
-   private ServiceLoader serviceLoader;
+public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBase {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ServiceLoader> serviceProducer;
 
-   @Mock
-   private DeploymentExceptionTransformer transformer;
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Mock
-   private Container container;
+    @Mock
+    private DeploymentExceptionTransformer transformer;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(DeploymentExceptionHandler.class);
-      extensions.add(TestExceptionDeployThrower.class);
-   }
-   
-   @Before
-   public void registerServiceLoader()
-   {
-      serviceProducer.set(serviceLoader);
-   }
-   
-   @Test
-   public void shouldSwallowExceptionIfExpected() throws Exception
-   {
-      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
-      fire(new DeployDeployment(
-            container, 
-            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(NullPointerException.class))));
-   }
-   
-   @Test
-   public void shouldCallDeploymentTransformers() throws Exception
-   {
-      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new IllegalArgumentException()); 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
+    @Mock
+    private Container container;
 
-      fire(new DeployDeployment(
-            container, 
-            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-            .setExpectedException(IllegalArgumentException.class))));
-      
-      Mockito.verify(transformer, Mockito.times(1)).transform(Mockito.isA(Exception.class));
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DeploymentExceptionHandler.class);
+        extensions.add(TestExceptionDeployThrower.class);
+    }
 
-   @Test
-   public void shouldTransformException() throws Exception
-   {
-      TestExceptionDeployThrower.shouldThrow = new IllegalStateException();
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
-      Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(new IllegalArgumentException());
+    @Before
+    public void registerServiceLoader() {
+        serviceProducer.set(serviceLoader);
+    }
 
-      fire(new DeployDeployment(
-            container, 
-            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class))));
-   }
-   
-   @Test
-   public void shouldSwallawExceptionIfExpectedAndDeploymentExceptionIsFieldOfThrown() throws Exception
-   {
-      MyDeploymentException myException = new MyDeploymentException("My special exception", new NullPointerException());
-      TestExceptionDeployThrower.shouldThrow = myException;
+    @Test
+    public void shouldSwallowExceptionIfExpected() throws Exception {
+        TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException());
+        fire(new DeployDeployment(
+                container,
+                new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+                        .setExpectedException(NullPointerException.class))));
+    }
 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
-      Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
-            myException.getDeploymentException());
+    @Test
+    public void shouldCallDeploymentTransformers() throws Exception {
+        TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new IllegalArgumentException());
+        Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
 
-      fire(new DeployDeployment(container, new Deployment(new DeploymentDescription("test",
-            ShrinkWrap.create(JavaArchive.class)).setExpectedException(NullPointerException.class))));
-   }
+        fire(new DeployDeployment(
+                container,
+                new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+                        .setExpectedException(IllegalArgumentException.class))));
 
-   @Test
-   public void shouldSwallawExceptionIfExpectedAndDeploymentExceptionIsFieldOfThrownAndCauseOfOther() throws Exception
-   {
-      IllegalArgumentException recursiveException = new IllegalArgumentException(new MyDeploymentException(
-            "My special exception", new NullPointerException()));
+        Mockito.verify(transformer, Mockito.times(1)).transform(Mockito.isA(Exception.class));
+    }
 
-      TestExceptionDeployThrower.shouldThrow = recursiveException;
+    @Test
+    public void shouldTransformException() throws Exception {
+        TestExceptionDeployThrower.shouldThrow = new IllegalStateException();
+        Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
+        Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(new IllegalArgumentException());
 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
-      Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
-            ((MyDeploymentException) recursiveException.getCause()).getDeploymentException());
+        fire(new DeployDeployment(
+                container,
+                new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+                        .setExpectedException(IllegalArgumentException.class))));
+    }
 
-      fire(new DeployDeployment(container, new Deployment(new DeploymentDescription("test",
-            ShrinkWrap.create(JavaArchive.class)).setExpectedException(NullPointerException.class))));
-   }
+    @Test
+    public void shouldSwallawExceptionIfExpectedAndDeploymentExceptionIsFieldOfThrown() throws Exception {
+        MyDeploymentException myException = new MyDeploymentException("My special exception", new NullPointerException());
+        TestExceptionDeployThrower.shouldThrow = myException;
 
-   private static class MyDeploymentException extends Exception
-   {
-      private static final long serialVersionUID = 4864115564504690695L;
+        Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
+        Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
+                myException.getDeploymentException());
 
-      private DeploymentException deploymentException;
+        fire(new DeployDeployment(container, new Deployment(new DeploymentDescription("test",
+                ShrinkWrap.create(JavaArchive.class)).setExpectedException(NullPointerException.class))));
+    }
 
-      public MyDeploymentException(String message, Throwable cause)
-      {
-         super(message);
-         this.deploymentException = new DeploymentException("Could not deploy", cause);
-      }
+    @Test
+    public void shouldSwallawExceptionIfExpectedAndDeploymentExceptionIsFieldOfThrownAndCauseOfOther() throws Exception {
+        IllegalArgumentException recursiveException = new IllegalArgumentException(new MyDeploymentException(
+                "My special exception", new NullPointerException()));
 
-      public DeploymentException getDeploymentException()
-      {
-         return deploymentException;
-      }
-   }
-   
-   @Test(expected = DeploymentException.class)
-   public void shouldRethrowExceptionIfWrongExpectedType() throws Exception
-   {
-      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
-      Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
+        TestExceptionDeployThrower.shouldThrow = recursiveException;
 
-      fire(new DeployDeployment(
-            container, 
-            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class))));
-      }
+        Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
+        Mockito.when(transformer.transform(TestExceptionDeployThrower.shouldThrow)).thenReturn(
+                ((MyDeploymentException) recursiveException.getCause()).getDeploymentException());
 
-   @Test(expected = DeploymentException.class)
-   public void shouldRethrowExceptionIfExpectedNotSet() throws Exception
-   {
-      TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException()); 
+        fire(new DeployDeployment(container, new Deployment(new DeploymentDescription("test",
+                ShrinkWrap.create(JavaArchive.class)).setExpectedException(NullPointerException.class))));
+    }
 
-      fire(new DeployDeployment(
-            container, 
-            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class)))));
-   }
+    private static class MyDeploymentException extends Exception {
+        private static final long serialVersionUID = 4864115564504690695L;
 
-   @Test(expected = RuntimeException.class)
-   public void shouldThrowExceptionIfExpectedButNoExceptionThrown() throws Exception
-   {
-      TestExceptionDeployThrower.shouldThrow = null;
+        private DeploymentException deploymentException;
 
-      fire(new DeployDeployment(
-            container, 
-            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
-               .setExpectedException(IllegalArgumentException.class))));
-   }
+        public MyDeploymentException(String message, Throwable cause) {
+            super(message);
+            this.deploymentException = new DeploymentException("Could not deploy", cause);
+        }
 
-   public static class TestExceptionDeployThrower 
-   {
-      public static Throwable shouldThrow = null;
-      
-      public void throwException(@Observes DeployDeployment event) throws Throwable
-      {
-         if(shouldThrow != null)
-         {
-            throw shouldThrow;
-         }
-      }
-   }
+        public DeploymentException getDeploymentException() {
+            return deploymentException;
+        }
+    }
+
+    @Test(expected = DeploymentException.class)
+    public void shouldRethrowExceptionIfWrongExpectedType() throws Exception {
+        TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException());
+        Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class)).thenReturn(Collections.singletonList(transformer));
+
+        fire(new DeployDeployment(
+                container,
+                new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+                        .setExpectedException(IllegalArgumentException.class))));
+    }
+
+    @Test(expected = DeploymentException.class)
+    public void shouldRethrowExceptionIfExpectedNotSet() throws Exception {
+        TestExceptionDeployThrower.shouldThrow = new DeploymentException("Could not handle ba", new NullPointerException());
+
+        fire(new DeployDeployment(
+                container,
+                new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class)))));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowExceptionIfExpectedButNoExceptionThrown() throws Exception {
+        TestExceptionDeployThrower.shouldThrow = null;
+
+        fire(new DeployDeployment(
+                container,
+                new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+                        .setExpectedException(IllegalArgumentException.class))));
+    }
+
+    public static class TestExceptionDeployThrower {
+        public static Throwable shouldThrow = null;
+
+        public void throwException(@Observes DeployDeployment event) throws Throwable {
+            if (shouldThrow != null) {
+                throw shouldThrow;
+            }
+        }
+    }
 }

@@ -28,11 +28,11 @@ import java.lang.annotation.Target;
  * The run mode for a test method is determined by the @Deployment annotations member testable.
  * By default testable is true which tells Arquillian to execute the test methods in container. If testable is set to false,
  * Arquillian will execute the test methods on the client side.
- *
+ * <p>
  * <p>
  * In some cases it is useful to run different test methods in a test class in different modes,
  * e.g. a client method that calls a Servlet for then to verify some internal state in a in container method.
- *
+ * <p>
  * Usage Example:<br/>
  * <pre><code>
  * &#64;Deployment
@@ -54,6 +54,5 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface RunAsClient
-{
+public @interface RunAsClient {
 }

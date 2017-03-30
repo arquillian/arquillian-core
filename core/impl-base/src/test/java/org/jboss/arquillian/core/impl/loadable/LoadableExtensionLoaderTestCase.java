@@ -26,13 +26,11 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LoadableExtensionLoaderTestCase 
-{
+public class LoadableExtensionLoaderTestCase {
 
-   @Test
-   public void shouldBeAbleTo() throws Exception
-   {
-      
-   }
-   
+    @Test
+    public void shouldBeAbleTo() throws Exception {
+
+    }
+
 }

@@ -26,46 +26,41 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class HashObjectStore implements ObjectStore
-{
-   private ConcurrentHashMap<Class<?>, Object> store;
-   
-   public HashObjectStore()
-   {
-      store = new ConcurrentHashMap<Class<?>, Object>();
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.impl.ObjectStore#add(java.lang.Class, T)
-    */
-   @Override
-   public <T> ObjectStore add(Class<T> type, T instance)
-   {
-      Validate.notNull(type, "Type must be specified");
-      Validate.notNull(instance, "Instance must be specified");
-      
-      store.put(type, instance);
-      return this;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.impl.ObjectStore#get(java.lang.Class)
-    */
-   @Override
-   public <T> T get(Class<T> type)
-   {
-      Validate.notNull(type, "Type must be specified");
-      
-      return type.cast(store.get(type));
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.impl.ObjectStore#clear()
-    */
-   @Override
-   public ObjectStore clear()
-   {
-      store.clear();
-      return this;
-   }
+public class HashObjectStore implements ObjectStore {
+    private ConcurrentHashMap<Class<?>, Object> store;
+
+    public HashObjectStore() {
+        store = new ConcurrentHashMap<Class<?>, Object>();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.impl.ObjectStore#add(java.lang.Class, T)
+     */
+    @Override
+    public <T> ObjectStore add(Class<T> type, T instance) {
+        Validate.notNull(type, "Type must be specified");
+        Validate.notNull(instance, "Instance must be specified");
+
+        store.put(type, instance);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.impl.ObjectStore#get(java.lang.Class)
+     */
+    @Override
+    public <T> T get(Class<T> type) {
+        Validate.notNull(type, "Type must be specified");
+
+        return type.cast(store.get(type));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.impl.ObjectStore#clear()
+     */
+    @Override
+    public ObjectStore clear() {
+        store.clear();
+        return this;
+    }
 }

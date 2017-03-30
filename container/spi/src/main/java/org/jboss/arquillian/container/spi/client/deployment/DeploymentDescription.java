@@ -26,212 +26,187 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentDescription
-{
-   private String name;
-   private boolean managed = true;
-   private int order = 0;
-   private boolean testable = true;
-   
-   private TargetDescription target = TargetDescription.DEFAULT;
-   private ProtocolDescription protocol= ProtocolDescription.DEFAULT;
-   private Archive<?> archive;
-   private Descriptor descriptor;
-   
-   private Archive<?> testableArchive;
-   
-   private Class<? extends Exception> expectedException;
+public class DeploymentDescription {
+    private String name;
+    private boolean managed = true;
+    private int order = 0;
+    private boolean testable = true;
 
-   public DeploymentDescription(String name, Archive<?> archive)
-   {
-      this(name);
-      
-      Validate.notNull(archive, "Archive must be specified");
-      this.archive = archive;
-   }
+    private TargetDescription target = TargetDescription.DEFAULT;
+    private ProtocolDescription protocol = ProtocolDescription.DEFAULT;
+    private Archive<?> archive;
+    private Descriptor descriptor;
 
-   public DeploymentDescription(String name, Descriptor descriptor)
-   {
-      this(name);
+    private Archive<?> testableArchive;
 
-      Validate.notNull(descriptor, "Descriptor must be specified");
-      this.descriptor = descriptor;
-   }
+    private Class<? extends Exception> expectedException;
 
-   private DeploymentDescription(String name)
-   {
-      Validate.notNull(name, "Name must be specified");
+    public DeploymentDescription(String name, Archive<?> archive) {
+        this(name);
 
-      this.name = name;
-   }
+        Validate.notNull(archive, "Archive must be specified");
+        this.archive = archive;
+    }
 
-   /**
-    * @return the name
-    */
-   public String getName()
-   {
-      return name;
-   }
-   
-   /**
-    * @param order the order to set
-    */
-   public DeploymentDescription setOrder(int order)
-   {
-      this.order = order;
-      return this;
-   }
-   
-   
-   /**
-    * @return the order
-    */
-   public int getOrder()
-   {
-      return order;
-   }
-   
-   /**
-    * @param target the target to set
-    */
-   public DeploymentDescription setTarget(TargetDescription target)
-   {
-      Validate.notNull(target, "TargetDescription must be specified");
-      this.target = target;
-      return this;
-   }
-   
-   /**
-    * @return the target
-    */
-   public TargetDescription getTarget()
-   {
-      return target;
-   }
-   
-   /**
-    * @param protocol the protocol to set
-    */
-   public DeploymentDescription setProtocol(ProtocolDescription protocol)
-   {
-      this.protocol = protocol;
-      return this;
-   }
+    public DeploymentDescription(String name, Descriptor descriptor) {
+        this(name);
 
-   /**
-    * @return the protocol
-    */
-   public ProtocolDescription getProtocol()
-   {
-      return protocol;
-   }
+        Validate.notNull(descriptor, "Descriptor must be specified");
+        this.descriptor = descriptor;
+    }
 
-   public DeploymentDescription shouldBeManaged(boolean startup)
-   {
-      this.managed = startup;
-      return this;
-   }
-   
-   /**
-    * @return the startup
-    */
-   public boolean managed()
-   {
-      return managed;
-   }
+    private DeploymentDescription(String name) {
+        Validate.notNull(name, "Name must be specified");
 
-   /**
-    * @param testable the testable to set
-    */
-   public DeploymentDescription shouldBeTestable(boolean testable)
-   {
-      if(!isArchiveDeployment())
-      {
-         throw new IllegalArgumentException("A non ArchiveDeployment can not be testable: " + getName());
-      }
-      this.testable = testable;
-      return this;
-   }
-   
-   /**
-    * @return the testable
-    */
-   public boolean testable()
-   {
-      return testable;
-   }
+        this.name = name;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param order the order to set
+     */
+    public DeploymentDescription setOrder(int order) {
+        this.order = order;
+        return this;
+    }
 
 
-   /**
-    * @return the testableArchive
-    */
-   public Archive<?> getTestableArchive()
-   {
-      return testableArchive;
-   }
-   
-   /**
-    * @param testableArchive the testableArchive to set
-    */
-   public DeploymentDescription setTestableArchive(Archive<?> testableArchive)
-   {
-      this.testableArchive = testableArchive;
-      return this;
-   }
+    /**
+     * @return the order
+     */
+    public int getOrder() {
+        return order;
+    }
 
-   /**
-    * @return the expectedException
-    */
-   public Class<? extends Exception> getExpectedException()
-   {
-      return expectedException;
-   }
-   
-   /**
-    * @param expectedException the expectedException to set
-    */
-   public DeploymentDescription setExpectedException(Class<? extends Exception> expectedException)
-   {
-      this.expectedException = expectedException;
-      return this;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Deployment ----------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    /**
+     * @param target the target to set
+     */
+    public DeploymentDescription setTarget(TargetDescription target) {
+        Validate.notNull(target, "TargetDescription must be specified");
+        this.target = target;
+        return this;
+    }
 
-   /**
-    * @return the archive
-    */
-   public Archive<?> getArchive()
-   {
-      return archive;
-   }
-   
-   /**
-    * @return the descriptor
-    */
-   public Descriptor getDescriptor()
-   {
-      return descriptor;
-   }
-   
-   public boolean isDescriptorDeployment()
-   {
-      return descriptor != null;
-   }
-   
-   public boolean isArchiveDeployment()
-   {
-      return archive != null;
-   }
-   
-   /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
-   @Override
-   public String toString()
-   {
-      return getName();
-   }
+    /**
+     * @return the target
+     */
+    public TargetDescription getTarget() {
+        return target;
+    }
+
+    /**
+     * @param protocol the protocol to set
+     */
+    public DeploymentDescription setProtocol(ProtocolDescription protocol) {
+        this.protocol = protocol;
+        return this;
+    }
+
+    /**
+     * @return the protocol
+     */
+    public ProtocolDescription getProtocol() {
+        return protocol;
+    }
+
+    public DeploymentDescription shouldBeManaged(boolean startup) {
+        this.managed = startup;
+        return this;
+    }
+
+    /**
+     * @return the startup
+     */
+    public boolean managed() {
+        return managed;
+    }
+
+    /**
+     * @param testable the testable to set
+     */
+    public DeploymentDescription shouldBeTestable(boolean testable) {
+        if (!isArchiveDeployment()) {
+            throw new IllegalArgumentException("A non ArchiveDeployment can not be testable: " + getName());
+        }
+        this.testable = testable;
+        return this;
+    }
+
+    /**
+     * @return the testable
+     */
+    public boolean testable() {
+        return testable;
+    }
+
+
+    /**
+     * @return the testableArchive
+     */
+    public Archive<?> getTestableArchive() {
+        return testableArchive;
+    }
+
+    /**
+     * @param testableArchive the testableArchive to set
+     */
+    public DeploymentDescription setTestableArchive(Archive<?> testableArchive) {
+        this.testableArchive = testableArchive;
+        return this;
+    }
+
+    /**
+     * @return the expectedException
+     */
+    public Class<? extends Exception> getExpectedException() {
+        return expectedException;
+    }
+
+    /**
+     * @param expectedException the expectedException to set
+     */
+    public DeploymentDescription setExpectedException(Class<? extends Exception> expectedException) {
+        this.expectedException = expectedException;
+        return this;
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Deployment ----------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /**
+     * @return the archive
+     */
+    public Archive<?> getArchive() {
+        return archive;
+    }
+
+    /**
+     * @return the descriptor
+     */
+    public Descriptor getDescriptor() {
+        return descriptor;
+    }
+
+    public boolean isDescriptorDeployment() {
+        return descriptor != null;
+    }
+
+    public boolean isArchiveDeployment() {
+        return archive != null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

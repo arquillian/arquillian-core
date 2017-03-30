@@ -23,20 +23,18 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ClassPermissionTestCase
-{
+public class ClassPermissionTestCase {
 
-   @Test
-   public void shouldBeAbleToUseProtectedFieldsAndMethods() throws Exception
-   {
-      Class<?> observerClass = SecurityActions.loadClass(
-            this.getClass().getPackage().getName() + ".test.PrivateObserver");
-      Manager manager = ManagerBuilder.from().extension(observerClass).create();
+    @Test
+    public void shouldBeAbleToUseProtectedFieldsAndMethods() throws Exception {
+        Class<?> observerClass = SecurityActions.loadClass(
+                this.getClass().getPackage().getName() + ".test.PrivateObserver");
+        Manager manager = ManagerBuilder.from().extension(observerClass).create();
 
-      manager.fire("Test");
+        manager.fire("Test");
 
-      Field wasCalled = observerClass.getField("wasCalled");
-      wasCalled.setAccessible(true);
-      Assert.assertTrue((Boolean)wasCalled.get(null));
-   }
+        Field wasCalled = observerClass.getField("wasCalled");
+        wasCalled.setAccessible(true);
+        Assert.assertTrue((Boolean) wasCalled.get(null));
+    }
 }

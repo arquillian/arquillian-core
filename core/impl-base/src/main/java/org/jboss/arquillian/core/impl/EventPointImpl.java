@@ -30,56 +30,47 @@ import org.jboss.arquillian.core.spi.InvocationException;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventPointImpl implements EventPoint
-{
-   private Object target;
-   private Field field;
+public class EventPointImpl implements EventPoint {
+    private Object target;
+    private Field field;
 
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   public static EventPointImpl of(Object target, Field field)
-   {
-      return new EventPointImpl(target, field);
-   }
+    public static EventPointImpl of(Object target, Field field) {
+        return new EventPointImpl(target, field);
+    }
 
-   EventPointImpl(Object target, Field field)
-   {
-      this.target = target;
-      this.field = field;
-   }
+    EventPointImpl(Object target, Field field) {
+        this.target = target;
+        this.field = field;
+    }
 
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - EventPoint ----------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - EventPoint ----------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Typed#getType()
-    */
-   @Override
-   public Type getType()
-   {
-      return ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
-    */
-   @Override
-   public void set(Event<?> value) throws InvocationException
-   {
-      try
-      {
-         if(!field.isAccessible())
-         {
-            field.setAccessible(true);
-         }
-         field.set(target, value);
-      }
-      catch (Exception e) 
-      {
-         throw new InvocationException(e);
-      }
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Typed#getType()
+     */
+    @Override
+    public Type getType() {
+        return ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
+     */
+    @Override
+    public void set(Event<?> value) throws InvocationException {
+        try {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            field.set(target, value);
+        } catch (Exception e) {
+            throw new InvocationException(e);
+        }
+    }
 }

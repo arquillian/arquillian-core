@@ -58,219 +58,188 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class CDIInjectionEnricherTestCase extends AbstractTestTestBase
-{
-   private WeldBootstrap bootstrap;
-   private WeldManager manager;
-   private CDIInjectionEnricher enricher;
- 
-   @org.jboss.arquillian.core.api.annotation.Inject 
-   private org.jboss.arquillian.core.api.Instance<Injector> injector;
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(CreationalContextDestroyer.class);
-   }
-   
-   @Before
-   public void setup() throws Exception 
-   {
-      Deployment deployment = createDeployment(Service.class, Cat.class, CatService.class, Dog.class, DogService.class);
-      bootstrap = new WeldBootstrap();
-      bootstrap.startContainer(Environments.SE, deployment)
-                  .startInitialization()
-                  .deployBeans()
-                  .validateBeans()
-                  .endInitialization();
+public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
+    private WeldBootstrap bootstrap;
+    private WeldManager manager;
+    private CDIInjectionEnricher enricher;
 
-      manager = bootstrap.getManager(deployment.getBeanDeploymentArchives().iterator().next());
+    @org.jboss.arquillian.core.api.annotation.Inject
+    private org.jboss.arquillian.core.api.Instance<Injector> injector;
 
-      bind(TestScoped.class,  BeanManager.class, manager);
-      
-      enricher = new CDIInjectionEnricher();
-      injector.get().inject(enricher);
-   }
-   
-   @After
-   public void teardown() throws Exception
-   {
-      bootstrap.shutdown();
-   }
-   
-   @Test
-   public void shouldInjectClassMembers() throws Exception
-   {
-      TestClass testClass = new TestClass();
-      enricher.injectClass(testClass);
-      testClass.testMethod(testClass.dogService, testClass.catService);
-   }
-   
-   @Test
-   public void shouldInjectMethodArguments() throws Exception
-   {
-      Method testMethod = TestClass.class.getMethod("testMethod", Service.class, Service.class);
-      
-      Object[] resolvedBeans = enricher.resolve(testMethod);
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(CreationalContextDestroyer.class);
+    }
 
-      TestClass testClass = new TestClass();
-      testMethod.invoke(testClass, resolvedBeans);
-   }
-   
-   @Test
-   public void shouldInjectMethodArgumentsEvent() throws Exception
-   {
-      Method testMethod = TestClass.class.getMethod("testEvent", Event.class, Event.class);
-      
-      Object[] resolvedBeans = enricher.resolve(testMethod);
+    @Before
+    public void setup() throws Exception {
+        Deployment deployment = createDeployment(Service.class, Cat.class, CatService.class, Dog.class, DogService.class);
+        bootstrap = new WeldBootstrap();
+        bootstrap.startContainer(Environments.SE, deployment)
+                .startInitialization()
+                .deployBeans()
+                .validateBeans()
+                .endInitialization();
 
-      TestClass testClass = new TestClass();
-      testMethod.invoke(testClass, resolvedBeans);
-   }
+        manager = bootstrap.getManager(deployment.getBeanDeploymentArchives().iterator().next());
 
-   @Test
-   public void shouldReleaseCreationalContext() throws Exception
-   {
-      TestClass testClass = new TestClass();
-      enricher.injectClass(testClass);
+        bind(TestScoped.class, BeanManager.class, manager);
 
-      fire(new org.jboss.arquillian.test.spi.event.suite.After(this, TestClass.class.getMethod("validateReleased")));
-      testClass.validateReleased();
-   }
-   
-   @Test
-   public void shouldInjectMethodArgumentsInstance() throws Exception
-   {
-      Method testMethod = TestClass.class.getMethod("testInstance", Instance.class, Instance.class);
-      
-      Object[] resolvedBeans = enricher.resolve(testMethod);
+        enricher = new CDIInjectionEnricher();
+        injector.get().inject(enricher);
+    }
 
-      TestClass testClass = new TestClass();
-      testMethod.invoke(testClass, resolvedBeans);
-   }
+    @After
+    public void teardown() throws Exception {
+        bootstrap.shutdown();
+    }
 
-   private static class TestClass 
-   {
-      @Inject
-      Service<Dog> dogService;
+    @Test
+    public void shouldInjectClassMembers() throws Exception {
+        TestClass testClass = new TestClass();
+        enricher.injectClass(testClass);
+        testClass.testMethod(testClass.dogService, testClass.catService);
+    }
 
-      @Inject
-      Service<Cat> catService;
-      
-      public void validateReleased()
-      {
-         Assert.assertTrue("@PreDestory has been called", dogService.wasReleased());
-         Assert.assertTrue("@PreDestory has been called", catService.wasReleased());
-      }
-      
-      public void testMethod(Service<Dog> dogService, Service<Cat> catService)
-      {
-         Assert.assertNotNull(catService);
-         Assert.assertNotNull(dogService);
-         
-         Assert.assertEquals("Injected object should be of type", CatService.class, catService.getClass());
-         Assert.assertEquals("Injected object should be of type", DogService.class, dogService.getClass());
-      }
-      
-      @SuppressWarnings("unused") // used only via reflection
-      public void testEvent(Event<Dog> dogEvent, Event<Cat> catEvent)
-      {
-         Assert.assertNotNull("Generic Event should be injected as MethodArgument", dogEvent);
-         Assert.assertNotNull("Generic Event should be injected as MethodArgument", catEvent);
-      }
+    @Test
+    public void shouldInjectMethodArguments() throws Exception {
+        Method testMethod = TestClass.class.getMethod("testMethod", Service.class, Service.class);
 
-      @SuppressWarnings("unused") // used only via reflection
-      public void testInstance(Instance<Dog> dogEvent, Instance<Cat> catEvent)
-      {
-         Assert.assertNotNull("Generic Instance should be injected as MethodArgument", dogEvent);
-         Assert.assertNotNull("Generic Instance should be injected as MethodArgument", catEvent);
-      }
-   }
-   
-   private Deployment createDeployment(final Class<?>... classes)
-   {
-      final BeanDeploymentArchive beanArchive = new BeanDeploymentArchive()
-      {
-         private ServiceRegistry registry = new SimpleServiceRegistry();
-         
-         public ServiceRegistry getServices()
-         {
-            return registry; 
-         }
-         
-         public String getId()
-         {
-            return "test.jar";
-         }
-         
-         public Collection<EjbDescriptor<?>> getEjbs()
-         {
-            return Collections.emptyList();
-         }
-         
-         public BeansXml getBeansXml()
-         {
-            try
-            {
-               Collection<URL> beansXmlPaths = Collections.singletonList(new URL(null, "archive://beans.xml", new URLStreamHandler() {
-                  @Override
-                  protected URLConnection openConnection(URL u) throws IOException {
-                     return new URLConnection(u) {
-                        public void connect() throws IOException {
-                        }
+        Object[] resolvedBeans = enricher.resolve(testMethod);
 
-                        public InputStream getInputStream() throws IOException {
-                           return new ByteArrayInputStream("<beans/>".getBytes());
-                        }
-                     };
-                  }
-               }));
-               return bootstrap.parse(beansXmlPaths);
-            } 
-            catch (Exception e) 
-            {
-               throw new RuntimeException(e);
+        TestClass testClass = new TestClass();
+        testMethod.invoke(testClass, resolvedBeans);
+    }
+
+    @Test
+    public void shouldInjectMethodArgumentsEvent() throws Exception {
+        Method testMethod = TestClass.class.getMethod("testEvent", Event.class, Event.class);
+
+        Object[] resolvedBeans = enricher.resolve(testMethod);
+
+        TestClass testClass = new TestClass();
+        testMethod.invoke(testClass, resolvedBeans);
+    }
+
+    @Test
+    public void shouldReleaseCreationalContext() throws Exception {
+        TestClass testClass = new TestClass();
+        enricher.injectClass(testClass);
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.After(this, TestClass.class.getMethod("validateReleased")));
+        testClass.validateReleased();
+    }
+
+    @Test
+    public void shouldInjectMethodArgumentsInstance() throws Exception {
+        Method testMethod = TestClass.class.getMethod("testInstance", Instance.class, Instance.class);
+
+        Object[] resolvedBeans = enricher.resolve(testMethod);
+
+        TestClass testClass = new TestClass();
+        testMethod.invoke(testClass, resolvedBeans);
+    }
+
+    private static class TestClass {
+        @Inject
+        Service<Dog> dogService;
+
+        @Inject
+        Service<Cat> catService;
+
+        public void validateReleased() {
+            Assert.assertTrue("@PreDestory has been called", dogService.wasReleased());
+            Assert.assertTrue("@PreDestory has been called", catService.wasReleased());
+        }
+
+        public void testMethod(Service<Dog> dogService, Service<Cat> catService) {
+            Assert.assertNotNull(catService);
+            Assert.assertNotNull(dogService);
+
+            Assert.assertEquals("Injected object should be of type", CatService.class, catService.getClass());
+            Assert.assertEquals("Injected object should be of type", DogService.class, dogService.getClass());
+        }
+
+        @SuppressWarnings("unused") // used only via reflection
+        public void testEvent(Event<Dog> dogEvent, Event<Cat> catEvent) {
+            Assert.assertNotNull("Generic Event should be injected as MethodArgument", dogEvent);
+            Assert.assertNotNull("Generic Event should be injected as MethodArgument", catEvent);
+        }
+
+        @SuppressWarnings("unused") // used only via reflection
+        public void testInstance(Instance<Dog> dogEvent, Instance<Cat> catEvent) {
+            Assert.assertNotNull("Generic Instance should be injected as MethodArgument", dogEvent);
+            Assert.assertNotNull("Generic Instance should be injected as MethodArgument", catEvent);
+        }
+    }
+
+    private Deployment createDeployment(final Class<?>... classes) {
+        final BeanDeploymentArchive beanArchive = new BeanDeploymentArchive() {
+            private ServiceRegistry registry = new SimpleServiceRegistry();
+
+            public ServiceRegistry getServices() {
+                return registry;
             }
-         }
-         
-         public Collection<BeanDeploymentArchive> getBeanDeploymentArchives()
-         {
-            return Collections.emptyList();
-         }
-         
-         public Collection<String> getBeanClasses()
-         {
-            Collection<String> beanClasses = new ArrayList<String>();
-            for (Class<?> c : classes)
-            {
-               beanClasses.add(c.getName());
-            }
-            return beanClasses;
-         }
-      };
-      final Deployment deployment = new Deployment() 
-      {
-         public Collection<BeanDeploymentArchive> getBeanDeploymentArchives()
-         {
-            return Collections.singletonList(beanArchive);
-         }
-         
-         public ServiceRegistry getServices()
-         {
-            return beanArchive.getServices();
-         }
-         
-         public BeanDeploymentArchive loadBeanDeploymentArchive(    
-               Class<?> beanClass)
-         {
-            return beanArchive;
-         }
 
-         public Iterable<Metadata<Extension>> getExtensions()
-         {
-            return Collections.emptyList();
-         }
-      };
-      return deployment;
-   }
+            public String getId() {
+                return "test.jar";
+            }
+
+            public Collection<EjbDescriptor<?>> getEjbs() {
+                return Collections.emptyList();
+            }
+
+            public BeansXml getBeansXml() {
+                try {
+                    Collection<URL> beansXmlPaths = Collections.singletonList(new URL(null, "archive://beans.xml", new URLStreamHandler() {
+                        @Override
+                        protected URLConnection openConnection(URL u) throws IOException {
+                            return new URLConnection(u) {
+                                public void connect() throws IOException {
+                                }
+
+                                public InputStream getInputStream() throws IOException {
+                                    return new ByteArrayInputStream("<beans/>".getBytes());
+                                }
+                            };
+                        }
+                    }));
+                    return bootstrap.parse(beansXmlPaths);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
+                return Collections.emptyList();
+            }
+
+            public Collection<String> getBeanClasses() {
+                Collection<String> beanClasses = new ArrayList<String>();
+                for (Class<?> c : classes) {
+                    beanClasses.add(c.getName());
+                }
+                return beanClasses;
+            }
+        };
+        final Deployment deployment = new Deployment() {
+            public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
+                return Collections.singletonList(beanArchive);
+            }
+
+            public ServiceRegistry getServices() {
+                return beanArchive.getServices();
+            }
+
+            public BeanDeploymentArchive loadBeanDeploymentArchive(
+                    Class<?> beanClass) {
+                return beanArchive;
+            }
+
+            public Iterable<Metadata<Extension>> getExtensions() {
+                return Collections.emptyList();
+            }
+        };
+        return deployment;
+    }
 }

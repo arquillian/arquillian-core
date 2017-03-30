@@ -24,35 +24,32 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestRunnerAdaptorBuilder
-{
-   private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
-   private static final String TEST_RUNNER_IMPL_CLASS = "org.jboss.arquillian.test.impl.EventTestRunnerAdaptor";
-   
-   private TestRunnerAdaptorBuilder() {}
+public class TestRunnerAdaptorBuilder {
+    private static final String DEFAULT_EXTENSION_CLASS = "org.jboss.arquillian.core.impl.loadable.LoadableExtensionLoader";
+    private static final String TEST_RUNNER_IMPL_CLASS = "org.jboss.arquillian.test.impl.EventTestRunnerAdaptor";
 
-   private static TestRunnerAdaptor testAdaptor;
+    private TestRunnerAdaptorBuilder() {
+    }
 
-   // Hidden from public, use reflection to invoke. Used for Test
-   public static void set(TestRunnerAdaptor adaptor)
-   {
-      testAdaptor = adaptor;
-   }
-   
-   public static TestRunnerAdaptor build() 
-   {
-      if(testAdaptor != null)
-      {
-         return testAdaptor;
-      }
-      
-      ManagerBuilder builder = ManagerBuilder.from()
-         .extension(SecurityActions.loadClass(DEFAULT_EXTENSION_CLASS));
+    private static TestRunnerAdaptor testAdaptor;
 
-      return SecurityActions.newInstance(
-            TEST_RUNNER_IMPL_CLASS, 
-            new Class<?>[] {ManagerBuilder.class}, 
-            new Object[] {builder}, 
-            TestRunnerAdaptor.class);     
-   }
+    // Hidden from public, use reflection to invoke. Used for Test
+    public static void set(TestRunnerAdaptor adaptor) {
+        testAdaptor = adaptor;
+    }
+
+    public static TestRunnerAdaptor build() {
+        if (testAdaptor != null) {
+            return testAdaptor;
+        }
+
+        ManagerBuilder builder = ManagerBuilder.from()
+                .extension(SecurityActions.loadClass(DEFAULT_EXTENSION_CLASS));
+
+        return SecurityActions.newInstance(
+                TEST_RUNNER_IMPL_CLASS,
+                new Class<?>[]{ManagerBuilder.class},
+                new Object[]{builder},
+                TestRunnerAdaptor.class);
+    }
 }

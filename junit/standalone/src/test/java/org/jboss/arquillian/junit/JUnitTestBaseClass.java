@@ -44,146 +44,121 @@ import org.mockito.stubbing.Answer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitTestBaseClass
-{
-   public static enum Cycle { BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS }
+public class JUnitTestBaseClass {
+    public static enum Cycle
 
-   /*
-    * Setup / Clear the static callback info.
-    */
-   private static Map<Cycle, Integer> callbackCount = new HashMap<Cycle, Integer>();
-   private static Map<Cycle, Throwable> callbackException = new HashMap<Cycle, Throwable>();
-   static
-   {
-      for(Cycle tmp : Cycle.values())
-      {
-         callbackCount.put(tmp, 0);
-      }
-   }
+    {
+        BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS
+    }
 
-   public static void throwException(Cycle cycle, Throwable exception)
-   {
-      callbackException.put(cycle, exception);
-   }
+    /*
+     * Setup / Clear the static callback info.
+     */
+    private static Map<Cycle, Integer> callbackCount = new HashMap<Cycle, Integer>();
+    private static Map<Cycle, Throwable> callbackException = new HashMap<Cycle, Throwable>();
 
-   public static void wasCalled(Cycle cycle) throws Throwable
-   {
-      if(callbackCount.containsKey(cycle))
-      {
-         callbackCount.put(cycle, callbackCount.get(cycle) + 1);
-      }
-      else
-      {
-         throw new RuntimeException("Unknown callback: " + cycle);
-      }
-      if(callbackException.containsKey(cycle))
-      {
-         throw callbackException.get(cycle);
-      }
-   }
+    static {
+        for (Cycle tmp : Cycle.values()) {
+            callbackCount.put(tmp, 0);
+        }
+    }
 
-   @After
-   public void clearCallbacks()
-   {
-      callbackCount.clear();
-      for(Cycle tmp : Cycle.values())
-      {
-         callbackCount.put(tmp, 0);
-      }
-      callbackException.clear();
-   }
+    public static void throwException(Cycle cycle, Throwable exception) {
+        callbackException.put(cycle, exception);
+    }
 
-   /*
-    * Mockito Answers for invoking the LifeCycle callbacks.
-    */
-   public static class ExecuteLifecycle implements Answer<Object>
-   {
-      @Override
-      public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable
-      {
-         for(Object argument : invocation.getArguments())
-         {
-            if(argument instanceof LifecycleMethodExecutor)
-            {
-               ((LifecycleMethodExecutor)argument).invoke();
+    public static void wasCalled(Cycle cycle) throws Throwable {
+        if (callbackCount.containsKey(cycle)) {
+            callbackCount.put(cycle, callbackCount.get(cycle) + 1);
+        } else {
+            throw new RuntimeException("Unknown callback: " + cycle);
+        }
+        if (callbackException.containsKey(cycle)) {
+            throw callbackException.get(cycle);
+        }
+    }
+
+    @After
+    public void clearCallbacks() {
+        callbackCount.clear();
+        for (Cycle tmp : Cycle.values()) {
+            callbackCount.put(tmp, 0);
+        }
+        callbackException.clear();
+    }
+
+    /*
+     * Mockito Answers for invoking the LifeCycle callbacks.
+     */
+    public static class ExecuteLifecycle implements Answer<Object> {
+        @Override
+        public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable {
+            for (Object argument : invocation.getArguments()) {
+                if (argument instanceof LifecycleMethodExecutor) {
+                    ((LifecycleMethodExecutor) argument).invoke();
+                } else if (argument instanceof TestMethodExecutor) {
+                    ((TestMethodExecutor) argument).invoke();
+                }
             }
-            else if(argument instanceof TestMethodExecutor)
-            {
-               ((TestMethodExecutor)argument).invoke();
+            return null;
+        }
+    }
+
+    public static class TestExecuteLifecycle extends ExecuteLifecycle {
+        private TestResult result;
+
+        public TestExecuteLifecycle(TestResult result) {
+            this.result = result;
+        }
+
+        @Override
+        public Object answer(InvocationOnMock invocation) throws Throwable {
+            super.answer(invocation);
+            return result;
+        }
+    }
+
+    /*
+     * Internal Helpers
+     */
+    protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception {
+        doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    public void assertCycle(int count, Cycle... cycles) {
+        for (Cycle cycle : cycles) {
+            Assert.assertEquals("Verify " + cycle + " called N times",
+                    count, (int) callbackCount.get(cycle));
+        }
+    }
+
+    protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception {
+        return run(adaptor, null, classes);
+    }
+
+    protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
+            throws Exception {
+        try {
+            setAdaptor(adaptor);
+            JUnitCore core = new JUnitCore();
+            if (listener != null) {
+                core.addListener(listener);
             }
-         }
-         return null;
-      }
-   }
 
-   public static class TestExecuteLifecycle extends ExecuteLifecycle
-   {
-      private TestResult result;
+            return core.run(classes);
+        } finally {
+            setAdaptor(null);
+        }
+    }
 
-      public TestExecuteLifecycle(TestResult result)
-      {
-         this.result = result;
-      }
-
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable
-      {
-         super.answer(invocation);
-         return result;
-      }
-   }
-
-   /*
-    * Internal Helpers
-    */
-   protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception
-   {
-      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor).test(any(TestMethodExecutor.class));
-   }
-
-   public void assertCycle(int count, Cycle... cycles)
-   {
-      for(Cycle cycle : cycles)
-      {
-         Assert.assertEquals("Verify " + cycle +  " called N times",
-               count, (int)callbackCount.get(cycle));
-      }
-   }
-
-   protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception
-   {
-      return run(adaptor, null, classes);
-   }
-
-   protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
-      throws Exception
-   {
-      try
-      {
-         setAdaptor(adaptor);
-         JUnitCore core = new JUnitCore();
-         if(listener != null)
-         {
-            core.addListener(listener);
-         }
-
-         return core.run(classes);
-      }
-      finally
-      {
-         setAdaptor(null);
-      }
-   }
-
-   // force set the TestRunnerAdaptor to use
-   private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception
-   {
-      Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
-      method.setAccessible(true);
-      method.invoke(null, adaptor);
-   }
+    // force set the TestRunnerAdaptor to use
+    private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception {
+        Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
+        method.setAccessible(true);
+        method.invoke(null, adaptor);
+    }
 }

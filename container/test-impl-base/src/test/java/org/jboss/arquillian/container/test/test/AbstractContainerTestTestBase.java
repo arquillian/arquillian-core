@@ -38,25 +38,22 @@ import org.jboss.arquillian.test.spi.context.TestContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class AbstractContainerTestTestBase extends AbstractManagerTestBase
-{
-   @Override
-   protected void addContexts(List<Class<? extends Context>> contexts)
-   {
-      contexts.add(SuiteContextImpl.class);
-      contexts.add(ClassContextImpl.class);
-      contexts.add(TestContextImpl.class);
-      contexts.add(ContainerContextImpl.class);
-      contexts.add(DeploymentContextImpl.class);
-   }
-   
-   @Override
-   protected void startContexts(Manager manager)
-   {
-      super.startContexts(manager);
-      manager.getContext(SuiteContext.class).activate();
-      manager.getContext(ClassContext.class).activate(super.getClass());
-      manager.getContext(TestContext.class).activate(this);
-   }
-   
+public abstract class AbstractContainerTestTestBase extends AbstractManagerTestBase {
+    @Override
+    protected void addContexts(List<Class<? extends Context>> contexts) {
+        contexts.add(SuiteContextImpl.class);
+        contexts.add(ClassContextImpl.class);
+        contexts.add(TestContextImpl.class);
+        contexts.add(ContainerContextImpl.class);
+        contexts.add(DeploymentContextImpl.class);
+    }
+
+    @Override
+    protected void startContexts(Manager manager) {
+        super.startContexts(manager);
+        manager.getContext(SuiteContext.class).activate();
+        manager.getContext(ClassContext.class).activate(super.getClass());
+        manager.getContext(TestContext.class).activate(this);
+    }
+
 }

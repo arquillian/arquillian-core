@@ -26,10 +26,8 @@ import org.jboss.arquillian.container.spi.Container;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class KillContainer extends ContainerControlEvent
-{
-   public KillContainer(Container container)
-   {
-      super(container);
-   }
+public class KillContainer extends ContainerControlEvent {
+    public KillContainer(Container container) {
+        super(container);
+    }
 }

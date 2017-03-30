@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * non standard component model objects available within the Arquillian runtime that can be of useful during testing.
  * <p>
  * Arquillian can expose these objects to the test case using the @ArquillianResource injection annotation.
- *
+ * <p>
  * Usage Example of Field injection:<br/>
  * <pre><code>
  * &#64;ArquillianResource
@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  *      context.lookup("");
  * }
  * </code></pre>
- *
+ * <p>
  * Usage Example of Argument injection:<br/>
  * <pre><code>
  * &#64;Test
@@ -58,10 +58,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ArquillianResource {
 
-   /**
-    * Defines the resource target for this injection. e.g. Servlet.
-    * 
-    * @return The Target Resource Type
-    */
-   Class<?> value() default ArquillianResource.class;
+    /**
+     * Defines the resource target for this injection. e.g. Servlet.
+     *
+     * @return The Target Resource Type
+     */
+    Class<?> value() default ArquillianResource.class;
 }

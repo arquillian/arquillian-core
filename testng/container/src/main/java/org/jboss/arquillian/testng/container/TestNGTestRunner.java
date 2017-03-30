@@ -35,38 +35,35 @@ import org.testng.xml.XmlTest;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGTestRunner implements TestRunner
-{
+public class TestNGTestRunner implements TestRunner {
 
-   public TestResult execute(Class<?> testClass, String methodName)
-   {
-      TestListener resultListener = new TestListener();
-      
-      TestNG runner = new TestNG(false);
-      runner.setVerbose(0);
-      
-      runner.addListener(resultListener);
-      runner.addListener(new RemoveDependsOnTransformer());
-      runner.setXmlSuites(
-              Collections.singletonList(createSuite(testClass, methodName)));
-      
-      runner.run();
-      
-      return resultListener.getTestResult(); 
-   }
-   
-   private XmlSuite createSuite(Class<?> className, String methodName)
-   {
-      XmlSuite suite = new XmlSuite();
-      suite.setName("Arquillian");
+    public TestResult execute(Class<?> testClass, String methodName) {
+        TestListener resultListener = new TestListener();
 
-      XmlTest test = new XmlTest(suite);
-      test.setName("Arquillian - " + className);
-      List<XmlClass> testClasses = new ArrayList<XmlClass>();
-      XmlClass testClass = new XmlClass(className);
-      testClass.getIncludedMethods().add(new XmlInclude(methodName));
-      testClasses.add(testClass);
-      test.setXmlClasses(testClasses);
-      return suite;
-   }
+        TestNG runner = new TestNG(false);
+        runner.setVerbose(0);
+
+        runner.addListener(resultListener);
+        runner.addListener(new RemoveDependsOnTransformer());
+        runner.setXmlSuites(
+                Collections.singletonList(createSuite(testClass, methodName)));
+
+        runner.run();
+
+        return resultListener.getTestResult();
+    }
+
+    private XmlSuite createSuite(Class<?> className, String methodName) {
+        XmlSuite suite = new XmlSuite();
+        suite.setName("Arquillian");
+
+        XmlTest test = new XmlTest(suite);
+        test.setName("Arquillian - " + className);
+        List<XmlClass> testClasses = new ArrayList<XmlClass>();
+        XmlClass testClass = new XmlClass(className);
+        testClass.getIncludedMethods().add(new XmlInclude(methodName));
+        testClasses.add(testClass);
+        test.setXmlClasses(testClasses);
+        return suite;
+    }
 }

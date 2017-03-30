@@ -77,483 +77,410 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase
-{
-   public static final String PROTOCOL_NAME_1 = "TEST_DEFAULT_1";
-   public static final String PROTOCOL_NAME_2 = "TEST_DEFAULT_2";
-   public static final String CONTAINER_NAME_1 = "CONTAINER_NAME_1";
-   public static final String CONTAINER_NAME_2 = "CONTAINER_NAME_2";
-   
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(DeploymentGenerator.class);
-   }
-   
-   @Inject 
-   private Instance<Injector> injectorInst;
-   
-   @Mock
-   private ServiceLoader serviceLoader;
+public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
+    public static final String PROTOCOL_NAME_1 = "TEST_DEFAULT_1";
+    public static final String PROTOCOL_NAME_2 = "TEST_DEFAULT_2";
+    public static final String CONTAINER_NAME_1 = "CONTAINER_NAME_1";
+    public static final String CONTAINER_NAME_2 = "CONTAINER_NAME_2";
 
-   private ContainerRegistry containerRegistry;
-   
-   private ProtocolRegistry protocolRegistry;
-   
-   @Mock
-   @SuppressWarnings("rawtypes")
-   private DeployableContainer deployableContainer;
 
-   @Mock
-   private DeploymentPackager packager;
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(DeploymentGenerator.class);
+    }
 
-   
-   @Before
-   public void prepare() 
-   {
-      Injector injector = injectorInst.get();
-      
-      when(serviceLoader.onlyOne(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class))
-               .thenReturn(new AnnotationDeploymentScenarioGenerator());
-      when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
-      when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription(PROTOCOL_NAME_1));
-      
-      when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
-         .thenReturn(create(AuxiliaryArchiveAppender.class, injector.inject(new TestAuxiliaryArchiveAppender())));
-      when(serviceLoader.all(eq(AuxiliaryArchiveProcessor.class)))
-         .thenReturn(create(AuxiliaryArchiveProcessor.class, injector.inject(new TestAuxiliaryArchiveProcessor())));
-      when(serviceLoader.all(eq(ApplicationArchiveProcessor.class)))
-         .thenReturn(create(ApplicationArchiveProcessor.class, injector.inject(new TestApplicationArchiveAppender())));
+    @Inject
+    private Instance<Injector> injectorInst;
 
-      containerRegistry = new LocalContainerRegistry(injector);
-      protocolRegistry = new ProtocolRegistry();
-      
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-      bind(ApplicationScoped.class, ContainerRegistry.class, containerRegistry);
-      bind(ApplicationScoped.class, ProtocolRegistry.class, protocolRegistry);
-      bind(ApplicationScoped.class, CallMap.class, new CallMap());
-   }
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Test
-   public void shouldUseDefaultDefinedProtocolIfFound()
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      addProtocol(PROTOCOL_NAME_1, true);
-      
-      fire(createEvent(DeploymentWithDefaults.class));
-      
-      verify(deployableContainer, times(0)).getDefaultProtocol();
-   }
-   
-   @Test
-   public void shouldUseContainerDefaultProtocolIfNonDefaultDefined() 
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      addProtocol(PROTOCOL_NAME_1, false);
-      addProtocol(PROTOCOL_NAME_2, false);
-      
-      fire(createEvent(DeploymentWithDefaults.class));
-      
-      verify(deployableContainer, times(1)).getDefaultProtocol();
-      verifyScenario("_DEFAULT_");
-   }
+    private ContainerRegistry containerRegistry;
 
-   @Test
-   public void shouldCallPackagingSPIsOnTestableArchive() throws Exception
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      addProtocol(PROTOCOL_NAME_1, true);
-      
-      fire(createEvent(DeploymentWithDefaults.class));
-      
-      CallMap spi = getManager().resolve(CallMap.class);
-      Assert.assertTrue(spi.wasCalled(ApplicationArchiveProcessor.class));
-      Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveAppender.class));
-      Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveProcessor.class));
-   
-      verifyScenario("_DEFAULT_");
-   }
+    private ProtocolRegistry protocolRegistry;
 
-   @Test
-   public void shouldNotCallPackagingSPIsOnNonTestableArchive() throws Exception
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      addProtocol(PROTOCOL_NAME_1, true);
-      
-      fire(createEvent(DeploymentNonTestableWithDefaults.class));
-      
-      CallMap spi = getManager().resolve(CallMap.class);
-      Assert.assertFalse(spi.wasCalled(ApplicationArchiveProcessor.class));
-      Assert.assertFalse(spi.wasCalled(AuxiliaryArchiveAppender.class));
-      Assert.assertFalse(spi.wasCalled(AuxiliaryArchiveProcessor.class));
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private DeployableContainer deployableContainer;
 
-      verifyScenario("_DEFAULT_");
-   }
+    @Mock
+    private DeploymentPackager packager;
 
-   @Test
-   public void shouldAllowNonManagedDeploymentOnCustomContainer() throws Exception
-   {
-      addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("custom");
-      fire(createEvent(DeploymentNonManagedWithCustomContainerReference.class));
-      
-      verifyScenario("DeploymentNonManagedWithCustomContainerReference");
-   }
 
-   @Test
-   public void shouldAllowMultipleSameNamedArchiveDeploymentWithDifferentTargets() throws Exception
-   {
-      addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("suite");
-      addContainer(CONTAINER_NAME_2).getContainerConfiguration().setMode("suite");
-      addProtocol(PROTOCOL_NAME_1, true);
+    @Before
+    public void prepare() {
+        Injector injector = injectorInst.get();
 
-      fire(createEvent(DeploymentMultipleSameNameArchiveDifferentTarget.class));
+        when(serviceLoader.onlyOne(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class))
+                .thenReturn(new AnnotationDeploymentScenarioGenerator());
+        when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
+        when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription(PROTOCOL_NAME_1));
 
-      verifyScenario("X", "Y");
-   }
+        when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
+                .thenReturn(create(AuxiliaryArchiveAppender.class, injector.inject(new TestAuxiliaryArchiveAppender())));
+        when(serviceLoader.all(eq(AuxiliaryArchiveProcessor.class)))
+                .thenReturn(create(AuxiliaryArchiveProcessor.class, injector.inject(new TestAuxiliaryArchiveProcessor())));
+        when(serviceLoader.all(eq(ApplicationArchiveProcessor.class)))
+                .thenReturn(create(ApplicationArchiveProcessor.class, injector.inject(new TestApplicationArchiveAppender())));
 
-   @Test // ARQ-971
-   @SuppressWarnings("unchecked")
-   public void shouldFilterNullAuxiliaryArchiveAppenderResulsts() throws Exception {
-      when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
-         .thenReturn(create(AuxiliaryArchiveAppender.class, injectorInst.get().inject(new NullAuxiliaryArchiveAppender())));
+        containerRegistry = new LocalContainerRegistry(injector);
+        protocolRegistry = new ProtocolRegistry();
 
-      addContainer(CONTAINER_NAME_1);
-      addProtocol(PROTOCOL_NAME_1, true);
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+        bind(ApplicationScoped.class, ContainerRegistry.class, containerRegistry);
+        bind(ApplicationScoped.class, ProtocolRegistry.class, protocolRegistry);
+        bind(ApplicationScoped.class, CallMap.class, new CallMap());
+    }
 
-      fire(createEvent(DeploymentWithDefaults.class));
+    @Test
+    public void shouldUseDefaultDefinedProtocolIfFound() {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
 
-      CallMap spi = getManager().resolve(CallMap.class);
-      Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveAppender.class));
+        fire(createEvent(DeploymentWithDefaults.class));
 
-      DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
-      Assert.assertEquals(1, scenario.deployments().size());
+        verify(deployableContainer, times(0)).getDefaultProtocol();
+    }
 
-      ArgumentCaptor<TestDeployment> captor = ArgumentCaptor.forClass(TestDeployment.class);
-      verify(packager).generateDeployment(captor.capture(), Mockito.any(Collection.class));
+    @Test
+    public void shouldUseContainerDefaultProtocolIfNonDefaultDefined() {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, false);
+        addProtocol(PROTOCOL_NAME_2, false);
 
-      Assert.assertEquals(0, captor.getValue().getAuxiliaryArchives().size());
-   }
+        fire(createEvent(DeploymentWithDefaults.class));
 
-   @Test(expected = ValidationException.class)
-   public void shouldThrowExceptionOnMissingContainerReference() throws Exception
-   {
-      try
-      {
-         fire(createEvent(DeploymentWithContainerReference.class));
-      }
-      catch (Exception e)
-      {
-         Assert.assertTrue("Validate correct error message", e.getMessage().contains("Please include at least 1 Deployable Container on your Classpath"));
-         throw e;
-      }
-   }
-   
-   @Test(expected = ValidationException.class)
-   public void shouldThrowExceptionOnWrongContainerReference() throws Exception
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      try
-      {
-         fire(createEvent(DeploymentWithContainerReference.class));
-      }
-      catch (Exception e)
-      {
-         Assert.assertTrue("Validate correct error message", e.getMessage().contains("does not match any found/configured Containers"));
-         throw e;
-      }
-   }
+        verify(deployableContainer, times(1)).getDefaultProtocol();
+        verifyScenario("_DEFAULT_");
+    }
 
-   @Test(expected = ValidationException.class)
-   public void shouldThrowExceptionOnMissingProtocolReference() throws Exception
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      try
-      {
-         fire(createEvent(DeploymentWithProtocolReference.class));
-      }
-      catch (Exception e)
-      {
-         Assert.assertTrue("Validate correct error message", e.getMessage().contains("not maching any defined Protocol"));
-         throw e;
-      }
-   }
+    @Test
+    public void shouldCallPackagingSPIsOnTestableArchive() throws Exception {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnMultipleNoNamedDeployments() throws Exception
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      try
-      {
-         fire(createEvent(DeploymentMultipleNoNamed.class));
-      }
-      catch (Exception e)
-      {
-         throw e;
-      }
-   }
+        fire(createEvent(DeploymentWithDefaults.class));
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnMultipleSameNamedArchiveDeployments() throws Exception
-   {
-      addContainer("test-contianer").getContainerConfiguration().setMode("suite");
-      try
-      {
-         fire(createEvent(DeploymentMultipleSameNameArchive.class));
-      }
-      catch (Exception e)
-      {
-         throw e;
-      }
-   }
+        CallMap spi = getManager().resolve(CallMap.class);
+        Assert.assertTrue(spi.wasCalled(ApplicationArchiveProcessor.class));
+        Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveAppender.class));
+        Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveProcessor.class));
 
-   @Test(expected = ValidationException.class)
-   public void shouldThrowExceptionOnManagedDeploymentOnCustomContainer() throws Exception
-   {
-      addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("custom");
-      try
-      {
-         fire(createEvent(DeploymentManagedWithCustomContainerReference.class));
-      }
-      catch (Exception e)
-      {
-         Assert.assertTrue("Validate correct error message", e.getMessage().contains("This container is set to mode custom "));
-         throw e;
-      }
-   }
+        verifyScenario("_DEFAULT_");
+    }
 
-   private void verifyScenario(String... names)
-   {
-      DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
-      Assert.assertEquals(names.length, scenario.deployments().size());
-      
-      for(int i = 0; i < names.length; i++)
-      {
-         contains(scenario.deployments(), names[i]);
-      }
-   }
+    @Test
+    public void shouldNotCallPackagingSPIsOnNonTestableArchive() throws Exception {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
 
-   private void contains(Collection<org.jboss.arquillian.container.spi.client.deployment.Deployment> deployments, String name)
-   {
-      if(deployments == null || deployments.size() == 0)
-      {
-         Assert.fail("No deployment by name " + name + " found in scenario. Scenario is empty");
-      }
-      for(org.jboss.arquillian.container.spi.client.deployment.Deployment deployment : deployments)
-      {
-         if(name.equals(deployment.getDescription().getName()))
-         {
-            return;
-         }
-      }
-      Assert.fail("No deployment by name " + name + " found in scenario. " + deployments);
-   }
+        fire(createEvent(DeploymentNonTestableWithDefaults.class));
 
-   private Container addContainer(String name)
-   {
-      return containerRegistry.create(
-            new ContainerDefImpl("arquillian.xml")
-               .container(name),
-            serviceLoader);
-   }
-   
-   private ProtocolDefinition addProtocol(String name, boolean shouldBeDefault)
-   {
-      Protocol<?> protocol = mock(Protocol.class);
-      when(protocol.getPackager()).thenReturn(packager);
-      when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
+        CallMap spi = getManager().resolve(CallMap.class);
+        Assert.assertFalse(spi.wasCalled(ApplicationArchiveProcessor.class));
+        Assert.assertFalse(spi.wasCalled(AuxiliaryArchiveAppender.class));
+        Assert.assertFalse(spi.wasCalled(AuxiliaryArchiveProcessor.class));
 
-      Map<String, String> config = Collections.emptyMap();
-      return protocolRegistry.addProtocol(new ProtocolDefinition(protocol, config, shouldBeDefault))
-         .getProtocol(new ProtocolDescription(name));
-   }
+        verifyScenario("_DEFAULT_");
+    }
 
-   private <T> Collection<T> create(Class<T> type, T... instances) 
-   {
-      List<T> list = new ArrayList<T>();
-      Collections.addAll(list, instances);
-      return list;
-   }
+    @Test
+    public void shouldAllowNonManagedDeploymentOnCustomContainer() throws Exception {
+        addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("custom");
+        fire(createEvent(DeploymentNonManagedWithCustomContainerReference.class));
 
-   private static class DeploymentWithDefaults
-   {
-      @SuppressWarnings("unused")
-      @Deployment
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
+        verifyScenario("DeploymentNonManagedWithCustomContainerReference");
+    }
 
-   private static class DeploymentMultipleNoNamed
-   {
-      @SuppressWarnings("unused")
-      @Deployment
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
+    @Test
+    public void shouldAllowMultipleSameNamedArchiveDeploymentWithDifferentTargets() throws Exception {
+        addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("suite");
+        addContainer(CONTAINER_NAME_2).getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
 
-      @SuppressWarnings("unused")
-      @Deployment
-      public static JavaArchive deploy2()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
+        fire(createEvent(DeploymentMultipleSameNameArchiveDifferentTarget.class));
 
-   private static class DeploymentMultipleSameNameArchive
-   {
-      @SuppressWarnings("unused")
-      @Deployment(name = "Y")
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
-      }
+        verifyScenario("X", "Y");
+    }
 
-      @SuppressWarnings("unused")
-      @Deployment(name = "X")
-      public static JavaArchive deploy2()
-      {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
-      }
-   }
+    @Test // ARQ-971
+    @SuppressWarnings("unchecked")
+    public void shouldFilterNullAuxiliaryArchiveAppenderResulsts() throws Exception {
+        when(serviceLoader.all(eq(AuxiliaryArchiveAppender.class)))
+                .thenReturn(create(AuxiliaryArchiveAppender.class, injectorInst.get().inject(new NullAuxiliaryArchiveAppender())));
 
-   private static class DeploymentMultipleSameNameArchiveDifferentTarget
-   {
-      @SuppressWarnings("unused")
-      @Deployment(name = "Y") @TargetsContainer(CONTAINER_NAME_1)
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
-      }
+        addContainer(CONTAINER_NAME_1);
+        addProtocol(PROTOCOL_NAME_1, true);
 
-      @SuppressWarnings("unused")
-      @Deployment(name = "X") @TargetsContainer(CONTAINER_NAME_2)
-      public static JavaArchive deploy2()
-      {
-         return ShrinkWrap.create(JavaArchive.class, "test.jar");
-      }
-   }
+        fire(createEvent(DeploymentWithDefaults.class));
 
-   private static class DeploymentNonTestableWithDefaults
-   {
-      @SuppressWarnings("unused")
-      @Deployment(testable = false)
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
+        CallMap spi = getManager().resolve(CallMap.class);
+        Assert.assertTrue(spi.wasCalled(AuxiliaryArchiveAppender.class));
 
-   private static class DeploymentWithContainerReference
-   {
-      @SuppressWarnings("unused")
-      @Deployment @TargetsContainer("DOES_NOT_EXIST")
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
+        DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
+        Assert.assertEquals(1, scenario.deployments().size());
 
-   private static class DeploymentWithProtocolReference
-   {
-      @SuppressWarnings("unused")
-      @Deployment @OverProtocol("DOES_NOT_EXIST")
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
-   
-   private static class DeploymentManagedWithCustomContainerReference
-   {
-      @SuppressWarnings("unused")
-      @Deployment(managed = true, testable = false)
-      @TargetsContainer(CONTAINER_NAME_1)
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
+        ArgumentCaptor<TestDeployment> captor = ArgumentCaptor.forClass(TestDeployment.class);
+        verify(packager).generateDeployment(captor.capture(), Mockito.any(Collection.class));
 
-   private static class DeploymentNonManagedWithCustomContainerReference
-   {
-      @SuppressWarnings("unused")
-      @Deployment(name = "DeploymentNonManagedWithCustomContainerReference", managed = false, testable = false)
-      @TargetsContainer(CONTAINER_NAME_1)
-      public static JavaArchive deploy()
-      {
-         return ShrinkWrap.create(JavaArchive.class);
-      }
-   }
+        Assert.assertEquals(0, captor.getValue().getAuxiliaryArchives().size());
+    }
 
-   private GenerateDeployment createEvent(Class<?> testClass) 
-   {
-      return new GenerateDeployment(new TestClass(testClass));
-   }
-   
-   private static class CallMap 
-   {
-      private Set<Class<?>> calls = new HashSet<Class<?>>();
-      
-      public void add(Class<?> called) 
-      {
-         calls.add(called);
-      }
-      
-      public boolean wasCalled(Class<?> called)
-      {
-         return calls.contains(called);
-      }
-   }
-   
-   private static class TestMaker 
-   {
-      @Inject
-      private Instance<CallMap> callmap;
-      
-      protected void called() 
-      {
-         callmap.get().add(super.getClass().getInterfaces()[0]);
-      }
-   }
+    @Test(expected = ValidationException.class)
+    public void shouldThrowExceptionOnMissingContainerReference() throws Exception {
+        try {
+            fire(createEvent(DeploymentWithContainerReference.class));
+        } catch (Exception e) {
+            Assert.assertTrue("Validate correct error message", e.getMessage().contains("Please include at least 1 Deployable Container on your Classpath"));
+            throw e;
+        }
+    }
 
-   private static class TestAuxiliaryArchiveAppender extends TestMaker implements AuxiliaryArchiveAppender 
-   {
-      @Override
-      public Archive<?> createAuxiliaryArchive()
-      {
-         called();
-         return ShrinkWrap.create(JavaArchive.class, this.getClass().getSimpleName() + ".jar");
-      }
-   }
+    @Test(expected = ValidationException.class)
+    public void shouldThrowExceptionOnWrongContainerReference() throws Exception {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        try {
+            fire(createEvent(DeploymentWithContainerReference.class));
+        } catch (Exception e) {
+            Assert.assertTrue("Validate correct error message", e.getMessage().contains("does not match any found/configured Containers"));
+            throw e;
+        }
+    }
 
-   private static class NullAuxiliaryArchiveAppender extends TestMaker implements AuxiliaryArchiveAppender 
-   {
-      @Override
-      public Archive<?> createAuxiliaryArchive()
-      {
-         called();
-         return null;
-      }
-   }
+    @Test(expected = ValidationException.class)
+    public void shouldThrowExceptionOnMissingProtocolReference() throws Exception {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        try {
+            fire(createEvent(DeploymentWithProtocolReference.class));
+        } catch (Exception e) {
+            Assert.assertTrue("Validate correct error message", e.getMessage().contains("not maching any defined Protocol"));
+            throw e;
+        }
+    }
 
-   private static class TestAuxiliaryArchiveProcessor extends TestMaker implements AuxiliaryArchiveProcessor 
-   {
-      @Override
-      public void process(Archive<?> auxiliaryArchive)
-      {
-         called();
-      }
-   }
-   
-   private static class TestApplicationArchiveAppender extends TestMaker implements ApplicationArchiveProcessor 
-   {
-      @Override
-      public void process(Archive<?> applicationArchive, TestClass testClass)
-      {
-         called();
-      }
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnMultipleNoNamedDeployments() throws Exception {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        try {
+            fire(createEvent(DeploymentMultipleNoNamed.class));
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnMultipleSameNamedArchiveDeployments() throws Exception {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        try {
+            fire(createEvent(DeploymentMultipleSameNameArchive.class));
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldThrowExceptionOnManagedDeploymentOnCustomContainer() throws Exception {
+        addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("custom");
+        try {
+            fire(createEvent(DeploymentManagedWithCustomContainerReference.class));
+        } catch (Exception e) {
+            Assert.assertTrue("Validate correct error message", e.getMessage().contains("This container is set to mode custom "));
+            throw e;
+        }
+    }
+
+    private void verifyScenario(String... names) {
+        DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
+        Assert.assertEquals(names.length, scenario.deployments().size());
+
+        for (int i = 0; i < names.length; i++) {
+            contains(scenario.deployments(), names[i]);
+        }
+    }
+
+    private void contains(Collection<org.jboss.arquillian.container.spi.client.deployment.Deployment> deployments, String name) {
+        if (deployments == null || deployments.size() == 0) {
+            Assert.fail("No deployment by name " + name + " found in scenario. Scenario is empty");
+        }
+        for (org.jboss.arquillian.container.spi.client.deployment.Deployment deployment : deployments) {
+            if (name.equals(deployment.getDescription().getName())) {
+                return;
+            }
+        }
+        Assert.fail("No deployment by name " + name + " found in scenario. " + deployments);
+    }
+
+    private Container addContainer(String name) {
+        return containerRegistry.create(
+                new ContainerDefImpl("arquillian.xml")
+                        .container(name),
+                serviceLoader);
+    }
+
+    private ProtocolDefinition addProtocol(String name, boolean shouldBeDefault) {
+        Protocol<?> protocol = mock(Protocol.class);
+        when(protocol.getPackager()).thenReturn(packager);
+        when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
+
+        Map<String, String> config = Collections.emptyMap();
+        return protocolRegistry.addProtocol(new ProtocolDefinition(protocol, config, shouldBeDefault))
+                .getProtocol(new ProtocolDescription(name));
+    }
+
+    private <T> Collection<T> create(Class<T> type, T... instances) {
+        List<T> list = new ArrayList<T>();
+        Collections.addAll(list, instances);
+        return list;
+    }
+
+    private static class DeploymentWithDefaults {
+        @SuppressWarnings("unused")
+        @Deployment
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class DeploymentMultipleNoNamed {
+        @SuppressWarnings("unused")
+        @Deployment
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+
+        @SuppressWarnings("unused")
+        @Deployment
+        public static JavaArchive deploy2() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class DeploymentMultipleSameNameArchive {
+        @SuppressWarnings("unused")
+        @Deployment(name = "Y")
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class, "test.jar");
+        }
+
+        @SuppressWarnings("unused")
+        @Deployment(name = "X")
+        public static JavaArchive deploy2() {
+            return ShrinkWrap.create(JavaArchive.class, "test.jar");
+        }
+    }
+
+    private static class DeploymentMultipleSameNameArchiveDifferentTarget {
+        @SuppressWarnings("unused")
+        @Deployment(name = "Y")
+        @TargetsContainer(CONTAINER_NAME_1)
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class, "test.jar");
+        }
+
+        @SuppressWarnings("unused")
+        @Deployment(name = "X")
+        @TargetsContainer(CONTAINER_NAME_2)
+        public static JavaArchive deploy2() {
+            return ShrinkWrap.create(JavaArchive.class, "test.jar");
+        }
+    }
+
+    private static class DeploymentNonTestableWithDefaults {
+        @SuppressWarnings("unused")
+        @Deployment(testable = false)
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class DeploymentWithContainerReference {
+        @SuppressWarnings("unused")
+        @Deployment
+        @TargetsContainer("DOES_NOT_EXIST")
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class DeploymentWithProtocolReference {
+        @SuppressWarnings("unused")
+        @Deployment
+        @OverProtocol("DOES_NOT_EXIST")
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class DeploymentManagedWithCustomContainerReference {
+        @SuppressWarnings("unused")
+        @Deployment(managed = true, testable = false)
+        @TargetsContainer(CONTAINER_NAME_1)
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class DeploymentNonManagedWithCustomContainerReference {
+        @SuppressWarnings("unused")
+        @Deployment(name = "DeploymentNonManagedWithCustomContainerReference", managed = false, testable = false)
+        @TargetsContainer(CONTAINER_NAME_1)
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private GenerateDeployment createEvent(Class<?> testClass) {
+        return new GenerateDeployment(new TestClass(testClass));
+    }
+
+    private static class CallMap {
+        private Set<Class<?>> calls = new HashSet<Class<?>>();
+
+        public void add(Class<?> called) {
+            calls.add(called);
+        }
+
+        public boolean wasCalled(Class<?> called) {
+            return calls.contains(called);
+        }
+    }
+
+    private static class TestMaker {
+        @Inject
+        private Instance<CallMap> callmap;
+
+        protected void called() {
+            callmap.get().add(super.getClass().getInterfaces()[0]);
+        }
+    }
+
+    private static class TestAuxiliaryArchiveAppender extends TestMaker implements AuxiliaryArchiveAppender {
+        @Override
+        public Archive<?> createAuxiliaryArchive() {
+            called();
+            return ShrinkWrap.create(JavaArchive.class, this.getClass().getSimpleName() + ".jar");
+        }
+    }
+
+    private static class NullAuxiliaryArchiveAppender extends TestMaker implements AuxiliaryArchiveAppender {
+        @Override
+        public Archive<?> createAuxiliaryArchive() {
+            called();
+            return null;
+        }
+    }
+
+    private static class TestAuxiliaryArchiveProcessor extends TestMaker implements AuxiliaryArchiveProcessor {
+        @Override
+        public void process(Archive<?> auxiliaryArchive) {
+            called();
+        }
+    }
+
+    private static class TestApplicationArchiveAppender extends TestMaker implements ApplicationArchiveProcessor {
+        @Override
+        public void process(Archive<?> applicationArchive, TestClass testClass) {
+            called();
+        }
+    }
 }

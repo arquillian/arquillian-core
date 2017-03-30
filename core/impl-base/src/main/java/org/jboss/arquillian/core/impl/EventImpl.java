@@ -25,46 +25,41 @@ import org.jboss.arquillian.core.spi.Manager;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventImpl<T> implements Event<T>
-{
-   private Manager manager;
-   private Class<T> type;
-   
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class EventImpl<T> implements Event<T> {
+    private Manager manager;
+    private Class<T> type;
 
-   public static <X> EventImpl<X> of(Class<X> type, Manager manager)
-   {
-      return new EventImpl<X>(type, manager);
-   }
-   
-   EventImpl(Class<T> type, Manager manager)
-   {
-      this.type = type;
-      this.manager = manager;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Event ---------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Typed#getType()
-    */
-   //@Override
-   public Class<?> getType() 
-   {
-      return type;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Event#fire(java.lang.Object)
-    */
-   @Override
-   public void fire(T event)
-   {
-      manager.fire(event);
-   }
+    public static <X> EventImpl<X> of(Class<X> type, Manager manager) {
+        return new EventImpl<X>(type, manager);
+    }
+
+    EventImpl(Class<T> type, Manager manager) {
+        this.type = type;
+        this.manager = manager;
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Event ---------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Typed#getType()
+     */
+    //@Override
+    public Class<?> getType() {
+        return type;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Event#fire(java.lang.Object)
+     */
+    @Override
+    public void fire(T event) {
+        manager.fire(event);
+    }
 
 }

@@ -20,20 +20,19 @@ import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * TestRunner
- * 
+ * <p>
  * A Generic way to start the test framework.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestRunner
-{
-   /**
-    * Run a single test method in a test class.
-    * 
-    * @param testClass The test case class to execute
-    * @param methodName The method to execute
-    * @return The result of the test
-    */
-   TestResult execute(Class<?> testClass, String methodName);
+public interface TestRunner {
+    /**
+     * Run a single test method in a test class.
+     *
+     * @param testClass  The test case class to execute
+     * @param methodName The method to execute
+     * @return The result of the test
+     */
+    TestResult execute(Class<?> testClass, String methodName);
 }

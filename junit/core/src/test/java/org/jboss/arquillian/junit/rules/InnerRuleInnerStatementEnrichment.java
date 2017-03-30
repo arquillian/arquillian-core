@@ -29,34 +29,28 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Uses Rule and Statement as inner anonymous classes.
- * 
+ *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- * 
  */
-public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnrichment
-{
+public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnrichment {
     @ArquillianResource
     private ResourceStub testResources;
 
     @Rule
-    public TestRule testRule = new TestRule()
-    {
+    public TestRule testRule = new TestRule() {
         @ArquillianResource
         private ResourceStub ruleResources;
 
         @Override
-        public Statement apply(final Statement base, Description description)
-        {
+        public Statement apply(final Statement base, Description description) {
             performRuleAssertion(testResources, ruleResources);
 
-            return new Statement()
-            {
+            return new Statement() {
                 @ArquillianResource
                 private ResourceStub statementResources;
 
                 @Override
-                public void evaluate() throws Throwable
-                {
+                public void evaluate() throws Throwable {
                     performStatementAssertion(testResources, ruleResources, statementResources);
                     base.evaluate();
                 }
@@ -65,24 +59,20 @@ public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnri
     };
 
     @Rule
-    public MethodRule methodRule = new MethodRule()
-    {
+    public MethodRule methodRule = new MethodRule() {
         @ArquillianResource
         private ResourceStub ruleResources;
 
         @Override
-        public Statement apply(final Statement base, FrameworkMethod method, Object target)
-        {
+        public Statement apply(final Statement base, FrameworkMethod method, Object target) {
             performRuleAssertion(testResources, ruleResources);
 
-            return new Statement()
-            {
+            return new Statement() {
                 @ArquillianResource
                 private ResourceStub statementResources;
 
                 @Override
-                public void evaluate() throws Throwable
-                {
+                public void evaluate() throws Throwable {
                     performStatementAssertion(testResources, ruleResources, statementResources);
                     base.evaluate();
                 }
@@ -90,32 +80,27 @@ public class InnerRuleInnerStatementEnrichment extends AbstractRuleStatementEnri
         }
     };
 
-    private void performRuleAssertion(ResourceStub testResources, ResourceStub ruleResources)
-    {
+    private void performRuleAssertion(ResourceStub testResources, ResourceStub ruleResources) {
         ResourceAssertion.assertNotNullAndNotEqual(testResources, ruleResources);
     }
 
     private void performStatementAssertion(ResourceStub testResources, ResourceStub ruleResources,
-                                           ResourceStub statementResources)
-    {
+                                           ResourceStub statementResources) {
         performRuleAssertion(testResources, ruleResources);
         ResourceAssertion.assertNotNullAndNotEqual(testResources, statementResources);
         ResourceAssertion.assertNotNullAndNotEqual(statementResources, ruleResources);
     }
 
-    public TestRule getTestRule()
-    {
+    public TestRule getTestRule() {
         return testRule;
     }
 
-    public MethodRule getMethodRule()
-    {
+    public MethodRule getMethodRule() {
         return methodRule;
     }
 
     @Test
-    public void verifyEnrichment()
-    {
+    public void verifyEnrichment() {
         assertNotNull(testResources);
     }
 }

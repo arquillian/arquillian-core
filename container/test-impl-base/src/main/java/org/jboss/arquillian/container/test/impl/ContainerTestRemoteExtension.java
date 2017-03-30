@@ -38,25 +38,23 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerTestRemoteExtension extends TestExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      super.register(builder);
-      
-      builder.service(ResourceProvider.class, ContainerURLResourceProvider.class)
-             .service(ResourceProvider.class, ContainerURIResourceProvider.class)
-             .service(ResourceProvider.class, DeployerProvider.class)
-             .service(ResourceProvider.class, InitialContextProvider.class)
-             .service(ResourceProvider.class, ContainerControllerProvider.class);
-      
-      builder.observer(AfterLifecycleEventExecuter.class)
-             .observer(ContainerTestExecuter.class)
-             .observer(ContainerDeployerCreator.class)
-             .observer(ContainerContainerControllerCreator.class)
-             .observer(LocalTestExecuter.class)
-             .observer(BeforeLifecycleEventExecuter.class);
-   }
+public class ContainerTestRemoteExtension extends TestExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        super.register(builder);
+
+        builder.service(ResourceProvider.class, ContainerURLResourceProvider.class)
+                .service(ResourceProvider.class, ContainerURIResourceProvider.class)
+                .service(ResourceProvider.class, DeployerProvider.class)
+                .service(ResourceProvider.class, InitialContextProvider.class)
+                .service(ResourceProvider.class, ContainerControllerProvider.class);
+
+        builder.observer(AfterLifecycleEventExecuter.class)
+                .observer(ContainerTestExecuter.class)
+                .observer(ContainerDeployerCreator.class)
+                .observer(ContainerContainerControllerCreator.class)
+                .observer(LocalTestExecuter.class)
+                .observer(BeforeLifecycleEventExecuter.class);
+    }
 
 }

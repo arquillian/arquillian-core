@@ -25,7 +25,7 @@ import java.io.ObjectOutputStream;
 
 /**
  * Serializer
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -54,20 +54,19 @@ final class Serializer {
     }
 
     public static <T> T toObject(Class<T> type, InputStream input) {
-       try {
-           ObjectInputStream outObj = new ObjectInputStream(input);
-           Object object = outObj.readObject();
+        try {
+            ObjectInputStream outObj = new ObjectInputStream(input);
+            Object object = outObj.readObject();
 
-           return type.cast(object);
-       } catch (Exception e) {
-           throw new RuntimeException("Could not deserialize object", e);
-       }
-       finally {
-          try {
-             input.close();
-          } catch (Exception e) {
-             e.printStackTrace();
-          }
-       }
-   }
+            return type.cast(object);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not deserialize object", e);
+        } finally {
+            try {
+                input.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

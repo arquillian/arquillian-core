@@ -46,104 +46,90 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBase
-{
-   @Mock
-   private ServiceLoader serviceLoader;
-   
-   @Mock
-   private Protocol<?> protocol;
+public class ProtocolRegistryCreatorTestCase extends AbstractContainerTestTestBase {
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ProtocolRegistryCreator.class);
-   }
-   
-   @Before
-   public void setup() throws Exception
-   {
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-   }
-   
-   
-   @Test
-   public void shouldBindProtocolRegistryToContext() throws Exception
-   {
-      fire(createDescriptor());
+    @Mock
+    private Protocol<?> protocol;
 
-      assertEventFiredInContext(ProtocolRegistry.class, ApplicationContext.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ProtocolRegistryCreator.class);
+    }
 
-   @Test
-   @SuppressWarnings("rawtypes")
-   public void shouldSetDefaultDefinedProtocolAsDefault()
-   {
-      String protocolName = "default-protocol";
+    @Before
+    public void setup() throws Exception {
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+    }
 
-      when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
-      when(serviceLoader.all(Protocol.class)).thenReturn(Collections.singletonList((Protocol) protocol));
 
-      fire(createDescriptor(protocolName));
+    @Test
+    public void shouldBindProtocolRegistryToContext() throws Exception {
+        fire(createDescriptor());
 
-      ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);
-      Assert.assertTrue(protocol.isDefaultProtocol());
-   }
+        assertEventFiredInContext(ProtocolRegistry.class, ApplicationContext.class);
+    }
 
-   @Test
-   @SuppressWarnings("rawtypes")
-   public void shouldBindFoundProtocolsToRegistry() throws Exception
-   {
-      String protocolName = "protocol";
-      when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
-      when(serviceLoader.all(Protocol.class)).thenReturn(Collections.singletonList((Protocol) protocol));
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void shouldSetDefaultDefinedProtocolAsDefault() {
+        String protocolName = "default-protocol";
 
-      fire(createDescriptor());
-      ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);
-      Assert.assertFalse(protocol.isDefaultProtocol());
-   }
+        when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
+        when(serviceLoader.all(Protocol.class)).thenReturn(Collections.singletonList((Protocol) protocol));
 
-   @Test(expected = IllegalStateException.class)
-   public void shouldThrowExceptionIfDefaultDefinedProtocolNotFound() throws Exception
-   {
-      try
-      {
-         fire(createDescriptor("DOES_NOT_EXIST"));
-      }
-      catch (Exception e)
-      {
-         Assert.assertTrue("Verify thrown exception", e.getMessage().contains("Defined default protocol"));
-         throw e;
-      }
-   }
+        fire(createDescriptor(protocolName));
 
-   private ProtocolDefinition verifyRegistryProtocol(String protocolName)
-   {
-      ProtocolRegistry registry = getManager().resolve(ProtocolRegistry.class);
-      ProtocolDefinition registeredProtocol = registry.getProtocol(new ProtocolDescription(protocolName));
-      Assert.assertNotNull(
-            "Verify " + Protocol.class.getSimpleName() + " was registered",
-            registeredProtocol);
+        ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);
+        Assert.assertTrue(protocol.isDefaultProtocol());
+    }
 
-      Assert.assertEquals(
-            "Verify same protocol instance was registered", 
-            protocol, registeredProtocol.getProtocol());
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void shouldBindFoundProtocolsToRegistry() throws Exception {
+        String protocolName = "protocol";
+        when(protocol.getDescription()).thenReturn(new ProtocolDescription(protocolName));
+        when(serviceLoader.all(Protocol.class)).thenReturn(Collections.singletonList((Protocol) protocol));
 
-      return registeredProtocol;
-   }
+        fire(createDescriptor());
+        ProtocolDefinition protocol = verifyRegistryProtocol(protocolName);
+        Assert.assertFalse(protocol.isDefaultProtocol());
+    }
 
-   private ArquillianDescriptor createDescriptor()
-   {
-      return createDescriptor(null);
-   }
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionIfDefaultDefinedProtocolNotFound() throws Exception {
+        try {
+            fire(createDescriptor("DOES_NOT_EXIST"));
+        } catch (Exception e) {
+            Assert.assertTrue("Verify thrown exception", e.getMessage().contains("Defined default protocol"));
+            throw e;
+        }
+    }
 
-   private ArquillianDescriptor createDescriptor(String defaultProtocol)
-   {
-      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class);
-      if(defaultProtocol != null)
-      {
-         desc.defaultProtocol(defaultProtocol);
-      }
-      return desc;
-   }
+    private ProtocolDefinition verifyRegistryProtocol(String protocolName) {
+        ProtocolRegistry registry = getManager().resolve(ProtocolRegistry.class);
+        ProtocolDefinition registeredProtocol = registry.getProtocol(new ProtocolDescription(protocolName));
+        Assert.assertNotNull(
+                "Verify " + Protocol.class.getSimpleName() + " was registered",
+                registeredProtocol);
+
+        Assert.assertEquals(
+                "Verify same protocol instance was registered",
+                protocol, registeredProtocol.getProtocol());
+
+        return registeredProtocol;
+    }
+
+    private ArquillianDescriptor createDescriptor() {
+        return createDescriptor(null);
+    }
+
+    private ArquillianDescriptor createDescriptor(String defaultProtocol) {
+        ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class);
+        if (defaultProtocol != null) {
+            desc.defaultProtocol(defaultProtocol);
+        }
+        return desc;
+    }
 }

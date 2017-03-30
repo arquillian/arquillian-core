@@ -25,7 +25,6 @@ import org.jboss.arquillian.core.spi.context.IdBoundContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentContext extends IdBoundContext<Deployment>
-{
+public interface DeploymentContext extends IdBoundContext<Deployment> {
 
 }

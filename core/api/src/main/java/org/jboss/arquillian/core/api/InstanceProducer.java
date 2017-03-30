@@ -33,8 +33,7 @@ package org.jboss.arquillian.core.api;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface InstanceProducer<T> extends Instance<T>
-{
-   void set(T value);
+public interface InstanceProducer<T> extends Instance<T> {
+    void set(T value);
 
 }

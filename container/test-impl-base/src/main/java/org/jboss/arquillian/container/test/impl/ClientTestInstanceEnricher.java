@@ -30,25 +30,22 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClientTestInstanceEnricher extends TestInstanceEnricher
-{
-   @Inject
-   private Instance<Deployment> deployment;
+public class ClientTestInstanceEnricher extends TestInstanceEnricher {
+    @Inject
+    private Instance<Deployment> deployment;
 
-   @Inject
-   private Instance<Container> container;
+    @Inject
+    private Instance<Container> container;
 
-   @Override
-   public void enrich(Before event) throws Exception
-   {
-      boolean runAsClient = RunModeUtils.isRunAsClient(
-            this.deployment.get(),
-            event.getTestClass(),
-            event.getTestMethod());
-      
-      if(runAsClient || RunModeUtils.isLocalContainer(container.get()))
-      {
-         super.enrich(event);
-      }
-   }
+    @Override
+    public void enrich(Before event) throws Exception {
+        boolean runAsClient = RunModeUtils.isRunAsClient(
+                this.deployment.get(),
+                event.getTestClass(),
+                event.getTestMethod());
+
+        if (runAsClient || RunModeUtils.isLocalContainer(container.get())) {
+            super.enrich(event);
+        }
+    }
 }

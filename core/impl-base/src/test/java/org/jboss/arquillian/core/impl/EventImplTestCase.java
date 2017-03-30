@@ -30,61 +30,53 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventImplTestCase
-{
-   @Test
-   public void shouldBeAbleToFireEvent() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .extensions(TestObserver.class).create();
-      
-      EventImpl<Object> event = EventImpl.of(Object.class, manager);
-      
-      Object testObject = new TestCommand();
-      event.fire(testObject);
-      
-      TestObserver observer = manager.getExtension(TestObserver.class);
-      Assert.assertTrue(observer.wasCalled);
-      Assert.assertTrue(observer.observerWasCalled);
-      Assert.assertEquals(
-            "Verify same object was observed", 
-            testObject, observer.getObject());
-   }
-   
-   private static class TestObserver 
-   {
-      private boolean wasCalled = false;
-      private boolean observerWasCalled = false;
-      private Object object;
-      
-      @SuppressWarnings("unused")
-      public void shouldBeCalled(@Observes Object object)
-      {
-         Assert.assertNotNull(object);
-         this.object = object;
-         wasCalled = true;
-      }
-      
-      @SuppressWarnings("unused")
-      public void shouldObserve(@Observes EventContext<Command> event)
-      {
-         observerWasCalled = true;
-         event.proceed();
-      }
+public class EventImplTestCase {
+    @Test
+    public void shouldBeAbleToFireEvent() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+                .extensions(TestObserver.class).create();
 
-      public Object getObject()
-      {
-         return object;
-      }
-   }
-   
-   private interface Command<T> 
-   {
-      
-   }
-   
-   private class TestCommand implements Command<String>
-   {
-      
-   }
+        EventImpl<Object> event = EventImpl.of(Object.class, manager);
+
+        Object testObject = new TestCommand();
+        event.fire(testObject);
+
+        TestObserver observer = manager.getExtension(TestObserver.class);
+        Assert.assertTrue(observer.wasCalled);
+        Assert.assertTrue(observer.observerWasCalled);
+        Assert.assertEquals(
+                "Verify same object was observed",
+                testObject, observer.getObject());
+    }
+
+    private static class TestObserver {
+        private boolean wasCalled = false;
+        private boolean observerWasCalled = false;
+        private Object object;
+
+        @SuppressWarnings("unused")
+        public void shouldBeCalled(@Observes Object object) {
+            Assert.assertNotNull(object);
+            this.object = object;
+            wasCalled = true;
+        }
+
+        @SuppressWarnings("unused")
+        public void shouldObserve(@Observes EventContext<Command> event) {
+            observerWasCalled = true;
+            event.proceed();
+        }
+
+        public Object getObject() {
+            return object;
+        }
+    }
+
+    private interface Command<T> {
+
+    }
+
+    private class TestCommand implements Command<String> {
+
+    }
 }

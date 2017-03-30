@@ -25,10 +25,8 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class AfterKill extends ContainerEvent
-{
-   public AfterKill(DeployableContainer<?> deployableContainer)
-   {
-      super(deployableContainer);
-   }
+public class AfterKill extends ContainerEvent {
+    public AfterKill(DeployableContainer<?> deployableContainer) {
+        super(deployableContainer);
+    }
 }

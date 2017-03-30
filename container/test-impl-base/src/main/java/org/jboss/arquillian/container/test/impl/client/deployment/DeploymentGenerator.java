@@ -55,226 +55,191 @@ import org.jboss.shrinkwrap.api.container.ClassContainer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentGenerator
-{
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
-   
-   @Inject @ClassScoped
-   private InstanceProducer<DeploymentScenario> deployment;
+public class DeploymentGenerator {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
-   
-   @Inject
-   private Instance<ProtocolRegistry> protocolRegistry;
+    @Inject
+    @ClassScoped
+    private InstanceProducer<DeploymentScenario> deployment;
 
-   public void generateDeployment(@Observes GenerateDeployment event)
-   {
-      DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
-            DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
-      
-      DeploymentScenario scenario = new DeploymentScenario();
-      
-      for(DeploymentDescription deployment : generator.generate(event.getTestClass())) 
-      {
-         scenario.addDeployment(deployment);
-      }
+    @Inject
+    private Instance<ContainerRegistry> containerRegistry;
 
-      validate(scenario);
-      createTestableDeployments(scenario, event.getTestClass());
+    @Inject
+    private Instance<ProtocolRegistry> protocolRegistry;
 
-      deployment.set(scenario);
-   }
+    public void generateDeployment(@Observes GenerateDeployment event) {
+        DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
+                DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
 
-   //-------------------------------------------------------------------------------------||
-   // Validate DeploymentScenario --------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+        DeploymentScenario scenario = new DeploymentScenario();
 
-   protected void validate(DeploymentScenario scenario)
-   {
-      ContainerRegistry conReg = containerRegistry.get();
-      for (TargetDescription target : scenario.targets())
-      {
-         Container container = conReg.getContainer(target);
-         if (container == null)
-         {
-            throwTargetNotFoundValidationException(conReg, target);
-         }
-      }
+        for (DeploymentDescription deployment : generator.generate(event.getTestClass())) {
+            scenario.addDeployment(deployment);
+        }
 
-      for(Deployment deployment : scenario.deployments())
-      {
-         Container container = conReg.getContainer(deployment.getDescription().getTarget());
-         if("custom".equalsIgnoreCase(container.getContainerConfiguration().getMode()))
-         {
-            if(deployment.getDescription().managed())
-            {
-               throw new ValidationException(
-                     "Deployment " + deployment.getDescription().getName() + " is targeted against container " + 
-                     container.getName() + ". This container is set to mode custom which can not handle managed deployments. " +
-                     "Please verify the @" + TargetsContainer.class.getName() + " annotation or container@mode in arquillian.xml");
+        validate(scenario);
+        createTestableDeployments(scenario, event.getTestClass());
+
+        deployment.set(scenario);
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Validate DeploymentScenario --------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    protected void validate(DeploymentScenario scenario) {
+        ContainerRegistry conReg = containerRegistry.get();
+        for (TargetDescription target : scenario.targets()) {
+            Container container = conReg.getContainer(target);
+            if (container == null) {
+                throwTargetNotFoundValidationException(conReg, target);
             }
-         }
-      }
+        }
 
-      ProtocolRegistry proReg = protocolRegistry.get();
-      for (ProtocolDescription proDesc : scenario.protocols())
-      {
-         if (ProtocolDescription.DEFAULT.equals(proDesc))
-         {
-            continue;
-         }
-         ProtocolDefinition protocol = proReg.getProtocol(proDesc);
-         if (protocol == null)
-         {
-            throw new ValidationException(DeploymentScenario.class.getSimpleName()
-                  + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
-         }
-      }
-
-   }
-
-   //-------------------------------------------------------------------------------------||
-   // Enrich with Protocol Packaging -----------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
-
-   /**
-    * @param scenario
-    */
-   private void createTestableDeployments(DeploymentScenario scenario, TestClass testCase)
-   {
-      ProtocolRegistry protoReg = protocolRegistry.get();
-      buildTestableDeployments(scenario, testCase, protoReg);
-   }
-
-   private void buildTestableDeployments(DeploymentScenario scenario, TestClass testCase, ProtocolRegistry protoReg)
-   {
-      for(Deployment deployment : scenario.deployments())
-      {
-         DeploymentDescription description = deployment.getDescription();
-         if(!description.testable() || !description.isArchiveDeployment())
-         {
-            continue;
-         }
-         List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(description);
-         
-         ProtocolDefinition protocolDefinition = protoReg.getProtocol(description.getProtocol());
-         if(protocolDefinition == null)
-         {
-            protocolDefinition = protoReg.getProtocol(
-                  containerRegistry.get().getContainer(description.getTarget()).getDeployableContainer().getDefaultProtocol());
-         }
-         Protocol<?> protocol = protocolDefinition.getProtocol();
-         DeploymentPackager packager = protocol.getPackager();
-
-         Archive<?> applicationArchive = description.getArchive();
-         applyApplicationProcessors(description.getArchive(), testCase);
-         applyAuxiliaryProcessors(auxiliaryArchives);
-
-         try
-         {
-            // this should be made more reliable, does not work with e.g. a EnterpriseArchive
-            if(ClassContainer.class.isInstance(applicationArchive)) 
-            {
-               ClassContainer<?> classContainer = ClassContainer.class.cast(applicationArchive);
-               classContainer.addClass(testCase.getJavaClass());
+        for (Deployment deployment : scenario.deployments()) {
+            Container container = conReg.getContainer(deployment.getDescription().getTarget());
+            if ("custom".equalsIgnoreCase(container.getContainerConfiguration().getMode())) {
+                if (deployment.getDescription().managed()) {
+                    throw new ValidationException(
+                            "Deployment " + deployment.getDescription().getName() + " is targeted against container " +
+                                    container.getName() + ". This container is set to mode custom which can not handle managed deployments. " +
+                                    "Please verify the @" + TargetsContainer.class.getName() + " annotation or container@mode in arquillian.xml");
+                }
             }
-         } 
-         catch (UnsupportedOperationException e) 
-         { 
+        }
+
+        ProtocolRegistry proReg = protocolRegistry.get();
+        for (ProtocolDescription proDesc : scenario.protocols()) {
+            if (ProtocolDescription.DEFAULT.equals(proDesc)) {
+                continue;
+            }
+            ProtocolDefinition protocol = proReg.getProtocol(proDesc);
+            if (protocol == null) {
+                throw new ValidationException(DeploymentScenario.class.getSimpleName()
+                        + " contains protocols not maching any defined Protocol in the registry. " + proDesc.getName());
+            }
+        }
+
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Enrich with Protocol Packaging -----------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /**
+     * @param scenario
+     */
+    private void createTestableDeployments(DeploymentScenario scenario, TestClass testCase) {
+        ProtocolRegistry protoReg = protocolRegistry.get();
+        buildTestableDeployments(scenario, testCase, protoReg);
+    }
+
+    private void buildTestableDeployments(DeploymentScenario scenario, TestClass testCase, ProtocolRegistry protoReg) {
+        for (Deployment deployment : scenario.deployments()) {
+            DeploymentDescription description = deployment.getDescription();
+            if (!description.testable() || !description.isArchiveDeployment()) {
+                continue;
+            }
+            List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(description);
+
+            ProtocolDefinition protocolDefinition = protoReg.getProtocol(description.getProtocol());
+            if (protocolDefinition == null) {
+                protocolDefinition = protoReg.getProtocol(
+                        containerRegistry.get().getContainer(description.getTarget()).getDeployableContainer().getDefaultProtocol());
+            }
+            Protocol<?> protocol = protocolDefinition.getProtocol();
+            DeploymentPackager packager = protocol.getPackager();
+
+            Archive<?> applicationArchive = description.getArchive();
+            applyApplicationProcessors(description.getArchive(), testCase);
+            applyAuxiliaryProcessors(auxiliaryArchives);
+
+            try {
+                // this should be made more reliable, does not work with e.g. a EnterpriseArchive
+                if (ClassContainer.class.isInstance(applicationArchive)) {
+                    ClassContainer<?> classContainer = ClassContainer.class.cast(applicationArchive);
+                    classContainer.addClass(testCase.getJavaClass());
+                }
+            } catch (UnsupportedOperationException e) {
             /*
              * Quick Fix: https://jira.jboss.org/jira/browse/ARQ-118
              * Keep in mind when rewriting for https://jira.jboss.org/jira/browse/ARQ-94
              * that a ShrinkWrap archive might not support a Container if even tho the 
              * ContianerBase implements it. Check the Archive Interface..  
              */
-         }
-         description.setTestableArchive(
-               packager.generateDeployment(
-                     new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
-                     serviceLoader.get().all(ProtocolArchiveProcessor.class)));
-      }
-   }
+            }
+            description.setTestableArchive(
+                    packager.generateDeployment(
+                            new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
+                            serviceLoader.get().all(ProtocolArchiveProcessor.class)));
+        }
+    }
 
-   private List<Archive<?>> loadAuxiliaryArchives(DeploymentDescription deployment) 
-   {
-      List<Archive<?>> archives = new ArrayList<Archive<?>>();
+    private List<Archive<?>> loadAuxiliaryArchives(DeploymentDescription deployment) {
+        List<Archive<?>> archives = new ArrayList<Archive<?>>();
 
-      // load based on the Containers ClassLoader
-      Collection<AuxiliaryArchiveAppender> archiveAppenders = serviceLoader.get().all(AuxiliaryArchiveAppender.class);
-      
-      for(AuxiliaryArchiveAppender archiveAppender : archiveAppenders)
-      {
-         Archive<?> auxiliaryArchive = archiveAppender.createAuxiliaryArchive();
-         if(auxiliaryArchive != null)
-         {
-            archives.add(auxiliaryArchive);
-         }
-      }
-      return archives;
-   }
+        // load based on the Containers ClassLoader
+        Collection<AuxiliaryArchiveAppender> archiveAppenders = serviceLoader.get().all(AuxiliaryArchiveAppender.class);
 
-   private void applyApplicationProcessors(Archive<?> applicationArchive, TestClass testClass)
-   {
-      Collection<ApplicationArchiveProcessor> processors = serviceLoader.get().all(ApplicationArchiveProcessor.class);
-      for(ApplicationArchiveProcessor processor : processors)
-      {
-         processor.process(applicationArchive, testClass);
-      }
-   }
-   
-   private void applyAuxiliaryProcessors(List<Archive<?>> auxiliaryArchives)
-   {
-      Collection<AuxiliaryArchiveProcessor> processors = serviceLoader.get().all(AuxiliaryArchiveProcessor.class);
-      for(AuxiliaryArchiveProcessor processor : processors)
-      {
-         for(Archive<?> auxiliaryArchive : auxiliaryArchives)
-         {
-            processor.process(auxiliaryArchive);
-         }
-      }
-   }
+        for (AuxiliaryArchiveAppender archiveAppender : archiveAppenders) {
+            Archive<?> auxiliaryArchive = archiveAppender.createAuxiliaryArchive();
+            if (auxiliaryArchive != null) {
+                archives.add(auxiliaryArchive);
+            }
+        }
+        return archives;
+    }
 
-   private void throwTargetNotFoundValidationException(ContainerRegistry conReg, TargetDescription target)
-   {
-      if (conReg.getContainers().size() == 0)
-      {
-         throwNoContainerFound(target);
-      }
-      throwNoMatchFound(conReg, target);
-   }
+    private void applyApplicationProcessors(Archive<?> applicationArchive, TestClass testClass) {
+        Collection<ApplicationArchiveProcessor> processors = serviceLoader.get().all(ApplicationArchiveProcessor.class);
+        for (ApplicationArchiveProcessor processor : processors) {
+            processor.process(applicationArchive, testClass);
+        }
+    }
 
-   private void throwNoContainerFound(TargetDescription target)
-   {
-      throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
-            + ") not matching any defined Container in the registry.\n"
-            + "Please include at least 1 Deployable Container on your Classpath.");
-   }
+    private void applyAuxiliaryProcessors(List<Archive<?>> auxiliaryArchives) {
+        Collection<AuxiliaryArchiveProcessor> processors = serviceLoader.get().all(AuxiliaryArchiveProcessor.class);
+        for (AuxiliaryArchiveProcessor processor : processors) {
+            for (Archive<?> auxiliaryArchive : auxiliaryArchives) {
+                processor.process(auxiliaryArchive);
+            }
+        }
+    }
 
-   private void throwNoMatchFound(ContainerRegistry conReg, TargetDescription target)
-   {
-      throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
-            + ") not matching any defined Container in the registry.\n" + "Possible causes are: None of the "
-            + conReg.getContainers().size() + " Containers are marked as default or you have defined a " + "@"
-            + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + " with a @"
-            + TargetsContainer.class.getSimpleName() + " of value (" + target.getName() + ") that "
-            + "does not match any found/configured Containers (" + toString(conReg)
-            + "), see arquillian.xml container@qualifier");
-   }
+    private void throwTargetNotFoundValidationException(ContainerRegistry conReg, TargetDescription target) {
+        if (conReg.getContainers().size() == 0) {
+            throwNoContainerFound(target);
+        }
+        throwNoMatchFound(conReg, target);
+    }
 
-   private String toString(ContainerRegistry reg)
-   {
-      StringBuilder sb = new StringBuilder();
-      for (Container container : reg.getContainers())
-      {
-         sb.append(container.getName()).append(",");
-      }
-      if (sb.length() > 0)
-      {
-         sb.deleteCharAt(sb.length() - 1);
-      }
-      return sb.toString();
-   }
+    private void throwNoContainerFound(TargetDescription target) {
+        throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
+                + ") not matching any defined Container in the registry.\n"
+                + "Please include at least 1 Deployable Container on your Classpath.");
+    }
+
+    private void throwNoMatchFound(ContainerRegistry conReg, TargetDescription target) {
+        throw new ValidationException("DeploymentScenario contains a target (" + target.getName()
+                + ") not matching any defined Container in the registry.\n" + "Possible causes are: None of the "
+                + conReg.getContainers().size() + " Containers are marked as default or you have defined a " + "@"
+                + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + " with a @"
+                + TargetsContainer.class.getSimpleName() + " of value (" + target.getName() + ") that "
+                + "does not match any found/configured Containers (" + toString(conReg)
+                + "), see arquillian.xml container@qualifier");
+    }
+
+    private String toString(ContainerRegistry reg) {
+        StringBuilder sb = new StringBuilder();
+        for (Container container : reg.getContainers()) {
+            sb.append(container.getName()).append(",");
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
+    }
 
 }

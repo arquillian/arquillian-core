@@ -33,13 +33,12 @@ import org.jboss.arquillian.core.api.event.ManagerStarted;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextProducer
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<Context> contextProducer;
-   
-   public void createContext(@Observes ManagerStarted event) throws NamingException
-   {
-      contextProducer.set(new InitialContext());
-   }
+public class InitialContextProducer {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<Context> contextProducer;
+
+    public void createContext(@Observes ManagerStarted event) throws NamingException {
+        contextProducer.set(new InitialContext());
+    }
 }

@@ -41,234 +41,181 @@ import org.jboss.arquillian.test.spi.TestResult;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletMethodExecutor implements ContainerMethodExecutor
-{
-   private static final Logger log = Logger.getLogger(ContainerMethodExecutor.class.getName());
+public class ServletMethodExecutor implements ContainerMethodExecutor {
+    private static final Logger log = Logger.getLogger(ContainerMethodExecutor.class.getName());
 
-   public static final String ARQUILLIAN_SERVLET_NAME = "ArquillianServletRunner";
+    public static final String ARQUILLIAN_SERVLET_NAME = "ArquillianServletRunner";
 
-   public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
+    public static final String ARQUILLIAN_SERVLET_MAPPING = "/" + ARQUILLIAN_SERVLET_NAME;
 
-   protected ServletURIHandler uriHandler;
-   protected CommandCallback callback;
-   protected ServletProtocolConfiguration config;
+    protected ServletURIHandler uriHandler;
+    protected CommandCallback callback;
+    protected ServletProtocolConfiguration config;
 
-   protected ServletMethodExecutor() {}
-   
-   public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts, final CommandCallback callback)
-   {
-      if(config == null)
-      {
-         throw new IllegalArgumentException("ServletProtocolConfiguration must be specified");
-      }
-      if (contexts == null || contexts.size() == 0)
-      {
-         throw new IllegalArgumentException("HTTPContext must be specified");
-      }
-      if (callback == null)
-      {
-         throw new IllegalArgumentException("Callback must be specified");
-      }
-      this.config = config;
-      this.uriHandler = new ServletURIHandler(config, contexts);
-      this.callback = callback;
-   }
+    protected ServletMethodExecutor() {
+    }
 
-   public TestResult invoke(final TestMethodExecutor testMethodExecutor)
-   {
-      if (testMethodExecutor == null)
-      {
-         throw new IllegalArgumentException("TestMethodExecutor must be specified");
-      }
+    public ServletMethodExecutor(ServletProtocolConfiguration config, Collection<HTTPContext> contexts, final CommandCallback callback) {
+        if (config == null) {
+            throw new IllegalArgumentException("ServletProtocolConfiguration must be specified");
+        }
+        if (contexts == null || contexts.size() == 0) {
+            throw new IllegalArgumentException("HTTPContext must be specified");
+        }
+        if (callback == null) {
+            throw new IllegalArgumentException("Callback must be specified");
+        }
+        this.config = config;
+        this.uriHandler = new ServletURIHandler(config, contexts);
+        this.callback = callback;
+    }
 
-      URI targetBaseURI = uriHandler.locateTestServlet(testMethodExecutor.getMethod());
+    public TestResult invoke(final TestMethodExecutor testMethodExecutor) {
+        if (testMethodExecutor == null) {
+            throw new IllegalArgumentException("TestMethodExecutor must be specified");
+        }
 
-      Class<?> testClass = testMethodExecutor.getInstance().getClass();
-      final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
-            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-            + testMethodExecutor.getMethod().getName();
+        URI targetBaseURI = uriHandler.locateTestServlet(testMethodExecutor.getMethod());
 
-      final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
-            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-            + testMethodExecutor.getMethod().getName() + "&cmd=event";
+        Class<?> testClass = testMethodExecutor.getInstance().getClass();
+        final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+                + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+                + testMethodExecutor.getMethod().getName();
 
-      Timer eventTimer = null;
-      try
-      {
-         eventTimer = createCommandServicePullTimer(eventUrl);
-         return executeWithRetry(url, TestResult.class);
-      }
-      catch (Exception e)
-      {
-         throw new IllegalStateException("Error launching test " + testClass.getName() + " "
-               + testMethodExecutor.getMethod(), e);
-      }
-      finally
-      {
-         if (eventTimer != null)
-         {
-            eventTimer.cancel();
-         }
-      }
-   }
+        final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+                + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+                + testMethodExecutor.getMethod().getName() + "&cmd=event";
 
-   protected <T> T executeWithRetry(String url, Class<T> type) throws Exception
-   {
-      long timeoutTime = System.currentTimeMillis() + 1000;
-      boolean interrupted = false;
-      while (timeoutTime > System.currentTimeMillis())
-      {
-         T o = execute(url, type, null);
-         if (o != null)
-         {
-            return o;
-         }
-         try
-         {
-            Thread.sleep(200);
-         }
-         catch (InterruptedException e)
-         {
-            interrupted = true;
-         }
-      }
-      if (interrupted)
-      {
-         Thread.currentThread().interrupt();
-      }
-      throw new IllegalStateException("Error launching request at " + url + ". No result returned");
-   }
-
-   protected <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception
-   {
-      URLConnection connection = new URL(url).openConnection();
-      if (!(connection instanceof HttpURLConnection))
-      {
-         throw new IllegalStateException("Not an http connection! " + connection);
-      }
-      HttpURLConnection httpConnection = (HttpURLConnection) connection;
-      httpConnection.setUseCaches(false);
-      httpConnection.setDefaultUseCaches(false);
-      httpConnection.setDoInput(true);
-
-      prepareHttpConnection(httpConnection);
-
-      try
-      {
-         
-         if(requestObject != null)
-         {
-            httpConnection.setRequestMethod("POST");
-            httpConnection.setDoOutput(true);
-            httpConnection.setRequestProperty("Content-Type", "application/octet-stream");
-         }
-         
-         if(requestObject != null)
-         {
-            ObjectOutputStream ous = new ObjectOutputStream(httpConnection.getOutputStream());
-            try
-            {
-               ous.writeObject(requestObject);
+        Timer eventTimer = null;
+        try {
+            eventTimer = createCommandServicePullTimer(eventUrl);
+            return executeWithRetry(url, TestResult.class);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error launching test " + testClass.getName() + " "
+                    + testMethodExecutor.getMethod(), e);
+        } finally {
+            if (eventTimer != null) {
+                eventTimer.cancel();
             }
-            catch (Exception e) 
-            {
-               throw new RuntimeException("Error sending request Object, " + requestObject, e);
-            }
-            finally
-            {
-               ous.flush();
-               ous.close();
-            }
-         }
+        }
+    }
 
-         try
-         {
-            httpConnection.getResponseCode();
-         }
-         catch (ConnectException e) 
-         {
-            return null; // Could not connect
-         }
-         if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
-         {
-            ObjectInputStream ois = new ObjectInputStream(httpConnection.getInputStream());
-            Object o;
-            try
-            {
-               o = ois.readObject();
+    protected <T> T executeWithRetry(String url, Class<T> type) throws Exception {
+        long timeoutTime = System.currentTimeMillis() + 1000;
+        boolean interrupted = false;
+        while (timeoutTime > System.currentTimeMillis()) {
+            T o = execute(url, type, null);
+            if (o != null) {
+                return o;
             }
-            finally 
-            {
-               ois.close();   
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                interrupted = true;
             }
-            
-            if (!returnType.isInstance(o))
-            {
-               throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got " + o);
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
+        throw new IllegalStateException("Error launching request at " + url + ". No result returned");
+    }
+
+    protected <T> T execute(String url, Class<T> returnType, Object requestObject) throws Exception {
+        URLConnection connection = new URL(url).openConnection();
+        if (!(connection instanceof HttpURLConnection)) {
+            throw new IllegalStateException("Not an http connection! " + connection);
+        }
+        HttpURLConnection httpConnection = (HttpURLConnection) connection;
+        httpConnection.setUseCaches(false);
+        httpConnection.setDefaultUseCaches(false);
+        httpConnection.setDoInput(true);
+
+        prepareHttpConnection(httpConnection);
+
+        try {
+
+            if (requestObject != null) {
+                httpConnection.setRequestMethod("POST");
+                httpConnection.setDoOutput(true);
+                httpConnection.setRequestProperty("Content-Type", "application/octet-stream");
             }
-            return returnType.cast(o);
-         }
-         else if(httpConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT)
-         {
+
+            if (requestObject != null) {
+                ObjectOutputStream ous = new ObjectOutputStream(httpConnection.getOutputStream());
+                try {
+                    ous.writeObject(requestObject);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error sending request Object, " + requestObject, e);
+                } finally {
+                    ous.flush();
+                    ous.close();
+                }
+            }
+
+            try {
+                httpConnection.getResponseCode();
+            } catch (ConnectException e) {
+                return null; // Could not connect
+            }
+            if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                ObjectInputStream ois = new ObjectInputStream(httpConnection.getInputStream());
+                Object o;
+                try {
+                    o = ois.readObject();
+                } finally {
+                    ois.close();
+                }
+
+                if (!returnType.isInstance(o)) {
+                    throw new IllegalStateException("Error reading results, expected a " + returnType.getName() + " but got " + o);
+                }
+                return returnType.cast(o);
+            } else if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_NO_CONTENT) {
+                return null;
+            } else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
+                throw new IllegalStateException(
+                        "Error launching test at " + url + ". " +
+                                "Got " + httpConnection.getResponseCode() + " (" + httpConnection.getResponseMessage() + ")");
+            }
+        } finally {
+            httpConnection.disconnect();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected void prepareHttpConnection(HttpURLConnection connection) {
+    }
+
+    protected Timer createCommandServicePullTimer(final String eventUrl) {
+        if (config.getPullInMilliSeconds() == null || config.getPullInMilliSeconds() <= 0) {
+            log.warning("The Servlet Protocol has been configured with a pullInMilliSeconds interval of " +
+                    config.getPullInMilliSeconds() + ". The effect of this is that the Command Service has been disabled." +
+                    " Depending on which features you use, this might cause serious delays. Be on high alert for " +
+                    " possible timeout runtime exceptions.");
             return null;
-         }
-         else if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND)
-         {
-            throw new IllegalStateException(
-                  "Error launching test at " + url + ". " +
-                  "Got " + httpConnection.getResponseCode() + " ("+ httpConnection.getResponseMessage() + ")");
-         }
-      }
-      finally
-      {
-         httpConnection.disconnect();
-      }
-      return null;
-   }
-
-   @SuppressWarnings("UnusedParameters")
-   protected void prepareHttpConnection(HttpURLConnection connection) {
-   }
-
-   protected Timer createCommandServicePullTimer(final String eventUrl)
-   {
-      if(config.getPullInMilliSeconds() == null || config.getPullInMilliSeconds() <= 0) {
-         log.warning("The Servlet Protocol has been configured with a pullInMilliSeconds interval of " + 
-               config.getPullInMilliSeconds() + ". The effect of this is that the Command Service has been disabled." + 
-               " Depending on which features you use, this might cause serious delays. Be on high alert for " + 
-               " possible timeout runtime exceptions.");
-         return null;
-      }
-      Timer eventTimer = new Timer();
-      eventTimer.schedule(new TimerTask()
-      {
-         @Override
-         public void run()
-         {
-            try
-            {
-               Object o = execute(eventUrl, Object.class, null);
-               if (o != null)
-               {
-                  if (o instanceof Command)
-                  {
-                     Command<?> command = (Command<?>) o;
-                     callback.fired(command);
-                     execute(eventUrl, Object.class, command);
-                  }
-                  else
-                  {
-                     throw new RuntimeException("Recived a non " + Command.class.getName()
-                           + " object on event channel");
-                  }
-               }
+        }
+        Timer eventTimer = new Timer();
+        eventTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    Object o = execute(eventUrl, Object.class, null);
+                    if (o != null) {
+                        if (o instanceof Command) {
+                            Command<?> command = (Command<?>) o;
+                            callback.fired(command);
+                            execute(eventUrl, Object.class, command);
+                        } else {
+                            throw new RuntimeException("Recived a non " + Command.class.getName()
+                                    + " object on event channel");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            catch (Exception e)
-            {
-               e.printStackTrace();
-            }
-         }
-      }, 0, config.getPullInMilliSeconds());
-      return eventTimer;
-   }
+        }, 0, config.getPullInMilliSeconds());
+        return eventTimer;
+    }
 }

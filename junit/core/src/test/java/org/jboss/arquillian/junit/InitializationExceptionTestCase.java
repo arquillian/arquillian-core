@@ -28,30 +28,28 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * ARQ-404 Better reporting when Arquillian fails to initialise
- * 
+ * <p>
  * Only run first test, ignore the rest
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InitializationExceptionTestCase extends JUnitTestBaseClass
-{
-   @Test
-   public void shouldKeepInitializationExceptionBetweenTestCases() throws Exception
-   {
-      String exceptionMessage = "TEST_EXCEPTION_BEFORE_SUITE_FAILING";
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      doThrow(new Exception(exceptionMessage)).when(adaptor).beforeSuite();
+public class InitializationExceptionTestCase extends JUnitTestBaseClass {
+    @Test
+    public void shouldKeepInitializationExceptionBetweenTestCases() throws Exception {
+        String exceptionMessage = "TEST_EXCEPTION_BEFORE_SUITE_FAILING";
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        doThrow(new Exception(exceptionMessage)).when(adaptor).beforeSuite();
 
-      Result result = run(adaptor, ArquillianClass1.class, ArquillianClass1.class);
-      
-      Assert.assertFalse(result.wasSuccessful());
-      // both should be marked failed, the second with the real exception as cause 
-      Assert.assertEquals(2, result.getFailureCount()); 
-      Assert.assertEquals(exceptionMessage, result.getFailures().get(0).getMessage());
-      Assert.assertEquals(exceptionMessage, result.getFailures().get(1).getException().getCause().getMessage());
-      
-      verify(adaptor, times(0)).afterSuite();
-   }
+        Result result = run(adaptor, ArquillianClass1.class, ArquillianClass1.class);
+
+        Assert.assertFalse(result.wasSuccessful());
+        // both should be marked failed, the second with the real exception as cause
+        Assert.assertEquals(2, result.getFailureCount());
+        Assert.assertEquals(exceptionMessage, result.getFailures().get(0).getMessage());
+        Assert.assertEquals(exceptionMessage, result.getFailures().get(1).getException().getCause().getMessage());
+
+        verify(adaptor, times(0)).afterSuite();
+    }
 }

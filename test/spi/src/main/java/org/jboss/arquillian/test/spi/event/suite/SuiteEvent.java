@@ -25,9 +25,7 @@ import org.jboss.arquillian.core.spi.event.Event;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SuiteEvent implements Event
-{
-   public SuiteEvent()
-   {
-   }
+public class SuiteEvent implements Event {
+    public SuiteEvent() {
+    }
 }

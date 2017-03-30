@@ -43,7 +43,7 @@ import org.junit.Test;
 
 /**
  * Test the {@link JMXTestRunner}
- * 
+ *
  * @author thomas.diesler@jboss.com
  */
 public class JMXTestRunnerTestCase {
@@ -127,55 +127,51 @@ public class JMXTestRunnerTestCase {
     }
 
     @Test
-    public void shouldBeAbleToSendReceiveCommands() throws Throwable
-    {
-       Object[] results = new Object[]{"Success", 100};
-       MockTestRunner.add(TestResult.passed());
-       MockTestRunner.add(new TestStringCommand());
-       MockTestRunner.add(new TestIntegerCommand());
+    public void shouldBeAbleToSendReceiveCommands() throws Throwable {
+        Object[] results = new Object[]{"Success", 100};
+        MockTestRunner.add(TestResult.passed());
+        MockTestRunner.add(new TestStringCommand());
+        MockTestRunner.add(new TestIntegerCommand());
 
-       MBeanServer mbeanServer = getMBeanServer();
-       JMXTestRunner jmxTestRunner = new JMXTestTestRunner(null);
+        MBeanServer mbeanServer = getMBeanServer();
+        JMXTestRunner jmxTestRunner = new JMXTestTestRunner(null);
 
-       jmxTestRunner.setExposedTestRunnerForTest(new MockTestRunner());
-       ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
+        jmxTestRunner.setExposedTestRunnerForTest(new MockTestRunner());
+        ObjectName oname = jmxTestRunner.registerMBean(mbeanServer);
 
-       try
-       {
-          JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, new TestCommandCallback(results));
+        try {
+            JMXMethodExecutor executor = new JMXMethodExecutor(mbeanServer, new TestCommandCallback(results));
 
-          TestResult result = executor.invoke(new TestMethodExecutor()
-          {
-             @Override
-             public void invoke(Object... parameters) throws Throwable { }
+            TestResult result = executor.invoke(new TestMethodExecutor() {
+                @Override
+                public void invoke(Object... parameters) throws Throwable {
+                }
 
-             @Override
-             public Method getMethod() { return testMethod(); }
+                @Override
+                public Method getMethod() {
+                    return testMethod();
+                }
 
-             @Override
-             public Object getInstance()
-             {
-                return JMXTestRunnerTestCase.this;
-             }
-          });
+                @Override
+                public Object getInstance() {
+                    return JMXTestRunnerTestCase.this;
+                }
+            });
 
-          assertNotNull("TestResult not null", result);
-          assertNotNull("Status not null", result.getStatus());
-          if (result.getStatus() == Status.FAILED)
-             throw result.getThrowable();
+            assertNotNull("TestResult not null", result);
+            assertNotNull("Status not null", result.getStatus());
+            if (result.getStatus() == Status.FAILED)
+                throw result.getThrowable();
 
-          for(int i = 0 ; i < results.length; i++)
-          {
-             Assert.assertEquals(
-                   "Should have returned command",
-                   results[i],
-                   MockTestRunner.commandResults.get(i));
-          }
-       }
-       finally
-       {
-          mbeanServer.unregisterMBean(oname);
-       }
+            for (int i = 0; i < results.length; i++) {
+                Assert.assertEquals(
+                        "Should have returned command",
+                        results[i],
+                        MockTestRunner.commandResults.get(i));
+            }
+        } finally {
+            mbeanServer.unregisterMBean(oname);
+        }
     }
 
     private MBeanServer getMBeanServer() {

@@ -31,20 +31,17 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class ContainerControllerProvider implements ResourceProvider
-{
-   @Inject
-   private Instance<ContainerController> controller;
-   
-   @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      return controller.get();
-   }
+public class ContainerControllerProvider implements ResourceProvider {
+    @Inject
+    private Instance<ContainerController> controller;
 
-   @Override
-   public boolean canProvide(Class<?> type)
-   {
-      return type.isAssignableFrom(ContainerController.class);
-   }
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return controller.get();
+    }
+
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(ContainerController.class);
+    }
 }

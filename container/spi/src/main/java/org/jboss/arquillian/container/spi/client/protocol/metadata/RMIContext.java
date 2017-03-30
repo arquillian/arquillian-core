@@ -24,48 +24,41 @@ import javax.naming.InitialContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class RMIContext extends NamedContext
-{
-   private String ip;
-   private int port;
+public class RMIContext extends NamedContext {
+    private String ip;
+    private int port;
 
-   public RMIContext(String ip, int port)
-   {
-      this("no-named", ip, port);
-   }
-   
-   public RMIContext(String name, String ip, int port)
-   {
-      super(name);
-      
-      this.ip = ip;
-      this.port = port;
-   }
-   
-   /**
-    * @return the ip
-    */
-   public String getIp()
-   {
-      return ip;
-   }
-   
-   /**
-    * @return the port
-    */
-   public int getPort()
-   {
-      return port;
-   }
-   
-   public InitialContext getInitialContext() 
-   {
-      return null;
-   }
+    public RMIContext(String ip, int port) {
+        this("no-named", ip, port);
+    }
 
-   @Override
-   public String toString()
-   {
-      return "RMIContext [ip=" + ip + ", port=" + port + "]";
-   }
+    public RMIContext(String name, String ip, int port) {
+        super(name);
+
+        this.ip = ip;
+        this.port = port;
+    }
+
+    /**
+     * @return the ip
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+
+    public InitialContext getInitialContext() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "RMIContext [ip=" + ip + ", port=" + port + "]";
+    }
 }

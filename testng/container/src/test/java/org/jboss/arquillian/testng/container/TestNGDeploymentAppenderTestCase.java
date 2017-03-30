@@ -27,23 +27,21 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGDeploymentAppenderTestCase
-{
+public class TestNGDeploymentAppenderTestCase {
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception 
-   {
-      Archive<?> archive = new TestNGDeploymentAppender().createAuxiliaryArchive();
+    @Test
+    public void shouldGenerateDependencies() throws Exception {
+        Archive<?> archive = new TestNGDeploymentAppender().createAuxiliaryArchive();
 
-      Assert.assertTrue(
-            "Should have added TestRunner SPI",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
-      
-      Assert.assertTrue(
-            "Should have added TestRunner Impl",
-            archive.contains(ArchivePaths.create("/org/jboss/arquillian/testng/container/TestNGTestRunner.class")));
+        Assert.assertTrue(
+                "Should have added TestRunner SPI",
+                archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
 
-      System.out.println(archive.toString(true));      
+        Assert.assertTrue(
+                "Should have added TestRunner Impl",
+                archive.contains(ArchivePaths.create("/org/jboss/arquillian/testng/container/TestNGTestRunner.class")));
 
-   }
+        System.out.println(archive.toString(true));
+
+    }
 }

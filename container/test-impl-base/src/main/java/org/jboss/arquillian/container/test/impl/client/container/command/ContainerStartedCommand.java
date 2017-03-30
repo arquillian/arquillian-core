@@ -26,22 +26,19 @@ import org.jboss.arquillian.container.test.impl.client.deployment.command.Abstra
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class ContainerStartedCommand extends AbstractCommand<Boolean>
-{
-   private static final long serialVersionUID = 1L;
+public class ContainerStartedCommand extends AbstractCommand<Boolean> {
+    private static final long serialVersionUID = 1L;
 
-   private String containerQualifier;
-   
-   public ContainerStartedCommand(String containerQualifier)
-   {
-      this.containerQualifier = containerQualifier;
-   }
-   
-   /**
-    * @return the containerQualifier
-    */
-   public String getContainerQualifier()
-   {
-      return containerQualifier;
-   }
+    private String containerQualifier;
+
+    public ContainerStartedCommand(String containerQualifier) {
+        this.containerQualifier = containerQualifier;
+    }
+
+    /**
+     * @return the containerQualifier
+     */
+    public String getContainerQualifier() {
+        return containerQualifier;
+    }
 }

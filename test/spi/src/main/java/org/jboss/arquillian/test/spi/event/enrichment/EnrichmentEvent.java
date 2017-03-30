@@ -27,26 +27,25 @@ import org.jboss.arquillian.core.spi.event.Event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EnrichmentEvent implements Event
-{
-	private Object instance;
+public class EnrichmentEvent implements Event {
+    private Object instance;
     private Method method;
 
-	public EnrichmentEvent(Object instance) {
-		this.instance = instance;
-	}
+    public EnrichmentEvent(Object instance) {
+        this.instance = instance;
+    }
 
     public EnrichmentEvent(Object instance, Method method) {
         this.instance = instance;
         this.method = method;
     }
 
-	public Object getInstance() {
-		return instance;
-	}
+    public Object getInstance() {
+        return instance;
+    }
 
-	// Could be null
-	public Method getMethod() {
+    // Could be null
+    public Method getMethod() {
         return method;
     }
 }

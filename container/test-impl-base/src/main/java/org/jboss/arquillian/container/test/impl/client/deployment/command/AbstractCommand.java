@@ -27,36 +27,31 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class AbstractCommand<T> implements Command<T>, Serializable
-{
-   private static final long serialVersionUID = 1L;
+public abstract class AbstractCommand<T> implements Command<T>, Serializable {
+    private static final long serialVersionUID = 1L;
 
-   private T result;
-   private Throwable throwable;
-   
-   public void setResult(T result) 
-   {
-      this.result = result;
-   }
+    private T result;
+    private Throwable throwable;
 
-   @Override
-   public T getResult()
-   {
-      return result;
-   }
+    public void setResult(T result) {
+        this.result = result;
+    }
 
-   @Override
-   public void setThrowable(Throwable throwable)
-   {
-      this.throwable = throwable;
-   }
-   
-   /**
-    * @return the throwable
-    */
-   @Override
-   public Throwable getThrowable()
-   {
-      return throwable;
-   }
+    @Override
+    public T getResult() {
+        return result;
+    }
+
+    @Override
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
+    /**
+     * @return the throwable
+     */
+    @Override
+    public Throwable getThrowable() {
+        return throwable;
+    }
 }

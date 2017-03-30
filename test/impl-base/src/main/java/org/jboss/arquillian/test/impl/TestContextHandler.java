@@ -40,98 +40,83 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
  * TestContextHandler
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @version $Revision: $
  */
-public class TestContextHandler
-{
-   @Inject
-   private Instance<SuiteContext> suiteContextInstance;
+public class TestContextHandler {
+    @Inject
+    private Instance<SuiteContext> suiteContextInstance;
 
-   @Inject
-   private Instance<ClassContext> classContextInstance;
+    @Inject
+    private Instance<ClassContext> classContextInstance;
 
-   @Inject
-   private Instance<TestContext> testContextInstance;
+    @Inject
+    private Instance<TestContext> testContextInstance;
 
-   @Inject
-   @ClassScoped
-   private InstanceProducer<TestClass> testClassProducer;
+    @Inject
+    @ClassScoped
+    private InstanceProducer<TestClass> testClassProducer;
 
-   // Since there can be multiple AfterTestLifecycleEvents (After/AfterRules)
-   // and we don't know which is the last one, perform the clean up in AfterClass.
-   private Map<Class<?>, Set<Object>> activatedTestContexts = new HashMap<Class<?>, Set<Object>>();
+    // Since there can be multiple AfterTestLifecycleEvents (After/AfterRules)
+    // and we don't know which is the last one, perform the clean up in AfterClass.
+    private Map<Class<?>, Set<Object>> activatedTestContexts = new HashMap<Class<?>, Set<Object>>();
 
-   public void createSuiteContext(@Observes(precedence = 100) EventContext<SuiteEvent> context)
-   {
-      SuiteContext suiteContext = this.suiteContextInstance.get();
-      try
-      {
-         suiteContext.activate();
-         context.proceed();
-      }
-      finally
-      {
-         suiteContext.deactivate();
-         if (AfterSuite.class.isAssignableFrom(context.getEvent().getClass()))
-         {
-            suiteContext.destroy();
-         }
-      }
-   }
-
-   public void createClassContext(@Observes(precedence = 100) EventContext<ClassEvent> context)
-   {
-      ClassContext classContext = this.classContextInstance.get();
-      try
-      {
-         classContext.activate(context.getEvent().getTestClass().getJavaClass());
-         testClassProducer.set(context.getEvent().getTestClass());
-         context.proceed();
-      }
-      finally
-      {
-         classContext.deactivate();
-         if (AfterClass.class.isAssignableFrom(context.getEvent().getClass()))
-         {
-            synchronized (activatedTestContexts) {
-               Class<?> testClass = context.getEvent().getTestClass().getJavaClass();
-               Set<Object> instances = activatedTestContexts.get(testClass);
-               if(instances != null) {
-                   TestContext testContext = testContextInstance.get();
-                   for(Object instance : instances) {
-                       testContext.destroy(instance);
-                   }
-                   activatedTestContexts.remove(testClass);
-               }
+    public void createSuiteContext(@Observes(precedence = 100) EventContext<SuiteEvent> context) {
+        SuiteContext suiteContext = this.suiteContextInstance.get();
+        try {
+            suiteContext.activate();
+            context.proceed();
+        } finally {
+            suiteContext.deactivate();
+            if (AfterSuite.class.isAssignableFrom(context.getEvent().getClass())) {
+                suiteContext.destroy();
             }
-            classContext.destroy(context.getEvent().getTestClass().getJavaClass());
-         }
-      }
-   }
+        }
+    }
 
-   public void createTestContext(@Observes(precedence = 100) EventContext<TestEvent> context)
-   {
-      TestContext testContext = this.testContextInstance.get();
-      try
-      {
-         testContext.activate(context.getEvent().getTestInstance());
-         synchronized (activatedTestContexts) {
-             Class<?> testClass = context.getEvent().getTestClass().getJavaClass();
-             Set<Object> instances = activatedTestContexts.get(testClass);
-             if(instances == null) {
-                 instances = new HashSet<Object>();
-                 activatedTestContexts.put(testClass, instances);
-             }
-             instances.add(context.getEvent().getTestInstance());
-         }
-         context.proceed();
-      }
-      finally
-      {
-         testContext.deactivate();
-      }
-   }
+    public void createClassContext(@Observes(precedence = 100) EventContext<ClassEvent> context) {
+        ClassContext classContext = this.classContextInstance.get();
+        try {
+            classContext.activate(context.getEvent().getTestClass().getJavaClass());
+            testClassProducer.set(context.getEvent().getTestClass());
+            context.proceed();
+        } finally {
+            classContext.deactivate();
+            if (AfterClass.class.isAssignableFrom(context.getEvent().getClass())) {
+                synchronized (activatedTestContexts) {
+                    Class<?> testClass = context.getEvent().getTestClass().getJavaClass();
+                    Set<Object> instances = activatedTestContexts.get(testClass);
+                    if (instances != null) {
+                        TestContext testContext = testContextInstance.get();
+                        for (Object instance : instances) {
+                            testContext.destroy(instance);
+                        }
+                        activatedTestContexts.remove(testClass);
+                    }
+                }
+                classContext.destroy(context.getEvent().getTestClass().getJavaClass());
+            }
+        }
+    }
+
+    public void createTestContext(@Observes(precedence = 100) EventContext<TestEvent> context) {
+        TestContext testContext = this.testContextInstance.get();
+        try {
+            testContext.activate(context.getEvent().getTestInstance());
+            synchronized (activatedTestContexts) {
+                Class<?> testClass = context.getEvent().getTestClass().getJavaClass();
+                Set<Object> instances = activatedTestContexts.get(testClass);
+                if (instances == null) {
+                    instances = new HashSet<Object>();
+                    activatedTestContexts.put(testClass, instances);
+                }
+                instances.add(context.getEvent().getTestInstance());
+            }
+            context.proceed();
+        } finally {
+            testContext.deactivate();
+        }
+    }
 }

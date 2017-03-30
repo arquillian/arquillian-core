@@ -31,21 +31,18 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  *
  * @author asotobu
  */
-public class ServletContextResourceProvider extends OperatesOnDeploymentAwareProvider
-{
+public class ServletContextResourceProvider extends OperatesOnDeploymentAwareProvider {
 
     @Inject
     Instance<ServletContext> servletContextInstance;
 
     @Override
-    public boolean canProvide(Class<?> type)
-    {
+    public boolean canProvide(Class<?> type) {
         return javax.servlet.ServletContext.class.isAssignableFrom(type);
     }
 
     @Override
-    public Object doLookup(ArquillianResource arquillianResource, Annotation... annotations)
-    {
+    public Object doLookup(ArquillianResource arquillianResource, Annotation... annotations) {
         return servletContextInstance.get();
     }
 }

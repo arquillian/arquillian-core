@@ -24,18 +24,15 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalExecutionEvent implements ExecutionEvent
-{
-   private TestMethodExecutor executor;
-   
-   public LocalExecutionEvent(TestMethodExecutor executor)
-   {
-      this.executor = executor;
-   }
-   
-   @Override
-   public TestMethodExecutor getExecutor()
-   {
-      return executor;
-   }
+public class LocalExecutionEvent implements ExecutionEvent {
+    private TestMethodExecutor executor;
+
+    public LocalExecutionEvent(TestMethodExecutor executor) {
+        this.executor = executor;
+    }
+
+    @Override
+    public TestMethodExecutor getExecutor() {
+        return executor;
+    }
 }

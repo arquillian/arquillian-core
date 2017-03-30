@@ -36,20 +36,18 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class JUnitIntegrationTestCase extends JUnitTestBaseClass
-{
-   @Test
-   public void shouldCallAllMethodsWithRealAdapter() throws Exception
-   {
-      System.setProperty("arquillian.debug", "true");
-      TestRunnerAdaptor adaptor = spy(TestRunnerAdaptorBuilder.build());
+public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
+    @Test
+    public void shouldCallAllMethodsWithRealAdapter() throws Exception {
+        System.setProperty("arquillian.debug", "true");
+        TestRunnerAdaptor adaptor = spy(TestRunnerAdaptorBuilder.build());
 
-      Result result = run(adaptor, ArquillianClass1.class);
+        Result result = run(adaptor, ArquillianClass1.class);
 
-      Assert.assertTrue(result.wasSuccessful());
-      assertCycle(1, Cycle.values());
+        Assert.assertTrue(result.wasSuccessful());
+        assertCycle(1, Cycle.values());
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 }

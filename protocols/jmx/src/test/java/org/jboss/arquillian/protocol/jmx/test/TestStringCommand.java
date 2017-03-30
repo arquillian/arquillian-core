@@ -27,34 +27,29 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestStringCommand implements Command<String>, Serializable
-{
-   private static final long serialVersionUID = 1L;
+public class TestStringCommand implements Command<String>, Serializable {
+    private static final long serialVersionUID = 1L;
 
-   private String result;
-   private Throwable throwable;
-   
-   @Override
-   public String getResult()
-   {
-      return result;
-   }
+    private String result;
+    private Throwable throwable;
 
-   @Override
-   public void setResult(String result)
-   {
-      this.result = result;
-   }
+    @Override
+    public String getResult() {
+        return result;
+    }
 
-   @Override
-   public Throwable getThrowable()
-   {
-      return throwable;
-   }
+    @Override
+    public void setResult(String result) {
+        this.result = result;
+    }
 
-   @Override
-   public void setThrowable(Throwable throwable)
-   {
-      this.throwable = throwable;
-   }
+    @Override
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    @Override
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
 }

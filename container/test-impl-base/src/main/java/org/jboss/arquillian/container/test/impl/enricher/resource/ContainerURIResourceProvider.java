@@ -30,28 +30,22 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerURIResourceProvider extends ContainerURLResourceProvider
-{
-   @Override
-   public boolean canProvide(Class<?> type) {
-      return type.isAssignableFrom(URI.class);
-   }
+public class ContainerURIResourceProvider extends ContainerURLResourceProvider {
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(URI.class);
+    }
 
-   @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      Object object = super.lookup(resource, qualifiers);
-      if(object == null)
-      {
-         return null;
-      }
-      try
-      {
-         return ((URL)object).toURI();
-      }
-      catch (URISyntaxException e)
-      {
-         throw new RuntimeException("Could not convert URL to URI: " + object, e);
-      }
-   }
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        Object object = super.lookup(resource, qualifiers);
+        if (object == null) {
+            return null;
+        }
+        try {
+            return ((URL) object).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Could not convert URL to URI: " + object, e);
+        }
+    }
 }

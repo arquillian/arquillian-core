@@ -24,15 +24,12 @@ import java.lang.reflect.Method;
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
-public interface TestExecutionDecider
-{
+public interface TestExecutionDecider {
 
-    static final TestExecutionDecider EXECUTE = new TestExecutionDecider()
-    {
+    static final TestExecutionDecider EXECUTE = new TestExecutionDecider() {
 
         @Override
-        public ExecutionDecision decide(Method testMethod)
-        {
+        public ExecutionDecision decide(Method testMethod) {
             return ExecutionDecision.execute();
         }
 
@@ -54,7 +51,7 @@ public interface TestExecutionDecider
 
     /**
      * Higher the precedence is, sooner this decider will be treated.
-     * 
+     *
      * @return precedence of this decider
      */
     int precedence();

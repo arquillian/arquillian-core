@@ -24,38 +24,37 @@ import java.util.Collection;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ServiceLoader
-{
-   /**
-    * Load multiple service implementations.
-    * 
-    * @param <T>
-    * @param serviceClass The service interface to load a implementations for
-    * @return A {@link Collection} of all instances of serviceClass 
-    */
-   <T> Collection<T> all(Class<T> serviceClass);
-   
-   /**
-    * Load a single service implementation. 
-    * 
-    * Method should throw {@link IllegalStateException} if multiple instances of serviceClass found.
-    * 
-    * @param <T>
-    * @param serviceClass The service interface to load a implementation for
-    * @return A instance of serviceClass
-    * @throws IllegalStateException if more then one implementation of serviceClass found
-    */
-   <T> T onlyOne(Class<T> serviceClass);
-   
-   /**
-    * Load a single service implementation. 
-    * 
-    * Method should returns a new instance of defaultServiceClass if no other instance is found.
-    * 
-    * @param <T>
-    * @param serviceClass The service interface to load a implementation for
-    * @param defaultServiceClass If no other implementations found, create a instance of this class
-    * @return A instance of serviceClass
-    */
-   <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass);
+public interface ServiceLoader {
+    /**
+     * Load multiple service implementations.
+     *
+     * @param <T>
+     * @param serviceClass The service interface to load a implementations for
+     * @return A {@link Collection} of all instances of serviceClass
+     */
+    <T> Collection<T> all(Class<T> serviceClass);
+
+    /**
+     * Load a single service implementation.
+     * <p>
+     * Method should throw {@link IllegalStateException} if multiple instances of serviceClass found.
+     *
+     * @param <T>
+     * @param serviceClass The service interface to load a implementation for
+     * @return A instance of serviceClass
+     * @throws IllegalStateException if more then one implementation of serviceClass found
+     */
+    <T> T onlyOne(Class<T> serviceClass);
+
+    /**
+     * Load a single service implementation.
+     * <p>
+     * Method should returns a new instance of defaultServiceClass if no other instance is found.
+     *
+     * @param <T>
+     * @param serviceClass        The service interface to load a implementation for
+     * @param defaultServiceClass If no other implementations found, create a instance of this class
+     * @return A instance of serviceClass
+     */
+    <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass);
 }

@@ -31,34 +31,30 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ToolingDeploymentFormatterTestCase
-{
+public class ToolingDeploymentFormatterTestCase {
 
-   @Test
-   public void shouldBeAbleToExportArchive() throws Exception
-   {
-      String content = ShrinkWrap
-            .create(WebArchive.class, "test.jar")
-            .addAsResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
-            .addAsResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
-            .addAsResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(),
-                  ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
-            .addAsServiceProvider(Service.class, ServiceImpl.class)
-            .addAsLibrary(ShrinkWrap.create(JavaArchive.class, "test.jar").addClass(ToolingDeploymentFormatter.class))
-            .toString(new ToolingDeploymentFormatter(getClass()));
-      
-      // TODO: do some output Assertions..
-      Assert.assertNotNull(content);
-      System.out.println(content);
-   }
-   
-   public static interface Service 
-   {
-      
-   }
-   
-   public static class ServiceImpl implements Service
-   {
-      
-   }
+    @Test
+    public void shouldBeAbleToExportArchive() throws Exception {
+        String content = ShrinkWrap
+                .create(WebArchive.class, "test.jar")
+                .addAsResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
+                .addAsResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
+                .addAsResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(),
+                        ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
+                .addAsServiceProvider(Service.class, ServiceImpl.class)
+                .addAsLibrary(ShrinkWrap.create(JavaArchive.class, "test.jar").addClass(ToolingDeploymentFormatter.class))
+                .toString(new ToolingDeploymentFormatter(getClass()));
+
+        // TODO: do some output Assertions..
+        Assert.assertNotNull(content);
+        System.out.println(content);
+    }
+
+    public static interface Service {
+
+    }
+
+    public static class ServiceImpl implements Service {
+
+    }
 }

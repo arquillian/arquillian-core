@@ -20,20 +20,19 @@ import java.util.List;
 
 /**
  * ServletMapping
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @version $Revision: $
  */
-public interface ServletMappingDef extends ServletDef
-{
-   String getServletName();
+public interface ServletMappingDef extends ServletDef {
+    String getServletName();
 
-   ServletMappingDef servletName(String servletName);
+    ServletMappingDef servletName(String servletName);
 
-   List<String> getUrlPatterns();
+    List<String> getUrlPatterns();
 
-   ServletMappingDef urlPattern(String urlPattern);
+    ServletMappingDef urlPattern(String urlPattern);
 
-   ServletMappingDef urlPatterns(String... urlPatterns);
+    ServletMappingDef urlPatterns(String... urlPatterns);
 }

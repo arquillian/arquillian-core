@@ -31,92 +31,79 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServiceRegistryLoader implements ServiceLoader
-{
-   private Injector injector;
-   private ServiceRegistry registry;
+public class ServiceRegistryLoader implements ServiceLoader {
+    private Injector injector;
+    private ServiceRegistry registry;
 
-   public ServiceRegistryLoader(Injector injector, ServiceRegistry registry)
-   {
-      this.injector = injector;
-      this.registry = registry;
-   }
+    public ServiceRegistryLoader(Injector injector, ServiceRegistry registry) {
+        this.injector = injector;
+        this.registry = registry;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.ServiceLoader#all(java.lang.Class)
-    */
-   @Override
-   public <T> Collection<T> all(Class<T> serviceClass)
-   {
-      List<T> serviceImpls = new ArrayList<T>();
-      Set<Class<? extends T>> serviceImplClasses = registry.getServiceImpls(serviceClass);
-      for(Class<? extends T> serviceImplClass : serviceImplClasses)
-      {
-         T serviceImpl = createServiceInstance(serviceImplClass);
-         serviceImpls.add(serviceImpl);
-      }
-      return serviceImpls;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.ServiceLoader#all(java.lang.Class)
+     */
+    @Override
+    public <T> Collection<T> all(Class<T> serviceClass) {
+        List<T> serviceImpls = new ArrayList<T>();
+        Set<Class<? extends T>> serviceImplClasses = registry.getServiceImpls(serviceClass);
+        for (Class<? extends T> serviceImplClass : serviceImplClasses) {
+            T serviceImpl = createServiceInstance(serviceImplClass);
+            serviceImpls.add(serviceImpl);
+        }
+        return serviceImpls;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.ServiceLoader#onlyOne(java.lang.Class)
-    */
-   @Override
-   public <T> T onlyOne(Class<T> serviceClass)
-   {
-      Collection<T> all = all(serviceClass);
-      if(all.size() == 1)
-      {
-         return all.iterator().next();
-      }
-      if(all.size() > 1)
-      {
-         throw new IllegalStateException("Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
-      }
-      return null;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.ServiceLoader#onlyOne(java.lang.Class)
+     */
+    @Override
+    public <T> T onlyOne(Class<T> serviceClass) {
+        Collection<T> all = all(serviceClass);
+        if (all.size() == 1) {
+            return all.iterator().next();
+        }
+        if (all.size() > 1) {
+            throw new IllegalStateException("Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
+        }
+        return null;
+    }
 
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.ServiceLoader#onlyOne(java.lang.Class, java.lang.Class)
-    */
-   @Override
-   public <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass)
-   {
-      T one = null;
-      try
-      {
-         one = onlyOne(serviceClass);
-      }
-      catch (Exception e) { }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.ServiceLoader#onlyOne(java.lang.Class, java.lang.Class)
+     */
+    @Override
+    public <T> T onlyOne(Class<T> serviceClass, Class<? extends T> defaultServiceClass) {
+        T one = null;
+        try {
+            one = onlyOne(serviceClass);
+        } catch (Exception e) {
+        }
 
-      if(one == null)
-      {
-         one = createServiceInstance(defaultServiceClass);
-      }
-      return one;
-   }
+        if (one == null) {
+            one = createServiceInstance(defaultServiceClass);
+        }
+        return one;
+    }
 
 
-   private <T> T createServiceInstance(Class<T> service)
-   {
-      T serviceInst = SecurityActions.newInstance(
-            service,
-            new Class<?>[]{},
-            new Object[]{});
+    private <T> T createServiceInstance(Class<T> service) {
+        T serviceInst = SecurityActions.newInstance(
+                service,
+                new Class<?>[]{},
+                new Object[]{});
 
-      injector.inject(serviceInst);
-      return serviceInst;
-   }
+        injector.inject(serviceInst);
+        return serviceInst;
+    }
 
-   private <T> String toClassString(Collection<T> providers)
-   {
-      StringBuilder sb = new StringBuilder();
-      for(Object provider : providers)
-      {
-         sb.append(provider.getClass().getName()).append(", ");
-      }
-      return sb.subSequence(0, sb.length()-2).toString();
-   }
+    private <T> String toClassString(Collection<T> providers) {
+        StringBuilder sb = new StringBuilder();
+        for (Object provider : providers) {
+            sb.append(provider.getClass().getName()).append(", ");
+        }
+        return sb.subSequence(0, sb.length() - 2).toString();
+    }
 
 }

@@ -26,24 +26,23 @@ import java.util.List;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ArquillianDescriptor extends Descriptor
-{
-   EngineDef engine();
-   
-   DefaultProtocolDef defaultProtocol(String type);
-   
-   DefaultProtocolDef getDefaultProtocol();
-   
-   ContainerDef container(String name);
-   
-   GroupDef group(String name);
-   
-   ExtensionDef extension(String name);
-   
-   List<ContainerDef> getContainers();
-   
-   List<GroupDef> getGroups();
-   
-   List<ExtensionDef> getExtensions();
-   
+public interface ArquillianDescriptor extends Descriptor {
+    EngineDef engine();
+
+    DefaultProtocolDef defaultProtocol(String type);
+
+    DefaultProtocolDef getDefaultProtocol();
+
+    ContainerDef container(String name);
+
+    GroupDef group(String name);
+
+    ExtensionDef extension(String name);
+
+    List<ContainerDef> getContainers();
+
+    List<GroupDef> getGroups();
+
+    List<ExtensionDef> getExtensions();
+
 }

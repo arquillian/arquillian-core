@@ -24,7 +24,6 @@ package org.jboss.arquillian.container.spi.event;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class StopManualContainers implements ContainerMultiControlEvent
-{
+public class StopManualContainers implements ContainerMultiControlEvent {
 
 }

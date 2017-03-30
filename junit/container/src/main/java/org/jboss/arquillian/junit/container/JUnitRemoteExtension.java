@@ -26,11 +26,9 @@ import org.jboss.arquillian.junit.RulesEnricher;
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @version $Revision: $
  */
-public class JUnitRemoteExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-         builder.observer(RulesEnricher.class);
-   }
+public class JUnitRemoteExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.observer(RulesEnricher.class);
+    }
 }

@@ -49,99 +49,90 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ClientDeployerTestCase extends AbstractContainerTestTestBase
-{
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ClientDeployerCreator.class);
-   }
+public class ClientDeployerTestCase extends AbstractContainerTestTestBase {
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ClientDeployerCreator.class);
+    }
 
-   private static final String DEPLOYMENT_NAME = "DEPLOYMENT";
-   
-   @Inject
-   private Instance<Deployer> deployer;
-   
-   @Inject
-   private Instance<DeploymentScenario> scenario;
+    private static final String DEPLOYMENT_NAME = "DEPLOYMENT";
 
-   @Before
-   public void createSetup()
-   {
-      ContainerRegistry reg = Mockito.mock(ContainerRegistry.class);
-      Container container = Mockito.mock(Container.class);
-      Mockito.when(container.getState()).thenReturn(State.STARTED);
-      Mockito.when(container.getName()).thenReturn("_DEFAULT_");
-      Container containerStopped = Mockito.mock(Container.class);
-      Mockito.when(containerStopped.getState()).thenReturn(State.STOPPED);
-      Mockito.when(containerStopped.getName()).thenReturn("_CONTAINER_STOPPED_");
-      
-      Mockito.when(reg.getContainer("_DEFAULT_")).thenReturn(container);
-      Mockito.when(reg.getContainer("_CONTAINER_STOPPED_")).thenReturn(containerStopped);
-      Mockito.when(reg.getContainer(new TargetDescription("_DEFAULT_"))).thenReturn(container);
-      Mockito.when(reg.getContainer(new TargetDescription("_CONTAINER_STOPPED_"))).thenReturn(containerStopped);
-      
-      bind(ApplicationScoped.class, DeploymentScenario.class, new DeploymentScenario());
-      bind(ApplicationScoped.class, ContainerRegistry.class, reg);
+    @Inject
+    private Instance<Deployer> deployer;
 
-      fire(new SetupContainers()); // binds the Deployer
-   }
+    @Inject
+    private Instance<DeploymentScenario> scenario;
 
-   @Test
-   public void shouldFireDeploymentEventOnDeploy() throws Exception
-   {
-      DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
-      description.shouldBeManaged(false);
-      description.setTarget(new TargetDescription("_DEFAULT_"));
-      scenario.get().addDeployment(description);
-      
-      deployer.get().deploy(DEPLOYMENT_NAME);
-      
-      assertEventFired(DeployDeployment.class, 1);
-   }
+    @Before
+    public void createSetup() {
+        ContainerRegistry reg = Mockito.mock(ContainerRegistry.class);
+        Container container = Mockito.mock(Container.class);
+        Mockito.when(container.getState()).thenReturn(State.STARTED);
+        Mockito.when(container.getName()).thenReturn("_DEFAULT_");
+        Container containerStopped = Mockito.mock(Container.class);
+        Mockito.when(containerStopped.getState()).thenReturn(State.STOPPED);
+        Mockito.when(containerStopped.getName()).thenReturn("_CONTAINER_STOPPED_");
 
-   @Test
-   public void shouldFireUnDeploymentEventOnUnDeploy() throws Exception
-   {
-      DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
-      description.shouldBeManaged(false);
-      description.setTarget(new TargetDescription("_DEFAULT_"));
-      scenario.get().addDeployment(description);
-      
-      deployer.get().undeploy(DEPLOYMENT_NAME);
-      
-      assertEventFired(UnDeployDeployment.class, 1);
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnDeployWhenNotFound() throws Exception
-   {
-      deployer.get().deploy("UNKNOWN_DEPLOYMENT");
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnUnDeployWhenNotFound() throws Exception
-   {
-      deployer.get().undeploy("UNKNOWN_DEPLOYMENT");
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnDeployWhenContainerNotStarted() throws Exception
-   {
-      DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
-      description.setTarget(new TargetDescription("_CONTAINER_STOPPED_"));
-      scenario.get().addDeployment(description);
-      
-      deployer.get().deploy(DEPLOYMENT_NAME);
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnUnDeployWhenContainerNotRunning() throws Exception
-   {
-      DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
-      description.setTarget(new TargetDescription("_CONTAINER_STOPPED_"));
-      scenario.get().addDeployment(description);
-      
-      deployer.get().undeploy(DEPLOYMENT_NAME);
-   }
+        Mockito.when(reg.getContainer("_DEFAULT_")).thenReturn(container);
+        Mockito.when(reg.getContainer("_CONTAINER_STOPPED_")).thenReturn(containerStopped);
+        Mockito.when(reg.getContainer(new TargetDescription("_DEFAULT_"))).thenReturn(container);
+        Mockito.when(reg.getContainer(new TargetDescription("_CONTAINER_STOPPED_"))).thenReturn(containerStopped);
+
+        bind(ApplicationScoped.class, DeploymentScenario.class, new DeploymentScenario());
+        bind(ApplicationScoped.class, ContainerRegistry.class, reg);
+
+        fire(new SetupContainers()); // binds the Deployer
+    }
+
+    @Test
+    public void shouldFireDeploymentEventOnDeploy() throws Exception {
+        DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+        description.shouldBeManaged(false);
+        description.setTarget(new TargetDescription("_DEFAULT_"));
+        scenario.get().addDeployment(description);
+
+        deployer.get().deploy(DEPLOYMENT_NAME);
+
+        assertEventFired(DeployDeployment.class, 1);
+    }
+
+    @Test
+    public void shouldFireUnDeploymentEventOnUnDeploy() throws Exception {
+        DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+        description.shouldBeManaged(false);
+        description.setTarget(new TargetDescription("_DEFAULT_"));
+        scenario.get().addDeployment(description);
+
+        deployer.get().undeploy(DEPLOYMENT_NAME);
+
+        assertEventFired(UnDeployDeployment.class, 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnDeployWhenNotFound() throws Exception {
+        deployer.get().deploy("UNKNOWN_DEPLOYMENT");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnUnDeployWhenNotFound() throws Exception {
+        deployer.get().undeploy("UNKNOWN_DEPLOYMENT");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnDeployWhenContainerNotStarted() throws Exception {
+        DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+        description.setTarget(new TargetDescription("_CONTAINER_STOPPED_"));
+        scenario.get().addDeployment(description);
+
+        deployer.get().deploy(DEPLOYMENT_NAME);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnUnDeployWhenContainerNotRunning() throws Exception {
+        DeploymentDescription description = new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class));
+        description.setTarget(new TargetDescription("_CONTAINER_STOPPED_"));
+        scenario.get().addDeployment(description);
+
+        deployer.get().undeploy(DEPLOYMENT_NAME);
+    }
 }

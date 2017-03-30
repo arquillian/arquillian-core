@@ -30,102 +30,80 @@ import java.util.Properties;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-class FileUtils
-{
-   static Properties loadArquillianProperties(String propertyName, String defaultName)
-   {
-      Properties props = new Properties();
-      FileName resourceName = getConfigFileName(propertyName, defaultName);
-      final InputStream input = loadResource(resourceName);
-      if(input != null)
-      {
-         try
-         {
-            props.load(input);
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException("Could not load Arquillian properties file, " + resourceName.getName(), e);
-         }
-      }
-      props.putAll(System.getProperties());
-      return props;
-   }
+class FileUtils {
+    static Properties loadArquillianProperties(String propertyName, String defaultName) {
+        Properties props = new Properties();
+        FileName resourceName = getConfigFileName(propertyName, defaultName);
+        final InputStream input = loadResource(resourceName);
+        if (input != null) {
+            try {
+                props.load(input);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not load Arquillian properties file, " + resourceName.getName(), e);
+            }
+        }
+        props.putAll(System.getProperties());
+        return props;
+    }
 
-   static InputStream loadArquillianXml(String propertyName, String defaultName)
-   {
-      FileName resourceName = getConfigFileName(propertyName, defaultName);
-      return loadResource(resourceName);
-   }
+    static InputStream loadArquillianXml(String propertyName, String defaultName) {
+        FileName resourceName = getConfigFileName(propertyName, defaultName);
+        return loadResource(resourceName);
+    }
 
-   static InputStream loadResource(FileName resourceName)
-   {
-      InputStream stream = loadClassPathResource(resourceName.getName());
-      if(stream == null)
-      {
-         stream = loadFileResource(resourceName.getName());
-      }
-      // only throw Exception if configured (non default) could not be found
-      if(stream == null && !resourceName.isDefault())
-      {
-         throw new IllegalArgumentException("Could not find configured filename as either classpath resource nor file resource: " + resourceName.getName());
-      }
-      return stream;
-   }
+    static InputStream loadResource(FileName resourceName) {
+        InputStream stream = loadClassPathResource(resourceName.getName());
+        if (stream == null) {
+            stream = loadFileResource(resourceName.getName());
+        }
+        // only throw Exception if configured (non default) could not be found
+        if (stream == null && !resourceName.isDefault()) {
+            throw new IllegalArgumentException("Could not find configured filename as either classpath resource nor file resource: " + resourceName.getName());
+        }
+        return stream;
+    }
 
-   static InputStream loadFileResource(String resourceName)
-   {
-      File file = new File(resourceName);
-      if(file.exists())
-      {
-         try
-         {
-            return new FileInputStream(file);
-         }
-         catch (FileNotFoundException e)
-         {
-            // should not happen unless file has been deleted since we did file.exists call
-            throw new IllegalArgumentException("Configuration file could not be found, " + resourceName);
-         }
-      }
-      return null;
-   }
+    static InputStream loadFileResource(String resourceName) {
+        File file = new File(resourceName);
+        if (file.exists()) {
+            try {
+                return new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                // should not happen unless file has been deleted since we did file.exists call
+                throw new IllegalArgumentException("Configuration file could not be found, " + resourceName);
+            }
+        }
+        return null;
+    }
 
-   static InputStream loadClassPathResource(String resourceName)
-   {
-      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-      return classLoader.getResourceAsStream(resourceName);
-   }
+    static InputStream loadClassPathResource(String resourceName) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return classLoader.getResourceAsStream(resourceName);
+    }
 
-   static FileName getConfigFileName(String propertyName, String defaultName)
-   {
-      String name = System.getProperty(propertyName);
-      if(name == null)
-      {
-         return new FileName(defaultName, true);
-      }
-      return new FileName(name, false);
-   }
+    static FileName getConfigFileName(String propertyName, String defaultName) {
+        String name = System.getProperty(propertyName);
+        if (name == null) {
+            return new FileName(defaultName, true);
+        }
+        return new FileName(name, false);
+    }
 
-   static class FileName
-   {
-      private String name;
-      private boolean isDefault;
+    static class FileName {
+        private String name;
+        private boolean isDefault;
 
-      public FileName(String name, boolean isDefault)
-      {
-         this.name = name;
-         this.isDefault = isDefault;
-      }
+        public FileName(String name, boolean isDefault) {
+            this.name = name;
+            this.isDefault = isDefault;
+        }
 
-      public String getName()
-      {
-         return name;
-      }
+        public String getName() {
+            return name;
+        }
 
-      public boolean isDefault()
-      {
-         return isDefault;
-      }
-   }
+        public boolean isDefault() {
+            return isDefault;
+        }
+    }
 }

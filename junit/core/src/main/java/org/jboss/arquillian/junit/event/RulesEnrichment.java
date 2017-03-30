@@ -38,7 +38,7 @@ public class RulesEnrichment extends BeforeTestLifecycleEvent {
      * @param executor          A call back when the LifecycleMethod represented by this event should be invoked
      */
     public RulesEnrichment(Object testInstance, TestClass testClassInstance, Method testMethod,
-        LifecycleMethodExecutor executor) {
+                           LifecycleMethodExecutor executor) {
         super(testInstance, testMethod, executor);
         this.testClassInstance = testClassInstance;
     }

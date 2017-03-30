@@ -22,35 +22,32 @@ import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebA
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 /**
- * Common util for Web.xml 2.5 manipulation 
+ * Common util for Web.xml 2.5 manipulation
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-class WebUtils
-{
-   private WebUtils() {}
-   
-   static WebAppDescriptor createNewDescriptor()
-   {
-      return mergeWithDescriptor(getDefaultDescriptor());
-   }
-   
-   static WebAppDescriptor getDefaultDescriptor() 
-   {
-      return Descriptors.create(WebAppDescriptor.class)
-                  .version("2.5")
-                  .displayName("Arquillian Servlet 2.5 Protocol");
-   }
-   
-   static WebAppDescriptor mergeWithDescriptor(WebAppDescriptor descriptor) 
-   {
-      // use String v. of desc.servlet(..) so we don't force Servlet API on classpath
-      descriptor.servlet(
-            ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME,
-            "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner",  
-            new String[]{ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING});
-      return descriptor;
-   }   
+class WebUtils {
+    private WebUtils() {
+    }
+
+    static WebAppDescriptor createNewDescriptor() {
+        return mergeWithDescriptor(getDefaultDescriptor());
+    }
+
+    static WebAppDescriptor getDefaultDescriptor() {
+        return Descriptors.create(WebAppDescriptor.class)
+                .version("2.5")
+                .displayName("Arquillian Servlet 2.5 Protocol");
+    }
+
+    static WebAppDescriptor mergeWithDescriptor(WebAppDescriptor descriptor) {
+        // use String v. of desc.servlet(..) so we don't force Servlet API on classpath
+        descriptor.servlet(
+                ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME,
+                "org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner",
+                new String[]{ServletMethodExecutor.ARQUILLIAN_SERVLET_MAPPING});
+        return descriptor;
+    }
 
 }

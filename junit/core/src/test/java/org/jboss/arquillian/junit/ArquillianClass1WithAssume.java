@@ -31,36 +31,30 @@ import org.junit.runner.RunWith;
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithAssume
-{
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+public class ArquillianClass1WithAssume {
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
 
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-      Assume.assumeTrue(false);
-   }
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+        Assume.assumeTrue(false);
+    }
 }

@@ -25,11 +25,10 @@ import java.util.List;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Extension
-{
-   List<InjectionPoint> getInjectionPoints();
-   
-   List<EventPoint> getEventPoints();
-   
-   List<ObserverMethod> getObservers();
+public interface Extension {
+    List<InjectionPoint> getInjectionPoints();
+
+    List<EventPoint> getEventPoints();
+
+    List<ObserverMethod> getObservers();
 }

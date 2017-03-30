@@ -55,7 +55,8 @@ public class ThreadedExecutorServiceTestCase extends AbstractManagerTestBase {
 
         Future<String> future = service.submit(new Callable<String>() {
 
-            @Inject Event<String> event;
+            @Inject
+            Event<String> event;
 
             @Override
             public String call() throws Exception {

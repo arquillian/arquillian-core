@@ -26,28 +26,20 @@ import org.junit.internal.AssumptionViolatedException;
 
 /**
  * Update the TestResult based on result After going through the JUnit chain.
- *
+ * <p>
  * This will give the correct TestResult in After, even with validation outside
  * of Arquillians control, e.g. ExpectedExceptions.
  */
-class UpdateTestResultBeforeAfter
-{
-    public void update(@Observes(precedence = 99) EventContext<AfterTestLifecycleEvent> context, TestResult result)
-    {
-        if(State.caughtExceptionAfterJunit() != null)
-        {
-            if(State.caughtExceptionAfterJunit() instanceof AssumptionViolatedException)
-            {
+class UpdateTestResultBeforeAfter {
+    public void update(@Observes(precedence = 99) EventContext<AfterTestLifecycleEvent> context, TestResult result) {
+        if (State.caughtExceptionAfterJunit() != null) {
+            if (State.caughtExceptionAfterJunit() instanceof AssumptionViolatedException) {
                 result.setStatus(Status.SKIPPED);
-            }
-            else
-            {
+            } else {
                 result.setStatus(Status.FAILED);
             }
             result.setThrowable(State.caughtExceptionAfterJunit());
-        }
-        else
-        {
+        } else {
             result.setStatus(Status.PASSED);
             result.setThrowable(null);
         }

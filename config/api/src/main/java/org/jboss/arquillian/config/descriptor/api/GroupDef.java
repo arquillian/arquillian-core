@@ -24,17 +24,16 @@ import java.util.List;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface GroupDef extends ArquillianDescriptor
-{
-   String getGroupName();
-   
-   GroupDef setGroupName(String name);
+public interface GroupDef extends ArquillianDescriptor {
+    String getGroupName();
 
-   GroupDef setGroupDefault();
-   
-   boolean isGroupDefault();
+    GroupDef setGroupName(String name);
 
-   ContainerDef container(String name);
-   
-   List<ContainerDef> getGroupContainers();
+    GroupDef setGroupDefault();
+
+    boolean isGroupDefault();
+
+    ContainerDef container(String name);
+
+    List<ContainerDef> getGroupContainers();
 }

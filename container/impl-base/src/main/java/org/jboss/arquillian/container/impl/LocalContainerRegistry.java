@@ -35,29 +35,25 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalContainerRegistry implements ContainerRegistry
-{
-   private List<Container> containers;
-   
-   private Injector injector;
+public class LocalContainerRegistry implements ContainerRegistry {
+    private List<Container> containers;
 
-   public LocalContainerRegistry(Injector injector)
-   {
-      this.containers = new ArrayList<Container>();
-      this.injector = injector;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#create(org.jboss.arquillian.impl.configuration.api.ContainerDef, org.jboss.arquillian.core.spi.ServiceLoader)
-    */
-   @Override
-   public Container create(ContainerDef definition, ServiceLoader loader)
-   {
-      Validate.notNull(definition, "Definition must be specified");
+    private Injector injector;
 
-      try
-      {
-         // TODO: this whole Classloading thing is a HACK and does not work. Need to split out into multiple JVMs for multi container testing
+    public LocalContainerRegistry(Injector injector) {
+        this.containers = new ArrayList<Container>();
+        this.injector = injector;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#create(org.jboss.arquillian.impl.configuration.api.ContainerDef, org.jboss.arquillian.core.spi.ServiceLoader)
+     */
+    @Override
+    public Container create(ContainerDef definition, ServiceLoader loader) {
+        Validate.notNull(definition, "Definition must be specified");
+
+        try {
+            // TODO: this whole Classloading thing is a HACK and does not work. Need to split out into multiple JVMs for multi container testing
 //         ClassLoader containerClassLoader;
 //         if(definition.getDependencies().size() > 0)
 //         {
@@ -73,85 +69,71 @@ public class LocalContainerRegistry implements ContainerRegistry
 //            containerClassLoader = LocalContainerRegistry.class.getClassLoader();
 //         }
 //            
-         return addContainer(
-               //before a Container is added to a collection of containers, inject into its injection point
-               injector.inject(new ContainerImpl(
-                               definition.getContainerName(), 
-                               loader.onlyOne(DeployableContainer.class),
-                               definition)));
-      }
-      catch (Exception e) 
-      {
-         throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
-      }
-   }
-
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainer(java.lang.String)
-    */
-   @Override
-   public Container getContainer(String name)
-   {
-      return findMatchingContainer(name);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainers()
-    */
-   @Override
-   public List<Container> getContainers()
-   {
-      return Collections.unmodifiableList(new ArrayList<Container>(containers));
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainer(org.jboss.arquillian.spi.client.deployment.TargetDescription)
-    */
-   @Override
-   public Container getContainer(TargetDescription target)
-   {
-      Validate.notNull(target, "Target must be specified");
-      if(TargetDescription.DEFAULT.equals(target))
-      {
-         return findDefaultContainer();
-      }
-      return findMatchingContainer(target.getName());
-   }
-
-   private Container addContainer(Container contianer)
-   {
-      containers.add(contianer);
-      return contianer;
-   }
-   
-   /**
-    * @return
-    */
-   private Container findDefaultContainer()
-   {
-      if(containers.size() == 1)
-      {
-         return containers.get(0);
-      }
-      for(Container container : containers)
-      {
-        if(container.getContainerConfiguration().isDefault())
-        {
-           return container;
+            return addContainer(
+                    //before a Container is added to a collection of containers, inject into its injection point
+                    injector.inject(new ContainerImpl(
+                            definition.getContainerName(),
+                            loader.onlyOne(DeployableContainer.class),
+                            definition)));
+        } catch (Exception e) {
+            throw new ContainerCreationException("Could not create Container " + definition.getContainerName(), e);
         }
-      }
-      return null;
-   }
+    }
 
-   private Container findMatchingContainer(String name)
-   {
-      for(Container container: containers)
-      {
-         if(container.getName().equals(name))
-         {
-            return container;
-         }
-      }
-      return null;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainer(java.lang.String)
+     */
+    @Override
+    public Container getContainer(String name) {
+        return findMatchingContainer(name);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainers()
+     */
+    @Override
+    public List<Container> getContainers() {
+        return Collections.unmodifiableList(new ArrayList<Container>(containers));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.domain.ContainerRegistryA#getContainer(org.jboss.arquillian.spi.client.deployment.TargetDescription)
+     */
+    @Override
+    public Container getContainer(TargetDescription target) {
+        Validate.notNull(target, "Target must be specified");
+        if (TargetDescription.DEFAULT.equals(target)) {
+            return findDefaultContainer();
+        }
+        return findMatchingContainer(target.getName());
+    }
+
+    private Container addContainer(Container contianer) {
+        containers.add(contianer);
+        return contianer;
+    }
+
+    /**
+     * @return
+     */
+    private Container findDefaultContainer() {
+        if (containers.size() == 1) {
+            return containers.get(0);
+        }
+        for (Container container : containers) {
+            if (container.getContainerConfiguration().isDefault()) {
+                return container;
+            }
+        }
+        return null;
+    }
+
+    private Container findMatchingContainer(String name) {
+        for (Container container : containers) {
+            if (container.getName().equals(name)) {
+                return container;
+            }
+        }
+        return null;
+    }
 }

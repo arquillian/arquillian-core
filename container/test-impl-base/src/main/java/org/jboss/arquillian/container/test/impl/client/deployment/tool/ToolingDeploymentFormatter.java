@@ -38,109 +38,88 @@ import org.jboss.shrinkwrap.api.formatter.Formatter;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ToolingDeploymentFormatter implements Formatter
-{
-   private Class<?> testClass;
-   
-   public ToolingDeploymentFormatter(Class<?> testClass)
-   {
-      Validate.notNull(testClass, "TestClass must be specified");
-      this.testClass = testClass;
-   }
-   
-   public String format(Archive<?> archive) throws IllegalArgumentException
-   {
-      StringBuilder xml = new StringBuilder();
-      
-      xml.append("<?xml version=\"1.0\"?>\n<deployment")
-      .append(" name=\"").append(archive.getName()).append("\"")
-      .append(" testclass=\"").append(testClass.getName()).append("\"")
-      .append(">\n");
+public class ToolingDeploymentFormatter implements Formatter {
+    private Class<?> testClass;
 
-      formatNode(archive.get(ArchivePaths.root()), xml); 
-      
-      xml.append("</deployment>").append("\n");
-      return xml.toString();
-   }
-   
-   public void formatNode(Node node, StringBuilder xml)
-   {
-      if(node.getAsset() != null)
-      {
-         String source = findResourceLocation(node.getAsset());
-         
-         xml.append("\t<asset")
-            .append(" type=\"").append(node.getAsset().getClass().getSimpleName()).append("\"")
-            .append(" path=\"").append(node.getPath().get()).append("\"");
-            if(source != null)
-            {
-               xml.append(" source=\"").append(source).append("\"");
+    public ToolingDeploymentFormatter(Class<?> testClass) {
+        Validate.notNull(testClass, "TestClass must be specified");
+        this.testClass = testClass;
+    }
+
+    public String format(Archive<?> archive) throws IllegalArgumentException {
+        StringBuilder xml = new StringBuilder();
+
+        xml.append("<?xml version=\"1.0\"?>\n<deployment")
+                .append(" name=\"").append(archive.getName()).append("\"")
+                .append(" testclass=\"").append(testClass.getName()).append("\"")
+                .append(">\n");
+
+        formatNode(archive.get(ArchivePaths.root()), xml);
+
+        xml.append("</deployment>").append("\n");
+        return xml.toString();
+    }
+
+    public void formatNode(Node node, StringBuilder xml) {
+        if (node.getAsset() != null) {
+            String source = findResourceLocation(node.getAsset());
+
+            xml.append("\t<asset")
+                    .append(" type=\"").append(node.getAsset().getClass().getSimpleName()).append("\"")
+                    .append(" path=\"").append(node.getPath().get()).append("\"");
+            if (source != null) {
+                xml.append(" source=\"").append(source).append("\"");
             }
-         
-         if(node.getAsset().getClass() == ArchiveAsset.class)
-         {
-            xml.append(">");
-            xml.append("\n");
-            formatNode(
-                  ((ArchiveAsset)node.getAsset()).getArchive().get(ArchivePaths.root()), 
-                  xml);
-            xml.append("</asset>").append("\n");
-         } 
-         else 
-         {
-            xml.append("/>").append("\n");
-         }
-         
-      }
-      else 
-      {
-         xml.append("\t<asset type=\"Directory\" path=\"").append(node.getPath().get()).append("\"/>\n");
-      }
-      for(Node child : node.getChildren())
-      {
-         formatNode(child, xml);
-      }
-   }
-   
-   private String findResourceLocation(Asset asset) 
-   {
-      Class<?> assetClass = asset.getClass();
-      
-      if(assetClass == FileAsset.class)
-      {
-         return getInternalFieldValue(File.class, "file", asset).getAbsolutePath();
-      }
-      if(assetClass == ClassAsset.class)
-      {
-         return getInternalFieldValue(Class.class, "clazz", asset).getName();
-      }
-      if(assetClass == UrlAsset.class)
-      {
-         return getInternalFieldValue(URL.class, "url", asset).toExternalForm();
-      }
-      if(assetClass == ClassLoaderAsset.class)
-      {
-         return getInternalFieldValue(String.class, "resourceName", asset);
-      }
-      return null;
-   }
-   
-   @SuppressWarnings("unchecked")
-   private <T> T getInternalFieldValue(Class<T> type, String fieldName, Object obj) 
-   {
-      try
-      {
-         Field field = obj.getClass().getDeclaredField(fieldName);
-         field.setAccessible(true);
-         
-         return (T)field.get(obj);
-      } 
-      catch (Exception e) 
-      {
-         throw new RuntimeException("Could not extract field " + fieldName + " on " + obj, e);
-      }
-   }
-   
+
+            if (node.getAsset().getClass() == ArchiveAsset.class) {
+                xml.append(">");
+                xml.append("\n");
+                formatNode(
+                        ((ArchiveAsset) node.getAsset()).getArchive().get(ArchivePaths.root()),
+                        xml);
+                xml.append("</asset>").append("\n");
+            } else {
+                xml.append("/>").append("\n");
+            }
+
+        } else {
+            xml.append("\t<asset type=\"Directory\" path=\"").append(node.getPath().get()).append("\"/>\n");
+        }
+        for (Node child : node.getChildren()) {
+            formatNode(child, xml);
+        }
+    }
+
+    private String findResourceLocation(Asset asset) {
+        Class<?> assetClass = asset.getClass();
+
+        if (assetClass == FileAsset.class) {
+            return getInternalFieldValue(File.class, "file", asset).getAbsolutePath();
+        }
+        if (assetClass == ClassAsset.class) {
+            return getInternalFieldValue(Class.class, "clazz", asset).getName();
+        }
+        if (assetClass == UrlAsset.class) {
+            return getInternalFieldValue(URL.class, "url", asset).toExternalForm();
+        }
+        if (assetClass == ClassLoaderAsset.class) {
+            return getInternalFieldValue(String.class, "resourceName", asset);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getInternalFieldValue(Class<T> type, String fieldName, Object obj) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+
+            return (T) field.get(obj);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not extract field " + fieldName + " on " + obj, e);
+        }
+    }
+
 //   private static class Deployment 
 //   {
 //      

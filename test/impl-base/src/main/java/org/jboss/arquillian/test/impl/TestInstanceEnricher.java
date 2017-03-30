@@ -36,24 +36,21 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestInstanceEnricher 
-{
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
+public class TestInstanceEnricher {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   @Inject
-   private Event<EnrichmentEvent> enrichmentEvent;
-   
-   public void enrich(@Observes Before event) throws Exception
-   {
-      Object instance = event.getTestInstance();
-      Method method = event.getTestMethod();
-      enrichmentEvent.fire(new BeforeEnrichment(instance, method));
-      Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
-      for(TestEnricher enricher : testEnrichers) 
-      {
-         enricher.enrich(instance);
-      }
-      enrichmentEvent.fire(new AfterEnrichment(instance, method));
-   }
+    @Inject
+    private Event<EnrichmentEvent> enrichmentEvent;
+
+    public void enrich(@Observes Before event) throws Exception {
+        Object instance = event.getTestInstance();
+        Method method = event.getTestMethod();
+        enrichmentEvent.fire(new BeforeEnrichment(instance, method));
+        Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
+        for (TestEnricher enricher : testEnrichers) {
+            enricher.enrich(instance);
+        }
+        enrichmentEvent.fire(new AfterEnrichment(instance, method));
+    }
 }

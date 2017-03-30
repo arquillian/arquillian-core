@@ -23,13 +23,12 @@ package org.jboss.arquillian.container.test.spi.command;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Command<T>
-{
-   T getResult();
-   
-   void setResult(T result);
-   
-   void setThrowable(Throwable throwable);
-   
-   Throwable getThrowable();
+public interface Command<T> {
+    T getResult();
+
+    void setResult(T result);
+
+    void setThrowable(Throwable throwable);
+
+    Throwable getThrowable();
 }

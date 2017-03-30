@@ -22,9 +22,8 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface InitParamDef extends WebAppDescriptor
-{
+public interface InitParamDef extends WebAppDescriptor {
 
-   InitParamDef initParam(String name, Object value);
+    InitParamDef initParam(String name, Object value);
 
 }

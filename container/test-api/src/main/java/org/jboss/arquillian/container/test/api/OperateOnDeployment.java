@@ -52,11 +52,11 @@ import java.lang.annotation.Target;
  * &#64;Test &#64;OperatesOnDeployment("Y")
  * public void shouldExecuteInY() { ... }
  * </code></pre>
- *
+ * <p>
  * Additionally you can reference another deployments metadata from within another context by qualifiing
  * OperateOnDeployment on ArquillianResource injection points.
  * <p>
- *
+ * <p>
  * Usage Example for ArquillianResource:<br/>
  * <pre><code>
  * &#64;Deployment(name = "X")
@@ -83,8 +83,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-public @interface OperateOnDeployment
-{
+public @interface OperateOnDeployment {
     /**
      * Refer to the deployment name this should operate on.
      *

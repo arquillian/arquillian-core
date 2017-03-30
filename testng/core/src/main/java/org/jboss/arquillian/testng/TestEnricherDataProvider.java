@@ -28,16 +28,15 @@ import org.testng.annotations.DataProvider;
  */
 public class TestEnricherDataProvider {
 
-	public static final String PROVIDER_NAME = "enrich";
-	
-	@DataProvider(name = PROVIDER_NAME)
-	public static Object[][] enrich(Method method) 
-	{
-	   // actual enrichment happens inside a Observer
-		Object[] parameterValues = new Object[method.getParameterTypes().length]; 
-		Object[][] values = new Object[1][method.getParameterTypes().length];
-		values[0] = parameterValues; 
-		
-		return values;
-	}
+    public static final String PROVIDER_NAME = "enrich";
+
+    @DataProvider(name = PROVIDER_NAME)
+    public static Object[][] enrich(Method method) {
+        // actual enrichment happens inside a Observer
+        Object[] parameterValues = new Object[method.getParameterTypes().length];
+        Object[][] values = new Object[1][method.getParameterTypes().length];
+        values[0] = parameterValues;
+
+        return values;
+    }
 }

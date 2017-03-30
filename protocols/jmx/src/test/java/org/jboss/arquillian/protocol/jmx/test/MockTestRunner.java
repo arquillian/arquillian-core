@@ -26,44 +26,38 @@ import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * MockTestRunner
- * 
+ * <p>
  * TestRunner that will return what you want for testing
- * 
+ *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class MockTestRunner implements TestRunner
-{
-   public static TestResult wantedResults;
+public class MockTestRunner implements TestRunner {
+    public static TestResult wantedResults;
 
-   public static List<Command<?>> commands = new ArrayList<Command<?>>();
+    public static List<Command<?>> commands = new ArrayList<Command<?>>();
 
-   public static List<Object> commandResults = new ArrayList<Object>();
+    public static List<Object> commandResults = new ArrayList<Object>();
 
-   public static void add(Command<?> command)
-   {
-      commands.add(command);
-   }
+    public static void add(Command<?> command) {
+        commands.add(command);
+    }
 
-   public static void add(TestResult wantedTestResult)
-   {
-      wantedResults = wantedTestResult;
-   }
+    public static void add(TestResult wantedTestResult) {
+        wantedResults = wantedTestResult;
+    }
 
-   public TestResult execute(Class<?> testClass, String methodName)
-   {
-      for (Command<?> command : commands)
-      {
-         commandResults.add(new JMXCommandService().execute(command));
-      }
+    public TestResult execute(Class<?> testClass, String methodName) {
+        for (Command<?> command : commands) {
+            commandResults.add(new JMXCommandService().execute(command));
+        }
 
-      return wantedResults;
-   }
+        return wantedResults;
+    }
 
-   public static void clear()
-   {
-      wantedResults = null;
-      commands.clear();
-      commandResults.clear();
-   }
+    public static void clear() {
+        wantedResults = null;
+        commands.clear();
+        commandResults.clear();
+    }
 }

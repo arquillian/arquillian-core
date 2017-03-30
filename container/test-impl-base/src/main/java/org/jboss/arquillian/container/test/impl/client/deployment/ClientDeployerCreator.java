@@ -32,16 +32,15 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClientDeployerCreator
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<Deployer> deployer;
-   
-   @Inject 
-   private Instance<Injector> injector;
+public class ClientDeployerCreator {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<Deployer> deployer;
 
-   public void createClientSideDeployer(@Observes SetupContainers event)
-   {
-      deployer.set(injector.get().inject(new ClientDeployer()));
-   }
+    @Inject
+    private Instance<Injector> injector;
+
+    public void createClientSideDeployer(@Observes SetupContainers event) {
+        deployer.set(injector.get().inject(new ClientDeployer()));
+    }
 }

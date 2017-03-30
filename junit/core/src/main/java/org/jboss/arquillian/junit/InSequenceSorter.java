@@ -27,23 +27,19 @@ import org.junit.runners.model.FrameworkMethod;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-class InSequenceSorter implements Comparator<FrameworkMethod>
-{
-   @Override
-   public int compare(FrameworkMethod o1, FrameworkMethod o2)
-   {
-      int i1Order = 0;
-      int i2Order = 0;
-      InSequence i1 = o1.getAnnotation(InSequence.class);
-      if(i1 != null)
-      {
-         i1Order = i1.value();
-      }
-      InSequence i2 = o2.getAnnotation(InSequence.class);
-      if(i2 != null)
-      {
-         i2Order = i2.value();
-      }
-      return (i1Order<i2Order ? -1 : (i1Order==i2Order ? 0 : 1));
-   }
+class InSequenceSorter implements Comparator<FrameworkMethod> {
+    @Override
+    public int compare(FrameworkMethod o1, FrameworkMethod o2) {
+        int i1Order = 0;
+        int i2Order = 0;
+        InSequence i1 = o1.getAnnotation(InSequence.class);
+        if (i1 != null) {
+            i1Order = i1.value();
+        }
+        InSequence i2 = o2.getAnnotation(InSequence.class);
+        if (i2 != null) {
+            i2Order = i2.value();
+        }
+        return (i1Order < i2Order ? -1 : (i1Order == i2Order ? 0 : 1));
+    }
 }

@@ -22,7 +22,6 @@ package org.jboss.arquillian.container.test.spi.client.protocol;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ProtocolConfiguration
-{
+public interface ProtocolConfiguration {
 
 }

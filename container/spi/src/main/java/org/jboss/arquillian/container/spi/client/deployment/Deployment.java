@@ -24,50 +24,42 @@ package org.jboss.arquillian.container.spi.client.deployment;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Deployment
-{
-   private boolean deployed = false;
-   private Throwable deploymentError = null;
+public class Deployment {
+    private boolean deployed = false;
+    private Throwable deploymentError = null;
 
-   private DeploymentDescription description;
-   
-   public Deployment(DeploymentDescription description)
-   {
-      Validate.notNull(description, "Description must be specified");
-      this.description = description;
-   }
-   
-   /**
-    * @return the description
-    */
-   public DeploymentDescription getDescription()
-   {
-      return description;
-   }
-   
-   public boolean isDeployed()
-   {
-      return deployed;
-   }
-   
-   public boolean hasDeploymentError()
-   {
-      return deploymentError != null;
-   }
-   
-   public void deployedWithError(Throwable deploymentError)
-   {
-      this.deployed = true;
-      this.deploymentError = deploymentError;
-   }
-   
-   public void deployed()
-   {
-      this.deployed = true;
-   }
+    private DeploymentDescription description;
 
-   public void undeployed()
-   {
-      this.deployed = false;
-   }
+    public Deployment(DeploymentDescription description) {
+        Validate.notNull(description, "Description must be specified");
+        this.description = description;
+    }
+
+    /**
+     * @return the description
+     */
+    public DeploymentDescription getDescription() {
+        return description;
+    }
+
+    public boolean isDeployed() {
+        return deployed;
+    }
+
+    public boolean hasDeploymentError() {
+        return deploymentError != null;
+    }
+
+    public void deployedWithError(Throwable deploymentError) {
+        this.deployed = true;
+        this.deploymentError = deploymentError;
+    }
+
+    public void deployed() {
+        this.deployed = true;
+    }
+
+    public void undeployed() {
+        this.deployed = false;
+    }
 }

@@ -25,13 +25,12 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeforeEnrichment extends EnrichmentEvent
-{
-	public BeforeEnrichment(Object instance) {
-		super(instance);
-	}
+public class BeforeEnrichment extends EnrichmentEvent {
+    public BeforeEnrichment(Object instance) {
+        super(instance);
+    }
 
-	public BeforeEnrichment(Object instance, Method method) {
+    public BeforeEnrichment(Object instance, Method method) {
         super(instance, method);
     }
 }

@@ -40,36 +40,33 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @Ignore // not implemented
 @RunWith(MockitoJUnitRunner.class)
-public class ArchiveDeploymentToolingExporterTestCase extends AbstractContainerTestTestBase
-{
-   private static final String EXPORT_FOLDER = "target/";
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ArchiveDeploymentToolingExporter.class);
-   }
-   
-   @Mock
-   private DeployableContainer<?> deployableContainer;
-   
-   @Mock 
-   private DeploymentDescription deployment;
+public class ArchiveDeploymentToolingExporterTestCase extends AbstractContainerTestTestBase {
+    private static final String EXPORT_FOLDER = "target/";
 
-   @Test
-   public void shouldThrowIllegalStateExceptionOnMissingDeploymentGenerator() throws Exception
-   {
-      System.setProperty(ArchiveDeploymentToolingExporter.ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER, EXPORT_FOLDER);
-      
-      //context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, "test.jar"));
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ArchiveDeploymentToolingExporter.class);
+    }
 
-      fire(new BeforeDeploy(deployableContainer, deployment));
-      
-      File exportedFile = new File(EXPORT_FOLDER + getClass().getName() + ".xml");
-      
-      Assert.assertTrue(exportedFile.exists());
-      
-      exportedFile.delete();
-   }
+    @Mock
+    private DeployableContainer<?> deployableContainer;
+
+    @Mock
+    private DeploymentDescription deployment;
+
+    @Test
+    public void shouldThrowIllegalStateExceptionOnMissingDeploymentGenerator() throws Exception {
+        System.setProperty(ArchiveDeploymentToolingExporter.ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER, EXPORT_FOLDER);
+
+        //context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, "test.jar"));
+
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        File exportedFile = new File(EXPORT_FOLDER + getClass().getName() + ".xml");
+
+        Assert.assertTrue(exportedFile.exists());
+
+        exportedFile.delete();
+    }
 
 }

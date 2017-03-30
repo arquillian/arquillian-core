@@ -32,20 +32,17 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextProvider extends OperatesOnDeploymentAwareProvider
-{
-   @Inject
-   private Instance<Context> initialContext;
+public class InitialContextProvider extends OperatesOnDeploymentAwareProvider {
+    @Inject
+    private Instance<Context> initialContext;
 
-   @Override
-   public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      return initialContext.get();
-   }
+    @Override
+    public Object doLookup(ArquillianResource resource, Annotation... qualifiers) {
+        return initialContext.get();
+    }
 
-   @Override
-   public boolean canProvide(Class<?> type)
-   {
-      return type.isAssignableFrom(Context.class) || type.isAssignableFrom(InitialContext.class);
-   }
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(Context.class) || type.isAssignableFrom(InitialContext.class);
+    }
 }

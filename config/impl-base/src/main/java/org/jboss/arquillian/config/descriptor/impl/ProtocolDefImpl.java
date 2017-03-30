@@ -29,71 +29,63 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef
-{
-   private Node protocol;
-   
-   public ProtocolDefImpl(String descriptorName, Node model, Node container, Node protocol)
-   {
-      super(descriptorName, model, container);
-      this.protocol = protocol;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - ProtocolDescriptor --------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef {
+    private Node protocol;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.ProtocolDef#getType()
-    */
-   @Override
-   public String getType()
-   {
-      return protocol.getAttribute("type");
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.ProtocolDef#setType(java.lang.String)
-    */
-   @Override
-   public ProtocolDef setType(String type)
-   {
-      protocol.attribute("type", type);
-      return this;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.ProtocolDescription#property(java.lang.String, java.lang.String)
-    */
-   @Override
-   public ProtocolDef property(String name, String value)
-   {
-      protocol.getOrCreate("property@name=" + name).attribute("name", name).text(value);
-      return this;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.ContainerDef#getProperties()
-    */
-   @Override
-   public Map<String, String> getProtocolProperties()
-   {
-      List<Node> props = protocol.get("property");
-      Map<String, String> properties = new HashMap<String, String>();
-      
-      for(Node prop: props)
-      {
-         properties.put(prop.getAttribute("name"), prop.getText());
-      }
-      return properties;
-   }
+    public ProtocolDefImpl(String descriptorName, Node model, Node container, Node protocol) {
+        super(descriptorName, model, container);
+        this.protocol = protocol;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
-    */
-   @Override
-   public String toString()
-   {
-      return protocol.toString(true);
-   }
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - ProtocolDescriptor --------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.ProtocolDef#getType()
+     */
+    @Override
+    public String getType() {
+        return protocol.getAttribute("type");
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.ProtocolDef#setType(java.lang.String)
+     */
+    @Override
+    public ProtocolDef setType(String type) {
+        protocol.attribute("type", type);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.ProtocolDescription#property(java.lang.String, java.lang.String)
+     */
+    @Override
+    public ProtocolDef property(String name, String value) {
+        protocol.getOrCreate("property@name=" + name).attribute("name", name).text(value);
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.ContainerDef#getProperties()
+     */
+    @Override
+    public Map<String, String> getProtocolProperties() {
+        List<Node> props = protocol.get("property");
+        Map<String, String> properties = new HashMap<String, String>();
+
+        for (Node prop : props) {
+            properties.put(prop.getAttribute("name"), prop.getText());
+        }
+        return properties;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl#toString()
+     */
+    @Override
+    public String toString() {
+        return protocol.toString(true);
+    }
 }

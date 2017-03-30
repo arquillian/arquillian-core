@@ -20,43 +20,39 @@ import org.jboss.arquillian.container.test.spi.TestRunner;
 
 /**
  * TestRunners
- * 
+ * <p>
  * Helper factory for loading TestRunners in container.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public final class TestRunners
-{
-   // Hide ctor
-   private TestRunners()
-   {
-   }
+public final class TestRunners {
+    // Hide ctor
+    private TestRunners() {
+    }
 
-   /**
-    * Dynamically loads an instance of a test runner. 
-    * 
-    * @return A Initialized TestRunner
-    * @throws IllegalStateException if multiple TestRunners found in classpath.
-    */
-   public static TestRunner getTestRunner()
-   {
-      return getTestRunner(SecurityActions.getThreadContextClassLoader());
-   }
+    /**
+     * Dynamically loads an instance of a test runner.
+     *
+     * @return A Initialized TestRunner
+     * @throws IllegalStateException if multiple TestRunners found in classpath.
+     */
+    public static TestRunner getTestRunner() {
+        return getTestRunner(SecurityActions.getThreadContextClassLoader());
+    }
 
-   /**
-    * Dynamically loads an instance of a test runner. 
-    * 
-    * @return A Initialized TestRunner
-    * @throws IllegalStateException if multiple TestRunners found in classpath.
-    */
-   public static TestRunner getTestRunner(ClassLoader classLoader)
-   {
-      ServiceLoader<TestRunner> serviceLoader = ServiceLoader.load(TestRunner.class, classLoader);
+    /**
+     * Dynamically loads an instance of a test runner.
+     *
+     * @return A Initialized TestRunner
+     * @throws IllegalStateException if multiple TestRunners found in classpath.
+     */
+    public static TestRunner getTestRunner(ClassLoader classLoader) {
+        ServiceLoader<TestRunner> serviceLoader = ServiceLoader.load(TestRunner.class, classLoader);
 
-      if (serviceLoader.getProviders().size() > 1)
-         throw new IllegalStateException("Multiple TestRunners found, only one allowed. Check your classpath");
-      
-      return serviceLoader.iterator().next();
-   }
+        if (serviceLoader.getProviders().size() > 1)
+            throw new IllegalStateException("Multiple TestRunners found, only one allowed. Check your classpath");
+
+        return serviceLoader.iterator().next();
+    }
 }

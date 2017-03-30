@@ -36,155 +36,137 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExtensionParseTestCase
-{
-   @Test
-   public void shouldBeAbleToReadAndInvokeObserverMethods() throws Exception
-   {
-      ExtensionWithObservers target = new ExtensionWithObservers();
-      Extension extension = ExtensionImpl.of(target);
-      
-      Assert.assertEquals(
-            "Verify correct observer methods were found",
-            2, extension.getObservers().size());
-      
-      for(ObserverMethod observer : extension.getObservers())
-      {
-         observer.invoke(null, new String());
-      }
-      
-      Assert.assertTrue(target.methodOneWasCalled);
-      Assert.assertTrue(target.methodTwoWasCalled);
-   }
+public class ExtensionParseTestCase {
+    @Test
+    public void shouldBeAbleToReadAndInvokeObserverMethods() throws Exception {
+        ExtensionWithObservers target = new ExtensionWithObservers();
+        Extension extension = ExtensionImpl.of(target);
 
-   @Test
-   public void shouldBeAbleToReadAndInvokeInjectionPoints() throws Exception
-   {
-      ExtensionWithInjection target = new ExtensionWithInjection();
-      Extension extension = ExtensionImpl.of(target);
-      
-      Assert.assertEquals(
-            "Verify correct injection fields were found",
-            1, extension.getInjectionPoints().size());
-      
-      Instance<Object> instance = new DummyInstanceImpl();
-      for(InjectionPoint point : extension.getInjectionPoints())
-      {
-         point.set(instance);
-      }
-      extension.getObservers().get(0).invoke(null, new Object());
-      
-      Assert.assertTrue(target.methodOneWasCalled);
-      Assert.assertNotNull(instance.get());
-   }
-   
-   @Test
-   public void shouldBeAbleToInjectEventAndFireNewEvent() throws Exception
-   {
-      ExtensionWithEvent target = new ExtensionWithEvent();
-      Extension extension = ExtensionImpl.of(target);
-      
-      Assert.assertEquals(
-            "Verify correct event fields were found",
-            1, extension.getEventPoints().size());
-      
-      Assert.assertEquals(1, extension.getObservers().size());
-      
-      DummyEventImpl event = new DummyEventImpl();
-      for(EventPoint point : extension.getEventPoints())
-      {
-         point.set(event);
-      }
-      extension.getObservers().get(0).invoke(null, new Object());  
-      
-      Assert.assertTrue(target.methodOneWasCalled);
-      Assert.assertEquals(
-            "Verify the Extensions Event was firable",
-            "some string", event.getString());
-   }
-   
-   private static class DummyInstanceImpl implements InstanceProducer<Object> 
-   {
-      private Object object;
-      
-      @Override
-      public Object get()
-      {
-         return object;
-      }
-      @Override
-      public void set(Object value)
-      {
-         this.object = value;
-      }
-   }
-   
-   private static class DummyEventImpl implements Event<String>
-   {
-      private String object;
-      
-      @Override
-      public void fire(String event)
-      {
-         this.object = event;
-      }
+        Assert.assertEquals(
+                "Verify correct observer methods were found",
+                2, extension.getObservers().size());
 
-      public String getString()
-      {
-         return object;
-      }
-   }
+        for (ObserverMethod observer : extension.getObservers()) {
+            observer.invoke(null, new String());
+        }
 
-   private static class ExtensionWithObservers 
-   {
-      private boolean methodOneWasCalled = false;
-      private boolean methodTwoWasCalled = false;
-      
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes Object object)
-      {
-         methodOneWasCalled = true;
-      }
+        Assert.assertTrue(target.methodOneWasCalled);
+        Assert.assertTrue(target.methodTwoWasCalled);
+    }
 
-      @SuppressWarnings("unused")
-      public void methodTwo(@Observes Object object)
-      {
-         methodTwoWasCalled = true;
-      }
-   }
+    @Test
+    public void shouldBeAbleToReadAndInvokeInjectionPoints() throws Exception {
+        ExtensionWithInjection target = new ExtensionWithInjection();
+        Extension extension = ExtensionImpl.of(target);
 
-   private static class ExtensionWithInjection 
-   {
-      private boolean methodOneWasCalled = false;
+        Assert.assertEquals(
+                "Verify correct injection fields were found",
+                1, extension.getInjectionPoints().size());
 
-      @Inject @ApplicationScoped
-      private InstanceProducer<Object> object;
-      
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes Object event)
-      {
-         Assert.assertNotNull(object);
-         Assert.assertNull(object.get());
-         
-         object.set(new Object());
-         methodOneWasCalled = true;
-      }
-   }
-   
-   private static class ExtensionWithEvent 
-   {
-      private boolean methodOneWasCalled = false;
-      
-      @Inject
-      private Event<String> stringEvent;
-      
-      @SuppressWarnings("unused")
-      public void methodOne(@Observes Object event)
-      {
-         Assert.assertNotNull(event);
-         Assert.assertNotNull(stringEvent);
-         stringEvent.fire("some string");
-         methodOneWasCalled = true;
-      }
-   }
+        Instance<Object> instance = new DummyInstanceImpl();
+        for (InjectionPoint point : extension.getInjectionPoints()) {
+            point.set(instance);
+        }
+        extension.getObservers().get(0).invoke(null, new Object());
+
+        Assert.assertTrue(target.methodOneWasCalled);
+        Assert.assertNotNull(instance.get());
+    }
+
+    @Test
+    public void shouldBeAbleToInjectEventAndFireNewEvent() throws Exception {
+        ExtensionWithEvent target = new ExtensionWithEvent();
+        Extension extension = ExtensionImpl.of(target);
+
+        Assert.assertEquals(
+                "Verify correct event fields were found",
+                1, extension.getEventPoints().size());
+
+        Assert.assertEquals(1, extension.getObservers().size());
+
+        DummyEventImpl event = new DummyEventImpl();
+        for (EventPoint point : extension.getEventPoints()) {
+            point.set(event);
+        }
+        extension.getObservers().get(0).invoke(null, new Object());
+
+        Assert.assertTrue(target.methodOneWasCalled);
+        Assert.assertEquals(
+                "Verify the Extensions Event was firable",
+                "some string", event.getString());
+    }
+
+    private static class DummyInstanceImpl implements InstanceProducer<Object> {
+        private Object object;
+
+        @Override
+        public Object get() {
+            return object;
+        }
+
+        @Override
+        public void set(Object value) {
+            this.object = value;
+        }
+    }
+
+    private static class DummyEventImpl implements Event<String> {
+        private String object;
+
+        @Override
+        public void fire(String event) {
+            this.object = event;
+        }
+
+        public String getString() {
+            return object;
+        }
+    }
+
+    private static class ExtensionWithObservers {
+        private boolean methodOneWasCalled = false;
+        private boolean methodTwoWasCalled = false;
+
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes Object object) {
+            methodOneWasCalled = true;
+        }
+
+        @SuppressWarnings("unused")
+        public void methodTwo(@Observes Object object) {
+            methodTwoWasCalled = true;
+        }
+    }
+
+    private static class ExtensionWithInjection {
+        private boolean methodOneWasCalled = false;
+
+        @Inject
+        @ApplicationScoped
+        private InstanceProducer<Object> object;
+
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes Object event) {
+            Assert.assertNotNull(object);
+            Assert.assertNull(object.get());
+
+            object.set(new Object());
+            methodOneWasCalled = true;
+        }
+    }
+
+    private static class ExtensionWithEvent {
+        private boolean methodOneWasCalled = false;
+
+        @Inject
+        private Event<String> stringEvent;
+
+        @SuppressWarnings("unused")
+        public void methodOne(@Observes Object event) {
+            Assert.assertNotNull(event);
+            Assert.assertNotNull(stringEvent);
+            stringEvent.fire("some string");
+            methodOneWasCalled = true;
+        }
+    }
 }

@@ -22,9 +22,7 @@ package org.jboss.arquillian.test.spi.event.suite;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AfterSuite extends SuiteEvent
-{
-   public AfterSuite()
-   {
-   }
+public class AfterSuite extends SuiteEvent {
+    public AfterSuite() {
+    }
 }

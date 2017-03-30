@@ -40,171 +40,147 @@ import javax.enterprise.util.AnnotationLiteral;
  * @author Pete Muir
  * @version $Revision: $
  */
-public class MethodParameterInjectionPoint<T> implements InjectionPoint
-{
-   private Method method;
-   private int position;
-   private BeanManager beanManager;
-   
-   public MethodParameterInjectionPoint(Method method, int position, BeanManager beanManager)
-   {
-      this.method = method;
-      this.position = position;
-      this.beanManager = beanManager;
-   }
-   
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#getBean()
-    */
-   public Bean<?> getBean()
-   {
-      return null;
-   }
+public class MethodParameterInjectionPoint<T> implements InjectionPoint {
+    private Method method;
+    private int position;
+    private BeanManager beanManager;
 
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#getMember()
-    */
-   public Member getMember()
-   {
-      return method;
-   }
+    public MethodParameterInjectionPoint(Method method, int position, BeanManager beanManager) {
+        this.method = method;
+        this.position = position;
+        this.beanManager = beanManager;
+    }
 
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#getQualifiers()
-    */
-   public Set<Annotation> getQualifiers()
-   {
-      Set<Annotation> qualifiers = new HashSet<Annotation>();
-      for(Annotation annotation : method.getParameterAnnotations()[position])
-      {
-         if(beanManager.isQualifier(annotation.annotationType()))
-         {
-            qualifiers.add(annotation);
-         }
-      }
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#getBean()
+     */
+    public Bean<?> getBean() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#getMember()
+     */
+    public Member getMember() {
+        return method;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#getQualifiers()
+     */
+    public Set<Annotation> getQualifiers() {
+        Set<Annotation> qualifiers = new HashSet<Annotation>();
+        for (Annotation annotation : method.getParameterAnnotations()[position]) {
+            if (beanManager.isQualifier(annotation.annotationType())) {
+                qualifiers.add(annotation);
+            }
+        }
       /*
        * TODO: ARQ-240 We should not add @Default by default, this should be handled by CDI. 
        * Due to bug in Weld 1.0.0.SP4(fixed in trunk). Remove this when 1.1.0 is out. 
        */
-      if(qualifiers.size() == 0)
-      {
-         qualifiers.add(new DefaultLiteral());
-      }
-      return qualifiers;
-   }
+        if (qualifiers.size() == 0) {
+            qualifiers.add(new DefaultLiteral());
+        }
+        return qualifiers;
+    }
 
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#getType()
-    */
-   public Type getType()
-   {
-      return findTypeOrGenericType();
-   }
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#getType()
+     */
+    public Type getType() {
+        return findTypeOrGenericType();
+    }
 
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#isDelegate()
-    */
-   public boolean isDelegate()
-   {
-      return false;
-   }
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#isDelegate()
+     */
+    public boolean isDelegate() {
+        return false;
+    }
 
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#isTransient()
-    */
-   public boolean isTransient()
-   {
-      return false;
-   }
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#isTransient()
+     */
+    public boolean isTransient() {
+        return false;
+    }
 
-   /* (non-Javadoc)
-    * @see javax.enterprise.inject.spi.InjectionPoint#getAnnotated()
-    */
-   public Annotated getAnnotated()
-   {
-      return new ArgumentAnnotated<T>();
-   }
+    /* (non-Javadoc)
+     * @see javax.enterprise.inject.spi.InjectionPoint#getAnnotated()
+     */
+    public Annotated getAnnotated() {
+        return new ArgumentAnnotated<T>();
+    }
 
-   private class ArgumentAnnotated<X> implements AnnotatedParameter<X> {
+    private class ArgumentAnnotated<X> implements AnnotatedParameter<X> {
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.AnnotatedParameter#getDeclaringCallable()
-       */
-      public AnnotatedCallable<X> getDeclaringCallable()
-      {
-         return null;
-      }
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.AnnotatedParameter#getDeclaringCallable()
+         */
+        public AnnotatedCallable<X> getDeclaringCallable() {
+            return null;
+        }
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.AnnotatedParameter#getPosition()
-       */
-      public int getPosition()
-      {
-         return position;
-      }
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.AnnotatedParameter#getPosition()
+         */
+        public int getPosition() {
+            return position;
+        }
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.Annotated#getAnnotation(java.lang.Class)
-       */
-      public <Y extends Annotation> Y getAnnotation(Class<Y> annotationType)
-      {
-         for(Annotation annotation : method.getParameterAnnotations()[position])
-         {
-            if(annotation.annotationType() == annotationType)
-            {
-               return annotationType.cast(annotation);
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.Annotated#getAnnotation(java.lang.Class)
+         */
+        public <Y extends Annotation> Y getAnnotation(Class<Y> annotationType) {
+            for (Annotation annotation : method.getParameterAnnotations()[position]) {
+                if (annotation.annotationType() == annotationType) {
+                    return annotationType.cast(annotation);
+                }
             }
-         }
-         return null;
-      }
+            return null;
+        }
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.Annotated#getAnnotations()
-       */
-      public Set<Annotation> getAnnotations()
-      {
-         return new HashSet<Annotation>(Arrays.asList(method.getParameterAnnotations()[position]));
-      }
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.Annotated#getAnnotations()
+         */
+        public Set<Annotation> getAnnotations() {
+            return new HashSet<Annotation>(Arrays.asList(method.getParameterAnnotations()[position]));
+        }
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.Annotated#getBaseType()
-       */
-      public Type getBaseType()
-      {
-         return getType();
-      }
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.Annotated#getBaseType()
+         */
+        public Type getBaseType() {
+            return getType();
+        }
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.Annotated#getTypeClosure()
-       */
-      public Set<Type> getTypeClosure()
-      {
-         Set<Type> types = new HashSet<Type>();
-         types.add(findTypeOrGenericType());
-         types.add(Object.class);
-         return types; 
-      }
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.Annotated#getTypeClosure()
+         */
+        public Set<Type> getTypeClosure() {
+            Set<Type> types = new HashSet<Type>();
+            types.add(findTypeOrGenericType());
+            types.add(Object.class);
+            return types;
+        }
 
-      /* (non-Javadoc)
-       * @see javax.enterprise.inject.spi.Annotated#isAnnotationPresent(java.lang.Class)
-       */
-      public boolean isAnnotationPresent(Class<? extends Annotation> annotationType)
-      {
-         return getAnnotation(annotationType) != null;
-      }
-   }
-   
-   private Type findTypeOrGenericType()
-   {
-      if(method.getGenericParameterTypes().length > 0)
-      {
-         return method.getGenericParameterTypes()[position];
-      }
-      return method.getParameterTypes()[position];
-   }
-   
-   private static class DefaultLiteral extends AnnotationLiteral<Default> implements Default 
-   {
-      private static final long serialVersionUID = 1L;
-   }
+        /* (non-Javadoc)
+         * @see javax.enterprise.inject.spi.Annotated#isAnnotationPresent(java.lang.Class)
+         */
+        public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
+            return getAnnotation(annotationType) != null;
+        }
+    }
+
+    private Type findTypeOrGenericType() {
+        if (method.getGenericParameterTypes().length > 0) {
+            return method.getGenericParameterTypes()[position];
+        }
+        return method.getParameterTypes()[position];
+    }
+
+    private static class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
+        private static final long serialVersionUID = 1L;
+    }
 }

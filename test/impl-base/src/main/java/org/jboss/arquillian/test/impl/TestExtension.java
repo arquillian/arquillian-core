@@ -30,19 +30,17 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.context(SuiteContextImpl.class)
-             .context(ClassContextImpl.class)
-             .context(TestContextImpl.class);
+public class TestExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.context(SuiteContextImpl.class)
+                .context(ClassContextImpl.class)
+                .context(TestContextImpl.class);
 
-      builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
-      
-      builder.observer(TestContextHandler.class)
-             .observer(TestInstanceEnricher.class);
-   }
+        builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
+
+        builder.observer(TestContextHandler.class)
+                .observer(TestInstanceEnricher.class);
+    }
 
 }

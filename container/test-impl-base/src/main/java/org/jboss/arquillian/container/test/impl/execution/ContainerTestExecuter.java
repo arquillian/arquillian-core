@@ -28,13 +28,11 @@ import org.jboss.arquillian.test.spi.event.suite.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerTestExecuter
-{
-   @Inject
-   private Event<LocalExecutionEvent> localEvent;
-   
-   public void execute(@Observes Test event) throws Exception
-   {
-      localEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
-   }
+public class ContainerTestExecuter {
+    @Inject
+    private Event<LocalExecutionEvent> localEvent;
+
+    public void execute(@Observes Test event) throws Exception {
+        localEvent.fire(new LocalExecutionEvent(event.getTestMethodExecutor()));
+    }
 }

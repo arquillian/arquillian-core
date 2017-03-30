@@ -28,51 +28,42 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class ServletMappingDefImpl extends ServletDefImpl implements ServletMappingDef
-{
-   private final Node mapping;
+public class ServletMappingDefImpl extends ServletDefImpl implements ServletMappingDef {
+    private final Node mapping;
 
-   public ServletMappingDefImpl(String descriptorName, Node webApp, Node servletNode, Node mappingNode)
-   {
-      super(descriptorName, webApp, servletNode);
-      this.mapping = mappingNode;
-   }
+    public ServletMappingDefImpl(String descriptorName, Node webApp, Node servletNode, Node mappingNode) {
+        super(descriptorName, webApp, servletNode);
+        this.mapping = mappingNode;
+    }
 
-   @Override
-   public String getServletName()
-   {
-      return mapping.getTextValueForPatternName("servlet-name");
-   }
+    @Override
+    public String getServletName() {
+        return mapping.getTextValueForPatternName("servlet-name");
+    }
 
-   @Override
-   public ServletMappingDef servletName(String servletName)
-   {
-      mapping.getOrCreate("servlet-name").text(servletName);
-      return this;
-   }
+    @Override
+    public ServletMappingDef servletName(String servletName) {
+        mapping.getOrCreate("servlet-name").text(servletName);
+        return this;
+    }
 
-   @Override
-   public List<String> getUrlPatterns()
-   {
-      return mapping.getTextValuesForPatternName("url-pattern");
-   }
+    @Override
+    public List<String> getUrlPatterns() {
+        return mapping.getTextValuesForPatternName("url-pattern");
+    }
 
-   @Override
-   public ServletMappingDef urlPattern(String urlPattern)
-   {
-      mapping.createChild("url-pattern").text(urlPattern);
-      return this;
-   }
+    @Override
+    public ServletMappingDef urlPattern(String urlPattern) {
+        mapping.createChild("url-pattern").text(urlPattern);
+        return this;
+    }
 
-   @Override
-   public ServletMappingDef urlPatterns(String... urlPatterns)
-   {
-      for (String string : urlPatterns)
-      {
-         urlPattern(string);
-      }
-      return this;
-   }
+    @Override
+    public ServletMappingDef urlPatterns(String... urlPatterns) {
+        for (String string : urlPatterns) {
+            urlPattern(string);
+        }
+        return this;
+    }
 }

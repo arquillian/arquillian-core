@@ -35,53 +35,44 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class ContainerContainerController implements ContainerController
-{
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
+public class ContainerContainerController implements ContainerController {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   @Override
-   public void start(String containerQualifier) 
-   {
-      getCommandService().execute(new StartContainerCommand(containerQualifier));
-   }
+    @Override
+    public void start(String containerQualifier) {
+        getCommandService().execute(new StartContainerCommand(containerQualifier));
+    }
 
-   @Override
-   public void start(String containerQualifier, Map<String, String> config)
-   {
-      getCommandService().execute(new StartContainerCommand(containerQualifier, config));
-   }
+    @Override
+    public void start(String containerQualifier, Map<String, String> config) {
+        getCommandService().execute(new StartContainerCommand(containerQualifier, config));
+    }
 
-   @Override
-   public void stop(String containerQualifier) 
-   {
-      getCommandService().execute(new StopContainerCommand(containerQualifier));
-   }
+    @Override
+    public void stop(String containerQualifier) {
+        getCommandService().execute(new StopContainerCommand(containerQualifier));
+    }
 
-   @Override
-   public void kill(String containerQualifier)
-   {
-      getCommandService().execute(new KillContainerCommand(containerQualifier));
-   }
+    @Override
+    public void kill(String containerQualifier) {
+        getCommandService().execute(new KillContainerCommand(containerQualifier));
+    }
 
-   @Override
-   public boolean isStarted(String containerQualifier)
-   {
-      return getCommandService().execute(new ContainerStartedCommand(containerQualifier));
-   }
+    @Override
+    public boolean isStarted(String containerQualifier) {
+        return getCommandService().execute(new ContainerStartedCommand(containerQualifier));
+    }
 
-   protected CommandService getCommandService()
-   {
-      ServiceLoader loader = serviceLoader.get();
-      if(loader == null)
-      {
-         throw new IllegalStateException("No " + ServiceLoader.class.getName() + " found in context");
-      }
-      CommandService service = loader.onlyOne(CommandService.class);
-      if(service == null)
-      {
-         throw new IllegalStateException("No " + CommandService.class.getName() + " found in context");
-      }
-      return service;
-   }
+    protected CommandService getCommandService() {
+        ServiceLoader loader = serviceLoader.get();
+        if (loader == null) {
+            throw new IllegalStateException("No " + ServiceLoader.class.getName() + " found in context");
+        }
+        CommandService service = loader.onlyOne(CommandService.class);
+        if (service == null) {
+            throw new IllegalStateException("No " + CommandService.class.getName() + " found in context");
+        }
+        return service;
+    }
 }

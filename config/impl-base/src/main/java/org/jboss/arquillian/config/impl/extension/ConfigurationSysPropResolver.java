@@ -24,38 +24,36 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  * replacing any sysprop EL expressions with a proper value or default,
  * and returning a new instance of the {@link ArquillianDescriptor}.
  * Fulfills ARQ-148.
- *
+ * <p>
  * TODO To eventually become part of a chain-based event mechanism
  * as defined by ARQ-284.
  *
  * @author <a href="mailto:alr@jboss.org">Andrew Lee Rubinger</a>
  */
-class ConfigurationSysPropResolver
-{
-   /**
-    * Internal ctor, not to be called
-    */
-   private ConfigurationSysPropResolver()
-   {
-      throw new UnsupportedOperationException("No instances permitted");
-   }
+class ConfigurationSysPropResolver {
+    /**
+     * Internal ctor, not to be called
+     */
+    private ConfigurationSysPropResolver() {
+        throw new UnsupportedOperationException("No instances permitted");
+    }
 
-   /**
-    * Returns a new instance of {@link ArquillianDescriptor} by resolving any
-    * sysprop EL expressions in the provided {@link ArquillianDescriptor} to real
-    * values or defaults
-    * @param descriptor The input to resolve, required
-    * @return
-    * @throws IllegalArgumentException
-    */
-   static ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
-         throws IllegalArgumentException
-   {
-      final String descrStr = descriptor.exportAsString();
-      final ArquillianDescriptor newArqDescriptor = Descriptors.importAs(ArquillianDescriptor.class).fromString(
-            StringPropertyReplacer.replaceProperties(descrStr));
+    /**
+     * Returns a new instance of {@link ArquillianDescriptor} by resolving any
+     * sysprop EL expressions in the provided {@link ArquillianDescriptor} to real
+     * values or defaults
+     *
+     * @param descriptor The input to resolve, required
+     * @return
+     * @throws IllegalArgumentException
+     */
+    static ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
+            throws IllegalArgumentException {
+        final String descrStr = descriptor.exportAsString();
+        final ArquillianDescriptor newArqDescriptor = Descriptors.importAs(ArquillianDescriptor.class).fromString(
+                StringPropertyReplacer.replaceProperties(descrStr));
 
-      return newArqDescriptor;
-   }
+        return newArqDescriptor;
+    }
 
 }

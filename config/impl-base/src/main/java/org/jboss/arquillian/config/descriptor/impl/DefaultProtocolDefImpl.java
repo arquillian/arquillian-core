@@ -29,67 +29,59 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements DefaultProtocolDef
-{
-   private Node protocol;
+public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements DefaultProtocolDef {
+    private Node protocol;
 
-   public DefaultProtocolDefImpl(String descirptorName, Node model, Node protocol)
-   {
-      super(descirptorName, model);
-      this.protocol = protocol;
-   }
+    public DefaultProtocolDefImpl(String descirptorName, Node model, Node protocol) {
+        super(descirptorName, model);
+        this.protocol = protocol;
+    }
 
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - ProtocolDescription -------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - ProtocolDescription -------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef#setType(java.lang.String)
-    */
-   @Override
-   public DefaultProtocolDef setType(String type)
-   {
-      protocol.attribute("type", type);
-      return this;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef#getType()
-    */
-   @Override
-   public String getType()
-   {
-      return protocol.getAttribute("type");
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.ProtocolDescription#property(java.lang.String, java.lang.String)
-    */
-   @Override
-   public DefaultProtocolDef property(String name, String value)
-   {
-      protocol.getOrCreate("property@name=" + name).text(value);
-      return this;
-   }
-   
-   public Map<String, String> getProperties()
-   {
-      List<Node> props = protocol.get("property");
-      Map<String, String> properties = new HashMap<String, String>();
-      
-      for(Node prop: props)
-      {
-         properties.put(prop.getAttribute("name"), prop.getText());
-      }
-      return properties;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef#setType(java.lang.String)
+     */
+    @Override
+    public DefaultProtocolDef setType(String type) {
+        protocol.attribute("type", type);
+        return this;
+    }
 
-   /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
-   @Override
-   public String toString()
-   {
-      return protocol.toString(true);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.DefaultProtocolDef#getType()
+     */
+    @Override
+    public String getType() {
+        return protocol.getAttribute("type");
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.ProtocolDescription#property(java.lang.String, java.lang.String)
+     */
+    @Override
+    public DefaultProtocolDef property(String name, String value) {
+        protocol.getOrCreate("property@name=" + name).text(value);
+        return this;
+    }
+
+    public Map<String, String> getProperties() {
+        List<Node> props = protocol.get("property");
+        Map<String, String> properties = new HashMap<String, String>();
+
+        for (Node prop : props) {
+            properties.put(prop.getAttribute("name"), prop.getText());
+        }
+        return properties;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return protocol.toString(true);
+    }
 }

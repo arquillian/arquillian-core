@@ -34,47 +34,45 @@ import org.w3c.dom.NodeList;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public final class AssertXPath
-{
-   /**
-    * Util class, should not be constructed. 
-    */
-   private AssertXPath() {}
-   
-   /**
-    * Assert that the specified XPath Expression resolves to the specified values.
-    * <br/><br/>
-    * Assertions:<br/>
-    * "ExpectedValue count should match found Node count" <br/> 
-    * "XPath content should match expected value" <br/>
-    * 
-    * @param xml The XML to assert against
-    * @param expression XPath expression to extract
-    * @param expectedValue The Expected values found by expression
-    * @throws Exception XML/XPath related parse exceptions
-    */
-   public static void assertXPath(String xml, String expression, Object... expectedValue)
-      throws Exception
-   {
-      Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
-            new ByteArrayInputStream(xml.getBytes()));
-      
-      XPathExpression xPathExpression = XPathFactory.newInstance().newXPath().compile(expression);
-   
-      NodeList nodes = (NodeList)xPathExpression.evaluate(doc, XPathConstants.NODESET);
-      Assert.assertEquals(
-            "ExpectedValue count should match found Node count", 
-            expectedValue.length, 
-            nodes.getLength());
-   
-      for(int i = 0; i < nodes.getLength(); i++)
-      {
-         Node node = nodes.item(i);
-         Assert.assertEquals(
-               "XPath content should match expected value",
-               String.valueOf(expectedValue[i]), 
-               node.getTextContent());
-      }
-   }
+public final class AssertXPath {
+    /**
+     * Util class, should not be constructed.
+     */
+    private AssertXPath() {
+    }
+
+    /**
+     * Assert that the specified XPath Expression resolves to the specified values.
+     * <br/><br/>
+     * Assertions:<br/>
+     * "ExpectedValue count should match found Node count" <br/>
+     * "XPath content should match expected value" <br/>
+     *
+     * @param xml           The XML to assert against
+     * @param expression    XPath expression to extract
+     * @param expectedValue The Expected values found by expression
+     * @throws Exception XML/XPath related parse exceptions
+     */
+    public static void assertXPath(String xml, String expression, Object... expectedValue)
+            throws Exception {
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+                new ByteArrayInputStream(xml.getBytes()));
+
+        XPathExpression xPathExpression = XPathFactory.newInstance().newXPath().compile(expression);
+
+        NodeList nodes = (NodeList) xPathExpression.evaluate(doc, XPathConstants.NODESET);
+        Assert.assertEquals(
+                "ExpectedValue count should match found Node count",
+                expectedValue.length,
+                nodes.getLength());
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            Assert.assertEquals(
+                    "XPath content should match expected value",
+                    String.valueOf(expectedValue[i]),
+                    node.getTextContent());
+        }
+    }
 
 }

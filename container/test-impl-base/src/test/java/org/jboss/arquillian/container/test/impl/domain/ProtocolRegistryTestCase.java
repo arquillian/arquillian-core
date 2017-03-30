@@ -36,109 +36,96 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ProtocolRegistryTestCase
-{
-   private String name = "some-name";
-   
-   @Mock
-   private Protocol<DummyProtocolConfiguration> protocol; 
+public class ProtocolRegistryTestCase {
+    private String name = "some-name";
 
-   @Before
-   public void setup() throws Exception
-   {
-      Mockito.when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
-      Mockito.when(protocol.getProtocolConfigurationClass()).thenReturn(DummyProtocolConfiguration.class);
-   }
-   
-   @Test
-   public void shouldBeAbleToDefaultProtocolIfOnlyOneFound() throws Exception
-   {
-      ProtocolRegistry registry = createRegistry()
-                  .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
-      
-      Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());            
-   }
+    @Mock
+    private Protocol<DummyProtocolConfiguration> protocol;
 
-   @Test
-   public void shouldBeAbleToDefaultToProtocolMakedAsDefault() throws Exception
-   {
-      Protocol<?> localProtocol = Mockito.mock(Protocol.class);
-      Mockito.when(localProtocol.getDescription()).thenReturn(new ProtocolDescription("local"));
-      Protocol<?> otherProtocol = Mockito.mock(Protocol.class);
-      Mockito.when(otherProtocol.getDescription()).thenReturn(new ProtocolDescription("other"));
-      
-      ProtocolRegistry registry = createRegistry()
-                  .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>(), true))
-                  .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
-                  .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
+    @Before
+    public void setup() throws Exception {
+        Mockito.when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
+        Mockito.when(protocol.getProtocolConfigurationClass()).thenReturn(DummyProtocolConfiguration.class);
+    }
 
-      Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());            
-   }
+    @Test
+    public void shouldBeAbleToDefaultProtocolIfOnlyOneFound() throws Exception {
+        ProtocolRegistry registry = createRegistry()
+                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
 
-   @Test
-   public void shouldReturnNullTryingToDefaultWithMultipleNonDefinedDefaultProtocols() throws Exception
-   {
-      Protocol<?> localProtocol = Mockito.mock(Protocol.class);
-      Mockito.when(localProtocol.getDescription()).thenReturn(new ProtocolDescription("local"));
-      Protocol<?> otherProtocol = Mockito.mock(Protocol.class);
-      Mockito.when(otherProtocol.getDescription()).thenReturn(new ProtocolDescription("other"));
-      
-      ProtocolRegistry registry = createRegistry()
-                  .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
-                  .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
-                  .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
-      
-      Assert.assertNull(registry.getProtocol(ProtocolDescription.DEFAULT));            
-   }
-   
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionIfMultipleProtocolsWithTheSameDescription()
-   {
-      createRegistry()
-         .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
-         .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
-   }
+        Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnNullProtocolRegistration() throws Exception
-   {
-      createRegistry().addProtocol(null);
-   }
+    @Test
+    public void shouldBeAbleToDefaultToProtocolMakedAsDefault() throws Exception {
+        Protocol<?> localProtocol = Mockito.mock(Protocol.class);
+        Mockito.when(localProtocol.getDescription()).thenReturn(new ProtocolDescription("local"));
+        Protocol<?> otherProtocol = Mockito.mock(Protocol.class);
+        Mockito.when(otherProtocol.getDescription()).thenReturn(new ProtocolDescription("other"));
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnNullProtocolLookup() throws Exception
-   {
-      createRegistry().getProtocol(null);
-   }
+        ProtocolRegistry registry = createRegistry()
+                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>(), true))
+                .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
+                .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
 
-   protected ProtocolRegistry createRegistry()
-   {
-      return new ProtocolRegistry();
-   }
+        Assert.assertEquals(protocol, registry.getProtocol(ProtocolDescription.DEFAULT).getProtocol());
+    }
 
-   @Test
-   public void shouldBeAbleToMatchAndConfigureProtocol() throws Exception
-   {
-   }
-   
-   public static class DummyProtocolConfiguration implements ProtocolConfiguration
-   {
-      private String property;
-      
-      /**
-       * @param property the property to set
-       */
-      public void setProperty(String property)
-      {
-         this.property = property;
-      }
-      
-      /**
-       * @return the property
-       */
-      public String getProperty()
-      {
-         return property;
-      }
-   }
+    @Test
+    public void shouldReturnNullTryingToDefaultWithMultipleNonDefinedDefaultProtocols() throws Exception {
+        Protocol<?> localProtocol = Mockito.mock(Protocol.class);
+        Mockito.when(localProtocol.getDescription()).thenReturn(new ProtocolDescription("local"));
+        Protocol<?> otherProtocol = Mockito.mock(Protocol.class);
+        Mockito.when(otherProtocol.getDescription()).thenReturn(new ProtocolDescription("other"));
+
+        ProtocolRegistry registry = createRegistry()
+                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
+                .addProtocol(new ProtocolDefinition(localProtocol, new HashMap<String, String>()))
+                .addProtocol(new ProtocolDefinition(otherProtocol, new HashMap<String, String>()));
+
+        Assert.assertNull(registry.getProtocol(ProtocolDescription.DEFAULT));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfMultipleProtocolsWithTheSameDescription() {
+        createRegistry()
+                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()))
+                .addProtocol(new ProtocolDefinition(protocol, new HashMap<String, String>()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnNullProtocolRegistration() throws Exception {
+        createRegistry().addProtocol(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnNullProtocolLookup() throws Exception {
+        createRegistry().getProtocol(null);
+    }
+
+    protected ProtocolRegistry createRegistry() {
+        return new ProtocolRegistry();
+    }
+
+    @Test
+    public void shouldBeAbleToMatchAndConfigureProtocol() throws Exception {
+    }
+
+    public static class DummyProtocolConfiguration implements ProtocolConfiguration {
+        private String property;
+
+        /**
+         * @param property the property to set
+         */
+        public void setProperty(String property) {
+            this.property = property;
+        }
+
+        /**
+         * @return the property
+         */
+        public String getProperty() {
+            return property;
+        }
+    }
 }

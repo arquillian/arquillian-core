@@ -22,28 +22,24 @@
 package org.jboss.arquillian.container.spi;
 
 
-
 /**
  * ServerKillProcessor
- * 
+ * <p>
  * Implementations can be used to manually kill container instances from within
  * Container. As opposed to start/stop methods of Container,
  * this is dedicated for hard-kill of server instances.
- * 
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public interface ServerKillProcessor 
-{
-   
-   /**
-    * 
-    * Kill a server instance via a specific implementation.
-    * 
-    * @param container
-    * @return
-    */
-   void kill(Container container) throws Exception;
-   
+public interface ServerKillProcessor {
+
+    /**
+     * Kill a server instance via a specific implementation.
+     *
+     * @param container
+     * @return
+     */
+    void kill(Container container) throws Exception;
+
 }

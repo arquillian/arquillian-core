@@ -28,22 +28,20 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppenderTestCase
-{
+public class JUnitDeploymentAppenderTestCase {
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception 
-   {
-      Archive<?> archive = new JUnitDeploymentAppender().createAuxiliaryArchive();
-      
-      Assert.assertTrue(
-            "Should have added Extension",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
-      
-      Assert.assertTrue(
-            "Should have added TestRunner Impl",
-            archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/container/JUnitTestRunner.class")));
+    @Test
+    public void shouldGenerateDependencies() throws Exception {
+        Archive<?> archive = new JUnitDeploymentAppender().createAuxiliaryArchive();
 
-     
-   }
+        Assert.assertTrue(
+                "Should have added Extension",
+                archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
+
+        Assert.assertTrue(
+                "Should have added TestRunner Impl",
+                archive.contains(ArchivePaths.create("/org/jboss/arquillian/junit/container/JUnitTestRunner.class")));
+
+
+    }
 }

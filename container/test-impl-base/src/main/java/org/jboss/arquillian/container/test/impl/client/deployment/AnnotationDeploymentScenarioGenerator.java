@@ -39,157 +39,131 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
- * {@link DeploymentScenarioGenerator} that builds a {@link DeploymentScenario} based on 
+ * {@link DeploymentScenarioGenerator} that builds a {@link DeploymentScenario} based on
  * the standard Arquillian API annotations.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AnnotationDeploymentScenarioGenerator implements DeploymentScenarioGenerator
-{
+public class AnnotationDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 
     private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
-    */
-   public List<DeploymentDescription> generate(TestClass testClass)
-   {
-      List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
-      Method[] deploymentMethods = testClass.getMethods(Deployment.class);
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
+     */
+    public List<DeploymentDescription> generate(TestClass testClass) {
+        List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
+        Method[] deploymentMethods = testClass.getMethods(Deployment.class);
 
-      for(Method deploymentMethod: deploymentMethods)
-      {
-         validate(deploymentMethod);
-         deployments.add(generateDeployment(deploymentMethod));
-      }
+        for (Method deploymentMethod : deploymentMethods) {
+            validate(deploymentMethod);
+            deployments.add(generateDeployment(deploymentMethod));
+        }
 
-      sortByDeploymentOrder(deployments);
+        sortByDeploymentOrder(deployments);
 
-      return deployments;
-   }
+        return deployments;
+    }
 
-   private void validate(Method deploymentMethod)
-   {
-      if(!Modifier.isStatic(deploymentMethod.getModifiers()))
-      {
-         throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " is not static. "  + deploymentMethod);
-      }
-      if(!Archive.class.isAssignableFrom(deploymentMethod.getReturnType()) && !Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) 
-      {
-         throw new IllegalArgumentException(
-               "Method annotated with " + Deployment.class.getName() + 
-               " must have return type " + Archive.class.getName() +  " or " + Descriptor.class.getName() + ". " + deploymentMethod);
-      }
-      if(deploymentMethod.getParameterTypes().length != 0)
-      {
-         throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " can not accept parameters. " + deploymentMethod);         
-      }
-   }
-   
-   /**
-    * @param deploymentMethod
-    * @return
-    */
-   private DeploymentDescription generateDeployment(Method deploymentMethod)
-   {
-      TargetDescription target = generateTarget(deploymentMethod);
-      ProtocolDescription protocol = generateProtocol(deploymentMethod);
-      
-      Deployment deploymentAnnotation = deploymentMethod.getAnnotation(Deployment.class);
-      DeploymentDescription deployment = null;
-      if(Archive.class.isAssignableFrom(deploymentMethod.getReturnType()))
-      {
-         deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
-         logWarningIfArchiveHasUnexpectedFileExtension(deployment);
-         deployment.shouldBeTestable(deploymentAnnotation.testable());
-      }
-      else if(Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType()))
-      {
-         deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
-         //deployment.shouldBeTestable(false);
-      }
-      deployment.shouldBeManaged(deploymentAnnotation.managed());
-      deployment.setOrder(deploymentAnnotation.order());
-      if(target != null)
-      {
-         deployment.setTarget(target);
-      }
-      if(protocol != null)
-      {
-         deployment.setProtocol(protocol);
-      }
-      
-      if(deploymentMethod.isAnnotationPresent(ShouldThrowException.class))
-      {
-         deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
-         deployment.shouldBeTestable(false); // can't test against failing deployments
-      }
-      
-      return deployment;
-   }
+    private void validate(Method deploymentMethod) {
+        if (!Modifier.isStatic(deploymentMethod.getModifiers())) {
+            throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " is not static. " + deploymentMethod);
+        }
+        if (!Archive.class.isAssignableFrom(deploymentMethod.getReturnType()) && !Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
+            throw new IllegalArgumentException(
+                    "Method annotated with " + Deployment.class.getName() +
+                            " must have return type " + Archive.class.getName() + " or " + Descriptor.class.getName() + ". " + deploymentMethod);
+        }
+        if (deploymentMethod.getParameterTypes().length != 0) {
+            throw new IllegalArgumentException("Method annotated with " + Deployment.class.getName() + " can not accept parameters. " + deploymentMethod);
+        }
+    }
 
-   private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment)
-   {
-      if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive()))
-      {
-         log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
-               + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
-               + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
-               + " rely on the given file extension, the archive type is only a description of a certain structure.");
-      }
-   }
+    /**
+     * @param deploymentMethod
+     * @return
+     */
+    private DeploymentDescription generateDeployment(Method deploymentMethod) {
+        TargetDescription target = generateTarget(deploymentMethod);
+        ProtocolDescription protocol = generateProtocol(deploymentMethod);
 
-   /**
-    * @param deploymentMethod
-    * @return
-    */
-   private TargetDescription generateTarget(Method deploymentMethod)
-   {
-      if(deploymentMethod.isAnnotationPresent(TargetsContainer.class))
-      {
-         return new TargetDescription(deploymentMethod.getAnnotation(TargetsContainer.class).value());
-      }
-      return TargetDescription.DEFAULT;
-   }
+        Deployment deploymentAnnotation = deploymentMethod.getAnnotation(Deployment.class);
+        DeploymentDescription deployment = null;
+        if (Archive.class.isAssignableFrom(deploymentMethod.getReturnType())) {
+            deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
+            logWarningIfArchiveHasUnexpectedFileExtension(deployment);
+            deployment.shouldBeTestable(deploymentAnnotation.testable());
+        } else if (Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
+            deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
+            //deployment.shouldBeTestable(false);
+        }
+        deployment.shouldBeManaged(deploymentAnnotation.managed());
+        deployment.setOrder(deploymentAnnotation.order());
+        if (target != null) {
+            deployment.setTarget(target);
+        }
+        if (protocol != null) {
+            deployment.setProtocol(protocol);
+        }
 
-   /**
-    * @param deploymentMethod
-    * @return
-    */
-   private ProtocolDescription generateProtocol(Method deploymentMethod)
-   {
-      if(deploymentMethod.isAnnotationPresent(OverProtocol.class))
-      {
-         return new ProtocolDescription(deploymentMethod.getAnnotation(OverProtocol.class).value());
-      }
-      return ProtocolDescription.DEFAULT;
-   }
+        if (deploymentMethod.isAnnotationPresent(ShouldThrowException.class)) {
+            deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
+            deployment.shouldBeTestable(false); // can't test against failing deployments
+        }
 
-   /**
-    * @param deploymentMethod
-    * @return
-    */
-   private <T> T invoke(Class<T> type, Method deploymentMethod)
-   {
-      try
-      {
-         return type.cast(deploymentMethod.invoke(null));
-      }
-      catch (Exception e) 
-      {
-         throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
-      }
-   }
+        return deployment;
+    }
 
-   private void sortByDeploymentOrder(List<DeploymentDescription> deploymentDescriptions) {
-      // sort them by order
-      Collections.sort(deploymentDescriptions, new Comparator<DeploymentDescription>()
-      {
-         public int compare(DeploymentDescription d1, DeploymentDescription d2)
-         {
-            return new Integer(d1.getOrder()).compareTo(d2.getOrder());
-         }
-      });
-   }
+    private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment) {
+        if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive())) {
+            log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
+                    + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
+                    + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
+                    + " rely on the given file extension, the archive type is only a description of a certain structure.");
+        }
+    }
+
+    /**
+     * @param deploymentMethod
+     * @return
+     */
+    private TargetDescription generateTarget(Method deploymentMethod) {
+        if (deploymentMethod.isAnnotationPresent(TargetsContainer.class)) {
+            return new TargetDescription(deploymentMethod.getAnnotation(TargetsContainer.class).value());
+        }
+        return TargetDescription.DEFAULT;
+    }
+
+    /**
+     * @param deploymentMethod
+     * @return
+     */
+    private ProtocolDescription generateProtocol(Method deploymentMethod) {
+        if (deploymentMethod.isAnnotationPresent(OverProtocol.class)) {
+            return new ProtocolDescription(deploymentMethod.getAnnotation(OverProtocol.class).value());
+        }
+        return ProtocolDescription.DEFAULT;
+    }
+
+    /**
+     * @param deploymentMethod
+     * @return
+     */
+    private <T> T invoke(Class<T> type, Method deploymentMethod) {
+        try {
+            return type.cast(deploymentMethod.invoke(null));
+        } catch (Exception e) {
+            throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
+        }
+    }
+
+    private void sortByDeploymentOrder(List<DeploymentDescription> deploymentDescriptions) {
+        // sort them by order
+        Collections.sort(deploymentDescriptions, new Comparator<DeploymentDescription>() {
+            public int compare(DeploymentDescription d1, DeploymentDescription d2) {
+                return new Integer(d1.getOrder()).compareTo(d2.getOrder());
+            }
+        });
+    }
 }

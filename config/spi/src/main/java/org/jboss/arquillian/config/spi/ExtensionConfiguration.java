@@ -18,11 +18,9 @@ package org.jboss.arquillian.config.spi;
 
 /**
  * A marker for extension configuration implementations.
- * 
+ *
  * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * 
  */
-public interface ExtensionConfiguration
-{
+public interface ExtensionConfiguration {
 
 }

@@ -32,54 +32,45 @@ import org.jboss.arquillian.core.spi.EventContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerDeploymentContextHandler
-{
-   @Inject 
-   private Instance<ContainerContext> containerContext;
+public class ContainerDeploymentContextHandler {
+    @Inject
+    private Instance<ContainerContext> containerContext;
 
-   @Inject 
-   private Instance<DeploymentContext> deploymentContext;
+    @Inject
+    private Instance<DeploymentContext> deploymentContext;
 
-   /*
-    * Container Level
-    * 
-    * Activate ContainerContext on all Container Events
-    * 
-    */
-   public void createContainerContext(@Observes EventContext<ContainerControlEvent> context)
-   {
-      ContainerContext containerContext = this.containerContext.get();
-      ContainerControlEvent event = context.getEvent();
+    /*
+     * Container Level
+     *
+     * Activate ContainerContext on all Container Events
+     *
+     */
+    public void createContainerContext(@Observes EventContext<ContainerControlEvent> context) {
+        ContainerContext containerContext = this.containerContext.get();
+        ContainerControlEvent event = context.getEvent();
 
-      try
-      {
-         containerContext.activate(event.getContainerName());
-         context.proceed();
-      }
-      finally
-      {
-         containerContext.deactivate();
-      }
-   }
+        try {
+            containerContext.activate(event.getContainerName());
+            context.proceed();
+        } finally {
+            containerContext.deactivate();
+        }
+    }
 
-   /*
-    * Deployment Level
-    * 
-    * Activate DeploymentContext on all Deployment Events
-    */
-   public void createDeploymentContext(@Observes EventContext<DeploymentEvent> context)
-   {
-      DeploymentContext deploymentContext = this.deploymentContext.get();
-      try
-      {
-         DeploymentEvent event = context.getEvent();
-         deploymentContext.activate(event.getDeployment());
+    /*
+     * Deployment Level
+     *
+     * Activate DeploymentContext on all Deployment Events
+     */
+    public void createDeploymentContext(@Observes EventContext<DeploymentEvent> context) {
+        DeploymentContext deploymentContext = this.deploymentContext.get();
+        try {
+            DeploymentEvent event = context.getEvent();
+            deploymentContext.activate(event.getDeployment());
 
-         context.proceed();
-      }
-      finally
-      {
-         deploymentContext.deactivate();
-      }
-   }
+            context.proceed();
+        } finally {
+            deploymentContext.deactivate();
+        }
+    }
 }

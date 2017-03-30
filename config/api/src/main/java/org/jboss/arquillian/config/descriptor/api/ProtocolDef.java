@@ -24,13 +24,12 @@ import java.util.Map;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ProtocolDef extends ContainerDef
-{
-   String getType();
-   
-   ProtocolDef setType(String type);
-   
-   ProtocolDef property(String name, String value);
-   
-   Map<String, String> getProtocolProperties();
+public interface ProtocolDef extends ContainerDef {
+    String getType();
+
+    ProtocolDef setType(String type);
+
+    ProtocolDef property(String name, String value);
+
+    Map<String, String> getProtocolProperties();
 }

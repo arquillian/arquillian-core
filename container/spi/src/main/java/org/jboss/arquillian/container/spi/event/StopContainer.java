@@ -26,10 +26,8 @@ import org.jboss.arquillian.container.spi.Container;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class StopContainer extends ContainerControlEvent
-{
-   public StopContainer(Container container)
-   {
-      super(container);
-   }
+public class StopContainer extends ContainerControlEvent {
+    public StopContainer(Container container) {
+        super(container);
+    }
 }
