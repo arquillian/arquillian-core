@@ -19,6 +19,7 @@ package org.jboss.arquillian.testenricher.resource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Logger;
@@ -191,6 +192,10 @@ public class ResourceInjectionEnricher implements TestEnricher {
     }
 
     protected String getResourceName(Resource resource) {
+        String lookup = tryResourceLookup(resource);
+        if (!lookup.equals("")) {
+            return lookup;
+        }
         String mappedName = resource.mappedName();
         if (!mappedName.equals("")) {
             return mappedName;
@@ -200,5 +205,19 @@ public class ResourceInjectionEnricher implements TestEnricher {
             return RESOURCE_LOOKUP_PREFIX + "/" + name;
         }
         return null;
+    }
+
+    protected String tryResourceLookup(Resource resource) {
+        try {
+            // added in Java EE 6 / Java SE 7
+            Method lookup = Resource.class.getDeclaredMethod("lookup");
+            return (String) lookup.invoke(resource);
+        } catch (NoSuchMethodException e) {
+            return "";
+        } catch (IllegalAccessException e) {
+            return "";
+        } catch (InvocationTargetException e) {
+            return "";
+        }
     }
 }
