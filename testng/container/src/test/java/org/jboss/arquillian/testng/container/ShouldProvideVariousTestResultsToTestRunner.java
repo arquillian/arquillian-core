@@ -19,6 +19,7 @@ package org.jboss.arquillian.testng.container;
 
 import java.lang.reflect.Method;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 
 public class ShouldProvideVariousTestResultsToTestRunner {
@@ -40,6 +41,11 @@ public class ShouldProvideVariousTestResultsToTestRunner {
     @org.testng.annotations.Test
     public void shouldProvideFailingTestToRunner() throws Exception {
         Assert.fail("Failing by design");
+    }
+
+    @org.testng.annotations.Test
+    public void shouldProvideSkippingTestToRunner() throws Exception {
+        throw new SkipException("Skipping test", new Throwable("Skip exception"));
     }
 
     @org.testng.annotations.Test(dataProvider = "xx")

@@ -20,6 +20,7 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.testng.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
+import org.testng.SkipException;
 
 public class TestNGTestRunnerTestCase extends Arquillian {
     @Test
@@ -42,6 +43,17 @@ public class TestNGTestRunnerTestCase extends Arquillian {
         Assert.assertNotNull(result);
         Assert.assertEquals(TestResult.Status.FAILED, result.getStatus());
         Assert.assertEquals(AssertionError.class, result.getThrowable().getClass());
+    }
+
+    @Test
+    public void shouldReturnSkippedTest() throws Exception {
+        TestNGTestRunner runner = new TestNGTestRunner();
+        TestResult result =
+            runner.execute(ShouldProvideVariousTestResultsToTestRunner.class, "shouldProvideSkippingTestToRunner");
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+        Assert.assertEquals(SkipException.class, result.getThrowable().getClass());
     }
 
     @Test
