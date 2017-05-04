@@ -233,6 +233,7 @@ public class EJBInjectionEnricher implements TestEnricher {
             "java:global/test/" + fieldType.getSimpleName(),
             "java:global/test/" + fieldType.getSimpleName() + "Bean",
             "java:global/test/" + fieldType.getSimpleName() + "/no-interface",
+            "java:module/" + fieldType.getSimpleName(),
             "test/" + fieldType.getSimpleName() + "Bean/local",
             "test/" + fieldType.getSimpleName() + "Bean/remote",
             "test/" + fieldType.getSimpleName() + "/no-interface",
