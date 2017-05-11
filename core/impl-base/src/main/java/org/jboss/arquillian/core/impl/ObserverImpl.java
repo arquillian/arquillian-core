@@ -126,20 +126,19 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> 
      * Resolve all Observer method arguments. Unresolved argument types wil be null.
      */
     private Object[] resolveArguments(Manager manager, Object event) {
-        Class<?>[] argumentTypes = getMethod().getParameterTypes();
+        final Class<?>[] argumentTypes = getMethod().getParameterTypes();
         int numberOfArguments = argumentTypes.length;
-        ;
 
         // we know that the first Argument is always the Event, and it will be there else this wouldn't be a Observer method
         Object[] arguments = new Object[numberOfArguments];
         arguments[0] = event;
 
         for (int i = 1; i < numberOfArguments; i++) {
-            Class<?> argumentType = argumentTypes[i];
+            final Class<?> argumentType = argumentTypes[i];
             arguments[i] = manager.resolve(argumentType);
-            if (arguments[i] == null) {
-                log.warning(String.format("Argument %d for %s.%s is null. It won't be invoked.", i,
-                    getMethod().getDeclaringClass().getSimpleName(), getMethod().getName()));
+            if (RuntimeLogger.DEBUG && arguments[i] == null) {
+                log.warning(String.format("Argument %d for %s#%s is null. Observer method won't be invoked.", i,
+                    getMethod().getDeclaringClass().getName(), getMethod().getName()));
             }
         }
         return arguments;
