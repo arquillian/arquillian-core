@@ -137,7 +137,7 @@ public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> 
         for (int i = 1; i < numberOfArguments; i++) {
             Class<?> argumentType = argumentTypes[i];
             arguments[i] = manager.resolve(argumentType);
-            if (arguments[i] == null) {
+            if (RuntimeLogger.DEBUG && arguments[i] == null) {
                 log.warning(String.format("Argument %d for %s.%s is null. It won't be invoked.", i,
                     getMethod().getDeclaringClass().getSimpleName(), getMethod().getName()));
             }
