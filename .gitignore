@@ -11,6 +11,7 @@
 
 # Maven
 target/
+timing.properties
 
 #Gradle
 .gradle
