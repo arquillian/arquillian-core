@@ -17,8 +17,10 @@
  */
 package org.jboss.arquillian.protocol.servlet;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,11 +43,11 @@ import org.junit.Before;
  * @version $Revision: $
  */
 public class AbstractServerBase {
-    protected Server server;
+    private Server server;
 
     @Before
     public void setup() throws Exception {
-        server = new Server(8181);
+        server = new Server(getAvailableLocalPort());
 
         ServletContextHandler root = new ServletContextHandler(ServletContextHandler.SESSIONS);
         root.setContextPath("/arquillian-protocol");
@@ -58,6 +60,18 @@ public class AbstractServerBase {
     public void cleanup() throws Exception {
         MockTestRunner.clear();
         server.stop();
+    }
+
+    private int getAvailableLocalPort() throws IOException {
+        ServerSocket socket = null;
+        try {
+            socket = new ServerSocket(0);
+            return socket.getLocalPort();
+        } finally {
+            if (socket != null) {
+                socket.close();
+            }
+        }
     }
 
     protected Collection<HTTPContext> createContexts() {
