@@ -73,7 +73,7 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
     public void shouldBeAbleToLoadConfiguredXMLFileResource() throws Exception {
         validate(
                 ConfigurationRegistrar.ARQUILLIAN_XML_PROPERTY,
-                "src/test/resources/registrar_tests/named_arquillian.xml",
+                "registrar_tests/named_arquillian.xml",
                 new AssertCallback() {
                     @Override
                     public void validate() {
@@ -124,7 +124,7 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
     public void shouldBeAbleToLoadConfiguredPropertiesFileResource() throws Exception {
         validate(
                 ConfigurationRegistrar.ARQUILLIAN_PROP_PROPERTY,
-                "src/test/resources/registrar_tests/named_arquillian.properties",
+                "registrar_tests/named_arquillian.properties",
                 new AssertCallback() {
                     @Override
                     public void validate() {
