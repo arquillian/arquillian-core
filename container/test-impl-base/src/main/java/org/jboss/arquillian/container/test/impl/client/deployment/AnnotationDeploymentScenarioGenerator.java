@@ -120,8 +120,9 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
         }
 
         if (deploymentMethod.isAnnotationPresent(ShouldThrowException.class)) {
-            deployment.setExpectedException(deploymentMethod.getAnnotation(ShouldThrowException.class).value());
-            deployment.shouldBeTestable(false); // can't test against failing deployments
+            ShouldThrowException shouldThrowException = deploymentMethod.getAnnotation(ShouldThrowException.class);
+            deployment.setExpectedException(shouldThrowException.value());
+            deployment.shouldBeTestable(shouldThrowException.testable());
         }
 
         return deployment;

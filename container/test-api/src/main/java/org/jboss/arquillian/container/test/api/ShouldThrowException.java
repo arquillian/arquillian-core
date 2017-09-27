@@ -37,8 +37,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * }
  * </code></pre>
  * <p>
- * Adding the @ShouldThrowException annotation will force the @{@link Deployment} to be testable = false which again
- * will force a @{@link RunAsClient} test run mode.
+ * Adding the @ShouldThrowException annotation will force the @{@link Deployment} to be <code>testable = false</code> which again
+ * will force a @{@link RunAsClient} test run mode, unless you explicitly mark <code>testable = true</code>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -48,4 +48,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.METHOD)
 public @interface ShouldThrowException {
     Class<? extends Exception> value() default Exception.class;
+
+    /**
+     * @return whether or not this deployment is intended to be testable, default is false
+     */
+    boolean testable() default false;
 }
