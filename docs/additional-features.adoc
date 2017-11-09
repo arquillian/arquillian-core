@@ -34,14 +34,14 @@ want to test how others (people, or other programs) interact with the
 application. Typically, you want to make sure that every use case and
 execution path is fully tested. Third parties can interact with your
 application in a number of ways, for example web services, remote EJBs
-or via http. You need to check that you object serialization or
+or via HTTP. You need to check that your object serialization or
 networking work for instance.
 
 This is why Arquillian comes with two run modes, `in container` and
 `as client`. `in container` is to test your application internals and
-`as client` is to test how your application is used by clients. Lets
+`as client` is to test how your application is used by clients. Let's
 dive a bit deeper into the differences between the run modes and see how
-they effect your test execution and packaging.
+they affect your test execution and packaging.
 
 [[container-mode]]
 ===== Container mode: @Deployment(testable = true)
@@ -96,11 +96,11 @@ public class LocalRunServletTestCase {
 It is also possible to mix the two run modes within the same test class.
 If you have defined the `Deployment` to be testable, you can specify the
 `@Test` method to use run mode `as client` by using the `@RunAsClient`
-annotation. This will allow two method within the same test class to run
-in different modes. This can be useful if you in a run `as client` mode
-want to execute against a remote endpoint in your application, for then
-in the next test method assert on server side state the remote endpoint
-might have created.
+annotation. This will allow two methods within the same test class to run
+in different modes. This can be useful if, in `as client` mode, you
+want to execute against a remote endpoint in your application, and then
+in the next test method, use `in container` mode to verify some state
+the previous remote invocation created on the server side.
 
 [source,java]
 ----
@@ -120,7 +120,7 @@ public void shouldBeAbleToRunOnClientSide() throws Exception {
 }
 ----
 
-The effect of the different run modes depend on the
+The effect of the different run modes depends on the
 `DeployableContainer` used. Both modes might seem to behave the same in
 some Embedded containers, but you should avoid mixing your internal and
 external tests. One thing is that they should test different aspects of
