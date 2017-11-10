@@ -28,7 +28,7 @@ container.
 _So what is the container that Arquillian uses? Is it some proprietary testing
 container that emulates the behavior of the technology (Java EE)?_
 
-Nope!It's pluggable. It can be your target runtime, such as JBoss AS,
+Nope! It's pluggable. It can be your target runtime, such as JBoss AS,
 GlassFish or Tomcat. Or it can even been an embedded container such as
 OpenEJB, GlassFish Embedded or Weld SE. You can even use one container
 for development and another for continuous integration.
