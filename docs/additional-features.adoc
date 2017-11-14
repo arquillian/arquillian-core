@@ -208,14 +208,14 @@ the request URI up through the context path.
 ==== Multiple Deployments
 
 Sometimes a single `Deployment` is not enough, and you need to specify
-more then one to get your test done.
+more than one to get your test done.
 
 _Maybe you want to test communication between two different web applications?_
 
-Arquillian supports this as well. Simple just add more `@Deployment` methods
-to the test class and your done. You can use the `@Deployment.order` if they
-need to be deployed in a specific order. When dealing with multiple in
-container deployments you need to specify which `Deployment` context the
+Arquillian supports this as well. Simply just add more `@Deployment` methods
+to the test class and you're done. You can use the `@Deployment.order` if they
+need to be deployed in a specific order. When dealing with multiple `in
+container` deployments, you need to specify which `Deployment` context the
 individual test methods should run in. You do this by adding a name to
 the deployment by using the `@Deployment.name` and refer to that name on
 the test method by adding `@OperateOnDeployment("deploymentName")`.
