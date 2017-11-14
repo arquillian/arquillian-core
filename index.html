@@ -1713,16 +1713,16 @@ the request URI up through the context path.
 <h4 id="multiple-deployments"><a class="anchor" href="#multiple-deployments"></a>2.6.4. Multiple Deployments</h4>
 <div class="paragraph">
 <p>Sometimes a single <code>Deployment</code> is not enough, and you need to specify
-more then one to get your test done.</p>
+more than one to get your test done.</p>
 </div>
 <div class="paragraph">
 <p><em>Maybe you want to test communication between two different web applications?</em></p>
 </div>
 <div class="paragraph">
-<p>Arquillian supports this as well. Simple just add more <code>@Deployment</code> methods
-to the test class and your done. You can use the <code>@Deployment.order</code> if they
-need to be deployed in a specific order. When dealing with multiple in
-container deployments you need to specify which <code>Deployment</code> context the
+<p>Arquillian supports this as well. Simply just add more <code>@Deployment</code> methods
+to the test class and you&#8217;re done. You can use the <code>@Deployment.order</code> if they
+need to be deployed in a specific order. When dealing with multiple <code>in
+container</code> deployments, you need to specify which <code>Deployment</code> context the
 individual test methods should run in. You do this by adding a name to
 the deployment by using the <code>@Deployment.name</code> and refer to that name on
 the test method by adding <code>@OperateOnDeployment("deploymentName")</code>.</p>
@@ -2903,7 +2903,7 @@ maven to download all the required jars.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-10 07:13:45 UTC
+Last updated 2017-11-14 06:23:21 UTC
 </div>
 </div>
 </body>
