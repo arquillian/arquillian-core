@@ -187,6 +187,22 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
     }
 
     @Test
+    public void shouldReadExpectedAndOverrideDeploymentWhenTestable() {
+        List<DeploymentDescription> scenario = generate(ExpectedDeploymentExceptionSetTestable.class);
+
+        Assert.assertNotNull(scenario);
+        Assert.assertEquals(
+            "Verify all deployments were found",
+            1, scenario.size());
+
+        DeploymentDescription deploymentOne = scenario.get(0);
+
+        Assert.assertEquals(true, deploymentOne.testable());
+        Assert.assertTrue(Validate.isArchiveOfType(JavaArchive.class, deploymentOne.getArchive()));
+        Assert.assertEquals(Exception.class, deploymentOne.getExpectedException());
+    }
+
+    @Test
     public void shouldAllowNoDeploymentPresent() throws Exception {
         List<DeploymentDescription> descriptors = generate(DeploymentNotPresent.class);
 
@@ -312,8 +328,17 @@ public class AnnotationDeploymentScenarioGeneratorTestCase {
 
     @SuppressWarnings("unused")
     private static class ExpectedDeploymentExceptionSet {
-        @Deployment(name = "second", testable = true) // testable should be overwritten by @Expected
+        @Deployment(name = "second", testable = true) // testable should be overwritten by @ShouldThrowException
         @ShouldThrowException
+        public static Archive<?> deploymentOne() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static class ExpectedDeploymentExceptionSetTestable {
+        @Deployment(name = "second", testable = false)
+        @ShouldThrowException(testable = true)
         public static Archive<?> deploymentOne() {
             return ShrinkWrap.create(JavaArchive.class);
         }
