@@ -64,7 +64,7 @@ public class ServiceRegistryLoader implements ServiceLoader {
         }
         if (all.size() > 1) {
             throw new IllegalStateException(
-                "Multiple service implementations found for " + serviceClass + ". " + toClassString(all));
+                "Multiple service implementations found for " + serviceClass + ": " + toClassString(all));
         }
         return null;
     }
