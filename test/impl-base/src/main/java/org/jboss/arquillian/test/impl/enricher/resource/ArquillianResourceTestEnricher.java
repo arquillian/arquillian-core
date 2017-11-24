@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -39,6 +40,9 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @version $Revision: $
  */
 public class ArquillianResourceTestEnricher implements TestEnricher {
+
+    private Logger logger = Logger.getLogger(ArquillianResourceTestEnricher.class.getName());
+
     @Inject
     private Instance<ServiceLoader> loader;
 
@@ -106,15 +110,21 @@ public class ArquillianResourceTestEnricher implements TestEnricher {
      */
     private Object lookup(Class<?> type, ArquillianResource resource, List<Annotation> qualifiers) {
         Collection<ResourceProvider> resourceProviders = loader.get().all(ResourceProvider.class);
+        List<ResourceProvider> failedToLookUpResources = new ArrayList<ResourceProvider>();
         for (ResourceProvider resourceProvider : resourceProviders) {
             if (resourceProvider.canProvide(type)) {
                 Object value = resourceProvider.lookup(resource, qualifiers.toArray(new Annotation[0]));
                 if (value == null) {
-                    throw new RuntimeException(
-                        "Provider for type " + type + " returned a null value: " + resourceProvider);
+                    logger.warning("Provider for type " + type + " returned a null value: " + resourceProvider);
+                    failedToLookUpResources.add(resourceProvider);
+                    continue;
                 }
                 return value;
             }
+        }
+        if (!failedToLookUpResources.isEmpty()) {
+            throw new RuntimeException(
+                "All Providers for type " + type + " returned a null value: " + failedToLookUpResources);
         }
         throw new IllegalArgumentException("No ResourceProvider found for type: " + type);
     }

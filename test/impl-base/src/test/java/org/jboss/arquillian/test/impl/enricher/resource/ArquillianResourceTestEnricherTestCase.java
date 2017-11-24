@@ -17,14 +17,21 @@
  */
 package org.jboss.arquillian.test.impl.enricher.resource;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -34,6 +41,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +63,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase {
+
+    private static Logger log = Logger.getLogger(ArquillianResourceTestEnricher.class.getName());
+    private static OutputStream logCapturingStream;
+    private static StreamHandler customLogHandler;
+
     @Inject
     private Instance<Injector> injector;
 
@@ -65,15 +78,46 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
     private ResourceProvider resourceProvider;
 
     @Mock
+    private ResourceProvider resourceProvider1;
+
+    @Mock
     private Object resource;
 
+    private List<ResourceProvider> resourceProviders = new ArrayList<ResourceProvider>();
+
+    public void attachLogCapturer() {
+        logCapturingStream = new ByteArrayOutputStream();
+        Handler[] handlers = log.getParent().getHandlers();
+        customLogHandler = new StreamHandler(logCapturingStream, handlers[0].getFormatter());
+        log.addHandler(customLogHandler);
+    }
+
+    @After
+    public void detachLagCapturer() {
+        log.removeHandler(customLogHandler);
+        customLogHandler = null;
+        try {
+            logCapturingStream.close();
+        } catch (IOException e) {
+            throw new IllegalStateException("Potential memory leak as log capturing stream could not be closed");
+        }
+        logCapturingStream = null;
+    }
+
+    public String getTestCapturedLog() throws IOException {
+        customLogHandler.flush();
+        return logCapturingStream.toString();
+    }
+
     @Before
-    public void addServiceLoader() throws Exception {
-        List<ResourceProvider> resourceProviders = Arrays.asList(resourceProvider);
+    public void addServiceLoaderAndLogCapturer() throws Exception {
+        resourceProviders.add(resourceProvider);
         Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
         Mockito.when(resourceProvider.canProvide(Object.class)).thenReturn(true);
 
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+
+        attachLogCapturer();
     }
 
     @Test
@@ -130,6 +174,65 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         enricher.enrich(test);
 
         Assert.assertEquals(resource, test.resource2);
+    }
+
+    @Test
+    public void shouldBeAbleToInjectBaseContextWithNonNullLookupFromOneProviderOutOfMultipleResourceProviders() throws Exception {
+        resourceProviders.add(resourceProvider1);
+        Mockito.when(resourceProvider1.canProvide(Object.class)).thenReturn(true);
+
+        Mockito.when(resourceProvider.lookup(
+            (ArquillianResource) Mockito.any(),
+            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+            .thenReturn(null);
+
+        Mockito.when(resourceProvider1.lookup(
+            (ArquillianResource) Mockito.any(),
+            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+            .thenReturn(resource);
+
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
+
+        ObjectClass test = new ObjectClass();
+        enricher.enrich(test);
+
+        Assert.assertEquals(resource, test.resource);
+        Assert.assertTrue(getTestCapturedLog().contains("Provider for type class java.lang.Object returned a null value: resourceProvider"));
+    }
+
+    @Test
+    public void shouldBeAbleToThrowExceptionWithMultipleResourceProvidersWhichProvidesNullLookUp() throws Exception {
+        resourceProviders.add(resourceProvider1);
+        Mockito.when(resourceProvider1.canProvide(Object.class)).thenReturn(true);
+
+        Mockito.when(resourceProvider.lookup(
+            (ArquillianResource) Mockito.any(),
+            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+            .thenReturn(null);
+
+        Mockito.when(resourceProvider1.lookup(
+            (ArquillianResource) Mockito.any(),
+            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+            .thenReturn(null);
+
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
+
+        ObjectClass test = new ObjectClass();
+        Throwable cause = null;
+        try {
+            enricher.enrich(test);
+        } catch (RuntimeException ex) {
+            cause = ex.getCause();
+        }
+
+        Assert.assertEquals(RuntimeException.class, cause.getClass());
+
+        final String capturedLog = getTestCapturedLog();
+
+        Assert.assertTrue(capturedLog.contains("WARNING: Provider for type class java.lang.Object returned a null value: resourceProvider"));
+        Assert.assertTrue(capturedLog.contains("WARNING: Provider for type class java.lang.Object returned a null value: resourceProvider1"));
     }
 
     @Test
