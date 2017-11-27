@@ -26,6 +26,7 @@
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.12</version.junit>
     <version.mockito_all>1.10.19</version.mockito_all>
+    <version.jcommander>1.69</version.jcommander>
     <version.testng>6.13</version.testng>
     <version.assertj>2.5.0</version.assertj>
   </properties>
@@ -59,6 +60,13 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- JCommander 1.66 is missing in Maven Central, thus taking newer one first -->
+      <dependency>
+        <groupId>com.beust</groupId>
+        <artifactId>jcommander</artifactId>
+        <version>1.69</version>
         <scope>test</scope>
       </dependency>
       <dependency>
