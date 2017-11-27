@@ -61,7 +61,7 @@ public class TestListener implements ITestListener {
             return TestResult.failed(
                 context.getFailedTests().getAllResults().iterator().next().getThrowable());
         } else if (context.getSkippedTests().size() > 0) {
-            return TestResult.skipped();
+            return TestResult.skipped().setThrowable(context.getSkippedTests().getAllResults().iterator().next().getThrowable());
         }
         if (context.getPassedTests().size() > 0) {
             return TestResult.passed().setThrowable(
