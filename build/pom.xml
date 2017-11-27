@@ -62,6 +62,7 @@
         <version>${version.junit}</version>
         <scope>test</scope>
       </dependency>
+      <!-- Workaround https://github.com/cbeust/testng/issues/1506#issuecomment-347178740 -->
       <!-- JCommander 1.66 is missing in Maven Central, thus taking newer one first -->
       <dependency>
         <groupId>com.beust</groupId>
