@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.testng;
 
 import java.lang.reflect.Method;
-
 import org.testng.annotations.DataProvider;
 
 /**
@@ -28,16 +27,15 @@ import org.testng.annotations.DataProvider;
  */
 public class TestEnricherDataProvider {
 
-	public static final String PROVIDER_NAME = "enrich";
-	
-	@DataProvider(name = PROVIDER_NAME)
-	public static Object[][] enrich(Method method) 
-	{
-	   // actual enrichment happens inside a Observer
-		Object[] parameterValues = new Object[method.getParameterTypes().length]; 
-		Object[][] values = new Object[1][method.getParameterTypes().length];
-		values[0] = parameterValues; 
-		
-		return values;
-	}
+    public static final String PROVIDER_NAME = "enrich";
+
+    @DataProvider(name = PROVIDER_NAME)
+    public static Object[][] enrich(Method method) {
+        // actual enrichment happens inside a Observer
+        Object[] parameterValues = new Object[method.getParameterTypes().length];
+        Object[][] values = new Object[1][method.getParameterTypes().length];
+        values[0] = parameterValues;
+
+        return values;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,41 +24,41 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestEvent extends ClassEvent
-{
-   private Object testInstance;
-   private Method testMethod;
+public class TestEvent extends ClassEvent {
+    private Object testInstance;
+    private Method testMethod;
 
-   /**
-    * @param testInstance The test case instance
-    * @param testMethod The test method 
-    * @throws IllegalArgumentException if testInstance is null
-    * @throws IllegalArgumentException if testMethod is null
-    */
-   public TestEvent(Object testInstance, Method testMethod)
-   {
-      super(validateAndExtractClass(testInstance, testMethod));
-      
-      this.testInstance = testInstance;
-      this.testMethod = testMethod;
-   }
+    /**
+     * @param testInstance
+     *     The test case instance
+     * @param testMethod
+     *     The test method
+     *
+     * @throws IllegalArgumentException
+     *     if testInstance is null
+     * @throws IllegalArgumentException
+     *     if testMethod is null
+     */
+    public TestEvent(Object testInstance, Method testMethod) {
+        super(validateAndExtractClass(testInstance, testMethod));
 
-   // TODO: eeehh..? 
-   private static Class<?> validateAndExtractClass(Object testInstance, Method testMethod) 
-   {
-      Validate.notNull(testInstance, "TestInstance must be specified");
-      Validate.notNull(testMethod, "TestMethod must be specified");
-      
-      return testInstance.getClass();
-   }
-   
-   public Object getTestInstance()
-   {
-      return testInstance;
-   }
-   
-   public Method getTestMethod()
-   {
-      return testMethod;
-   }
+        this.testInstance = testInstance;
+        this.testMethod = testMethod;
+    }
+
+    // TODO: eeehh..?
+    private static Class<?> validateAndExtractClass(Object testInstance, Method testMethod) {
+        Validate.notNull(testInstance, "TestInstance must be specified");
+        Validate.notNull(testMethod, "TestMethod must be specified");
+
+        return testInstance.getClass();
+    }
+
+    public Object getTestInstance() {
+        return testInstance;
+    }
+
+    public Method getTestMethod() {
+        return testMethod;
+    }
 }

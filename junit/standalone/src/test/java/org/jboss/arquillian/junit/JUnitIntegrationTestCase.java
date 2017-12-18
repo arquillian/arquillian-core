@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,10 +16,6 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.Assert;
@@ -28,6 +24,9 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
@@ -36,20 +35,18 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class JUnitIntegrationTestCase extends JUnitTestBaseClass
-{
-   @Test
-   public void shouldCallAllMethodsWithRealAdapter() throws Exception
-   {
-      System.setProperty("arquillian.debug", "true");
-      TestRunnerAdaptor adaptor = spy(TestRunnerAdaptorBuilder.build());
+public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
+    @Test
+    public void shouldCallAllMethodsWithRealAdapter() throws Exception {
+        System.setProperty("arquillian.debug", "true");
+        TestRunnerAdaptor adaptor = spy(TestRunnerAdaptorBuilder.build());
 
-      Result result = run(adaptor, ArquillianClass1.class);
+        Result result = run(adaptor, ArquillianClass1.class);
 
-      Assert.assertTrue(result.wasSuccessful());
-      assertCycle(1, Cycle.values());
+        Assert.assertTrue(result.wasSuccessful());
+        assertCycle(1, Cycle.values());
 
-      verify(adaptor, times(1)).beforeSuite();
-      verify(adaptor, times(1)).afterSuite();
-   }
+        verify(adaptor, times(1)).beforeSuite();
+        verify(adaptor, times(1)).afterSuite();
+    }
 }

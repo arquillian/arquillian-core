@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.spi.EventPoint;
 import org.jboss.arquillian.core.spi.InvocationException;
@@ -30,56 +29,47 @@ import org.jboss.arquillian.core.spi.InvocationException;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventPointImpl implements EventPoint
-{
-   private Object target;
-   private Field field;
+public class EventPointImpl implements EventPoint {
+    private Object target;
+    private Field field;
 
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   public static EventPointImpl of(Object target, Field field)
-   {
-      return new EventPointImpl(target, field);
-   }
+    EventPointImpl(Object target, Field field) {
+        this.target = target;
+        this.field = field;
+    }
 
-   EventPointImpl(Object target, Field field)
-   {
-      this.target = target;
-      this.field = field;
-   }
+    public static EventPointImpl of(Object target, Field field) {
+        return new EventPointImpl(target, field);
+    }
 
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - EventPoint ----------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - EventPoint ----------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Typed#getType()
-    */
-   @Override
-   public Type getType()
-   {
-      return (Class<?>) ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
-    */
-   @Override
-   public void set(Event<?> value) throws InvocationException
-   {
-      try
-      {
-         if(!field.isAccessible())
-         {
-            field.setAccessible(true);
-         }
-         field.set(target, value);
-      }
-      catch (Exception e) 
-      {
-         throw new InvocationException(e);
-      }
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Typed#getType()
+     */
+    @Override
+    public Type getType() {
+        return ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
+     */
+    @Override
+    public void set(Event<?> value) throws InvocationException {
+        try {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            field.set(target, value);
+        } catch (Exception e) {
+            throw new InvocationException(e);
+        }
+    }
 }

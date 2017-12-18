@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,19 +20,19 @@ import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * Extension point to alter system defined deployments.
- * 
+ * <p>
  * Example:
  * - Add beans.xml to EE modules
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface AuxiliaryArchiveProcessor
-{
-   /**
-    * Called once for each found ArchiveAppender
-    * 
-    * @param auxiliaryArchive The system defined deployment archive
-    */
-   void process(Archive<?> auxiliaryArchive);
+public interface AuxiliaryArchiveProcessor {
+    /**
+     * Called once for each found ArchiveAppender
+     *
+     * @param auxiliaryArchive
+     *     The system defined deployment archive
+     */
+    void process(Archive<?> auxiliaryArchive);
 }

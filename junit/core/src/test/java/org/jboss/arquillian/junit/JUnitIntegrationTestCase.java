@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,18 +16,9 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -43,6 +34,13 @@ import org.junit.runner.notification.RunListener;
 import org.mockito.internal.stubbing.answers.ThrowsException;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
@@ -51,10 +49,10 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class JUnitIntegrationTestCase extends JUnitTestBaseClass 
+public class JUnitIntegrationTestCase extends JUnitTestBaseClass
 {
    @Test
-   public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception 
+   public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
@@ -134,7 +132,7 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }
-   
+
    /*
     * ARQ-391, After not called when Error's are thrown, e.g. AssertionError
     */
@@ -238,7 +236,6 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass
       Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterException"));
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
       assertCycle(0, Cycle.TEST);
-
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }

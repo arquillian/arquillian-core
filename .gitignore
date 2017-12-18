@@ -11,6 +11,7 @@
 
 # Maven
 target/
+timing.properties
 
 #Gradle
 .gradle
@@ -20,3 +21,8 @@ test-output/
 
 # JBoss AS
 transaction.log
+
+# Floobits
+.floo
+.flooignore
+gh-pages

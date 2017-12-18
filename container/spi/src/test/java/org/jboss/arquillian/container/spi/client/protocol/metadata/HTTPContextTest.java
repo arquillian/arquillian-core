@@ -17,27 +17,24 @@
  */
 package org.jboss.arquillian.container.spi.client.protocol.metadata;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-public class HTTPContextTest
-{
-   static final String TEST_HOST = "localhost";
-   static final int TEST_PORT = 8888;
+import static org.junit.Assert.assertEquals;
 
-   @Test
-   public void testHTTPContext()
-   {
-      HTTPContext httpContext = new HTTPContext(TEST_HOST, TEST_PORT);
+public class HTTPContextTest {
+    static final String TEST_HOST = "localhost";
+    static final int TEST_PORT = 8888;
 
-      assertEquals(TEST_HOST, httpContext.getHost());
-      assertEquals(TEST_PORT, httpContext.getPort());
-   }
+    @Test
+    public void testHTTPContext() {
+        HTTPContext httpContext = new HTTPContext(TEST_HOST, TEST_PORT);
 
-   @Test(expected=IllegalArgumentException.class)
-   public void testHTTPContextForNullHost()
-   {
-      new HTTPContext(null, TEST_PORT);
-   }
+        assertEquals(TEST_HOST, httpContext.getHost());
+        assertEquals(TEST_PORT, httpContext.getPort());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testHTTPContextForNullHost() {
+        new HTTPContext(null, TEST_PORT);
+    }
 }

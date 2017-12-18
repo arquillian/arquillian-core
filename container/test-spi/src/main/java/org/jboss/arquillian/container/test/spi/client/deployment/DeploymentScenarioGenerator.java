@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.spi.client.deployment;
 
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.test.spi.TestClass;
 
@@ -27,13 +26,14 @@ import org.jboss.arquillian.test.spi.TestClass;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface DeploymentScenarioGenerator
-{
-   /**
-    * Extract all meta data related to a {@link TestClass}.
-    *  
-    * @param testClass Data to extract meta data based on.
-    * @return The given {@link TestClass}s {@link DeploymentDescription}s
-    */
-   List<DeploymentDescription> generate(TestClass testClass);
+public interface DeploymentScenarioGenerator {
+    /**
+     * Extract all meta data related to a {@link TestClass}.
+     *
+     * @param testClass
+     *     Data to extract meta data based on.
+     *
+     * @return The given {@link TestClass}s {@link DeploymentDescription}s
+     */
+    List<DeploymentDescription> generate(TestClass testClass);
 }

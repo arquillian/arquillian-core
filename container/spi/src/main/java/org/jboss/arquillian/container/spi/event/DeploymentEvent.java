@@ -27,29 +27,25 @@ import org.jboss.arquillian.container.spi.client.deployment.Deployment;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class DeploymentEvent extends ContainerControlEvent
-{
-   private Deployment deployment;
+public abstract class DeploymentEvent extends ContainerControlEvent {
+    private Deployment deployment;
 
-   public DeploymentEvent(Container container, Deployment deployment)
-   {
-      super(container);
-      this.deployment = deployment;
-   }
+    public DeploymentEvent(Container container, Deployment deployment) {
+        super(container);
+        this.deployment = deployment;
+    }
 
-   /**
-    * @return
-    */
-   public DeployableContainer<?> getDeployableContainer()
-   {
-      return getContainer().getDeployableContainer();
-   }
-   
-   /**
-    * @return
-    */
-   public Deployment getDeployment()
-   {
-      return deployment;
-   }
+    /**
+     * @return
+     */
+    public DeployableContainer<?> getDeployableContainer() {
+        return getContainer().getDeployableContainer();
+    }
+
+    /**
+     * @return
+     */
+    public Deployment getDeployment() {
+        return deployment;
+    }
 }

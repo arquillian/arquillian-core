@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
-import org.jboss.arquillian.config.descriptor.api.Multiline;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -26,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.jboss.arquillian.config.descriptor.api.Multiline;
 
 /**
  * MapObjectPopulator
@@ -33,104 +32,78 @@ import java.util.logging.Logger;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class MapObject
-{
+public class MapObject {
 
-   public static Logger log = Logger.getLogger(MapObject.class.getName());
+    public static Logger log = Logger.getLogger(MapObject.class.getName());
 
-   public static void populate(Object object, Map<String, String> values) throws Exception
-   {
-      final Map<String, String> clonedValues = new HashMap<String, String>(values);
-      final Set<String> candidates = new HashSet<String>();
-      final Class<?> clazz = object.getClass();
-      for (Method candidate : clazz.getMethods())
-      {
-         if (isSetter(candidate))
-         {
-            candidate.setAccessible(true);
-            final String methodName = candidate.getName();
-            String propertyName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
-            candidates.add(propertyName);
-            if (clonedValues.containsKey(propertyName))
-            {
-               if (shouldBeTrimmed(candidate))
-               {
-                  String trimmed = MultilineTrimmer.trim(clonedValues.get(propertyName));
-                  clonedValues.put(propertyName, trimmed);
-               }
-               candidate.invoke(
-                     object,
-                     convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
-               clonedValues.remove(propertyName);
+    public static void populate(Object object, Map<String, String> values) throws Exception {
+        final Map<String, String> clonedValues = new HashMap<String, String>(values);
+        final Set<String> candidates = new HashSet<String>();
+        final Class<?> clazz = object.getClass();
+        for (Method candidate : clazz.getMethods()) {
+            if (isSetter(candidate)) {
+                candidate.setAccessible(true);
+                final String methodName = candidate.getName();
+                String propertyName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
+                candidates.add(propertyName);
+                if (clonedValues.containsKey(propertyName)) {
+                    if (shouldBeTrimmed(candidate)) {
+                        String trimmed = MultilineTrimmer.trim(clonedValues.get(propertyName));
+                        clonedValues.put(propertyName, trimmed);
+                    }
+                    candidate.invoke(
+                        object,
+                        convert(candidate.getParameterTypes()[0], clonedValues.get(propertyName)));
+                    clonedValues.remove(propertyName);
+                }
             }
-         }
-      }
-      if(!clonedValues.isEmpty())
-      {
-         log.warning(
-               "Configuration contain properties not supported by the backing object " + clazz.getName() + "\n" +
-                     "Unused property entries: " + clonedValues + "\n" +
-                     "Supported property names: " + candidates);
-      }
-   }
+        }
+        if (!clonedValues.isEmpty()) {
+            log.warning(
+                "Configuration contain properties not supported by the backing object " + clazz.getName() + "\n" +
+                    "Unused property entries: " + clonedValues + "\n" +
+                    "Supported property names: " + candidates);
+        }
+    }
 
-   public static URL[] convert(File[] files)
-   {
-      final URL[] urls = new URL[files.length];
-      try
-      {
-         for(int i = 0 ; i < files.length; i++)
-         {
-            urls[i] = files[i].toURI().toURL();
-         }
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Could not create URL from a File object?", e);
-      }
-      return urls;
-   }
+    public static URL[] convert(File[] files) {
+        final URL[] urls = new URL[files.length];
+        try {
+            for (int i = 0; i < files.length; i++) {
+                urls[i] = files[i].toURI().toURL();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create URL from a File object?", e);
+        }
+        return urls;
+    }
 
-   private static boolean isSetter(Method candidate)
-   {
-      return candidate.getName().matches("^set[A-Z].*") &&
+    private static boolean isSetter(Method candidate) {
+        return candidate.getName().matches("^set[A-Z].*") &&
             candidate.getReturnType().equals(Void.TYPE) &&
             candidate.getParameterTypes().length == 1;
-   }
+    }
 
-   private static boolean shouldBeTrimmed(Method candidate)
-   {
-      return (String.class.equals(candidate.getParameterTypes()[0]) && !candidate.isAnnotationPresent(Multiline.class));
-   }
+    private static boolean shouldBeTrimmed(Method candidate) {
+        return (String.class.equals(candidate.getParameterTypes()[0]) && !candidate.isAnnotationPresent(Multiline.class));
+    }
 
-   /**
-    * Converts a String value to the specified class.
-    * @param clazz
-    * @param value
-    * @return
-    */
-   private static Object convert(Class<?> clazz, String value)
-   {
+    /**
+     * Converts a String value to the specified class.
+     */
+    private static Object convert(Class<?> clazz, String value) {
       /* TODO create a new Converter class and move this method there for reuse */
 
-      if (Integer.class.equals(clazz) || int.class.equals(clazz))
-      {
-         return Integer.valueOf(value);
-      }
-      else if (Double.class.equals(clazz) || double.class.equals(clazz))
-      {
-         return Double.valueOf(value);
-      }
-      else if (Long.class.equals(clazz) || long.class.equals(clazz))
-      {
-         return Long.valueOf(value);
-      }
-      else if (Boolean.class.equals(clazz) || boolean.class.equals(clazz))
-      {
-         return Boolean.valueOf(value);
-      }
+        if (Integer.class.equals(clazz) || int.class.equals(clazz)) {
+            return Integer.valueOf(value);
+        } else if (Double.class.equals(clazz) || double.class.equals(clazz)) {
+            return Double.valueOf(value);
+        } else if (Long.class.equals(clazz) || long.class.equals(clazz)) {
+            return Long.valueOf(value);
+        } else if (Boolean.class.equals(clazz) || boolean.class.equals(clazz)) {
+            return Boolean.valueOf(value);
+        }
 
-      return value;
-   }
-
+        return value;
+    }
 }

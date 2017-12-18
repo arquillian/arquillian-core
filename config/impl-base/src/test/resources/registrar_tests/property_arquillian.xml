@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+    <defaultProtocol type="Foo">
+        <property name="bbb">BBB</property>
+    </defaultProtocol>
+    <container qualifier="A" mode="class">
+        <configuration>
+            <property name="aaa">AAA</property>
+        </configuration>
+    </container>
+    <extension qualifier="EXT1">
+        <property name="ddd">DDD</property>
+    </extension>
+    <group qualifier="Q2">
+        <container qualifier="Q3">
+            <configuration>
+                <property name="eee">EEE</property>
+            </configuration>
+            <protocol type="P1">
+                <property name="fff">FFF</property>
+                <property name="ggg1">${env.ENV1}</property>
+                <property name="ggg2">${env.ENV2}</property>
+                <property name="ggg3">${env.ENV1}</property>
+                <property name="hhh1">${env.ENV3} HHH</property>
+                <property name="hhh2">${env.ENV4} HHH</property>
+                <property name="hhh3">${env.ENV1} HHH</property>
+            </protocol>
+        </container>
+    </group>
+</arquillian>

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.testenricher.cdi.client;
 
 import java.util.Map;
-
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
@@ -32,68 +31,52 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * A {@link ProtocolArchiveProcessor} that will add beans.xml to the protocol unit if one is defined in the test deployment.
+ * A {@link ProtocolArchiveProcessor} that will add beans.xml to the protocol unit if one is defined in the test
+ * deployment.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor
-{
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor#process(org.jboss.arquillian.spi.TestDeployment, org.jboss.shrinkwrap.api.Archive)
-    */
-   @Override
-   public void process(TestDeployment testDeployment, Archive<?> protocolArchive)
-   {
-      if(testDeployment.getApplicationArchive().equals(protocolArchive))
-      {
-         return; // if the protocol is merged in the user Archive, the user is in control.
-      }
-      
-      if(containsBeansXML(testDeployment.getApplicationArchive()))
-      {
-         if(Validate.isArchiveOfType(WebArchive.class, protocolArchive))
-         {
-            if(!protocolArchive.contains("WEB-INF/beans.xml"))
-            {
-               protocolArchive.as(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.deployment.ProtocolArchiveProcessor#process(org.jboss.arquillian.spi.TestDeployment, org.jboss.shrinkwrap.api.Archive)
+     */
+    @Override
+    public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {
+        if (testDeployment.getApplicationArchive().equals(protocolArchive)) {
+            return; // if the protocol is merged in the user Archive, the user is in control.
+        }
+
+        if (containsBeansXML(testDeployment.getApplicationArchive())) {
+            if (Validate.isArchiveOfType(WebArchive.class, protocolArchive)) {
+                if (!protocolArchive.contains("WEB-INF/beans.xml")) {
+                    protocolArchive.as(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                }
+            } else if (Validate.isArchiveOfType(JavaArchive.class, protocolArchive)) {
+                if (!protocolArchive.contains("META-INF/beans.xml")) {
+                    protocolArchive.as(JavaArchive.class).addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                }
             }
-         }
-         else if(Validate.isArchiveOfType(JavaArchive.class, protocolArchive))
-         {
-            if(!protocolArchive.contains("META-INF/beans.xml"))
-            {
-               protocolArchive.as(JavaArchive.class).addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+        }
+    }
+
+    private boolean containsBeansXML(Archive<?> archive) {
+        Map<ArchivePath, Node> content = archive.getContent(Filters.include(".*/beans\\.xml"));
+        if (!content.isEmpty()) {
+            return true;
+        }
+        Map<ArchivePath, Node> nested = archive.getContent(Filters.include("/.*\\.(jar|war)"));
+        if (!nested.isEmpty()) {
+            for (ArchivePath path : nested.keySet()) {
+                try {
+                    if (containsBeansXML(archive.getAsType(GenericArchive.class, path))) {
+                        return true;
+                    }
+                } catch (IllegalArgumentException e) {
+                    // no-op, Nested archive is not a ShrinkWrap archive.
+                }
             }
-         }
-      }
-   }
-   
-   private boolean containsBeansXML(Archive<?> archive)
-   {
-      Map<ArchivePath, Node> content = archive.getContent(Filters.include(".*/beans\\.xml"));
-      if(!content.isEmpty())
-      {
-         return true;
-      }
-      Map<ArchivePath, Node> nested = archive.getContent(Filters.include("/.*\\.(jar|war)"));
-      if(!nested.isEmpty())
-      {
-         for(ArchivePath path : nested.keySet())
-         {
-            try
-            {
-               if(containsBeansXML(archive.getAsType(GenericArchive.class, path))) 
-               {
-                  return true;
-               }
-            }
-            catch (IllegalArgumentException e) 
-            {
-               // no-op, Nested archive is not a ShrinkWrap archive. 
-            }
-         }
-      }
-      return false;
-   }
+        }
+        return false;
+    }
 }

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.spi;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -29,18 +28,16 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerRegistry
-{
+public interface ContainerRegistry {
 
-   Container create(ContainerDef definition, ServiceLoader loader);
+    Container create(ContainerDef definition, ServiceLoader loader);
 
-   Container getContainer(String name);
+    Container getContainer(String name);
 
-   /**
-    * @return the containers
-    */
-   List<Container> getContainers();
+    /**
+     * @return the containers
+     */
+    List<Container> getContainers();
 
-   Container getContainer(TargetDescription target);
-
+    Container getContainer(TargetDescription target);
 }

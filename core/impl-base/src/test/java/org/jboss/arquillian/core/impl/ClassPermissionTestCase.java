@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,26 +17,23 @@
 package org.jboss.arquillian.core.impl;
 
 import java.lang.reflect.Field;
-
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ClassPermissionTestCase
-{
+public class ClassPermissionTestCase {
 
-   @Test
-   public void shouldBeAbleToUseProtectedFieldsAndMethods() throws Exception
-   {
-      Class<?> observerClass = SecurityActions.loadClass(
+    @Test
+    public void shouldBeAbleToUseProtectedFieldsAndMethods() throws Exception {
+        Class<?> observerClass = SecurityActions.loadClass(
             this.getClass().getPackage().getName() + ".test.PrivateObserver");
-      Manager manager = ManagerBuilder.from().extension(observerClass).create();
+        Manager manager = ManagerBuilder.from().extension(observerClass).create();
 
-      manager.fire("Test");
+        manager.fire("Test");
 
-      Field wasCalled = observerClass.getField("wasCalled");
-      wasCalled.setAccessible(true);
-      Assert.assertTrue((Boolean)wasCalled.get(null));
-   }
+        Field wasCalled = observerClass.getField("wasCalled");
+        wasCalled.setAccessible(true);
+        Assert.assertTrue((Boolean) wasCalled.get(null));
+    }
 }

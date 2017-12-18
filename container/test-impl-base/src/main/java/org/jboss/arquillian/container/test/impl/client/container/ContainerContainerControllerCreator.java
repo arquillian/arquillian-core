@@ -32,18 +32,17 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class ContainerContainerControllerCreator
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<ContainerController> controller;
-   
-   @Inject 
-   private Instance<Injector> injector;
+public class ContainerContainerControllerCreator {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ContainerController> controller;
 
-   public void createContainerSideContainerController(@Observes BeforeSuite event)
-   {
-      controller.set(injector.get().inject(new ContainerContainerController()));
-   }
+    @Inject
+    private Instance<Injector> injector;
+
+    public void createContainerSideContainerController(@Observes BeforeSuite event) {
+        controller.set(injector.get().inject(new ContainerContainerController()));
+    }
 }
 
  

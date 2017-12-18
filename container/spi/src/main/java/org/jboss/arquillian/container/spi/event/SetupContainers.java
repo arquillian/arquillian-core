@@ -17,14 +17,12 @@
  */
 package org.jboss.arquillian.container.spi.event;
 
-
 /**
  * StartContainer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SetupContainers implements ContainerMultiControlEvent
-{
+public class SetupContainers implements ContainerMultiControlEvent {
 
 }

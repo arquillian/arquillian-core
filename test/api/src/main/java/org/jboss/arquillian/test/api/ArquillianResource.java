@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,20 +16,20 @@
  */
 package org.jboss.arquillian.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Arquillian has support for multiple injection points like @EJB, @Resources and @Inject, but there are also
  * non standard component model objects available within the Arquillian runtime that can be of useful during testing.
  * <p>
  * Arquillian can expose these objects to the test case using the @ArquillianResource injection annotation.
- *
+ * <p>
  * Usage Example of Field injection:<br/>
  * <pre><code>
  * &#64;ArquillianResource
@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  *      context.lookup("");
  * }
  * </code></pre>
- *
+ * <p>
  * Usage Example of Argument injection:<br/>
  * <pre><code>
  * &#64;Test
@@ -58,10 +58,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface ArquillianResource {
 
-   /**
-    * Defines the resource target for this injection. e.g. Servlet.
-    * 
-    * @return The Target Resource Type
-    */
-   Class<?> value() default ArquillianResource.class;
+    /**
+     * Defines the resource target for this injection. e.g. Servlet.
+     *
+     * @return The Target Resource Type
+     */
+    Class<?> value() default ArquillianResource.class;
 }

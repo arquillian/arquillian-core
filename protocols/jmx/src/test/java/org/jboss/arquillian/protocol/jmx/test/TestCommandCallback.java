@@ -22,25 +22,22 @@ import org.jboss.arquillian.container.test.spi.command.CommandCallback;
 
 /**
  * TestRemoteCommandCallback
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestCommandCallback implements CommandCallback
-{
-   private Object[] results;
-   
-   private int invocationCount = 0;
+public class TestCommandCallback implements CommandCallback {
+    private Object[] results;
 
-   public TestCommandCallback(Object... object)
-   {
-      results = object;
-   }
-   
-   @SuppressWarnings({"rawtypes", "unchecked"})
-   @Override
-   public void fired(Command event)
-   {
-      event.setResult(results[invocationCount++]);
-   }
+    private int invocationCount = 0;
+
+    public TestCommandCallback(Object... object) {
+        results = object;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public void fired(Command event) {
+        event.setResult(results[invocationCount++]);
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,65 +25,51 @@ import java.net.URLClassLoader;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class FilteredURLClassLoader extends URLClassLoader
-{
+public class FilteredURLClassLoader extends URLClassLoader {
 
-   private String regExpFilter;
-   
-   public FilteredURLClassLoader(URL[] urls, String regExpFilter)
-   {
-      super(urls);
-      this.regExpFilter = regExpFilter;
-   }
+    private String regExpFilter;
 
-   public java.lang.Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
-   {
-      if (!name.matches(regExpFilter))
-      {
-         Class<?> c = findLoadedClass(name);
-         if (c == null)
-         {
-            URL resource = super.findResource(name.replace('.', '/').concat(".class"));
-            if (resource != null)
-            {
-               c = super.findClass(name);
+    public FilteredURLClassLoader(URL[] urls, String regExpFilter) {
+        super(urls);
+        this.regExpFilter = regExpFilter;
+    }
+
+    public java.lang.Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        if (!name.matches(regExpFilter)) {
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                URL resource = super.findResource(name.replace('.', '/').concat(".class"));
+                if (resource != null) {
+                    c = super.findClass(name);
+                }
             }
-         }
-         if (c != null) // class found locally
-         {
-            return c;
-         }
-      }
-      try
-      {
-         return getParent().loadClass(name);
-      }
-      catch (ClassNotFoundException e)
-      {
-         return super.loadClass(name, resolve);
-      }
-   }
+            if (c != null) // class found locally
+            {
+                return c;
+            }
+        }
+        try {
+            return getParent().loadClass(name);
+        } catch (ClassNotFoundException e) {
+            return super.loadClass(name, resolve);
+        }
+    }
 
-   public java.net.URL getResource(String name)
-   {
-      java.net.URL url = null;
-      if (!name.matches(regExpFilter))
-      {
-         url = findResource(name);
-         if (url == null)
-         {
-            url = super.findResource(name);
-         }
-         if (url != null)
-         {
-            return url;
-         }
-      }
-      url = getParent().getResource(name);
-      if (url == null)
-      {
-         return super.getResource(name);
-      }
-      return url;
-   }
+    public java.net.URL getResource(String name) {
+        java.net.URL url = null;
+        if (!name.matches(regExpFilter)) {
+            url = findResource(name);
+            if (url == null) {
+                url = super.findResource(name);
+            }
+            if (url != null) {
+                return url;
+            }
+        }
+        url = getParent().getResource(name);
+        if (url == null) {
+            return super.getResource(name);
+        }
+        return url;
+    }
 }

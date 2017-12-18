@@ -30,52 +30,40 @@ import org.jboss.arquillian.core.spi.EventContext;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class ContainerCommandObserver
-{
-   @Inject
-   private Instance<ContainerController> controllerInst;
-   
-   @SuppressWarnings({ "rawtypes", "unchecked" }) // Generics not supported fully by core
-   public void onException(@Observes EventContext<Command> event)
-   {
-      try
-      {
-         event.proceed();
-      }
-      catch (Exception e) 
-      {
-         event.getEvent().setResult("FAILED: " + e.getMessage());
-         event.getEvent().setThrowable(e);
-      }
-   }
-   
-   public void start(@Observes StartContainerCommand event)
-   {
-      if (event.getConfiguration() == null)
-      {
-         controllerInst.get().start(event.getContainerQualifier());
-      }
-      else
-      {
-         controllerInst.get().start(event.getContainerQualifier(), event.getConfiguration());
-      }
-      event.setResult("SUCCESS");
-   }
-   
-   public void stop(@Observes StopContainerCommand event)
-   {
-      controllerInst.get().stop(event.getContainerQualifier());
-      event.setResult("SUCCESS");
-   }
-   
-   public void kill(@Observes KillContainerCommand event)
-   {
-      controllerInst.get().kill(event.getContainerQualifier());
-      event.setResult("SUCCESS");
-   }
+public class ContainerCommandObserver {
+    @Inject
+    private Instance<ContainerController> controllerInst;
 
-   public void isStarted(@Observes ContainerStartedCommand event)
-   {
-      event.setResult(controllerInst.get().isStarted(event.getContainerQualifier()));
-   }
+    @SuppressWarnings({"rawtypes", "unchecked"}) // Generics not supported fully by core
+    public void onException(@Observes EventContext<Command> event) {
+        try {
+            event.proceed();
+        } catch (Exception e) {
+            event.getEvent().setResult("FAILED: " + e.getMessage());
+            event.getEvent().setThrowable(e);
+        }
+    }
+
+    public void start(@Observes StartContainerCommand event) {
+        if (event.getConfiguration() == null) {
+            controllerInst.get().start(event.getContainerQualifier());
+        } else {
+            controllerInst.get().start(event.getContainerQualifier(), event.getConfiguration());
+        }
+        event.setResult("SUCCESS");
+    }
+
+    public void stop(@Observes StopContainerCommand event) {
+        controllerInst.get().stop(event.getContainerQualifier());
+        event.setResult("SUCCESS");
+    }
+
+    public void kill(@Observes KillContainerCommand event) {
+        controllerInst.get().kill(event.getContainerQualifier());
+        event.setResult("SUCCESS");
+    }
+
+    public void isStarted(@Observes ContainerStartedCommand event) {
+        event.setResult(controllerInst.get().isStarted(event.getContainerQualifier()));
+    }
 }

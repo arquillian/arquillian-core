@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,13 +24,14 @@ import java.util.Map;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ProtocolDef extends ContainerDef
-{
-   String getType();
-   
-   ProtocolDef setType(String type);
-   
-   ProtocolDef property(String name, String value);
-   
-   Map<String, String> getProtocolProperties();
+public interface ProtocolDef extends ContainerDef {
+    String getType();
+
+    ProtocolDef setType(String type);
+
+    ProtocolDef property(String name, String value);
+
+    Map<String, String> getProtocolProperties();
+
+    String getProtocolProperty(String name);
 }

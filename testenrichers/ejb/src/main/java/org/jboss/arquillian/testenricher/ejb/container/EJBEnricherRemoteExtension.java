@@ -27,16 +27,12 @@ import org.jboss.arquillian.testenricher.ejb.EJBInjectionEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EJBEnricherRemoteExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      // only load if EJB is on ClassPath
-      if(Validate.classExists("javax.ejb.EJB"))
-      {
-         builder.service(TestEnricher.class, EJBInjectionEnricher.class);         
-      }
-   }
-
+public class EJBEnricherRemoteExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        // only load if EJB is on ClassPath
+        if (Validate.classExists("javax.ejb.EJB")) {
+            builder.service(TestEnricher.class, EJBInjectionEnricher.class);
+        }
+    }
 }

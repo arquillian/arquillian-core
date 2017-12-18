@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.junit.event.BeforeRules;
+import org.jboss.arquillian.junit.event.RulesEnrichment;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.event.enrichment.AfterEnrichment;
 import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
@@ -39,46 +39,49 @@ import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 
 /**
- * Enriches instance of the Rule that has been applied; of the Statement that is about to be taken; and of the Test that is
+ * Enriches instance of the Rule that has been applied; of the Statement that is about to be taken; and of the Test that
+ * is
  * about to be executed<br/>
- * 
+ *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  * @version $Revision: $
  */
-public class RulesEnricher
-{
+public class RulesEnricher {
+
+    private static Logger log = Logger.getLogger(RulesEnricher.class.getName());
+
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
     @Inject
     private Event<EnrichmentEvent> enrichmentEvent;
 
-    private static Logger log = Logger.getLogger(RulesEnricher.class.getName());
-
-    public void enrich(@Observes BeforeRules event) throws Exception
-    {
-        List<Object> toEnrich = getRuleInstances(event);
-        if (toEnrich == null)
-        {
+    public void enrichRulesAndTestInstance(@Observes RulesEnrichment event) throws Exception {
+        Object testInstance = event.getTestInstance();
+        List<Object> toEnrich = getRuleInstances(testInstance);
+        if (toEnrich == null) {
             return;
         }
+        toEnrich.add(testInstance);
+        enrichInstances(toEnrich);
+    }
 
-        toEnrich.add(event.getTestInstance());
+    public void enrichStatement(@Observes BeforeRules event) throws Exception {
+        List<Object> toEnrich = new ArrayList<Object>();
 
-        if (RunRules.class.isInstance(event.getStatementInstance()))
-        {
+        if (RunRules.class.isInstance(event.getStatementInstance())) {
             toEnrich.add(SecurityActions.getField(RunRules.class, "statement").get(event.getStatementInstance()));
-        } else
-        {
+        } else {
             toEnrich.add(event.getStatementInstance());
         }
+        enrichInstances(toEnrich);
+    }
 
+    public void enrichInstances(List<Object> toEnrich) {
         Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
-        for (Object instance : toEnrich)
-        {
+        for (Object instance : toEnrich) {
             enrichmentEvent.fire(new BeforeEnrichment(instance));
-            for (TestEnricher enricher : testEnrichers)
-            {
+            for (TestEnricher enricher : testEnrichers) {
                 enricher.enrich(instance);
             }
             enrichmentEvent.fire(new AfterEnrichment(instance));
@@ -88,34 +91,27 @@ public class RulesEnricher
     /**
      * Retrieves instances of the TestRule and MethodRule classes
      */
-    private List<Object> getRuleInstances(BeforeRules event) throws Exception
-    {
-        Object testInstance = event.getTestInstance();
+    private List<Object> getRuleInstances(Object testInstance) throws Exception {
         List<Object> ruleInstances = new ArrayList<Object>();
 
-        List<Field> fieldsWithRuleAnnotation = SecurityActions.getFieldsWithAnnotation(testInstance.getClass(), Rule.class);
-        if (fieldsWithRuleAnnotation.isEmpty())
-        {
-            List<Method> methodsWithAnnotation = SecurityActions.getMethodsWithAnnotation(testInstance.getClass(), Rule.class);
-            if (methodsWithAnnotation.isEmpty())
-            {
+        List<Field> fieldsWithRuleAnnotation =
+            SecurityActions.getFieldsWithAnnotation(testInstance.getClass(), Rule.class);
+        if (fieldsWithRuleAnnotation.isEmpty()) {
+            List<Method> methodsWithAnnotation =
+                SecurityActions.getMethodsWithAnnotation(testInstance.getClass(), Rule.class);
+            if (methodsWithAnnotation.isEmpty()) {
                 // there isn't any rule in the test class
                 return null;
-            }
-            else
-            {
+            } else {
                 log.warning("Please note that methods annotated with @Rule are not fully supported in Arquillian. "
-                    + "Specificaly, if you want to enrich a field in your Rule implementation class.");
-                
+                    + "Specifically, if you want to enrich a field in your Rule implementation class.");
+
                 return ruleInstances;
             }
-        } else
-        {
-            for (Field field : fieldsWithRuleAnnotation)
-            {
-                Object fieldInstance = field.get(event.getTestInstance());
-                if (isRule(fieldInstance))
-                {
+        } else {
+            for (Field field : fieldsWithRuleAnnotation) {
+                Object fieldInstance = field.get(testInstance);
+                if (isRule(fieldInstance)) {
                     ruleInstances.add(fieldInstance);
                 }
             }
@@ -126,8 +122,7 @@ public class RulesEnricher
     /**
      * Decides whether the instance is a Rule or not
      */
-    private boolean isRule(Object instance)
-    {
+    private boolean isRule(Object instance) {
         return MethodRule.class.isInstance(instance) || TestRule.class.isInstance(instance);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,22 +26,19 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeployerEvent extends ContainerEvent
-{
-   private DeploymentDescription deployment;
-   
-   public DeployerEvent(DeployableContainer<?> deployableContainer, DeploymentDescription deployment)
-   {
-      super(deployableContainer);
-      Validate.notNull(deployment, "Deployment must be specified");
-      this.deployment = deployment;
-   }
-   
-   /**
-    * @return the deployments
-    */
-   public DeploymentDescription getDeployment()
-   {
-      return deployment;
-   }
+public class DeployerEvent extends ContainerEvent {
+    private DeploymentDescription deployment;
+
+    public DeployerEvent(DeployableContainer<?> deployableContainer, DeploymentDescription deployment) {
+        super(deployableContainer);
+        Validate.notNull(deployment, "Deployment must be specified");
+        this.deployment = deployment;
+    }
+
+    /**
+     * @return the deployments
+     */
+    public DeploymentDescription getDeployment() {
+        return deployment;
+    }
 }

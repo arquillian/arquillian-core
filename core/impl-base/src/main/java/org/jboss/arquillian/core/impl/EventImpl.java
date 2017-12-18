@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,46 +25,40 @@ import org.jboss.arquillian.core.spi.Manager;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventImpl<T> implements Event<T>
-{
-   private Manager manager;
-   private Class<T> type;
-   
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class EventImpl<T> implements Event<T> {
+    private Manager manager;
+    private Class<T> type;
 
-   public static <X> EventImpl<X> of(Class<X> type, Manager manager)
-   {
-      return new EventImpl<X>(type, manager);
-   }
-   
-   EventImpl(Class<T> type, Manager manager)
-   {
-      this.type = type;
-      this.manager = manager;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Event ---------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Typed#getType()
-    */
-   //@Override
-   public Class<?> getType() 
-   {
-      return type;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Event#fire(java.lang.Object)
-    */
-   @Override
-   public void fire(T event)
-   {
-      manager.fire(event);
-   }
+    EventImpl(Class<T> type, Manager manager) {
+        this.type = type;
+        this.manager = manager;
+    }
 
+    public static <X> EventImpl<X> of(Class<X> type, Manager manager) {
+        return new EventImpl<X>(type, manager);
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Event ---------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Typed#getType()
+     */
+    //@Override
+    public Class<?> getType() {
+        return type;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Event#fire(java.lang.Object)
+     */
+    @Override
+    public void fire(T event) {
+        manager.fire(event);
+    }
 }

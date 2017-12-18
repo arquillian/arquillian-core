@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,27 +24,21 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestMethodExecutor 
-{
-   /**
-    * The method to invoke.
-    * 
-    * @return
-    */
-   Method getMethod();
-   
-   /**
-    * The current instance.
-    * 
-    * @return
-    */
-   Object getInstance();
-   
-   /**
-    * Invokes the Method on the Instance.
-    * 
-    * @param parameters
-    * @throws Throwable
-    */
-   void invoke(Object... parameters) throws Throwable;
+public interface TestMethodExecutor {
+    /**
+     * The method to invoke.
+     */
+    Method getMethod();
+
+    /**
+     * The current instance.
+     */
+    Object getInstance();
+
+    /**
+     * Invokes the Method on the Instance.
+     *
+     * @throws Throwable
+     */
+    void invoke(Object... parameters) throws Throwable;
 }

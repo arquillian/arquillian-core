@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,17 +20,16 @@ import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 
 /**
- * Describes a Event with the capability of Vetoing the execution of a method. 
+ * Describes a Event with the capability of Vetoing the execution of a method.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface LifecycleEvent extends Event
-{
-   /**
-    * Get the call back handler for this lifecycle method.
-    * @return the executor
-    */
-   LifecycleMethodExecutor getExecutor();
-   
+public interface LifecycleEvent extends Event {
+    /**
+     * Get the call back handler for this lifecycle method.
+     *
+     * @return the executor
+     */
+    LifecycleMethodExecutor getExecutor();
 }

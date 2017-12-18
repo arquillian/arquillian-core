@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.test.impl.execution;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-
 import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -33,87 +32,72 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
 
 /**
  * A Handler for executing the Test Method.<br/>
- *  <br/>
- *  <b>Imports:</b><br/>
- *   {@link Injector}<br/>
- *   {@link ServiceLoader}<br/>
- *  <br/>
- *  <b>Exports:</b><br/>
- *   {@link TestResult}<br/>
+ * <br/>
+ * <b>Imports:</b><br/>
+ * {@link Injector}<br/>
+ * {@link ServiceLoader}<br/>
+ * <br/>
+ * <b>Exports:</b><br/>
+ * {@link TestResult}<br/>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalTestExecuter 
-{
-   @Inject 
-   private Instance<ServiceLoader> serviceLoader;
-   
-   @Inject @TestScoped
-   private InstanceProducer<TestResult> testResult;
-   
-   public void execute(@Observes LocalExecutionEvent event) throws Exception 
-   {
-      TestResult result = new TestResult();
-      try 
-      {
-         event.getExecutor().invoke(
-               enrichArguments(
-                     event.getExecutor().getMethod(), 
-                     serviceLoader.get().all(TestEnricher.class)));
-         result.setStatus(Status.PASSED);
-      } 
-      catch (Throwable e) 
-      {
-         result.setStatus(Status.FAILED);
-         result.setThrowable(e);
-      }
-      finally 
-      {
-         result.setEnd(System.currentTimeMillis());         
-      }
-      testResult.set(result);
-   }
+public class LocalTestExecuter {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   /**
-    * Enrich the method arguments of a method call.<br/>
-    * The Object[] index will match the method parameterType[] index.
-    * 
-    * @param method
-    * @return the argument values
-    */
-   private Object[] enrichArguments(Method method, Collection<TestEnricher> enrichers)
-   {
-      Object[] values = new Object[method.getParameterTypes().length];
-      if(method.getParameterTypes().length == 0)
-      {
-         return values;
-      }
-      for (TestEnricher enricher : enrichers)
-      {
-         mergeValues(values, enricher.resolve(method));
-      }
-      return values;
-   }
+    @Inject
+    @TestScoped
+    private InstanceProducer<TestResult> testResult;
 
-   private void mergeValues(Object[] values, Object[] resolvedValues)
-   {
-      if(resolvedValues == null || resolvedValues.length == 0)
-      {
-         return;
-      }
-      if(values.length != resolvedValues.length)
-      {
-         throw new IllegalStateException("TestEnricher resolved wrong argument count, expected " + 
-               values.length + " returned " + resolvedValues.length);
-      }
-      for (int i = 0; i < resolvedValues.length; i++)
-      {
-         Object resvoledValue = resolvedValues[i];
-         if (resvoledValue != null && values[i] == null)
-         {
-            values[i] = resvoledValue;
-         }
-      }
-   }
+    public void execute(@Observes LocalExecutionEvent event) throws Exception {
+        TestResult result = new TestResult();
+        try {
+            event.getExecutor().invoke(
+                enrichArguments(
+                    event.getExecutor().getMethod(),
+                    serviceLoader.get().all(TestEnricher.class)));
+            result.setStatus(Status.PASSED);
+        } catch (Throwable e) {
+            result.setStatus(Status.FAILED);
+            result.setThrowable(e);
+        } finally {
+            result.setEnd(System.currentTimeMillis());
+        }
+        testResult.set(result);
+    }
+
+    /**
+     * Enrich the method arguments of a method call.<br/>
+     * The Object[] index will match the method parameterType[] index.
+     *
+     * @return the argument values
+     */
+    private Object[] enrichArguments(Method method, Collection<TestEnricher> enrichers) {
+        Object[] values = new Object[method.getParameterTypes().length];
+        if (method.getParameterTypes().length == 0) {
+            return values;
+        }
+        for (TestEnricher enricher : enrichers) {
+            mergeValues(values, enricher.resolve(method));
+        }
+        return values;
+    }
+
+    private void mergeValues(Object[] values, Object[] resolvedValues) {
+        if (resolvedValues == null || resolvedValues.length == 0) {
+            return;
+        }
+        if (values.length != resolvedValues.length) {
+            throw new IllegalStateException("TestEnricher resolved wrong argument count, expected " +
+                values.length + " returned " + resolvedValues.length);
+        }
+        for (int i = 0; i < resolvedValues.length; i++) {
+            Object resvoledValue = resolvedValues[i];
+            if (resvoledValue != null && values[i] == null) {
+                values[i] = resvoledValue;
+            }
+        }
+    }
 }

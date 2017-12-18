@@ -26,12 +26,9 @@ import org.jboss.arquillian.testenricher.initialcontext.InitialContextProducer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextRemoteExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.observer(InitialContextProducer.class);
-   }
-
+public class InitialContextRemoteExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.observer(InitialContextProducer.class);
+    }
 }

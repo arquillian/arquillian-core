@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.impl.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.context.annotation.DeploymentScoped;
@@ -31,23 +30,20 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentContextImpl extends AbstractContext<Deployment> implements DeploymentContext
-{
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return DeploymentScoped.class;
-   }
+public class DeploymentContextImpl extends AbstractContext<Deployment> implements DeploymentContext {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return DeploymentScoped.class;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }

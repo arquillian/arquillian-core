@@ -18,7 +18,6 @@
 package org.jboss.arquillian.testenricher.cdi;
 
 import javax.enterprise.context.spi.CreationalContext;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -31,25 +30,19 @@ import org.jboss.arquillian.test.spi.event.suite.After;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class CreationalContextDestroyer
-{
-   @SuppressWarnings("rawtypes")
-   @Inject
-   private Instance<CreationalContext> creationalContext;
-   
-   public void destory(@Observes EventContext<After> event)
-   {
-      try
-      {
-         event.proceed();
-      }
-      finally
-      {
-         CreationalContext<Object> cc = creationalContext.get();
-         if(cc != null)
-         {
-            cc.release();
-         }
-      }
-   }
+public class CreationalContextDestroyer {
+    @SuppressWarnings("rawtypes")
+    @Inject
+    private Instance<CreationalContext> creationalContext;
+
+    public void destory(@Observes EventContext<After> event) {
+        try {
+            event.proceed();
+        } finally {
+            CreationalContext<Object> cc = creationalContext.get();
+            if (cc != null) {
+                cc.release();
+            }
+        }
+    }
 }

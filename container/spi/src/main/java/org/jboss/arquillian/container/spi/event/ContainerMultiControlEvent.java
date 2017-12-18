@@ -23,7 +23,6 @@ package org.jboss.arquillian.container.spi.event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerMultiControlEvent
-{
+public interface ContainerMultiControlEvent {
 
 }

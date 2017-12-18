@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,13 +18,11 @@ package org.jboss.arquillian.container.test.impl.domain;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.impl.MapObject;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.core.spi.Validate;
-
 
 /**
  * ProtocolDefinition
@@ -32,92 +30,79 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDefinition
-{
-   private Protocol<?> protocol;
-   private Map<String, String> protocolConfiguration;
-   private boolean defaultProtocol = false;
-   
-   public ProtocolDefinition(Protocol<?> protocol)
-   {
-      this(protocol, new HashMap<String, String>(), false);
-   }
+public class ProtocolDefinition {
+    private Protocol<?> protocol;
+    private Map<String, String> protocolConfiguration;
+    private boolean defaultProtocol = false;
 
-   public ProtocolDefinition(Protocol<?> protocol, Map<String, String> protocolConfiguration)
-   {
-      this(protocol, protocolConfiguration, false);
-   }
-   
-   public ProtocolDefinition(Protocol<?> protocol, Map<String, String> protocolConfiguration, boolean defaultProtocol)
-   {
-      Validate.notNull(protocol, "Protocol must be specified");
-      Validate.notNull(protocolConfiguration, "ProtocolConfiguration must be specified");
-      Validate.notNull(defaultProtocol, "DefaultProtocol must be specified");
-      
-      this.protocol = protocol;
-      this.protocolConfiguration = protocolConfiguration;
-      this.defaultProtocol = defaultProtocol;
-   }
-   
-   public ProtocolDescription getProtocolDescription()
-   {
-      return protocol.getDescription();
-   }
-   
-   /**
-    * @return the defaultProtocol
-    */
-   public boolean isDefaultProtocol()
-   {
-      return defaultProtocol;
-   }
-   
-   /**
-    * @return the protocol
-    */
-   public Protocol<?> getProtocol()
-   {
-      return protocol;
-   }
-   
-   /**
-    * @return the name
-    */
-   public String getName()
-   {
-      return protocol.getDescription().getName();
-   }
-   
-   /**
-    * @return the protocolConfiguration
-    */
-   public Map<String, String> getProtocolConfiguration()
-   {
-      return protocolConfiguration;
-   }
+    public ProtocolDefinition(Protocol<?> protocol) {
+        this(protocol, new HashMap<String, String>(), false);
+    }
 
-   /**
-    * Create a new ProtocolConfiguration based on default configuration.
-    * 
-    * @return
-    * @throws Exception
-    */
-   public ProtocolConfiguration createProtocolConfiguration() throws Exception
-   {
-      return createProtocolConfiguration(protocolConfiguration);
-   }
+    public ProtocolDefinition(Protocol<?> protocol, Map<String, String> protocolConfiguration) {
+        this(protocol, protocolConfiguration, false);
+    }
 
-   /**
-    * Create a new ProtocolConfiguration based on given configuration.
-    * 
-    * @return
-    * @throws Exception
-    */
-   public ProtocolConfiguration createProtocolConfiguration(Map<String, String> configuration) throws Exception
-   {
-      Validate.notNull(configuration, "ProtocolConfiguration must be specified");
-      ProtocolConfiguration config = protocol.getProtocolConfigurationClass().newInstance();
-      MapObject.populate(config, configuration);
-      return config;
-   }
+    public ProtocolDefinition(Protocol<?> protocol, Map<String, String> protocolConfiguration, boolean defaultProtocol) {
+        Validate.notNull(protocol, "Protocol must be specified");
+        Validate.notNull(protocolConfiguration, "ProtocolConfiguration must be specified");
+        Validate.notNull(defaultProtocol, "DefaultProtocol must be specified");
+
+        this.protocol = protocol;
+        this.protocolConfiguration = protocolConfiguration;
+        this.defaultProtocol = defaultProtocol;
+    }
+
+    public ProtocolDescription getProtocolDescription() {
+        return protocol.getDescription();
+    }
+
+    /**
+     * @return the defaultProtocol
+     */
+    public boolean isDefaultProtocol() {
+        return defaultProtocol;
+    }
+
+    /**
+     * @return the protocol
+     */
+    public Protocol<?> getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return protocol.getDescription().getName();
+    }
+
+    /**
+     * @return the protocolConfiguration
+     */
+    public Map<String, String> getProtocolConfiguration() {
+        return protocolConfiguration;
+    }
+
+    /**
+     * Create a new ProtocolConfiguration based on default configuration.
+     *
+     * @throws Exception
+     */
+    public ProtocolConfiguration createProtocolConfiguration() throws Exception {
+        return createProtocolConfiguration(protocolConfiguration);
+    }
+
+    /**
+     * Create a new ProtocolConfiguration based on given configuration.
+     *
+     * @throws Exception
+     */
+    public ProtocolConfiguration createProtocolConfiguration(Map<String, String> configuration) throws Exception {
+        Validate.notNull(configuration, "ProtocolConfiguration must be specified");
+        ProtocolConfiguration config = protocol.getProtocolConfigurationClass().newInstance();
+        MapObject.populate(config, configuration);
+        return config;
+    }
 }

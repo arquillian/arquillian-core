@@ -33,20 +33,17 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.context(ContainerContextImpl.class)
-             .context(DeploymentContextImpl.class);
-      
-      builder.observer(ContainerRegistryCreator.class)
-             .observer(ContainerDeploymentContextHandler.class)
-             .observer(ContainerLifecycleController.class)
-             .observer(ContainerDeployController.class)
-             .observer(ArchiveDeploymentExporter.class)
-             .observer(DeploymentExceptionHandler.class);
-   }
+public class ContainerExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.context(ContainerContextImpl.class)
+            .context(DeploymentContextImpl.class);
 
+        builder.observer(ContainerRegistryCreator.class)
+            .observer(ContainerDeploymentContextHandler.class)
+            .observer(ContainerLifecycleController.class)
+            .observer(ContainerDeployController.class)
+            .observer(ArchiveDeploymentExporter.class)
+            .observer(DeploymentExceptionHandler.class);
+    }
 }

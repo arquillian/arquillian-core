@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,15 +24,11 @@ package org.jboss.arquillian.test.spi;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface LifecycleMethodExecutor
-{
-   public static final LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor()
-   {
-      public void invoke() throws Throwable
-      {
-      }
-   };
-   
-   void invoke() throws Throwable;
+public interface LifecycleMethodExecutor {
+    public static final LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor() {
+        public void invoke() throws Throwable {
+        }
+    };
 
+    void invoke() throws Throwable;
 }

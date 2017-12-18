@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,64 +22,61 @@ package org.jboss.arquillian.container.spi.client.deployment;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TargetDescription
-{
-   public static final TargetDescription DEFAULT = new TargetDescription("_DEFAULT_");
-   
-   private String name;
+public class TargetDescription {
+    public static final TargetDescription DEFAULT = new TargetDescription("_DEFAULT_");
 
-   public TargetDescription(String name)
-   {
-      super();
-      this.name = name;
-   }
-   
-   /**
-    * @return the name
-    */
-   public String getName()
-   {
-      return name;
-   }
+    private String name;
 
-   @Override
-   public String toString()
-   {
-      return name;
-   }
+    public TargetDescription(String name) {
+        super();
+        this.name = name;
+    }
 
-   /* (non-Javadoc)
-    * @see java.lang.Object#hashCode()
-    */
-   @Override
-   public int hashCode()
-   {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      return result;
-   }
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-   /* (non-Javadoc)
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      TargetDescription other = (TargetDescription) obj;
-      if (name == null)
-      {
-         if (other.name != null)
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
-      }
-      else if (!name.equals(other.name))
-         return false;
-      return true;
-   }
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TargetDescription other = (TargetDescription) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
 }

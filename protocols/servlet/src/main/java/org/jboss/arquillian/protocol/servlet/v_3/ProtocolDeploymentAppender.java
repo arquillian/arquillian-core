@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,24 +24,22 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
  * ProtocolDeploymentAppender
- * 
- * DeploymentAppender to add required resources for the protocol servlet to run  
+ * <p>
+ * DeploymentAppender to add required resources for the protocol servlet to run
  * in container.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
-{
-   @Override
-   public JavaArchive createAuxiliaryArchive()
-   {
-      // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
-      return ShrinkWrap.create(JavaArchive.class, "arquillian-protocol.jar")
-                     .addPackage(ServletRemoteExtension.class.getPackage()) // servlet.runner
-                     .addAsManifestResource(
-                           "org/jboss/arquillian/protocol/servlet/v_3/web-fragment.xml",
-                           "web-fragment.xml")
-                     .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
-   }
+public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender {
+    @Override
+    public JavaArchive createAuxiliaryArchive() {
+        // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
+        return ShrinkWrap.create(JavaArchive.class, "arquillian-protocol.jar")
+            .addPackage(ServletRemoteExtension.class.getPackage()) // servlet.runner
+            .addAsManifestResource(
+                "org/jboss/arquillian/protocol/servlet/v_3/web-fragment.xml",
+                "web-fragment.xml")
+            .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
+    }
 }

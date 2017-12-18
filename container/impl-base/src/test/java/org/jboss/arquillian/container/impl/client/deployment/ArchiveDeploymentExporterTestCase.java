@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.impl.client.deployment;
 
 import java.io.File;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -39,179 +38,157 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Verify the behavior of the ArchiveDeploymentExporter 
+ * Verify the behavior of the ArchiveDeploymentExporter
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
-{
-   /**
-    * 
-    */
-   private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_PATH = "arquillian.deploymentExportPath";
-   private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED = "arquillian.deploymentExportExploded";
+public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase {
+    /**
+     *
+     */
+    private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_PATH = "arquillian.deploymentExportPath";
+    private static final String ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED = "arquillian.deploymentExportExploded";
 
-   private static final String TARGET_NAME = "test.jar";
+    private static final String TARGET_NAME = "test.jar";
 
-   private static final String DEPLOYMENT_NAME = "test.jar";
-   
-   private static final String ARCHIVE_NAME = "test.jar";
+    private static final String DEPLOYMENT_NAME = "test.jar";
 
-   private static final String EXPORT_PATH = "target/";
+    private static final String ARCHIVE_NAME = "test.jar";
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ArchiveDeploymentExporter.class);
-   }
+    private static final String EXPORT_PATH = "target/";
+    @Mock
+    private DeployableContainer<?> deployableContainer;
+    private DeploymentDescription deployment;
 
-   @Mock
-   private DeployableContainer<?> deployableContainer;
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ArchiveDeploymentExporter.class);
+    }
 
-   private DeploymentDescription deployment;
+    @Before
+    public void createDeployment() {
+        Archive<?> archive = ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass());
 
-   @Before
-   public void createDeployment()
-   {
-      Archive<?> archive = ShrinkWrap.create(JavaArchive.class, ARCHIVE_NAME).addClass(getClass());
+        deployment = new DeploymentDescription(DEPLOYMENT_NAME, archive);
+        deployment.setTarget(new TargetDescription(TARGET_NAME));
+        deployment.setTestableArchive(archive);
+    }
 
-      deployment = new DeploymentDescription(DEPLOYMENT_NAME, archive);
-      deployment.setTarget(new TargetDescription(TARGET_NAME));
-      deployment.setTestableArchive(archive);
-   }
+    @Test
+    public void shouldHandleNoConfigurationInContext() throws Exception {
+        fire(new BeforeDeploy(deployableContainer, deployment));
 
-   @Test
-   public void shouldHandleNoConfigurationInContext() throws Exception
-   {
-      fire(new BeforeDeploy(deployableContainer, deployment));
+        fileShouldExist(false);
+    }
 
-      fileShouldExist(false);
-   }
+    @Test
+    public void shouldExportIfExportPathSystemPropertyIsSet() throws Exception {
+        System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
+        try {
+            bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
 
-   @Test
-   public void shouldExportIfExportPathSystemPropertyIsSet() throws Exception
-   {
-      System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
-      try
-      {
-         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+            fire(new BeforeDeploy(deployableContainer, deployment));
 
-         fire(new BeforeDeploy(deployableContainer, deployment));
+            fileShouldExist(true);
+        } finally {
+            System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, "");
+        }
+    }
 
-         fileShouldExist(true);
-      }
-      finally
-      {
-         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, "");
-      }
-   }
+    @Test
+    public void shouldNotExportIfDeploymentExportPathNotSet() throws Exception {
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
 
-   @Test
-   public void shouldNotExportIfDeploymentExportPathNotSet() throws Exception
-   {
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+        fire(new BeforeDeploy(deployableContainer, deployment));
 
-      fire(new BeforeDeploy(deployableContainer, deployment));
+        fileShouldExist(false);
+    }
 
-      fileShouldExist(false);
-   }
-
-   @Test
-   public void shouldNotExportedIfDeploymentIsNotArchive() throws Exception
-   {
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+    @Test
+    public void shouldNotExportedIfDeploymentIsNotArchive() throws Exception {
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
             .deploymentExportPath(EXPORT_PATH));
 
-      deployment = new DeploymentDescription(DEPLOYMENT_NAME, Descriptors.create(WebAppDescriptor.class));
-      deployment.setTarget(new TargetDescription(TARGET_NAME));
-      
-      fire(new BeforeDeploy(deployableContainer, deployment));
+        deployment = new DeploymentDescription(DEPLOYMENT_NAME, Descriptors.create(WebAppDescriptor.class));
+        deployment.setTarget(new TargetDescription(TARGET_NAME));
 
-      fileShouldExist(false);
-   }
-   
-   @Test
-   public void shouldBeExportedWhenDeploymentExportPathIsSet() throws Exception
-   {
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        fileShouldExist(false);
+    }
+
+    @Test
+    public void shouldBeExportedWhenDeploymentExportPathIsSet() throws Exception {
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
             .deploymentExportPath(EXPORT_PATH));
 
-      fire(new BeforeDeploy(deployableContainer, deployment));
+        fire(new BeforeDeploy(deployableContainer, deployment));
 
-      fileShouldExist(true);
-   }
+        fileShouldExist(true);
+    }
 
-   @Test
-   public void shouldBeExportedExplodedWhenDeploymentExportExplodedIsSet() throws Exception {
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+    @Test
+    public void shouldBeExportedExplodedWhenDeploymentExportExplodedIsSet() throws Exception {
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
             .deploymentExportPath(EXPORT_PATH)
             .deploymentExportExploded(true));
 
-      fire(new BeforeDeploy(deployableContainer, deployment));
+        fire(new BeforeDeploy(deployableContainer, deployment));
 
-      directoryShouldExist();
-   }
+        directoryShouldExist();
+    }
 
-   @Test
-   public void shouldExportExplodedIfExportExplodedSystemPropertyIsSet() throws Exception
-   {
-      System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
-      System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "true");
-      try
-      {
-         bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
+    @Test
+    public void shouldExportExplodedIfExportExplodedSystemPropertyIsSet() throws Exception {
+        System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
+        System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "true");
+        try {
+            bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class));
 
-         fire(new BeforeDeploy(deployableContainer, deployment));
+            fire(new BeforeDeploy(deployableContainer, deployment));
 
-         fileShouldExist(true);
-      }
-      finally
-      {
-         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, "");
-         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "");
-      }
-   }
+            fileShouldExist(true);
+        } finally {
+            System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, "");
+            System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "");
+        }
+    }
 
-   private void fileShouldExist(boolean bol)
-   {
-      File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
+    private void fileShouldExist(boolean bol) {
+        File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
 
-      try {
-         Assert.assertEquals("File exists", bol, file.exists());
-         if(bol) {
-            Assert.assertTrue("File is a file", file.isFile());
-         }
-      }
-      finally {
-         delete(file);
-      }
+        try {
+            Assert.assertEquals("File exists", bol, file.exists());
+            if (bol) {
+                Assert.assertTrue("File is a file", file.isFile());
+            }
+        } finally {
+            delete(file);
+        }
+    }
 
-   }
+    private void directoryShouldExist() {
+        File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
 
-   private void directoryShouldExist()
-   {
-      File file = new File(EXPORT_PATH + TARGET_NAME + "_" + DEPLOYMENT_NAME + "_" + ARCHIVE_NAME);
+        try {
+            Assert.assertTrue("File exists", file.exists());
+            Assert.assertTrue("File is a directory", file.isDirectory());
+        } finally {
+            delete(file);
+        }
+    }
 
-      try {
-         Assert.assertTrue("File exists", file.exists());
-         Assert.assertTrue("File is a directory", file.isDirectory());
-      }
-      finally {
-        delete(file);
-      }
-   }
-
-   private void delete(File file) {
-      if(!file.exists()) {
-         return;
-      }
-      if(file.isDirectory()) {
-         for(File sub : file.listFiles()) {
-            delete(sub);
-         }
-      }
-      file.delete();
-   }
+    private void delete(File file) {
+        if (!file.exists()) {
+            return;
+        }
+        if (file.isDirectory()) {
+            for (File sub : file.listFiles()) {
+                delete(sub);
+            }
+        }
+        file.delete();
+    }
 }

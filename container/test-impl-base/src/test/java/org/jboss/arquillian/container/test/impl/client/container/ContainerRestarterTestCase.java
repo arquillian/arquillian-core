@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,11 +17,9 @@
 package org.jboss.arquillian.container.test.impl.client.container;
 
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.container.spi.event.StartSuiteContainers;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
-import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -30,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-
 /**
  * ContainerRestarterTestCase
  *
@@ -38,62 +35,54 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ContainerRestarterTestCase extends AbstractContainerTestTestBase
-{
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ContainerRestarter.class);
-   }
+public class ContainerRestarterTestCase extends AbstractContainerTestTestBase {
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ContainerRestarter.class);
+    }
 
-   @Test
-   public void shouldNotRestartContainerOnStartOfSequence() throws Exception
-   {
-      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+    @Test
+    public void shouldNotRestartContainerOnStartOfSequence() throws Exception {
+        ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
             .engine().maxTestClassesBeforeRestart(5);
 
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 
-      for(int i = 0; i < 5; i++)
-      {
-         fire(new BeforeClass(getClass()));
-      }
+        for (int i = 0; i < 5; i++) {
+            fire(new BeforeClass(getClass()));
+        }
 
-      assertEventFired(StartSuiteContainers.class, 0);
-      assertEventFired(StopSuiteContainers.class, 0);
-   }
+        assertEventFired(StartSuiteContainers.class, 0);
+        assertEventFired(StopSuiteContainers.class, 0);
+    }
 
-   @Test
-   public void shouldRestartContainerForEveryX() throws Exception 
-   {
-      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+    @Test
+    public void shouldRestartContainerForEveryX() throws Exception {
+        ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
             .engine().maxTestClassesBeforeRestart(5);
 
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
-      
-      for(int i = 0; i < 6; i++)
-      {
-         fire(new BeforeClass(getClass()));
-      }
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 
-      assertEventFired(StartSuiteContainers.class, 1);
-      assertEventFired(StopSuiteContainers.class, 1);
-   }
+        for (int i = 0; i < 6; i++) {
+            fire(new BeforeClass(getClass()));
+        }
 
-   @Test
-   public void shouldNotForceRestartIfMaxDeploymentsNotSet() throws Exception
-   {
-      ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
+        assertEventFired(StartSuiteContainers.class, 1);
+        assertEventFired(StopSuiteContainers.class, 1);
+    }
+
+    @Test
+    public void shouldNotForceRestartIfMaxDeploymentsNotSet() throws Exception {
+        ArquillianDescriptor desc = Descriptors.create(ArquillianDescriptor.class)
             .engine();
 
-      bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
-      
-      for(int i = 0; i < 10; i++)
-      {
-         fire(new BeforeClass(getClass()));
-      }
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, desc);
 
-      assertEventFired(StartSuiteContainers.class, 0);
-      assertEventFired(StopSuiteContainers.class, 0);
-   }
+        for (int i = 0; i < 10; i++) {
+            fire(new BeforeClass(getClass()));
+        }
+
+        assertEventFired(StartSuiteContainers.class, 0);
+        assertEventFired(StopSuiteContainers.class, 0);
+    }
 }

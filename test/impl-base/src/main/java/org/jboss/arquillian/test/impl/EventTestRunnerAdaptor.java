@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Manager;
@@ -51,155 +50,131 @@ import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EventTestRunnerAdaptor implements TestRunnerAdaptor
-{
-   private Manager manager;
+public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
+    private Manager manager;
 
-   public EventTestRunnerAdaptor(ManagerBuilder builder)
-   {
-      Validate.notNull(builder, "ManagerBuilder must be specified");
-      
-      this.manager = builder.create();
-      this.manager.start();
-   }
+    public EventTestRunnerAdaptor(ManagerBuilder builder) {
+        Validate.notNull(builder, "ManagerBuilder must be specified");
 
-   public EventTestRunnerAdaptor(Manager manager)
-   {
-      Validate.notNull(manager, "Manager must be specified");
-      
-      this.manager = manager;
-   }
+        this.manager = builder.create();
+        this.manager.start();
+    }
 
-   public void beforeSuite() throws Exception
-   {
-      manager.fire(new BeforeSuite());
-   }
+    public EventTestRunnerAdaptor(Manager manager) {
+        Validate.notNull(manager, "Manager must be specified");
 
-   public void afterSuite() throws Exception
-   {
-      manager.fire(new AfterSuite());
-   }
+        this.manager = manager;
+    }
 
-   public void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
-   {
-      Validate.notNull(testClass, "TestClass must be specified");
-      
-      manager.fire(new BeforeClass(testClass, executor));
-   }
+    public void beforeSuite() throws Exception {
+        manager.fire(new BeforeSuite());
+    }
 
-   public void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception
-   {
-      Validate.notNull(testClass, "TestClass must be specified");
-      
-      manager.fire(new AfterClass(testClass, executor));
-   }
+    public void afterSuite() throws Exception {
+        manager.fire(new AfterSuite());
+    }
 
-   public void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
-   {
-      Validate.notNull(testInstance, "TestInstance must be specified");
-      Validate.notNull(testMethod, "TestMethod must be specified");
+    public void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception {
+        Validate.notNull(testClass, "TestClass must be specified");
 
-      ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethod);
-      if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
-      {
-          return;
-      }
+        manager.fire(new BeforeClass(testClass, executor));
+    }
 
-      manager.fire(new Before(testInstance, testMethod, executor));
-   }
+    public void afterClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception {
+        Validate.notNull(testClass, "TestClass must be specified");
 
-   public void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception
-   {
-      Validate.notNull(testInstance, "TestInstance must be specified");
-      Validate.notNull(testMethod, "TestMethod must be specified");
+        manager.fire(new AfterClass(testClass, executor));
+    }
 
-      ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethod);
-      if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
-      {
-          return;
-      }
+    public void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception {
+        Validate.notNull(testInstance, "TestInstance must be specified");
+        Validate.notNull(testMethod, "TestMethod must be specified");
 
-      manager.fire(new After(testInstance, testMethod, executor));
-   }
-   
-   public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception
-   {
-      Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
+        ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethod);
+        if (executionDecision.getDecision() == Decision.DONT_EXECUTE) {
+            return;
+        }
 
-      ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethodExecutor.getMethod());
-      if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
-      {
-          return TestResult.skipped(new SkippedTestExecutionException(executionDecision.getReason()));
-      }      
+        manager.fire(new Before(testInstance, testMethod, executor));
+    }
 
-      final List<TestResult> result = new ArrayList<TestResult>();
-      manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>()
-      {
-         @Inject
-         private Instance<TestResult> testResult;
-         
-         @Override
-         public void fired(Test event)
-         {
-            result.add(testResult.get());
-         }
-      });
-      return result.get(0);
-   }
-   
-   @Override
-   public <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception {
-       Validate.notNull(event, "Event must be specified");
+    public void after(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception {
+        Validate.notNull(testInstance, "TestInstance must be specified");
+        Validate.notNull(testMethod, "TestMethod must be specified");
 
-       ExecutionDecision executionDecision = resolveExecutionDecision(manager, event.getTestMethod());
-       if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
-       {
-           return;
-       }
-       manager.fire(event);
-   }
+        ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethod);
+        if (executionDecision.getDecision() == Decision.DONT_EXECUTE) {
+            return;
+        }
 
-   public void shutdown()
-   {
-      manager.shutdown();
-   }
-   
-   private ExecutionDecision resolveExecutionDecision(Manager manager, Method testMethod)
-   {
-       Validate.notNull(manager, "Manager must be specified.");
-       ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
+        manager.fire(new After(testInstance, testMethod, executor));
+    }
 
-       ExecutionDecision executionDecision = TestExecutionDecider.EXECUTE.decide(testMethod);
+    public TestResult test(TestMethodExecutor testMethodExecutor) throws Exception {
+        Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
 
-       if (serviceLoader != null)
-       {
-           final List<TestExecutionDecider> deciders = new ArrayList<TestExecutionDecider>(serviceLoader.all(TestExecutionDecider.class));
+        ExecutionDecision executionDecision = resolveExecutionDecision(manager, testMethodExecutor.getMethod());
+        if (executionDecision.getDecision() == Decision.DONT_EXECUTE) {
+            return TestResult.skipped(new SkippedTestExecutionException(executionDecision.getReason()));
+        }
 
-           if (deciders.size() != 0)
-           {
-               Collections.sort(deciders, new TestExecutionDeciderComparator());
-               Collections.reverse(deciders);
+        final List<TestResult> results = new ArrayList<TestResult>();
+        manager.fire(new Test(testMethodExecutor), new NonManagedObserver<Test>() {
+            @Inject
+            private Instance<TestResult> testResult;
 
-               for (final TestExecutionDecider decider : deciders)
-               {
-                   final ExecutionDecision tempExecutionDecision = decider.decide(testMethod);
-                   
-                   if (tempExecutionDecision == null)
-                   {
-                       continue;
-                   }
-                   else
-                   {
-                       executionDecision = tempExecutionDecision;
-                   }
-                   
-                   if (executionDecision.getDecision() == Decision.DONT_EXECUTE)
-                   {
-                       break;
-                   }
-               }
-           }
-       }
-       return executionDecision;
-   }
+            @Override
+            public void fired(Test event) {
+                results.add(testResult.get());
+            }
+        });
+        return TestResult.flatten(results);
+    }
+
+    @Override
+    public <T extends TestLifecycleEvent> void fireCustomLifecycle(T event) throws Exception {
+        Validate.notNull(event, "Event must be specified");
+
+        ExecutionDecision executionDecision = resolveExecutionDecision(manager, event.getTestMethod());
+        if (executionDecision.getDecision() == Decision.DONT_EXECUTE) {
+            return;
+        }
+        manager.fire(event);
+    }
+
+    public void shutdown() {
+        manager.shutdown();
+    }
+
+    private ExecutionDecision resolveExecutionDecision(Manager manager, Method testMethod) {
+        Validate.notNull(manager, "Manager must be specified.");
+        ServiceLoader serviceLoader = manager.resolve(ServiceLoader.class);
+
+        ExecutionDecision executionDecision = TestExecutionDecider.EXECUTE.decide(testMethod);
+
+        if (serviceLoader != null) {
+            final List<TestExecutionDecider> deciders =
+                new ArrayList<TestExecutionDecider>(serviceLoader.all(TestExecutionDecider.class));
+
+            if (deciders.size() != 0) {
+                Collections.sort(deciders, new TestExecutionDeciderComparator());
+                Collections.reverse(deciders);
+
+                for (final TestExecutionDecider decider : deciders) {
+                    final ExecutionDecision tempExecutionDecision = decider.decide(testMethod);
+
+                    if (tempExecutionDecision == null) {
+                        continue;
+                    } else {
+                        executionDecision = tempExecutionDecision;
+                    }
+
+                    if (executionDecision.getDecision() == Decision.DONT_EXECUTE) {
+                        break;
+                    }
+                }
+            }
+        }
+        return executionDecision;
+    }
 }

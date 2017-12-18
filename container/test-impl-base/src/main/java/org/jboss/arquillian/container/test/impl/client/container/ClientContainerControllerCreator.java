@@ -32,18 +32,17 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class ClientContainerControllerCreator
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<ContainerController> controller;
-   
-   @Inject 
-   private Instance<Injector> injector;
+public class ClientContainerControllerCreator {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<ContainerController> controller;
 
-   public void createClientSideContainerController(@Observes SetupContainers event)
-   {
-      controller.set(injector.get().inject(new ClientContainerController()));
-   }
+    @Inject
+    private Instance<Injector> injector;
+
+    public void createClientSideContainerController(@Observes SetupContainers event) {
+        controller.set(injector.get().inject(new ClientContainerController()));
+    }
 }
 
  

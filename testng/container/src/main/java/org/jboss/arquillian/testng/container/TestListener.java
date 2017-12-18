@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -27,62 +27,47 @@ import org.testng.ITestResult;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestListener implements ITestListener
-{
+public class TestListener implements ITestListener {
 
-   private ITestContext context;
+    private ITestContext context;
 
-   public void onFinish(ITestContext paramITestContext)
-   {
-      context = paramITestContext;
-   }
+    public void onFinish(ITestContext paramITestContext) {
+        context = paramITestContext;
+    }
 
-   public void onStart(ITestContext paramITestContext)
-   {
-   }
+    public void onStart(ITestContext paramITestContext) {
+    }
 
-   public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult)
-   {
-   }
+    public void onTestFailedButWithinSuccessPercentage(ITestResult paramITestResult) {
+    }
 
-   public void onTestFailure(ITestResult paramITestResult)
-   {
-   }
+    public void onTestFailure(ITestResult paramITestResult) {
+    }
 
-   public void onTestSkipped(ITestResult paramITestResult)
-   {
-   }
+    public void onTestSkipped(ITestResult paramITestResult) {
+    }
 
-   public void onTestStart(ITestResult paramITestResult)
-   {
-   }
+    public void onTestStart(ITestResult paramITestResult) {
+    }
 
-   public void onTestSuccess(ITestResult paramITestResult)
-   {
-   }
+    public void onTestSuccess(ITestResult paramITestResult) {
+    }
 
-   public TestResult getTestResult()
-   {
-      if (context.getFailedConfigurations().size() > 0)
-      {
-         return TestResult.failed(
-               context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
-      }
-      else if (context.getFailedTests().size() > 0)
-      {
-         return TestResult.failed(
-               context.getFailedTests().getAllResults().iterator().next().getThrowable());
-      }
-      else if (context.getSkippedTests().size() > 0)
-      {
-         return TestResult.skipped(null);
-      }
-      if (context.getPassedTests().size() > 0)
-      {
-         return TestResult.passed().setThrowable(
-               context.getPassedTests().getAllResults().iterator().next().getThrowable());
-      }
-      return TestResult.failed(
+    public TestResult getTestResult() {
+        if (context.getFailedConfigurations().size() > 0) {
+            return TestResult.failed(
+                context.getFailedConfigurations().getAllResults().iterator().next().getThrowable());
+        } else if (context.getFailedTests().size() > 0) {
+            return TestResult.failed(
+                context.getFailedTests().getAllResults().iterator().next().getThrowable());
+        } else if (context.getSkippedTests().size() > 0) {
+            return TestResult.skipped().setThrowable(context.getSkippedTests().getAllResults().iterator().next().getThrowable());
+        }
+        if (context.getPassedTests().size() > 0) {
+            return TestResult.passed().setThrowable(
+                context.getPassedTests().getAllResults().iterator().next().getThrowable());
+        }
+        return TestResult.failed(
             new RuntimeException("Unknown test result: " + context).fillInStackTrace());
-   }
+    }
 }

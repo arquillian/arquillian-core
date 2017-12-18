@@ -19,7 +19,6 @@ package org.jboss.arquillian.testenricher.cdi;
 
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
-
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.testenricher.cdi.client.BeansXMLProtocolProcessor;
 import org.jboss.shrinkwrap.api.Archive;
@@ -32,154 +31,137 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * BeansXMLProtocolProcessorTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeansXMLProtocolProcessorTestCase
-{
+public class BeansXMLProtocolProcessorTestCase {
 
-   @Test
-   public void shouldAddBeansXMLWhenFoundInWebArchive() 
-   {
-      WebArchive deployment = ShrinkWrap.create(WebArchive.class)
+    @Test
+    public void shouldAddBeansXMLWhenFoundInWebArchive() {
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
-      runAndAssertWebArchiveProtocol(deployment, true);
-   }
+        runAndAssertWebArchiveProtocol(deployment, true);
+    }
 
-   @Test
-   public void shouldAddBeansXMLWhenFoundInJavaArchive()
-   {
-      JavaArchive deployment = ShrinkWrap.create(JavaArchive.class)
+    @Test
+    public void shouldAddBeansXMLWhenFoundInJavaArchive() {
+        JavaArchive deployment = ShrinkWrap.create(JavaArchive.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-      
-      runAndAssertJavaArchiveProtocol(deployment, true);
-   }
 
-   @Test
-   public void shouldNotAddBeansXMLIfNotFoundInWebArchive() 
-   {
-      WebArchive deployment = ShrinkWrap.create(WebArchive.class);
-      
-      runAndAssertWebArchiveProtocol(deployment, false);
-   }
-   
-   @Test
-   public void shouldAddBeansXMLWhenFoundInEnterpriseModule()
-   {
-      EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
+        runAndAssertJavaArchiveProtocol(deployment, true);
+    }
+
+    @Test
+    public void shouldNotAddBeansXMLIfNotFoundInWebArchive() {
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class);
+
+        runAndAssertWebArchiveProtocol(deployment, false);
+    }
+
+    @Test
+    public void shouldAddBeansXMLWhenFoundInEnterpriseModule() {
+        EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
             ShrinkWrap.create(WebArchive.class).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
-      
-      runAndAssertWebArchiveProtocol(deployment, true);
-   }
 
-   @Test
-   public void shouldNotAddBeansXMLIfNotFoundInEnterpriseModule()
-   {
-      EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
+        runAndAssertWebArchiveProtocol(deployment, true);
+    }
+
+    @Test
+    public void shouldNotAddBeansXMLIfNotFoundInEnterpriseModule() {
+        EnterpriseArchive deployment = ShrinkWrap.create(EnterpriseArchive.class).addAsModule(
             ShrinkWrap.create(WebArchive.class));
-      
-      runAndAssertWebArchiveProtocol(deployment, false);
-   }
 
-   @Test
-   public void shouldNotAddBeansXMLIfArchivesAreEqual()
-   {
-      WebArchive protocol = ShrinkWrap.create(WebArchive.class);
+        runAndAssertWebArchiveProtocol(deployment, false);
+    }
 
-      new BeansXMLProtocolProcessor().process(
+    @Test
+    public void shouldNotAddBeansXMLIfArchivesAreEqual() {
+        WebArchive protocol = ShrinkWrap.create(WebArchive.class);
+
+        new BeansXMLProtocolProcessor().process(
             new TestDeployment(protocol, new ArrayList<Archive<?>>()), protocol);
 
-      Assert.assertFalse(protocol.contains("WEB-INF/beans.xml"));
-   }
+        Assert.assertFalse(protocol.contains("WEB-INF/beans.xml"));
+    }
 
-   @Test // ARQ-1421 this does not fail on SW 1.0 since it silently ignore overwriting existing paths. 
-   public void shouldNotOverwriteBeansXMLIfArchivesAreTheSameAndContainBeansXml() throws Exception
-   {
-      String beansXmlContent = "test";
-      WebArchive deployment = ShrinkWrap.create(WebArchive.class)
+    @Test // ARQ-1421 this does not fail on SW 1.0 since it silently ignore overwriting existing paths.
+    public void shouldNotOverwriteBeansXMLIfArchivesAreTheSameAndContainBeansXml() throws Exception {
+        String beansXmlContent = "test";
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class)
             .addAsWebInfResource(new StringAsset(beansXmlContent), "beans.xml");
 
-      WebArchive protocol = deployment.as(WebArchive.class);
+        WebArchive protocol = deployment.as(WebArchive.class);
 
-      new BeansXMLProtocolProcessor().process(
+        new BeansXMLProtocolProcessor().process(
             new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
 
+        Assert.assertTrue(protocol.contains("WEB-INF/beans.xml"));
 
-      Assert.assertTrue(protocol.contains("WEB-INF/beans.xml"));
+        byte[] buf = new byte[beansXmlContent.length()];
+        new BufferedInputStream(protocol.get("WEB-INF/beans.xml").getAsset().openStream()).read(buf);
 
-      byte[] buf = new byte[beansXmlContent.length()];
-      new BufferedInputStream(protocol.get("WEB-INF/beans.xml").getAsset().openStream()).read(buf);
+        Assert.assertEquals(beansXmlContent, new String(buf));
+    }
 
-      Assert.assertEquals(beansXmlContent, new String(buf));
-   }
-
-   @Test // ARQ-1421
-   public void shouldNotOverwriteBeansXMLIfProtocolWebArchiveContainBeansXml() throws Exception
-   {
-      String beansXmlContent = "test";
-      WebArchive deployment = ShrinkWrap.create(WebArchive.class)
+    @Test // ARQ-1421
+    public void shouldNotOverwriteBeansXMLIfProtocolWebArchiveContainBeansXml() throws Exception {
+        String beansXmlContent = "test";
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
-      WebArchive protocol = ShrinkWrap.create(WebArchive.class)
-         .addAsWebInfResource(new StringAsset(beansXmlContent), "beans.xml");
+        WebArchive protocol = ShrinkWrap.create(WebArchive.class)
+            .addAsWebInfResource(new StringAsset(beansXmlContent), "beans.xml");
 
-      new BeansXMLProtocolProcessor().process(
+        new BeansXMLProtocolProcessor().process(
             new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
 
+        Assert.assertTrue(protocol.contains("WEB-INF/beans.xml"));
 
-      Assert.assertTrue(protocol.contains("WEB-INF/beans.xml"));
+        byte[] buf = new byte[beansXmlContent.length()];
+        new BufferedInputStream(protocol.get("WEB-INF/beans.xml").getAsset().openStream()).read(buf);
 
-      byte[] buf = new byte[beansXmlContent.length()];
-      new BufferedInputStream(protocol.get("WEB-INF/beans.xml").getAsset().openStream()).read(buf);
+        Assert.assertEquals(beansXmlContent, new String(buf));
+    }
 
-      Assert.assertEquals(beansXmlContent, new String(buf));
-   }
-
-   @Test // ARQ-1421
-   public void shouldNotOverwriteBeansXMLIfProtocolJavaArchiveContainBeansXml() throws Exception
-   {
-      String beansXmlContent = "test";
-      JavaArchive deployment = ShrinkWrap.create(JavaArchive.class)
+    @Test // ARQ-1421
+    public void shouldNotOverwriteBeansXMLIfProtocolJavaArchiveContainBeansXml() throws Exception {
+        String beansXmlContent = "test";
+        JavaArchive deployment = ShrinkWrap.create(JavaArchive.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
-      JavaArchive protocol = ShrinkWrap.create(JavaArchive.class)
-         .addAsManifestResource(new StringAsset(beansXmlContent), "beans.xml");
+        JavaArchive protocol = ShrinkWrap.create(JavaArchive.class)
+            .addAsManifestResource(new StringAsset(beansXmlContent), "beans.xml");
 
-      new BeansXMLProtocolProcessor().process(
+        new BeansXMLProtocolProcessor().process(
             new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
 
+        Assert.assertTrue(protocol.contains("META-INF/beans.xml"));
 
-      Assert.assertTrue(protocol.contains("META-INF/beans.xml"));
+        byte[] buf = new byte[beansXmlContent.length()];
+        new BufferedInputStream(protocol.get("META-INF/beans.xml").getAsset().openStream()).read(buf);
 
-      byte[] buf = new byte[beansXmlContent.length()];
-      new BufferedInputStream(protocol.get("META-INF/beans.xml").getAsset().openStream()).read(buf);
+        Assert.assertEquals(beansXmlContent, new String(buf));
+    }
 
-      Assert.assertEquals(beansXmlContent, new String(buf));
-   }
+    public void runAndAssertWebArchiveProtocol(Archive<?> deployment, boolean shouldBeFound) {
+        runAndAsset(deployment, ShrinkWrap.create(WebArchive.class), shouldBeFound, "WEB-INF/beans.xml");
+    }
 
-   public void runAndAssertWebArchiveProtocol(Archive<?> deployment, boolean shouldBeFound)
-   {
-      runAndAsset(deployment, ShrinkWrap.create(WebArchive.class), shouldBeFound, "WEB-INF/beans.xml");
-   }
+    public void runAndAssertJavaArchiveProtocol(Archive<?> deployment, boolean shouldBeFound) {
+        runAndAsset(deployment, ShrinkWrap.create(JavaArchive.class), shouldBeFound, "META-INF/beans.xml");
+    }
 
-   public void runAndAssertJavaArchiveProtocol(Archive<?> deployment, boolean shouldBeFound)
-   {
-      runAndAsset(deployment, ShrinkWrap.create(JavaArchive.class), shouldBeFound, "META-INF/beans.xml");
-   }
-
-   public void runAndAsset(Archive<?> deployment, Archive<?> protocol, boolean shouldBeFound, String expectedLocation)
-   {
-      new BeansXMLProtocolProcessor().process(
+    public void runAndAsset(Archive<?> deployment, Archive<?> protocol, boolean shouldBeFound, String expectedLocation) {
+        new BeansXMLProtocolProcessor().process(
             new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
-      
-      System.out.println(protocol.toString(true));
-      Assert.assertEquals(
-            "Verify beans.xml was " + (!shouldBeFound ? "not ":"") + "found in "+ expectedLocation,
+
+        System.out.println(protocol.toString(true));
+        Assert.assertEquals(
+            "Verify beans.xml was " + (!shouldBeFound ? "not " : "") + "found in " + expectedLocation,
             shouldBeFound, protocol.contains(expectedLocation));
-   }
+    }
 }

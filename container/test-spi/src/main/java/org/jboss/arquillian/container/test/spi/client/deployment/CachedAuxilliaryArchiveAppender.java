@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.spi.client.deployment;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
@@ -28,23 +27,19 @@ import org.jboss.shrinkwrap.api.Archive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class CachedAuxilliaryArchiveAppender implements AuxiliaryArchiveAppender
-{
-   private static Map<Class<?>, Archive<?>> cached = new HashMap<Class<?>, Archive<?>>();
+public abstract class CachedAuxilliaryArchiveAppender implements AuxiliaryArchiveAppender {
+    private static Map<Class<?>, Archive<?>> cached = new HashMap<Class<?>, Archive<?>>();
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender#createAuxiliaryArchive()
-    */
-   @Override
-   public final Archive<?> createAuxiliaryArchive()
-   {
-      if(!cached.containsKey(getClass()))
-      {
-         cached.put(getClass(), buildArchive());
-      }
-      return cached.get(getClass());
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender#createAuxiliaryArchive()
+     */
+    @Override
+    public final Archive<?> createAuxiliaryArchive() {
+        if (!cached.containsKey(getClass())) {
+            cached.put(getClass(), buildArchive());
+        }
+        return cached.get(getClass());
+    }
 
-   protected abstract Archive<?> buildArchive(); 
-   
+    protected abstract Archive<?> buildArchive();
 }

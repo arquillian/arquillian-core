@@ -26,20 +26,17 @@ import org.jboss.arquillian.test.spi.TestClass;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class GenerateDeployment implements Event
-{
-   private TestClass testClass;
-   
-   public GenerateDeployment(TestClass testClass)
-   {
-      this.testClass = testClass;
-   }
-   
-   /**
-    * @return the testClass
-    */
-   public TestClass getTestClass()
-   {
-      return testClass;
-   }
+public class GenerateDeployment implements Event {
+    private TestClass testClass;
+
+    public GenerateDeployment(TestClass testClass) {
+        this.testClass = testClass;
+    }
+
+    /**
+     * @return the testClass
+     */
+    public TestClass getTestClass() {
+        return testClass;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,32 +21,30 @@ import java.lang.reflect.Method;
 /**
  * SPI used to enrich the runtime test object.
  *
- *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface TestEnricher
-{
-   /**
-    * Extension point to add features to the a Test class instance.<br/>
-    * <br/>
-    * IE. Instance field injection
-    *  
-    * @param testCase The test case instance
-    */
-   void enrich(Object testCase);
-   
-   /**
-    * Extension point to add features to the test method arguments.<br/>
-    * <br/>
-    * IE. Argument injection<br/>
-    * <br/>
-    * 
-    * The return value Object[] must match the Field[] indexes. 
-    * Leave Object[] index as null if it can't be handled by this {@link TestEnricher}.
-    * 
-    * @param method
-    * @return A Object[] of Arguments 
-    */
-   Object[] resolve(Method method);
+public interface TestEnricher {
+    /**
+     * Extension point to add features to the a Test class instance.<br/>
+     * <br/>
+     * IE. Instance field injection
+     *
+     * @param testCase
+     *     The test case instance
+     */
+    void enrich(Object testCase);
+
+    /**
+     * Extension point to add features to the test method arguments.<br/>
+     * <br/>
+     * IE. Argument injection<br/>
+     * <br/>
+     * <p>
+     * The return value Object[] must match the Field[] indexes.
+     * Leave Object[] index as null if it can't be handled by this {@link TestEnricher}.
+     *
+     * @return A Object[] of Arguments
+     */
+    Object[] resolve(Method method);
 }

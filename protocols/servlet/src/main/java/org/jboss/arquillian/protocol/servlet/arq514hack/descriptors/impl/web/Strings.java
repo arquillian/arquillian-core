@@ -27,89 +27,69 @@ import java.util.Iterator;
 
 /**
  * String utilities.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class Strings
-{
-   /**
-    * Capitalize the given String: "input" -> "Input"
-    */
-   public static String capitalize(final String input)
-   {
-      if ((input == null) || (input.length() == 0))
-      {
-         return input;
-      }
-      return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
-   }
+public class Strings {
+    /**
+     * Capitalize the given String: "input" -> "Input"
+     */
+    public static String capitalize(final String input) {
+        if ((input == null) || (input.length() == 0)) {
+            return input;
+        }
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
 
-   public static String unquote(final String value)
-   {
-      String result = null;
-      if (value != null)
-      {
-         result = value.replaceAll("\"(.*)\"", "$1");
-      }
-      return result;
-   }
+    public static String unquote(final String value) {
+        String result = null;
+        if (value != null) {
+            result = value.replaceAll("\"(.*)\"", "$1");
+        }
+        return result;
+    }
 
-   public static String enquote(final String value)
-   {
-      String result = null;
-      if (value != null)
-      {
-         result = "\"" + value + "\"";
-      }
-      return result;
-   }
+    public static String enquote(final String value) {
+        String result = null;
+        if (value != null) {
+            result = "\"" + value + "\"";
+        }
+        return result;
+    }
 
-   public static String join(Collection<?> collection, String delimiter)
-   {
-      StringBuffer buffer = new StringBuffer();
-      Iterator<?> iter = collection.iterator();
-      while (iter.hasNext())
-      {
-         buffer.append(iter.next());
-         if (iter.hasNext())
-         {
-            buffer.append(delimiter);
-         }
-      }
-      return buffer.toString();
-   }
+    public static String join(Collection<?> collection, String delimiter) {
+        StringBuffer buffer = new StringBuffer();
+        Iterator<?> iter = collection.iterator();
+        while (iter.hasNext()) {
+            buffer.append(iter.next());
+            if (iter.hasNext()) {
+                buffer.append(delimiter);
+            }
+        }
+        return buffer.toString();
+    }
 
-   public static boolean isNullOrEmpty(String string)
-   {
-      return string == null || "".equals(string);
-   }
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || "".equals(string);
+    }
 
-   public static boolean isTrue(String value)
-   {
-      return value == null ? false : "true".equalsIgnoreCase(value.trim());
-   }
+    public static boolean isTrue(String value) {
+        return value == null ? false : "true".equalsIgnoreCase(value.trim());
+    }
 
-   public static boolean areEqual(String left, String right)
-   {
-      if (left == null && right == null)
-      {
-         return true;
-      }
-      else if (left == null || right == null)
-      {
-         return false;
-      }
-      return left.equals(right);
-   }
+    public static boolean areEqual(String left, String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left == null || right == null) {
+            return false;
+        }
+        return left.equals(right);
+    }
 
-   public static boolean areEqualTrimmed(String left, String right)
-   {
-      if (left != null && right != null)
-      {
-         return left.trim().equals(right.trim());
-      }
-      return areEqual(left, right);
-   }
-
+    public static boolean areEqualTrimmed(String left, String right) {
+        if (left != null && right != null) {
+            return left.trim().equals(right.trim());
+        }
+        return areEqual(left, right);
+    }
 }

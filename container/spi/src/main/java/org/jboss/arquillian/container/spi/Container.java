@@ -30,50 +30,47 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Container
-{
+public interface Container {
 
-   /**
-    * @return the name
-    */
-   String getName();
+    /**
+     * @return the name
+     */
+    String getName();
 
-   /**
-    * @return the deployableContainer
-    */
-   DeployableContainer<?> getDeployableContainer();
+    /**
+     * @return the deployableContainer
+     */
+    DeployableContainer<?> getDeployableContainer();
 
-   /**
-    * @return the containerConfiguration
-    */
-   ContainerDef getContainerConfiguration();
+    /**
+     * @return the containerConfiguration
+     */
+    ContainerDef getContainerConfiguration();
 
-   /**
-    * @return the configuration
-    */
-   ContainerConfiguration createDeployableConfiguration() throws Exception;
+    /**
+     * @return the configuration
+     */
+    ContainerConfiguration createDeployableConfiguration() throws Exception;
 
-   boolean hasProtocolConfiguration(ProtocolDescription description);
+    boolean hasProtocolConfiguration(ProtocolDescription description);
 
-   ProtocolDef getProtocolConfiguration(ProtocolDescription description);
-   
-   void setup() throws Exception;
-   
-   void start() throws LifecycleException;
-   
-   void stop() throws LifecycleException;
-   
-   void kill() throws Exception;
-   
-   State getState();
-   
-   Throwable getFailureCause();
-   
-   void setState(State state);
-   
-   public enum State 
-   {  
-      SETUP, SETUP_FAILED, STARTED, STARTED_FAILED, STOPPED, STOPPED_FAILED, KILLED, KILLED_FAILED;
-   }
+    ProtocolDef getProtocolConfiguration(ProtocolDescription description);
 
+    void setup() throws Exception;
+
+    void start() throws LifecycleException;
+
+    void stop() throws LifecycleException;
+
+    void kill() throws Exception;
+
+    State getState();
+
+    void setState(State state);
+
+    Throwable getFailureCause();
+
+    enum State {
+        SETUP, SETUP_FAILED, STARTED, STARTED_FAILED, STOPPED, STOPPED_FAILED, KILLED, KILLED_FAILED;
+    }
 }

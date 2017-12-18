@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test;
 
 import java.util.List;
-
 import org.jboss.arquillian.container.impl.context.ContainerContextImpl;
 import org.jboss.arquillian.container.impl.context.DeploymentContextImpl;
 import org.jboss.arquillian.core.spi.context.Context;
@@ -30,13 +29,11 @@ import org.jboss.arquillian.core.test.AbstractManagerTestBase;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class AbstractContainerTestBase extends AbstractManagerTestBase
-{
+public abstract class AbstractContainerTestBase extends AbstractManagerTestBase {
 
-   @Override
-   protected void addContexts(List<Class<? extends Context>> contexts)
-   {
-      contexts.add(ContainerContextImpl.class);
-      contexts.add(DeploymentContextImpl.class);
-   }
+    @Override
+    protected void addContexts(List<Class<? extends Context>> contexts) {
+        contexts.add(ContainerContextImpl.class);
+        contexts.add(DeploymentContextImpl.class);
+    }
 }

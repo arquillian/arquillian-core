@@ -18,10 +18,8 @@
 package org.jboss.arquillian.testenricher.cdi.container;
 
 import java.util.logging.Logger;
-
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
-
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -33,56 +31,47 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BeanManagerProducer
-{
-   private static final String STANDARD_BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
+public class BeanManagerProducer {
+    private static final String STANDARD_BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
 
-   private static final String SERVLET_BEAN_MANAGER_JNDI_NAME = "java:comp/env/BeanManager";
+    private static final String SERVLET_BEAN_MANAGER_JNDI_NAME = "java:comp/env/BeanManager";
 
-   // TODO: Hack until BeanManager binding fixed in JBoss AS
-   private static final String JBOSSAS_BEAN_MANAGER_JNDI_NAME = "BeanManager";
+    // TODO: Hack until BeanManager binding fixed in JBoss AS
+    private static final String JBOSSAS_BEAN_MANAGER_JNDI_NAME = "BeanManager";
 
-   private static final String[] BEAN_MANAGER_JNDI_NAMES =
-   {STANDARD_BEAN_MANAGER_JNDI_NAME, SERVLET_BEAN_MANAGER_JNDI_NAME, JBOSSAS_BEAN_MANAGER_JNDI_NAME};
+    private static final String[] BEAN_MANAGER_JNDI_NAMES =
+        {STANDARD_BEAN_MANAGER_JNDI_NAME, SERVLET_BEAN_MANAGER_JNDI_NAME, JBOSSAS_BEAN_MANAGER_JNDI_NAME};
 
-   private static final Logger log = Logger.getLogger(BeanManagerProducer.class.getName());
+    private static final Logger log = Logger.getLogger(BeanManagerProducer.class.getName());
 
-   @Inject
-   @ApplicationScoped
-   private InstanceProducer<BeanManager> beanManagerProducer;
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<BeanManager> beanManagerProducer;
 
-   public void findBeanManager(@Observes Context context)
-   {
-      BeanManager manager = lookup(context);
-      if (manager != null)
-      {
-         beanManagerProducer.set(manager);
-      }
-   }
+    public void findBeanManager(@Observes Context context) {
+        BeanManager manager = lookup(context);
+        if (manager != null) {
+            beanManagerProducer.set(manager);
+        }
+    }
 
-   private BeanManager lookup(Context context)
-   {
-      for (String beanManagerJndiName : BEAN_MANAGER_JNDI_NAMES)
-      {
-         try
-         {
-            return (BeanManager) context.lookup(beanManagerJndiName);
-         }
-         catch (Exception e)
-         {
-            log.fine("Tried to lookup the BeanManager with name " + beanManagerJndiName + " but caught exception: "
-                  + e.getMessage());
-         }
-      }
+    private BeanManager lookup(Context context) {
+        for (String beanManagerJndiName : BEAN_MANAGER_JNDI_NAMES) {
+            try {
+                return (BeanManager) context.lookup(beanManagerJndiName);
+            } catch (Exception e) {
+                log.fine("Tried to lookup the BeanManager with name " + beanManagerJndiName + " but caught exception: "
+                    + e.getMessage());
+            }
+        }
 
-      BeanManager beanManager = CDIExtension.getBeanManager();
+        BeanManager beanManager = CDIExtension.getBeanManager();
 
-      if (beanManager != null)
-      {
-         return beanManager;
-      }
+        if (beanManager != null) {
+            return beanManager;
+        }
 
-      log.info("BeanManager not found.");
-      return null;
-   }
+        log.info("BeanManager not found.");
+        return null;
+    }
 }

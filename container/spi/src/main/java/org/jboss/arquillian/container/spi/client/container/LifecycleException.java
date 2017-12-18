@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,18 +22,14 @@ package org.jboss.arquillian.container.spi.client.container;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LifecycleException extends Exception
-{
-   private static final long serialVersionUID = 1L;
+public class LifecycleException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-   public LifecycleException(String message)
-   {
-      super(message);
-   }
-   
-   public LifecycleException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
+    public LifecycleException(String message) {
+        super(message);
+    }
 
+    public LifecycleException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

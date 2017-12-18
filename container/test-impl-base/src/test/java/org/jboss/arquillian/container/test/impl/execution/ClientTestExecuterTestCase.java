@@ -17,12 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.execution;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -37,6 +33,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * ClientTestExecuterTestCase
@@ -45,112 +43,107 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase
-{
-   @Mock
-   private DeploymentDescription deploymentDescriptor;
-   
-   @Mock
-   private Deployment deployment;
+public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
+    @Mock
+    private DeploymentDescription deploymentDescriptor;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.test.AbstractManagerTestBase#addExtensions(java.util.List)
-    */
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ClientTestExecuter.class);
-   }
-   
-   @Before
-   public void bindDeployment()
-   {
-      bind(ApplicationScoped.class, Deployment.class, deployment);
-      bind(ApplicationScoped.class, DeploymentDescription.class, deploymentDescriptor);
-      
-      when(deployment.getDescription()).thenReturn(deploymentDescriptor);
-      when(deployment.isDeployed()).thenReturn(true);
-   }
-   
-   @Test
-   public void shouldExecuteRemoteIfDeploymentIsTestableAndDeployed() throws Exception
-   {
-      when(deploymentDescriptor.testable()).thenReturn(true);
-      
-      fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
-      
-      assertEventFired(RemoteExecutionEvent.class, 1);
-   }
+    @Mock
+    private Deployment deployment;
 
-   @Test
-   public void shouldExecuteLocalIfDeploymentIsTestableButNotDeployed() throws Exception
-   {
-      when(deploymentDescriptor.testable()).thenReturn(true);
-      when(deployment.isDeployed()).thenReturn(false); // override @Before setup
-      
-      fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
-      
-      assertEventFired(LocalExecutionEvent.class, 1);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.test.AbstractManagerTestBase#addExtensions(java.util.List)
+     */
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ClientTestExecuter.class);
+    }
 
-   @Test
-   public void shouldExecuteLocalIfDeploymentIsNotTestable() throws Exception
-   {
-      when(deploymentDescriptor.testable()).thenReturn(false);
-      
-      fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
-      
-      assertEventFired(LocalExecutionEvent.class, 1);
-   }
+    @Before
+    public void bindDeployment() {
+        bind(ApplicationScoped.class, Deployment.class, deployment);
+        bind(ApplicationScoped.class, DeploymentDescription.class, deploymentDescriptor);
 
-   @Test
-   public void shouldExecuteLocalIfDeploymentIsTestableAndClassRunModeAsClient() throws Exception
-   {
-      when(deploymentDescriptor.testable()).thenReturn(true);
+        when(deployment.getDescription()).thenReturn(deploymentDescriptor);
+        when(deployment.isDeployed()).thenReturn(true);
+    }
 
-      fire(test("methodLevelRunModeDefault", new ClassLevelRunModeAsClient()));
-      
-      assertEventFired(LocalExecutionEvent.class, 1);
-   }
+    @Test
+    public void shouldExecuteRemoteIfDeploymentIsTestableAndDeployed() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
 
-   @Test
-   public void shouldExecuteLocalIfDeploymentIsTestableAndMethodRunModeAsClient() throws Exception
-   {
-      when(deploymentDescriptor.testable()).thenReturn(true);
-      
-      fire(test("methodLevelRunModeAsClient", new ClassLevelRunModeDefault()));
-      
-      assertEventFired(LocalExecutionEvent.class, 1);
-   }
+        fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
 
-   private org.jboss.arquillian.test.spi.event.suite.Test test(String testMethodName, Object obj) throws Exception
-   {
-      TestMethodExecutor executor = mock(TestMethodExecutor.class);
-      when(executor.getInstance()).thenReturn(obj);
-      when(executor.getMethod()).thenReturn(method(testMethodName));
+        assertEventFired(RemoteExecutionEvent.class, 1);
+    }
 
-      return new org.jboss.arquillian.test.spi.event.suite.Test(
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsTestableButNotDeployed() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+        when(deployment.isDeployed()).thenReturn(false); // override @Before setup
+
+        fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsNotTestable() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(false);
+
+        fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsTestableAndClassRunModeAsClient() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+
+        fire(test("methodLevelRunModeDefault", new ClassLevelRunModeAsClient()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsTestableAndMethodRunModeAsClient() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+
+        fire(test("methodLevelRunModeAsClient", new ClassLevelRunModeDefault()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    private org.jboss.arquillian.test.spi.event.suite.Test test(String testMethodName, Object obj) throws Exception {
+        TestMethodExecutor executor = mock(TestMethodExecutor.class);
+        when(executor.getInstance()).thenReturn(obj);
+        when(executor.getMethod()).thenReturn(method(testMethodName));
+
+        return new org.jboss.arquillian.test.spi.event.suite.Test(
             executor
-      );
-   }
-   
-   private Method method(String name) throws Exception
-   {
-      return this.getClass().getDeclaredMethod(name);
-   }
-   
-   private static class ClassLevelRunModeDefault { }
+        );
+    }
 
-   @RunAsClient
-   private static class ClassLevelRunModeAsClient { }
-   
-   @SuppressWarnings("unused")
-   private void methodLevelRunModeDefault() {}
+    private Method method(String name) throws Exception {
+        return this.getClass().getDeclaredMethod(name);
+    }
 
-   @SuppressWarnings("unused")
-   private void methodLevelRunModeInContainer() {}
+    @SuppressWarnings("unused")
+    private void methodLevelRunModeDefault() {
+    }
 
-   @SuppressWarnings("unused")
-   @RunAsClient
-   private void methodLevelRunModeAsClient() {}
+    @SuppressWarnings("unused")
+    private void methodLevelRunModeInContainer() {
+    }
+
+    @SuppressWarnings("unused")
+    @RunAsClient
+    private void methodLevelRunModeAsClient() {
+    }
+
+    private static class ClassLevelRunModeDefault {
+    }
+
+    @RunAsClient
+    private static class ClassLevelRunModeAsClient {
+    }
 }

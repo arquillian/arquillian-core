@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,11 +18,9 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
 import java.util.List;
-
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
-import org.jboss.arquillian.container.test.impl.client.deployment.tool.ArchiveDeploymentToolingExporter;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -30,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  * ArchiveDeploymentToolingExporterTestCase
@@ -40,36 +37,30 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @Ignore // not implemented
 @RunWith(MockitoJUnitRunner.class)
-public class ArchiveDeploymentToolingExporterTestCase extends AbstractContainerTestTestBase
-{
-   private static final String EXPORT_FOLDER = "target/";
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ArchiveDeploymentToolingExporter.class);
-   }
-   
-   @Mock
-   private DeployableContainer<?> deployableContainer;
-   
-   @Mock 
-   private DeploymentDescription deployment;
+public class ArchiveDeploymentToolingExporterTestCase extends AbstractContainerTestTestBase {
+    private static final String EXPORT_FOLDER = "target/";
+    @Mock
+    private DeployableContainer<?> deployableContainer;
+    @Mock
+    private DeploymentDescription deployment;
 
-   @Test
-   public void shouldThrowIllegalStateExceptionOnMissingDeploymentGenerator() throws Exception
-   {
-      System.setProperty(ArchiveDeploymentToolingExporter.ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER, EXPORT_FOLDER);
-      
-      //context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, "test.jar"));
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ArchiveDeploymentToolingExporter.class);
+    }
 
-      fire(new BeforeDeploy(deployableContainer, deployment));
-      
-      File exportedFile = new File(EXPORT_FOLDER + getClass().getName() + ".xml");
-      
-      Assert.assertTrue(exportedFile.exists());
-      
-      exportedFile.delete();
-   }
+    @Test
+    public void shouldThrowIllegalStateExceptionOnMissingDeploymentGenerator() throws Exception {
+        System.setProperty(ArchiveDeploymentToolingExporter.ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER, EXPORT_FOLDER);
 
+        //context.add(Archive.class, ShrinkWrap.create(JavaArchive.class, "test.jar"));
+
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        File exportedFile = new File(EXPORT_FOLDER + getClass().getName() + ".xml");
+
+        Assert.assertTrue(exportedFile.exists());
+
+        exportedFile.delete();
+    }
 }

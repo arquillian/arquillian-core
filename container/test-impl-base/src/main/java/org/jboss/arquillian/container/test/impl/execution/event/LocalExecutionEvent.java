@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,18 +24,15 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalExecutionEvent implements ExecutionEvent
-{
-   private TestMethodExecutor executor;
-   
-   public LocalExecutionEvent(TestMethodExecutor executor)
-   {
-      this.executor = executor;
-   }
-   
-   @Override
-   public TestMethodExecutor getExecutor()
-   {
-      return executor;
-   }
+public class LocalExecutionEvent implements ExecutionEvent {
+    private TestMethodExecutor executor;
+
+    public LocalExecutionEvent(TestMethodExecutor executor) {
+        this.executor = executor;
+    }
+
+    @Override
+    public TestMethodExecutor getExecutor() {
+        return executor;
+    }
 }

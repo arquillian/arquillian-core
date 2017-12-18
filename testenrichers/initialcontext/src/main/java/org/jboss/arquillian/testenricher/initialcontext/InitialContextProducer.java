@@ -20,7 +20,6 @@ package org.jboss.arquillian.testenricher.initialcontext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -33,13 +32,12 @@ import org.jboss.arquillian.core.api.event.ManagerStarted;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextProducer
-{
-   @Inject @ApplicationScoped
-   private InstanceProducer<Context> contextProducer;
-   
-   public void createContext(@Observes ManagerStarted event) throws NamingException
-   {
-      contextProducer.set(new InitialContext());
-   }
+public class InitialContextProducer {
+    @Inject
+    @ApplicationScoped
+    private InstanceProducer<Context> contextProducer;
+
+    public void createContext(@Observes ManagerStarted event) throws NamingException {
+        contextProducer.set(new InitialContext());
+    }
 }

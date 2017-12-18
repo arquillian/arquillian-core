@@ -23,9 +23,8 @@ package org.jboss.arquillian.core.spi;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface EventContext<T>
-{
-   T getEvent();
-   
-   void proceed();
+public interface EventContext<T> {
+    T getEvent();
+
+    void proceed();
 }

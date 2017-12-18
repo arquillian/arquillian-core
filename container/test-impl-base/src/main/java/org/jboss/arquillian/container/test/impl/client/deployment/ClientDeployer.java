@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.Container.State;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -43,119 +42,101 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ClientDeployer implements Deployer
-{
-   @Inject
-   private Event<DeploymentEvent> event;
-   
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
-   
-   @Inject
-   private Instance<DeploymentScenario> deploymentScenario;
+public class ClientDeployer implements Deployer {
+    @Inject
+    private Event<DeploymentEvent> event;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Deployer#deploy(java.lang.String)
-    */
-   @Override
-   public void deploy(String name)
-   {
-      DeploymentScenario scenario = deploymentScenario.get();
-      if(scenario == null)
-      {
-         throw new IllegalArgumentException("No deployment scenario in context");
-      }
-      ContainerRegistry registry = containerRegistry.get();
-      if(registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
-      
-      Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
-      if(deployment == null)
-      {
-         throw new IllegalArgumentException("No deployment in context found with name " + name);
-      }
-      
-      if (deployment.getDescription().managed())
-      {
-         throw new IllegalArgumentException("Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
-      }
-      
-      Container container = registry.getContainer(deployment.getDescription().getTarget());
-      
-      if (!container.getState().equals(State.STARTED))
-      {
-         throw new IllegalArgumentException("Deployment with name " + name + " could not be deployed. Container " + 
-            container.getName() + " must be started first.");
-      }
-      
-      event.fire(new DeployDeployment(container, deployment));
-   }
+    @Inject
+    private Instance<ContainerRegistry> containerRegistry;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Deployer#undeploy(java.lang.String)
-    */
-   @Override
-   public void undeploy(String name)
-   {
-      DeploymentScenario scenario = deploymentScenario.get();
-      if(scenario == null)
-      {
-         throw new IllegalArgumentException("No deployment scenario in context");
-      }
-      ContainerRegistry registry = containerRegistry.get();
-      if(registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
-      
-      Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
-      if(deployment == null)
-      {
-         throw new IllegalArgumentException("No deployment in context found with name " + name);
-      }
-      
-      if (deployment.getDescription().managed())
-      {
-         throw new IllegalArgumentException("Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
-      }
-      
-      Container container = registry.getContainer(deployment.getDescription().getTarget());
-      
-      if (!container.getState().equals(State.STARTED))
-      {
-         throw new IllegalArgumentException("Deployment with name " + name + " could not be undeployed. Container " + 
-            container.getName() + " must be still running.");
-      }
-      
-      event.fire(new UnDeployDeployment(container, deployment));
-   }
+    @Inject
+    private Instance<DeploymentScenario> deploymentScenario;
 
-   @Override
-   public InputStream getDeployment(String name)
-   {
-      DeploymentScenario scenario = deploymentScenario.get();
-      if(scenario == null)
-      {
-         throw new IllegalArgumentException("No deployment scenario in context");
-      }
-      Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
-      if(deployment == null)
-      {
-         throw new IllegalArgumentException("No deployment in context found with name " + name);
-      }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Deployer#deploy(java.lang.String)
+     */
+    @Override
+    public void deploy(String name) {
+        DeploymentScenario scenario = deploymentScenario.get();
+        if (scenario == null) {
+            throw new IllegalArgumentException("No deployment scenario in context");
+        }
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
 
-      DeploymentDescription description = deployment.getDescription();
-      if(description.isArchiveDeployment())
-      {
-         Archive<?> archive = description.testable() ? description.getTestableArchive():description.getArchive();
-         return archive.as(ZipExporter.class).exportAsInputStream();
-      }
-      else
-      {
-         return new ByteArrayInputStream(description.getDescriptor().exportAsString().getBytes());
-      }
-   }
+        Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
+        if (deployment == null) {
+            throw new IllegalArgumentException("No deployment in context found with name " + name);
+        }
 
+        if (deployment.getDescription().managed()) {
+            throw new IllegalArgumentException(
+                "Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
+        }
+
+        Container container = registry.getContainer(deployment.getDescription().getTarget());
+
+        if (!container.getState().equals(State.STARTED)) {
+            throw new IllegalArgumentException("Deployment with name " + name + " could not be deployed. Container " +
+                container.getName() + " must be started first.");
+        }
+
+        event.fire(new DeployDeployment(container, deployment));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Deployer#undeploy(java.lang.String)
+     */
+    @Override
+    public void undeploy(String name) {
+        DeploymentScenario scenario = deploymentScenario.get();
+        if (scenario == null) {
+            throw new IllegalArgumentException("No deployment scenario in context");
+        }
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
+
+        Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
+        if (deployment == null) {
+            throw new IllegalArgumentException("No deployment in context found with name " + name);
+        }
+
+        if (deployment.getDescription().managed()) {
+            throw new IllegalArgumentException(
+                "Could not deploy " + name + " deployment. The deployment is controlled by Arquillian");
+        }
+
+        Container container = registry.getContainer(deployment.getDescription().getTarget());
+
+        if (!container.getState().equals(State.STARTED)) {
+            throw new IllegalArgumentException("Deployment with name " + name + " could not be undeployed. Container " +
+                container.getName() + " must be still running.");
+        }
+
+        event.fire(new UnDeployDeployment(container, deployment));
+    }
+
+    @Override
+    public InputStream getDeployment(String name) {
+        DeploymentScenario scenario = deploymentScenario.get();
+        if (scenario == null) {
+            throw new IllegalArgumentException("No deployment scenario in context");
+        }
+        Deployment deployment = scenario.deployment(new DeploymentTargetDescription(name));
+        if (deployment == null) {
+            throw new IllegalArgumentException("No deployment in context found with name " + name);
+        }
+
+        DeploymentDescription description = deployment.getDescription();
+        if (description.isArchiveDeployment()) {
+            Archive<?> archive = description.testable() ? description.getTestableArchive() : description.getArchive();
+            return archive.as(ZipExporter.class).exportAsInputStream();
+        } else {
+            return new ByteArrayInputStream(description.getDescriptor().exportAsString().getBytes());
+        }
+    }
 }

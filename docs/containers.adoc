@@ -1,0 +1,254 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Containers
+:icons: font
+
+* <<container-selection, Container Selection>>
+* <<container-configuration, Container Configuration>>
+* <<supported-containers, Supported Containers>>
+* <<container-config-runtime-selection, Container Config Runtime Selection>>
+
+Arquillian's forte is not only its ease of use, but also its
+extensibility. Good integration testing is not just about testing in
+_any_ environment, but rather testing in the environment of your
+application targets. It's easy to give ourselves false assurance by
+validating components in a specialized testing container, or by using
+mocks, only to realize that small variations and assumptions cause the
+components to fail when the application is deployed to production. To make
+tests count, you want to execute them in the target environment, or
+container.
+
+_So what is the container that Arquillian uses? Is it some proprietary testing
+container that emulates the behavior of the technology (Java EE)?_
+
+Nope! It's pluggable. It can be your target runtime, such as JBoss AS,
+GlassFish or Tomcat. Or it can even been an embedded container such as
+OpenEJB, GlassFish Embedded or Weld SE. You can even use one container
+for development and another for continuous integration.
+
+This portability is made possible by a RPC-style (or local, if
+applicable) communication between the test runner and the container, a
+real container. You can run the same test case against various
+containers and you don't get locked into a proprietary test environment.
+
+Arquillian recognizes three container interaction styles:
+
+* A _remote container_ resides in a separate JVM from the test runner.
+Arquillian binds to the container to deploy the test archive and invokes
+tests via a remote protocol (e.g., Servlet, JMX).
+* A _managed container_ is similar to a remote container, except its
+lifecycle (startup/shutdown) is also managed by Arquillian.
+* An _embedded container_ resides in the same JVM and is mostly likely
+managed by Arquillian. Tests are executed via a local protocol for
+containers without a web component and via a remote protocol for
+containers with a web component. No need to fiddle with those Maven
+plugins!
+
+A container is further classified by its capabilities:
+
+* Java EE application server (e.g., JBoss AS, GlassFish, WebLogic)
+* Servlet container (e.g., Tomcat, Jetty)
+* standalone bean container (e.g., OpenEJB, Weld SE)
+* OSGi container
+
+Arquillian can control a variety of containers out of the box. If the
+container you are using isn't supported, Arquillian provides an SPI that
+allows you to introduce any additional container to the default
+collection.
+
+[[container-selection]]
+==== Container Selection
+
+_How can a single Arquillian test be executed in different containers?
+How does Arquillian decide which container to target? And how are both
+remote and local invocations supported?_
+
+The answers to these questions touch upon the extensibility of Arquillian.
+
+**Container selection occurs at runtime**. Arquillian selects the target
+container according to which container adapter is available on the
+runtime classpath at the time the test is launched. Therefore, you must
+include the container adapter as a test-scoped dependency that
+corresponds to the container you want to target.
+
+Arquillian delegates to an SPI (Service Provider Interface) to handle
+starting and stopping the server and deploying and undeploying archives.
+In this case, the SPI is the interface
+`org.jboss.arquillian.spi.client.DeployableContainer`. If you recall
+from the getting started guide, we added an Arquillian container adapter
+according to the target container we wanted to use. That library
+contains an implementation of this interface, thus controlling how
+Arquillian handles deployment.
+
+If you want to add support for another container in Arquillian, you need
+to provide an implementation of the `DeployableContainer` interface.
+
+To switch to another container, you just change which container adapter
+is on the classpath before running the test.
+
+NOTE: You can only have one container adapter on the classpath at a time. The
+execution of the test will be aborted if more than one adapter is
+detected.
+
+One way to swap the libraries on the classpath is to manually edit the
+dependencies defined in the pom.xml each time. But that’s just tedious.
+The recommended approach is to use Maven profiles.
+
+Maven profiles allow you to partition your dependencies into groups, one
+group for each container adapter and its related artifacts. When running
+the tests, you activate one of those groups, which in turn selects a
+target container. The profile is activated either using either a
+commandline flag (-P) or a preference in the IDE.
+
+The http://arquillian.org/getting_started/[Getting Started Guide]
+explains how to setup and use Maven profiles for this purpose in more
+detail.
+
+So far we've covered how a container adapter is selected. It's also
+possible to configure the container adapter, which we'll look at next.
+
+[[container-configuration]]
+==== Container Configuration
+
+We've covered how a container gets selected, but how does Arquillian
+know how to locate or communicate with the container? That's where
+configuration comes in.
+
+You can come a long way with default values, but at some point you may
+need to customize some of the container settings to fit your
+environment. Let's see how this can be done with Arquillian.
+
+Arquillian will look for configuration settings in a file named
+`arquillian.xml` in the root of your classpath. If it exists it will be
+auto loaded, else default values will be used. This file is not a
+requirement.
+
+Let's imagine that we're working for the company `example.com` and in
+our environment we have two servers; `test.example.com` and
+`hudson.example.com`. `test.example.com` is the JBoss instance we use
+for our integration tests and `hudson.example.com` is our continuous
+integration server that we want to run our integration suite from. By
+default, Arquillian will use localhost, so we need to tell it to use
+`test.example.com` to run the tests. The JBoss AS container by default
+use the Servlet protocol, so we have to override the default
+configuration.
+
+[source,xml]
+----
+<?xml version="1.0"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://jboss.org/schema/arquillian"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://www.jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <container qualifier="jbossas" default="true">
+        <configuration>
+            <property name="providerUrl">jnp://test.example.com:1099</property>
+        </configuration>
+        <protocol type="Servlet 3.0">
+            <property name="host">test.example.com</property>
+            <property name="port">8181</property>
+        </protocol>
+    </container>
+
+</arquillian>
+----
+
+That should do it! Here we use the JBoss AS 6.0 Remote container which
+default use the Servlet 3.0 protocol implementation. We override the
+default Servlet configuration to say that the http requests for this
+container can be executed over `test.example.com:8181`, but we also need
+to configure the container so it knows where to deploy our archives. We
+could for example have configured the Servlet protocol to communicate
+with a Apache server in front of the JBoss AS Server if we wanted to.
+Each container has different configuration options.
+
+// TODO Fix the Link
+For a complete overview of all the containers and their configuration
+options, see the
+https://docs.jboss.org/author/display/ARQ/Container+adapters[container
+adapters] appendix.
+
+[[supported-containers]]
+==== Supported Containers
+
+// TODO Fix the Link
+Please see the
+https://docs.jboss.org/author/display/ARQ/Container+adapters[container
+adapters] appendix for a list of supported containers, including details
+for how to use and configure them.
+
+[[container-config-runtime-selection]]
+==== Container Config Runtime Selection
+
+During execution of your Arquillian test-suite, you may have configured
+one or more containers with which you need to execute the test suite.
+This is usually configured with maven profiles, but in the case where
+individual container options need to be specified at runtime to the
+target container. This is where you will need to specify configurations
+in your arquillian.xml file, and also activate those configurations
+using Java system properties.
+
+===== Example arquillian.xml with two container configurations:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://jboss.org/schema/arquillian"
+   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+   <container qualifier="jbossas_managed" default="true">
+      <protocol type="Servlet 3.0">
+         <property name="executionType">MANAGED</property>
+      </protocol>
+      <configuration>
+         <property name="jbossHome">${project.baseDir}/target/jboss-as-7.1.1.Final/</property>
+         <property name="allowConnectingToRunningServer">true</property>
+      </configuration>
+   </container>
+   
+   <container qualifier="jetty">
+      <configuration>
+          <more configuration>...</more configuration>
+      </configuration>
+   </container>
+</arquillian>
+----
+
+===== Activating a configuration via the command line
+
+The -Darquillian.launch system property is what controls arquillian.xml
+configuration selection. If you are running tests from Eclipse or
+directly from the command like, you should add the -D system property to
+your launch configuration or command.
+
+===== Activating a configuration via Maven
+
+These configurations may be activated in the maven profile using the
+Surefire plugin configuration in your container's maven profile to set
+the 'arquillian.launch' system property for test execution, as follows:
+
+[source,xml]
+----
+<profile>
+         <id>JBOSS_AS_MANAGED_7.X</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                     <systemPropertyVariables>
+                        <arquillian.launch>jbossas_managed</arquillian.launch>
+                     </systemPropertyVariables>
+                  </configuration>
+               </plugin>
+  ...
+----

@@ -28,17 +28,14 @@ import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class CDIEnricherRemoteExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      // only load if BeanManager is on ClassPath
-      if(Validate.classExists("javax.enterprise.inject.spi.BeanManager"))
-      {
-         builder.service(TestEnricher.class, CDIInjectionEnricher.class);
-         builder.observer(BeanManagerProducer.class)
+public class CDIEnricherRemoteExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        // only load if BeanManager is on ClassPath
+        if (Validate.classExists("javax.enterprise.inject.spi.BeanManager")) {
+            builder.service(TestEnricher.class, CDIInjectionEnricher.class);
+            builder.observer(BeanManagerProducer.class)
                 .observer(CreationalContextDestroyer.class);
-      }
-   }
+        }
+    }
 }

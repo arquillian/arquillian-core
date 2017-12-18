@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,24 +30,22 @@ import org.jboss.arquillian.test.spi.TestResult;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class LocalContainerMethodExecutor implements ContainerMethodExecutor
-{
-   @Inject
-   private Event<LocalExecutionEvent> event;
+public class LocalContainerMethodExecutor implements ContainerMethodExecutor {
+    @Inject
+    private Event<LocalExecutionEvent> event;
 
-   @Inject 
-   private Instance<TestResult> testResult;
+    @Inject
+    private Instance<TestResult> testResult;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.ContainerMethodExecutor#invoke(org.jboss.arquillian.spi.TestMethodExecutor)
-    */
-   public TestResult invoke(TestMethodExecutor testMethodExecutor)
-   {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.ContainerMethodExecutor#invoke(org.jboss.arquillian.spi.TestMethodExecutor)
+     */
+    public TestResult invoke(TestMethodExecutor testMethodExecutor) {
       /*
        *  TODO: when we fire a LocalExecutionEvent from a ContainerMethodExecutor, 
        *  both the LocalTestExecutor and RemoteTestExecutor will set the same TestResult. 
        */
-      event.fire(new LocalExecutionEvent(testMethodExecutor));
-      return testResult.get();
-   }
+        event.fire(new LocalExecutionEvent(testMethodExecutor));
+        return testResult.get();
+    }
 }

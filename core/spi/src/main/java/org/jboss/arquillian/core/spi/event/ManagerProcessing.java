@@ -25,9 +25,8 @@ import org.jboss.arquillian.core.spi.context.Context;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ManagerProcessing
-{
-   ManagerProcessing observer(Class<?> handler); 
-   
-   ManagerProcessing context(Class<? extends Context> context);
+public interface ManagerProcessing {
+    ManagerProcessing observer(Class<?> handler);
+
+    ManagerProcessing context(Class<? extends Context> context);
 }

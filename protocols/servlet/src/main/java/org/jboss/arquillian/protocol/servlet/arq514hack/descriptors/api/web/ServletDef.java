@@ -26,32 +26,30 @@ import java.util.Map;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ServletDef extends WebAppDescriptor
-{
-   ServletDef name(String name);
+public interface ServletDef extends WebAppDescriptor {
+    ServletDef name(String name);
 
-   ServletDef servletClass(Class<?> clazz);
+    ServletDef servletClass(Class<?> clazz);
 
-   ServletDef servletClass(String clazz);
+    ServletDef servletClass(String clazz);
 
-   ServletDef asyncSupported(boolean value);
+    ServletDef asyncSupported(boolean value);
 
-   ServletDef initParam(String name, Object value);
+    ServletDef initParam(String name, Object value);
 
-   ServletDef loadOnStartup(int order);
+    ServletDef loadOnStartup(int order);
 
-   ServletMappingDef mapping();
+    ServletMappingDef mapping();
 
-   String getName();
-   
-   String getServletClass();
+    String getName();
 
-   String getInitParam(String name);
+    String getServletClass();
 
-   Map<String, String> getInitParams();
+    String getInitParam(String name);
 
-   boolean isAsyncSupported();
+    Map<String, String> getInitParams();
 
-   int getLoadOnStartup();
+    boolean isAsyncSupported();
 
+    int getLoadOnStartup();
 }

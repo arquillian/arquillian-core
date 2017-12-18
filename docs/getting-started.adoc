@@ -1,0 +1,11 @@
+[[getting-started]]
+=== Getting Started
+
+We promised that integration and functional testing with Arquillian is
+no more complex than writing a unit test. Now it's time to prove it to
+you. We've prepared a series of guides designed exclusively to teach you
+how to use Arquillian. You'll have the tests running from both Maven and
+Eclipse by the end of the first guide.
+
+Head over to the http://arquillian.org/guides/getting_started[Getting
+Started Guide] and start writing real tests!

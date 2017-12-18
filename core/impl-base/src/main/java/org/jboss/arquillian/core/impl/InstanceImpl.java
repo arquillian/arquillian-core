@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.api.InstanceProducer;
 
 /**
@@ -26,51 +25,45 @@ import org.jboss.arquillian.core.api.InstanceProducer;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InstanceImpl<T> implements InstanceProducer<T>
-{
-   private ManagerImpl manager;
-   private Class<T> type;
-   private Class<? extends Annotation> scope;
-   
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class InstanceImpl<T> implements InstanceProducer<T> {
+    private ManagerImpl manager;
+    private Class<T> type;
+    private Class<? extends Annotation> scope;
 
-   public static <X> InstanceImpl<X> of(Class<X> type, Class<? extends Annotation> scope, ManagerImpl manager)
-   {
-      return new InstanceImpl<X>(type, scope, manager);
-   }
-   
-   InstanceImpl(Class<T> type, Class<? extends Annotation> scope, ManagerImpl manager)
-   {
-      this.type = type;
-      this.scope = scope;
-      this.manager = manager;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Instance ------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Instance#get()
-    */
-   @Override
-   public T get()
-   {
-      return manager.resolve(type);
-   }
+    InstanceImpl(Class<T> type, Class<? extends Annotation> scope, ManagerImpl manager) {
+        this.type = type;
+        this.scope = scope;
+        this.manager = manager;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Instance#set(java.lang.Object)
-    */
-   @Override
-   public void set(T value)
-   {
-      if(scope == null)
-      {
-         throw new IllegalStateException("Value can not be set, instance has no Scope defined: " + value);
-      }
-      manager.bindAndFire(scope, type, value);
-   }
+    public static <X> InstanceImpl<X> of(Class<X> type, Class<? extends Annotation> scope, ManagerImpl manager) {
+        return new InstanceImpl<X>(type, scope, manager);
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Instance ------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Instance#get()
+     */
+    @Override
+    public T get() {
+        return manager.resolve(type);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Instance#set(java.lang.Object)
+     */
+    @Override
+    public void set(T value) {
+        if (scope == null) {
+            throw new IllegalStateException("Value can not be set, instance has no Scope defined: " + value);
+        }
+        manager.bindAndFire(scope, type, value);
+    }
 }

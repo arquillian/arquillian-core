@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.impl.client.container;
 
 import java.util.Collection;
-
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.DeploymentExceptionTransformer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -31,51 +30,45 @@ import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
 /**
- * A exception handler that attempt to Veto a Exception during deployment if {@link ShouldThrowException} is defined for the {@link Deployment}. 
+ * A exception handler that attempt to Veto a Exception during deployment if {@link ShouldThrowException} is defined for
+ * the {@link Deployment}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentExceptionHandler
-{
-   @Inject 
-   private Instance<ServiceLoader> serviceLoader;
-   
-   public void verifyExpectedExceptionDuringDeploy(@Observes EventContext<DeployDeployment> context) throws Exception
-   {
-      DeploymentDescription deployment = context.getEvent().getDeployment().getDescription(); 
-      boolean deploymentExceptionThrown = true;
-      try
-      {
-         context.proceed();
-         if(deployment.getExpectedException() != null)
-         {
-            deploymentExceptionThrown = false;
-            throw new RuntimeException(
-                  "Expected exception of type " + deployment.getExpectedException().getName() + " during deployment of " + 
-                  deployment.getName() + ", but no exception was thrown.");
-         }
-      }
-      catch (Exception e) 
-      {
-         // if exception is not thrown from the deployment, rethrow it (we threw it).
-         if(!deploymentExceptionThrown)
-         {
-            throw e;
-         }
-         if(deployment.getExpectedException() != null)
-         {
-            if (!containsType(e, deployment.getExpectedException()))
-            {
-               throw e;
+public class DeploymentExceptionHandler {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
+
+    public void verifyExpectedExceptionDuringDeploy(@Observes EventContext<DeployDeployment> context) throws Exception {
+        DeploymentDescription deployment = context.getEvent().getDeployment().getDescription();
+        boolean deploymentExceptionThrown = true;
+        try {
+            context.proceed();
+            if (deployment.getExpectedException() != null) {
+                deploymentExceptionThrown = false;
+                throw new RuntimeException(
+                    "Expected exception of type "
+                        + deployment.getExpectedException().getName()
+                        + " during deployment of "
+                        +
+                        deployment.getName()
+                        + ", but no exception was thrown.");
             }
-         }
-         else
-         {
-            throw e;
-         }
-      }
-   }
+        } catch (Exception e) {
+            // if exception is not thrown from the deployment, rethrow it (we threw it).
+            if (!deploymentExceptionThrown) {
+                throw e;
+            }
+            if (deployment.getExpectedException() != null) {
+                if (!containsType(e, deployment.getExpectedException())) {
+                    throw e;
+                }
+            } else {
+                throw e;
+            }
+        }
+    }
    
 /*
    public void verifyExpectedExceptionDuringUnDeploy(@Observes EventContext<UnDeployDeployment> context) throws Exception
@@ -94,40 +87,33 @@ public class DeploymentExceptionHandler
       }
    }
 */
-   
-   private boolean containsType(Throwable exception, Class<? extends Exception> expectedType)
-   {
-      Throwable transformedException = transform(exception);
 
-      if(transformedException == null)
-      {
-         return false;
-      }
-      if(expectedType.isAssignableFrom(transformedException.getClass()))
-      {
-         return true;
-      }
-      
-      
-      return containsType(transformedException.getCause(), expectedType);
-   }
-   
-   private Throwable transform(Throwable exception)
-   {
-      Throwable toBeTransformed = exception;
-      if(exception instanceof DeploymentException)
-      {
-         toBeTransformed = exception.getCause();
-      }
-      Collection<DeploymentExceptionTransformer> transformers = serviceLoader.get().all(DeploymentExceptionTransformer.class);
-      for(DeploymentExceptionTransformer transformer : transformers)
-      {
-         Throwable transformed = transformer.transform(toBeTransformed);
-         if(transformed != null)
-         {
-            return transformed;
-         }
-      }
-      return toBeTransformed;
-   }
+    private boolean containsType(Throwable exception, Class<? extends Exception> expectedType) {
+        Throwable transformedException = transform(exception);
+
+        if (transformedException == null) {
+            return false;
+        }
+        if (expectedType.isAssignableFrom(transformedException.getClass())) {
+            return true;
+        }
+
+        return containsType(transformedException.getCause(), expectedType);
+    }
+
+    private Throwable transform(Throwable exception) {
+        Throwable toBeTransformed = exception;
+        if (exception instanceof DeploymentException) {
+            toBeTransformed = exception.getCause();
+        }
+        Collection<DeploymentExceptionTransformer> transformers =
+            serviceLoader.get().all(DeploymentExceptionTransformer.class);
+        for (DeploymentExceptionTransformer transformer : transformers) {
+            Throwable transformed = transformer.transform(toBeTransformed);
+            if (transformed != null) {
+                return transformed;
+            }
+        }
+        return toBeTransformed;
+    }
 }

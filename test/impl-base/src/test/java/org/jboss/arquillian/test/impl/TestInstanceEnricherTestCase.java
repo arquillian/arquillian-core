@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,7 +18,6 @@ package org.jboss.arquillian.test.impl;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
@@ -39,31 +38,28 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestInstanceEnricherTestCase extends AbstractTestTestBase
-{
-   @Mock
-   private ServiceLoader serviceLoader;
-   
-   @Mock
-   private TestEnricher enricher;
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(TestInstanceEnricher.class);
-   }
-   
-   @Test
-   public void shouldCallAllEnrichers() throws Exception
-   {
-      Mockito.when(serviceLoader.all(TestEnricher.class)).thenReturn(Arrays.asList(enricher, enricher));
-      bind(SuiteScoped.class, ServiceLoader.class, serviceLoader);
-      
-      fire(new Before(this, getClass().getMethod("shouldCallAllEnrichers")));
-      
-      Mockito.verify(enricher, Mockito.times(2)).enrich(this);
-   
-      assertEventFired(BeforeEnrichment.class, 1);
-      assertEventFired(AfterEnrichment.class, 1);
-   }
+public class TestInstanceEnricherTestCase extends AbstractTestTestBase {
+    @Mock
+    private ServiceLoader serviceLoader;
+
+    @Mock
+    private TestEnricher enricher;
+
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(TestInstanceEnricher.class);
+    }
+
+    @Test
+    public void shouldCallAllEnrichers() throws Exception {
+        Mockito.when(serviceLoader.all(TestEnricher.class)).thenReturn(Arrays.asList(enricher, enricher));
+        bind(SuiteScoped.class, ServiceLoader.class, serviceLoader);
+
+        fire(new Before(this, getClass().getMethod("shouldCallAllEnrichers")));
+
+        Mockito.verify(enricher, Mockito.times(2)).enrich(this);
+
+        assertEventFired(BeforeEnrichment.class, 1);
+        assertEventFired(AfterEnrichment.class, 1);
+    }
 }

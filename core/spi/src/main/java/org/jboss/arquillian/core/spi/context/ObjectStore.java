@@ -23,13 +23,11 @@ package org.jboss.arquillian.core.spi.context;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ObjectStore
-{
+public interface ObjectStore {
 
-   <T> ObjectStore add(Class<T> type, T instance);
+    <T> ObjectStore add(Class<T> type, T instance);
 
-   <T> T get(Class<T> type);
+    <T> T get(Class<T> type);
 
-   ObjectStore clear();
-
+    ObjectStore clear();
 }

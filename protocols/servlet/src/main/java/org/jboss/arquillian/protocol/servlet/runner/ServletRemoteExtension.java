@@ -27,13 +27,11 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletRemoteExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(CommandService.class, ServletCommandService.class);
-      builder.service(ResourceProvider.class, ServletContextResourceProvider.class);
-      builder.observer(ServletContextRegistrar.class);
-   }
+public class ServletRemoteExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(CommandService.class, ServletCommandService.class);
+        builder.service(ResourceProvider.class, ServletContextResourceProvider.class);
+        builder.observer(ServletContextRegistrar.class);
+    }
 }

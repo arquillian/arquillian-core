@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,65 +37,54 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
  * <br/>
  * Before/After are ONLY executed on Client side if the @Test's RunMode is Client. <br/>
  * <br/>
- * 
+ * <p>
  * BeforeX event execution has a low precedence to execute as late in the Before Phase as possible.<br/>
  * AfterX event execution has a high precedence to execute as early in the After Phase as possible.<br/>
  * (compared to other Arquillian @Observers)<br/>
- * 
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  * @see BeforeLifecycleEventExecuter
  */
-public class ClientBeforeAfterLifecycleEventExecuter
-{
-   @Inject
-   private Instance<Deployment> deployment;
-   
-   @Inject
-   private Instance<Container> container;
+public class ClientBeforeAfterLifecycleEventExecuter {
+    @Inject
+    private Instance<Deployment> deployment;
 
-   public void on(@Observes(precedence = -100) BeforeClass event) throws Throwable
-   {
-      execute(event);
-   }
+    @Inject
+    private Instance<Container> container;
 
-   public void on(@Observes(precedence = 100) AfterClass event) throws Throwable
-   {
-      execute(event);
-   }
+    public void on(@Observes(precedence = -100) BeforeClass event) throws Throwable {
+        execute(event);
+    }
 
-   public void on(@Observes(precedence = -100) BeforeTestLifecycleEvent event) throws Throwable
-   {
-      if(isRunAsClient(event) || isLocalContainer())
-      {
-         execute(event);         
-      }
-   }
+    public void on(@Observes(precedence = 100) AfterClass event) throws Throwable {
+        execute(event);
+    }
 
-   public void on(@Observes(precedence = 100) AfterTestLifecycleEvent event) throws Throwable
-   {
-      if(isRunAsClient(event) || isLocalContainer())
-      {
-         execute(event);         
-      }
-   }
+    public void on(@Observes(precedence = -100) BeforeTestLifecycleEvent event) throws Throwable {
+        if (isRunAsClient(event) || isLocalContainer()) {
+            execute(event);
+        }
+    }
 
-   private boolean isRunAsClient(TestLifecycleEvent event)
-   {
-      return RunModeUtils.isRunAsClient(
+    public void on(@Observes(precedence = 100) AfterTestLifecycleEvent event) throws Throwable {
+        if (isRunAsClient(event) || isLocalContainer()) {
+            execute(event);
+        }
+    }
+
+    private boolean isRunAsClient(TestLifecycleEvent event) {
+        return RunModeUtils.isRunAsClient(
             deployment.get(),
-            event.getTestClass().getJavaClass(), 
+            event.getTestClass(),
             event.getTestMethod());
-   }
+    }
 
-   private boolean isLocalContainer()
-   {
-      return RunModeUtils.isLocalContainer(container.get());
-   }
-   
-   private void execute(LifecycleEvent event) throws Throwable
-   {
-      event.getExecutor().invoke();
-   }
+    private boolean isLocalContainer() {
+        return RunModeUtils.isLocalContainer(container.get());
+    }
+
+    private void execute(LifecycleEvent event) throws Throwable {
+        event.getExecutor().invoke();
+    }
 }

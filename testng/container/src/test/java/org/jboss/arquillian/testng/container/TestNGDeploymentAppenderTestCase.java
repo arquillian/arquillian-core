@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.testng.container;
 
-import org.jboss.arquillian.testng.container.TestNGDeploymentAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.junit.Assert;
@@ -28,23 +27,21 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGDeploymentAppenderTestCase
-{
+public class TestNGDeploymentAppenderTestCase {
 
-   @Test
-   public void shouldGenerateDependencies() throws Exception 
-   {
-      Archive<?> archive = new TestNGDeploymentAppender().createAuxiliaryArchive();
+    @Test
+    public void shouldGenerateDependencies() throws Exception {
+        Archive<?> archive = new TestNGDeploymentAppender().createAuxiliaryArchive();
 
-      Assert.assertTrue(
+        Assert.assertTrue(
             "Should have added TestRunner SPI",
-            archive.contains(ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
-      
-      Assert.assertTrue(
+            archive.contains(
+                ArchivePaths.create("/META-INF/services/org.jboss.arquillian.container.test.spi.TestRunner")));
+
+        Assert.assertTrue(
             "Should have added TestRunner Impl",
             archive.contains(ArchivePaths.create("/org/jboss/arquillian/testng/container/TestNGTestRunner.class")));
 
-      System.out.println(archive.toString(true));      
-
-   }
+        System.out.println(archive.toString(true));
+    }
 }

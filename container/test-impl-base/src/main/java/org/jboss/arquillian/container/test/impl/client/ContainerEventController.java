@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.client;
 
 import java.lang.reflect.Method;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -57,95 +56,80 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerEventController
-{
-   @Inject 
-   private Instance<ContainerContext> containerContext;
+public class ContainerEventController {
+    @Inject
+    private Instance<ContainerContext> containerContext;
 
-   @Inject 
-   private Instance<DeploymentContext> deploymentContext;
+    @Inject
+    private Instance<DeploymentContext> deploymentContext;
 
-   @Inject 
-   private Instance<ContainerRegistry> containerRegistry;
+    @Inject
+    private Instance<ContainerRegistry> containerRegistry;
 
-   @Inject 
-   private Instance<DeploymentScenario> deploymentScenario;
+    @Inject
+    private Instance<DeploymentScenario> deploymentScenario;
 
-   @Inject
-   private Event<ContainerMultiControlEvent> container;
-   
-   @Inject
-   private Event<GenerateDeployment> deployment;
+    @Inject
+    private Event<ContainerMultiControlEvent> container;
 
-   /*
-    * Suite Level
-    */
-   public void execute(@Observes BeforeSuite event)
-   {
-      container.fire(new SetupContainers());
-      container.fire(new StartSuiteContainers());
-   }
+    @Inject
+    private Event<GenerateDeployment> deployment;
 
-   public void execute(@Observes AfterSuite event)
-   {
-      container.fire(new StopSuiteContainers());
-   }
+    /*
+     * Suite Level
+     */
+    public void execute(@Observes BeforeSuite event) {
+        container.fire(new SetupContainers());
+        container.fire(new StartSuiteContainers());
+    }
 
-   /*
-    * Class Level
-    */
-   public void execute(@Observes BeforeClass event)
-   {
-      container.fire(new StartClassContainers());
-      deployment.fire(new GenerateDeployment(event.getTestClass()));
-      container.fire(new DeployManagedDeployments());
-   }
+    public void execute(@Observes AfterSuite event) {
+        container.fire(new StopSuiteContainers());
+    }
 
-   public void execute(@Observes AfterClass event)
-   {
-      try
-      {
-         container.fire(new UnDeployManagedDeployments());
-      }
-      finally
-      {
-         container.fire(new StopManualContainers());
-         container.fire(new StopClassContainers());
-      }
-   }
-   
-   /*
-    * Test Level
-    * 
-    * Activate Container and Deployment context on Before / Test / After events
-    */
-   public void createBeforeContext(@Observes EventContext<BeforeTestLifecycleEvent> context)
-   {
-      createContext(context);
-   }
+    /*
+     * Class Level
+     */
+    public void execute(@Observes BeforeClass event) {
+        container.fire(new StartClassContainers());
+        deployment.fire(new GenerateDeployment(event.getTestClass()));
+        container.fire(new DeployManagedDeployments());
+    }
 
-   public void createTestContext(@Observes EventContext<Test> context) 
-   {
-      createContext(context);
-   }
+    public void execute(@Observes AfterClass event) {
+        try {
+            container.fire(new UnDeployManagedDeployments());
+        } finally {
+            container.fire(new StopManualContainers());
+            container.fire(new StopClassContainers());
+        }
+    }
 
-   public void createAfterContext(@Observes EventContext<AfterTestLifecycleEvent> context)
-   {
-      createContext(context);
-   }
+    /*
+     * Test Level
+     *
+     * Activate Container and Deployment context on Before / Test / After events
+     */
+    public void createBeforeContext(@Observes EventContext<BeforeTestLifecycleEvent> context) {
+        createContext(context);
+    }
 
-   private void createContext(EventContext<? extends TestEvent> context)
-   {
-      try
-      {
-         lookup(context.getEvent().getTestMethod(), new Activate());
-         context.proceed();
-      }
-      finally
-      {
-         lookup(context.getEvent().getTestMethod(), new DeActivate());
-      }
-   }
+    public void createTestContext(@Observes EventContext<Test> context) {
+        createContext(context);
+    }
+
+    public void createAfterContext(@Observes EventContext<AfterTestLifecycleEvent> context) {
+        createContext(context);
+    }
+
+    private void createContext(EventContext<? extends TestEvent> context) {
+        try {
+            lookup(context.getEvent().getTestMethod(), new Activate());
+            context.proceed();
+        } finally {
+            lookup(context.getEvent().getTestMethod(), new DeActivate());
+        }
+    }
    
    /*
     * Internal Helpers needed to extract @OperatesOnDeployment from TestMethod.
@@ -154,66 +138,66 @@ public class ContainerEventController
     * common metadata layer.
     */
 
-   private void lookup(Method method, ResultCallback callback)
-   {
-      DeploymentTargetDescription deploymentTarget = locateDeployment(method);
-      
-      ContainerRegistry containerRegistry = this.containerRegistry.get();
-      DeploymentScenario deploymentScenario = this.deploymentScenario.get();
-      
-      Deployment deployment = deploymentScenario.deployment(deploymentTarget);
-      if(deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT)
-      {
-         // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
-         throw new IllegalStateException(
-               "No deployment found in " + DeploymentScenario.class.getSimpleName() + " for defined target: " + deploymentTarget.getName() + ". " + 
-               "Please verify that the @" + OperateOnDeployment.class.getSimpleName() + " annotation on method " + method.getName() + " match a defined " +
-               "@" + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName() + ".name");
-      }
-      if(deployment != null)
-      {
-         Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
-         callback.call(container, deployment);
-      }
-   }
-   
-   // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
-   private DeploymentTargetDescription locateDeployment(Method method)
-   {
-      DeploymentTargetDescription target = null;
-      if(method.isAnnotationPresent(OperateOnDeployment.class))
-      {
-         target = new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
-      }
-      else
-      {
-         target = DeploymentTargetDescription.DEFAULT;
-      }
-      return target;
-   }
-   
-   private abstract class ResultCallback
-   {
-      abstract void call(Container container, Deployment deployment);
-   }
-   
-   private class Activate extends ResultCallback
-   {
-      @Override
-      void call(Container container, Deployment deployment)
-      {
-         containerContext.get().activate(container.getName());
-         deploymentContext.get().activate(deployment);
-      }
-   }
+    private void lookup(Method method, ResultCallback callback) {
+        DeploymentTargetDescription deploymentTarget = locateDeployment(method);
 
-   private class DeActivate extends ResultCallback
-   {
-      @Override
-      void call(Container container, Deployment deployment)
-      {
-         containerContext.get().deactivate();
-         deploymentContext.get().deactivate();
-      }
-   }
+        ContainerRegistry containerRegistry = this.containerRegistry.get();
+        DeploymentScenario deploymentScenario = this.deploymentScenario.get();
+
+        Deployment deployment = deploymentScenario.deployment(deploymentTarget);
+        if (deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT) {
+            // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
+            throw new IllegalStateException(
+                "No deployment found in "
+                    + DeploymentScenario.class.getSimpleName()
+                    + " for defined target: "
+                    + deploymentTarget.getName()
+                    + ". "
+                    +
+                    "Please verify that the @"
+                    + OperateOnDeployment.class.getSimpleName()
+                    + " annotation on method "
+                    + method.getName()
+                    + " match a defined "
+                    +
+                    "@"
+                    + org.jboss.arquillian.container.test.api.Deployment.class.getSimpleName()
+                    + ".name");
+        }
+        if (deployment != null) {
+            Container container = containerRegistry.getContainer(deployment.getDescription().getTarget());
+            callback.call(container, deployment);
+        }
+    }
+
+    // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
+    private DeploymentTargetDescription locateDeployment(Method method) {
+        DeploymentTargetDescription target = null;
+        if (method.isAnnotationPresent(OperateOnDeployment.class)) {
+            target = new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
+        } else {
+            target = DeploymentTargetDescription.DEFAULT;
+        }
+        return target;
+    }
+
+    private abstract class ResultCallback {
+        abstract void call(Container container, Deployment deployment);
+    }
+
+    private class Activate extends ResultCallback {
+        @Override
+        void call(Container container, Deployment deployment) {
+            containerContext.get().activate(container.getName());
+            deploymentContext.get().activate(deployment);
+        }
+    }
+
+    private class DeActivate extends ResultCallback {
+        @Override
+        void call(Container container, Deployment deployment) {
+            containerContext.get().deactivate();
+            deploymentContext.get().deactivate();
+        }
+    }
 }

@@ -26,113 +26,98 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef
-{
-   private static final String exportPath = "property@name=deploymentExportPath";
-   private static final String exportExploded = "property@name=deploymentExportExploded";
-   private static final String maxTestClasses = "property@name=maxTestClassesBeforeRestart";
-   
-   private Node engine;
-   
-   public EngineDefImpl(String descriptorName, Node model, Node engine)
-   {
-      super(descriptorName, model);
-      this.engine = engine;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#deploymentExportPath(java.lang.String)
-    */
-   @Override
-   public EngineDef deploymentExportPath(String path)
-   {
-      engine.getOrCreate(exportPath).text(path);
-      return this;
-   }
+public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef {
+    private static final String exportPath = "property@name=deploymentExportPath";
+    private static final String exportExploded = "property@name=deploymentExportExploded";
+    private static final String maxTestClasses = "property@name=maxTestClassesBeforeRestart";
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getDeploymentExportPath()
-    */
-   @Override
-   public String getDeploymentExportPath()
-   {
-      return getTextIfExists(exportPath);
-   }
+    private Node engine;
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#deploymentExportExploded(java.lang.Boolean)
-    */
-   @Override
-   public EngineDef deploymentExportExploded(Boolean exploded)
-   {
-      engine.getOrCreate(exportExploded).text(exploded);
-      return this;
-   }
+    public EngineDefImpl(String descriptorName, Node model, Node engine) {
+        super(descriptorName, model);
+        this.engine = engine;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getDeploymentExportExploded()
-    */
-   @Override
-   public Boolean getDeploymentExportExploded()
-   {
-      return getTextIfExistsAsBoolean(exportExploded, false);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#deploymentExportPath(java.lang.String)
+     */
+    @Override
+    public EngineDef deploymentExportPath(String path) {
+        engine.getOrCreate(exportPath).text(path);
+        return this;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#maxTestClassesBeforeRestart(java.lang.Integer)
-    */
-   @Override
-   public EngineDef maxTestClassesBeforeRestart(Integer max)
-   {
-      engine.getOrCreate(maxTestClasses).text(max);
-      return this;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getDeploymentExportPath()
+     */
+    @Override
+    public String getDeploymentExportPath() {
+        return getTextIfExists(exportPath);
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getMaxTestClassesBeforeRestart()
-    */
-   @Override
-   public Integer getMaxTestClassesBeforeRestart()
-   {
-      return getTextIfExistsAsInteger(maxTestClasses);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#deploymentExportExploded(java.lang.Boolean)
+     */
+    @Override
+    public EngineDef deploymentExportExploded(Boolean exploded) {
+        engine.getOrCreate(exportExploded).text(exploded);
+        return this;
+    }
 
-   private Integer getTextIfExistsAsInteger(String pattern)
-   {
-      String text = getTextIfExists(pattern);
-      if(text != null)
-      {
-         return Integer.parseInt(text);
-      }
-      return null;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getDeploymentExportExploded()
+     */
+    @Override
+    public Boolean getDeploymentExportExploded() {
+        return getTextIfExistsAsBoolean(exportExploded, false);
+    }
 
-   private Boolean getTextIfExistsAsBoolean(String pattern, Boolean defaultValue)
-   {
-      String text = getTextIfExists(pattern);
-      if(text != null)
-      {
-         return Boolean.parseBoolean(text);
-      }
-      return defaultValue;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#maxTestClassesBeforeRestart(java.lang.Integer)
+     */
+    @Override
+    public EngineDef maxTestClassesBeforeRestart(Integer max) {
+        engine.getOrCreate(maxTestClasses).text(max);
+        return this;
+    }
 
-   private String getTextIfExists(String pattern)
-   {
-      Node propery = engine.getSingle(pattern);
-      if(propery != null)
-      {
-         return propery.getText();
-      }
-      return null;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.impl.configuration.api.EngineDef#getMaxTestClassesBeforeRestart()
+     */
+    @Override
+    public Integer getMaxTestClassesBeforeRestart() {
+        return getTextIfExistsAsInteger(maxTestClasses);
+    }
 
-   /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
-   @Override
-   public String toString()
-   {
-      return engine.toString(true);
-   }
+    private Integer getTextIfExistsAsInteger(String pattern) {
+        String text = getTextIfExists(pattern);
+        if (text != null) {
+            return Integer.parseInt(text);
+        }
+        return null;
+    }
+
+    private Boolean getTextIfExistsAsBoolean(String pattern, Boolean defaultValue) {
+        String text = getTextIfExists(pattern);
+        if (text != null) {
+            return Boolean.parseBoolean(text);
+        }
+        return defaultValue;
+    }
+
+    private String getTextIfExists(String pattern) {
+        Node propery = engine.getSingle(pattern);
+        if (propery != null) {
+            return propery.getText();
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return engine.toString(true);
+    }
 }

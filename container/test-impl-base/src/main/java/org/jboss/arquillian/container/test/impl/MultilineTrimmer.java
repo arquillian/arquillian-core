@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,18 +16,14 @@
  */
 package org.jboss.arquillian.container.test.impl;
 
-class MultilineTrimmer
-{
-   static String trim(String toTrim)
-   {
-      final StringBuilder builder = new StringBuilder(toTrim.length());
-      for (String token : toTrim.split("\\s+"))
-      {
-         if (token != null && !"".equals(token.trim()))
-         {
-            builder.append(token.trim()).append(' ');
-         }
-      }
-      return builder.toString().trim();
-   }
+class MultilineTrimmer {
+    static String trim(String toTrim) {
+        final StringBuilder builder = new StringBuilder(toTrim.length());
+        for (String token : toTrim.split("\\s+")) {
+            if (token != null && !"".equals(token.trim())) {
+                builder.append(token.trim()).append(' ');
+            }
+        }
+        return builder.toString().trim();
+    }
 }

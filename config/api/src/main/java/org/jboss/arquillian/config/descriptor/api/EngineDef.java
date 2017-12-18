@@ -23,18 +23,17 @@ package org.jboss.arquillian.config.descriptor.api;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface EngineDef extends ArquillianDescriptor
-{
+public interface EngineDef extends ArquillianDescriptor {
 
-   EngineDef deploymentExportPath(String path);
-   
-   String getDeploymentExportPath();
+    EngineDef deploymentExportPath(String path);
 
-   EngineDef deploymentExportExploded(Boolean exploded);
+    String getDeploymentExportPath();
 
-   Boolean getDeploymentExportExploded();
-   
-   EngineDef maxTestClassesBeforeRestart(Integer max);
-   
-   Integer getMaxTestClassesBeforeRestart();
+    EngineDef deploymentExportExploded(Boolean exploded);
+
+    Boolean getDeploymentExportExploded();
+
+    EngineDef maxTestClassesBeforeRestart(Integer max);
+
+    Integer getMaxTestClassesBeforeRestart();
 }

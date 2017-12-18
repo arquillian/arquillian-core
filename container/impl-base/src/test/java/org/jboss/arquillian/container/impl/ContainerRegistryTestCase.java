@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -43,171 +43,158 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ContainerRegistryTestCase extends AbstractContainerTestBase
-{
-   private static final String ARQUILLIAN_XML = "arquillian.xml";
-   
-   @Inject
-   private Instance<Injector> injector;
-   
-   @Mock
-   private ServiceLoader serviceLoader;
+public class ContainerRegistryTestCase extends AbstractContainerTestBase {
+    private static final String ARQUILLIAN_XML = "arquillian.xml";
 
-   @Mock
-   private DeployableContainer<DummyContainerConfiguration> deployableContainer;
+    @Inject
+    private Instance<Injector> injector;
 
-   @Before
-   public void setup() throws Exception
-   {
-      Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
-      Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(DummyContainerConfiguration.class);
-   }
-   
-   @Test
-   public void shouldBeAbleToDefaultTargetToOnlyRegisteredContainer() throws Exception
-   {
-      String name = "some-name";
-      
-      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
-      
-      Container container = registry.getContainer(TargetDescription.DEFAULT);
-      
-      Assert.assertEquals(
+    @Mock
+    private ServiceLoader serviceLoader;
+
+    @Mock
+    private DeployableContainer<DummyContainerConfiguration> deployableContainer;
+
+    @Before
+    public void setup() throws Exception {
+        Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
+        Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(DummyContainerConfiguration.class);
+    }
+
+    @Test
+    public void shouldBeAbleToDefaultTargetToOnlyRegisteredContainer() throws Exception {
+        String name = "some-name";
+
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
+
+        Container container = registry.getContainer(TargetDescription.DEFAULT);
+
+        Assert.assertEquals(
             "Verify that the only registered container is returned as default",
             name, container.getName());
-   }
+    }
 
-   @Test
-   public void shouldBeAbleToDefaultTargetToDefaultRegisteredContainer() throws Exception
-   {
-      String name = "some-name";
-      
-      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("some-other-name"), serviceLoader);
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name).setDefault(), serviceLoader);
-      
-      Container container = registry.getContainer(TargetDescription.DEFAULT);
-      
-      Assert.assertEquals(
+    @Test
+    public void shouldBeAbleToDefaultTargetToDefaultRegisteredContainer() throws Exception {
+        String name = "some-name";
+
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("some-other-name"), serviceLoader);
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name).setDefault(), serviceLoader);
+
+        Container container = registry.getContainer(TargetDescription.DEFAULT);
+
+        Assert.assertEquals(
             "Verify that the default registered container is returned as default",
             name, container.getName());
-   }
+    }
 
-   @Test
-   public void shouldBeAbleToCreateContainerConfiguration() throws Exception
-   {
-      String name = "some-name";
-      String prop = "prop-value";
+    @Test
+    public void shouldBeAbleToCreateContainerConfiguration() throws Exception {
+        String name = "some-name";
+        String prop = "prop-value";
 
-      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
-                           .property("property", prop), serviceLoader);
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
+            .property("property", prop), serviceLoader);
 
-      Container container = registry.getContainer(new TargetDescription(name));
+        Container container = registry.getContainer(new TargetDescription(name));
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Verify that the only registered container is returned as default",
             name, container.getName());
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Verify that the configuration was populated",
             prop,
-            ((DummyContainerConfiguration)container.createDeployableConfiguration()).getProperty());
-   }
+            ((DummyContainerConfiguration) container.createDeployableConfiguration()).getProperty());
+    }
 
-   @Test
-   public void shouldBeAbleToCreatePrivateContainerConfiguration() throws Exception
-   {
-      // Override default configured class
-      ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
-      DeployableContainer<PrivateDummyContainerConfiguration> deployableContainer = Mockito.mock(DeployableContainer.class); 
+    @Test
+    public void shouldBeAbleToCreatePrivateContainerConfiguration() throws Exception {
+        // Override default configured class
+        ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
+        DeployableContainer<PrivateDummyContainerConfiguration> deployableContainer =
+            Mockito.mock(DeployableContainer.class);
 
-      Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
-      Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(PrivateDummyContainerConfiguration.class);
+        Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
+        Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(PrivateDummyContainerConfiguration.class);
 
-      String name = "some-name";
-      String prop = "prop-value";
+        String name = "some-name";
+        String prop = "prop-value";
 
-      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
-                           .property("property", prop), serviceLoader);
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name)
+            .property("property", prop), serviceLoader);
 
-      Container container = registry.getContainer(new TargetDescription(name));
+        Container container = registry.getContainer(new TargetDescription(name));
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Verify that the only registered container is returned as default",
             name, container.getName());
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Verify that the configuration was populated",
             prop,
-            ((PrivateDummyContainerConfiguration)container.createDeployableConfiguration()).getProperty());
-   }
+            ((PrivateDummyContainerConfiguration) container.createDeployableConfiguration()).getProperty());
+    }
 
-   @Test
-   public void shouldBeAbleToSpecifyTarget() throws Exception
-   {
-      String name = "some-name";
-      
-      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
-      
-      Container container = registry.getContainer(new TargetDescription(name));
-      
-      Assert.assertEquals(
+    @Test
+    public void shouldBeAbleToSpecifyTarget() throws Exception {
+        String name = "some-name";
+
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
+
+        Container container = registry.getContainer(new TargetDescription(name));
+
+        Assert.assertEquals(
             "Verify that the specific registered container is returned",
             name, container.getName());
-   }
-   
-   @Test
-   public void shouldBeAbleToGetContainerByName() throws Exception
-   {
-      String name = "some-name";
+    }
 
-      ContainerRegistry registry = new LocalContainerRegistry(injector.get());
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
-      registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
-      
-      Container container = registry.getContainer(name);
+    @Test
+    public void shouldBeAbleToGetContainerByName() throws Exception {
+        String name = "some-name";
 
-      Assert.assertEquals(
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName("other-name"), serviceLoader);
+        registry.create(new ContainerDefImpl(ARQUILLIAN_XML).setContainerName(name), serviceLoader);
+
+        Container container = registry.getContainer(name);
+
+        Assert.assertEquals(
             "Verify that the specific registered container is returned",
             name, container.getName());
-      
-   }
+    }
 
-   public static class DummyContainerConfiguration implements ContainerConfiguration
-   {
-      private String property;
-            
-      /**
-       * @param property the property to set
-       */
-      public void setProperty(String property)
-      {
-         this.property = property;
-      }
-      
-      /**
-       * @return the property
-       */
-      public String getProperty()
-      {
-         return property;
-      }
+    public static class DummyContainerConfiguration implements ContainerConfiguration {
+        private String property;
 
-      @Override
-      public void validate() throws ConfigurationException
-      {
-      }
-   }
+        /**
+         * @return the property
+         */
+        public String getProperty() {
+            return property;
+        }
 
-   private static class PrivateDummyContainerConfiguration extends DummyContainerConfiguration
-   {
-      private PrivateDummyContainerConfiguration()
-      {
-      }
-   }
+        /**
+         * @param property
+         *     the property to set
+         */
+        public void setProperty(String property) {
+            this.property = property;
+        }
+
+        @Override
+        public void validate() throws ConfigurationException {
+        }
+    }
+
+    private static class PrivateDummyContainerConfiguration extends DummyContainerConfiguration {
+        private PrivateDummyContainerConfiguration() {
+        }
+    }
 }

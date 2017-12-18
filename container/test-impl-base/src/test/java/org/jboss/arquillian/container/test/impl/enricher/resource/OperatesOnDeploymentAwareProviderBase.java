@@ -19,7 +19,6 @@ package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
 import org.jboss.arquillian.container.impl.ContainerImpl;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -49,7 +48,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-
 /**
  * OperatesOnDeploymentAwareProviderTestCase
  *
@@ -57,128 +55,119 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractContainerTestTestBase
-{
-   @Inject
-   private Instance<Injector> injector;
+public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractContainerTestTestBase {
+    @Inject
+    private Instance<Injector> injector;
 
-   @Mock
-   private ServiceLoader serviceLoader;
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @SuppressWarnings("rawtypes")
-   @Mock
-   private DeployableContainer deployableContainer;
+    @SuppressWarnings("rawtypes")
+    @Mock
+    private DeployableContainer deployableContainer;
 
-   @Mock
-   private DeploymentScenario scenario;
+    @Mock
+    private DeploymentScenario scenario;
 
-   @Mock
-   private ContainerRegistry registry;
+    @Mock
+    private ContainerRegistry registry;
 
-   private ResourceProvider resourceProvider;
+    private ResourceProvider resourceProvider;
 
-   protected abstract ResourceProvider getResourceProvider();
+    protected abstract ResourceProvider getResourceProvider();
 
-   @Before
-   public void addServiceLoader() throws Exception
-   {
-      resourceProvider = getResourceProvider();
-      injector.get().inject(resourceProvider);
+    @Before
+    public void addServiceLoader() throws Exception {
+        resourceProvider = getResourceProvider();
+        injector.get().inject(resourceProvider);
 
-      List<ResourceProvider> resourceProviders = Arrays.asList(new ResourceProvider[]{resourceProvider});
-      Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
+        List<ResourceProvider> resourceProviders = Arrays.asList(resourceProvider);
+        Mockito.when(serviceLoader.all(ResourceProvider.class)).thenReturn(resourceProviders);
 
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-   }
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+    }
 
-   protected <X, T> X execute(Class<X> enrichType, Class<T> contextualType, T type) throws Exception
-   {
-      bind(ApplicationScoped.class, contextualType, type);
+    protected <X, T> X execute(Class<X> enrichType, Class<T> contextualType, T type) throws Exception {
+        bind(ApplicationScoped.class, contextualType, type);
 
-      TestEnricher enricher = new ArquillianResourceTestEnricher();
-      injector.get().inject(enricher);
+        TestEnricher enricher = new ArquillianResourceTestEnricher();
+        injector.get().inject(enricher);
 
-      X test = enrichType.cast(enrichType.newInstance());
-      enricher.enrich(test);
-      return test;
-   }
+        X test = enrichType.cast(enrichType.newInstance());
+        enricher.enrich(test);
+        return test;
+    }
 
-   protected <X, T> X execute(Class<X> enrichType, Class<T> contextualType, T outerType, T innerType) throws Exception
-   {
-      return execute(true, true, enrichType, contextualType, outerType, innerType);
-   }
+    protected <X, T> X execute(Class<X> enrichType, Class<T> contextualType, T outerType, T innerType) throws Exception {
+        return execute(true, true, enrichType, contextualType, outerType, innerType);
+    }
 
-   protected <X, T> X execute(boolean reigsterRegistry, boolean registerScenario, Class<X> enrichType, Class<T> contextualType, T outerType, T innerType) throws Exception
-   {
-      if(reigsterRegistry)
-      {
-         bind(ApplicationScoped.class, ContainerRegistry.class, registry);
-      }
-      if(registerScenario)
-      {
-         bind(ApplicationScoped.class, DeploymentScenario.class, scenario);
-      }
+    protected <X, T> X execute(boolean reigsterRegistry, boolean registerScenario, Class<X> enrichType,
+        Class<T> contextualType, T outerType, T innerType) throws Exception {
+        if (reigsterRegistry) {
+            bind(ApplicationScoped.class, ContainerRegistry.class, registry);
+        }
+        if (registerScenario) {
+            bind(ApplicationScoped.class, DeploymentScenario.class, scenario);
+        }
 
-      Mockito.when(registry.getContainer(
-            new TargetDescription("X"))).thenReturn(new ContainerImpl("X", deployableContainer, new ContainerDefImpl("X")));
-      Mockito.when(registry.getContainer(
-            new TargetDescription("Z"))).thenReturn(new ContainerImpl("Z", deployableContainer, new ContainerDefImpl("Z")));
+        Mockito.when(registry.getContainer(
+            new TargetDescription("X")))
+            .thenReturn(new ContainerImpl("X", deployableContainer, new ContainerDefImpl("X")));
+        Mockito.when(registry.getContainer(
+            new TargetDescription("Z")))
+            .thenReturn(new ContainerImpl("Z", deployableContainer, new ContainerDefImpl("Z")));
 
-      Deployment deploymentZ = new Deployment(new DeploymentDescription("Z", ShrinkWrap.create(JavaArchive.class))
-                                                   .setTarget(new TargetDescription("Z")));
-      Deployment deploymentX = new Deployment(new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
-                                                   .setTarget(new TargetDescription("X")));
+        Deployment deploymentZ = new Deployment(new DeploymentDescription("Z", ShrinkWrap.create(JavaArchive.class))
+            .setTarget(new TargetDescription("Z")));
+        Deployment deploymentX = new Deployment(new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
+            .setTarget(new TargetDescription("X")));
 
-      Mockito.when(scenario.deployment(new DeploymentTargetDescription("Z"))).thenReturn(deploymentZ);
-      Mockito.when(scenario.deployment(new DeploymentTargetDescription("X"))).thenReturn(deploymentX);
+        Mockito.when(scenario.deployment(new DeploymentTargetDescription("Z"))).thenReturn(deploymentZ);
+        Mockito.when(scenario.deployment(new DeploymentTargetDescription("X"))).thenReturn(deploymentX);
 
-      ContainerContext containerContext = getManager().getContext(ContainerContext.class);
-      DeploymentContext deploymentContext = getManager().getContext(DeploymentContext.class);
-      try
-      {
-         deploymentContext.activate(deploymentX);
-         deploymentContext.getObjectStore().add(contextualType, innerType);
-         deploymentContext.deactivate();
+        ContainerContext containerContext = getManager().getContext(ContainerContext.class);
+        DeploymentContext deploymentContext = getManager().getContext(DeploymentContext.class);
+        try {
+            deploymentContext.activate(deploymentX);
+            deploymentContext.getObjectStore().add(contextualType, innerType);
+            deploymentContext.deactivate();
 
          /*
           *  deploymentZ is left active and should be handled as 'current'.
           *  The test is to see if the Enricher with Qualifier can activate/deactive and read from X
           */
-         deploymentContext.activate(deploymentZ);
-         deploymentContext.getObjectStore().add(contextualType, outerType);
+            deploymentContext.activate(deploymentZ);
+            deploymentContext.getObjectStore().add(contextualType, outerType);
 
-         containerContext.activate("TEST");
+            containerContext.activate("TEST");
 
-         TestEnricher enricher = new ArquillianResourceTestEnricher();
-         injector.get().inject(enricher);
+            TestEnricher enricher = new ArquillianResourceTestEnricher();
+            injector.get().inject(enricher);
 
-         X test = enrichType.cast(enrichType.newInstance());
-         enricher.enrich(test);
+            X test = enrichType.cast(enrichType.newInstance());
+            enricher.enrich(test);
 
-         return test;
-      }
-      catch (RuntimeException e)
-      {
-         throw (Exception)e.getCause();
-      }
-      finally
-      {
-         if(deploymentContext.isActive())
-         {
-            Deployment activeContext = deploymentContext.getActiveId();
-            if(!"Z".equals(activeContext.getDescription().getName()))
-            {
-               Assert.fail("Wrong deployment context active, potential leak in Enricher. Active context was " + activeContext.getDescription().getName());
+            return test;
+        } catch (RuntimeException e) {
+            throw (Exception) e.getCause();
+        } finally {
+            if (deploymentContext.isActive()) {
+                Deployment activeContext = deploymentContext.getActiveId();
+                if (!"Z".equals(activeContext.getDescription().getName())) {
+                    Assert.fail(
+                        "Wrong deployment context active, potential leak in Enricher. Active context was " + activeContext
+                            .getDescription()
+                            .getName());
+                }
             }
-         }
-         if(containerContext.isActive())
-         {
-            String activeContext = containerContext.getActiveId();
-            if(!"TEST".equalsIgnoreCase(activeContext))
-            {
-               Assert.fail("Wrong container context active, potential leak in Enricher. Active context was " + activeContext);
+            if (containerContext.isActive()) {
+                String activeContext = containerContext.getActiveId();
+                if (!"TEST".equalsIgnoreCase(activeContext)) {
+                    Assert.fail("Wrong container context active, potential leak in Enricher. Active context was "
+                        + activeContext);
+                }
             }
-         }
-      }
-   }
+        }
+    }
 }

@@ -17,14 +17,13 @@
  */
 package org.jboss.arquillian.test.spi.enricher.resource;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * ResourceProvider
@@ -32,35 +31,30 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ResourceProvider
-{
+public interface ResourceProvider {
     boolean canProvide(Class<?> type);
 
     Object lookup(ArquillianResource resource, Annotation... qualifiers);
 
     /**
-     * This annotation is put to {@link ResourceProvider#lookup(ArquillianResource, Annotation...)} qualifiers parameter so
+     * This annotation is put to {@link ResourceProvider#lookup(ArquillianResource, Annotation...)} qualifiers parameter
+     * so
      * implementation of ResourceProvider can enrich it knowing it enriches class scoped ArquillianResource.
      *
      * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
-     *
      */
     @Documented
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface ClassInjection
-    {
+    @Retention(RetentionPolicy.RUNTIME) @interface ClassInjection {
     }
 
     /**
-     * This annotation is put to {@link ResourceProvider#lookup(ArquillianResource, Annotation...)} qualifiers parameter so
+     * This annotation is put to {@link ResourceProvider#lookup(ArquillianResource, Annotation...)} qualifiers parameter
+     * so
      * implementation of ResourceProvider can enrich it knowing it enriches method scoped ArquillianResource.
      *
      * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
-     *
      */
     @Documented
-    @Retention(RUNTIME)
-    @interface MethodInjection
-    {
+    @Retention(RUNTIME) @interface MethodInjection {
     }
 }

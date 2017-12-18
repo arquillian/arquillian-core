@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.core.spi.EventPoint;
 import org.jboss.arquillian.core.spi.Extension;
 import org.jboss.arquillian.core.spi.InjectionPoint;
@@ -34,102 +33,89 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ExtensionImpl implements Extension
-{
-   private Object target;
-   private List<InjectionPoint> injectionPoints;
-   private List<EventPoint> eventPoints;
-   private List<ObserverMethod> observers;
-   
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class ExtensionImpl implements Extension {
+    private Object target;
+    private List<InjectionPoint> injectionPoints;
+    private List<EventPoint> eventPoints;
+    private List<ObserverMethod> observers;
 
-   public static ExtensionImpl of(Object target)
-   {
-      Validate.notNull(target, "Extension must be specified");
-      return new ExtensionImpl(
-            target, 
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    ExtensionImpl(Object target, List<InjectionPoint> injectionPoints, List<EventPoint> eventPoints,
+        List<ObserverMethod> observers) {
+        this.target = target;
+        this.injectionPoints = injectionPoints;
+        this.eventPoints = eventPoints;
+        this.observers = observers;
+    }
+
+    public static ExtensionImpl of(Object target) {
+        Validate.notNull(target, "Extension must be specified");
+        return new ExtensionImpl(
+            target,
             injections(target, Reflections.getFieldInjectionPoints(target.getClass())),
             events(target, Reflections.getEventPoints(target.getClass())),
             observers(target, Reflections.getObserverMethods(target.getClass())));
-   }
-   
-   private static List<ObserverMethod> observers(Object extension, List<Method> observerMethods) 
-   {
-      List<ObserverMethod> result = new ArrayList<ObserverMethod>();
-      for(Method method : observerMethods)
-      {
-         result.add(ObserverImpl.of(extension, method));
-      }
-      return result;
-   }
+    }
 
-   private static List<InjectionPoint> injections(Object extension, List<Field> injectionPoints) 
-   {
-      List<InjectionPoint> result = new ArrayList<InjectionPoint>();
-      for(Field field : injectionPoints)
-      {
-         result.add(InjectionPointImpl.of(extension, field));
-      }
-      return result;
-   }
+    private static List<ObserverMethod> observers(Object extension, List<Method> observerMethods) {
+        List<ObserverMethod> result = new ArrayList<ObserverMethod>();
+        for (Method method : observerMethods) {
+            result.add(ObserverImpl.of(extension, method));
+        }
+        return result;
+    }
 
-   private static List<EventPoint> events(Object extension, List<Field> eventPoints) 
-   {
-      List<EventPoint> result = new ArrayList<EventPoint>();
-      for(Field method : eventPoints)
-      {
-         result.add(EventPointImpl.of(extension, method));
-      }
-      return result;
-   }
+    private static List<InjectionPoint> injections(Object extension, List<Field> injectionPoints) {
+        List<InjectionPoint> result = new ArrayList<InjectionPoint>();
+        for (Field field : injectionPoints) {
+            result.add(InjectionPointImpl.of(extension, field));
+        }
+        return result;
+    }
 
-   
-   ExtensionImpl(Object target, List<InjectionPoint> injectionPoints, List<EventPoint> eventPoints, List<ObserverMethod> observers)
-   {
-      this.target = target;
-      this.injectionPoints = injectionPoints;
-      this.eventPoints = eventPoints;
-      this.observers = observers;
-   }
+    private static List<EventPoint> events(Object extension, List<Field> eventPoints) {
+        List<EventPoint> result = new ArrayList<EventPoint>();
+        for (Field method : eventPoints) {
+            result.add(EventPointImpl.of(extension, method));
+        }
+        return result;
+    }
 
-   /**
-    * @return the target
-    */
-   public Object getTarget()
-   {
-      return target;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Extension -----------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    /**
+     * @return the target
+     */
+    public Object getTarget() {
+        return target;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Extension#getFieldInjectionPoints()
-    */
-   @Override
-   public List<InjectionPoint> getInjectionPoints()
-   {
-      return Collections.unmodifiableList(injectionPoints);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Extension#getEventPoints()
-    */
-   @Override
-   public List<EventPoint> getEventPoints()
-   {
-      return Collections.unmodifiableList(eventPoints);
-   }
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Extension -----------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Extension#getObservers()
-    */
-   @Override
-   public List<ObserverMethod> getObservers()
-   {
-      return Collections.unmodifiableList(observers);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Extension#getFieldInjectionPoints()
+     */
+    @Override
+    public List<InjectionPoint> getInjectionPoints() {
+        return Collections.unmodifiableList(injectionPoints);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Extension#getEventPoints()
+     */
+    @Override
+    public List<EventPoint> getEventPoints() {
+        return Collections.unmodifiableList(eventPoints);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Extension#getObservers()
+     */
+    @Override
+    public List<ObserverMethod> getObservers() {
+        return Collections.unmodifiableList(observers);
+    }
 }

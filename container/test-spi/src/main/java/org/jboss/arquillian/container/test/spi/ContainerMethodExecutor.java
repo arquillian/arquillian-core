@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,22 +21,18 @@ import org.jboss.arquillian.test.spi.TestResult;
 
 /**
  * RemoteMethodExecutor
- * 
+ * <p>
  * A Generic way to execute a in-container/remotely deployed test case.
- * 
- * Implementations should handle the protocol used for communication 
+ * <p>
+ * Implementations should handle the protocol used for communication
  * ie http/servlet, jmx, rmi etc.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ContainerMethodExecutor
-{
-   /**
-    * Invoke a test method deployed in the container.
-    * 
-    * @param testMethodExecutor 
-    * @return
-    */
-   TestResult invoke(TestMethodExecutor testMethodExecutor);
+public interface ContainerMethodExecutor {
+    /**
+     * Invoke a test method deployed in the container.
+     */
+    TestResult invoke(TestMethodExecutor testMethodExecutor);
 }

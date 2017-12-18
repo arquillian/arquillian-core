@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,10 +21,8 @@ import org.testng.annotations.Test;
 /*
  * Predfined TestClass
  */
-public class ArquillianClass1 extends Arquillian
-{
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-   }
+public class ArquillianClass1 extends Arquillian {
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+    }
 }

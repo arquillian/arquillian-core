@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 
@@ -32,94 +31,86 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * @author Davide D'Alto
  * @version $Revision: $
  */
-public class ServiceRegistry
-{
-   private final Injector injector;
-   private final Map<Class<?>, Set<Class<?>>> registry;
-   private final Map<Class<?>, Set<Class<?>>> vetoed;
-   
-   public ServiceRegistry(Injector injector)
-   {
-      this.registry = new HashMap<Class<?>, Set<Class<?>>>();
-      this.vetoed = new HashMap<Class<?>, Set<Class<?>>>();
-      this.injector = injector;
-   }
-   
-   public <T> void addService(Class<T> service, Class<? extends T> serviceImpl)
-   {
-      synchronized (registry)
-      {
-         if(isImplementationVetoed(service, serviceImpl))
-            return;
-         
-         Set<Class<?>> registeredImpls = registry.get(service);
-         if(registeredImpls == null)
-         {
-            registeredImpls = new HashSet<Class<?>>();
-         }
-         registeredImpls.add(serviceImpl);   
-         registry.put(service, registeredImpls);
-      }
-   }
+public class ServiceRegistry {
+    private final Injector injector;
+    private final Map<Class<?>, Set<Class<?>>> registry;
+    private final Map<Class<?>, Set<Class<?>>> vetoed;
 
-   public <T> void removeService(Class<T> service, Class<? extends T> serviceImpl)
-   {
-      synchronized (registry)
-      {
-         Set<Class<?>> registeredImpls = registry.get(service);
-         if(registeredImpls == null)
-            return;
+    public ServiceRegistry(Injector injector, Map<Class<?>, Set<Class<?>>> vetoed) {
+        this.registry = new HashMap<Class<?>, Set<Class<?>>>();
+        this.vetoed = new HashMap<Class<?>, Set<Class<?>>>(vetoed);
+        this.injector = injector;
+    }
 
-         registeredImpls.remove(serviceImpl);   
-      }
-   }
-   
-   public <T> void overrideService(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl)
-   {
-      synchronized (registry)
-      {
-         Set<Class<?>> vetoedImpls = vetoed.get(service);
-         if(vetoedImpls == null)
-         {
-            vetoedImpls = new HashSet<Class<?>>();
-            vetoed.put(service, vetoedImpls);
-         }
-         vetoedImpls.add(oldServiceImpl);
-         
-         removeService(service, oldServiceImpl);
-         addService(service, newServiceImpl);
-      }
-   }
-   
-   public <T> Set<Class<? extends T>> getServiceImpls(Class<T> service)
-   {
-      Set<Class<?>> registeredImpls = registry.get(service);
-      Set<Class<? extends T>> typedImpls = new HashSet<Class<? extends T>>();
-      if(registeredImpls == null)
-      {
-         return typedImpls;
-      }
-      for(Class<?> registeredImpl : registeredImpls)
-      {
-         typedImpls.add(registeredImpl.asSubclass(service));
-      }
-      
-      return typedImpls;
-   }
+    public <T> void addService(Class<T> service, Class<? extends T> serviceImpl) {
+        synchronized (registry) {
+            if (isImplementationVetoed(service, serviceImpl)) {
+                return;
+            }
 
-   private <T> boolean isImplementationVetoed(Class<?> service, Class<? extends T> serviceImpl)
-   {
-      Set<Class<?>> vetoedImpls = vetoed.get(service);
-      return vetoedImpls != null && vetoedImpls.contains(serviceImpl);
-   }
-   
-   public void clear()
-   {
-      registry.clear();
-   }
-   
-   public ServiceLoader getServiceLoader()
-   {
-      return new ServiceRegistryLoader(injector, this);
-   }
+            Set<Class<?>> registeredImpls = registry.get(service);
+            if (registeredImpls == null) {
+                registeredImpls = new HashSet<Class<?>>();
+            }
+            registeredImpls.add(serviceImpl);
+            registry.put(service, registeredImpls);
+        }
+    }
+
+    public <T> void removeService(Class<T> service, Class<? extends T> serviceImpl) {
+        synchronized (registry) {
+            Set<Class<?>> registeredImpls = registry.get(service);
+            if (registeredImpls == null) {
+                return;
+            }
+
+            registeredImpls.remove(serviceImpl);
+        }
+    }
+
+    public <T> void overrideService(Class<T> service, Class<? extends T> oldServiceImpl,
+        Class<? extends T> newServiceImpl) {
+        synchronized (registry) {
+
+            if (isImplementationVetoed(service, newServiceImpl)) {
+                return;
+            }
+
+            Set<Class<?>> vetoedImpls = vetoed.get(service);
+            if (vetoedImpls == null) {
+                vetoedImpls = new HashSet<Class<?>>();
+                vetoed.put(service, vetoedImpls);
+            }
+            vetoedImpls.add(oldServiceImpl);
+
+            removeService(service, oldServiceImpl);
+            addService(service, newServiceImpl);
+        }
+    }
+
+    public <T> Set<Class<? extends T>> getServiceImpls(Class<T> service) {
+        Set<Class<?>> registeredImpls = registry.get(service);
+        Set<Class<? extends T>> typedImpls = new HashSet<Class<? extends T>>();
+        if (registeredImpls == null) {
+            return typedImpls;
+        }
+        for (Class<?> registeredImpl : registeredImpls) {
+            typedImpls.add(registeredImpl.asSubclass(service));
+        }
+
+        return typedImpls;
+    }
+
+    private <T> boolean isImplementationVetoed(Class<?> service, Class<? extends T> serviceImpl) {
+        Set<Class<?>> vetoedImpls = vetoed.get(service);
+        return vetoedImpls != null && vetoedImpls.contains(serviceImpl);
+    }
+
+    public void clear() {
+        registry.clear();
+    }
+
+    public ServiceLoader getServiceLoader() {
+        return new ServiceRegistryLoader(injector, this);
+    }
 }

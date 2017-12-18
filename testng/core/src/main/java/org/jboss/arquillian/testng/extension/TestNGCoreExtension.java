@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,5 +24,4 @@ class TestNGCoreExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.observer(UpdateTestResultBeforeAfter.class);
     }
-
 }

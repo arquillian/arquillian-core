@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,7 +22,6 @@
 package org.jboss.arquillian.container.impl;
 
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ServerKillProcessor;
 
@@ -32,14 +31,12 @@ import org.jboss.arquillian.container.spi.ServerKillProcessor;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class DefaultServerKillProcessor implements ServerKillProcessor 
-{
-   private final Logger log = Logger.getLogger(DefaultServerKillProcessor.class.getName());
-   
-   @Override
-   public void kill(Container container) throws Exception 
-   {
-      log.warning("Triggering default implementation of a server kill() command => using stop() internally");
-      container.getDeployableContainer().stop();
-   }
+public class DefaultServerKillProcessor implements ServerKillProcessor {
+    private final Logger log = Logger.getLogger(DefaultServerKillProcessor.class.getName());
+
+    @Override
+    public void kill(Container container) throws Exception {
+        log.warning("Triggering default implementation of a server kill() command => using stop() internally");
+        container.getDeployableContainer().stop();
+    }
 }

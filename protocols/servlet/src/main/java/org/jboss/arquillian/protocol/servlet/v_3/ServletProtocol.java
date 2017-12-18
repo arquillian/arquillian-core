@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,22 +25,19 @@ import org.jboss.arquillian.protocol.servlet.BaseServletProtocol;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletProtocol extends BaseServletProtocol
-{
-   private static final String PROTOCOL_NAME = "Servlet 3.0";
+public class ServletProtocol extends BaseServletProtocol {
+    private static final String PROTOCOL_NAME = "Servlet 3.0";
 
-   @Override
-   protected String getProtcolName()
-   {
-      return PROTOCOL_NAME;
-   }
+    @Override
+    protected String getProtcolName() {
+        return PROTOCOL_NAME;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
-    */
-   @Override
-   public DeploymentPackager getPackager()
-   {
-      return new ServletProtocolDeploymentPackager();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.client.protocol.Protocol#getPackager()
+     */
+    @Override
+    public DeploymentPackager getPackager() {
+        return new ServletProtocolDeploymentPackager();
+    }
 }

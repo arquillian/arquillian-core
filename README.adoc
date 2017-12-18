@@ -1,0 +1,56 @@
+= Arquillian - So you can rule your code. Not the bugs.
+:asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-core/master/docs
+:numbered:
+:sectlink:
+:sectanchors:
+:sectid:
+:source-language: java
+:source-highlighter: coderay
+:sectnums:
+:icons: font
+:toc: left
+
+image:https://travis-ci.org/arquillian/arquillian-core.svg?branch=master["Build Status", link="https://travis-ci.org/arquillian/arquillian-core"]
+
+ifndef::generated-doc[]
+To read complete documentation visit http://arquillian.org/arquillian-core/
+endif::generated-doc[]
+
+
+Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to
+easily create automated integration, functional and acceptance tests for Java middleware.
+
+== Arquillian makes integration testing a breeze!
+
+Picking up where unit tests leave off, Arquillian handles all the plumbing of container management, deployment and framework initialization so you can focus on the task at hand, writing your tests. Real tests. In short…
+
+Arquillian brings the test to the runtime so you don’t have to manage the runtime from the test (or the build). Arquillian eliminates this burden by covering all aspects of test execution, which entails:
+
+* Managing the lifecycle of the container (or containers)
+* Bundling the test case, dependent classes and resources into a ShrinkWrap archive (or archives)
+* Deploying the archive (or archives) to the container (or containers)
+* Enriching the test case by providing dependency injection and other declarative services
+* Executing the tests inside (or against) the container
+* Capturing the results and returning them to the test runner for reporting
+
+To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
+
+ifdef::generated-doc[]
+== Guide
+
+include::{asciidoctor-source}/introduction.adoc[]
+include::{asciidoctor-source}/getting-started.adoc[]
+include::{asciidoctor-source}/deployment-archives.adoc[]
+include::{asciidoctor-source}/containers.adoc[]
+include::{asciidoctor-source}/test-enrichers.adoc[]
+include::{asciidoctor-source}/additional-features.adoc[]
+include::{asciidoctor-source}/protocols.adoc[]
+include::{asciidoctor-source}/build-integration.adoc[]
+endif::generated-doc[]
+
+== Useful URLs
+
+* http://arquillian.org[Project Site]
+* http://arquillian.org/guides[Guides]
+* http://discuss.arquillian.org/[Forum]
+* https://jira.jboss.org/jira/browse/ARQ[Issue Tracker]

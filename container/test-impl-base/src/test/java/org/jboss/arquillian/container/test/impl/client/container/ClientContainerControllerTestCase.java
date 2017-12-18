@@ -17,14 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.client.container;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
-
 import junit.framework.Assert;
-
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.Container;
@@ -57,6 +51,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * ClientContainerControllerTestCase
  *
@@ -64,255 +62,219 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ClientContainerControllerTestCase extends AbstractContainerTestTestBase
-{
-   private static final String MANAGED_SERVER_NAME = "suiteOrClassServer";
+public class ClientContainerControllerTestCase extends AbstractContainerTestTestBase {
+    private static final String MANAGED_SERVER_NAME = "suiteOrClassServer";
 
-   private static final String MANUAL_SERVER_NAME = "manualServer";
+    private static final String MANUAL_SERVER_NAME = "manualServer";
 
-   private static final String CUSTOM_SERVER_NAME = "customServer";
+    private static final String CUSTOM_SERVER_NAME = "customServer";
 
-   private static final String UNKNOWN_SERVER = "unknown";
+    private static final String UNKNOWN_SERVER = "unknown";
 
-   private static final String DEPLOYMENT_NAME = "DEPLOYMENT";
+    private static final String DEPLOYMENT_NAME = "DEPLOYMENT";
+    @Inject
+    private Instance<Injector> injector;
+    private ContainerRegistry registry;
+    @Inject
+    private Instance<ContainerController> controller;
+    @Inject
+    private Instance<DeploymentScenario> scenario;
+    @Mock
+    private ServiceLoader serviceLoader;
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private DeployableContainer deployableContainer;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(ClientContainerControllerCreator.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(ClientContainerControllerCreator.class);
+    }
 
-   @Inject
-   private Instance<Injector> injector;
+    @Before
+    public void createSetup() {
+        registry = new LocalContainerRegistry(injector.get());
+        when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
 
-   private ContainerRegistry registry;
+        ContainerDef suiteContainerDef = mock(ContainerDef.class);
+        when(suiteContainerDef.getContainerName()).thenReturn(MANAGED_SERVER_NAME);
+        when(suiteContainerDef.getMode()).thenReturn("suite");
 
-   @Inject
-   private Instance<ContainerController> controller;
+        ContainerDef manualContainerDef = Mockito.mock(ContainerDef.class);
+        when(manualContainerDef.getContainerName()).thenReturn(MANUAL_SERVER_NAME);
+        when(manualContainerDef.getMode()).thenReturn("manual");
 
-   @Inject
-   private Instance<DeploymentScenario> scenario;
+        ContainerDef customContainerDef = Mockito.mock(ContainerDef.class);
+        when(customContainerDef.getMode()).thenReturn("custom");
+        when(customContainerDef.getContainerName()).thenReturn(CUSTOM_SERVER_NAME);
 
-   @Mock
-   private ServiceLoader serviceLoader;
+        registry.create(suiteContainerDef, serviceLoader);
+        registry.create(manualContainerDef, serviceLoader);
+        registry.create(customContainerDef, serviceLoader);
 
-   @Mock
-   @SuppressWarnings("rawtypes")
-   private DeployableContainer deployableContainer;
+        bind(ApplicationScoped.class, ContainerRegistry.class, registry);
+        bind(ApplicationScoped.class, DeploymentScenario.class, new DeploymentScenario());
 
-   @Before
-   public void createSetup()
-   {
-      registry = new LocalContainerRegistry(injector.get());
-      when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
+        fire(new SetupContainers());
+    }
 
-      ContainerDef suiteContainerDef = mock(ContainerDef.class);
-      when(suiteContainerDef.getContainerName()).thenReturn(MANAGED_SERVER_NAME);
-      when(suiteContainerDef.getMode()).thenReturn("suite");
+    @Test
+    public void shouldFireStartContainerEventOnStartManual() throws Exception {
+        controller.get().start(MANUAL_SERVER_NAME);
+        assertEventFired(StartContainer.class, 1);
+    }
 
-      ContainerDef manualContainerDef = Mockito.mock(ContainerDef.class);
-      when(manualContainerDef.getContainerName()).thenReturn(MANUAL_SERVER_NAME);
-      when(manualContainerDef.getMode()).thenReturn("manual");
+    @Test
+    public void shouldFireStartContainerEventOnStartCustom() throws Exception {
+        controller.get().start(CUSTOM_SERVER_NAME);
+        assertEventFired(StartContainer.class, 1);
+    }
 
-      ContainerDef customContainerDef = Mockito.mock(ContainerDef.class);
-      when(customContainerDef.getMode()).thenReturn("custom");
-      when(customContainerDef.getContainerName()).thenReturn(CUSTOM_SERVER_NAME);
+    @Test
+    public void shouldFireDeployDeploymentEventOnStartManualWhenManagedDeployment() throws Exception {
+        setupAndExecuteManagedDeployment(MANUAL_SERVER_NAME);
+        assertEventFired(DeployDeployment.class, 2);
+    }
 
-      registry.create(suiteContainerDef, serviceLoader);
-      registry.create(manualContainerDef, serviceLoader);
-      registry.create(customContainerDef, serviceLoader);
+    // Custom Containers does not allow Managed Deployments (verified in DeploymentGenerator)
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnStartCustomWhenManagedDeployment() throws Exception {
+        setupAndExecuteManagedDeployment(CUSTOM_SERVER_NAME);
+        //assertEventFired(DeployDeployment.class, 0);
+    }
 
-      bind(ApplicationScoped.class, ContainerRegistry.class, registry);
-      bind(ApplicationScoped.class, DeploymentScenario.class, new DeploymentScenario());
+    @Test
+    public void shouldNotFireDeployDeploymentEventOnStartManualWhenNotManagedDeployment() throws Exception {
+        setupAndExecuteNonManagedDeployment(MANUAL_SERVER_NAME);
+        assertEventFired(DeployDeployment.class, 0);
+    }
 
-      fire(new SetupContainers());
-   }
+    @Test
+    public void shouldNotFireDeployDeploymentEventOnStartCustomWhenNotManagedDeployment() throws Exception {
+        setupAndExecuteNonManagedDeployment(CUSTOM_SERVER_NAME);
+        assertEventFired(DeployDeployment.class, 0);
+    }
 
-   @Test
-   public void shouldFireStartContainerEventOnStartManual() throws Exception
-   {
-      controller.get().start(MANUAL_SERVER_NAME);
-      assertEventFired(StartContainer.class, 1);
-   }
+    @Test
+    public void shouldFireUnDeployDeploymentEventOnStopManualWhenManagedDeployment() throws Exception {
+        setupAndExecuteManagedUnDeployment(MANUAL_SERVER_NAME);
+        assertEventFired(UnDeployDeployment.class, 1);
+    }
 
-   @Test
-   public void shouldFireStartContainerEventOnStartCustom() throws Exception
-   {
-      controller.get().start(CUSTOM_SERVER_NAME);
-      assertEventFired(StartContainer.class, 1);
-   }
+    @Test
+    public void shouldNotFireUnDeployDeploymentEventOnStopManualWhenNotManagedDeployment() throws Exception {
+        setupAndExecuteNonManagedUnDeployment(MANUAL_SERVER_NAME);
+        assertEventFired(UnDeployDeployment.class, 0);
+    }
 
-   @Test
-   public void shouldFireDeployDeploymentEventOnStartManualWhenManagedDeployment() throws Exception
-   {
-      setupAndExecuteManagedDeployment(MANUAL_SERVER_NAME);
-      assertEventFired(DeployDeployment.class, 2);
-   }
-   
-   // Custom Containers does not allow Managed Deployments (verified in DeploymentGenerator)
-   @Test(expected = IllegalStateException.class)
-   public void shouldThrowExceptionOnStartCustomWhenManagedDeployment() throws Exception
-   {
-      setupAndExecuteManagedDeployment(CUSTOM_SERVER_NAME);
-      //assertEventFired(DeployDeployment.class, 0);
-   }
+    @Test
+    public void shouldNotFireUnDeployDeploymentEventOnStopCustomWhenNotManagedDeployment() throws Exception {
+        setupAndExecuteNonManagedUnDeployment(CUSTOM_SERVER_NAME);
+        assertEventFired(UnDeployDeployment.class, 0);
+    }
 
-   @Test
-   public void shouldNotFireDeployDeploymentEventOnStartManualWhenNotManagedDeployment() throws Exception
-   {
-      setupAndExecuteNonManagedDeployment(MANUAL_SERVER_NAME);
-      assertEventFired(DeployDeployment.class, 0);
-   }
+    @Test
+    public void shouldFireStartContainerEventOnStartWithOverrides() throws Exception {
+        controller.get().start(MANUAL_SERVER_NAME, new Config().add("managementPort", "19999").map());
 
-   @Test
-   public void shouldNotFireDeployDeploymentEventOnStartCustomWhenNotManagedDeployment() throws Exception
-   {
-      setupAndExecuteNonManagedDeployment(CUSTOM_SERVER_NAME);
-      assertEventFired(DeployDeployment.class, 0);
-   }
+        assertEventFired(StartContainer.class, 1);
+    }
 
-   @Test
-   public void shouldFireUnDeployDeploymentEventOnStopManualWhenManagedDeployment() throws Exception
-   {
-      setupAndExecuteManagedUnDeployment(MANUAL_SERVER_NAME);
-      assertEventFired(UnDeployDeployment.class, 1);
-   }
+    @Test
+    public void shouldFireStopContainerEventOnStop() throws Exception {
+        controller.get().stop(MANUAL_SERVER_NAME);
 
-   @Test
-   public void shouldNotFireUnDeployDeploymentEventOnStopManualWhenNotManagedDeployment() throws Exception
-   {
-      setupAndExecuteNonManagedUnDeployment(MANUAL_SERVER_NAME);
-      assertEventFired(UnDeployDeployment.class, 0);
-   }
+        assertEventFired(StopContainer.class, 1);
+    }
 
-   @Test
-   public void shouldNotFireUnDeployDeploymentEventOnStopCustomWhenNotManagedDeployment() throws Exception
-   {
-      setupAndExecuteNonManagedUnDeployment(CUSTOM_SERVER_NAME);
-      assertEventFired(UnDeployDeployment.class, 0);
-   }
+    @Test
+    public void shouldFireKillContainerEventOnKill() throws Exception {
+        controller.get().kill(MANUAL_SERVER_NAME);
 
-   @Test
-   public void shouldFireStartContainerEventOnStartWithOverrides() throws Exception
-   {
-      controller.get().start(MANUAL_SERVER_NAME, new Config().add("managementPort", "19999").map());
+        assertEventFired(KillContainer.class, 1);
+    }
 
-      assertEventFired(StartContainer.class, 1);
-   }
+    @Test
+    public void shouldBeAbleToCheckTheStateOfAServer() throws Exception {
+        Container contianer = registry.getContainer(CUSTOM_SERVER_NAME);
+        contianer.setState(Container.State.STOPPED);
+        Assert.assertFalse(controller.get().isStarted(CUSTOM_SERVER_NAME));
 
-   @Test
-   public void shouldFireStopContainerEventOnStop() throws Exception
-   {
-      controller.get().stop(MANUAL_SERVER_NAME);
+        contianer.setState(Container.State.STARTED);
+        Assert.assertTrue(controller.get().isStarted(CUSTOM_SERVER_NAME));
+    }
 
-      assertEventFired(StopContainer.class, 1);
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnStartWhenManaged() throws Exception {
+        controller.get().start(MANAGED_SERVER_NAME);
+    }
 
-   @Test
-   public void shouldFireKillContainerEventOnKill() throws Exception
-   {
-      controller.get().kill(MANUAL_SERVER_NAME);
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnStartWithOverridesWhenManaged() throws Exception {
+        controller.get().start(MANAGED_SERVER_NAME, new Config().add("managementPort", "19999").map());
+    }
 
-      assertEventFired(KillContainer.class, 1);
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnStopWhenManaged() throws Exception {
+        controller.get().stop(MANAGED_SERVER_NAME);
+    }
 
-   @Test
-   public void shouldBeAbleToCheckTheStateOfAServer() throws Exception
-   {
-      Container contianer = registry.getContainer(CUSTOM_SERVER_NAME);
-      contianer.setState(Container.State.STOPPED);
-      Assert.assertFalse(controller.get().isStarted(CUSTOM_SERVER_NAME));
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnKillWhenManaged() throws Exception {
+        controller.get().kill(MANAGED_SERVER_NAME);
+    }
 
-      contianer.setState(Container.State.STARTED);
-      Assert.assertTrue(controller.get().isStarted(CUSTOM_SERVER_NAME));
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnStartWhenNotFound() throws Exception {
+        controller.get().start(UNKNOWN_SERVER);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnStartWhenManaged() throws Exception
-   {
-      controller.get().start(MANAGED_SERVER_NAME);
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnStopWhenNotFound() throws Exception {
+        controller.get().stop(UNKNOWN_SERVER);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnStartWithOverridesWhenManaged() throws Exception
-   {
-      controller.get().start(MANAGED_SERVER_NAME, new Config().add("managementPort", "19999").map());
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnKillWhenNotFound() throws Exception {
+        controller.get().kill(UNKNOWN_SERVER);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnStopWhenManaged() throws Exception
-   {
-      controller.get().stop(MANAGED_SERVER_NAME);
-   }
+    private void setupAndExecuteManagedDeployment(String containerName) {
+        setupAndExecuteDeployment(containerName, true);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnKillWhenManaged() throws Exception
-   {
-      controller.get().kill(MANAGED_SERVER_NAME);
-   }
+    private void setupAndExecuteNonManagedDeployment(String containerName) {
+        setupAndExecuteDeployment(containerName, false);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnStartWhenNotFound() throws Exception
-   {
-      controller.get().start(UNKNOWN_SERVER);
-   }
+    private void setupAndExecuteManagedUnDeployment(String containerName) {
+        setupAndExecuteUnDeployment(containerName, true);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnStopWhenNotFound() throws Exception
-   {
-      controller.get().stop(UNKNOWN_SERVER);
-   }
+    private void setupAndExecuteNonManagedUnDeployment(String containerName) {
+        setupAndExecuteUnDeployment(containerName, false);
+    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldThrowExceptionOnKillWhenNotFound() throws Exception
-   {
-      controller.get().kill(UNKNOWN_SERVER);
-   }
+    private void setupAndExecuteDeployment(String containerName, boolean managed) {
+        DeploymentDescription description = createDeploymentDescription(containerName)
+            .shouldBeManaged(managed);
 
-   private void setupAndExecuteManagedDeployment(String containerName)
-   {
-      setupAndExecuteDeployment(containerName, true);
-   }
+        scenario.get().addDeployment(description);
+        controller.get().start(containerName);
+        controller.get().start(containerName, new Config().add("managementPort", "19999").map());
+    }
 
-   private void setupAndExecuteNonManagedDeployment(String containerName)
-   {
-      setupAndExecuteDeployment(containerName, false);
-   }
+    private void setupAndExecuteUnDeployment(String containerName, boolean managed) {
+        DeploymentDescription description = createDeploymentDescription(containerName)
+            .shouldBeManaged(managed);
+        scenario.get().addDeployment(description);
+        controller.get().start(containerName);
+        scenario.get().deployment(new DeploymentTargetDescription(DEPLOYMENT_NAME)).deployed();
 
-   private void setupAndExecuteManagedUnDeployment(String containerName)
-   {
-      setupAndExecuteUnDeployment(containerName, true);
-   }
+        controller.get().stop(containerName);
+    }
 
-   private void setupAndExecuteNonManagedUnDeployment(String containerName)
-   {
-      setupAndExecuteUnDeployment(containerName, false);
-   }
-
-   private void setupAndExecuteDeployment(String containerName, boolean managed)
-   {
-      DeploymentDescription description = createDeploymentDescription(containerName)
-                               .shouldBeManaged(managed);
-
-      scenario.get().addDeployment(description);
-      controller.get().start(containerName);
-      controller.get().start(containerName, new Config().add("managementPort", "19999").map());
-   }
-
-   private void setupAndExecuteUnDeployment(String containerName, boolean managed)
-   {
-      DeploymentDescription description = createDeploymentDescription(containerName)
-                                             .shouldBeManaged(managed);
-      scenario.get().addDeployment(description);
-      controller.get().start(containerName);
-      scenario.get().deployment(new DeploymentTargetDescription(DEPLOYMENT_NAME)).deployed();
-
-      controller.get().stop(containerName);
-   }
-
-   private DeploymentDescription createDeploymentDescription(String targetName)
-   {
-      return new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class))
-               .setTarget(new TargetDescription(targetName));
-   }
+    private DeploymentDescription createDeploymentDescription(String targetName) {
+        return new DeploymentDescription(DEPLOYMENT_NAME, ShrinkWrap.create(JavaArchive.class))
+            .setTarget(new TargetDescription(targetName));
+    }
 }

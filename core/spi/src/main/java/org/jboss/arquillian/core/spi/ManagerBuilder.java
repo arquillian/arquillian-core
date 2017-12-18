@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.spi;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.jboss.arquillian.core.spi.context.Context;
 
 /**
@@ -28,56 +27,48 @@ import org.jboss.arquillian.core.spi.context.Context;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ManagerBuilder
-{
-   private static final String MANAGER_IMPL_CLASS = "org.jboss.arquillian.core.impl.ManagerImpl";
-   
-   private Set<Class<? extends Context>> contexts;
-   private Set<Class<?>> extensions;
-   
-   public static ManagerBuilder from()
-   {
-      return new ManagerBuilder();
-   }
-   
-   private ManagerBuilder()
-   {
-      contexts = new HashSet<Class<? extends Context>>();
-      extensions = new HashSet<Class<?>>();
-   }
+public class ManagerBuilder {
+    private static final String MANAGER_IMPL_CLASS = "org.jboss.arquillian.core.impl.ManagerImpl";
 
-   public ManagerBuilder context(Class<? extends Context> context)
-   {
-      Validate.notNull(context, "Context must be specified");
-      
-      contexts.add(context);
-      return this;
-   }
+    private Set<Class<? extends Context>> contexts;
+    private Set<Class<?>> extensions;
 
-   public ManagerBuilder extensions(Class<?>... extensions)
-   {
-      Validate.notNull(extensions, "Extensions must be specified");
-      for(Class<?> extension : extensions)
-      {
-         extension(extension);
-      }
-      return this;
-   }
+    private ManagerBuilder() {
+        contexts = new HashSet<Class<? extends Context>>();
+        extensions = new HashSet<Class<?>>();
+    }
 
-   public ManagerBuilder extension(Class<?> extension)
-   {
-      Validate.notNull(extension, "Extension must be specified");
-      
-      extensions.add(extension);
-      return this;
-   }
-   
-   public Manager create()
-   {
-      return SecurityActions.newInstance(
-            MANAGER_IMPL_CLASS, 
+    public static ManagerBuilder from() {
+        return new ManagerBuilder();
+    }
+
+    public ManagerBuilder context(Class<? extends Context> context) {
+        Validate.notNull(context, "Context must be specified");
+
+        contexts.add(context);
+        return this;
+    }
+
+    public ManagerBuilder extensions(Class<?>... extensions) {
+        Validate.notNull(extensions, "Extensions must be specified");
+        for (Class<?> extension : extensions) {
+            extension(extension);
+        }
+        return this;
+    }
+
+    public ManagerBuilder extension(Class<?> extension) {
+        Validate.notNull(extension, "Extension must be specified");
+
+        extensions.add(extension);
+        return this;
+    }
+
+    public Manager create() {
+        return SecurityActions.newInstance(
+            MANAGER_IMPL_CLASS,
             new Class<?>[] {Collection.class, Collection.class},
             new Object[] {contexts, extensions},
             Manager.class);
-   }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.test.impl.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;
@@ -30,23 +29,20 @@ import org.jboss.arquillian.test.spi.context.TestContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestContextImpl extends AbstractContext<Object> implements TestContext
-{
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return TestScoped.class;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+public class TestContextImpl extends AbstractContext<Object> implements TestContext {
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return TestScoped.class;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }

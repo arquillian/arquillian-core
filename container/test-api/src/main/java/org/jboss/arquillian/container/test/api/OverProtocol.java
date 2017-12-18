@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,19 +16,20 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Defines how Arquillian should communicate with and prepare the @{@link Deployment} for in container testing.
  * <p>
- * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can override this behavior 
+ * Arquillian will use what the container has defined as it's default protocol unless you specify other wise. You can
+ * override this behavior
  * by using @OverProtocol on the @Deployment method.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -37,10 +38,10 @@ import java.lang.annotation.Target;
  *      return ShrinkWrap.create(WebArchive.class);
  * }
  * </code></pre>
- *
+ * <p>
  * You can also override the default behavior on a global level using arquillian.xml. This will apply to
  * all containers and all deployments in your test suite.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -59,12 +60,9 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface OverProtocol 
-{
-   /**
-    * A String reference to the protocol name
-    * 
-    * @return
-    */
-   String value();
+public @interface OverProtocol {
+    /**
+     * A String reference to the protocol name
+     */
+    String value();
 }

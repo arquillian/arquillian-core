@@ -21,7 +21,6 @@ import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import org.jboss.arquillian.test.api.ArquillianResource;
 
 /**
@@ -30,29 +29,22 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class URIResourceProvider extends URLResourceProvider
-{
-   @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      Object object = super.lookup(resource, qualifiers);
-      if(object == null)
-      {
-         return null;
-      }
-      try
-      {
-         return ((URL)object).toURI();
-      }
-      catch (URISyntaxException e) 
-      {
-         throw new RuntimeException("Could not convert URL to URI: " + object, e);
-      }
-   }
+public class URIResourceProvider extends URLResourceProvider {
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        Object object = super.lookup(resource, qualifiers);
+        if (object == null) {
+            return null;
+        }
+        try {
+            return ((URL) object).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Could not convert URL to URI: " + object, e);
+        }
+    }
 
-   @Override
-   public boolean canProvide(Class<?> type)
-   {
-      return type.isAssignableFrom(URI.class);
-   }
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(URI.class);
+    }
 }

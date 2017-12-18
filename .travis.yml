@@ -1,0 +1,57 @@
+sudo: required
+services:
+  - docker
+addons:
+   apt:
+     sources:
+       - git-core
+     packages:
+       - git
+
+language: java
+jdk:
+  - oraclejdk8
+cache:
+  directories:
+    - $HOME/.m2
+
+before_install:
+  - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - '[ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "#doc" | wc -l) -gt 0 ] && FORCE_DOC_GEN=0 || FORCE_DOC_GEN=1'
+  - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
+  - '[ $BRANCH == "master" ] && [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
+  - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
+      git config user.name "${GH_USER}";
+      git config user.email "${GH_EMAIL}";
+      git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*;
+      git fetch --unshallow origin gh-pages;
+      git worktree add -b gh-pages gh-pages origin/gh-pages;
+      GH_REF=$(git remote get-url origin | awk "{sub(/https:\/\//,\"https://${GH_TOKEN}@\")}; 1" | awk "{sub(/\.git/, \"\")} 1");
+      docker pull rochdev/alpine-asciidoctor:mini;
+    fi'
+
+before_script: ./mvnw install -q -U -DskipTests=true
+
+script:
+  - ./mvnw clean install
+  - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
+      docker run -v $TRAVIS_BUILD_DIR:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor /docs/README.adoc -a generated-doc=true -a asciidoctor-source=/docs/docs -o /docs/gh-pages/index.html;
+    fi'
+
+after_success:
+  - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
+      cd gh-pages;
+      git add .;
+      git commit -m"Publishes new documentation";
+      git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
+    fi'
+
+after_error:
+  - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
+      docker logs adoc-to-html;
+    fi'
+
+after_failure:
+  - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
+      docker logs adoc-to-html;
+    fi'

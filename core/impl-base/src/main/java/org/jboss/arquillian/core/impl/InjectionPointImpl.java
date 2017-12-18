@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.spi.InjectionPoint;
 import org.jboss.arquillian.core.spi.InvocationException;
@@ -31,72 +30,59 @@ import org.jboss.arquillian.core.spi.InvocationException;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectionPointImpl implements InjectionPoint
-{
-   private Object target;
-   private Field field;
-   private Class<? extends Annotation> scope;
+public class InjectionPointImpl implements InjectionPoint {
+    private Object target;
+    private Field field;
+    private Class<? extends Annotation> scope;
 
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
-   
-   public static InjectionPointImpl of(Object target, Field field)
-   {
-      return new InjectionPointImpl(target, field, Reflections.getScope(field));
-   }
-   
-   InjectionPointImpl(Object target, Field field, Class<? extends Annotation> scope)
-   {
-      this.target = target;
-      this.field = field;
-      this.scope = scope;
-   }
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - InjectionPoint ------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    InjectionPointImpl(Object target, Field field, Class<? extends Annotation> scope) {
+        this.target = target;
+        this.field = field;
+        this.scope = scope;
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Typed#getType()
-    */
-   @Override
-   public Type getType()
-   {
-      ParameterizedType type = (ParameterizedType) field.getGenericType();
-      if(type.getActualTypeArguments()[0] instanceof ParameterizedType)
-      {
-         ParameterizedType first = (ParameterizedType)type.getActualTypeArguments()[0];
-         return (Class<?>)first.getRawType();
-      }
-      else
-      {
-         return (Class<?>)type.getActualTypeArguments()[0];
-      }
-   }
-   
-   public Class<? extends Annotation> getScope()
-   {
-      return scope;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
-    */
-   @Override
-   public void set(Instance<?> value) throws InvocationException
-   {
-      try
-      {
-         if(!field.isAccessible())
-         {
-            field.setAccessible(true);
-         }
-         field.set(target, value);
-      }
-      catch (Exception e) 
-      {
-         throw new InvocationException(e.getCause());
-      }
-   }
+    public static InjectionPointImpl of(Object target, Field field) {
+        return new InjectionPointImpl(target, field, Reflections.getScope(field));
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - InjectionPoint ------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Typed#getType()
+     */
+    @Override
+    public Type getType() {
+        ParameterizedType type = (ParameterizedType) field.getGenericType();
+        if (type.getActualTypeArguments()[0] instanceof ParameterizedType) {
+            ParameterizedType first = (ParameterizedType) type.getActualTypeArguments()[0];
+            return first.getRawType();
+        } else {
+            return type.getActualTypeArguments()[0];
+        }
+    }
+
+    public Class<? extends Annotation> getScope() {
+        return scope;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.InjectionPoint#set(org.jboss.arquillian.api.Instance)
+     */
+    @Override
+    public void set(Instance<?> value) throws InvocationException {
+        try {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            field.set(target, value);
+        } catch (Exception e) {
+            throw new InvocationException(e.getCause());
+        }
+    }
 }

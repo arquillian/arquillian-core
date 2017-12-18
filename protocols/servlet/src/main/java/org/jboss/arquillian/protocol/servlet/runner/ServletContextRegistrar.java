@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,13 +16,12 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
+import javax.servlet.ServletContext;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
-
-import javax.servlet.ServletContext;
 
 public class ServletContextRegistrar {
 
@@ -30,9 +29,7 @@ public class ServletContextRegistrar {
     @ApplicationScoped
     private InstanceProducer<ServletContext> servletContextInstanceProducer;
 
-    public void registerServletContext(@Observes ManagerStarted managerStarted)
-    {
+    public void registerServletContext(@Observes ManagerStarted managerStarted) {
         servletContextInstanceProducer.set(ServletTestRunner.getCurrentServletContext());
     }
-
 }

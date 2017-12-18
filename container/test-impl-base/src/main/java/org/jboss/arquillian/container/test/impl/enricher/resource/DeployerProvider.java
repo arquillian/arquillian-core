@@ -18,7 +18,6 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -31,20 +30,17 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeployerProvider implements ResourceProvider
-{
-   @Inject
-   private Instance<Deployer> deployer;
-   
-   @Override
-   public Object lookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      return deployer.get();
-   }
+public class DeployerProvider implements ResourceProvider {
+    @Inject
+    private Instance<Deployer> deployer;
 
-   @Override
-   public boolean canProvide(Class<?> type)
-   {
-      return type.isAssignableFrom(Deployer.class);
-   }
+    @Override
+    public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+        return deployer.get();
+    }
+
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(Deployer.class);
+    }
 }

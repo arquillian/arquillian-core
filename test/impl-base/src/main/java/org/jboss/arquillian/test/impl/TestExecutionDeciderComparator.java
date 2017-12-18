@@ -17,12 +17,10 @@
 package org.jboss.arquillian.test.impl;
 
 import java.util.Comparator;
-
 import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
 
 /**
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
- *
  */
 public class TestExecutionDeciderComparator implements Comparator<TestExecutionDecider> {
 
@@ -30,5 +28,4 @@ public class TestExecutionDeciderComparator implements Comparator<TestExecutionD
     public int compare(TestExecutionDecider decider1, TestExecutionDecider decider2) {
         return decider1.precedence() - decider2.precedence();
     }
-
 }

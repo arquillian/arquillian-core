@@ -19,13 +19,12 @@ package org.jboss.arquillian.protocol.jmx;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 
 /**
  * JMXCommandService
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
@@ -38,7 +37,7 @@ public class JMXCommandService implements CommandService {
         MBeanServer server = JMXTestRunner.localMBeanServer;
         try {
             ObjectName runner = new ObjectName(JMXTestRunner.OBJECT_NAME);
-            server.invoke(runner, "send", new Object[] { command }, new String[] { Command.class.getName() });
+            server.invoke(runner, "send", new Object[] {command}, new String[] {Command.class.getName()});
 
             long timeoutTime = System.currentTimeMillis() + TIMEOUT;
             while (timeoutTime > System.currentTimeMillis()) {
@@ -62,5 +61,4 @@ public class JMXCommandService implements CommandService {
             throw new RuntimeException("Could not communicate with client side", e);
         }
     }
-
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,25 +24,26 @@ import java.lang.annotation.Annotation;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Manager
-{
-   // Event
-   void fire(Object event);
-   <T> void fire(T event, NonManagedObserver<T> observer);
-   
-   // Contextual 
-   <T> T resolve(Class<T> type);
-   <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance);
-   
-   // Injector
-   void inject(Object obj);
-   
-   // Contexts
-   <T> T getContext(Class<T> type);
+public interface Manager {
+    // Event
+    void fire(Object event);
 
-   // startup
-   void start();
+    <T> void fire(T event, NonManagedObserver<T> observer);
 
-   // clean
-   void shutdown();
+    // Contextual
+    <T> T resolve(Class<T> type);
+
+    <T> void bind(Class<? extends Annotation> scope, Class<T> type, T instance);
+
+    // Injector
+    void inject(Object obj);
+
+    // Contexts
+    <T> T getContext(Class<T> type);
+
+    // startup
+    void start();
+
+    // clean
+    void shutdown();
 }

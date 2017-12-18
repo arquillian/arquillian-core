@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
-
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -31,34 +30,30 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ToolingDeploymentFormatterTestCase
-{
+public class ToolingDeploymentFormatterTestCase {
 
-   @Test
-   public void shouldBeAbleToExportArchive() throws Exception
-   {
-      String content = ShrinkWrap
+    @Test
+    public void shouldBeAbleToExportArchive() throws Exception {
+        String content = ShrinkWrap
             .create(WebArchive.class, "test.jar")
             .addAsResource(new File("src/test/resources/tooling/arquillian.xml"), ArchivePaths.create("resource.xml"))
             .addAsResource("tooling/arquillian.xml", ArchivePaths.create("resource2.xml"))
             .addAsResource(new File("src/test/resources/tooling/arquillian.xml").toURI().toURL(),
-                  ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
+                ArchivePaths.create("resource3.xml")).addClass(ToolingDeploymentFormatterTestCase.class)
             .addAsServiceProvider(Service.class, ServiceImpl.class)
             .addAsLibrary(ShrinkWrap.create(JavaArchive.class, "test.jar").addClass(ToolingDeploymentFormatter.class))
             .toString(new ToolingDeploymentFormatter(getClass()));
-      
-      // TODO: do some output Assertions..
-      Assert.assertNotNull(content);
-      System.out.println(content);
-   }
-   
-   public static interface Service 
-   {
-      
-   }
-   
-   public static class ServiceImpl implements Service
-   {
-      
-   }
+
+        // TODO: do some output Assertions..
+        Assert.assertNotNull(content);
+        System.out.println(content);
+    }
+
+    public static interface Service {
+
+    }
+
+    public static class ServiceImpl implements Service {
+
+    }
 }

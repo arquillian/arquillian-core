@@ -18,7 +18,6 @@
 package org.jboss.arquillian.core.test.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
 import org.jboss.arquillian.core.spi.context.ObjectStore;
@@ -29,44 +28,38 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ManagerTestContextImpl extends AbstractContext<String> implements ManagerTestContext
-{
-   private static final String SUITE_CONTEXT_ID = "managerTest";
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#activate()
-    */
-   @Override
-   public void activate()
-   {
-      super.activate(SUITE_CONTEXT_ID);
-   }
+public class ManagerTestContextImpl extends AbstractContext<String> implements ManagerTestContext {
+    private static final String SUITE_CONTEXT_ID = "managerTest";
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#destroy()
-    */
-   @Override
-   public void destroy()
-   {
-      super.destroy(SUITE_CONTEXT_ID);
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#activate()
+     */
+    @Override
+    public void activate() {
+        super.activate(SUITE_CONTEXT_ID);
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return ManagerTestScoped.class;
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.NonIdBoundContext#destroy()
+     */
+    @Override
+    public void destroy() {
+        super.destroy(SUITE_CONTEXT_ID);
+    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return ManagerTestScoped.class;
+    }
 
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.spi.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }

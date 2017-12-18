@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,12 +16,12 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Defines that the target should operate within the context of the referenced deployment.
@@ -52,11 +52,11 @@ import java.lang.annotation.Target;
  * &#64;Test &#64;OperatesOnDeployment("Y")
  * public void shouldExecuteInY() { ... }
  * </code></pre>
- *
+ * <p>
  * Additionally you can reference another deployments metadata from within another context by qualifiing
  * OperateOnDeployment on ArquillianResource injection points.
  * <p>
- *
+ * <p>
  * Usage Example for ArquillianResource:<br/>
  * <pre><code>
  * &#64;Deployment(name = "X")
@@ -83,12 +83,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-public @interface OperateOnDeployment
-{
+public @interface OperateOnDeployment {
     /**
      * Refer to the deployment name this should operate on.
      *
      * @return The Deployment name this method operates on
+     *
      * @see Deployment#name()
      */
     String value();

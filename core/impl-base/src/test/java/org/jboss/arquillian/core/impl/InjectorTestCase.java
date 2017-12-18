@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl;
 
 import java.util.List;
-
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -33,51 +32,45 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectorTestCase extends AbstractManagerTestBase
-{
-   @Override
+public class InjectorTestCase extends AbstractManagerTestBase {
+    @Override
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(TestObserver.class);
     }
 
-   @Test
-   public void shouldBeAbleToDoStaticInjection() throws Exception
-   {
-      bind(ApplicationScoped.class, Object.class, new Object());
-      
-      fire("test event");
-      
-      Assert.assertTrue(getManager().getExtension(TestObserver.class).wasCalled);
-   }
-   
-   private static class TestObserver 
-   {
-      private boolean wasCalled;
-      
-      @Inject
-      private Instance<Injector> injectorInstance;
-      
-      @SuppressWarnings("unused")
-      public void on(@Observes String test)
-      {
-         TestStaticInjected target = new TestStaticInjected();
-         injectorInstance.get().inject(target);
-         
-         target.check();
-         
-         wasCalled = true;
-      }
-   }
-   
-   private static class TestStaticInjected
-   {
-      @Inject
-      private Instance<Object> objectnstance;
-      
-      public void check() 
-      {
-         Assert.assertNotNull(objectnstance);
-         Assert.assertNotNull(objectnstance.get());
-      }
-   }
+    @Test
+    public void shouldBeAbleToDoStaticInjection() throws Exception {
+        bind(ApplicationScoped.class, Object.class, new Object());
+
+        fire("test event");
+
+        Assert.assertTrue(getManager().getExtension(TestObserver.class).wasCalled);
+    }
+
+    private static class TestObserver {
+        private boolean wasCalled;
+
+        @Inject
+        private Instance<Injector> injectorInstance;
+
+        @SuppressWarnings("unused")
+        public void on(@Observes String test) {
+            TestStaticInjected target = new TestStaticInjected();
+            injectorInstance.get().inject(target);
+
+            target.check();
+
+            wasCalled = true;
+        }
+    }
+
+    private static class TestStaticInjected {
+        @Inject
+        private Instance<Object> objectnstance;
+
+        public void check() {
+            Assert.assertNotNull(objectnstance);
+            Assert.assertNotNull(objectnstance.get());
+        }
+    }
 }

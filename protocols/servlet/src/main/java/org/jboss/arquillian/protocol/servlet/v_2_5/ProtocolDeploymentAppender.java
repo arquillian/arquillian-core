@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,24 +25,22 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  * ProtocolDeploymentAppender
- * 
- * DeploymentAppender to add required resources for the protocol servlet to run  
+ * <p>
+ * DeploymentAppender to add required resources for the protocol servlet to run
  * in container.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender
-{
-   @Override
-   public WebArchive createAuxiliaryArchive()
-   {
-      // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
-      return ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
-                     .addPackage(ServletRemoteExtension.class.getPackage())
-                     .setWebXML(new StringAsset(
-                           WebUtils.createNewDescriptor().exportAsString()
-                     ))
-                     .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
-   }
+public class ProtocolDeploymentAppender implements AuxiliaryArchiveAppender {
+    @Override
+    public WebArchive createAuxiliaryArchive() {
+        // Load based on package to avoid ClassNotFoundException on HttpServlet when loading ServletTestRunner
+        return ShrinkWrap.create(WebArchive.class, "arquillian-protocol.war")
+            .addPackage(ServletRemoteExtension.class.getPackage())
+            .setWebXML(new StringAsset(
+                WebUtils.createNewDescriptor().exportAsString()
+            ))
+            .addAsServiceProvider(RemoteLoadableExtension.class, ServletRemoteExtension.class);
+    }
 }

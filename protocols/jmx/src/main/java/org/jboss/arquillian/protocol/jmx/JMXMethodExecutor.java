@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,13 +19,11 @@ package org.jboss.arquillian.protocol.jmx;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import javax.management.ObjectName;
-
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.command.Command;
 import org.jboss.arquillian.container.test.spi.command.CommandCallback;
@@ -52,7 +50,8 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
         this(mbeanServer, callback, JMXTestRunnerMBean.OBJECT_NAME, null);
     }
 
-    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback, String objectName, Map<String, String> protocolProps) {
+    public JMXMethodExecutor(MBeanServerConnection mbeanServer, CommandCallback callback, String objectName,
+        Map<String, String> protocolProps) {
         this.mbeanServer = mbeanServer;
         this.callback = callback;
         this.objectName = objectName;
@@ -60,8 +59,9 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
     }
 
     public TestResult invoke(TestMethodExecutor testMethodExecutor) {
-        if (testMethodExecutor == null)
+        if (testMethodExecutor == null) {
             throw new IllegalArgumentException("TestMethodExecutor null");
+        }
 
         String testClass = testMethodExecutor.getInstance().getClass().getName();
         String testMethod = testMethodExecutor.getMethod().getName();
@@ -77,8 +77,8 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
 
             JMXTestRunnerMBean testRunner = getMBeanProxy(objectName, JMXTestRunnerMBean.class);
             log.fine("Invoke " + testCanonicalName);
-            result = Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod, protocolProps));
-
+            result =
+                Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod, protocolProps));
         } catch (final Throwable th) {
             result = new TestResult(Status.FAILED);
             result.setThrowable(th);
@@ -93,13 +93,14 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
             }
         }
         log.fine("Result: " + result);
-        if (result.getStatus() == Status.FAILED)
+        if (result.getStatus() == Status.FAILED) {
             log.log(Level.SEVERE, "Failed: " + testCanonicalName, result.getThrowable());
+        }
         return result;
     }
 
     private <T> T getMBeanProxy(ObjectName name, Class<T> interf) {
-        return (T) MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
+        return MBeanServerInvocationHandler.newProxyInstance(mbeanServer, name, interf, false);
     }
 
     private class CallbackNotificationListener implements NotificationListener {
@@ -116,8 +117,9 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
             callback.fired(command);
 
             try {
-                mbeanServer.invoke(serviceName, "push", new Object[] { eventMessage, Serializer.toByteArray(command) }, new String[] { String.class.getName(),
-                        byte[].class.getName() });
+                mbeanServer.invoke(serviceName, "push", new Object[] {eventMessage, Serializer.toByteArray(command)},
+                    new String[] {String.class.getName(),
+                        byte[].class.getName()});
             } catch (Exception e) {
                 throw new RuntimeException("Could not return command result for command " + command, e);
             }

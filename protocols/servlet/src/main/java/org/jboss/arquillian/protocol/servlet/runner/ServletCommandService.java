@@ -26,37 +26,31 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletCommandService implements CommandService
-{
-   private static long TIMEOUT = 30000;
-   
-   @SuppressWarnings("unchecked")
-   public <T> T execute(Command<T> command)
-   {
-      String currentId = ServletTestRunner.currentCall.get();
-      ServletTestRunner.events.put(currentId, command);
+public class ServletCommandService implements CommandService {
+    private static long TIMEOUT = 30000;
 
-      long timeoutTime = System.currentTimeMillis() + TIMEOUT;
-      while (timeoutTime > System.currentTimeMillis())
-      {
-         Command<?> newCommand = ServletTestRunner.events.get(currentId);
-         if (newCommand != null) {
-             if (newCommand.getThrowable() != null) {
-                 throw new RuntimeException(newCommand.getThrowable());
-             }
-             if (newCommand.getResult() != null) {
-                 return (T) newCommand.getResult();
-             }
-         }
-         try
-         {
-            Thread.sleep(100);
-         }
-         catch (Exception e) 
-         {
-            throw new RuntimeException(e);
-         }
-      }
-      throw new RuntimeException("No command response within timeout of " + TIMEOUT + " ms.");
-   }
+    @SuppressWarnings("unchecked")
+    public <T> T execute(Command<T> command) {
+        String currentId = ServletTestRunner.currentCall.get();
+        ServletTestRunner.events.put(currentId, command);
+
+        long timeoutTime = System.currentTimeMillis() + TIMEOUT;
+        while (timeoutTime > System.currentTimeMillis()) {
+            Command<?> newCommand = ServletTestRunner.events.get(currentId);
+            if (newCommand != null) {
+                if (newCommand.getThrowable() != null) {
+                    throw new RuntimeException(newCommand.getThrowable());
+                }
+                if (newCommand.getResult() != null) {
+                    return (T) newCommand.getResult();
+                }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        throw new RuntimeException("No command response within timeout of " + TIMEOUT + " ms.");
+    }
 }

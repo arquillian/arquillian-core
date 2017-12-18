@@ -17,13 +17,9 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -38,152 +34,133 @@ import org.junit.runner.notification.RunListener;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+
 /**
  * JUnitTestBaseClass
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitTestBaseClass
-{
-   public static enum Cycle { BEFORE_CLASS, BEFORE, TEST,  AFTER, AFTER_CLASS }
+public class JUnitTestBaseClass {
+    /*
+     * Setup / Clear the static callback info.
+     */
+    private static Map<Cycle, Integer> callbackCount = new HashMap<Cycle, Integer>();
+    private static Map<Cycle, Throwable> callbackException = new HashMap<Cycle, Throwable>();
 
-   /*
-    * Setup / Clear the static callback info.
-    */
-   private static Map<Cycle, Integer> callbackCount = new HashMap<Cycle, Integer>();
-   private static Map<Cycle, Throwable> callbackException = new HashMap<Cycle, Throwable>();
-   static
-   {
-      for(Cycle tmp : Cycle.values())
-      {
-         callbackCount.put(tmp, 0);
-      }
-   }
+    static {
+        for (Cycle tmp : Cycle.values()) {
+            callbackCount.put(tmp, 0);
+        }
+    }
 
-   public static void throwException(Cycle cycle, Throwable exception)
-   {
-      callbackException.put(cycle, exception);
-   }
+    public static void throwException(Cycle cycle, Throwable exception) {
+        callbackException.put(cycle, exception);
+    }
 
-   public static void wasCalled(Cycle cycle) throws Throwable
-   {
-      if(callbackCount.containsKey(cycle))
-      {
-         callbackCount.put(cycle, callbackCount.get(cycle) + 1);
-      }
-      else
-      {
-         throw new RuntimeException("Unknown callback: " + cycle);
-      }
-      if(callbackException.containsKey(cycle))
-      {
-         throw callbackException.get(cycle);
-      }
-   }
+    public static void wasCalled(Cycle cycle) throws Throwable {
+        if (callbackCount.containsKey(cycle)) {
+            callbackCount.put(cycle, callbackCount.get(cycle) + 1);
+        } else {
+            throw new RuntimeException("Unknown callback: " + cycle);
+        }
+        if (callbackException.containsKey(cycle)) {
+            throw callbackException.get(cycle);
+        }
+    }
 
-   @After
-   public void clearCallbacks()
-   {
-      callbackCount.clear();
-      for(Cycle tmp : Cycle.values())
-      {
-         callbackCount.put(tmp, 0);
-      }
-      callbackException.clear();
-   }
+    @After
+    public void clearCallbacks() {
+        callbackCount.clear();
+        for (Cycle tmp : Cycle.values()) {
+            callbackCount.put(tmp, 0);
+        }
+        callbackException.clear();
+    }
 
-   /*
-    * Mockito Answers for invoking the LifeCycle callbacks.
-    */
-   public static class ExecuteLifecycle implements Answer<Object>
-   {
-      @Override
-      public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable
-      {
-         for(Object argument : invocation.getArguments())
-         {
-            if(argument instanceof LifecycleMethodExecutor)
-            {
-               ((LifecycleMethodExecutor)argument).invoke();
+    /*
+     * Internal Helpers
+     */
+    protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception {
+        doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor)
+            .before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor)
+            .after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor)
+            .test(any(TestMethodExecutor.class));
+    }
+
+    public void assertCycle(int count, Cycle... cycles) {
+        for (Cycle cycle : cycles) {
+            Assert.assertEquals("Verify " + cycle + " called N times",
+                count, (int) callbackCount.get(cycle));
+        }
+    }
+
+    protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception {
+        return run(adaptor, null, classes);
+    }
+
+    protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
+        throws Exception {
+        try {
+            setAdaptor(adaptor);
+            JUnitCore core = new JUnitCore();
+            if (listener != null) {
+                core.addListener(listener);
             }
-            else if(argument instanceof TestMethodExecutor)
-            {
-               ((TestMethodExecutor)argument).invoke();
+
+            return core.run(classes);
+        } finally {
+            setAdaptor(null);
+        }
+    }
+
+    // force set the TestRunnerAdaptor to use
+    private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception {
+        Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
+        method.setAccessible(true);
+        method.invoke(null, adaptor);
+    }
+
+    public static enum Cycle
+
+    {
+        BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS
+    }
+
+    /*
+     * Mockito Answers for invoking the LifeCycle callbacks.
+     */
+    public static class ExecuteLifecycle implements Answer<Object> {
+        @Override
+        public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable {
+            for (Object argument : invocation.getArguments()) {
+                if (argument instanceof LifecycleMethodExecutor) {
+                    ((LifecycleMethodExecutor) argument).invoke();
+                } else if (argument instanceof TestMethodExecutor) {
+                    ((TestMethodExecutor) argument).invoke();
+                }
             }
-         }
-         return null;
-      }
-   }
+            return null;
+        }
+    }
 
-   public static class TestExecuteLifecycle extends ExecuteLifecycle
-   {
-      private TestResult result;
+    public static class TestExecuteLifecycle extends ExecuteLifecycle {
+        private TestResult result;
 
-      public TestExecuteLifecycle(TestResult result)
-      {
-         this.result = result;
-      }
+        public TestExecuteLifecycle(TestResult result) {
+            this.result = result;
+        }
 
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable
-      {
-         super.answer(invocation);
-         return result;
-      }
-   }
-
-   /*
-    * Internal Helpers
-    */
-   protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception
-   {
-      doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-      doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor).test(any(TestMethodExecutor.class));
-   }
-
-   public void assertCycle(int count, Cycle... cycles)
-   {
-      for(Cycle cycle : cycles)
-      {
-         Assert.assertEquals("Verify " + cycle +  " called N times",
-               count, (int)callbackCount.get(cycle));
-      }
-   }
-
-   protected Result run(TestRunnerAdaptor adaptor, Class<?>... classes) throws Exception
-   {
-      return run(adaptor, (RunListener)null, classes);
-   }
-
-   protected Result run(TestRunnerAdaptor adaptor, RunListener listener, Class<?>... classes)
-      throws Exception
-   {
-      try
-      {
-         setAdaptor(adaptor);
-         JUnitCore core = new JUnitCore();
-         if(listener != null)
-         {
-            core.addListener(listener);
-         }
-
-         return core.run(classes);
-      }
-      finally
-      {
-         setAdaptor(null);
-      }
-   }
-
-   // force set the TestRunnerAdaptor to use
-   private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception
-   {
-      Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
-      method.setAccessible(true);
-      method.invoke(null, adaptor);
-   }
+        @Override
+        public Object answer(InvocationOnMock invocation) throws Throwable {
+            super.answer(invocation);
+            return result;
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,36 +18,32 @@ package org.jboss.arquillian.container.test.impl.client.deployment.tool;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
 import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.shrinkwrap.api.Archive;
 
 /**
- * Handler that will export a XML version of the Deployed Archive. 
- * 
+ * Handler that will export a XML version of the Deployed Archive.
+ * <p>
  * Used by tooling to show a view of the ShrinkWrap archive.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArchiveDeploymentToolingExporter 
-{
-   static final String ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER = "arquillian.tooling.deployment.folder";
-   
-   public void export(@Observes BeforeDeploy event) throws Exception 
-   {
-      String deploymentOutputFolder = System.getProperty(ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER);
-      if(deploymentOutputFolder == null) // tooling not activated, nothing to do 
-      {
-         return;
-      }
-      Archive<?> deployment = event.getDeployment().getTestableArchive(); // deployment not in context?, nothing to do
-      if(deployment == null)
-      {
-         return;
-      }
+public class ArchiveDeploymentToolingExporter {
+    static final String ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER = "arquillian.tooling.deployment.folder";
+
+    public void export(@Observes BeforeDeploy event) throws Exception {
+        String deploymentOutputFolder = System.getProperty(ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER);
+        if (deploymentOutputFolder == null) // tooling not activated, nothing to do
+        {
+            return;
+        }
+        Archive<?> deployment = event.getDeployment().getTestableArchive(); // deployment not in context?, nothing to do
+        if (deployment == null) {
+            return;
+        }
 /*      
       TestClass testClass = event.getTestClass();
       String deploymentContent = deployment.toString(new ToolingDeploymentFormatter(testClass.getJavaClass()));
@@ -55,34 +51,27 @@ public class ArchiveDeploymentToolingExporter
             new File(deploymentOutputFolder + "/" + testClass.getName() + ".xml"), 
             deploymentContent);
 */
-   }
-   
-   protected void writeOutToFile(File target, String content) 
-   {
-      Validate.notNull(target, "Target must be specified");
-      Validate.notNull(content, "Content must be specified");
-      
-      FileOutputStream output = null;
-      try
-      {
-         output = new FileOutputStream(target);
-         output.write(content.getBytes());
-         output.close();
-      }
-      catch (Exception e) 
-      {
-         throw new RuntimeException("Could not write content to file", e);
-      }
-      finally
-      {
-         if(output != null)
-         {
-            try {output.close(); } 
-            catch (Exception e) 
-            { 
-               throw new RuntimeException("Could not close output stream", e);  
+    }
+
+    protected void writeOutToFile(File target, String content) {
+        Validate.notNull(target, "Target must be specified");
+        Validate.notNull(content, "Content must be specified");
+
+        FileOutputStream output = null;
+        try {
+            output = new FileOutputStream(target);
+            output.write(content.getBytes());
+            output.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not write content to file", e);
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not close output stream", e);
+                }
             }
-         }
-      }
-   }
+        }
+    }
 }

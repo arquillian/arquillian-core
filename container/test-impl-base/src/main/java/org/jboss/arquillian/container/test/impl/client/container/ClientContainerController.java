@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.test.impl.client.container;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -40,249 +39,220 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 
 /**
  * ClientContainerController
- * 
+ *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
- * 
  */
-public class ClientContainerController implements ContainerController
-{
+public class ClientContainerController implements ContainerController {
 
-   private final Logger log = Logger.getLogger(ClientContainerController.class.getName());
+    private final Logger log = Logger.getLogger(ClientContainerController.class.getName());
 
-   @Inject
-   private Event<ContainerControlEvent> event;
+    @Inject
+    private Event<ContainerControlEvent> event;
 
-   @Inject
-   private Instance<ContainerRegistry> containerRegistry;
-   
-   @Inject
-   private Instance<DeploymentScenario> deploymentScenario;
+    @Inject
+    private Instance<ContainerRegistry> containerRegistry;
 
-   @Override
-   public void start(String containerQualifier)
-   {
-      DeploymentScenario scenario = deploymentScenario.get();
-      if(scenario == null)
-      {
-         throw new IllegalArgumentException("No deployment scenario in context");
-      }
-      
-      ContainerRegistry registry = containerRegistry.get();
-      if (registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
+    @Inject
+    private Instance<DeploymentScenario> deploymentScenario;
 
-      if (!containerExists(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("No container found in registry with name " + containerQualifier);
-      }
+    @Override
+    public void start(String containerQualifier) {
+        DeploymentScenario scenario = deploymentScenario.get();
+        if (scenario == null) {
+            throw new IllegalArgumentException("No deployment scenario in context");
+        }
 
-      if (!isControllableContainer(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
-      }
-      
-      List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
-      
-      Container container = registry.getContainer(new TargetDescription(containerQualifier));
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
 
-      log.info("Manual starting of a server instance");
+        if (!containerExists(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("No container found in registry with name " + containerQualifier);
+        }
 
-      event.fire(new StartContainer(container));
-      
-      for (Deployment d : managedDeployments)
-      {
-         if(d.getDescription().managed() && "custom".equalsIgnoreCase(container.getContainerConfiguration().getMode()))
-         {
-            throw new IllegalStateException(
-                  "Trying to deploy managed deployment " + d.getDescription().getName() +
-                  " to custom mode container " + container.getName());
-         }
-         if (!d.isDeployed()) 
-         {
-            log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() + 
-               " for the container with name " + container.getName());
-            event.fire(new DeployDeployment(container, d));
-         }
-      }
-   }
+        if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("Could not start "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
+        }
 
-   @Override
-   public void start(String containerQualifier, Map<String, String> config)
-   {
-      DeploymentScenario scenario = deploymentScenario.get();
-      if(scenario == null)
-      {
-         throw new IllegalArgumentException("No deployment scenario in context");
-      }
-      
-      ContainerRegistry registry = containerRegistry.get();
-      if (registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
+        List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
 
-      if (!containerExists(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("No container with the specified name exists");
-      }
-      
-      if (!isControllableContainer(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
-      }
+        Container container = registry.getContainer(new TargetDescription(containerQualifier));
 
-      List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
-      
-      Container container = registry.getContainer(new TargetDescription(containerQualifier));
+        log.info("Manual starting of a server instance");
 
-      for (String name : config.keySet())
-      {
-         container.getContainerConfiguration().overrideProperty(name, config.get(name));
-      }
+        event.fire(new StartContainer(container));
 
-      log.info("Manual starting of a server instance with overridden configuration. New configuration: " + 
-         container.getContainerConfiguration().getContainerProperties());
+        for (Deployment d : managedDeployments) {
+            if (d.getDescription().managed() && "custom".equalsIgnoreCase(
+                container.getContainerConfiguration().getMode())) {
+                throw new IllegalStateException(
+                    "Trying to deploy managed deployment " + d.getDescription().getName() +
+                        " to custom mode container " + container.getName());
+            }
+            if (!d.isDeployed()) {
+                log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() +
+                    " for the container with name " + container.getName());
+                event.fire(new DeployDeployment(container, d));
+            }
+        }
+    }
 
-      event.fire(new SetupContainer(container));
-      event.fire(new StartContainer(container));
-      
-      for (Deployment d : managedDeployments)
-      {
-         if (!d.isDeployed()) 
-         {
-            log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() + 
-               " for the container with name " + container.getName());
-            event.fire(new DeployDeployment(container, d));
-         }
-      }
-   }
+    @Override
+    public void start(String containerQualifier, Map<String, String> config) {
+        DeploymentScenario scenario = deploymentScenario.get();
+        if (scenario == null) {
+            throw new IllegalArgumentException("No deployment scenario in context");
+        }
 
-   @Override
-   public void stop(String containerQualifier)
-   {
-      DeploymentScenario scenario = deploymentScenario.get();
-      if(scenario == null)
-      {
-         throw new IllegalArgumentException("No deployment scenario in context");
-      }
-      
-      ContainerRegistry registry = containerRegistry.get();
-      if (registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
 
-      if (!containerExists(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("No container with the specified name exists");
-      }
-      
-      if (!isControllableContainer(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("Could not stop " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
-      }
+        if (!containerExists(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("No container with the specified name exists");
+        }
 
-      Container container = registry.getContainer(new TargetDescription(containerQualifier));
+        if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("Could not start "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
+        }
 
-      List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
-      
-      for (Deployment d : managedDeployments)
-      {
-         if (d.isDeployed()) 
-         {
-            log.info("Automatic undeploying of the managed deployment with name " + d.getDescription().getName() + 
-               " from the container with name " + container.getName());
-            event.fire(new UnDeployDeployment(container, d));
-         }
-      }
-      
-      log.info("Manual stopping of a server instance");
+        List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
 
-      event.fire(new StopContainer(container));
-   }
+        Container container = registry.getContainer(new TargetDescription(containerQualifier));
 
-   @Override
-   public void kill(String containerQualifier)
-   {
-      ContainerRegistry registry = containerRegistry.get();
-      if (registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
+        for (String name : config.keySet()) {
+            container.getContainerConfiguration().overrideProperty(name, config.get(name));
+        }
 
-      if (!containerExists(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("No container with the specified name exists");
-      }
-      
-      if (!isControllableContainer(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("Could not start " + containerQualifier + " container. The container life cycle is controlled by Arquillian");
-      }
+        log.info("Manual starting of a server instance with overridden configuration. New configuration: " +
+            container.getContainerConfiguration().getContainerProperties());
 
-      Container container = registry.getContainer(new TargetDescription(containerQualifier));
+        event.fire(new SetupContainer(container));
+        event.fire(new StartContainer(container));
 
-      log.info("Hard killing of a server instance");
+        for (Deployment d : managedDeployments) {
+            if (!d.isDeployed()) {
+                log.info("Automatic deploying of the managed deployment with name " + d.getDescription().getName() +
+                    " for the container with name " + container.getName());
+                event.fire(new DeployDeployment(container, d));
+            }
+        }
+    }
 
-      event.fire(new KillContainer(container));
-   }
+    @Override
+    public void stop(String containerQualifier) {
+        DeploymentScenario scenario = deploymentScenario.get();
+        if (scenario == null) {
+            throw new IllegalArgumentException("No deployment scenario in context");
+        }
 
-   @Override
-   public boolean isStarted(String containerQualifier)
-   {
-      ContainerRegistry registry = containerRegistry.get();
-      if (registry == null)
-      {
-         throw new IllegalArgumentException("No container registry in context");
-      }
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
 
-      if (!containerExists(registry.getContainers(), containerQualifier))
-      {
-         throw new IllegalArgumentException("No container found in registry with name " + containerQualifier);
-      }
+        if (!containerExists(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("No container with the specified name exists");
+        }
 
-      Container container = registry.getContainer(new TargetDescription(containerQualifier));
-      return container.getState() == Container.State.STARTED;
-   }
+        if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("Could not stop "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
+        }
 
-   protected boolean containerExists(List<Container> containers, String name)
-   {
-      for (Container container : containers)
-      {
-         if (container.getName().equals(name))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
+        Container container = registry.getContainer(new TargetDescription(containerQualifier));
 
-   protected boolean isControllableContainer(List<Container> containers, String containerQualifier)
-   {
-      for (Container container : containers)
-      {
-         String contianerMode = container.getContainerConfiguration().getMode();
-         if (container.getName().equals(containerQualifier) &&
-               ("manual".equalsIgnoreCase(contianerMode) || "custom".equalsIgnoreCase(contianerMode)))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
+        List<Deployment> managedDeployments = scenario.startupDeploymentsFor(new TargetDescription(containerQualifier));
 
-   protected Event<ContainerControlEvent> getContainerControllerEvent() {
-      return event;
-   }
+        for (Deployment d : managedDeployments) {
+            if (d.isDeployed()) {
+                log.info("Automatic undeploying of the managed deployment with name " + d.getDescription().getName() +
+                    " from the container with name " + container.getName());
+                event.fire(new UnDeployDeployment(container, d));
+            }
+        }
 
-   protected Instance<ContainerRegistry> getContainerRegistry() {
-      return containerRegistry;
-   }
+        log.info("Manual stopping of a server instance");
 
-   protected Instance<DeploymentScenario> getDeploymentScenario() {
-      return deploymentScenario;
-   }
+        event.fire(new StopContainer(container));
+    }
+
+    @Override
+    public void kill(String containerQualifier) {
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
+
+        if (!containerExists(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("No container with the specified name exists");
+        }
+
+        if (!isControllableContainer(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("Could not start "
+                + containerQualifier
+                + " container. The container life cycle is controlled by Arquillian");
+        }
+
+        Container container = registry.getContainer(new TargetDescription(containerQualifier));
+
+        log.info("Hard killing of a server instance");
+
+        event.fire(new KillContainer(container));
+    }
+
+    @Override
+    public boolean isStarted(String containerQualifier) {
+        ContainerRegistry registry = containerRegistry.get();
+        if (registry == null) {
+            throw new IllegalArgumentException("No container registry in context");
+        }
+
+        if (!containerExists(registry.getContainers(), containerQualifier)) {
+            throw new IllegalArgumentException("No container found in registry with name " + containerQualifier);
+        }
+
+        Container container = registry.getContainer(new TargetDescription(containerQualifier));
+        return container.getState() == Container.State.STARTED;
+    }
+
+    protected boolean containerExists(List<Container> containers, String name) {
+        for (Container container : containers) {
+            if (container.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isControllableContainer(List<Container> containers, String containerQualifier) {
+        for (Container container : containers) {
+            String contianerMode = container.getContainerConfiguration().getMode();
+            if (container.getName().equals(containerQualifier) &&
+                ("manual".equalsIgnoreCase(contianerMode) || "custom".equalsIgnoreCase(contianerMode))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected Event<ContainerControlEvent> getContainerControllerEvent() {
+        return event;
+    }
+
+    protected Instance<ContainerRegistry> getContainerRegistry() {
+        return containerRegistry;
+    }
+
+    protected Instance<DeploymentScenario> getDeploymentScenario() {
+        return deploymentScenario;
+    }
 }

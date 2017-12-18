@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,11 +16,9 @@
  */
 package org.jboss.arquillian.testng.container;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.testng.TestNG;
@@ -35,48 +33,35 @@ import org.testng.xml.XmlTest;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestNGTestRunner implements TestRunner
-{
+public class TestNGTestRunner implements TestRunner {
 
-   public TestResult execute(Class<?> testClass, String methodName)
-   {
-      TestListener resultListener = new TestListener();
-      
-      TestNG runner = new TestNG(false);
-      runner.setVerbose(0);
-      
-      runner.addListener(resultListener);
-      runner.addListener(new RemoveDependsOnTransformer());
-      runner.setXmlSuites(
-            Arrays.asList(createSuite(testClass, methodName)));
-      
-      runner.run();
-      
-      return resultListener.getTestResult(); 
-   }
-   
-   private XmlSuite createSuite(Class<?> className, String methodName)
-   {
-      XmlSuite suite = new XmlSuite();
-      suite.setName("Arquillian");
+    public TestResult execute(Class<?> testClass, String methodName) {
+        TestListener resultListener = new TestListener();
 
-      // TestNG >= 6.3 has removed this method
-      try
-      {
-         Method method = XmlSuite.class.getMethod("setAnnotations", String.class);
-         method.invoke(suite, "JDK");
-      }
-      catch (Exception e) {
-         // no-op
-      }
+        TestNG runner = new TestNG(false);
+        runner.setVerbose(0);
 
-      XmlTest test = new XmlTest(suite);
-      test.setName("Arquillian - " + className);
-      List<XmlClass> testClasses = new ArrayList<XmlClass>();
-      XmlClass testClass = new XmlClass(className);
-      testClass.getIncludedMethods().add(new XmlInclude(methodName));
-      testClasses.add(testClass);
-      test.setXmlClasses(testClasses);
-      return suite;
-   }
+        runner.addListener(resultListener);
+        runner.addListener(new RemoveDependsOnTransformer());
+        runner.setXmlSuites(
+            Collections.singletonList(createSuite(testClass, methodName)));
+
+        runner.run();
+
+        return resultListener.getTestResult();
+    }
+
+    private XmlSuite createSuite(Class<?> className, String methodName) {
+        XmlSuite suite = new XmlSuite();
+        suite.setName("Arquillian");
+
+        XmlTest test = new XmlTest(suite);
+        test.setName("Arquillian - " + className);
+        List<XmlClass> testClasses = new ArrayList<XmlClass>();
+        XmlClass testClass = new XmlClass(className);
+        testClass.getIncludedMethods().add(new XmlInclude(methodName));
+        testClasses.add(testClass);
+        test.setXmlClasses(testClasses);
+        return suite;
+    }
 }

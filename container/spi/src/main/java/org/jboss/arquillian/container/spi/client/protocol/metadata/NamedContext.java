@@ -27,8 +27,7 @@ public class NamedContext {
 
     private final String name;
 
-    public NamedContext(String name) 
-    {
+    public NamedContext(String name) {
         this.name = name;
     }
 

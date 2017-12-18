@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,7 +18,6 @@ package org.jboss.arquillian.container.test.impl.execution;
 
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.jboss.arquillian.container.test.impl.execution.event.LocalExecutionEvent;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -32,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-
 /**
  * InContainerExecuterTestCase
  *
@@ -40,79 +38,73 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class LocalTestExecuterTestCase extends AbstractContainerTestTestBase
-{
-   @Mock
-   private TestMethodExecutor testExecutor;
+public class LocalTestExecuterTestCase extends AbstractContainerTestTestBase {
+    @Mock
+    private TestMethodExecutor testExecutor;
 
-   @Mock
-   private ServiceLoader serviceLoader;
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(LocalTestExecuter.class);
-   }
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Test
-   public void shouldReturnPassed() throws Throwable
-   {
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-      
-      Mockito.when(testExecutor.getInstance()).thenReturn(this);
-      Mockito.when(testExecutor.getMethod()).thenReturn(
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(LocalTestExecuter.class);
+    }
+
+    @Test
+    public void shouldReturnPassed() throws Throwable {
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+
+        Mockito.when(testExecutor.getInstance()).thenReturn(this);
+        Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldReturnPassed"));
-      
-      fire(new LocalExecutionEvent(testExecutor));
-      
-      TestResult result = getManager().resolve(TestResult.class);
-      Assert.assertNotNull(
+
+        fire(new LocalExecutionEvent(testExecutor));
+
+        TestResult result = getManager().resolve(TestResult.class);
+        Assert.assertNotNull(
             "Should have set result",
             result);
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have passed test",
             TestResult.Status.PASSED,
             result.getStatus());
 
-      Assert.assertNull(
+        Assert.assertNull(
             "Should not have set cause",
             result.getThrowable());
-   }
+    }
 
-   @Test
-   public void shouldReturnFailedOnException() throws Throwable
-   {
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-      
-      Exception exception = new Exception();
-      
-      Mockito.when(testExecutor.getInstance()).thenReturn(this);
-      Mockito.when(testExecutor.getMethod()).thenReturn(
+    @Test
+    public void shouldReturnFailedOnException() throws Throwable {
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+
+        Exception exception = new Exception();
+
+        Mockito.when(testExecutor.getInstance()).thenReturn(this);
+        Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldReturnFailedOnException"));
-      Mockito.doThrow(exception).when(testExecutor).invoke();
-      
-      
-      fire(new LocalExecutionEvent(testExecutor));
+        Mockito.doThrow(exception).when(testExecutor).invoke();
 
-      TestResult result = getManager().resolve(TestResult.class);
-      Assert.assertNotNull(
+        fire(new LocalExecutionEvent(testExecutor));
+
+        TestResult result = getManager().resolve(TestResult.class);
+        Assert.assertNotNull(
             "Should have set result",
             result);
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have failed test",
             TestResult.Status.FAILED,
             result.getStatus());
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have set failed cause",
             exception,
             result.getThrowable());
-   }
+    }
 
-   private Method getTestMethod(String name) throws Exception
-   {
-      return this.getClass().getMethod(name);
-   }
+    private Method getTestMethod(String name) throws Exception {
+        return this.getClass().getMethod(name);
+    }
 }

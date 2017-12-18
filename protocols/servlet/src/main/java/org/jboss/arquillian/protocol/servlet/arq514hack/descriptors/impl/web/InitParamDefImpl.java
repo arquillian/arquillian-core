@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,25 +23,22 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * @author Dan Allen
  */
 // TODO could be generic since servlet can use it too
-public class InitParamDefImpl extends WebAppDescriptorImpl implements InitParamDef
-{
-   protected Node child;
-   
-   public InitParamDefImpl(String descriptorName, Node webApp, Node child)
-   {
-      super(descriptorName, webApp);
-      this.child = child;
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.shrinkwrap.descriptor.api.spec.web.FilterDef#initParam(java.lang.String, java.lang.Object)
-    */
-   @Override
-   public InitParamDef initParam(String name, Object value)
-   {
-      Node init = child.createChild("init-param");
-      init.createChild("param-name").text(name);
-      init.createChild("param-value").text(String.valueOf(value));
-      return this;
-   }
+public class InitParamDefImpl extends WebAppDescriptorImpl implements InitParamDef {
+    protected Node child;
+
+    public InitParamDefImpl(String descriptorName, Node webApp, Node child) {
+        super(descriptorName, webApp);
+        this.child = child;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.shrinkwrap.descriptor.api.spec.web.FilterDef#initParam(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public InitParamDef initParam(String name, Object value) {
+        Node init = child.createChild("init-param");
+        init.createChild("param-name").text(name);
+        init.createChild("param-value").text(String.valueOf(value));
+        return this;
+    }
 }

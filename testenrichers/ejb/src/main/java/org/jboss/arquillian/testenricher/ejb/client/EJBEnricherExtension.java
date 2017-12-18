@@ -28,18 +28,14 @@ import org.jboss.arquillian.testenricher.ejb.EJBInjectionEnricher;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class EJBEnricherExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(AuxiliaryArchiveAppender.class, EJBEnricherArchiveAppender.class);
-      
-      // only load if EJB is on ClassPath
-      if(Validate.classExists("javax.ejb.EJB"))
-      {
-         builder.service(TestEnricher.class, EJBInjectionEnricher.class);         
-      }
-   }
+public class EJBEnricherExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(AuxiliaryArchiveAppender.class, EJBEnricherArchiveAppender.class);
 
+        // only load if EJB is on ClassPath
+        if (Validate.classExists("javax.ejb.EJB")) {
+            builder.service(TestEnricher.class, EJBInjectionEnricher.class);
+        }
+    }
 }

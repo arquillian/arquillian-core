@@ -1,0 +1,380 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Additional Features
+:icons: font
+
+This chapter walks through the following additional features that Arquillian
+provides to address more advanced use cases. These features may even allow you to
+write tests for scenarios you previously classified as too difficult to
+test.
+
+* <<test-run-modes, Test Run Modes>>
+** <<container-mode, Container Mode>>
+** <<client-mode, Client Mode>>
+** <<mixed-mode, Mixed Mode>>
+* <<descriptor-deployment, Descriptor Deployment>>
+* <<arquillian-resource-injection, Arquillian Resource Injection>>
+* <<multiple-deployments, Multiple Deployments>>
+* <<multiple-containers, Multiple Containers>>
+* <<protocol-selection, Protocol Selection>>
+* <<enabling-assertions, Enabling Assertions>>
+
+[[test-run-modes]]
+==== Test Run Modes
+
+So far, we've focused on testing your application internals, but we also
+want to test how others (people, or other programs) interact with the
+application. Typically, you want to make sure that every use case and
+execution path is fully tested. Third parties can interact with your
+application in a number of ways, for example web services, remote EJBs
+or via HTTP. You need to check that your object serialization or
+networking work for instance.
+
+This is why Arquillian comes with two run modes, `in container` and
+`as client`. `in container` is to test your application internals and
+`as client` is to test how your application is used by clients. Let's
+dive a bit deeper into the differences between the run modes and see how
+they affect your test execution and packaging.
+
+[[container-mode]]
+===== Container mode: @Deployment(testable = true)
+
+As we mentioned above, we need to repackage your `@Deployment`, adding
+some Arquillian support classes, to run in-container. This gives us the
+ability to communicate with the test, enrich the test and run the test
+remotely. In this mode, the test executes in the remote container.
+
+_Arquillian uses this mode by default._
+
+See the Complete Protocol Reference for an overview of the expected
+output of the packaging process when you provide a `@Deployment`.
+
+[[client-mode]]
+===== Client mode: @Deployment(testable = false)
+
+Now this mode is the easy part. As opposed to in-container mode which
+repackages and overrides the test execution, the as-client mode does as
+little as possible. It does not repackage your `@Deployment` nor does it
+forward the test execution to a remote server. Your test case is running
+in your JVM as expected and you're free to test the container from the
+outside, as your clients see it. The only thing Arquillian does is to
+control the lifecycle of your `@Deployment`.
+
+Here is an example calling a Servlet using the `as client` mode.
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class LocalRunServletTestCase {
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClass(TestServlet.class);
+   }
+
+    @Test
+    public void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
+        String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
+        Assert.assertEquals(
+            "Verify that the servlet was deployed and returns the expected result",
+            "hello",
+            body);
+   }
+}
+----
+
+[[mixed-mode]]
+===== Mixed mode
+
+It is also possible to mix the two run modes within the same test class.
+If you have defined the `Deployment` to be testable, you can specify the
+`@Test` method to use run mode `as client` by using the `@RunAsClient`
+annotation. This will allow two methods within the same test class to run
+in different modes. This can be useful if, in `as client` mode, you
+want to execute against a remote endpoint in your application, and then
+in the next test method, use `in container` mode to verify some state
+the previous remote invocation created on the server side.
+
+[source,java]
+----
+@Deployment(testable = true)
+public static WebArchive create() {
+   ...
+}
+
+@Test // runs in container
+public void shouldBeAbleToRunOnContainerSide() throws Exception {
+   ...
+}
+
+@Test @RunAsClient // runs as client
+public void shouldBeAbleToRunOnClientSide() throws Exception {
+   ...
+}
+----
+
+The effect of the different run modes depends on the
+`DeployableContainer` used. Both modes might seem to behave the same in
+some Embedded containers, but you should avoid mixing your internal and
+external tests. One thing is that they should test different aspects of
+your application and different use-cases, another is that you will miss
+the benefits of switching `DeployableContainers` and run the same tests
+suite against a remote server if you do.
+
+[[descriptor-deployment]]
+==== Descriptor Deployment
+
+We have previously seen Arquillian deploys ShrinkWrap Archives, but some
+times you need to deploy other items like a JMS Queue or a DataSource
+for your test to run. This can be done by using a ShrinkWrap sub project
+called ShrinkWrap Descriptors. Just like you would deploy an `Archive`
+you can deploy a `Descriptor`.
+
+[source,java]
+----
+@Deployment(order = 1)
+public static Descriptor createDep1()
+{
+  return Descriptors.create(DataSourceDescriptor.class);
+}
+
+@Deployment(order = 2)
+public static WebArchive createDep2() {}
+
+@Test
+public void testDataBase() {}
+----
+
+[[arquillian-resource-injection]]
+==== Arquillian Resource Injection
+
+When dealing with multiple different environments and hidden dynamic
+container configuration you very soon come to a point where you need
+access to the backing containers ip/port/context information. This is
+especially useful when doing remote end point testing. So instead of
+trying to setup all containers on the same ip/port/context, or hard code
+this in your test, Arquillian provides something we call
+`@ArquillianResource` injection. Via this injection point we can expose
+multiple internal objects.
+
+WARNING: Note that `@ArquillianResource` injection of URLs is only supported
+for in-container tests since Arquillian version 1.1.9.Final
+(see https://issues.jboss.org/browse/ARQ-540[ARQ-540]).
+
+When you need to get a hold of the request URI (up through the context
+path) your `Deployment` defined, e.g. "http://localhost:8080/test", you
+can use `@ArquillianResource` on a field or method argument of type URL:
+
+[source,java]
+----
+@ArquillianResource
+private URL baseURL;
+
+@Test
+private void shouldDoX(@ArquillianResource URL baseURL)
+{
+}
+----
+
+If you are deploying an EAR with multiple WARs, and you've deployed a
+given servlet to just one of them, you can provide the servlet's class
+to get the request URI up through the context path for the WAR that
+contains that servlet, e.g. "http://localhost:8080/test1" vs.
+"http://localhost:8080/test2":
+
+[source,java]
+----
+@ArquillianResource(MyServlet.class)
+private URL baseURL;
+
+@Test
+private void shouldDoX(@ArquillianResource(MyServlet.class) URL baseURL)
+{
+}
+----
+
+NOTE: Note that this version does not return the request URI to the given
+servlet, e.g. "http://localhost:8080/test2/MyServlet", but again just
+the request URI up through the context path.
+
+[[multiple-deployments]]
+==== Multiple Deployments
+
+Sometimes a single `Deployment` is not enough, and you need to specify
+more than one to get your test done.
+
+_Maybe you want to test communication between two different web applications?_
+
+Arquillian supports this as well. Simply just add more `@Deployment` methods
+to the test class and you're done. You can use the `@Deployment.order` if they
+need to be deployed in a specific order. When dealing with multiple `in
+container` deployments, you need to specify which `Deployment` context the
+individual test methods should run in. You do this by adding a name to
+the deployment by using the `@Deployment.name` and refer to that name on
+the test method by adding `@OperateOnDeployment("deploymentName")`.
+
+[source,java]
+----
+@Deployment(name = "dep1", order = 1)
+public static WebArchive createDep1() {}
+
+@Deployment(name = "dep2", order = 2)
+public static WebArchive createDep2() {}
+
+@Test @OperateOnDeployment("dep1")
+public void testRunningInDep1() {}
+
+@Test @OperateOnDeployment("dep2")
+public void testRunningInDep2() {}
+----
+
+[[multiple-containers]]
+==== Multiple Containers
+
+There are times when you need to involve multiple containers in the same
+test case, if you for instance want to test clustering. The first step
+you need to take is to add a `group` with multiple containers to your
+Arquillian configuration.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+    <group qualifier="tomcat-cluster" default="true">
+        <container qualifier="container-1" default="true">
+            <configuration>
+                <property name="tomcatHome">target/tomcat-embedded-6-standby</property>
+                <property name="workDir">work</property>
+                <property name="bindHttpPort">8880</property>
+                <property name="unpackArchive">true</property>
+            </configuration>
+        </container>
+        <container qualifier="container-2">
+            <configuration>
+                <property name="tomcatHome">target/tomcat-embedded-6-active-1</property>
+                <property name="workDir">work</property>
+                <property name="bindHttpPort">8881</property>
+                <property name="unpackArchive">true</property>
+            </configuration>
+        </container>
+    </group>
+</arquillian>
+----
+
+So what we have done here is to say we have two containers that
+Arquillian will control, container-1 and container-2. Arquillian will
+now instead of starting up one container, which is normal, start up two.
+In your test class you can target different deployments against the
+different containers using the `@TargetsContainer("containerName")`
+annotation on your `Deployment` methods.
+
+[source,java]
+----
+@Deployment(name = "dep1") @TargetsContainer("container-1")
+public static WebArchive createDep1() {}
+
+@Deployment(name = "dep2")  @TargetsContainer("container-2")
+public static WebArchive createDep2() {}
+
+@Test @OperateOnDeployment("dep1")
+public void testRunningInDep1() {}
+
+@Test @OperateOnDeployment("dep2")
+public void testRunningInDep2() {}
+----
+
+We now have a single test class that will be executed in two different
+containers. `testRunningInDep1` will operate in the context of the
+`dep1` deployment which is deployed on the container named `container-1`
+and `testRunningInDep2` will operate in the context of deployment `dep2`
+which is deployed on container `container-2`. As the test moves along,
+each method is executed inside the individual containers.
+
+Arquillian does not support ClassLoader isolation on the client side so
+for this feature to work the container adapter must support running
+multiple instances within the same ClassLoader/JVM. Currently this only
+works with containers of type Remote or Managed as the adapter normally
+will connect to an isolated server started in its own JVM.
+
+[[protocol-selection]]
+==== Protocol Selection
+
+A protocol is how Arquillian talks and executes the tests inside the
+container. For ease of development and configuration a container defines
+a default protocol that will be used if no other is specified. You can
+override this default behavior by defining the `@OverProtocol`
+annotation on your `@Deployment` method.
+
+[source,java]
+----
+@Deployment @OverProtocol("MyCustomProtocol")
+public static WebArchive createDep1() {}
+
+@Test
+public void testExecutedUsingCustomProtocol() {}
+----
+
+When `testExecutedUsingCustomProtocol` is executed, instead of using the
+containers protocol which is defined by default, Arquillian will use
+`MyCustomProtocol` to communicate with the container. Since this is
+defined on `Deployment` level, you can have different test methods which
+operate on different deployments and therefore being executed using
+different protocols. This can be useful when for instance a protocols
+packaging requirements hinder how you define your archive, or you simply
+can not communicate with the container using the default protocol due to
+e.g. firewall settings.
+
+Arquillian only supports Servlet 2.5 and Servlet 3.0 at this time. EJB
+3.0 and 3.1 are planned. But you might implement your own Protocol. For
+doing this, please see the Complete Protocol Reference for the better
+knowing what is currently supported.
+
+[[enabling-assertions]]
+==== Enabling Assertions
+
+The first time you try Arquillian, you may find that assertions that use
+the Java assert keyword are not working. Keep in mind that the test is
+not executing the same JVM as the test runner.
+
+In order for the Java keyword "assert" to work you have to enable
+assertions (using the -ea flag) in the JVM that is running the
+container. You may want to consider specifying the package names of your
+test classes to avoid assertions to be enabled throughout the
+container's source code.
+
+[[enabling-assertions-in-jboss-as]]
+===== Enabling Assertions In JBoss AS
+
+If you are using JBoss AS, the quickest way to setup debug mode is to
+add the following line to the end of $JBOSS_AS_HOME/bin/run.conf
+(Unix/Linux):
+
+[source,java]
+----
+JAVA_OPTS="$JAVA_OPTS -ea"
+----
+
+or before the line :JAVA_OPTS_SET in $JBOSS_AS_HOME/bin/run.conf.bat
+(Windows)
+
+[source,java]
+----
+set "JAVA_OPTS=%JAVA_OPTS% -ea"
+----
+
+Keep in mind your container will always run with assertions enabled
+after making this change. You might want to consider putting some logic
+in the run.conf* file.
+
+As an alternative, we recommend using the 'Assert' object that comes
+with your test framework instead to avoid the whole issue. Also keep in
+mind that if you use System.out.println statements, the output is going
+to show up in the log file of the container rather than in the test
+output.

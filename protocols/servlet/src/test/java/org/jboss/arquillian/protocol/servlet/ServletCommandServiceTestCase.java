@@ -18,7 +18,6 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import java.lang.reflect.Field;
-
 import org.jboss.arquillian.protocol.servlet.runner.ServletCommandService;
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
@@ -34,77 +33,74 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ServletCommandServiceTestCase extends AbstractServerBase
-{
-   @Test
-   public void shouldBeAbleToTransfereCommand() throws Exception
-   {
-      Object[] results = new Object[] {"Wee", 100};
+public class ServletCommandServiceTestCase extends AbstractServerBase {
+    @Test
+    public void shouldBeAbleToTransfereCommand() throws Exception {
+        Object[] results = new Object[] {"Wee", 100};
 
-      MockTestRunner.add(TestResult.passed());
-      MockTestRunner.add(new TestStringCommand());
-      MockTestRunner.add(new TestIntegerCommand());
+        MockTestRunner.add(TestResult.passed());
+        MockTestRunner.add(new TestStringCommand());
+        MockTestRunner.add(new TestIntegerCommand());
 
-      ServletMethodExecutor executor = new ServletMethodExecutor(
-              new ServletProtocolConfiguration(),
-              createContexts(),
-              new TestCommandCallback(results));
+        ServletMethodExecutor executor = new ServletMethodExecutor(
+            new ServletProtocolConfiguration(),
+            createContexts(),
+            new TestCommandCallback(results));
 
-      TestResult result = executor.invoke(new MockTestExecutor());
+        TestResult result = executor.invoke(new MockTestExecutor());
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have returned a passed test",
             MockTestRunner.wantedResults.getStatus(),
             result.getStatus());
 
-      Assert.assertNull(
+        Assert.assertNull(
             "Exception should have been thrown",
             result.getThrowable());
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have returned command",
             results[0],
             MockTestRunner.commandResults.get(0));
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have returned command",
             results[1],
             MockTestRunner.commandResults.get(1));
-   }
+    }
 
-   @Test
-   public void shouldDisableCommandService() throws Exception
-   {
-      Field f = ServletCommandService.class.getDeclaredField("TIMEOUT");
-      f.setAccessible(true);
-      f.set(null, 500);
+    @Test
+    public void shouldDisableCommandService() throws Exception {
+        Field f = ServletCommandService.class.getDeclaredField("TIMEOUT");
+        f.setAccessible(true);
+        f.set(null, 500);
 
-      ServletProtocolConfiguration config = new ServletProtocolConfiguration();
-      config.setPullInMilliSeconds(0);
+        ServletProtocolConfiguration config = new ServletProtocolConfiguration();
+        config.setPullInMilliSeconds(0);
 
-      Object[] results = new Object[] {"Wee", 100};
+        Object[] results = new Object[] {"Wee", 100};
 
-      MockTestRunner.add(TestResult.failed(null));
-      MockTestRunner.add(new TestStringCommand());
+        MockTestRunner.add(TestResult.failed(null));
+        MockTestRunner.add(new TestStringCommand());
 
-      ServletMethodExecutor executor = new ServletMethodExecutor(
-              config,
-              createContexts(),
-              new TestCommandCallback(results));
+        ServletMethodExecutor executor = new ServletMethodExecutor(
+            config,
+            createContexts(),
+            new TestCommandCallback(results));
 
-      TestResult result = executor.invoke(new MockTestExecutor());
+        TestResult result = executor.invoke(new MockTestExecutor());
 
-      Assert.assertEquals(
+        Assert.assertEquals(
             "Should have returned a passed test",
             MockTestRunner.wantedResults.getStatus(),
             result.getStatus());
 
-      Assert.assertNotNull(
+        Assert.assertNotNull(
             "Exception should have been thrown",
             result.getThrowable());
 
-      Assert.assertTrue(
+        Assert.assertTrue(
             "Timeout exception should have been thrown",
             result.getThrowable().getMessage().contains("timeout"));
-   }
+    }
 }

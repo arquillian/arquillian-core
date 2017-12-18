@@ -26,28 +26,24 @@ import org.jboss.arquillian.core.spi.event.Event;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public abstract class ContainerControlEvent implements Event
-{
-   private Container container;
+public abstract class ContainerControlEvent implements Event {
+    private Container container;
 
-   public ContainerControlEvent(Container container)
-   {
-      this.container = container;
-   }
+    public ContainerControlEvent(Container container) {
+        this.container = container;
+    }
 
-   /**
-    * @return the container
-    */
-   public Container getContainer()
-   {
-      return container;
-   }
-   
-   /**
-    * @return
-    */
-   public String getContainerName()
-   {
-      return getContainer().getName();
-   }
+    /**
+     * @return the container
+     */
+    public Container getContainer() {
+        return container;
+    }
+
+    /**
+     * @return
+     */
+    public String getContainerName() {
+        return getContainer().getName();
+    }
 }

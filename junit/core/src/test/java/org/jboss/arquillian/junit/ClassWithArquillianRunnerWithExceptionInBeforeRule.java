@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,8 +16,6 @@
  */
 package org.jboss.arquillian.junit;
 
-import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
-
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,6 +27,8 @@ import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
+import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
  * Predfined TestClass

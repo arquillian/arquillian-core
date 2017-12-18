@@ -20,10 +20,8 @@ import java.io.Serializable;
 
 /**
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
- *
  */
-public final class ExecutionDecision implements Serializable
-{
+public final class ExecutionDecision implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,52 +29,41 @@ public final class ExecutionDecision implements Serializable
 
     private String reason;
 
-    public static ExecutionDecision execute()
-    {
-        return new ExecutionDecision(Decision.EXECUTE);
-    }
-
-    public static ExecutionDecision execute(String reason)
-    {
-        return new ExecutionDecision(Decision.EXECUTE, reason);
-    }
-
-    public static ExecutionDecision dontExecute(String reason)
-    {
-        return new ExecutionDecision(Decision.DONT_EXECUTE, reason);
-    }
-
-    public enum Decision
-    {
-
-        EXECUTE,
-
-        DONT_EXECUTE;
-    }
-
-    private ExecutionDecision()
-    {
+    private ExecutionDecision() {
         this(null);
     }
 
-    private ExecutionDecision(Decision decision)
-    {
+    private ExecutionDecision(Decision decision) {
         this(decision, null);
     }
 
-    private ExecutionDecision(Decision decision, String reason)
-    {
+    private ExecutionDecision(Decision decision, String reason) {
         this.decision = decision;
         this.reason = reason;
     }
 
-    public Decision getDecision()
-    {
+    public static ExecutionDecision execute() {
+        return new ExecutionDecision(Decision.EXECUTE);
+    }
+
+    public static ExecutionDecision execute(String reason) {
+        return new ExecutionDecision(Decision.EXECUTE, reason);
+    }
+
+    public static ExecutionDecision dontExecute(String reason) {
+        return new ExecutionDecision(Decision.DONT_EXECUTE, reason);
+    }
+
+    public Decision getDecision() {
         return decision;
     }
 
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
+    }
+
+    public enum Decision {
+        EXECUTE,
+        DONT_EXECUTE;
     }
 }

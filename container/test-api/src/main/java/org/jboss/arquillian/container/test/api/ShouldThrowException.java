@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,18 +16,18 @@
  */
 package org.jboss.arquillian.container.test.api;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Define that a Deployment should cause a exception during deployment. If the Container does not throw a exception,
  * or the exception is of the wrong type, a RuntimeException will be thrown and the test failed.
  * If the correct exception is thrown the test will execute as normal.
- *
+ * <p>
  * <p>
  * Usage Example:<br/>
  * <pre><code>
@@ -36,9 +36,9 @@ import java.lang.annotation.Target;
  *      return ShrinkWrap.create(WebArchive.class);
  * }
  * </code></pre>
- *
- * Adding the @ShouldThrowException annotation will force the @{@link Deployment} to be testable = false which again
- * will force a @{@link RunAsClient} test run mode.
+ * <p>
+ * Adding the @ShouldThrowException annotation will force the @{@link Deployment} to be <code>testable = false</code> which again
+ * will force a @{@link RunAsClient} test run mode, unless you explicitly mark <code>testable = true</code>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -46,7 +46,11 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ShouldThrowException
-{
-   Class<? extends Exception> value() default Exception.class;
+public @interface ShouldThrowException {
+    Class<? extends Exception> value() default Exception.class;
+
+    /**
+     * @return whether or not this deployment is intended to be testable, default is false
+     */
+    boolean testable() default false;
 }

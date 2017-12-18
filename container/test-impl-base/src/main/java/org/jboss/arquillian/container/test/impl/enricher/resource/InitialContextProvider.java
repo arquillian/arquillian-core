@@ -18,10 +18,8 @@
 package org.jboss.arquillian.container.test.impl.enricher.resource;
 
 import java.lang.annotation.Annotation;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -32,20 +30,17 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextProvider extends OperatesOnDeploymentAwareProvider
-{
-   @Inject
-   private Instance<Context> initialContext;
+public class InitialContextProvider extends OperatesOnDeploymentAwareProvider {
+    @Inject
+    private Instance<Context> initialContext;
 
-   @Override
-   public Object doLookup(ArquillianResource resource, Annotation... qualifiers)
-   {
-      return initialContext.get();
-   }
+    @Override
+    public Object doLookup(ArquillianResource resource, Annotation... qualifiers) {
+        return initialContext.get();
+    }
 
-   @Override
-   public boolean canProvide(Class<?> type)
-   {
-      return type.isAssignableFrom(Context.class) || type.isAssignableFrom(InitialContext.class);
-   }
+    @Override
+    public boolean canProvide(Class<?> type) {
+        return type.isAssignableFrom(Context.class) || type.isAssignableFrom(InitialContext.class);
+    }
 }

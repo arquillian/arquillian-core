@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,98 +21,83 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests for {@link EJBInjectionEnricher}.
- *
+ * <p>
  * These tests doesn't use embedded container, as they're just simple unit tests.
  *
  * @author PedroKowalski
- *
  */
-public class EJBInjectionEnricherBase
-{
-   protected EJBInjectionEnricher cut;
+public class EJBInjectionEnricherBase {
+    protected EJBInjectionEnricher cut;
 
-   protected String[] resolvedJndiName;
-   protected RuntimeException caughtResolveException;
+    protected String[] resolvedJndiName;
+    protected RuntimeException caughtResolveException;
 
-   @Before
-   public void before() throws Exception
-   {
-      cut = new EJBInjectionEnricher() {
-         @Override
-         protected Context createContext() throws Exception
-         {
-            // just need to return non null. lookupEJB is overwritten so usage of context is under our control
-            return new InitialContext();
-         }
-
-         @Override
-         protected Object lookupEJB(String[] jndiNames) throws Exception
-         {
-            resolvedJndiName = jndiNames;
-            return new ExemplaryEJBMockImpl();
-         }
-
-         @Override
-         protected String[] resolveJNDINames(Class<?> fieldType, String mappedName, String beanName, String lookup)
-         {
-            try {
-               return super.resolveJNDINames(fieldType, mappedName, beanName, lookup);
+    @Before
+    public void before() throws Exception {
+        cut = new EJBInjectionEnricher() {
+            @Override
+            protected Context createContext() throws Exception {
+                // just need to return non null. lookupEJB is overwritten so usage of context is under our control
+                return new InitialContext();
             }
-            catch(RuntimeException e)
-            {
-               caughtResolveException = e;
-               throw e;
+
+            @Override
+            protected Object lookupEJB(String[] jndiNames) throws Exception {
+                resolvedJndiName = jndiNames;
+                return new ExemplaryEJBMockImpl();
             }
-         }
-      };
-   }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void testResolveJNDINameFieldNotSet()
-   {
-      // Annotated field must be set.
-      cut.resolveJNDINames(null, "anyString()", null, null);
-   }
+            @Override
+            protected String[] resolveJNDINames(Class<?> fieldType, String mappedName, String beanName, String lookup) {
+                try {
+                    return super.resolveJNDINames(fieldType, mappedName, beanName, lookup);
+                } catch (RuntimeException e) {
+                    caughtResolveException = e;
+                    throw e;
+                }
+            }
+        };
+    }
 
-   /**
-    * Exemplary EJB's local interface.
-    *
-    * @author PedroKowalski
-    *
-    */
-   @Local
-   public static interface ExemplaryEJB
-   {
-   }
+    @Test(expected = IllegalArgumentException.class)
+    public void testResolveJNDINameFieldNotSet() {
+        // Annotated field must be set.
+        cut.resolveJNDINames(null, "anyString()", null, null);
+    }
 
-   /**
-    * Exemplary implementation of the EJB's local interface.
-    *
-    * @author PedroKowalski
-    *
-    */
-   @Stateless
-   public static class ExemplaryEJBMockImpl implements ExemplaryEJB
-   {
-   }
+    /**
+     * Exemplary EJB's local interface.
+     *
+     * @author PedroKowalski
+     */
+    @Local
+    public static interface ExemplaryEJB {
+    }
 
-   /**
-    * Exemplary implementation of the EJB's local interface.
-    *
-    * This class is here only to be sure that despite more than one implementation of the interface, only the one pointed by
-    * <tt>beanName</tt> attribute of the {@link EJB} annotation will be used.
-    *
-    * @author PedroKowalski
-    *
-    */
-   @Stateless
-   public static class ExemplaryEJBProductionImpl implements ExemplaryEJB
-   {
-   }
+    /**
+     * Exemplary implementation of the EJB's local interface.
+     *
+     * @author PedroKowalski
+     */
+    @Stateless
+    public static class ExemplaryEJBMockImpl implements ExemplaryEJB {
+    }
+
+    /**
+     * Exemplary implementation of the EJB's local interface.
+     * <p>
+     * This class is here only to be sure that despite more than one implementation of the interface, only the one pointed
+     * by
+     * <tt>beanName</tt> attribute of the {@link EJB} annotation will be used.
+     *
+     * @author PedroKowalski
+     */
+    @Stateless
+    public static class ExemplaryEJBProductionImpl implements ExemplaryEJB {
+    }
 }

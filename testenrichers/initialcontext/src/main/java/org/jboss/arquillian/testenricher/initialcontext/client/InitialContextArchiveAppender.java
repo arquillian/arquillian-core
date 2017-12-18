@@ -31,15 +31,13 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InitialContextArchiveAppender extends CachedAuxilliaryArchiveAppender
-{
-   @Override
-   protected Archive<?> buildArchive()
-   {
-      return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-initialcontext.jar")
-                  .addClasses(
-                        InitialContextRemoteExtension.class, 
-                        InitialContextProducer.class)
-                  .addAsServiceProvider(RemoteLoadableExtension.class, InitialContextRemoteExtension.class);
-   }
+public class InitialContextArchiveAppender extends CachedAuxilliaryArchiveAppender {
+    @Override
+    protected Archive<?> buildArchive() {
+        return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-initialcontext.jar")
+            .addClasses(
+                InitialContextRemoteExtension.class,
+                InitialContextProducer.class)
+            .addAsServiceProvider(RemoteLoadableExtension.class, InitialContextRemoteExtension.class);
+    }
 }

@@ -1,0 +1,163 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Protocols
+:icons: font
+
+In order to support running the same test locally and in remote
+containers, Arquillian uses an SPI that controls which protocol is used
+to negotiate execution of the test. This appendix details the default
+protocols that Arquillian provides, when they are used and how they can
+be configured.
+
+* <<local, Local>>
+* <<servlet-2.5, Servlet 2.5>>
+* <<servlet-3.0, Servlet 3.0>>
+
+[[local]]
+==== Local
+
+The Local Protocol implementation is used by most EE5 compliant
+containers. It does nothing to the deployment. The Local Protocol is also
+used when executing in run mode `as client`.
+
+*Packaging rules*
+
+[cols="3,3,4",options="header"]
+|===
+|@Deployment |Output |Action
+
+|JavaArchive
+|JavaArchive
+|Does nothing.
+
+|WebArchive
+|WebArchive
+|Does nothing.
+
+|EnterpriseArchive
+|EnterpriseArchive
+|Does nothing.
+|===
+
+===== Configuration
+
+*Protocol Configuration Options*
+
+[options="header"]
+|===
+|Name |Type |Default |Description
+|===
+
+[[servlet-2.5]]
+==== Servlet 2.5
+
+The Servlet 2.5 Protocol implementation is used by most EE5 compliant
+containers. It will attempt to add a war to the deployment.
+
+*Packaging rules*
+
+[cols="1,1,8",options="header"]
+|===
+|@Deployment |Output |Action
+
+|JavaArchive
+|EnterpriseArchive
+|Create a new `EnterpriseArchive`, add `@Deployment` and
+ `ServletProtocol` as module, the other `Auxiliary Archives` as
+ libraries.
+
+|WebArchive
+|WebArchive
+|If a web.xml is found, a Servlet will be added, else a web.xml will be
+ added. The Servlet `WebArchive` will be merged with the Deployment and
+ the `Auxiliary Archives` added as libraries.
+
+|EnterpriseArchive
+|EnterpriseArchive
+|Same as `JavaArchive`, but using the `@Deployment` defined
+ `EnterpriseArchive` instead of creating a new.
+|===
+
+===== Configuration
+
+*Protocol Configuration Options*
+
+[cols="2,1,1,6",options="header"]
+|===
+|Name |Type |Default |Description
+
+|host
+|String
+|none
+|Used to override the Deployments default hostname.
+
+|port
+|int
+|none
+|Used to override the Deployments default http port.
+
+|contextRoot
+|String
+|none
+|Used to override the Deployments default contextRoot.
+|===
+
+[[servlet-3.0]]
+==== Servlet 3.0
+
+The Servlet 3.0 Protocol implementation is used by most EE6 compliant
+containers. It will attempt to add a web-fragment to the deployment.
+
+*Packaging rules*
+
+[cols="1,1,8",options="header"]
+|===
+|@Deployment |Output |Action
+
+|JavaArchive
+|WebArchive
+|Creates a new `WebArchive`, adds `@Deployment` and `Auxiliary Archives`
+ as libraries.
+
+|WebArchive
+|WebArchive
+|Adds `@Deployment` and `Auxiliary Archives` as libraries.
+
+|EnterpriseArchive
+|EnterpriseArchive
+|If a single `WebArchive` is found, the same as for `WebArchive` is done.
+ If no `WebArchives` are found a new one is created, adds `@Deployment`
+ and `Auxiliary Archives` as libraries. If multiple `WebArchives` are
+ found, a exception is thrown.
+|===
+
+===== Configuration
+
+*Protocol Configuration Options*
+
+[cols="2,1,1,6",options="header"]
+|===
+|Name |Type |Default |Description
+
+|host
+|String
+|none
+|Used to override the Deployments default hostname.
+
+|port
+|int
+|none
+|Used to override the Deployments default http port.
+
+|contextRoot
+|String
+|none
+|Used to override the Deployments default contextRoot.
+|===

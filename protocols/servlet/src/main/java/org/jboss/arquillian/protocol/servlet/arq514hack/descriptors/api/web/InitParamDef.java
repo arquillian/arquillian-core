@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,9 +22,7 @@ package org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface InitParamDef extends WebAppDescriptor
-{
+public interface InitParamDef extends WebAppDescriptor {
 
-   InitParamDef initParam(String name, Object value);
-
+    InitParamDef initParam(String name, Object value);
 }

@@ -25,18 +25,15 @@ import javax.annotation.PreDestroy;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AbstractService<T> implements Service<T>
-{
-   private boolean released = false;
+public class AbstractService<T> implements Service<T> {
+    private boolean released = false;
 
-   @PreDestroy
-   public void release()
-   {
-      this.released = true;
-   }
+    @PreDestroy
+    public void release() {
+        this.released = true;
+    }
 
-   public boolean wasReleased()
-   {
-      return released;
-   }
+    public boolean wasReleased() {
+        return released;
+    }
 }

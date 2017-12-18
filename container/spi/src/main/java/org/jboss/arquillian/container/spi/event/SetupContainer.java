@@ -19,17 +19,14 @@ package org.jboss.arquillian.container.spi.event;
 
 import org.jboss.arquillian.container.spi.Container;
 
-
 /**
  * StartContainer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SetupContainer extends ContainerControlEvent
-{
-   public SetupContainer(Container container)
-   {
-      super(container);
-   }
+public class SetupContainer extends ContainerControlEvent {
+    public SetupContainer(Container container) {
+        super(container);
+    }
 }

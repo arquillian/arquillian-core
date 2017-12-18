@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.protocol.servlet;
 
 import java.net.URL;
-
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.MockTestRunner;
 import org.jboss.arquillian.protocol.servlet.test.TestCommandCallback;
@@ -26,106 +25,97 @@ import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * ProtocolTestCase
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ProtocolTestCase extends AbstractServerBase 
-{
-   
-   @Test
-   public void shouldReturnTestResult() throws Exception 
-   {
-      MockTestRunner.add(TestResult.passed());
-      
-      ServletMethodExecutor executor = createExecutor();
-      TestResult result = executor.invoke(new MockTestExecutor());
-      
-      Assert.assertEquals(
+public class ProtocolTestCase extends AbstractServerBase {
+
+    @Test
+    public void shouldReturnTestResult() throws Exception {
+        MockTestRunner.add(TestResult.passed());
+
+        ServletMethodExecutor executor = createExecutor();
+        TestResult result = executor.invoke(new MockTestExecutor());
+
+        Assert.assertEquals(
             "Should have returned a passed test",
             MockTestRunner.wantedResults.getStatus(),
             result.getStatus());
-      
-      Assert.assertNull(
+
+        Assert.assertNull(
             "No Exception should have been thrown",
             result.getThrowable());
-   }
+    }
 
-   @Test
-   public void shouldReturnThrownException() throws Exception 
-   {
-      MockTestRunner.add(TestResult.failed(new Exception().fillInStackTrace()));
-      
-      ServletMethodExecutor executor = createExecutor();
-      TestResult result = executor.invoke(new MockTestExecutor());
-      
-      Assert.assertEquals(
+    @Test
+    public void shouldReturnThrownException() throws Exception {
+        MockTestRunner.add(TestResult.failed(new Exception().fillInStackTrace()));
+
+        ServletMethodExecutor executor = createExecutor();
+        TestResult result = executor.invoke(new MockTestExecutor());
+
+        Assert.assertEquals(
             "Should have returned a passed test",
             MockTestRunner.wantedResults.getStatus(),
             result.getStatus());
-      
-      Assert.assertNotNull(
+
+        Assert.assertNotNull(
             "Exception should have been thrown",
             result.getThrowable());
-      
-   }
-   
-   @Test
-   public void shouldReturnExceptionWhenMissingTestClassParameter() throws Exception
-   {
-      URL url = createURL(ServletTestRunner.OUTPUT_MODE_SERIALIZED, null, null);
-      TestResult result = (TestResult)TestUtil.execute(url);
-      
-      Assert.assertEquals(
+    }
+
+    @Test
+    public void shouldReturnExceptionWhenMissingTestClassParameter() throws Exception {
+        URL url = createURL(ServletTestRunner.OUTPUT_MODE_SERIALIZED, null, null);
+        TestResult result = (TestResult) TestUtil.execute(url);
+
+        Assert.assertEquals(
             "Should have returned a passed test",
             Status.FAILED,
             result.getStatus());
-      
-      Assert.assertTrue(
+
+        Assert.assertTrue(
             "No Exception should have been thrown",
             result.getThrowable() instanceof IllegalArgumentException);
-   }
-   
-   @Test
-   public void shouldReturnExceptionWhenMissingMethodParameter() throws Exception
-   {
-      URL url = createURL(ServletTestRunner.OUTPUT_MODE_SERIALIZED, "org.my.test", null);
-      TestResult result = (TestResult)TestUtil.execute(url);
-      
-      Assert.assertEquals(
+    }
+
+    @Test
+    public void shouldReturnExceptionWhenMissingMethodParameter() throws Exception {
+        URL url = createURL(ServletTestRunner.OUTPUT_MODE_SERIALIZED, "org.my.test", null);
+        TestResult result = (TestResult) TestUtil.execute(url);
+
+        Assert.assertEquals(
             "Should have returned a passed test",
             Status.FAILED,
             result.getStatus());
-      
-      Assert.assertTrue(
+
+        Assert.assertTrue(
             "No Exception should have been thrown",
             result.getThrowable() instanceof IllegalArgumentException);
-   }
-   
-   @Test
-   public void shouldReturnExceptionWhenErrorLoadingClass() throws Exception
-   {
-      URL url = createURL(ServletTestRunner.OUTPUT_MODE_SERIALIZED, "org.my.test", "test");
-      TestResult result = (TestResult)TestUtil.execute(url);
-      
-      Assert.assertEquals(
+    }
+
+    @Test
+    public void shouldReturnExceptionWhenErrorLoadingClass() throws Exception {
+        URL url = createURL(ServletTestRunner.OUTPUT_MODE_SERIALIZED, "org.my.test", "test");
+        TestResult result = (TestResult) TestUtil.execute(url);
+
+        Assert.assertEquals(
             "Should have returned a passed test",
             Status.FAILED,
             result.getStatus());
-      
-      Assert.assertTrue(
+
+        Assert.assertTrue(
             "No Exception should have been thrown",
             result.getThrowable() instanceof ClassNotFoundException);
-   }
+    }
 
-   protected ServletMethodExecutor createExecutor()
-   {
-       return new ServletMethodExecutor(
-               new ServletProtocolConfiguration(),
-               createContexts(), 
-               new TestCommandCallback());
-   }
+    protected ServletMethodExecutor createExecutor() {
+        return new ServletMethodExecutor(
+            new ServletProtocolConfiguration(),
+            createContexts(),
+            new TestCommandCallback());
+    }
 }

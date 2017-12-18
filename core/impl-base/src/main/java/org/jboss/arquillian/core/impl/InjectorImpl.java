@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,36 +26,32 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InjectorImpl implements Injector
-{
-   private Manager manager;
-   
-   //-------------------------------------------------------------------------------------||
-   // Public Factory Methods -------------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+public class InjectorImpl implements Injector {
+    private Manager manager;
 
-   public static InjectorImpl of(Manager manager)
-   {
-      return new InjectorImpl(manager);
-   }
-   
-   InjectorImpl(Manager manager)
-   {
-      this.manager = manager;
-   }
-   
-   //-------------------------------------------------------------------------------------||
-   // Required Implementations - Injector ------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+    // Public Factory Methods -------------------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.api.Injector#inject(java.lang.Object)
-    */
-   @Override
-   public <T> T inject(T target) 
-   {
-      Validate.notNull(target, "Target must be specified.");
-      manager.inject(target);
-      return target;
-   }
+    InjectorImpl(Manager manager) {
+        this.manager = manager;
+    }
+
+    public static InjectorImpl of(Manager manager) {
+        return new InjectorImpl(manager);
+    }
+
+    //-------------------------------------------------------------------------------------||
+    // Required Implementations - Injector ------------------------------------------------||
+    //-------------------------------------------------------------------------------------||
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.api.Injector#inject(java.lang.Object)
+     */
+    @Override
+    public <T> T inject(T target) {
+        Validate.notNull(target, "Target must be specified.");
+        manager.inject(target);
+        return target;
+    }
 }

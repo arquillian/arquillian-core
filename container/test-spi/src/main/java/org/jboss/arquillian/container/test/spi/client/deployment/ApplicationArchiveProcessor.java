@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,20 +21,19 @@ import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * Extension point for client side deployment enhancements.
- * 
+ * <p>
  * Example:
- * - Annotations to help define meta data for the deployment 
+ * - Annotations to help define meta data for the deployment
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ApplicationArchiveProcessor
-{
-   /**
-    * 
-    * 
-    * @param applicationArchive The user defined deployment archive
-    * @param testClass The users test class
-    */
-   void process(Archive<?> applicationArchive, TestClass testClass);
+public interface ApplicationArchiveProcessor {
+    /**
+     * @param applicationArchive
+     *     The user defined deployment archive
+     * @param testClass
+     *     The users test class
+     */
+    void process(Archive<?> applicationArchive, TestClass testClass);
 }

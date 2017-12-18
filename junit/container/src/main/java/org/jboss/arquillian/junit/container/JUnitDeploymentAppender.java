@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.junit.container;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,28 +26,29 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
  * JUnitDeploymentAppender
- * 
+ * <p>
  * Package up the JUnit / Arquillian JUnit related dependencies.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender
-{
-   @Override
-   protected Archive<?> buildArchive()
-   {
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
-                        .addPackages(
-                              true, 
-                              "junit", 
-                              "org.junit",
-                              "org.hamcrest",
-                              Arquillian.class.getPackage().getName())
-                        .addAsServiceProvider(
-                              TestRunner.class, 
-                              JUnitTestRunner.class);
-      return archive;
-   }
-
+public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender {
+    @Override
+    protected Archive<?> buildArchive() {
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit.jar")
+            .addPackages(
+                true,
+                "junit",
+                "org.junit",
+                "org.hamcrest",
+                Arquillian.class.getPackage().getName())
+            .addAsServiceProvider(
+                TestRunner.class,
+                JUnitTestRunner.class)
+            .addClass(JUnitRemoteExtension.class)
+            .addAsServiceProvider(
+                RemoteLoadableExtension.class,
+                JUnitRemoteExtension.class);
+        return archive;
+    }
 }

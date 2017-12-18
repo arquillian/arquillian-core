@@ -25,35 +25,28 @@ import org.jboss.arquillian.core.spi.context.Context;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface LoadableExtension
-{
-   public void register(ExtensionBuilder builder);
+public interface LoadableExtension {
+    public void register(ExtensionBuilder builder);
 
-   
-   public interface ExtensionBuilder
-   {
-      <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl);
-      
-      <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl, Class<? extends T> newServiceImpl);
-      
-      ExtensionBuilder observer(Class<?> handler);
-      
-      ExtensionBuilder context(Class<? extends Context> context);
-   }
-   
-   public static class Validate 
-   {
-      public static boolean classExists(String className)
-      {
-         try
-         {
-            Class.forName(className);
-            return true;
-         }
-         catch (Exception e) 
-         {
-            return false;
-         }
-      }
-   }
+    public interface ExtensionBuilder {
+        <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl);
+
+        <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl,
+            Class<? extends T> newServiceImpl);
+
+        ExtensionBuilder observer(Class<?> handler);
+
+        ExtensionBuilder context(Class<? extends Context> context);
+    }
+
+    public static class Validate {
+        public static boolean classExists(String className) {
+            try {
+                Class.forName(className);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    }
 }

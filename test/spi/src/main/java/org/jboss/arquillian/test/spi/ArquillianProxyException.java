@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,45 +20,43 @@ package org.jboss.arquillian.test.spi;
  * Exception class used when a proxied exception cannot be created. This
  * exception type is is thrown instead and contains information about the
  * proxied class and a hint about why it could not be thrown.
- * 
+ *
  * @author <a href="mailto:contact@andygibson.net">Andy Gibson</a>
- * 
  */
 public class ArquillianProxyException extends RuntimeException {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   public ArquillianProxyException() {
-		super();
-	}
+    public ArquillianProxyException() {
+        super();
+    }
 
-	public ArquillianProxyException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ArquillianProxyException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ArquillianProxyException(String message) {
-		super(message);
-	}
+    public ArquillianProxyException(String message) {
+        super(message);
+    }
 
-	public ArquillianProxyException(Throwable cause) {
-		super(cause);
-	}
+    public ArquillianProxyException(Throwable cause) {
+        super(cause);
+    }
 
-	/**
-	 * ArquillianProxyException constructor based on an underlying exception
-	 * that cannot be recreated.
-	 * 
-	 * @param message
-	 *            Message from the proxied Exception
-	 * @param exceptionClassName
-	 *            Class name of the proxied class type
-	 * @param reason
-	 *            reason that the exception couldn't be re-created
-	 * @param cause
-	 *            cause from the original exception
-	 */
-	public ArquillianProxyException(String message, String exceptionClassName, String reason, Throwable cause) {
-		this(String.format("%s : %s [Proxied because : %s]", exceptionClassName, message, reason), cause);
-	}
-
+    /**
+     * ArquillianProxyException constructor based on an underlying exception
+     * that cannot be recreated.
+     *
+     * @param message
+     *     Message from the proxied Exception
+     * @param exceptionClassName
+     *     Class name of the proxied class type
+     * @param reason
+     *     reason that the exception couldn't be re-created
+     * @param cause
+     *     cause from the original exception
+     */
+    public ArquillianProxyException(String message, String exceptionClassName, String reason, Throwable cause) {
+        this(String.format("%s : %s [Proxied because : %s]", exceptionClassName, message, reason), cause);
+    }
 }

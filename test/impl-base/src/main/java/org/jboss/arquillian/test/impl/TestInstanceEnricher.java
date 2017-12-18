@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,7 +18,6 @@ package org.jboss.arquillian.test.impl;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -36,24 +35,21 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestInstanceEnricher 
-{
-   @Inject
-   private Instance<ServiceLoader> serviceLoader;
+public class TestInstanceEnricher {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
-   @Inject
-   private Event<EnrichmentEvent> enrichmentEvent;
-   
-   public void enrich(@Observes Before event) throws Exception
-   {
-      Object instance = event.getTestInstance();
-      Method method = event.getTestMethod();
-      enrichmentEvent.fire(new BeforeEnrichment(instance, method));
-      Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
-      for(TestEnricher enricher : testEnrichers) 
-      {
-         enricher.enrich(instance);
-      }
-      enrichmentEvent.fire(new AfterEnrichment(instance, method));
-   }
+    @Inject
+    private Event<EnrichmentEvent> enrichmentEvent;
+
+    public void enrich(@Observes Before event) throws Exception {
+        Object instance = event.getTestInstance();
+        Method method = event.getTestMethod();
+        enrichmentEvent.fire(new BeforeEnrichment(instance, method));
+        Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
+        for (TestEnricher enricher : testEnrichers) {
+            enricher.enrich(instance);
+        }
+        enrichmentEvent.fire(new AfterEnrichment(instance, method));
+    }
 }

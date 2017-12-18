@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,89 +28,75 @@ import java.util.Set;
  * @author <a href="mailto:ian@ianbrandt.com">Ian Brandt</a>
  * @version $Revision: $
  */
-public class HTTPContext extends NamedContext
-{
-   private final String host;
-   private final int port;
+public class HTTPContext extends NamedContext {
+    private final String host;
+    private final int port;
 
-   private final Set<Servlet> servlets;
+    private final Set<Servlet> servlets;
 
-   public HTTPContext(String host, int port)
-   {
-       this("no-named", host, port);
-   }
-   
-   public HTTPContext(String name, String host, int port)
-   {
-      super(name);
-      
-      if (host == null) {
-         throw new IllegalArgumentException("host must not be null");
-      }
-      this.host = host;
-      this.port = port;
-      this.servlets = new HashSet<Servlet>();
-   }
-    
-   /**
-    * @return the ip
-    */
-   public String getHost()
-   {
-      return host;
-   }
+    public HTTPContext(String host, int port) {
+        this("no-named", host, port);
+    }
 
-   /**
-    * @return the port
-    */
-   public int getPort()
-   {
-      return port;
-   }
+    public HTTPContext(String name, String host, int port) {
+        super(name);
 
-   public HTTPContext add(Servlet servlet)
-   {
-      servlet.setParent(this);
-      this.servlets.add(servlet);
-      return this;
-   }
+        if (host == null) {
+            throw new IllegalArgumentException("host must not be null");
+        }
+        this.host = host;
+        this.port = port;
+        this.servlets = new HashSet<Servlet>();
+    }
 
-   /**
-    * @return the servlets
-    */
-   public List<Servlet> getServlets()
-   {
-      return new ArrayList<Servlet>(servlets);
-   }
+    /**
+     * @return the ip
+     */
+    public String getHost() {
+        return host;
+    }
 
-   public Servlet getServletByName(String name)
-   {
-      for(Servlet servlet : getServlets())
-      {
-         if(servlet.getName().equals(name))
-         {
-            return servlet;
-         }
-      }
-      return null;
-   }
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
 
-   @Override
-   public String toString()
-   {
-      return "HTTPContext [host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
-   }
+    public HTTPContext add(Servlet servlet) {
+        servlet.setParent(this);
+        this.servlets.add(servlet);
+        return this;
+    }
 
-   private String toString(Set<Servlet> servlets)
-   {
-      StringBuilder sb = new StringBuilder();
-      if(servlets != null)
-      {
-         for(Object obj : servlets)
-         {
-            sb.append('\n').append(obj);
-         }
-      }
-      return sb.toString();
-   }
+    /**
+     * @return the servlets
+     */
+    public List<Servlet> getServlets() {
+        return new ArrayList<Servlet>(servlets);
+    }
+
+    public Servlet getServletByName(String name) {
+        for (Servlet servlet : getServlets()) {
+            if (servlet.getName().equals(name)) {
+                return servlet;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "HTTPContext [host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
+    }
+
+    private String toString(Set<Servlet> servlets) {
+        StringBuilder sb = new StringBuilder();
+        if (servlets != null) {
+            for (Object obj : servlets) {
+                sb.append('\n').append(obj);
+            }
+        }
+        return sb.toString();
+    }
 }

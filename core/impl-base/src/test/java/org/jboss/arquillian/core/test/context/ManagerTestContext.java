@@ -25,7 +25,6 @@ import org.jboss.arquillian.core.spi.context.NonIdBoundContext;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ManagerTestContext extends NonIdBoundContext
-{
+public interface ManagerTestContext extends NonIdBoundContext {
 
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,11 +16,8 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
-
 import java.lang.annotation.Annotation;
-
 import javax.servlet.ServletContext;
-
 import org.jboss.arquillian.container.test.impl.enricher.resource.OperatesOnDeploymentAwareProvider;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -31,21 +28,18 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  *
  * @author asotobu
  */
-public class ServletContextResourceProvider extends OperatesOnDeploymentAwareProvider
-{
+public class ServletContextResourceProvider extends OperatesOnDeploymentAwareProvider {
 
     @Inject
     Instance<ServletContext> servletContextInstance;
 
     @Override
-    public boolean canProvide(Class<?> type)
-    {
+    public boolean canProvide(Class<?> type) {
         return javax.servlet.ServletContext.class.isAssignableFrom(type);
     }
 
     @Override
-    public Object doLookup(ArquillianResource arquillianResource, Annotation... annotations)
-    {
+    public Object doLookup(ArquillianResource arquillianResource, Annotation... annotations) {
         return servletContextInstance.get();
     }
 }

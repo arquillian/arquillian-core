@@ -20,11 +20,9 @@ package org.jboss.arquillian.core.impl.loadable.util;
 /**
  * Loaded via Reflection in ServiceRegistryLoader
  */
-class PackageProtectedService implements FakeService
-{
-   @Override
-   public boolean isValid()
-   {
-      return true;
-   }
+class PackageProtectedService implements FakeService {
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 }

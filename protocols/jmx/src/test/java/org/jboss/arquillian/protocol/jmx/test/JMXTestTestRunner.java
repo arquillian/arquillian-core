@@ -21,29 +21,25 @@ import org.jboss.arquillian.container.test.spi.command.Command;
 
 /**
  * ARQ-469
- * Override send on original JMXTestRunner so we can simulate multi threaded behavior when running in container. 
+ * Override send on original JMXTestRunner so we can simulate multi threaded behavior when running in container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class JMXTestTestRunner extends org.jboss.arquillian.protocol.jmx.JMXTestRunner
-{
-   public JMXTestTestRunner(TestClassLoader classLoader)
-   {
-      super(classLoader);
-   }
+public class JMXTestTestRunner extends org.jboss.arquillian.protocol.jmx.JMXTestRunner {
+    public JMXTestTestRunner(TestClassLoader classLoader) {
+        super(classLoader);
+    }
 
-   @Override
-   public void send(final Command<?> command)
-   {
-      final String currentCall = getCurrentCall();
-      new Thread(new Runnable() {
-         @Override
-         public void run()
-         {
-            JMXTestTestRunner.this.setCurrentCall(currentCall);
-            JMXTestTestRunner.super.send(command);
-         }
-      }).start();
-   }
+    @Override
+    public void send(final Command<?> command) {
+        final String currentCall = getCurrentCall();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JMXTestTestRunner.this.setCurrentCall(currentCall);
+                JMXTestTestRunner.super.send(command);
+            }
+        }).start();
+    }
 }

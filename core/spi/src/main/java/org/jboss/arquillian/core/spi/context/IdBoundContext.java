@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,21 +16,18 @@
  */
 package org.jboss.arquillian.core.spi.context;
 
-
 /**
  * IdBoundContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface IdBoundContext<T> extends Context
-{
-   T getActiveId();
-   
-   void activate(T id);
+public interface IdBoundContext<T> extends Context {
+    T getActiveId();
 
-   void destroy(T id);
+    void activate(T id);
 
-   void deactivate();
+    void destroy(T id);
 
+    void deactivate();
 }

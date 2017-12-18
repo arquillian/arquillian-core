@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,60 +23,47 @@ import java.net.URL;
 
 /**
  * TestUtil
- * 
+ * <p>
  * Internal helper for testcase to do http request
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class TestUtil
-{
-   private TestUtil() {}
+public class TestUtil {
+    private TestUtil() {
+    }
 
-   public static Object execute(URL url) 
-   {
-      ObjectInputStream input = null;
-      try 
-      {
-         input = new ObjectInputStream(url.openStream());
-         return input.readObject();
-      }
-      catch (Exception e) 
-      {
-         throw new RuntimeException("Could not fetch url " + url);
-      }
-      finally 
-      {
-         close(input);
-      }
-   }
-   
-   private static void close(InputStream input) 
-   {
-      if(input == null) 
-      {
-         return;
-      }
-      try 
-      {
-         input.close();
-      } 
-      catch (Exception e) 
-      {
-         // ignore
-      }
-   }
-   
-   public static String convertToString(InputStream in) throws Exception
-   {
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      int b;
-      while ((b = in.read()) != -1)
-      {
-         out.write(b);
-      }
-      out.close();
-      in.close();
-      return new String(out.toByteArray(), "UTF-8");
-   }
+    public static Object execute(URL url) {
+        ObjectInputStream input = null;
+        try {
+            input = new ObjectInputStream(url.openStream());
+            return input.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not fetch url " + url);
+        } finally {
+            close(input);
+        }
+    }
+
+    private static void close(InputStream input) {
+        if (input == null) {
+            return;
+        }
+        try {
+            input.close();
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    public static String convertToString(InputStream in) throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int b;
+        while ((b = in.read()) != -1) {
+            out.write(b);
+        }
+        out.close();
+        in.close();
+        return new String(out.toByteArray(), "UTF-8");
+    }
 }

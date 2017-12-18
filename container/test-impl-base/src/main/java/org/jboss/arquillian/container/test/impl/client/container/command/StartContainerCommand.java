@@ -20,43 +20,37 @@ package org.jboss.arquillian.container.test.impl.client.container.command;
 import java.util.Map;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.AbstractCommand;
 
-
 /**
  * StartContainerCommand
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class StartContainerCommand extends AbstractCommand<String>
-{
-   private static final long serialVersionUID = 1L;
+public class StartContainerCommand extends AbstractCommand<String> {
+    private static final long serialVersionUID = 1L;
 
-   private String containerQualifier;
-   
-   private Map<String, String> configuration;
-   
-   public StartContainerCommand(String containerQualifier)
-   {
-      this.containerQualifier = containerQualifier;
-      this.configuration = null;
-   }
-   
-   public StartContainerCommand(String containerQualifier, Map<String, String> config)
-   {
-      this.containerQualifier = containerQualifier;
-      this.configuration = config;
-   }
-   
-   /**
-    * @return the containerQualifier
-    */
-   public String getContainerQualifier()
-   {
-      return containerQualifier;
-   }
-   
-   public Map<String, String> getConfiguration()
-   {
-      return configuration;
-   }
+    private String containerQualifier;
+
+    private Map<String, String> configuration;
+
+    public StartContainerCommand(String containerQualifier) {
+        this.containerQualifier = containerQualifier;
+        this.configuration = null;
+    }
+
+    public StartContainerCommand(String containerQualifier, Map<String, String> config) {
+        this.containerQualifier = containerQualifier;
+        this.configuration = config;
+    }
+
+    /**
+     * @return the containerQualifier
+     */
+    public String getContainerQualifier() {
+        return containerQualifier;
+    }
+
+    public Map<String, String> getConfiguration() {
+        return configuration;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -26,21 +26,18 @@ import org.jboss.arquillian.core.spi.event.Event;
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerEvent implements Event
-{
-   private DeployableContainer<?> deployableContainer;
-   
-   public ContainerEvent(DeployableContainer<?> deployableContainer)
-   {
-      Validate.notNull(deployableContainer, "DeployableContainer must be specified");
-      this.deployableContainer = deployableContainer;
-   }
-   
-   /**
-    * @return the deployableContainer
-    */
-   public DeployableContainer<?> getDeployableContainer()
-   {
-      return deployableContainer;
-   }
+public class ContainerEvent implements Event {
+    private DeployableContainer<?> deployableContainer;
+
+    public ContainerEvent(DeployableContainer<?> deployableContainer) {
+        Validate.notNull(deployableContainer, "DeployableContainer must be specified");
+        this.deployableContainer = deployableContainer;
+    }
+
+    /**
+     * @return the deployableContainer
+     */
+    public DeployableContainer<?> getDeployableContainer() {
+        return deployableContainer;
+    }
 }

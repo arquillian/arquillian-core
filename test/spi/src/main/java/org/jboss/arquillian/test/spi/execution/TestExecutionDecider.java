@@ -24,15 +24,12 @@ import java.lang.reflect.Method;
  *
  * @author <a href="mailto:smikloso@redhat.com">Stefan Miklosovic</a>
  */
-public interface TestExecutionDecider
-{
+public interface TestExecutionDecider {
 
-    static final TestExecutionDecider EXECUTE = new TestExecutionDecider()
-    {
+    static final TestExecutionDecider EXECUTE = new TestExecutionDecider() {
 
         @Override
-        public ExecutionDecision decide(Method testMethod)
-        {
+        public ExecutionDecision decide(Method testMethod) {
             return ExecutionDecision.execute();
         }
 
@@ -40,21 +37,23 @@ public interface TestExecutionDecider
         public int precedence() {
             return 0;
         }
-
     };
 
     /**
      * This method will be called individually for each event(before/test/after), but
      * should return the same result for each to behave consistently.
      *
-     * @param testMethod test method to resolve a test execution on. This is always the @Test method regardless of the current phase before or after.
+     * @param testMethod
+     *     test method to resolve a test execution on. This is always the @Test method regardless of the current phase
+     *     before or after.
+     *
      * @return execution decision telling if a test method is going to be executed or not
      */
     ExecutionDecision decide(Method testMethod);
 
     /**
      * Higher the precedence is, sooner this decider will be treated.
-     * 
+     *
      * @return precedence of this decider
      */
     int precedence();

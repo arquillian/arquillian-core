@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,14 +18,12 @@ package org.jboss.arquillian.core.spi;
 
 import org.jboss.arquillian.core.api.Event;
 
-
 /**
  * EventPoint
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface EventPoint extends Typed
-{
-   void set(Event<?> value) throws InvocationException;
+public interface EventPoint extends Typed {
+    void set(Event<?> value) throws InvocationException;
 }

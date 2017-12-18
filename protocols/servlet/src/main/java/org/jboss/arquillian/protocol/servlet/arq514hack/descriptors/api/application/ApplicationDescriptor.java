@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,31 +20,29 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * DSL Grammar to construct / alter Application XML Descriptors
- * 
+ *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface ApplicationDescriptor extends Descriptor
-{
+public interface ApplicationDescriptor extends Descriptor {
 
-   ApplicationDescriptor version(String version);
+    ApplicationDescriptor version(String version);
 
-   ApplicationDescriptor displayName(String displayName);
+    ApplicationDescriptor displayName(String displayName);
 
-   ApplicationDescriptor description(String description);
+    ApplicationDescriptor description(String description);
 
-   ApplicationDescriptor libraryDirectory(String libraryDirectory);
+    ApplicationDescriptor libraryDirectory(String libraryDirectory);
 
-   ApplicationDescriptor webModule(String uri, String contextRoot);
+    ApplicationDescriptor webModule(String uri, String contextRoot);
 
-   ApplicationDescriptor ejbModule(String uri);
+    ApplicationDescriptor ejbModule(String uri);
 
-   ApplicationDescriptor javaModule(String uri);
+    ApplicationDescriptor javaModule(String uri);
 
-   ApplicationDescriptor connectorModule(String uri);
+    ApplicationDescriptor connectorModule(String uri);
 
-   ApplicationDescriptor securityRole(String roleName);
+    ApplicationDescriptor securityRole(String roleName);
 
-   ApplicationDescriptor securityRole(String roleName, String description);
-
+    ApplicationDescriptor securityRole(String roleName, String description);
 }

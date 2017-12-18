@@ -25,41 +25,33 @@ import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.applicat
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class WebModuleImpl implements WebModule
-{
-   private String uri;
-   private String contextRoot;
+public class WebModuleImpl implements WebModule {
+    private String uri;
+    private String contextRoot;
 
-   public WebModuleImpl(String webUri, String contextRoot)
-   {
-      uri = webUri;
-      this.contextRoot = contextRoot;
-   }
+    public WebModuleImpl(String webUri, String contextRoot) {
+        uri = webUri;
+        this.contextRoot = contextRoot;
+    }
 
-   @Override
-   public String getUri()
-   {
-      return uri;
-   }
+    @Override
+    public String getUri() {
+        return uri;
+    }
 
-   @Override
-   public String getContextRoot()
-   {
-      return contextRoot;
-   }
+    @Override
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
-   @Override
-   public void setUri(String uri)
-   {
-      this.uri = uri;
-   }
+    @Override
+    public String getContextRoot() {
+        return contextRoot;
+    }
 
-   @Override
-   public void setContextRoot(String contextRoot)
-   {
-      this.contextRoot = contextRoot;
-   }
-
+    @Override
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
+    }
 }

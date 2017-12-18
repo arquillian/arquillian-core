@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,9 +17,7 @@
 package org.jboss.arquillian.core.spi;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.api.Instance;
-
 
 /**
  * FieldInjectionPoint
@@ -27,9 +25,8 @@ import org.jboss.arquillian.core.api.Instance;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface InjectionPoint extends Typed
-{
-   Class<? extends Annotation> getScope();
-   
-   void set(Instance<?> value) throws InvocationException;
+public interface InjectionPoint extends Typed {
+    Class<? extends Annotation> getScope();
+
+    void set(Instance<?> value) throws InvocationException;
 }

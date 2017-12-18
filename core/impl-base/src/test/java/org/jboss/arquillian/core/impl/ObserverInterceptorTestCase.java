@@ -19,7 +19,6 @@ package org.jboss.arquillian.core.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
@@ -32,68 +31,52 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ObserverInterceptorTestCase extends AbstractManagerTestBase
-{
-   public static List<String> callStack = new ArrayList<String>();
-   
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(InterceptorObserver.class);
-      extensions.add(InterceptorObserver2.class); 
-      extensions.add(Observer.class);
-   }
+public class ObserverInterceptorTestCase extends AbstractManagerTestBase {
+    public static List<String> callStack = new ArrayList<String>();
 
-   @Test
-   public void shouldInterceptEvent() throws Exception
-   {
-      fire("test");
-      
-      Assert.assertEquals(InterceptorObserver2.class.getSimpleName(), callStack.get(0));
-      Assert.assertEquals(InterceptorObserver.class.getSimpleName(), callStack.get(1));
-      Assert.assertEquals(Observer.class.getSimpleName(), callStack.get(2));
-      Assert.assertEquals(InterceptorObserver.class.getSimpleName(), callStack.get(3));
-      Assert.assertEquals(InterceptorObserver2.class.getSimpleName(), callStack.get(4));
-   }
-   
-   public static class Observer 
-   {
-      public void around(@Observes String event)
-      {
-         callStack.add(Observer.class.getSimpleName());
-      }
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(InterceptorObserver.class);
+        extensions.add(InterceptorObserver2.class);
+        extensions.add(Observer.class);
+    }
 
-   public static class InterceptorObserver 
-   {
-      public void around(@Observes EventContext<String> event)
-      {
-         callStack.add(InterceptorObserver.class.getSimpleName());
-         try
-         {
-            event.proceed();
-         }
-         finally
-         {
+    @Test
+    public void shouldInterceptEvent() throws Exception {
+        fire("test");
+
+        Assert.assertEquals(InterceptorObserver2.class.getSimpleName(), callStack.get(0));
+        Assert.assertEquals(InterceptorObserver.class.getSimpleName(), callStack.get(1));
+        Assert.assertEquals(Observer.class.getSimpleName(), callStack.get(2));
+        Assert.assertEquals(InterceptorObserver.class.getSimpleName(), callStack.get(3));
+        Assert.assertEquals(InterceptorObserver2.class.getSimpleName(), callStack.get(4));
+    }
+
+    public static class Observer {
+        public void around(@Observes String event) {
+            callStack.add(Observer.class.getSimpleName());
+        }
+    }
+
+    public static class InterceptorObserver {
+        public void around(@Observes EventContext<String> event) {
             callStack.add(InterceptorObserver.class.getSimpleName());
-         }
-      }
-   }
-   
-   public static class InterceptorObserver2 
-   {
-      public void around(@Observes(precedence = 1) EventContext<String> event)
-      {
-         callStack.add(InterceptorObserver2.class.getSimpleName());
-         try
-         {
-            event.proceed();
-         }
-         finally
-         {
-            callStack.add(InterceptorObserver2.class.getSimpleName());
-         }
-      }
-   }
+            try {
+                event.proceed();
+            } finally {
+                callStack.add(InterceptorObserver.class.getSimpleName());
+            }
+        }
+    }
 
+    public static class InterceptorObserver2 {
+        public void around(@Observes(precedence = 1) EventContext<String> event) {
+            callStack.add(InterceptorObserver2.class.getSimpleName());
+            try {
+                event.proceed();
+            } finally {
+                callStack.add(InterceptorObserver2.class.getSimpleName());
+            }
+        }
+    }
 }

@@ -26,44 +26,38 @@ import java.security.PrivilegedAction;
 
 /**
  * Priviledged actions for the package
+ *
  * @author Scott.Stark@jboss.org
  * @version $Revision: 2787 $
  */
-class SysPropertyActions
-{
-   interface SysProps
-   {
-      SysProps NON_PRIVILEDGED = new SysProps()
-      {
-         public String getProperty(final String name, final String defaultValue)
-         {
-            return System.getProperty(name, defaultValue);
-         }
-      };
-      SysProps PRIVILEDGED = new SysProps()
-      {
-         public String getProperty(final String name, final String defaultValue)
-         {
-            final PrivilegedAction<String> action = new PrivilegedAction<String>()
-            {
-               public String run()
-               {
-                  return System.getProperty(name, defaultValue);
-               }
-            };
-            return (String) AccessController.doPrivileged(action);
-         }
-      };
-      String getProperty(String name, String defaultValue);
-   }
+class SysPropertyActions {
+    public static String getProperty(String name, String defaultValue) {
+        String prop;
+        if (System.getSecurityManager() == null) {
+            prop = SysProps.NON_PRIVILEDGED.getProperty(name, defaultValue);
+        } else {
+            prop = SysProps.PRIVILEDGED.getProperty(name, defaultValue);
+        }
+        return prop;
+    }
 
-   public static String getProperty(String name, String defaultValue)
-   {
-      String prop;
-      if( System.getSecurityManager() == null )
-         prop = SysProps.NON_PRIVILEDGED.getProperty(name, defaultValue);
-      else
-         prop = SysProps.PRIVILEDGED.getProperty(name, defaultValue);
-      return prop;
-   }
+    interface SysProps {
+        SysProps NON_PRIVILEDGED = new SysProps() {
+            public String getProperty(final String name, final String defaultValue) {
+                return System.getProperty(name, defaultValue);
+            }
+        };
+        SysProps PRIVILEDGED = new SysProps() {
+            public String getProperty(final String name, final String defaultValue) {
+                final PrivilegedAction<String> action = new PrivilegedAction<String>() {
+                    public String run() {
+                        return System.getProperty(name, defaultValue);
+                    }
+                };
+                return AccessController.doPrivileged(action);
+            }
+        };
+
+        String getProperty(String name, String defaultValue);
+    }
 }

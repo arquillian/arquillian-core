@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,25 +24,23 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Test extends TestEvent
-{
-   private TestMethodExecutor testMethodExecutor;
-   
-   /**
-    * @param testMethodExecutor The executor responsible for executing the test method
-    */
-   public Test(TestMethodExecutor testMethodExecutor)
-   {
-      // TODO: how to validate testMethodExecutor
-      super(testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
-      
-      //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
-      
-      this.testMethodExecutor = testMethodExecutor;
-   }
-   
-   public TestMethodExecutor getTestMethodExecutor()
-   {
-      return testMethodExecutor;
-   }
+public class Test extends TestEvent {
+    private TestMethodExecutor testMethodExecutor;
+
+    /**
+     * @param testMethodExecutor
+     *     The executor responsible for executing the test method
+     */
+    public Test(TestMethodExecutor testMethodExecutor) {
+        // TODO: how to validate testMethodExecutor
+        super(testMethodExecutor.getInstance(), testMethodExecutor.getMethod());
+
+        //Validate.notNull(testMethodExecutor, "TestMethodExecutor must be specified");
+
+        this.testMethodExecutor = testMethodExecutor;
+    }
+
+    public TestMethodExecutor getTestMethodExecutor() {
+        return testMethodExecutor;
+    }
 }

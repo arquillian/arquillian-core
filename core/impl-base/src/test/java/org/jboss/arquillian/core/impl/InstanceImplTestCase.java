@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.core.impl;
 
-
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -27,84 +26,71 @@ import org.jboss.arquillian.core.test.context.ManagerTestScoped;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * InstanceImplTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class InstanceImplTestCase
-{
-   @Test
-   public void shouldBeAbleToLookupInContext() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .context(ManagerTestContextImpl.class).create();
+public class InstanceImplTestCase {
+    @Test
+    public void shouldBeAbleToLookupInContext() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+            .context(ManagerTestContextImpl.class).create();
 
-      Object testObject = new Object();
-      ManagerTestContext context = manager.getContext(ManagerTestContext.class);
-      try
-      {
-         context.activate();
-         context.getObjectStore().add(Object.class, testObject);
-         
-         Instance<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
-         
-         Assert.assertEquals(
-               "Verify expected object was returned",
-               testObject, instance.get());
-      } 
-      finally
-      {
-         context.deactivate();
-         context.destroy();
-      }
-   }
+        Object testObject = new Object();
+        ManagerTestContext context = manager.getContext(ManagerTestContext.class);
+        try {
+            context.activate();
+            context.getObjectStore().add(Object.class, testObject);
 
-   @Test
-   public void shouldFireEventOnSet() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from()
-         .context(ManagerTestContextImpl.class)
-         .extension(TestObserver.class).create();
+            Instance<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
 
-      ManagerTestContext context = manager.getContext(ManagerTestContext.class);
-      try
-      {
-         context.activate();
-         
-         InstanceProducer<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
-         instance.set(new Object());
+            Assert.assertEquals(
+                "Verify expected object was returned",
+                testObject, instance.get());
+        } finally {
+            context.deactivate();
+            context.destroy();
+        }
+    }
 
-         Assert.assertTrue(manager.getExtension(TestObserver.class).wasCalled);
-      } 
-      finally
-      {
-         context.deactivate();
-         context.destroy();
-      }
-   }
+    @Test
+    public void shouldFireEventOnSet() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from()
+            .context(ManagerTestContextImpl.class)
+            .extension(TestObserver.class).create();
 
-   @Test(expected = IllegalStateException.class)
-   public void shouldThrowExceptionIfTryingToSetAUnScopedInstance() throws Exception
-   {
-      ManagerImpl manager = (ManagerImpl)ManagerBuilder.from().create();
-      InstanceProducer<Object> instance = InstanceImpl.of(Object.class, null, manager);
-      
-      instance.set(new Object());
-      Assert.fail("Should have thrown " + IllegalStateException.class);
-   }
-   
-   private static class TestObserver 
-   {
-      private boolean wasCalled = false;
-      
-      @SuppressWarnings("unused")
-      public void shouldBeCalled(@Observes Object object)
-      {
-         Assert.assertNotNull(object);
-         wasCalled = true;
-      }
-   }
+        ManagerTestContext context = manager.getContext(ManagerTestContext.class);
+        try {
+            context.activate();
+
+            InstanceProducer<Object> instance = InstanceImpl.of(Object.class, ManagerTestScoped.class, manager);
+            instance.set(new Object());
+
+            Assert.assertTrue(manager.getExtension(TestObserver.class).wasCalled);
+        } finally {
+            context.deactivate();
+            context.destroy();
+        }
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionIfTryingToSetAUnScopedInstance() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerBuilder.from().create();
+        InstanceProducer<Object> instance = InstanceImpl.of(Object.class, null, manager);
+
+        instance.set(new Object());
+        Assert.fail("Should have thrown " + IllegalStateException.class);
+    }
+
+    private static class TestObserver {
+        private boolean wasCalled = false;
+
+        @SuppressWarnings("unused")
+        public void shouldBeCalled(@Observes Object object) {
+            Assert.assertNotNull(object);
+            wasCalled = true;
+        }
+    }
 }

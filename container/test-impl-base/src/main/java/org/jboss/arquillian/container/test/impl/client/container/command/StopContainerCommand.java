@@ -19,29 +19,25 @@ package org.jboss.arquillian.container.test.impl.client.container.command;
 
 import org.jboss.arquillian.container.test.impl.client.deployment.command.AbstractCommand;
 
-
 /**
  * StartContainerCommand
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @version $Revision: $
  */
-public class StopContainerCommand extends AbstractCommand<String>
-{
-   private static final long serialVersionUID = 1L;
+public class StopContainerCommand extends AbstractCommand<String> {
+    private static final long serialVersionUID = 1L;
 
-   private String containerQualifier;
-   
-   public StopContainerCommand(String containerQualifier)
-   {
-      this.containerQualifier = containerQualifier;
-   }
-   
-   /**
-    * @return the containerQualifier
-    */
-   public String getContainerQualifier()
-   {
-      return containerQualifier;
-   }
+    private String containerQualifier;
+
+    public StopContainerCommand(String containerQualifier) {
+        this.containerQualifier = containerQualifier;
+    }
+
+    /**
+     * @return the containerQualifier
+     */
+    public String getContainerQualifier() {
+        return containerQualifier;
+    }
 }

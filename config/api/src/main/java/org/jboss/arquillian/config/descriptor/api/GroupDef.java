@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,17 +24,16 @@ import java.util.List;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface GroupDef extends ArquillianDescriptor
-{
-   String getGroupName();
-   
-   GroupDef setGroupName(String name);
+public interface GroupDef extends ArquillianDescriptor {
+    String getGroupName();
 
-   GroupDef setGroupDefault();
-   
-   boolean isGroupDefault();
+    GroupDef setGroupName(String name);
 
-   ContainerDef container(String name);
-   
-   List<ContainerDef> getGroupContainers();
+    GroupDef setGroupDefault();
+
+    boolean isGroupDefault();
+
+    ContainerDef container(String name);
+
+    List<ContainerDef> getGroupContainers();
 }

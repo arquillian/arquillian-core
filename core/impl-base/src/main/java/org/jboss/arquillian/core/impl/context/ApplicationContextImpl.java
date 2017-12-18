@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,7 +17,6 @@
 package org.jboss.arquillian.core.impl.context;
 
 import java.lang.annotation.Annotation;
-
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.spi.HashObjectStore;
 import org.jboss.arquillian.core.spi.context.AbstractContext;
@@ -30,43 +29,38 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ApplicationContextImpl extends AbstractContext<String> implements ApplicationContext
-{
-   private static final String APP_CONTEXT_ID = "app";
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.spi.Context#getScope()
-    */
-   @Override
-   public Class<? extends Annotation> getScope()
-   {
-      return ApplicationScoped.class;
-   }
+public class ApplicationContextImpl extends AbstractContext<String> implements ApplicationContext {
+    private static final String APP_CONTEXT_ID = "app";
 
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.context.AbstractContext#activate(java.lang.Object)
-    */
-   @Override
-   public void activate()
-   {
-      super.activate(APP_CONTEXT_ID);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.context.AbstractContext#destroy(java.lang.Object)
-    */
-   @Override
-   public void destroy()
-   {
-      super.destroy(APP_CONTEXT_ID);
-   }
-   
-   /* (non-Javadoc)
-    * @see org.jboss.arquillian.core.impl.context.AbstractContext#createNewObjectStore()
-    */
-   @Override
-   protected ObjectStore createNewObjectStore()
-   {
-      return new HashObjectStore();
-   }
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.spi.Context#getScope()
+     */
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return ApplicationScoped.class;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.context.AbstractContext#activate(java.lang.Object)
+     */
+    @Override
+    public void activate() {
+        super.activate(APP_CONTEXT_ID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.context.AbstractContext#destroy(java.lang.Object)
+     */
+    @Override
+    public void destroy() {
+        super.destroy(APP_CONTEXT_ID);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.arquillian.core.impl.context.AbstractContext#createNewObjectStore()
+     */
+    @Override
+    protected ObjectStore createNewObjectStore() {
+        return new HashObjectStore();
+    }
 }
