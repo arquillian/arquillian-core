@@ -23,14 +23,16 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 /*
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithExpectedException
+public class ClassWithArquillianRunnerWithExpectedExceptionRule
 {
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -56,10 +58,14 @@ public class ArquillianClass1WithExpectedException
       wasCalled(Cycle.AFTER);
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Rule
+   public ExpectedException e = ExpectedException.none();
+
+   @Test
    public void shouldBeInvoked() throws Throwable
    {
       wasCalled(Cycle.TEST);
+      e.expect(IllegalArgumentException.class);
       throw new IllegalArgumentException();
    }
 }

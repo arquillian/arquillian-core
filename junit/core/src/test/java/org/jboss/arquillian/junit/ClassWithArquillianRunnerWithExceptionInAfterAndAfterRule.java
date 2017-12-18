@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithExceptionInAfterAndAfterRule
+public class ClassWithArquillianRunnerWithExceptionInAfterAndAfterRule
 {
    @BeforeClass
    public static void beforeClass() throws Throwable

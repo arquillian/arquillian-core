@@ -34,7 +34,7 @@ import org.junit.runners.model.Statement;
  * Predfined TestClass
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithExceptionInBeforeRule
+public class ClassWithArquillianRunnerWithExceptionInAfterRule
 {
    @Rule
    public MethodRule rule = new MethodRule() {
@@ -43,7 +43,8 @@ public class ArquillianClass1WithExceptionInBeforeRule
          return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                throw new RuntimeException("BeforeRuleException");
+                base.evaluate();
+                throw new RuntimeException("AfterRuleException");
             }
         };
       }

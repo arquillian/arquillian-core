@@ -27,10 +27,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /*
- * Predfined TestClass
+ * Predfined TestClass 
  */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithTimeout
+public class ClassWithArquillianRunnerWithExceptionInBeforeAndAfter
 {
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -48,18 +48,19 @@ public class ArquillianClass1WithTimeout
    public void before() throws Throwable
    {
       wasCalled(Cycle.BEFORE);
+      throw new RuntimeException("BeforeException");
    }
 
    @After
    public void after() throws Throwable
    {
       wasCalled(Cycle.AFTER);
+      throw new RuntimeException("AfterException");
    }
 
-   @Test(timeout = 500)
-   public void shouldBeInvoked() throws Throwable
+   @Test
+   public void shouldBeInvoked() throws Throwable 
    {
       wasCalled(Cycle.TEST);
-      Thread.sleep(1001);
    }
 }
