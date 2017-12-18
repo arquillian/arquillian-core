@@ -1,0 +1,44 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Rules
+:icons: font
+
+If you want to use arquillian functionality with some other runner. You can use Arquillian with Junit Rule using `ArquillianTestClass` and `ArquillianTest` Rules.
+
+In order to use full functionality of Arquillian you have to use both the rules i.e. `ArquillianTestClass` and
+`ArquillianTest`.
+
+==== How to use it?
+
+[source, java, indent=0]
+----
+public class HelloWorldTest
+{
+   @ClassRule
+   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+
+   @Rule
+   public ArquillianTest arquillianTest = new ArquillianTest();
+
+   @Rule
+   public MethodRule testWatchman = MethodRuleChain.outer(arquillianTest).around(new TestWatchman());
+
+   @Test
+   public void shouldNotBeNull()
+   {
+      Assert.assertNotNull(arquillianTest);
+   }
+}
+----
+
+IMPORTANT:
+However while using above Junit Rules you can't inject method scoped arquillian resources.
+In order to use any Method Rule with `ArquillianTest` Rule, you have to use it with RuleChain
+having `ArquillianTest` as outer Rule. You can see it in above example.
