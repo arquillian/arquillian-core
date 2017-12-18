@@ -36,13 +36,13 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 public class ClassWithArquillianClassAndMethodRuleWithExceptionInBeforeRule
 {
    @ClassRule
-   public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
+   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
    @Rule
-   public ArquillianRule arquillianRule = new ArquillianRule();
+   public ArquillianTest arquillianTest = new ArquillianTest();
 
    @Rule
-   public MethodRule rule = MethodRuleChain.outer(arquillianRule).around(new MethodRule() {
+   public MethodRule rule = MethodRuleChain.outer(arquillianTest).around(new MethodRule() {
       @Override
       public Statement apply(final Statement base, FrameworkMethod method, Object target) {
          return new Statement() {

@@ -15,10 +15,10 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 public class ArquillianClassWithRuleAndArquillianRunner {
 
     @ClassRule
-    public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
     @Rule
-    public ArquillianRule arquillianRule = new ArquillianRule();
+    public ArquillianTest arquillianTest = new ArquillianTest();
 
     @BeforeClass
     public static void beforeClass() throws Throwable {

@@ -325,8 +325,8 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       Assert.assertTrue(result.getFailures().get(0).getMessage().equals(
           "TestClass: org.jboss.arquillian.junit.ArquillianClassWithRuleAndArquillianRunner "
               + "contains Arquillian runner and Arquillian Rule. Arquillian doesn't support "
-              + "@RunWith(Arquillian.class) and ArquillianClassRule or ArquillianRule to use at "
-              + "the same time."));
+              + "@RunWith(Arquillian.class) and ArquillianClassTest or ArquillianTest Rules to "
+              + "use at the same time."));
    }
 
 }

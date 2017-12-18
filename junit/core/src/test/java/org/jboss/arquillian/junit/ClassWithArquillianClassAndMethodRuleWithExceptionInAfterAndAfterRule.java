@@ -17,21 +17,26 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
- * Predfined TestClass
+ * Predefined TestClass
  */
 public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterAndAfterRule
 {
    @ClassRule
-   public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
+   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
    @Rule
-   public ArquillianRule arquillianRule = new ArquillianRule();
+   public ArquillianTest arquillianTest = new ArquillianTest();
 
    @BeforeClass
    public static void beforeClass() throws Throwable

@@ -20,7 +20,7 @@ import org.junit.runners.model.Statement;
  *
  * @author <a href="mailto:alexander.schwartz@gmx.net">Alexander Schwartz</a>
  */
-public class ArquillianClassRule implements TestRule {
+public class ArquillianTestClass implements TestRule {
 
     private TestRunnerAdaptor adaptor;
 

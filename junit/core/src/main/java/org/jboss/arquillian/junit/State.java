@@ -91,7 +91,7 @@ public class State {
 
     static boolean hasAnyArquillianRule(org.junit.runners.model.TestClass testClass) {
         for (FrameworkField field : testClass.getAnnotatedFields()) {
-            if (ArquillianClassRule.class.equals(field.getType()) || ArquillianRule.class.equals(field.getType())) {
+            if (ArquillianTestClass.class.equals(field.getType()) || ArquillianTest.class.equals(field.getType())) {
                 return true;
             }
         }

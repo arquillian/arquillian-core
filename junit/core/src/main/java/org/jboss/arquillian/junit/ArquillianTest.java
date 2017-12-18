@@ -29,11 +29,11 @@ import org.junit.runners.model.TestClass;
  *
  * @author <a href="mailto:alexander.schwartz@gmx.net">Alexander Schwartz</a>
  */
-public class ArquillianRule implements MethodRule {
+public class ArquillianTest implements MethodRule {
 
     private TestRunnerAdaptor adaptor;
 
-    public ArquillianRule() {
+    public ArquillianTest() {
         if (State.hasTestAdaptor()) {
             adaptor = State.getTestAdaptor();
         } else {
