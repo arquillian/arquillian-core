@@ -65,19 +65,21 @@ public class ArquillianClassRule implements TestRule {
                     adaptor = State.getTestAdaptor();
                 }
 
-                adaptor.beforeClass(description.getTestClass(),
-                        LifecycleMethodExecutor.NO_OP);
+                adaptor.beforeClass(description.getTestClass(), LifecycleMethodExecutor.NO_OP);
                 try {
                     base.evaluate();
                 } finally {
-                    adaptor.afterClass(description.getTestClass(),
-                            LifecycleMethodExecutor.NO_OP);
+                    adaptor.afterClass(description.getTestClass(), LifecycleMethodExecutor.NO_OP);
                     State.runnerFinished();
                     if (State.isLastRunner()) {
-                        adaptor.afterSuite();
-                        adaptor.shutdown();
-                        State.clean();
+                        try {
+                            adaptor.afterSuite();
+                            adaptor.shutdown();
+                        } finally {
+                            State.clean();
+                        }
                     }
+                    adaptor = null;
                 }
             }
         };

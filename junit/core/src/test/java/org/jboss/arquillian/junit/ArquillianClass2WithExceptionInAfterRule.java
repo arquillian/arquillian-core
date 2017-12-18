@@ -17,9 +17,14 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
@@ -28,7 +33,6 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predfined TestClass
  */
-@RunWith(Arquillian.class)
 public class ArquillianClass2WithExceptionInAfterRule
 {
    @ClassRule

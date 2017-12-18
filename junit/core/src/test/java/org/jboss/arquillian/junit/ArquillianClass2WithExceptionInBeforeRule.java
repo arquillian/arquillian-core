@@ -17,9 +17,14 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
@@ -37,7 +42,7 @@ public class ArquillianClass2WithExceptionInBeforeRule
    public ArquillianRule arquillianRule = new ArquillianRule();
 
    @Rule
-   public MethodRule rule = new MethodRule() {
+   public MethodRule rule = MethodRuleChain.outer(arquillianRule).around(new MethodRule() {
       @Override
       public Statement apply(final Statement base, FrameworkMethod method, Object target) {
          return new Statement() {
@@ -47,7 +52,7 @@ public class ArquillianClass2WithExceptionInBeforeRule
             }
         };
       }
-   };
+   });
 
    @BeforeClass
    public static void beforeClass() throws Throwable

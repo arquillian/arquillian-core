@@ -16,6 +16,9 @@
  */
 package org.jboss.arquillian.junit;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -23,7 +26,6 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
@@ -32,13 +34,13 @@ import org.junit.runner.notification.RunListener;
 import org.mockito.internal.stubbing.answers.ThrowsException;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -51,7 +53,7 @@ import static org.mockito.Mockito.*;
 public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 {
    @Test
-   public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception 
+   public void shouldCallBeforeClassAndAfterClassWithoutLifecycleHandlers() throws Exception
    {
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
@@ -59,8 +61,9 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       Result result = run(adaptor, ArquillianClass2.class);
 
       Assert.assertTrue(result.wasSuccessful());
-      // FIXME: before class always called
-      // assertCycle(0, Cycle.basics());
+
+      assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
+      assertCycle(0, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_RULE, Cycle.BEFORE_RULE);
       
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
@@ -77,9 +80,8 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       Assert.assertTrue(result.wasSuccessful());
       assertCycle(1, Cycle.basics());
 
-      // FIXME: not called any more
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
 
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
@@ -130,9 +132,8 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       Result result = run(adaptor, ArquillianClass2.class, ArquillianClass2.class, ArquillianClass2.class, ArquillianClass2.class);
       Assert.assertTrue(result.wasSuccessful());
 
-      // FIXME: can't do suites with Rules, will be called four times instead of once")
-      verify(adaptor, times(4)).beforeSuite(); // was: 1
-      verify(adaptor, times(4)).afterSuite(); // was: 1
+      verify(adaptor, times(4)).beforeSuite();
+      verify(adaptor, times(4)).afterSuite();
    }
    
    /*
@@ -257,9 +258,8 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
       assertCycle(0, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER);
 
-      // FIXME: custom lifecycle not called
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }
@@ -277,9 +277,8 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       Assert.assertTrue(result.getFailures().get(0).getMessage().equals("AfterRuleException"));
       assertCycle(1, Cycle.basics());
 
-      // FIXME: no custom lifecycle fired
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }
@@ -299,17 +298,35 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       Result result = run(adaptor, ArquillianClass2WithExceptionInAfterAndAfterRule.class);
 
       Assert.assertFalse(result.wasSuccessful());
-      // FIXME: there is only one exception reported here
-      Assert.assertEquals(1,  result.getFailureCount()); // was: 2
+
+      Assert.assertEquals(2,  result.getFailureCount());
       Assert.assertTrue(result.getFailures().get(0).getMessage().equals("AfterException"));
-      // FIXME: no second exception
-      // Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterRuleException"));
+
+      Assert.assertTrue(result.getFailures().get(1).getMessage().equals("AfterRuleException"));
       assertCycle(1, Cycle.basics());
 
-      // FIXME: no custom lifecycle fired
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
-      // verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(BeforeRules.class));
+      verify(adaptor, times(1)).fireCustomLifecycle(isA(AfterRules.class));
       verify(adaptor, times(1)).beforeSuite();
       verify(adaptor, times(1)).afterSuite();
    }
+
+   @Test
+   public void shouldThrowExceptionIfTestClassContainsArquillianRunnerAndRule() throws Exception
+   {
+      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+      executeAllLifeCycles(adaptor);
+
+      Result result = run(adaptor, ArquillianClassWithRuleAndArquillianRunner.class);
+
+      Assert.assertFalse(result.wasSuccessful());
+      assertCycle(0, Cycle.basics());
+
+      Assert.assertTrue(result.getFailures().get(0).getMessage().equals(
+          "TestClass: org.jboss.arquillian.junit.ArquillianClassWithRuleAndArquillianRunner "
+              + "contains Arquillian runner and Arquillian Rule. Arquillian doesn't support "
+              + "@RunWith(Arquillian.class) and ArquillianClassRule or ArquillianRule to use at "
+              + "the same time."));
+   }
+
 }

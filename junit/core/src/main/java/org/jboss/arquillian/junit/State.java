@@ -18,6 +18,7 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
+import org.junit.runners.model.FrameworkField;
 
 /**
  * State
@@ -57,7 +58,7 @@ public class State
       @Override
       protected Integer initialValue()
       {
-         return new Integer(0);
+         return 0;
       }
    };
 
@@ -114,7 +115,16 @@ public class State
    {
       deployableTest.set(adaptor);
    }
-   
+
+   static boolean hasAnyArquillianRule(org.junit.runners.model.TestClass testClass) {
+      for (FrameworkField field : testClass.getAnnotatedFields()) {
+         if (ArquillianClassRule.class.equals(field.getType()) || ArquillianRule.class.equals(field.getType())) {
+            return true;
+         }
+      }
+      return false;
+   }
+
    static boolean hasTestAdaptor()
    {
       return getTestAdaptor() != null;

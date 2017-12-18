@@ -88,6 +88,12 @@ public class Arquillian extends BlockJUnit4ClassRunner
    @Override
    public void run(final RunNotifier notifier)
    {
+      if (State.hasAnyArquillianRule(this.getTestClass())) {
+          throw new RuntimeException(String.format("TestClass: %s contains Arquillian runner and Arquillian Rule."
+              + " Arquillian doesn't support @RunWith(Arquillian.class) and ArquillianClassRule or "
+              + "ArquillianRule to use at the same time.", this.getTestClass().getName()));
+      }
+
       if(State.isNotRunningInEclipse()) {
           State.runnerStarted();
       }

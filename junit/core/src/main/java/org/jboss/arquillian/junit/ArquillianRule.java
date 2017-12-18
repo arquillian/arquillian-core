@@ -1,18 +1,23 @@
 package org.jboss.arquillian.junit;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import org.jboss.arquillian.junit.event.AfterRules;
+import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.rules.MethodRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-
-import java.lang.reflect.Method;
+import org.junit.runners.model.TestClass;
 
 /**
- * Class rule für Arquillian tests. Allows arquillian to be combined with other runners.
+ * Method rule for Arquillian tests. Allows arquillian to be combined with other runners.
  * Always use both rules together to get the full functionality of Arquillian.
  * <p>
  * <pre>
@@ -41,13 +46,23 @@ public class ArquillianRule implements MethodRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                adaptor.before(target, method.getMethod(),
-                    LifecycleMethodExecutor.NO_OP);
+                final List<Throwable> errors = new ArrayList<>();
+
+                adaptor.fireCustomLifecycle(
+                    new BeforeRules(target, new TestClass(method.getDeclaringClass()), base, method.getMethod(),
+                        LifecycleMethodExecutor.NO_OP));
+
+                adaptor.before(target, method.getMethod(), LifecycleMethodExecutor.NO_OP);
+
                 try {
                     TestResult result = adaptor.test(new TestMethodExecutor() {
                         public void invoke(Object... parameters)
                             throws Throwable {
-                            base.evaluate();
+                            try {
+                                base.evaluate();
+                            } catch (Throwable e) {
+                                errors.add(e);
+                            }
                         }
 
                         public Method getMethod() {
@@ -58,9 +73,6 @@ public class ArquillianRule implements MethodRule {
                             return target;
                         }
                     });
-                    if (result.getThrowable() != null) {
-                        throw result.getThrowable();
-                    }
                     if (result.getStatus() != Status.PASSED) {
                         throw new RuntimeException("problem: " + result);
                     }
@@ -68,7 +80,14 @@ public class ArquillianRule implements MethodRule {
                 } finally {
                     adaptor.after(target, method.getMethod(),
                         LifecycleMethodExecutor.NO_OP);
+                    try {
+                        adaptor.fireCustomLifecycle(
+                            new AfterRules(target, method.getMethod(), LifecycleMethodExecutor.NO_OP));
+                    } catch (Throwable e) {
+                        errors.add(e);
+                    }
                 }
+                org.junit.runners.model.MultipleFailureException.assertEmpty(errors);
             }
         };
     }
