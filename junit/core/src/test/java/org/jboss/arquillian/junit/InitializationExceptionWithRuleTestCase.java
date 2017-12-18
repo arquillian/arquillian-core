@@ -24,7 +24,10 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * ARQ-404 Better reporting when Arquillian fails to initialise
@@ -35,26 +38,25 @@ import static org.mockito.Mockito.*;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InitializationExceptionWithRuleTestCase extends JUnitTestBaseClass
-{
-   @Test
-   public void shouldKeepInitializationExceptionBetweenTestCases() throws Exception
-   {
-      String exceptionMessage = "TEST_EXCEPTION_BEFORE_SUITE_FAILING";
-      TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-      doThrow(new Exception(exceptionMessage)).when(adaptor).beforeSuite();
+public class InitializationExceptionWithRuleTestCase extends JUnitTestBaseClass {
 
-      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class, ClassWithArquillianClassAndMethodRule.class);
+    @Test
+    public void shouldKeepInitializationExceptionBetweenTestCases() throws Exception {
+        String exceptionMessage = "TEST_EXCEPTION_BEFORE_SUITE_FAILING";
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        doThrow(new Exception(exceptionMessage)).when(adaptor).beforeSuite();
 
-      Assert.assertFalse(result.wasSuccessful());
-      // both should be marked failed, the second with the real exception as cause
-      result.getFailures().get(0).getException().printStackTrace();
-      Assert.assertEquals(2, result.getFailureCount());
-      Assert.assertEquals(exceptionMessage, result.getFailures().get(0).getMessage());
-      // FIXME: second call will have been initialized as well
-      // Assert.assertEquals(exceptionMessage, result.getFailures().get(1).getException().getCause().getMessage());
+        Result result =
+            run(adaptor, ClassWithArquillianClassAndMethodRule.class, ClassWithArquillianClassAndMethodRule.class);
 
-      verify(adaptor, times(0)).afterSuite();
-   }
+        Assert.assertFalse(result.wasSuccessful());
+        // both should be marked failed, the second with the real exception as cause
+        result.getFailures().get(0).getException().printStackTrace();
+        Assert.assertEquals(2, result.getFailureCount());
+        Assert.assertEquals(exceptionMessage, result.getFailures().get(0).getMessage());
 
+        Assert.assertEquals(exceptionMessage, result.getFailures().get(1).getMessage());
+
+        verify(adaptor, times(0)).afterSuite();
+    }
 }
