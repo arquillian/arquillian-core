@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * ARQ-404 Better reporting when Arquillian fails to initialise
- * 
+ * <p>
  * Only run first test, ignore the rest
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -50,7 +50,7 @@ public class InitializationExceptionWithRuleTestCase extends JUnitTestBaseClass 
             run(adaptor, ClassWithArquillianClassAndMethodRule.class, ClassWithArquillianClassAndMethodRule.class);
 
         Assert.assertFalse(result.wasSuccessful());
-        // both should be marked failed, the second with the real exception as cause
+
         result.getFailures().get(0).getException().printStackTrace();
         Assert.assertEquals(2, result.getFailureCount());
         Assert.assertEquals(exceptionMessage, result.getFailures().get(0).getMessage());

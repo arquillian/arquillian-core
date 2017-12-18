@@ -31,46 +31,39 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predefined TestClass
  */
-public class ClassWithArquillianClassAndMethodRuleWithExpectedExceptionRule
-{
-   @ClassRule
-   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+public class ClassWithArquillianClassAndMethodRuleWithExpectedExceptionRule {
+    @ClassRule
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
-   @Rule
-   public ArquillianTest arquillianTest = new ArquillianTest();
+    @Rule
+    public ArquillianTest arquillianTest = new ArquillianTest();
+    @Rule
+    public ExpectedException e = ExpectedException.none();
 
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
 
-   @Rule
-   public ExpectedException e = ExpectedException.none();
-
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-      e.expect(IllegalArgumentException.class);
-      throw new IllegalArgumentException();
-   }
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+        e.expect(IllegalArgumentException.class);
+        throw new IllegalArgumentException();
+    }
 }

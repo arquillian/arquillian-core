@@ -7,7 +7,6 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-
 public class MethodRuleChain implements MethodRule {
 
     private static final MethodRuleChain EMPTY_CHAIN
@@ -15,16 +14,13 @@ public class MethodRuleChain implements MethodRule {
 
     private final List<MethodRule> rules;
 
-
     private MethodRuleChain(List<MethodRule> rules) {
         this.rules = rules;
     }
 
-
     private static MethodRuleChain emptyChain() {
         return MethodRuleChain.EMPTY_CHAIN;
     }
-
 
     static MethodRuleChain outer(MethodRule outerRule) {
         return MethodRuleChain.emptyChain().around(outerRule);

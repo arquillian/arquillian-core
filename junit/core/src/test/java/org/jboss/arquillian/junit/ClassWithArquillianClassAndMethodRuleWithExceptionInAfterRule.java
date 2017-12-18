@@ -33,55 +33,50 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predefined TestClass
  */
-public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterRule
-{
-   @ClassRule
-   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterRule {
 
-   @Rule
-   public ArquillianTest arquillianTest = new ArquillianTest();
+    @ClassRule
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
-   @Rule
-   public MethodRule rule = new MethodRule() {
-      @Override
-      public Statement apply(final Statement base, FrameworkMethod method, Object target) {
-         return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                base.evaluate();
-                throw new RuntimeException("AfterRuleException");
-            }
-        };
-      }
-   };
+    @Rule
+    public ArquillianTest arquillianTest = new ArquillianTest();
 
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+    @Rule
+    public MethodRule rule = new MethodRule() {
+        @Override
+        public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    base.evaluate();
+                    throw new RuntimeException("AfterRuleException");
+                }
+            };
+        }
+    };
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
+
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+    }
 }

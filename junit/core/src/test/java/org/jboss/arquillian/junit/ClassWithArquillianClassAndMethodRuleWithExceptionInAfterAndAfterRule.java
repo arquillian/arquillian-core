@@ -30,42 +30,37 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predefined TestClass
  */
-public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterAndAfterRule
-{
-   @ClassRule
-   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterAndAfterRule {
 
-   @Rule
-   public ArquillianTest arquillianTest = new ArquillianTest();
+    @ClassRule
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+    @Rule
+    public ArquillianTest arquillianTest = new ArquillianTest();
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-      throw new RuntimeException("AfterException");
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+        throw new RuntimeException("AfterException");
+    }
+
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+    }
 }

@@ -42,7 +42,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 /**
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
  *

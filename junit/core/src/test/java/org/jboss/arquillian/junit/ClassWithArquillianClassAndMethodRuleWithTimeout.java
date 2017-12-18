@@ -30,42 +30,36 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predefined TestClass
  */
-public class ClassWithArquillianClassAndMethodRuleWithTimeout
-{
-   @ClassRule
-   public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+public class ClassWithArquillianClassAndMethodRuleWithTimeout {
+    @ClassRule
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
-   @Rule
-   public ArquillianTest arquillianTest = new ArquillianTest();
+    @Rule
+    public ArquillianTest arquillianTest = new ArquillianTest();
 
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
 
-   @Test(timeout = 500)
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-      Thread.sleep(1001);
-   }
+    @Test(timeout = 500)
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+        Thread.sleep(1001);
+    }
 }

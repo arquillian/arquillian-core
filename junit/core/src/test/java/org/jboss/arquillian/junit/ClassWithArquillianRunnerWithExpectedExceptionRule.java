@@ -32,40 +32,34 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
  * Predefined TestClass
  */
 @RunWith(Arquillian.class)
-public class ClassWithArquillianRunnerWithExpectedExceptionRule
-{
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE_CLASS);
-   }
+public class ClassWithArquillianRunnerWithExpectedExceptionRule {
+    @Rule
+    public ExpectedException e = ExpectedException.none();
 
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      wasCalled(Cycle.AFTER_CLASS);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        wasCalled(Cycle.BEFORE_CLASS);
+    }
 
-   @Before
-   public void before() throws Throwable
-   {
-      wasCalled(Cycle.BEFORE);
-   }
+    @AfterClass
+    public static void afterClass() throws Throwable {
+        wasCalled(Cycle.AFTER_CLASS);
+    }
 
-   @After
-   public void after() throws Throwable
-   {
-      wasCalled(Cycle.AFTER);
-   }
+    @Before
+    public void before() throws Throwable {
+        wasCalled(Cycle.BEFORE);
+    }
 
-   @Rule
-   public ExpectedException e = ExpectedException.none();
+    @After
+    public void after() throws Throwable {
+        wasCalled(Cycle.AFTER);
+    }
 
-   @Test
-   public void shouldBeInvoked() throws Throwable
-   {
-      wasCalled(Cycle.TEST);
-      e.expect(IllegalArgumentException.class);
-      throw new IllegalArgumentException();
-   }
+    @Test
+    public void shouldBeInvoked() throws Throwable {
+        wasCalled(Cycle.TEST);
+        e.expect(IllegalArgumentException.class);
+        throw new IllegalArgumentException();
+    }
 }
