@@ -317,7 +317,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClassWithRuleAndArquillianRunner.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleAndWithArquillianRunner.class);
 
       Assert.assertFalse(result.wasSuccessful());
       assertCycle(0, Cycle.basics());
