@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
- * Predfined TestClass
+ * Predefined TestClass
  */
 public class ClassWithArquillianClassAndMethodRule
 {
@@ -63,7 +63,7 @@ public class ClassWithArquillianClassAndMethodRule
    }
 
    @Test
-   public void shouldBeInvoked() throws Throwable 
+   public void shouldBeInvoked() throws Throwable
    {
       wasCalled(Cycle.TEST);
    }
