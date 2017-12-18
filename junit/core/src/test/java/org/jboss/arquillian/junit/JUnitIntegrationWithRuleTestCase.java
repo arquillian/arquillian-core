@@ -58,7 +58,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
       
-      Result result = run(adaptor, ArquillianClass2.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class);
 
       Assert.assertTrue(result.wasSuccessful());
 
@@ -75,7 +75,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       executeAllLifeCycles(adaptor);
       
-      Result result = run(adaptor, ArquillianClass2.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class);
       
       Assert.assertTrue(result.wasSuccessful());
       assertCycle(1, Cycle.basics());
@@ -95,7 +95,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       
       throwException(Cycle.BEFORE_CLASS, new Throwable());
       
-      Result result = run(adaptor, ArquillianClass2.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class);
       Assert.assertFalse(result.wasSuccessful());
       
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
@@ -113,7 +113,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       
       throwException(Cycle.BEFORE, new Throwable());
       
-      Result result = run(adaptor, ArquillianClass2.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class);
       Assert.assertFalse(result.wasSuccessful());
       
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS, Cycle.BEFORE, Cycle.AFTER);
@@ -129,7 +129,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       executeAllLifeCycles(adaptor);
       
-      Result result = run(adaptor, ArquillianClass2.class, ArquillianClass2.class, ArquillianClass2.class, ArquillianClass2.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class, ClassWithArquillianClassAndMethodRule.class, ClassWithArquillianClassAndMethodRule.class, ClassWithArquillianClassAndMethodRule.class);
       Assert.assertTrue(result.wasSuccessful());
 
       verify(adaptor, times(4)).beforeSuite();
@@ -147,7 +147,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       throwException(Cycle.TEST, new Throwable());
 
-      Result result = run(adaptor, ArquillianClass2.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRule.class);
       Assert.assertFalse(result.wasSuccessful());
 
       assertCycle(1, Cycle.basics());
@@ -162,7 +162,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass2WithTimeout.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithTimeout.class);
 
       Assert.assertFalse(result.wasSuccessful());
       Assert.assertTrue(result.getFailures().get(0).getMessage().contains("timed out"));
@@ -178,7 +178,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass2WithExpectedExceptionRule.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithExpectedExceptionRule.class);
 
       Assert.assertTrue(result.wasSuccessful());
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
@@ -193,7 +193,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass2WithExpectedException.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithExpectedException.class);
 
       Assert.assertTrue(result.wasSuccessful());
       assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS);
@@ -213,7 +213,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
         public void testAssumptionFailure(Failure failure) {
               assumptionFailure.add(failure);
         }
-      }, ArquillianClass2WithAssume.class);
+      }, ClassWithArquillianClassAndMethodRuleWithAssume.class);
 
       Assert.assertEquals(1, assumptionFailure.size());
       Assert.assertTrue(result.wasSuccessful());
@@ -231,7 +231,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass2ExceptionInBeforeAndAfter.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithExceptionInBeforeAndAfter.class);
 
       Assert.assertFalse(result.wasSuccessful());
       Assert.assertEquals(2,  result.getFailureCount());
@@ -250,7 +250,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass2WithExceptionInBeforeRule.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithExceptionInBeforeRule.class);
 
       Assert.assertFalse(result.wasSuccessful());
       Assert.assertEquals(1,  result.getFailureCount());
@@ -270,7 +270,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
 
       executeAllLifeCycles(adaptor);
 
-      Result result = run(adaptor, ArquillianClass2WithExceptionInAfterRule.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithExceptionInAfterRule.class);
 
       Assert.assertFalse(result.wasSuccessful());
       Assert.assertEquals(1,  result.getFailureCount());
@@ -295,7 +295,7 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass
       doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
       doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
 
-      Result result = run(adaptor, ArquillianClass2WithExceptionInAfterAndAfterRule.class);
+      Result result = run(adaptor, ClassWithArquillianClassAndMethodRuleWithExceptionInAfterAndAfterRule.class);
 
       Assert.assertFalse(result.wasSuccessful());
 

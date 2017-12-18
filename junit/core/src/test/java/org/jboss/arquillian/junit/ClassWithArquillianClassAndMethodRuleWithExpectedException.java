@@ -17,42 +17,21 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
+import org.junit.*;
+import org.junit.runner.RunWith;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
  * Predfined TestClass
  */
-public class ArquillianClass2WithExceptionInBeforeRule
+public class ClassWithArquillianClassAndMethodRuleWithExpectedException
 {
    @ClassRule
    public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
 
    @Rule
    public ArquillianRule arquillianRule = new ArquillianRule();
-
-   @Rule
-   public MethodRule rule = MethodRuleChain.outer(arquillianRule).around(new MethodRule() {
-      @Override
-      public Statement apply(final Statement base, FrameworkMethod method, Object target) {
-         return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                throw new RuntimeException("BeforeRuleException");
-            }
-        };
-      }
-   });
 
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -78,9 +57,10 @@ public class ArquillianClass2WithExceptionInBeforeRule
       wasCalled(Cycle.AFTER);
    }
 
-   @Test
+   @Test(expected = IllegalArgumentException.class)
    public void shouldBeInvoked() throws Throwable
    {
       wasCalled(Cycle.TEST);
+      throw new IllegalArgumentException();
    }
 }

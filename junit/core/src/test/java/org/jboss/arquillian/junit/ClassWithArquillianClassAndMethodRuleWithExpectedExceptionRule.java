@@ -26,7 +26,7 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predfined TestClass
  */
-public class ArquillianClass2WithExpectedExceptionRule
+public class ClassWithArquillianClassAndMethodRuleWithExpectedExceptionRule
 {
    @ClassRule
    public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();

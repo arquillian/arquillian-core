@@ -23,9 +23,9 @@ import org.junit.runner.RunWith;
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
- * Predfined TestClass
+ * Predfined TestClass 
  */
-public class ArquillianClass2WithExceptionInAfterAndAfterRule
+public class ClassWithArquillianClassAndMethodRuleWithExceptionInBeforeAndAfter
 {
    @ClassRule
    public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
@@ -49,6 +49,7 @@ public class ArquillianClass2WithExceptionInAfterAndAfterRule
    public void before() throws Throwable
    {
       wasCalled(Cycle.BEFORE);
+      throw new RuntimeException("BeforeException");
    }
 
    @After
@@ -59,7 +60,7 @@ public class ArquillianClass2WithExceptionInAfterAndAfterRule
    }
 
    @Test
-   public void shouldBeInvoked() throws Throwable
+   public void shouldBeInvoked() throws Throwable 
    {
       wasCalled(Cycle.TEST);
    }

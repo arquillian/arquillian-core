@@ -25,7 +25,7 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 /*
  * Predfined TestClass
  */
-public class ArquillianClass2WithAssume
+public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterAndAfterRule
 {
    @ClassRule
    public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
@@ -55,12 +55,12 @@ public class ArquillianClass2WithAssume
    public void after() throws Throwable
    {
       wasCalled(Cycle.AFTER);
+      throw new RuntimeException("AfterException");
    }
 
    @Test
    public void shouldBeInvoked() throws Throwable
    {
       wasCalled(Cycle.TEST);
-      Assume.assumeTrue(false);
    }
 }

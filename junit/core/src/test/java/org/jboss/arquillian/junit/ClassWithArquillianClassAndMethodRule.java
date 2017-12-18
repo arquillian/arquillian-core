@@ -23,9 +23,9 @@ import org.junit.runner.RunWith;
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
- * Predfined TestClass
+ * Predfined TestClass 
  */
-public class ArquillianClass2WithExpectedException
+public class ClassWithArquillianClassAndMethodRule
 {
    @ClassRule
    public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
@@ -57,10 +57,9 @@ public class ArquillianClass2WithExpectedException
       wasCalled(Cycle.AFTER);
    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void shouldBeInvoked() throws Throwable
+   @Test
+   public void shouldBeInvoked() throws Throwable 
    {
       wasCalled(Cycle.TEST);
-      throw new IllegalArgumentException();
    }
 }
