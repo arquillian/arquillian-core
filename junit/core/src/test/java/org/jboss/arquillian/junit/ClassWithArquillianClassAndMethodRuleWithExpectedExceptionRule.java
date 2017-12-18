@@ -29,7 +29,7 @@ import org.junit.rules.ExpectedException;
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
- * Predfined TestClass
+ * Predefined TestClass
  */
 public class ClassWithArquillianClassAndMethodRuleWithExpectedExceptionRule
 {

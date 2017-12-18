@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 /*
- * Predfined TestClass 
+ * Predfined TestClass
  */
 public class ClassWithArquillianClassAndMethodRule
 {
