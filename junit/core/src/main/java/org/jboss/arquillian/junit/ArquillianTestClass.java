@@ -8,14 +8,14 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * Class rule für Arquillian tests. Allows arquillian to be combined with other runners.
+ * Class rule for Arquillian tests. Allows arquillian to be combined with other runners.
  * Always use both rules together to get the full functionality of Arquillian.
  * <p>
  * <pre>
  * @ClassRule
- * public static ArquillianClassRule arquillianClassRuleRule = new ArquillianClassRule();
+ * public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
  * @Rule
- * public ArquillianRule arquillianRule = new ArquillianRule();
+ * public ArquillianTest arquillianTest = new ArquillianTest();
  * </pre>
  *
  * @author <a href="mailto:alexander.schwartz@gmx.net">Alexander Schwartz</a>

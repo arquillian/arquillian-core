@@ -22,9 +22,9 @@ import org.junit.runners.model.TestClass;
  * <p>
  * <pre>
  * @ClassRule
- * public static ArquillianClassRule arquillianClassRuleRule = new ArquillianClassRule();
+ * public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
  * @Rule
- * public ArquillianRule arquillianRule = new ArquillianRule();
+ * public ArquillianTest arquillianTest = new ArquillianTest();
  * </pre>
  *
  * @author <a href="mailto:alexander.schwartz@gmx.net">Alexander Schwartz</a>
