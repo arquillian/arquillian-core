@@ -31,7 +31,7 @@ public class MethodRuleChain implements MethodRule {
     }
 
     MethodRuleChain around(MethodRule enclosedRule) {
-        final List<MethodRule> rules = new ArrayList<>();
+        final List<MethodRule> rules = new ArrayList<MethodRule>();
 
         rules.add(enclosedRule);
         rules.addAll(this.rules);

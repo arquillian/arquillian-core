@@ -46,7 +46,7 @@ public class ArquillianRule implements MethodRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                final List<Throwable> errors = new ArrayList<>();
+                final List<Throwable> errors = new ArrayList<Throwable>();
 
                 adaptor.fireCustomLifecycle(
                     new BeforeRules(target, new TestClass(method.getDeclaringClass()), base, method.getMethod(),
