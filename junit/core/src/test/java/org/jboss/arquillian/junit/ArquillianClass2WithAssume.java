@@ -28,7 +28,7 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 public class ArquillianClass2WithAssume
 {
    @ClassRule
-   public static ArquillianClassRule arquillianClassRuleRule = new ArquillianClassRule();
+   public static ArquillianClassRule arquillianClassRule = new ArquillianClassRule();
 
    @Rule
    public ArquillianRule arquillianRule = new ArquillianRule();
