@@ -27,9 +27,6 @@ public class HelloWorldTest
    @Rule
    public ArquillianTest arquillianTest = new ArquillianTest();
 
-   @Rule
-   public MethodRule testWatchman = MethodRuleChain.outer(arquillianTest).around(new TestWatchman());
-
    @Test
    public void shouldNotBeNull()
    {
@@ -40,5 +37,10 @@ public class HelloWorldTest
 
 IMPORTANT:
 However while using above Junit Rules you can't inject method scoped arquillian resources.
-In order to use any Method Rule with `ArquillianTest` Rule, you have to use it with RuleChain
-having `ArquillianTest` as outer Rule. You can see it in above example.
+In order to use any other JUnit Method Rule with `ArquillianTest` Rule, you have to use it with RuleChain
+having `ArquillianTest` as outer Rule.
+e.g.
+```java
+   @Rule
+   public MethodRule testWatchman = MethodRuleChain.outer(arquillianTest).around(new TestWatchman());
+```
