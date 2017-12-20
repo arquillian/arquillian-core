@@ -37,8 +37,7 @@ public class ArquillianTestClass implements TestRule {
                         // failed on suite level, ignore children
                         // notifier.fireTestIgnored(getDescription());
                         throw new RuntimeException(
-                                "Arquillian has previously been attempted initialized, but failed. "
-                                        + "See cause for previous exception",
+                            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
                                 State.getInitializationException());
                     } else {
                         try {

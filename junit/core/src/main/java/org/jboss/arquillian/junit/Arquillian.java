@@ -99,7 +99,7 @@ public class Arquillian extends BlockJUnit4ClassRunner {
                 notifier.fireTestFailure(
                     new Failure(getDescription(),
                         new RuntimeException(
-                            "Arquillian has previously been attempted initialized, but failed. See cause for previous exception",
+                            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
                             State.getInitializationException())));
             } else {
                 try {
