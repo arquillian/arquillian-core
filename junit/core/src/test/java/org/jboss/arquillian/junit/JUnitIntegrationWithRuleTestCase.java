@@ -1,6 +1,5 @@
 package org.jboss.arquillian.junit;
 
-
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
