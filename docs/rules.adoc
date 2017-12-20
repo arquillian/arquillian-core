@@ -12,7 +12,10 @@ endif::[]
 
 If you want to use Arquillian Testing Platform with other JUnit Runner, you can now use JUnit Rules - `ArquillianTestClass` and `ArquillianTest` - and happily let Arquillian do the heavy lifting for your tests.
 
-To get the similar functionality what the `@RunWith(Arquillian.class)` is offering you should require both rules i.e. `ArquillianTestClass` and `ArquillianTest`. If you are trying to run tests with one rule, it will fail by saying "Arquillian needs both rules to get full functionality."
+To get the similar functionality what the `@RunWith(Arquillian.class)` is offering you should require both rules i.e. `ArquillianTestClass` and `ArquillianTest`.
+If you are trying to run tests with one rule, it won't work as per expectations. We are not enforcing user to define both rules as implementations of `MethodRuleChain`
+is different for different users. JUnit doesn't provide `MethodRuleChain` similar to the `RuleChain`, as we don't know your implementation of `MethodRuleChain`,
+we can't check if your MethodRuleChain has `ArquillianTest` Rule defined.
 
 ==== How to use it?
 
