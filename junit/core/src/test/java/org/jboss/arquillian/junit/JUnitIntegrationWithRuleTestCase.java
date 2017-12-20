@@ -1,8 +1,5 @@
 package org.jboss.arquillian.junit;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -17,6 +14,10 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.mockito.internal.stubbing.answers.ThrowsException;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
