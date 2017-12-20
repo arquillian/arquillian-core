@@ -524,9 +524,10 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#deployment-archives">2.3. Deployment Archives</a></li>
 <li><a href="#_containers">2.4. Containers</a></li>
 <li><a href="#_test_enrichers">2.5. Test Enrichers</a></li>
-<li><a href="#_additional_features">2.6. Additional Features</a></li>
-<li><a href="#_protocols">2.7. Protocols</a></li>
-<li><a href="#_build_integration">2.8. Build Integration</a></li>
+<li><a href="#_rules">2.6. Rules</a></li>
+<li><a href="#_additional_features">2.7. Additional Features</a></li>
+<li><a href="#_protocols">2.8. Protocols</a></li>
+<li><a href="#_build_integration">2.9. Build Integration</a></li>
 </ul>
 </li>
 <li><a href="#_useful_urls">3. Useful URLs</a></li>
@@ -1453,7 +1454,74 @@ future release of Arquillian.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_additional_features"><a class="anchor" href="#_additional_features"></a>2.6. Additional Features</h3>
+<h3 id="_rules"><a class="anchor" href="#_rules"></a>2.6. Rules</h3>
+<div class="paragraph">
+<p>If you want to use Arquillian Testing Platform with other JUnit Runner, you can now use JUnit Rules - <code>ArquillianTestClass</code> and <code>ArquillianTest</code> - and happily let Arquillian do the heavy lifting for your tests.</p>
+</div>
+<div class="paragraph">
+<p>To get the similar functionality what the <code>@RunWith(Arquillian.class)</code> is offering you should require both rules i.e. <code>ArquillianTestClass</code> and <code>ArquillianTest</code>.
+If you are trying to run tests with one rule, it won&#8217;t work as per expectations. We are not enforcing user to define both rules as implementations of <code>MethodRuleChain</code>
+is different for different users. JUnit doesn&#8217;t provide <code>MethodRuleChain</code> similar to the <code>RuleChain</code>, as we don&#8217;t know your implementation of <code>MethodRuleChain</code>,
+we can&#8217;t check if your MethodRuleChain has <code>ArquillianTest</code> Rule defined.</p>
+</div>
+<div class="sect3">
+<h4 id="_how_to_use_it"><a class="anchor" href="#_how_to_use_it"></a>2.6.1. How to use it?</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">GreeterManagedBeanWithJUnitRulesTestCase</span> {
+
+    <span class="annotation">@ClassRule</span>
+    <span class="directive">public</span> <span class="directive">static</span> ArquillianTestClass arquillianTestClass = <span class="keyword">new</span> ArquillianTestClass();
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> ArquillianTest arquillianTest = <span class="keyword">new</span> ArquillianTest();
+
+    <span class="annotation">@Deployment</span>
+    <span class="directive">public</span> <span class="directive">static</span> JavaArchive createDeployment() {
+        <span class="keyword">return</span> ShrinkWrap.create(JavaArchive.class)
+            .addClass(Greeter.class)
+            .addAsManifestResource(EmptyAsset.INSTANCE, <span class="string"><span class="delimiter">&quot;</span><span class="content">beans.xml</span><span class="delimiter">&quot;</span></span>);
+    }
+
+    <span class="annotation">@Inject</span>
+    Greeter greeter;
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> should_greet_earthlings() <span class="directive">throws</span> <span class="exception">Exception</span> {
+        <span class="predefined-type">String</span> name = <span class="string"><span class="delimiter">&quot;</span><span class="content">Earthlings</span><span class="delimiter">&quot;</span></span>;
+        Assert.assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, </span><span class="delimiter">&quot;</span></span> + name, greeter.greet(name));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+However while using above Junit Rules you can&#8217;t inject method scoped Arquillian resources.
+Unfortunately it is not possible to have one rule acting as both test class and test method rule. For more info
+ see this <a href="https://github.com/junit-team/junit4/issues/351#issuecomment-102084524">comment</a>.
+In order to use any other JUnit Method Rule with <code>ArquillianTest</code> Rule, you have to use it with <code>RuleChain</code>
+having <code>ArquillianTest</code> as outer Rule.
+e.g.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">   <span class="annotation">@Rule</span>
+   <span class="directive">public</span> MethodRule testWatchman = MethodRuleChain.outer(<span class="keyword">new</span> ArquillianTest().around(<span class="keyword">new</span> TestWatchman());</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_additional_features"><a class="anchor" href="#_additional_features"></a>2.7. Additional Features</h3>
 <div class="paragraph">
 <p>This chapter walks through the following additional features that Arquillian
 provides to address more advanced use cases. These features may even allow you to
@@ -1499,7 +1567,7 @@ test.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="test-run-modes"><a class="anchor" href="#test-run-modes"></a>2.6.1. Test Run Modes</h4>
+<h4 id="test-run-modes"><a class="anchor" href="#test-run-modes"></a>2.7.1. Test Run Modes</h4>
 <div class="paragraph">
 <p>So far, we&#8217;ve focused on testing your application internals, but we also
 want to test how others (people, or other programs) interact with the
@@ -1610,7 +1678,7 @@ suite against a remote server if you do.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="descriptor-deployment"><a class="anchor" href="#descriptor-deployment"></a>2.6.2. Descriptor Deployment</h4>
+<h4 id="descriptor-deployment"><a class="anchor" href="#descriptor-deployment"></a>2.7.2. Descriptor Deployment</h4>
 <div class="paragraph">
 <p>We have previously seen Arquillian deploys ShrinkWrap Archives, but some
 times you need to deploy other items like a JMS Queue or a DataSource
@@ -1635,7 +1703,7 @@ you can deploy a <code>Descriptor</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="arquillian-resource-injection"><a class="anchor" href="#arquillian-resource-injection"></a>2.6.3. Arquillian Resource Injection</h4>
+<h4 id="arquillian-resource-injection"><a class="anchor" href="#arquillian-resource-injection"></a>2.7.3. Arquillian Resource Injection</h4>
 <div class="paragraph">
 <p>When dealing with multiple different environments and hidden dynamic
 container configuration you very soon come to a point where you need
@@ -1710,7 +1778,7 @@ the request URI up through the context path.
 </div>
 </div>
 <div class="sect3">
-<h4 id="multiple-deployments"><a class="anchor" href="#multiple-deployments"></a>2.6.4. Multiple Deployments</h4>
+<h4 id="multiple-deployments"><a class="anchor" href="#multiple-deployments"></a>2.7.4. Multiple Deployments</h4>
 <div class="paragraph">
 <p>Sometimes a single <code>Deployment</code> is not enough, and you need to specify
 more than one to get your test done.</p>
@@ -1744,7 +1812,7 @@ the test method by adding <code>@OperateOnDeployment("deploymentName")</code>.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="multiple-containers"><a class="anchor" href="#multiple-containers"></a>2.6.5. Multiple Containers</h4>
+<h4 id="multiple-containers"><a class="anchor" href="#multiple-containers"></a>2.7.5. Multiple Containers</h4>
 <div class="paragraph">
 <p>There are times when you need to involve multiple containers in the same
 test case, if you for instance want to test clustering. The first step
@@ -1816,7 +1884,7 @@ will connect to an isolated server started in its own JVM.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="protocol-selection"><a class="anchor" href="#protocol-selection"></a>2.6.6. Protocol Selection</h4>
+<h4 id="protocol-selection"><a class="anchor" href="#protocol-selection"></a>2.7.6. Protocol Selection</h4>
 <div class="paragraph">
 <p>A protocol is how Arquillian talks and executes the tests inside the
 container. For ease of development and configuration a container defines
@@ -1852,7 +1920,7 @@ knowing what is currently supported.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="enabling-assertions"><a class="anchor" href="#enabling-assertions"></a>2.6.7. Enabling Assertions</h4>
+<h4 id="enabling-assertions"><a class="anchor" href="#enabling-assertions"></a>2.7.7. Enabling Assertions</h4>
 <div class="paragraph">
 <p>The first time you try Arquillian, you may find that assertions that use
 the Java assert keyword are not working. Keep in mind that the test is
@@ -1902,7 +1970,7 @@ output.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_protocols"><a class="anchor" href="#_protocols"></a>2.7. Protocols</h3>
+<h3 id="_protocols"><a class="anchor" href="#_protocols"></a>2.8. Protocols</h3>
 <div class="paragraph">
 <p>In order to support running the same test locally and in remote
 containers, Arquillian uses an SPI that controls which protocol is used
@@ -1924,7 +1992,7 @@ be configured.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="local"><a class="anchor" href="#local"></a>2.7.1. Local</h4>
+<h4 id="local"><a class="anchor" href="#local"></a>2.8.1. Local</h4>
 <div class="paragraph">
 <p>The Local Protocol implementation is used by most EE5 compliant
 containers. It does nothing to the deployment. The Local Protocol is also
@@ -1988,7 +2056,7 @@ used when executing in run mode <code>as client</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="servlet-2.5"><a class="anchor" href="#servlet-2.5"></a>2.7.2. Servlet 2.5</h4>
+<h4 id="servlet-2.5"><a class="anchor" href="#servlet-2.5"></a>2.8.2. Servlet 2.5</h4>
 <div class="paragraph">
 <p>The Servlet 2.5 Protocol implementation is used by most EE5 compliant
 containers. It will attempt to add a war to the deployment.</p>
@@ -2076,7 +2144,7 @@ containers. It will attempt to add a war to the deployment.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="servlet-3.0"><a class="anchor" href="#servlet-3.0"></a>2.7.3. Servlet 3.0</h4>
+<h4 id="servlet-3.0"><a class="anchor" href="#servlet-3.0"></a>2.8.3. Servlet 3.0</h4>
 <div class="paragraph">
 <p>The Servlet 3.0 Protocol implementation is used by most EE6 compliant
 containers. It will attempt to add a web-fragment to the deployment.</p>
@@ -2164,7 +2232,7 @@ containers. It will attempt to add a web-fragment to the deployment.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_build_integration"><a class="anchor" href="#_build_integration"></a>2.8. Build Integration</h3>
+<h3 id="_build_integration"><a class="anchor" href="#_build_integration"></a>2.9. Build Integration</h3>
 <div class="paragraph">
 <p>Just because the Arquillian project uses Maven doesn&#8217;t mean you have to
 use it to run your Arquillian tests. Arquillian is designed to have
@@ -2176,7 +2244,7 @@ chapter is going to be about alternative build systems, namely <a href="#gradle"
 and <a href="#ant">Ant</a>.</p>
 </div>
 <div class="sect3">
-<h4 id="_active_build_ingredient"><a class="anchor" href="#_active_build_ingredient"></a>2.8.1. Active Build Ingredient</h4>
+<h4 id="_active_build_ingredient"><a class="anchor" href="#_active_build_ingredient"></a>2.9.1. Active Build Ingredient</h4>
 <div class="paragraph">
 <p>The secret ingredient required to activate the Arquillian test runner is
 getting the correct libraries on the classpath. (Often easier said than
@@ -2233,7 +2301,7 @@ that approach for contrast.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="maven"><a class="anchor" href="#maven"></a>2.8.2. Maven</h4>
+<h4 id="maven"><a class="anchor" href="#maven"></a>2.9.2. Maven</h4>
 <div class="paragraph">
 <p>The community has gravitated towards Maven as the preferred build tool
 for projects that use Arquillian. Details on how to setup Arquillian in
@@ -2242,7 +2310,7 @@ a Maven project is covered in detail in the
 </div>
 </div>
 <div class="sect3">
-<h4 id="gradle"><a class="anchor" href="#gradle"></a>2.8.3. Gradle</h4>
+<h4 id="gradle"><a class="anchor" href="#gradle"></a>2.9.3. Gradle</h4>
 <div class="paragraph">
 <p><a href="http://gradle.org">Gradle</a> is a build tool that allows you to create
 declarative, maintainable, concise and highly-performing builds. More
@@ -2845,13 +2913,13 @@ into a Gradle build, we&#8217;d love to hear it on the
 </div>
 </div>
 <div class="sect3">
-<h4 id="ant-ivy"><a class="anchor" href="#ant-ivy"></a>2.8.4. Ant + Ivy</h4>
+<h4 id="ant-ivy"><a class="anchor" href="#ant-ivy"></a>2.9.4. Ant + Ivy</h4>
 <div class="paragraph">
 <p>WRITE ME</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ant"><a class="anchor" href="#ant"></a>2.8.5. Ant</h4>
+<h4 id="ant"><a class="anchor" href="#ant"></a>2.9.5. Ant</h4>
 <div class="paragraph">
 <p>This guide will detail how to use Arquillian using ant. We will use
 maven to download all the required jars.</p>
@@ -2903,7 +2971,7 @@ maven to download all the required jars.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-28 07:51:04 UTC
+Last updated 2017-12-20 12:08:25 UTC
 </div>
 </div>
 </body>
