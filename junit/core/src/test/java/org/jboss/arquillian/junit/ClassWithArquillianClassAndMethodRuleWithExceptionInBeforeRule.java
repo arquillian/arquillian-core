@@ -35,7 +35,7 @@ public class ClassWithArquillianClassAndMethodRuleWithExceptionInBeforeRule {
     public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
     @Rule
-    public MethodRule rule = MethodRuleChain.outer(new ArquillianTest()).around(new MethodRule() {
+    public MethodRuleChain rule = MethodRuleChain.outer(new ArquillianTest()).around(new MethodRule() {
         @Override
         public Statement apply(final Statement base, FrameworkMethod method, Object target) {
             return new Statement() {
