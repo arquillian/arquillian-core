@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
-/*
- * Predefined TestClass
- */
 public class ClassWithArquillianClassAndMethodRuleWithTimeout {
     @ClassRule
     public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();

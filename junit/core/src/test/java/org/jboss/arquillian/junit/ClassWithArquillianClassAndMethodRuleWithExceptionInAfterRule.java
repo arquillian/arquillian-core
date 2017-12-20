@@ -30,9 +30,6 @@ import org.junit.runners.model.Statement;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
-/*
- * Predefined TestClass
- */
 public class ClassWithArquillianClassAndMethodRuleWithExceptionInAfterRule {
 
     @ClassRule
