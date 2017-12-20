@@ -1,0 +1,60 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+=== Rules
+:icons: font
+
+If you want to use Arquillian Testing Platform with other JUnit Runner, you can now use JUnit Rules - `ArquillianTestClass` and `ArquillianTest` - and happily let Arquillian do the heavy lifting for your tests.
+
+To get the similar functionality what the `@RunWith(Arquillian.class)` is offering you should require both rules i.e. `ArquillianTestClass` and `ArquillianTest`.
+If you are trying to run tests with one rule, it won't work as per expectations. We are not enforcing user to define both rules as implementations of `MethodRuleChain`
+is different for different users. JUnit doesn't provide `MethodRuleChain` similar to the `RuleChain`, as we don't know your implementation of `MethodRuleChain`,
+we can't check if your MethodRuleChain has `ArquillianTest` Rule defined.
+
+==== How to use it?
+
+[source, java, indent=0]
+----
+public class GreeterManagedBeanWithJUnitRulesTestCase {
+
+    @ClassRule
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+
+    @Rule
+    public ArquillianTest arquillianTest = new ArquillianTest();
+
+    @Deployment
+    public static JavaArchive createDeployment() {
+        return ShrinkWrap.create(JavaArchive.class)
+            .addClass(Greeter.class)
+            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    @Inject
+    Greeter greeter;
+
+    @Test
+    public void should_greet_earthlings() throws Exception {
+        String name = "Earthlings";
+        Assert.assertEquals("Hello, " + name, greeter.greet(name));
+    }
+
+}
+----
+
+IMPORTANT: However while using above Junit Rules you can't inject method scoped Arquillian resources.
+Unfortunately it is not possible to have one rule acting as both test class and test method rule. For more info
+ see this https://github.com/junit-team/junit4/issues/351#issuecomment-102084524[comment].
+In order to use any other JUnit Method Rule with `ArquillianTest` Rule, you have to use it with `RuleChain`
+having `ArquillianTest` as outer Rule.
+e.g.
+```java
+   @Rule
+   public MethodRule testWatchman = MethodRuleChain.outer(new ArquillianTest().around(new TestWatchman());
+```

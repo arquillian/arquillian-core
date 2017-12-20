@@ -19,19 +19,20 @@ package org.jboss.arquillian.junit;
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
-/*
- * Predfined TestClass
- */
 @RunWith(Arquillian.class)
-public class ArquillianClass1WithAssume {
+public class ClassWithArquillianRunnerWithExpectedExceptionRule {
+    @Rule
+    public ExpectedException e = ExpectedException.none();
+
     @BeforeClass
     public static void beforeClass() throws Throwable {
         wasCalled(Cycle.BEFORE_CLASS);
@@ -55,6 +56,7 @@ public class ArquillianClass1WithAssume {
     @Test
     public void shouldBeInvoked() throws Throwable {
         wasCalled(Cycle.TEST);
-        Assume.assumeTrue(false);
+        e.expect(IllegalArgumentException.class);
+        throw new IllegalArgumentException();
     }
 }

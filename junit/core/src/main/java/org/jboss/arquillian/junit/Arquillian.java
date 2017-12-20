@@ -81,6 +81,14 @@ public class Arquillian extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(final RunNotifier notifier) {
+        if (State.hasAnyArquillianRule(this.getTestClass())) {
+            throw new RuntimeException(String.format("TestClass: %s contains Arquillian runner and Arquillian Rule."
+                + " Arquillian doesn't support @RunWith(Arquillian.class) and ArquillianTestClass or "
+                    + "ArquillianTest to use at the same time. You have to decide whether you want use runner:"
+                    + " http://arquillian.org/arquillian-core/#how-it-works or rules : http://arquillian.org/arquillian-core/#_how_to_use_it",
+                this.getTestClass().getName()));
+        }
+
         if (State.isNotRunningInEclipse()) {
             State.runnerStarted();
         }
@@ -93,7 +101,7 @@ public class Arquillian extends BlockJUnit4ClassRunner {
                 notifier.fireTestFailure(
                     new Failure(getDescription(),
                         new RuntimeException(
-                            "Arquillian has previously been attempted initialized, but failed. See cause for previous exception",
+                            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
                             State.getInitializationException())));
             } else {
                 try {

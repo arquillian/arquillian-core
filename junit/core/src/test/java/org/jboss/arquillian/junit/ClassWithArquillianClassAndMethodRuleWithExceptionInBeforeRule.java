@@ -1,19 +1,3 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2009 Red Hat Inc. and/or its affiliates and other contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
@@ -21,22 +5,21 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
-/*
- * Predfined TestClass
- */
-@RunWith(Arquillian.class)
-public class ArquillianClass1WithExceptionInBeforeRule {
+public class ClassWithArquillianClassAndMethodRuleWithExceptionInBeforeRule {
+    @ClassRule
+    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+
     @Rule
-    public MethodRule rule = new MethodRule() {
+    public MethodRuleChain rule = MethodRuleChain.outer(new ArquillianTest()).around(new MethodRule() {
         @Override
         public Statement apply(final Statement base, FrameworkMethod method, Object target) {
             return new Statement() {
@@ -46,7 +29,7 @@ public class ArquillianClass1WithExceptionInBeforeRule {
                 }
             };
         }
-    };
+    });
 
     @BeforeClass
     public static void beforeClass() throws Throwable {

@@ -8,19 +8,19 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * Class rule für Arquillian tests. Allows arquillian to be combined with other runners.
+ * Class rule for Arquillian tests. Allows arquillian to be combined with other runners.
  * Always use both rules together to get the full functionality of Arquillian.
  * <p>
  * <pre>
  * @ClassRule
- * public static ArquillianClassRule arquillianClassRuleRule = new ArquillianClassRule();
+ * public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
  * @Rule
- * public ArquillianRule arquillianRule = new ArquillianRule();
+ * public ArquillianTest arquillianTest = new ArquillianTest();
  * </pre>
  *
  * @author <a href="mailto:alexander.schwartz@gmx.net">Alexander Schwartz</a>
  */
-public class ArquillianClassRule implements TestRule {
+public class ArquillianTestClass implements TestRule {
 
     private TestRunnerAdaptor adaptor;
 
@@ -37,8 +37,7 @@ public class ArquillianClassRule implements TestRule {
                         // failed on suite level, ignore children
                         // notifier.fireTestIgnored(getDescription());
                         throw new RuntimeException(
-                                "Arquillian has previously been attempted initialized, but failed. "
-                                        + "See cause for previous exception",
+                            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
                                 State.getInitializationException());
                     } else {
                         try {
@@ -65,19 +64,21 @@ public class ArquillianClassRule implements TestRule {
                     adaptor = State.getTestAdaptor();
                 }
 
-                adaptor.beforeClass(description.getTestClass(),
-                        LifecycleMethodExecutor.NO_OP);
+                adaptor.beforeClass(description.getTestClass(), LifecycleMethodExecutor.NO_OP);
                 try {
                     base.evaluate();
                 } finally {
-                    adaptor.afterClass(description.getTestClass(),
-                            LifecycleMethodExecutor.NO_OP);
+                    adaptor.afterClass(description.getTestClass(), LifecycleMethodExecutor.NO_OP);
                     State.runnerFinished();
                     if (State.isLastRunner()) {
-                        adaptor.afterSuite();
-                        adaptor.shutdown();
-                        State.clean();
+                        try {
+                            adaptor.afterSuite();
+                            adaptor.shutdown();
+                        } finally {
+                            State.clean();
+                        }
                     }
+                    adaptor = null;
                 }
             }
         };
