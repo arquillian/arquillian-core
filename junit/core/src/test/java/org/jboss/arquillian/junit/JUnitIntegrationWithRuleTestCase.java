@@ -320,9 +320,26 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass {
         assertCycle(0, Cycle.basics());
 
         Assert.assertTrue(result.getFailures().get(0).getMessage().equals(
-            "TestClass: org.jboss.arquillian.junit.ClassWithArquillianClassAndMethodRuleAndWithArquillianRunner"
-                + " contains Arquillian runner and Arquillian Rule. Arquillian doesn't support "
-                + "@RunWith(Arquillian.class) and ArquillianTestClass or ArquillianTest to use "
-                + "at the same time."));
+            "TestClass: org.jboss.arquillian.junit.ClassWithArquillianClassAndMethodRuleAndWithArquillianRunner contains "
+                + "Arquillian runner and Arquillian Rule. Arquillian doesn't support @RunWith(Arquillian.class) and "
+                + "ArquillianTestClass or ArquillianTest to use at the same time. You have to decide whether you want use "
+                + "runner: http://arquillian.org/arquillian-core/#how-it-works or "
+                + "rules : http://arquillian.org/arquillian-core/#_how_to_use_it"));
+    }
+
+    @Test
+    public void shouldThrowExceptionIfTestClassContainsOnlyArquillianTestRule() throws Exception {
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+
+        Result result = run(adaptor, ClassWithArquillianMethodRule.class);
+
+        Assert.assertFalse(result.wasSuccessful());
+        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
+        assertCycle(0, Cycle.BEFORE, Cycle.BEFORE_RULE, Cycle.AFTER_RULE, Cycle.AFTER);
+
+        Assert.assertTrue(result.getFailures().get(0).getMessage().equals(
+            "arquillian not initialized. Please make sure to define `ArquillianTestClass` Rule in your testclass. "
+                + "This could be one of the reason for arquillian not to be initialized."));
     }
 }

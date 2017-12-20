@@ -34,7 +34,8 @@ public class ArquillianTest implements MethodRule {
         if (State.hasTestAdaptor()) {
             adaptor = State.getTestAdaptor();
         } else {
-            throw new IllegalStateException("arquillian not initialized");
+            throw new IllegalStateException("arquillian not initialized. Please make sure to define `ArquillianTestClass` Rule in"
+                + " your testclass. This could be one of the reason for arquillian not to be initialized.");
         }
     }
 
