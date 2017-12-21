@@ -17,6 +17,9 @@ If you are trying to run tests with one rule, it won't work as per expectations.
 is different for different users. JUnit doesn't provide `MethodRuleChain` similar to the `RuleChain`, as we don't know your implementation of `MethodRuleChain`,
 we can't check if your MethodRuleChain has `ArquillianTest` Rule defined.
 
+==== Minimum requirements
+In order to use this feature, your project needs JUnit `4.12` version.
+
 ==== How to use it?
 
 [source, java, indent=0]
