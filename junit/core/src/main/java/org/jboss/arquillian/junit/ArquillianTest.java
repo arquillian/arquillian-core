@@ -7,6 +7,7 @@ import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -53,7 +54,7 @@ public class ArquillianTest implements MethodRule {
                 adaptor.before(target, method.getMethod(), LifecycleMethodExecutor.NO_OP);
 
                 try {
-                    adaptor.test(new TestMethodExecutor() {
+                    TestResult result = adaptor.test(new TestMethodExecutor() {
                         public void invoke(Object... parameters)
                             throws Throwable {
                             try {
@@ -61,6 +62,7 @@ public class ArquillianTest implements MethodRule {
                             } catch (Throwable e) {
                                 errors.add(e);
                             }
+
                         }
 
                         public Method getMethod() {
@@ -71,6 +73,9 @@ public class ArquillianTest implements MethodRule {
                             return target;
                         }
                     });
+                    if (result.getThrowable() != null) {
+                        throw result.getThrowable();
+                    }
                 } finally {
                     adaptor.after(target, method.getMethod(),
                         LifecycleMethodExecutor.NO_OP);
