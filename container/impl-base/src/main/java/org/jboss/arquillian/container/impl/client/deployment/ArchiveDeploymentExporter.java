@@ -74,12 +74,14 @@ public class ArchiveDeploymentExporter {
                 deployment = event.getDeployment().getArchive();
             }
 
+            final File fileToExport = new File(exportDir, createFileName(event.getDeployment(), deployment));
+            deleteIfExists(fileToExport);
+
             if (exportExploded) {
                 deployment.as(ExplodedExporter.class).exportExploded(
                     exportDir, createFileName(event.getDeployment(), deployment));
             } else {
-                deployment.as(ZipExporter.class).exportTo(
-                    new File(exportDir, createFileName(event.getDeployment(), deployment)),
+                deployment.as(ZipExporter.class).exportTo(fileToExport,
                     true);
             }
         }
@@ -88,5 +90,17 @@ public class ArchiveDeploymentExporter {
     private String createFileName(DeploymentDescription deployment, Archive<?> archive) {
         // TODO: where do we get TestClass name from ?
         return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + archive.getName();
+    }
+
+    private void deleteIfExists(File file) {
+        if (!file.exists()) {
+            return;
+        }
+        if (file.isDirectory()) {
+            for (File sub : file.listFiles()) {
+                deleteIfExists(sub);
+            }
+        }
+        file.delete();
     }
 }
