@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.impl.client.deployment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
@@ -92,7 +93,7 @@ public class ArchiveDeploymentExporter {
         return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + archive.getName();
     }
 
-    private void deleteIfExists(File file) {
+    private void deleteIfExists(File file) throws IOException {
         if (!file.exists()) {
             return;
         }
@@ -101,6 +102,9 @@ public class ArchiveDeploymentExporter {
                 deleteIfExists(sub);
             }
         }
-        file.delete();
+
+        if (!file.delete()) {
+            throw new IOException("Failed to delete file: " + file);
+        }
     }
 }
