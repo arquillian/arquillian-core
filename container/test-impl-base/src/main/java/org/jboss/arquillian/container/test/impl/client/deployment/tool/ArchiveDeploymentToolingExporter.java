@@ -55,7 +55,7 @@ public class ArchiveDeploymentToolingExporter {
 
     protected void writeOutToFile(File target, String content) {
         Validate.notNull(target, "Target must be specified");
-        Validate.notNull(content, "Content must be specified");
+        Validate.notNull(content, "DeploymentContent must be specified");
 
         FileOutputStream output = null;
         try {

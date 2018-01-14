@@ -134,7 +134,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
             if (requestObject != null) {
                 httpConnection.setRequestMethod("POST");
                 httpConnection.setDoOutput(true);
-                httpConnection.setRequestProperty("Content-Type", "application/octet-stream");
+                httpConnection.setRequestProperty("DeploymentContent-Type", "application/octet-stream");
             }
 
             if (requestObject != null) {

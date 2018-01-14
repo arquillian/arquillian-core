@@ -18,6 +18,7 @@
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -102,8 +103,10 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     public void prepare() {
         Injector injector = injectorInst.get();
 
-        when(serviceLoader.onlyOne(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class))
-            .thenReturn(new AnnotationDeploymentScenarioGenerator());
+        final List<DeploymentScenarioGenerator> deploymentScenarioGenerators = new ArrayList<DeploymentScenarioGenerator>();
+        deploymentScenarioGenerators.add(new AnnotationDeploymentScenarioGenerator());
+        when(serviceLoader.all(DeploymentScenarioGenerator.class))
+            .thenReturn(deploymentScenarioGenerators);
         when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
         when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription(PROTOCOL_NAME_1));
 
