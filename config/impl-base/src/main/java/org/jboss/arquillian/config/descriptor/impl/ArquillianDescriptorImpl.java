@@ -44,16 +44,16 @@ public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements 
     // Constructor ------------------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
 
-    public ArquillianDescriptorImpl(String descirptorName) {
-        this(descirptorName, new Node("arquillian")
+    public ArquillianDescriptorImpl(String descriptorName) {
+        this(descriptorName, new Node("arquillian")
             .attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
             .attribute("xmlns", "http://jboss.org/schema/arquillian")
             .attribute("xsi:schemaLocation",
                 "http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"));
     }
 
-    public ArquillianDescriptorImpl(String descirptorName, Node model) {
-        super(descirptorName);
+    public ArquillianDescriptorImpl(String descriptorName, Node model) {
+        super(descriptorName);
         this.model = model;
     }
 

@@ -39,11 +39,6 @@ import java.util.Properties;
  */
 public final class StringPropertyReplacer {
     /**
-     * New line string constant
-     */
-    public static final String NEWLINE = SysPropertyActions.getProperty("line.separator", "\n");
-
-    /**
      * File separator value
      */
     private static final String FILE_SEPARATOR = File.separator;
@@ -74,7 +69,7 @@ public final class StringPropertyReplacer {
     private static final int IN_BRACKET = 2;
 
     /**
-     * Go through the input string and replace any occurance of ${p} with
+     * Go through the input string and replace any occurrence of ${p} with
      * the System.getProtocolProperty(p) value. If there is no such property p defined,
      * then the ${p} reference will remain unchanged.
      * <p>
@@ -168,7 +163,7 @@ public final class StringPropertyReplacer {
                     buffer.append("${}"); // REVIEW: Correct?
                 } else // Collect the system property
                 {
-                    String value = null;
+                    String value;
 
                     String key = string.substring(start + 2, i);
 

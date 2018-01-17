@@ -33,17 +33,17 @@ public class ExtensionDefImpl extends ArquillianDescriptorImpl implements Extens
     private Node extension;
 
     // test only
-    public ExtensionDefImpl(String descirptorName) {
-        this(descirptorName, new Node("arquillian"));
+    public ExtensionDefImpl(String descriptorName) {
+        this(descriptorName, new Node("arquillian"));
     }
 
     // test only
-    public ExtensionDefImpl(String descirptorName, Node model) {
-        this(descirptorName, model, model.createChild("extension"));
+    public ExtensionDefImpl(String descriptorName, Node model) {
+        this(descriptorName, model, model.createChild("extension"));
     }
 
-    public ExtensionDefImpl(String descirptorName, Node model, Node extension) {
-        super(descirptorName, model);
+    public ExtensionDefImpl(String descriptorName, Node model, Node extension) {
+        super(descriptorName, model);
         this.extension = extension;
     }
 

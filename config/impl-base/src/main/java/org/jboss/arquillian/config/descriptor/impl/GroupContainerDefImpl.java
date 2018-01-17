@@ -31,8 +31,8 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 public class GroupContainerDefImpl extends ContainerDefImpl implements GroupDef {
     private Node group;
 
-    public GroupContainerDefImpl(String descirptorName, Node model, Node group, Node container) {
-        super(descirptorName, model, container);
+    public GroupContainerDefImpl(String descriptorName, Node model, Node group, Node container) {
+        super(descriptorName, model, container);
         this.group = group;
     }
 

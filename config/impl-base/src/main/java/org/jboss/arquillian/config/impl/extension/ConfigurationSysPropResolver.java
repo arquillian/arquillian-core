@@ -50,10 +50,8 @@ class ConfigurationSysPropResolver {
      */
     static ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
         throws IllegalArgumentException {
-        final String descrStr = descriptor.exportAsString();
-        final ArquillianDescriptor newArqDescriptor = Descriptors.importAs(ArquillianDescriptor.class).fromString(
-            StringPropertyReplacer.replaceProperties(descrStr));
-
-        return newArqDescriptor;
+        final String descriptorAsString = descriptor.exportAsString();
+        return Descriptors.importAs(ArquillianDescriptor.class)
+            .fromString(StringPropertyReplacer.replaceProperties(descriptorAsString));
     }
 }

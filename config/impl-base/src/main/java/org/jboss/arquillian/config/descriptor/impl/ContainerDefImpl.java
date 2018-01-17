@@ -35,17 +35,17 @@ public class ContainerDefImpl extends ArquillianDescriptorImpl implements Contai
     private Node container;
 
     // test only
-    public ContainerDefImpl(String descirptorName) {
-        this(descirptorName, new Node("arquillian"));
+    public ContainerDefImpl(String descriptorName) {
+        this(descriptorName, new Node("arquillian"));
     }
 
     // test only
-    public ContainerDefImpl(String descirptorName, Node model) {
-        this(descirptorName, model, model.createChild("container"));
+    public ContainerDefImpl(String descriptorName, Node model) {
+        this(descriptorName, model, model.createChild("container"));
     }
 
-    public ContainerDefImpl(String descirptorName, Node model, Node container) {
-        super(descirptorName, model);
+    public ContainerDefImpl(String descriptorName, Node model, Node container) {
+        super(descriptorName, model);
         this.container = container;
     }
 

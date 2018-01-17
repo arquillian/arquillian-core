@@ -32,8 +32,8 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements DefaultProtocolDef {
     private Node protocol;
 
-    public DefaultProtocolDefImpl(String descirptorName, Node model, Node protocol) {
-        super(descirptorName, model);
+    public DefaultProtocolDefImpl(String descriptorName, Node model, Node protocol) {
+        super(descriptorName, model);
         this.protocol = protocol;
     }
 

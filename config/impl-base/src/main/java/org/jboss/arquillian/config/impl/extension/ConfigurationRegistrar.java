@@ -16,9 +16,6 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Properties;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -26,6 +23,10 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
 
 import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
 
@@ -37,10 +38,10 @@ import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropRes
  */
 public class ConfigurationRegistrar {
     public static final String ARQUILLIAN_XML_PROPERTY = "arquillian.xml";
-    public static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
+    private static final String ARQUILLIAN_XML_DEFAULT = "arquillian.xml";
 
     public static final String ARQUILLIAN_PROP_PROPERTY = "arquillian.properties";
-    public static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
+    private static final String ARQUILLIAN_PROP_DEFAULT = "arquillian.properties";
 
     private Map<String, String> systemEnvironmentVars = System.getenv();
 

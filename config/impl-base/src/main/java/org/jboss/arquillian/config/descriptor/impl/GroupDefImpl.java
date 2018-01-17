@@ -31,8 +31,8 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 public class GroupDefImpl extends ArquillianDescriptorImpl implements GroupDef {
     private Node group;
 
-    public GroupDefImpl(String descirptorName, Node model, Node group) {
-        super(descirptorName, model);
+    public GroupDefImpl(String descriptorName, Node model, Node group) {
+        super(descriptorName, model);
         this.group = group;
     }
 
