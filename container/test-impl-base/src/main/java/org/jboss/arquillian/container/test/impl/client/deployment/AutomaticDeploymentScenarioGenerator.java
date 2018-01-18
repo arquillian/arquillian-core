@@ -14,15 +14,13 @@ import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.DeploymentContent;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.spi.util.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
-
-//where to register as service
 
 public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 
@@ -40,7 +38,7 @@ public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioG
 
         final Iterator<AutomaticDeployment> deploymentSpiIterator = deploymentSpis.iterator();
         while (deploymentSpiIterator.hasNext()) {
-            final AutomaticDeployment.DeploymentContent deploymentContent =
+            final DeploymentContent deploymentContent =
                 deploymentSpiIterator.next().generateDeploymentScenario(testClass);
 
             if (deploymentContent != null) {
@@ -59,7 +57,7 @@ public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioG
      * @param deploymentMethods
      * @return
      */
-    private DeploymentDescription generateDeployment(AutomaticDeployment.DeploymentContent deploymentContent,
+    private DeploymentDescription generateDeployment(DeploymentContent deploymentContent,
         Method[] deploymentMethods) {
         TargetDescription target = generateTarget(deploymentContent);
         ProtocolDescription protocol = generateProtocol(deploymentContent);
@@ -153,7 +151,7 @@ public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioG
      * @param deploymentContent
      * @return
      */
-    private TargetDescription generateTarget(AutomaticDeployment.DeploymentContent deploymentContent) {
+    private TargetDescription generateTarget(DeploymentContent deploymentContent) {
         if (deploymentContent.getTargets() != null) {
             return new TargetDescription(deploymentContent.getTargets().value());
         }
@@ -164,7 +162,7 @@ public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioG
      * @param deploymentContent
      * @return
      */
-    private ProtocolDescription generateProtocol(AutomaticDeployment.DeploymentContent deploymentContent) {
+    private ProtocolDescription generateProtocol(DeploymentContent deploymentContent) {
         if (deploymentContent.getOverProtocol() != null) {
             return new ProtocolDescription(deploymentContent.getOverProtocol().value());
         }
