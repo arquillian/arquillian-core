@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit;
+package org.jboss.arquillian.junit.container;
 
-import org.jboss.arquillian.junit.JUnitTestBaseClass.Cycle;
+import org.jboss.arquillian.junit.Arquillian;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;
@@ -32,10 +32,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
+import static org.jboss.arquillian.junit.container.JUnitTestBaseClass.Cycle;
+import static org.jboss.arquillian.junit.container.JUnitTestBaseClass.wasCalled;
 
 @RunWith(Arquillian.class)
-public class ClassWithArquillianRunnerWithAssume {
+public class ClassWithArquillianRunnerWithRules {
 
     @ClassRule
     public static TestRule classRule = new TestRule() {
@@ -90,6 +91,5 @@ public class ClassWithArquillianRunnerWithAssume {
     @Test
     public void shouldBeInvoked() throws Throwable {
         wasCalled(Cycle.TEST);
-        Assume.assumeTrue(false);
     }
 }
