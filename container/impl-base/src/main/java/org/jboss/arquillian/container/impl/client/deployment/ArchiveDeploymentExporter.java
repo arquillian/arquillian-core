@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.impl.client.deployment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.EngineDef;
@@ -74,12 +75,14 @@ public class ArchiveDeploymentExporter {
                 deployment = event.getDeployment().getArchive();
             }
 
+            final File fileToExport = new File(exportDir, createFileName(event.getDeployment(), deployment));
+            deleteIfExists(fileToExport);
+
             if (exportExploded) {
                 deployment.as(ExplodedExporter.class).exportExploded(
                     exportDir, createFileName(event.getDeployment(), deployment));
             } else {
-                deployment.as(ZipExporter.class).exportTo(
-                    new File(exportDir, createFileName(event.getDeployment(), deployment)),
+                deployment.as(ZipExporter.class).exportTo(fileToExport,
                     true);
             }
         }
@@ -88,5 +91,20 @@ public class ArchiveDeploymentExporter {
     private String createFileName(DeploymentDescription deployment, Archive<?> archive) {
         // TODO: where do we get TestClass name from ?
         return deployment.getTarget().getName() + "_" + deployment.getName() + "_" + archive.getName();
+    }
+
+    private void deleteIfExists(File file) throws IOException {
+        if (!file.exists()) {
+            return;
+        }
+        if (file.isDirectory()) {
+            for (File sub : file.listFiles()) {
+                deleteIfExists(sub);
+            }
+        }
+
+        if (!file.delete()) {
+            throw new IOException("Failed to delete file: " + file);
+        }
     }
 }

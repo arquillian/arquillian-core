@@ -141,6 +141,46 @@ public class ArchiveDeploymentExporterTestCase extends AbstractContainerTestBase
     }
 
     @Test
+    public void shouldBeDeleteAlreadyExportedDeploymentAndExportExplodedWhenDeploymentExportExplodedIsSet() throws Exception {
+        // given - To create exploded deployment
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH)
+            .deploymentExportExploded(false));
+
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        // when
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH)
+            .deploymentExportExploded(true));
+
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        // then
+        directoryShouldExist();
+    }
+
+    @Test
+    public void shouldBeDeleteAlreadyExplodedDeploymentAndExportDeploymentWhenDeploymentExportIsNotSet() throws Exception {
+        // given - To export deployment archive
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH)
+            .deploymentExportExploded(true));
+
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        // when
+        bind(ApplicationScoped.class, ArquillianDescriptor.class, Descriptors.create(ArquillianDescriptor.class).engine()
+            .deploymentExportPath(EXPORT_PATH)
+            .deploymentExportExploded(false));
+
+        fire(new BeforeDeploy(deployableContainer, deployment));
+
+        // then
+        fileShouldExist(true);
+    }
+
+    @Test
     public void shouldExportExplodedIfExportExplodedSystemPropertyIsSet() throws Exception {
         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_PATH, EXPORT_PATH);
         System.setProperty(ARQUILLIAN_DEPLOYMENT_EXPORT_EXPLODED, "true");
