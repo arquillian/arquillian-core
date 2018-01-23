@@ -35,6 +35,7 @@ import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
@@ -126,8 +127,25 @@ public class Arquillian extends BlockJUnit4ClassRunner {
             eachTestMethod.validatePublicVoid(isStatic, errors);
         }
     }
-      
-   /*
+
+    /**
+     * Override @ClassRule retrieval to prevent from running them inside of a container
+     */
+    @Override
+    protected List<TestRule> classRules() {
+        List<JUnitClassRulesFilter> junitClassRulesFilters =
+            new JavaSPILoader().all(Arquillian.class.getClassLoader(), JUnitClassRulesFilter.class);
+        List<TestRule> result = super.classRules();
+
+        if (!junitClassRulesFilters.isEmpty()) {
+            for (final JUnitClassRulesFilter junitClassRulesFilter : junitClassRulesFilters) {
+                result = junitClassRulesFilter.filter(result);
+            }
+        }
+        return result;
+    }
+
+    /*
     * Override BeforeClass/AfterClass and Before/After handling.
     * 
     * Let super create the Before/After chain against a EmptyStatement so our newly created Statement

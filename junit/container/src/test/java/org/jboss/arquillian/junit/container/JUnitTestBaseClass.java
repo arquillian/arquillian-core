@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit;
+package org.jboss.arquillian.junit.container;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -57,10 +57,6 @@ public class JUnitTestBaseClass {
         for (Cycle tmp : Cycle.values()) {
             callbackCount.put(tmp, 0);
         }
-    }
-
-    public static void throwException(Cycle cycle, Throwable exception) {
-        callbackException.put(cycle, exception);
     }
 
     public static void wasCalled(Cycle cycle) throws Throwable {
@@ -131,14 +127,10 @@ public class JUnitTestBaseClass {
         method.invoke(null, adaptor);
     }
 
-    public static enum Cycle
+    public enum Cycle
 
     {
         BEFORE_CLASS_RULE, BEFORE_RULE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_RULE, AFTER_CLASS_RULE;
-
-        public static Cycle[] basics() {
-            return new Cycle[] {BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS};
-        }
     }
 
     /*

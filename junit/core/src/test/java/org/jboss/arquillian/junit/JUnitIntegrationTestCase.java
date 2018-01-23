@@ -210,7 +210,9 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         Assert.assertTrue(result.wasSuccessful());
         Assert.assertEquals(0, result.getFailureCount());
         Assert.assertEquals(0, result.getIgnoreCount());
-        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.AFTER, Cycle.AFTER_CLASS);
+        assertCycle(1, Cycle.BEFORE_CLASS_RULE, Cycle.BEFORE_RULE, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST,
+            Cycle.AFTER, Cycle.AFTER_CLASS, Cycle.AFTER_CLASS_RULE);
+        assertCycle(0, Cycle.AFTER_RULE);
 
         verify(adaptor, times(1)).beforeSuite();
         verify(adaptor, times(1)).afterSuite();

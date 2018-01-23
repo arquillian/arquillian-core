@@ -20,6 +20,7 @@ import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.JUnitClassRulesFilter;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -48,7 +49,10 @@ public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender {
             .addClass(JUnitRemoteExtension.class)
             .addAsServiceProvider(
                 RemoteLoadableExtension.class,
-                JUnitRemoteExtension.class);
+                JUnitRemoteExtension.class)
+            .addAsServiceProvider(
+                JUnitClassRulesFilter.class,
+                ContainerClassRulesFilter.class);
         return archive;
     }
 }
