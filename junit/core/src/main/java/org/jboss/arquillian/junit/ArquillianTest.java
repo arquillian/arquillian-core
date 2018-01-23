@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jboss.arquillian.junit.event.AfterRules;
 import org.jboss.arquillian.junit.event.BeforeRules;
+import org.jboss.arquillian.junit.event.RulesEnrichment;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
-import org.jboss.arquillian.test.spi.TestMethodExecutor;
-import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -40,48 +39,39 @@ public class ArquillianTest implements MethodRule {
         }
     }
 
-    public Statement apply(final Statement base, final FrameworkMethod method,
-                           final Object target) {
+    public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+
                 final List<Throwable> errors = new ArrayList<Throwable>();
 
-                adaptor.fireCustomLifecycle(
-                    new BeforeRules(target, new TestClass(method.getDeclaringClass()), base, method.getMethod(),
-                        LifecycleMethodExecutor.NO_OP));
+                TestClass testClass = new TestClass(method.getDeclaringClass());
+                Method testMethod = method.getMethod();
 
-                adaptor.before(target, method.getMethod(), LifecycleMethodExecutor.NO_OP);
+                adaptor.fireCustomLifecycle(
+                    new RulesEnrichment(target, testClass, testMethod, LifecycleMethodExecutor.NO_OP));
+                adaptor.fireCustomLifecycle(
+                    new BeforeRules(target, testClass, base, testMethod, LifecycleMethodExecutor.NO_OP));
+
+                adaptor.before(target, testMethod, LifecycleMethodExecutor.NO_OP);
 
                 try {
-                    TestResult result = adaptor.test(new TestMethodExecutor() {
-                        public void invoke(Object... parameters)
-                            throws Throwable {
+                    new MethodInvoker() {
+                        void invokeMethod(Object... parameters) throws Throwable {
                             try {
                                 base.evaluate();
                             } catch (Throwable e) {
                                 errors.add(e);
                             }
-
                         }
-
-                        public Method getMethod() {
-                            return method.getMethod();
-                        }
-
-                        public Object getInstance() {
-                            return target;
-                        }
-                    });
-                    if (result.getThrowable() != null) {
-                        throw result.getThrowable();
-                    }
+                    }.invoke(adaptor, method, target);
                 } finally {
-                    adaptor.after(target, method.getMethod(),
+                    adaptor.after(target, testMethod,
                         LifecycleMethodExecutor.NO_OP);
                     try {
                         adaptor.fireCustomLifecycle(
-                            new AfterRules(target, method.getMethod(), LifecycleMethodExecutor.NO_OP));
+                            new AfterRules(target, testMethod, LifecycleMethodExecutor.NO_OP));
                     } catch (Throwable e) {
                         errors.add(e);
                     }
