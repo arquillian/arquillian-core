@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-build</artifactId>
-    <version>1.2.1.Final</version>
+    <version>1.3.0-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
