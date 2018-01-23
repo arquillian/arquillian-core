@@ -30,14 +30,13 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
-import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.jboss.arquillian.test.spi.execution.SkippedTestExecutionException;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
+import org.junit.runner.Description;
 import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -92,59 +91,26 @@ public class Arquillian extends BlockJUnit4ClassRunner {
         if (State.isNotRunningInEclipse()) {
             State.runnerStarted();
         }
-        // first time we're being initialized
-        if (!State.hasTestAdaptor()) {
-            // no, initialization has been attempted before and failed, refuse to do anything else
-            if (State.hasInitializationException()) {
-                // failed on suite level, ignore children
-                //notifier.fireTestIgnored(getDescription());
-                notifier.fireTestFailure(
-                    new Failure(getDescription(),
-                        new RuntimeException(
-                            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
-                            State.getInitializationException())));
-            } else {
-                try {
-                    // ARQ-1742 If exceptions happen during boot
-                    TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
-                    // don't set it if beforeSuite fails
-                    adaptor.beforeSuite();
-                    State.testAdaptor(adaptor);
-                } catch (Exception e) {
-                    // caught exception during BeforeSuite, mark this as failed
-                    State.caughtInitializationException(e);
-                    notifier.fireTestFailure(new Failure(getDescription(), e));
-                }
-            }
-        }
-        notifier.addListener(new RunListener() {
-            @Override
-            public void testRunFinished(Result result) throws Exception {
-                State.runnerFinished();
-                shutdown();
+
+        AdaptorManagerWithNotifier adaptorManager = new AdaptorManagerWithNotifier(notifier) {
+            protected void setAdaptor(TestRunnerAdaptor testRunnerAdaptor) {
+                adaptor = testRunnerAdaptor;
             }
 
-            private void shutdown() {
-                try {
-                    if (State.isLastRunner()) {
-                        try {
-                            if (adaptor != null) {
-                                adaptor.afterSuite();
-                                adaptor.shutdown();
-                            }
-                        } finally {
-                            State.clean();
-                        }
-                    }
-                    adaptor = null;
-                } catch (Exception e) {
-                    throw new RuntimeException("Could not run @AfterSuite", e);
-                }
+            protected TestRunnerAdaptor getAdaptor() {
+                return adaptor;
             }
-        });
+
+            protected Description getFailureDescription() {
+                return getDescription();
+            }
+        };
+        adaptorManager.initializeAdaptor();
+        adaptorManager.prepareDestroyAdaptorProcess();
+
+
         // initialization ok, run children
         if (State.hasTestAdaptor()) {
-            adaptor = State.getTestAdaptor();
             super.run(notifier);
         }
     }
@@ -335,9 +301,8 @@ public class Arquillian extends BlockJUnit4ClassRunner {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                TestResult result = adaptor.test(new TestMethodExecutor() {
-                    @Override
-                    public void invoke(Object... parameters) throws Throwable {
+                new MethodInvoker() {
+                    void invokeMethod(Object... parameters) throws Throwable {
                         try {
                             method.invokeExplosively(test, parameters);
                         } catch (Throwable e) {
@@ -346,24 +311,7 @@ public class Arquillian extends BlockJUnit4ClassRunner {
                             throw e;
                         }
                     }
-
-                    public Method getMethod() {
-                        return method.getMethod();
-                    }
-
-                    public Object getInstance() {
-                        return test;
-                    }
-                });
-                Throwable throwable = result.getThrowable();
-                if (throwable != null) {
-                    if (result.getStatus() == Status.SKIPPED) {
-                        if (throwable instanceof SkippedTestExecutionException) {
-                            result.setThrowable(new AssumptionViolatedException(throwable.getMessage()));
-                        }
-                    }
-                    throw result.getThrowable();
-                }
+                }.invoke(adaptor, method, test);
             }
         };
     }
