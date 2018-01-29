@@ -35,7 +35,7 @@ public class DeploymentContent {
     ShouldThrowException shouldThrowException;
     Archive archive;
     Descriptor descriptor;
-    Deployment deployment;
+    Deployment deployment = new DeploymentClass();
 
     public TargetsContainer getTargets() {
         return targetsContainer;

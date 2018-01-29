@@ -45,85 +45,53 @@ import org.jboss.shrinkwrap.api.Archive;
  *
  * @version $Revision: $
  */
-public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
+public class AutomaticDeploymentScenarioGenerator extends AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 
-    private static Logger log = Logger.getLogger(AutomaticDeploymentScenarioGenerator.class.getName());
+    AutomaticDeploymentLocator automaticDeploymentLocator;
 
-    /* (non-Javadoc)
-     * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
-     */
-    public List<DeploymentDescription> generate(TestClass testClass) {
-        final List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
+    public AutomaticDeploymentScenarioGenerator() {
+        automaticDeploymentLocator = new AutomaticDeploymentLocator() {
+            public ServiceLoader<AutomaticDeployment> find() {
+                return ServiceLoader.load(AutomaticDeployment.class);
+            }
+        };
+    }
 
-        Method[] deploymentMethods = testClass.getMethods(BeforeDeployment.class);
+    protected List<DeploymentContent> generateDeploymentContent(TestClass testClass) {
 
-        final ServiceLoader<AutomaticDeployment> deploymentSpis = ServiceLoader.load(AutomaticDeployment.class);
-
+        final List<DeploymentContent> deploymentContents = new ArrayList<DeploymentContent>();
+        final ServiceLoader<AutomaticDeployment> deploymentSpis = automaticDeploymentLocator.find();
         final Iterator<AutomaticDeployment> deploymentSpiIterator = deploymentSpis.iterator();
+
         while (deploymentSpiIterator.hasNext()) {
             final DeploymentContent deploymentContent =
                 deploymentSpiIterator.next().generateDeploymentScenario(testClass);
 
             if (deploymentContent != null) {
-                final DeploymentDescription deploymentDescription = generateDeployment(deploymentContent, deploymentMethods);
-                deployments.add(deploymentDescription);
+                deploymentContents.add(deploymentContent);
             }
         }
 
-        sortByDeploymentOrder(deployments);
-
-        return deployments;
+        return deploymentContents;
     }
 
-    /**
-     * @param deploymentContent
-     * @param deploymentMethods
-     * @return
-     */
-    private DeploymentDescription generateDeployment(DeploymentContent deploymentContent,
-        Method[] deploymentMethods) {
-        TargetDescription target = generateTarget(deploymentContent);
-        ProtocolDescription protocol = generateProtocol(deploymentContent);
+    protected Archive manipulateArchive(TestClass testClass, String deploymentName, Archive archive) {
 
-        Deployment deploymentAnnotation = deploymentContent.getDeployment();
-        DeploymentDescription deployment = null;
-        Archive archive = deploymentContent.getArchive();
-        if (archive != null) {
+        final Method[] beforeDeploymentMethods = testClass.getMethods(BeforeDeployment.class);
 
-            for (Method beforeDeploymentMethod : deploymentMethods) {
-                final BeforeDeployment beforeDeploymentMethodAnnotation = beforeDeploymentMethod.getAnnotation(BeforeDeployment.class);
+        for (Method beforeDeploymentMethod : beforeDeploymentMethods) {
+            final BeforeDeployment beforeDeploymentMethodAnnotation = beforeDeploymentMethod.getAnnotation(BeforeDeployment.class);
 
-                if (beforeDeploymentMethodAnnotation.name().equals(deploymentAnnotation.name())) {
-                    validate(beforeDeploymentMethod);
-                    archive = invoke(Archive.class, beforeDeploymentMethod, archive);
-                    break;
-                }
+            if (beforeDeploymentMethodAnnotation.name().equals(deploymentName)) {
+                validate(beforeDeploymentMethod);
+                archive = invoke(Archive.class, beforeDeploymentMethod, archive);
+                break;
             }
-
-            deployment = new DeploymentDescription(deploymentAnnotation.name(), archive);
-            logWarningIfArchiveHasUnexpectedFileExtension(deployment);
-            deployment.shouldBeTestable(deploymentAnnotation.testable());
-        } else if (deploymentContent.getDescriptor() != null) {
-            deployment =
-                new DeploymentDescription(deploymentAnnotation.name(), deploymentContent.getDescriptor());
-        }
-        deployment.shouldBeManaged(deploymentAnnotation.managed());
-        deployment.setOrder(deploymentAnnotation.order());
-        if (target != null) {
-            deployment.setTarget(target);
-        }
-        if (protocol != null) {
-            deployment.setProtocol(protocol);
         }
 
-        if (deploymentContent.getShouldThrowException() != null) {
-            ShouldThrowException shouldThrowException = deploymentContent.getShouldThrowException();
-            deployment.setExpectedException(shouldThrowException.value());
-            deployment.shouldBeTestable(shouldThrowException.testable());
-        }
-
-        return deployment;
+        return archive;
     }
+
 
     /**
      * @param deploymentMethod
@@ -161,44 +129,8 @@ public class AutomaticDeploymentScenarioGenerator implements DeploymentScenarioG
         }
     }
 
-    private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment) {
-        if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive())) {
-            log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
-                + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
-                + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
-                + " rely on the given file extension, the archive type is only a description of a certain structure.");
-        }
-    }
-
-    /**
-     * @param deploymentContent
-     * @return
-     */
-    private TargetDescription generateTarget(DeploymentContent deploymentContent) {
-        if (deploymentContent.getTargets() != null) {
-            return new TargetDescription(deploymentContent.getTargets().value());
-        }
-        return TargetDescription.DEFAULT;
-    }
-
-    /**
-     * @param deploymentContent
-     * @return
-     */
-    private ProtocolDescription generateProtocol(DeploymentContent deploymentContent) {
-        if (deploymentContent.getOverProtocol() != null) {
-            return new ProtocolDescription(deploymentContent.getOverProtocol().value());
-        }
-        return ProtocolDescription.DEFAULT;
-    }
-
-    private void sortByDeploymentOrder(List<DeploymentDescription> deploymentDescriptions) {
-        // sort them by order
-        Collections.sort(deploymentDescriptions, new Comparator<DeploymentDescription>() {
-            public int compare(DeploymentDescription d1, DeploymentDescription d2) {
-                return new Integer(d1.getOrder()).compareTo(d2.getOrder());
-            }
-        });
+    interface AutomaticDeploymentLocator {
+        ServiceLoader<AutomaticDeployment> find();
     }
 
 }

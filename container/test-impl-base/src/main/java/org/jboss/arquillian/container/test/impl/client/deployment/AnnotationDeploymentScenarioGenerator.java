@@ -29,6 +29,7 @@ import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.DeploymentContent;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -44,23 +45,17 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AnnotationDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
+public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 
-    private static Logger log = Logger.getLogger(AnnotationDeploymentScenarioGenerator.class.getName());
+    protected List<DeploymentContent> generateDeploymentContent(TestClass testClass) {
 
-    /* (non-Javadoc)
-     * @see org.jboss.arquillian.spi.deployment.DeploymentScenarioGenerator#generate(org.jboss.arquillian.spi.TestClass)
-     */
-    public List<DeploymentDescription> generate(TestClass testClass) {
-        List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
+        List<DeploymentContent> deployments = new ArrayList<DeploymentContent>();
         Method[] deploymentMethods = testClass.getMethods(Deployment.class);
 
         for (Method deploymentMethod : deploymentMethods) {
             validate(deploymentMethod);
-            deployments.add(generateDeployment(deploymentMethod));
+            deployments.add(generateDeploymentContent(deploymentMethod));
         }
-
-        sortByDeploymentOrder(deployments);
 
         return deployments;
     }
@@ -95,69 +90,39 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
      * @param deploymentMethod
      * @return
      */
-    private DeploymentDescription generateDeployment(Method deploymentMethod) {
-        TargetDescription target = generateTarget(deploymentMethod);
-        ProtocolDescription protocol = generateProtocol(deploymentMethod);
+    private DeploymentContent generateDeploymentContent(Method deploymentMethod) {
 
         Deployment deploymentAnnotation = deploymentMethod.getAnnotation(Deployment.class);
-        DeploymentDescription deployment = null;
+        DeploymentContent.DeploymentContentBuilder deploymentContentBuilder = null;
         if (Archive.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deployment = new DeploymentDescription(deploymentAnnotation.name(), invoke(Archive.class, deploymentMethod));
-            logWarningIfArchiveHasUnexpectedFileExtension(deployment);
-            deployment.shouldBeTestable(deploymentAnnotation.testable());
+            deploymentContentBuilder = new DeploymentContent.DeploymentContentBuilder(invoke(Archive.class, deploymentMethod));
         } else if (Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deployment =
-                new DeploymentDescription(deploymentAnnotation.name(), invoke(Descriptor.class, deploymentMethod));
-            //deployment.shouldBeTestable(false);
+            deploymentContentBuilder = new DeploymentContent.DeploymentContentBuilder(invoke(Descriptor.class, deploymentMethod));
         }
-        deployment.shouldBeManaged(deploymentAnnotation.managed());
-        deployment.setOrder(deploymentAnnotation.order());
-        if (target != null) {
-            deployment.setTarget(target);
+
+        if (deploymentMethod.isAnnotationPresent(OverProtocol.class)) {
+            deploymentContentBuilder.withOverProtocol(deploymentMethod.getAnnotation(OverProtocol.class).value());
         }
-        if (protocol != null) {
-            deployment.setProtocol(protocol);
+
+        if (deploymentMethod.isAnnotationPresent(TargetsContainer.class)) {
+            deploymentContentBuilder.withTargetsContainer(deploymentMethod.getAnnotation(TargetsContainer.class).value());
         }
 
         if (deploymentMethod.isAnnotationPresent(ShouldThrowException.class)) {
-            ShouldThrowException shouldThrowException = deploymentMethod.getAnnotation(ShouldThrowException.class);
-            deployment.setExpectedException(shouldThrowException.value());
-            deployment.shouldBeTestable(shouldThrowException.testable());
+            final ShouldThrowException shouldThrowException = deploymentMethod.getAnnotation(ShouldThrowException.class);
+            deploymentContentBuilder.withShouldThrowException(shouldThrowException.value(), shouldThrowException.testable());
         }
 
-        return deployment;
+        deploymentContentBuilder = deploymentContentBuilder.withDeployment()
+            .withManaged(deploymentAnnotation.managed())
+            .withName(deploymentAnnotation.name())
+            .withOrder(deploymentAnnotation.order())
+            .withTestable(deploymentAnnotation.testable())
+            .build();
+
+        return deploymentContentBuilder.get();
     }
 
-    private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment) {
-        if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive())) {
-            log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
-                + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
-                + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"
-                + " rely on the given file extension, the archive type is only a description of a certain structure.");
-        }
-    }
-
-    /**
-     * @param deploymentMethod
-     * @return
-     */
-    private TargetDescription generateTarget(Method deploymentMethod) {
-        if (deploymentMethod.isAnnotationPresent(TargetsContainer.class)) {
-            return new TargetDescription(deploymentMethod.getAnnotation(TargetsContainer.class).value());
-        }
-        return TargetDescription.DEFAULT;
-    }
-
-    /**
-     * @param deploymentMethod
-     * @return
-     */
-    private ProtocolDescription generateProtocol(Method deploymentMethod) {
-        if (deploymentMethod.isAnnotationPresent(OverProtocol.class)) {
-            return new ProtocolDescription(deploymentMethod.getAnnotation(OverProtocol.class).value());
-        }
-        return ProtocolDescription.DEFAULT;
-    }
 
     /**
      * @param deploymentMethod
@@ -171,12 +136,4 @@ public class AnnotationDeploymentScenarioGenerator implements DeploymentScenario
         }
     }
 
-    private void sortByDeploymentOrder(List<DeploymentDescription> deploymentDescriptions) {
-        // sort them by order
-        Collections.sort(deploymentDescriptions, new Comparator<DeploymentDescription>() {
-            public int compare(DeploymentDescription d1, DeploymentDescription d2) {
-                return new Integer(d1.getOrder()).compareTo(d2.getOrder());
-            }
-        });
-    }
 }
