@@ -43,5 +43,11 @@ public class TestNGDeploymentAppenderTestCase {
             archive.contains(ArchivePaths.create("/org/jboss/arquillian/testng/container/TestNGTestRunner.class")));
 
         System.out.println(archive.toString(true));
+
+        Assert.assertTrue(archive.contains("/org/testng"));
+        Assert.assertTrue(archive.contains("/bsh"));
+        Assert.assertTrue(archive.contains("/org/jboss/arquillian/testng"));
+        Assert.assertTrue(archive.contains("/com/beust"));
+        Assert.assertTrue(archive.contains("/com/beust/jcommander"));
     }
 }
