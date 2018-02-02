@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observer;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.ManagerBuilder;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
@@ -77,6 +78,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
     public void beforeClass(Class<?> testClass, LifecycleMethodExecutor executor) throws Exception {
         Validate.notNull(testClass, "TestClass must be specified");
 
+        if (testClass.isAnnotationPresent(Observer.class)) {
+            Observer annotation = testClass.getAnnotation(Observer.class);
+            Class<?> value = annotation.value();
+            if (value != null) {
+                manager.addExtension(value);
+            }
+        }
+
         manager.fire(new BeforeClass(testClass, executor));
     }
 
@@ -84,6 +93,14 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
         Validate.notNull(testClass, "TestClass must be specified");
 
         manager.fire(new AfterClass(testClass, executor));
+
+        if (testClass.isAnnotationPresent(Observer.class)) {
+            Observer annotation = testClass.getAnnotation(Observer.class);
+            Class<?> value = annotation.value();
+            if (value != null) {
+                manager.removeExtension(value);
+            }
+        }
     }
 
     public void before(Object testInstance, Method testMethod, LifecycleMethodExecutor executor) throws Exception {

@@ -49,6 +49,7 @@ import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observer;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
@@ -131,6 +132,23 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         fire(createEvent(DeploymentWithDefaults.class));
 
         verify(deployableContainer, times(0)).getDefaultProtocol();
+    }
+
+    @Test
+    public void shouldAddAdditionalObserverClass() {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
+
+        fire(createEvent(DeploymentWithObserver.class));
+
+        DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
+        String testClassPath = DeploymentWithObserver.class.getName().replace(".", "/") + ".class";
+        String observerPath = ObserverClass.class.getName().replace(".", "/") + ".class";
+        Archive<?> archive = scenario.deployments().get(0).getDescription().getArchive();
+        Assert.assertTrue(String.format("archive %s should contain the path %s", archive.toString(true), testClassPath),
+            archive.contains(testClassPath));
+        Assert.assertTrue(String.format("archive %s should contain the path %s", archive.toString(true), observerPath),
+            archive.contains(observerPath));
     }
 
     @Test
@@ -340,6 +358,18 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         public static JavaArchive deploy() {
             return ShrinkWrap.create(JavaArchive.class);
         }
+    }
+
+    @Observer(ObserverClass.class)
+    private static class DeploymentWithObserver {
+        @SuppressWarnings("unused")
+        @Deployment
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class ObserverClass {
     }
 
     private static class DeploymentMultipleNoNamed {

@@ -41,6 +41,7 @@ import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observer;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -169,6 +170,7 @@ public class DeploymentGenerator {
                 if (ClassContainer.class.isInstance(applicationArchive)) {
                     ClassContainer<?> classContainer = ClassContainer.class.cast(applicationArchive);
                     classContainer.addClass(testCase.getJavaClass());
+                    addAdditionalObserverClass(classContainer, testCase.getJavaClass());
                 }
             } catch (UnsupportedOperationException e) {
             /*
@@ -183,6 +185,15 @@ public class DeploymentGenerator {
                     new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
                     serviceLoader.get().all(ProtocolArchiveProcessor.class)));
         }
+    }
+
+    private void addAdditionalObserverClass(ClassContainer<?> classContainer, Class<?> testClass){
+        if (testClass.isAnnotationPresent(Observer.class)) {
+            Observer annotation = testClass.getAnnotation(Observer.class);
+            Class<?> value = annotation.value();
+            classContainer.addClass(value);
+        }
+
     }
 
     private List<Archive<?>> loadAuxiliaryArchives(DeploymentDescription deployment) {
