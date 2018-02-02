@@ -47,6 +47,7 @@ include::{asciidoctor-source}/rules.adoc[]
 include::{asciidoctor-source}/additional-features.adoc[]
 include::{asciidoctor-source}/protocols.adoc[]
 include::{asciidoctor-source}/build-integration.adoc[]
+include::{asciidoctor-source}/advanced-topics.adoc[]
 endif::generated-doc[]
 
 == Useful URLs
