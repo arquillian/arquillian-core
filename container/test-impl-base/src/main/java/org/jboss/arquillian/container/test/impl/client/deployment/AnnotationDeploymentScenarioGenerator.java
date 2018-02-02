@@ -19,17 +19,10 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Logger;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
-import org.jboss.arquillian.container.spi.client.deployment.Validate;
-import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.DeploymentContent;
+import org.jboss.arquillian.container.test.api.DeploymentConfiguration;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -47,9 +40,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  */
 public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 
-    protected List<DeploymentContent> generateDeploymentContent(TestClass testClass) {
+    protected List<DeploymentConfiguration> generateDeploymentContent(TestClass testClass) {
 
-        List<DeploymentContent> deployments = new ArrayList<DeploymentContent>();
+        List<DeploymentConfiguration> deployments = new ArrayList<DeploymentConfiguration>();
         Method[] deploymentMethods = testClass.getMethods(Deployment.class);
 
         for (Method deploymentMethod : deploymentMethods) {
@@ -90,14 +83,14 @@ public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentSce
      * @param deploymentMethod
      * @return
      */
-    private DeploymentContent generateDeploymentContent(Method deploymentMethod) {
+    private DeploymentConfiguration generateDeploymentContent(Method deploymentMethod) {
 
         Deployment deploymentAnnotation = deploymentMethod.getAnnotation(Deployment.class);
-        DeploymentContent.DeploymentContentBuilder deploymentContentBuilder = null;
+        DeploymentConfiguration.DeploymentContentBuilder deploymentContentBuilder = null;
         if (Archive.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deploymentContentBuilder = new DeploymentContent.DeploymentContentBuilder(invoke(Archive.class, deploymentMethod));
+            deploymentContentBuilder = new DeploymentConfiguration.DeploymentContentBuilder(invoke(Archive.class, deploymentMethod));
         } else if (Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deploymentContentBuilder = new DeploymentContent.DeploymentContentBuilder(invoke(Descriptor.class, deploymentMethod));
+            deploymentContentBuilder = new DeploymentConfiguration.DeploymentContentBuilder(invoke(Descriptor.class, deploymentMethod));
         }
 
         if (deploymentMethod.isAnnotationPresent(OverProtocol.class)) {

@@ -10,7 +10,7 @@ import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.DeploymentContent;
+import org.jboss.arquillian.container.test.api.DeploymentConfiguration;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -20,17 +20,17 @@ import org.jboss.shrinkwrap.api.Archive;
 
 public abstract class AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 
-    private static Logger log = Logger.getLogger(AbstractDeploymentScenarioGenerator.class.getName());
+    private static final Logger log = Logger.getLogger(AbstractDeploymentScenarioGenerator.class.getName());
 
-    protected abstract List<DeploymentContent> generateDeploymentContent(TestClass testClass);
+    protected abstract List<DeploymentConfiguration> generateDeploymentContent(TestClass testClass);
 
     public List<DeploymentDescription> generate(TestClass testClass) {
         List<DeploymentDescription> deployments = new ArrayList<DeploymentDescription>();
 
-        final List<DeploymentContent> deploymentContents = generateDeploymentContent(testClass);
+        final List<DeploymentConfiguration> deploymentConfigurations = generateDeploymentContent(testClass);
 
-        for (DeploymentContent deploymentContent : deploymentContents) {
-            deployments.add(configureDeploymentDescription(deploymentContent, testClass));
+        for (DeploymentConfiguration deploymentConfiguration : deploymentConfigurations) {
+            deployments.add(configureDeploymentDescription(deploymentConfiguration, testClass));
         }
 
         sortByDeploymentOrder(deployments);
@@ -42,16 +42,20 @@ public abstract class AbstractDeploymentScenarioGenerator implements DeploymentS
         return archive;
     }
 
-    private DeploymentDescription configureDeploymentDescription(DeploymentContent deploymentContent, TestClass testClass) {
+    private DeploymentDescription configureDeploymentDescription(DeploymentConfiguration deploymentConfiguration, TestClass testClass) {
 
         DeploymentDescription deploymentDescription = null;
-        final Deployment deployment = deploymentContent.getDeployment();
-        if (deploymentContent.getArchive() != null) {
+        final Deployment deployment = deploymentConfiguration.getDeployment();
+        if (deploymentConfiguration.getArchive() != null) {
             deploymentDescription = new DeploymentDescription(deployment.name(), manipulateArchive(testClass, deployment.name(),
-                deploymentContent.getArchive()));
+                deploymentConfiguration.getArchive()));
             deploymentDescription.shouldBeTestable(deployment.testable());
-        } else if (deploymentContent.getDescriptor() != null) {
-            deploymentDescription = new DeploymentDescription(deployment.name(), deploymentContent.getDescriptor());
+        } else if (deploymentConfiguration.getDescriptor() != null) {
+            deploymentDescription = new DeploymentDescription(deployment.name(), deploymentConfiguration.getDescriptor());
+        }
+
+        if (deploymentDescription == null) {
+            throw new IllegalArgumentException("Deployment does not contain an archive nor a descriptor to deploy");
         }
 
         logWarningIfArchiveHasUnexpectedFileExtension(deploymentDescription);
@@ -59,19 +63,19 @@ public abstract class AbstractDeploymentScenarioGenerator implements DeploymentS
         deploymentDescription.shouldBeManaged(deployment.managed());
         deploymentDescription.setOrder(deployment.order());
 
-        final TargetDescription target = generateTarget(deploymentContent.getTargets());
+        final TargetDescription target = generateTarget(deploymentConfiguration.getTargets());
 
         if (target != null) {
             deploymentDescription.setTarget(target);
         }
 
-        final ProtocolDescription protocol = generateProtocol(deploymentContent.getOverProtocol());
+        final ProtocolDescription protocol = generateProtocol(deploymentConfiguration.getOverProtocol());
 
         if (protocol != null) {
             deploymentDescription.setProtocol(protocol);
         }
 
-        final ShouldThrowException shouldThrowException = deploymentContent.getShouldThrowException();
+        final ShouldThrowException shouldThrowException = deploymentConfiguration.getShouldThrowException();
         if (shouldThrowException != null) {
             deploymentDescription.setExpectedException(shouldThrowException.value());
             deploymentDescription.shouldBeTestable(shouldThrowException.testable());

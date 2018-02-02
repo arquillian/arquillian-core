@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.test.api.BeforeDeployment;
-import org.jboss.arquillian.container.test.api.DeploymentContent;
+import org.jboss.arquillian.container.test.api.DeploymentConfiguration;
 import org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment;
 import org.jboss.arquillian.container.test.spi.util.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -17,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.any;
@@ -38,7 +37,7 @@ public class AutomaticDeploymentScenarioGeneratorTestCase {
     @Before
     public void setUpTest() {
 
-        DeploymentContent.DeploymentContentBuilder content = new DeploymentContent.DeploymentContentBuilder(ShrinkWrap.create(
+        DeploymentConfiguration.DeploymentContentBuilder content = new DeploymentConfiguration.DeploymentContentBuilder(ShrinkWrap.create(
             JavaArchive.class));
 
         when(automaticDeployment.generateDeploymentScenario(any(TestClass.class))).thenReturn(content.get());

@@ -1,38 +1,13 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2010 Red Hat Inc. and/or its affiliates and other contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
-import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
-import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
-import org.jboss.arquillian.container.spi.client.deployment.Validate;
-import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.api.BeforeDeployment;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.DeploymentContent;
-import org.jboss.arquillian.container.test.api.ShouldThrowException;
+import org.jboss.arquillian.container.test.api.DeploymentConfiguration;
 import org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.spi.util.ServiceLoader;
@@ -57,22 +32,21 @@ public class AutomaticDeploymentScenarioGenerator extends AbstractDeploymentScen
         };
     }
 
-    protected List<DeploymentContent> generateDeploymentContent(TestClass testClass) {
+    protected List<DeploymentConfiguration> generateDeploymentContent(TestClass testClass) {
 
-        final List<DeploymentContent> deploymentContents = new ArrayList<DeploymentContent>();
+        final List<DeploymentConfiguration> deploymentConfigurations = new ArrayList<DeploymentConfiguration>();
         final ServiceLoader<AutomaticDeployment> deploymentSpis = automaticDeploymentLocator.find();
-        final Iterator<AutomaticDeployment> deploymentSpiIterator = deploymentSpis.iterator();
 
-        while (deploymentSpiIterator.hasNext()) {
-            final DeploymentContent deploymentContent =
-                deploymentSpiIterator.next().generateDeploymentScenario(testClass);
+        for (AutomaticDeployment deploymentSpi : deploymentSpis) {
+            final DeploymentConfiguration deploymentConfiguration =
+                deploymentSpi.generateDeploymentScenario(testClass);
 
-            if (deploymentContent != null) {
-                deploymentContents.add(deploymentContent);
+            if (deploymentConfiguration != null) {
+                deploymentConfigurations.add(deploymentConfiguration);
             }
         }
 
-        return deploymentContents;
+        return deploymentConfigurations;
     }
 
     protected Archive manipulateArchive(TestClass testClass, String deploymentName, Archive archive) {
@@ -94,8 +68,8 @@ public class AutomaticDeploymentScenarioGenerator extends AbstractDeploymentScen
 
 
     /**
-     * @param deploymentMethod
-     * @return
+     * @param deploymentMethod to invoke
+     * @return result
      */
     private <T> T invoke(Class<T> type, Method deploymentMethod, Archive currentArchive) {
         try {

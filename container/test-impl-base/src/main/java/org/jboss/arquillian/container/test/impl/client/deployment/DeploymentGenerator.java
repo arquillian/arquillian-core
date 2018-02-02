@@ -69,8 +69,6 @@ public class DeploymentGenerator {
     private Instance<ProtocolRegistry> protocolRegistry;
 
     public void generateDeployment(@Observes GenerateDeployment event) {
-        //DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
-        //    DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
 
         final Collection<DeploymentScenarioGenerator> deploymentScenarioGenerators =
             serviceLoader.get().all(DeploymentScenarioGenerator.class);
