@@ -22,6 +22,8 @@ import org.jboss.arquillian.container.test.impl.client.LocalCommandService;
 import org.jboss.arquillian.container.test.impl.client.container.ClientContainerControllerCreator;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
 import org.jboss.arquillian.container.test.impl.client.container.command.ContainerCommandObserver;
+import org.jboss.arquillian.container.test.impl.client.deployment.AnnotationDeploymentScenarioGenerator;
+import org.jboss.arquillian.container.test.impl.client.deployment.AutomaticDeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.impl.client.deployment.ClientDeployerCreator;
 import org.jboss.arquillian.container.test.impl.client.deployment.DeploymentGenerator;
 import org.jboss.arquillian.container.test.impl.client.deployment.command.DeploymentCommandObserver;
@@ -40,6 +42,7 @@ import org.jboss.arquillian.container.test.impl.execution.ClientTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.LocalTestExecuter;
 import org.jboss.arquillian.container.test.impl.execution.RemoteTestExecuter;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.command.CommandService;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -80,7 +83,9 @@ public class ContainerTestExtension implements LoadableExtension {
             .service(ResourceProvider.class, URIResourceProvider.class)
             .service(ResourceProvider.class, DeployerProvider.class)
             .service(ResourceProvider.class, InitialContextProvider.class)
-            .service(ResourceProvider.class, ContainerControllerProvider.class);
+            .service(ResourceProvider.class, ContainerControllerProvider.class)
+            .service(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class)
+            .service(DeploymentScenarioGenerator.class, AutomaticDeploymentScenarioGenerator.class);
 
         builder.observer(ContainerEventController.class)
             .observer(ContainerRestarter.class)
