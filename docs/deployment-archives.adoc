@@ -71,9 +71,9 @@ include::../container/test-spi/src/main/java/org/jboss/arquillian/container/test
 
 TIP: To build `DeploymentConfiguration` type you can use `org.jboss.arquillian.container.test.api.DeploymentConfiguration.DeploymentContentBuilder` class.
 
-IMPORTANT: Remember to register the SPI by creating a file `META-INF/services/org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment` containing the fully qualified name to your implementation.
+IMPORTANT: Remember to register the SPI by creating `META-INF/services/org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment` file containing the fully qualified name of your implementation.
 
-Moreover, `@BeforeDeployment` method annotation is created to allow test writer to modify the archive before it is deployed.
+Moreover, you can use `@BeforeDeployment` method annotation which allows you to modify the archive before it is deployed.
 The method must be public static and receive as a parameter an `org.jboss.shrinkwrap.api.Archive` which is the archive created by `AutomaticDeployment` implementation and return a modified `org.jboss.shrinkwrap.api.Archive`.
 
 [source, java]
