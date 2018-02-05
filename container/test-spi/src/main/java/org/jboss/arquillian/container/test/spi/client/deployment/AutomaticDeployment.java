@@ -10,11 +10,12 @@ import org.jboss.arquillian.test.spi.TestClass;
  */
 public interface AutomaticDeployment {
 
+    // tag::docs[]
     /**
      * Method called for generating the deployment configuration.
      * @param testClass of current running test.
      * @return Model object that contains all the information related to deployment configuration.
      */
     DeploymentConfiguration generateDeploymentScenario(TestClass testClass);
-
+    // end::docs[]
 }

@@ -3,7 +3,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.test.api.BeforeDeployment;
