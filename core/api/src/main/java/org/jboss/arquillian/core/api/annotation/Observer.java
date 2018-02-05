@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * An annotation to specify an arquillian observer (class that contains a method with annotation {@link Observes}) for
+ * An annotation to specify an Arquillian observer (class that contains a method with annotation {@link Observes}) for
  * test class - it will observe all events starting with {@code org.jboss.arquillian.test.spi.event.suite.BeforeClass}
  * and ending with {@code org.jboss.arquillian.test.spi.event.suite.AfterClass}.
  * It will behave as any other Arquillian observer - it will be supported by dependency injection for Arquillian extensions.
