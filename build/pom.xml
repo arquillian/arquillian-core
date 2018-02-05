@@ -28,7 +28,7 @@
     <version.mockito_all>1.10.19</version.mockito_all>
     <version.jcommander>1.69</version.jcommander>
     <version.testng>6.13</version.testng>
-    <version.assertj>2.5.0</version.assertj>
+    <version.assertj>2.9.0</version.assertj>
   </properties>
 
   <!-- Dependency Management -->
