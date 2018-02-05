@@ -1,0 +1,42 @@
+ifdef::env-github,env-browser[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:outfilesuffix: .adoc
+endif::[]
+
+== Advanced Topics
+
+=== Debugging
+
+If you are struggling with running your Arquillian test and you need more info about what is going on underneath, then you can specify `-Darquillian.debug=true`. Arquillian will print out its lifecycle so you will know exactly where it got stuck.
+The output has four types of information - you can distinguish them by their prefix:
+
+* (E) Arquillian event that was fired
+* (I) Arquillian interceptor that observed the related event context
+* (O) Arquillian observer that observed the related event
+* (X) Arquillian extension that was registered
+
+
+=== Test Observer
+
+In case you need to add an additional logic to the whole test suite, you can use Arquillian SPI and create your own Arquillian extension. But this extension is applied to all test classes.
+In case you want to add an additional observer that will be applied only to one specific test class, then you can use an annotation `@Observer` at the test class level. This will use the specified class(es) as Arquillian observer(s) and observe any Arquillian event in the context of the related test class that you need (starting with `BeforeClass` and ending with `AfterClass`):
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+@Observer(MyObserver.class)
+public class MyTestCase {
+----
+
+The Arquillian observer class has to have a non-parametric constructor and the observer method should be defined by `@Observes` annotation:
+
+[source,java]
+----
+public void observeBeforeClass(@Observes BeforeClass event) {
+    ...
+}
+----
