@@ -80,9 +80,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
 
         if (testClass.isAnnotationPresent(Observer.class)) {
             Observer annotation = testClass.getAnnotation(Observer.class);
-            Class<?> value = annotation.value();
-            if (value != null) {
-                manager.addExtension(value);
+            Class<?>[] classes = annotation.value();
+            for (Class<?> observerClass : classes) {
+                manager.addExtension(observerClass);
             }
         }
 
@@ -96,9 +96,9 @@ public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
 
         if (testClass.isAnnotationPresent(Observer.class)) {
             Observer annotation = testClass.getAnnotation(Observer.class);
-            Class<?> value = annotation.value();
-            if (value != null) {
-                manager.removeExtension(value);
+            Class<?>[] classes = annotation.value();
+            for (Class<?> observerClass : classes) {
+                manager.removeExtension(observerClass);
             }
         }
     }

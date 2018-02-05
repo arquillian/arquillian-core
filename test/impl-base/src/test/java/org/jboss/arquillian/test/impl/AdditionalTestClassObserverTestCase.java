@@ -13,37 +13,37 @@ import org.junit.Test;
 public class AdditionalTestClassObserverTestCase extends AbstractTestTestBase {
 
     @Test
-    public void should_add_observer_to_list_of_extensions() throws Exception {
+    public void should_add_observers_to_list_of_extensions() throws Exception {
         // given
         EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(getManager());
 
         // when
-        adaptor.beforeClass(TestClassWithObserver.class, LifecycleMethodExecutor.NO_OP);
+        adaptor.beforeClass(TestClassWithTwoObservers.class, LifecycleMethodExecutor.NO_OP);
 
         // then
-        ObserverClass extension = getManager().getExtension(ObserverClass.class);
-        Assert.assertNotNull("the extension of type " + ObserverClass.class.getName() + " should be present", extension);
+        verifyObserverPresence(ObserverClass.class, true);
+        verifyObserverPresence(EmptyObserverClass.class, true);
     }
 
     @Test
-    public void should_remove_observer_from_list_of_extensions_in_after_class_phase() throws Exception {
+    public void should_remove_observers_from_list_of_extensions_in_after_class_phase() throws Exception {
         // given
         EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(getManager());
-        adaptor.beforeClass(TestClassWithObserver.class, LifecycleMethodExecutor.NO_OP);
+        adaptor.beforeClass(TestClassWithTwoObservers.class, LifecycleMethodExecutor.NO_OP);
 
         // when
-        adaptor.afterClass(TestClassWithObserver.class, LifecycleMethodExecutor.NO_OP);
+        adaptor.afterClass(TestClassWithTwoObservers.class, LifecycleMethodExecutor.NO_OP);
 
         // then
-        ObserverClass extension = getManager().getExtension(ObserverClass.class);
-        Assert.assertNull("The extension of type " + ObserverClass.class.getName() + " should NOT be present", extension);
+        verifyObserverPresence(ObserverClass.class, false);
+        verifyObserverPresence(EmptyObserverClass.class, false);
     }
 
     @Test
     public void should_invoke_additionally_added_observer_and_inject_value_to_variable() throws Exception {
         // given
         EventTestRunnerAdaptor adaptor = new EventTestRunnerAdaptor(getManager());
-        adaptor.beforeClass(TestClassWithObserver.class, LifecycleMethodExecutor.NO_OP);
+        adaptor.beforeClass(TestClassWithTwoObservers.class, LifecycleMethodExecutor.NO_OP);
         InvokedInfo invokedInfo = new InvokedInfo();
         getManager().bind(ClassScoped.class, InvokedInfo.class, invokedInfo);
 
@@ -54,8 +54,17 @@ public class AdditionalTestClassObserverTestCase extends AbstractTestTestBase {
         Assert.assertTrue("The observer should be invoked but wasn't", invokedInfo.isInvoked());
     }
 
-    @Observer(ObserverClass.class)
-    private static class TestClassWithObserver {
+    private void verifyObserverPresence(Class<?> observerClass, boolean shouldBePresent) {
+        Object observer = getManager().getExtension(observerClass);
+        if (shouldBePresent) {
+            Assert.assertNotNull("the observer of type " + observerClass.getName() + " should be present", observer);
+        } else {
+            Assert.assertNull("the observer of type " + observerClass.getName() + " should NOT be present", observer);
+        }
+    }
+
+    @Observer({EmptyObserverClass.class, ObserverClass.class})
+    private static class TestClassWithTwoObservers {
     }
 
     private static class ObserverClass {
@@ -65,6 +74,9 @@ public class AdditionalTestClassObserverTestCase extends AbstractTestTestBase {
         void observe(@Observes MyEvent event) {
             invokedInfoInstance.get().setInvoked(true);
         }
+    }
+
+    private static class EmptyObserverClass {
     }
 
     private static class MyEvent {

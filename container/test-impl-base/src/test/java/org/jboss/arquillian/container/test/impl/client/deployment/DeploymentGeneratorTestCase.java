@@ -135,20 +135,23 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     }
 
     @Test
-    public void shouldAddAdditionalObserverClass() {
+    public void shouldAddAdditionalObserverClasses() {
         addContainer("test-contianer").getContainerConfiguration().setMode("suite");
         addProtocol(PROTOCOL_NAME_1, true);
 
         fire(createEvent(DeploymentWithObserver.class));
 
         DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
-        String testClassPath = DeploymentWithObserver.class.getName().replace(".", "/") + ".class";
-        String observerPath = ObserverClass.class.getName().replace(".", "/") + ".class";
         Archive<?> archive = scenario.deployments().get(0).getDescription().getArchive();
-        Assert.assertTrue(String.format("archive %s should contain the path %s", archive.toString(true), testClassPath),
-            archive.contains(testClassPath));
-        Assert.assertTrue(String.format("archive %s should contain the path %s", archive.toString(true), observerPath),
-            archive.contains(observerPath));
+        verifyThatIsContainedInArchive(archive, DeploymentWithObserver.class);
+        verifyThatIsContainedInArchive(archive, ObserverClass.class);
+        verifyThatIsContainedInArchive(archive, SecondObserverClass.class);
+    }
+
+    private void verifyThatIsContainedInArchive(Archive<?> archive, Class<?> clazz) {
+        String classPath = clazz.getName().replace(".", "/") + ".class";
+        Assert.assertTrue(String.format("archive %s should contain the path %s", archive.toString(true), classPath),
+            archive.contains(classPath));
     }
 
     @Test
@@ -360,7 +363,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         }
     }
 
-    @Observer(ObserverClass.class)
+    @Observer({ObserverClass.class, SecondObserverClass.class})
     private static class DeploymentWithObserver {
         @SuppressWarnings("unused")
         @Deployment
@@ -370,6 +373,9 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     }
 
     private static class ObserverClass {
+    }
+
+    private static class SecondObserverClass {
     }
 
     private static class DeploymentMultipleNoNamed {
