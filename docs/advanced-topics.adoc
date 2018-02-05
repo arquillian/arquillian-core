@@ -22,7 +22,8 @@ The output has four types of information - you can distinguish them by their pre
 
 === Test Observer
 
-In case you need to observe one or more Arquillian events and you don't want to deal with the whole SPI machinery, you can use the annotation `@Observer` at your test class and observe any Arquillian event in the context of the related test class (starting with `BeforeClass` and ending with `AfterClass`):
+In case you need to add an additional logic to the whole test suite, you can use Arquillian SPI and create your own Arquillian extension. But this extension is applied to all test classes.
+In case you want to add an additional observer that will be applied only to one specific test class, then you can use an annotation `@Observer` at the test class level. This will use the specified class(es) as Arquillian observer(s) and observe any Arquillian event in the context of the related test class that you need (starting with `BeforeClass` and ending with `AfterClass`):
 
 [source,java]
 ----
@@ -31,7 +32,7 @@ In case you need to observe one or more Arquillian events and you don't want to 
 public class MyTestCase {
 ----
 
-The Arquillian observer class has to have a non-parametric constructor and the the observer method you can define by `@Observes` annotation:
+The Arquillian observer class has to have a non-parametric constructor and the observer method should be defined by `@Observes` annotation:
 
 [source,java]
 ----
