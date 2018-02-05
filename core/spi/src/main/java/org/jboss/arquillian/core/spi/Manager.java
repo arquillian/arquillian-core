@@ -47,9 +47,7 @@ public interface Manager {
     // clean
     void shutdown();
 
-    // adds extension specified via annotation @Observer
     void addExtension(Class<?> extension) throws Exception;
 
-    // removes extension specified via annotation @Observer
     void removeExtension(Class<?> extension) throws Exception;
 }
