@@ -170,7 +170,7 @@ public class DeploymentGenerator {
                 if (ClassContainer.class.isInstance(applicationArchive)) {
                     ClassContainer<?> classContainer = ClassContainer.class.cast(applicationArchive);
                     classContainer.addClass(testCase.getJavaClass());
-                    addAdditionalObserverClass(classContainer, testCase.getJavaClass());
+                    addAdditionalObserverClassIfPresent(classContainer, testCase.getJavaClass());
                 }
             } catch (UnsupportedOperationException e) {
             /*
@@ -187,7 +187,7 @@ public class DeploymentGenerator {
         }
     }
 
-    private void addAdditionalObserverClass(ClassContainer<?> classContainer, Class<?> testClass){
+    private void addAdditionalObserverClassIfPresent(ClassContainer<?> classContainer, Class<?> testClass){
         if (testClass.isAnnotationPresent(Observer.class)) {
             Observer annotation = testClass.getAnnotation(Observer.class);
             Class<?> value = annotation.value();
