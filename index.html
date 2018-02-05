@@ -530,7 +530,13 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_build_integration">2.9. Build Integration</a></li>
 </ul>
 </li>
-<li><a href="#_useful_urls">3. Useful URLs</a></li>
+<li><a href="#_advanced_topics">3. Advanced Topics</a>
+<ul class="sectlevel2">
+<li><a href="#_debugging">3.1. Debugging</a></li>
+<li><a href="#_test_observer">3.2. Test Observer</a></li>
+</ul>
+</li>
+<li><a href="#_useful_urls">4. Useful URLs</a></li>
 </ul>
 </div>
 </div>
@@ -2960,7 +2966,59 @@ maven to download all the required jars.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_useful_urls"><a class="anchor" href="#_useful_urls"></a>3. Useful URLs</h2>
+<h2 id="_advanced_topics"><a class="anchor" href="#_advanced_topics"></a>3. Advanced Topics</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_debugging"><a class="anchor" href="#_debugging"></a>3.1. Debugging</h3>
+<div class="paragraph">
+<p>If you are struggling with running your Arquillian test and you need more info about what is going on underneath, then you can specify <code>-Darquillian.debug=true</code>. Arquillian will print out its lifecycle so you will know exactly where it got stuck.
+The output has four types of information - you can distinguish them by their prefix:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>(E) Arquillian event that was fired</p>
+</li>
+<li>
+<p>(I) Arquillian interceptor that observed the related event context</p>
+</li>
+<li>
+<p>(O) Arquillian observer that observed the related event</p>
+</li>
+<li>
+<p>(X) Arquillian extension that was registered</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test_observer"><a class="anchor" href="#_test_observer"></a>3.2. Test Observer</h3>
+<div class="paragraph">
+<p>In case you need to add an additional logic to the whole test suite, you can use Arquillian SPI and create your own Arquillian extension. But this extension is applied to all test classes.
+In case you want to add an additional observer that will be applied only to one specific test class, then you can use an annotation <code>@Observer</code> at the test class level. This will use the specified class(es) as Arquillian observer(s) and observe any Arquillian event in the context of the related test class that you need (starting with <code>BeforeClass</code> and ending with <code>AfterClass</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(Arquillian.class)
+<span class="annotation">@Observer</span>(MyObserver.class)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MyTestCase</span> {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Arquillian observer class has to have a non-parametric constructor and the observer method should be defined by <code>@Observes</code> annotation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">void</span> observeBeforeClass(<span class="annotation">@Observes</span> BeforeClass event) {
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_useful_urls"><a class="anchor" href="#_useful_urls"></a>4. Useful URLs</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
@@ -2983,7 +3041,7 @@ maven to download all the required jars.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-21 10:42:25 UTC
+Last updated 2018-02-05 15:40:07 UTC
 </div>
 </div>
 </body>
