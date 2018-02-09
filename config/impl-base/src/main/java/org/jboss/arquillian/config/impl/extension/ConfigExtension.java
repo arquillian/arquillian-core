@@ -31,7 +31,7 @@ public class ConfigExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.observer(ConfigurationRegistrar.class);
 
-        builder.service(ConfigurationPlaceholderResolver.class, ConfigurationSysPropResolver.class);
+        builder.service(ConfigurationPlaceholderResolver.class, SystemPropertiesConfigurationPlaceholderResolver.class);
         builder.service(ConfigurationPlaceholderResolver.class, ClasspathConfigurationPlaceholderResolver.class);
     }
 }

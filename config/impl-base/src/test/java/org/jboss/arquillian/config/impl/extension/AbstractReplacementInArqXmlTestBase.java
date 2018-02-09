@@ -28,7 +28,7 @@ public class AbstractReplacementInArqXmlTestBase extends AbstractManagerTestBase
 
         final ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
         startContexts(manager);
-        final ConfigurationPlaceholderResolver configurationSysPropResolver = new ConfigurationSysPropResolver();
+        final ConfigurationPlaceholderResolver configurationSysPropResolver = new SystemPropertiesConfigurationPlaceholderResolver();
         final ConfigurationPlaceholderResolver classpathConfigurationPlaceholderResolver = new ClasspathConfigurationPlaceholderResolver();
 
         Mockito.when(serviceLoader.all(ConfigurationPlaceholderResolver.class))

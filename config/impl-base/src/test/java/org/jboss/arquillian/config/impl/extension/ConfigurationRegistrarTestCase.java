@@ -74,7 +74,7 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
 
     @Before
     public void injectConfigurationRegistrar() {
-        ConfigurationPlaceholderResolver configurationSysPropResolver = new ConfigurationSysPropResolver();
+        ConfigurationPlaceholderResolver configurationSysPropResolver = new SystemPropertiesConfigurationPlaceholderResolver();
 
         Mockito.when(serviceLoader.all(ConfigurationPlaceholderResolver.class))
             .thenReturn(Arrays.asList(configurationSysPropResolver));
