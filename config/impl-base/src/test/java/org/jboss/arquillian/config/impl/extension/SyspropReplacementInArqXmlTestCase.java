@@ -49,11 +49,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  *
  * @author <a href="mailto:alr@jboss.org">Andrew Lee Rubinger</a>
  */
-@RunWith(MockitoJUnitRunner.class)
-public class SyspropReplacementInArqXmlTestCase extends AbstractManagerTestBase {
-
-    @Mock
-    private ServiceLoader serviceLoader;
+public class SyspropReplacementInArqXmlTestCase extends AbstractReplacementInArqXmlTestBase {
 
     /**
      * Name of the arquillian.xml to test
@@ -66,12 +62,6 @@ public class SyspropReplacementInArqXmlTestCase extends AbstractManagerTestBase 
     private static final String SYSPROP_ARQ_CONTAINER = "arquillian.container";
 
     private static final String VALUE_EL_OVERRIDE = "ALR";
-
-    /**
-     * The loaded arquillian.xml
-     */
-    @Inject
-    private Instance<ArquillianDescriptor> desc;
 
     /**
      * Sets the name of the arquillian.xml under test
@@ -101,43 +91,11 @@ public class SyspropReplacementInArqXmlTestCase extends AbstractManagerTestBase 
     @Test
     public void syspropReplacementInArqXml() throws Exception {
 
+        // when
         final String xml = desc.get().exportAsString();
-        System.out.println(xml);
+
+        // then
         AssertXPath.assertXPath(xml, "/arquillian/container/@qualifier", VALUE_EL_OVERRIDE);
     }
 
-    @Override
-    protected void beforeStartManager(Manager manager) {
-        startContexts(manager);
-        final ConfigurationPlaceholderResolver configurationSysPropResolver = new ConfigurationSysPropResolver();
-        final ConfigurationPlaceholderResolver classpathConfigurationPlaceholderResolver = new ClasspathConfigurationPlaceholderResolver();
-
-        Mockito.when(serviceLoader.all(ConfigurationPlaceholderResolver.class))
-            .thenReturn(Arrays.asList(configurationSysPropResolver, classpathConfigurationPlaceholderResolver));
-
-        bind(SuiteScoped.class, ServiceLoader.class, serviceLoader);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.jboss.arquillian.core.test.AbstractManagerTestBase#addExtensions(java.util.List)
-     */
-    @Override
-    protected void addExtensions(final List<Class<?>> extensions) {
-        extensions.add(ConfigurationRegistrar.class);
-        super.addExtensions(extensions);
-    }
-
-    @Override
-    protected void addContexts(List<Class<? extends Context>> contexts) {
-        super.addContexts(contexts);
-        contexts.add(SuiteContextImpl.class);
-    }
-
-    @Override
-    protected void startContexts(Manager manager) {
-        super.startContexts(manager);
-        manager.getContext(SuiteContext.class).activate();
-    }
 }

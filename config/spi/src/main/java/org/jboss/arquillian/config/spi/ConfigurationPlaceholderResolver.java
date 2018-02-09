@@ -7,7 +7,7 @@ public interface ConfigurationPlaceholderResolver {
     ArquillianDescriptor resolve(ArquillianDescriptor arquillianDescriptor);
 
     /**
-     * In case then more of one placeholder resolver, they are ordered as they appear on classpath.
+     * In case of registering more than one placeholder resolver, they are ordered as they appear on classpath.
      * If you need to reorder them, you can use {@code precedence} value. The higher the {@code precedence} is,
      * the sooner the observer is executed.
      * @return

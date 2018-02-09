@@ -9,7 +9,6 @@ import static org.jboss.arquillian.config.descriptor.impl.AssertXPath.assertXPat
 
 public class ArquillianDescriptorClasspathPropertiesTestCase {
 
-
     @Test
     public void should_replace_properties_with_classpath_location() throws Exception {
         // given

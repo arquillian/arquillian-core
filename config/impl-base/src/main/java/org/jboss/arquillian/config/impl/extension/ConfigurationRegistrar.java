@@ -79,21 +79,27 @@ public class ConfigurationRegistrar {
         ArquillianDescriptor resolvedDesc = descriptor;
 
         final List<ConfigurationPlaceholderResolver> configurationPlaceholderResolvers =
-            new ArrayList<ConfigurationPlaceholderResolver>(serviceLoaderInstance.get().all(ConfigurationPlaceholderResolver.class));
-
-        Collections.sort(configurationPlaceholderResolvers, new Comparator<ConfigurationPlaceholderResolver>() {
-            public int compare(ConfigurationPlaceholderResolver o1, ConfigurationPlaceholderResolver o2) {
-                Integer a = o1.precedence();
-                Integer b = o2.precedence();
-                return b.compareTo(a);
-            }
-        });
+            loadAndOrderPlaceholderResolvers();
 
         for (ConfigurationPlaceholderResolver configurationPlaceholderResolver : configurationPlaceholderResolvers) {
             resolvedDesc = configurationPlaceholderResolver.resolve(resolvedDesc);
         }
 
         descriptorInst.set(resolvedDesc);
+    }
+
+    private List<ConfigurationPlaceholderResolver> loadAndOrderPlaceholderResolvers() {
+        final List<ConfigurationPlaceholderResolver> configurationPlaceholderResolvers =
+            new ArrayList<ConfigurationPlaceholderResolver>(serviceLoaderInstance.get().all(ConfigurationPlaceholderResolver.class));
+
+        Collections.sort(configurationPlaceholderResolvers, new Comparator<ConfigurationPlaceholderResolver>() {
+            public int compare(ConfigurationPlaceholderResolver firstResolver, ConfigurationPlaceholderResolver secondResolver) {
+                Integer a = firstResolver.precedence();
+                Integer b = secondResolver.precedence();
+                return b.compareTo(a);
+            }
+        });
+        return configurationPlaceholderResolvers;
     }
 
     private ArquillianDescriptor resolveDescriptor(final InputStream input) {
