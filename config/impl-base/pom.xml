@@ -56,7 +56,6 @@
       <artifactId>shrinkwrap-descriptors-spi</artifactId>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.arquillian.core</groupId>
       <artifactId>arquillian-core-impl-base</artifactId>
@@ -72,17 +71,10 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.test</groupId>
-      <artifactId>arquillian-test-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.arquillian.test</groupId>
       <artifactId>arquillian-test-impl-base</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
