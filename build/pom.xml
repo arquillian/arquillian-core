@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-parent</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -26,9 +26,9 @@
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.12</version.junit>
     <version.mockito_all>1.10.19</version.mockito_all>
-
     <version.testng>6.14.2</version.testng>
-    <version.assertj>2.5.0</version.assertj>
+    <version.jcommander>1.69</version.jcommander>
+    <version.assertj>2.9.0</version.assertj>
   </properties>
 
   <!-- Dependency Management -->

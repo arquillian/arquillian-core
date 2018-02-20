@@ -320,6 +320,23 @@ public class ManagerImpl implements Manager {
         this.contexts.addAll(createContexts(contexts));
     }
 
+    public void addExtension(Class<?> extensionClass) throws Exception {
+        runtimeLogger.debugExtension(extensionClass);
+        ExtensionImpl newExtension = ExtensionImpl.of(Reflections.createInstance(extensionClass));
+        inject(newExtension);
+        extensions.add(newExtension);
+    }
+
+    public void removeExtension(Class<?> extensionClass) {
+        for (Extension extension : extensions) {
+            Object target = ((ExtensionImpl) extension).getTarget();
+            if (extensionClass.isInstance(target)) {
+                extensions.remove(extension);
+                break;
+            }
+        }
+    }
+
     boolean isExceptionHandled(Throwable e) {
         return handledThrowables.get().contains(e.getClass());
     }

@@ -46,4 +46,8 @@ public interface Manager {
 
     // clean
     void shutdown();
+
+    void addExtension(Class<?> extension) throws Exception;
+
+    void removeExtension(Class<?> extension) throws Exception;
 }

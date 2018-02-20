@@ -18,6 +18,7 @@
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observer;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
@@ -102,8 +104,10 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     public void prepare() {
         Injector injector = injectorInst.get();
 
-        when(serviceLoader.onlyOne(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class))
-            .thenReturn(new AnnotationDeploymentScenarioGenerator());
+        final List<DeploymentScenarioGenerator> deploymentScenarioGenerators = new ArrayList<DeploymentScenarioGenerator>();
+        deploymentScenarioGenerators.add(new AnnotationDeploymentScenarioGenerator());
+        when(serviceLoader.all(DeploymentScenarioGenerator.class))
+            .thenReturn(deploymentScenarioGenerators);
         when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
         when(deployableContainer.getDefaultProtocol()).thenReturn(new ProtocolDescription(PROTOCOL_NAME_1));
 
@@ -131,6 +135,26 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         fire(createEvent(DeploymentWithDefaults.class));
 
         verify(deployableContainer, times(0)).getDefaultProtocol();
+    }
+
+    @Test
+    public void shouldAddAdditionalObserverClasses() {
+        addContainer("test-contianer").getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
+
+        fire(createEvent(DeploymentWithObserver.class));
+
+        DeploymentScenario scenario = getManager().resolve(DeploymentScenario.class);
+        Archive<?> archive = scenario.deployments().get(0).getDescription().getArchive();
+        verifyThatIsContainedInArchive(archive, DeploymentWithObserver.class);
+        verifyThatIsContainedInArchive(archive, ObserverClass.class);
+        verifyThatIsContainedInArchive(archive, SecondObserverClass.class);
+    }
+
+    private void verifyThatIsContainedInArchive(Archive<?> archive, Class<?> clazz) {
+        String classPath = clazz.getName().replace(".", "/") + ".class";
+        Assert.assertTrue(String.format("archive %s should contain the path %s", archive.toString(true), classPath),
+            archive.contains(classPath));
     }
 
     @Test
@@ -340,6 +364,21 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         public static JavaArchive deploy() {
             return ShrinkWrap.create(JavaArchive.class);
         }
+    }
+
+    @Observer({ObserverClass.class, SecondObserverClass.class})
+    private static class DeploymentWithObserver {
+        @SuppressWarnings("unused")
+        @Deployment
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
+    private static class ObserverClass {
+    }
+
+    private static class SecondObserverClass {
     }
 
     private static class DeploymentMultipleNoNamed {

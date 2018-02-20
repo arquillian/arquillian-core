@@ -41,6 +41,7 @@ import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observer;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -69,13 +70,17 @@ public class DeploymentGenerator {
     private Instance<ProtocolRegistry> protocolRegistry;
 
     public void generateDeployment(@Observes GenerateDeployment event) {
-        DeploymentScenarioGenerator generator = serviceLoader.get().onlyOne(
-            DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class);
+
+        final Collection<DeploymentScenarioGenerator> deploymentScenarioGenerators =
+            serviceLoader.get().all(DeploymentScenarioGenerator.class);
 
         DeploymentScenario scenario = new DeploymentScenario();
 
-        for (DeploymentDescription deployment : generator.generate(event.getTestClass())) {
-            scenario.addDeployment(deployment);
+        for (DeploymentScenarioGenerator generator : deploymentScenarioGenerators) {
+
+            for (DeploymentDescription deployment : generator.generate(event.getTestClass())) {
+                scenario.addDeployment(deployment);
+            }
         }
 
         validate(scenario);
@@ -169,6 +174,7 @@ public class DeploymentGenerator {
                 if (ClassContainer.class.isInstance(applicationArchive)) {
                     ClassContainer<?> classContainer = ClassContainer.class.cast(applicationArchive);
                     classContainer.addClass(testCase.getJavaClass());
+                    addAdditionalObserverClassesIfPresent(classContainer, testCase.getJavaClass());
                 }
             } catch (UnsupportedOperationException e) {
             /*
@@ -183,6 +189,17 @@ public class DeploymentGenerator {
                     new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
                     serviceLoader.get().all(ProtocolArchiveProcessor.class)));
         }
+    }
+
+    private void addAdditionalObserverClassesIfPresent(ClassContainer<?> classContainer, Class<?> testClass){
+        if (testClass.isAnnotationPresent(Observer.class)) {
+            Observer annotation = testClass.getAnnotation(Observer.class);
+            Class<?>[] classes = annotation.value();
+            for (Class<?> observerClass : classes) {
+                classContainer.addClass(observerClass);
+            }
+        }
+
     }
 
     private List<Archive<?>> loadAuxiliaryArchives(DeploymentDescription deployment) {
