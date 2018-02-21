@@ -59,6 +59,20 @@ public class ConfigurationRegistrar {
     private Instance<ServiceLoader> serviceLoaderInstance;
 
     public void loadConfiguration(@Observes ManagerStarted event) {
+        //Placeholder resolver
+        ArquillianDescriptor resolvedDesc = loadConfiguration();
+
+        final List<ConfigurationPlaceholderResolver> configurationPlaceholderResolvers =
+            loadAndOrderPlaceholderResolvers();
+
+        for (ConfigurationPlaceholderResolver configurationPlaceholderResolver : configurationPlaceholderResolvers) {
+            resolvedDesc = configurationPlaceholderResolver.resolve(resolvedDesc);
+        }
+
+        descriptorInst.set(resolvedDesc);
+    }
+
+    public ArquillianDescriptor loadConfiguration() {
         final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
 
         //First arquillian.xml is resolved
@@ -75,17 +89,7 @@ public class ConfigurationRegistrar {
         envProperties.putAll(systemEnvironmentVars);
         propertiesParser.addProperties(descriptor, envProperties);
 
-        //Placeholder resolver
-        ArquillianDescriptor resolvedDesc = descriptor;
-
-        final List<ConfigurationPlaceholderResolver> configurationPlaceholderResolvers =
-            loadAndOrderPlaceholderResolvers();
-
-        for (ConfigurationPlaceholderResolver configurationPlaceholderResolver : configurationPlaceholderResolvers) {
-            resolvedDesc = configurationPlaceholderResolver.resolve(resolvedDesc);
-        }
-
-        descriptorInst.set(resolvedDesc);
+        return descriptor;
     }
 
     private List<ConfigurationPlaceholderResolver> loadAndOrderPlaceholderResolvers() {
