@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
+import org.jboss.arquillian.config.spi.ConfigurationPlaceholderResolver;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
@@ -29,5 +30,8 @@ public class ConfigExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.observer(ConfigurationRegistrar.class);
+
+        builder.service(ConfigurationPlaceholderResolver.class, SystemPropertiesConfigurationPlaceholderResolver.class);
+        builder.service(ConfigurationPlaceholderResolver.class, ClasspathConfigurationPlaceholderResolver.class);
     }
 }

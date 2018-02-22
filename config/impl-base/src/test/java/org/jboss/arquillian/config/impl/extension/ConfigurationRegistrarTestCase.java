@@ -17,18 +17,31 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.spi.ConfigurationPlaceholderResolver;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
+import org.jboss.arquillian.core.spi.Manager;
+import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.core.spi.context.Context;
 import org.jboss.arquillian.core.test.AbstractManagerTestBase;
+import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.jboss.arquillian.test.spi.context.SuiteContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * ConfigurationRegistrarTestCase
@@ -36,7 +49,12 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
+
+    @Mock
+    private ServiceLoader serviceLoader;
+
     @Inject
     private Instance<Injector> injectorInst;
 
@@ -56,6 +74,11 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
 
     @Before
     public void injectConfigurationRegistrar() {
+        ConfigurationPlaceholderResolver configurationSysPropResolver = new SystemPropertiesConfigurationPlaceholderResolver();
+
+        Mockito.when(serviceLoader.all(ConfigurationPlaceholderResolver.class))
+            .thenReturn(Arrays.asList(configurationSysPropResolver));
+        bind(SuiteScoped.class, ServiceLoader.class, serviceLoader);
         registrar = injectorInst.get().inject(new ConfigurationRegistrar());
     }
 
@@ -458,6 +481,18 @@ public class ConfigurationRegistrarTestCase extends AbstractManagerTestBase {
                 });
             }
         });
+    }
+
+    @Override
+    protected void addContexts(List<Class<? extends Context>> contexts) {
+        super.addContexts(contexts);
+        contexts.add(SuiteContextImpl.class);
+    }
+
+    @Override
+    protected void startContexts(Manager manager) {
+        super.startContexts(manager);
+        manager.getContext(SuiteContext.class).activate();
     }
 
     public interface AssertCallback {

@@ -18,5 +18,13 @@
   <name>Arquillian Config SPI</name>
   <description>SPI for the Config Module.</description>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.arquillian.config</groupId>
+      <artifactId>arquillian-config-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
 </project>
 

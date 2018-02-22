@@ -16,19 +16,25 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.spi.ConfigurationPlaceholderResolver;
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
+import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
-
-import static org.jboss.arquillian.config.impl.extension.ConfigurationSysPropResolver.resolveSystemProperties;
 
 /**
  * Configurator
@@ -49,6 +55,9 @@ public class ConfigurationRegistrar {
     @ApplicationScoped
     private InstanceProducer<ArquillianDescriptor> descriptorInst;
 
+    @Inject
+    private Instance<ServiceLoader> serviceLoaderInstance;
+
     public void loadConfiguration(@Observes ManagerStarted event) {
         final InputStream input = FileUtils.loadArquillianXml(ARQUILLIAN_XML_PROPERTY, ARQUILLIAN_XML_DEFAULT);
 
@@ -67,9 +76,30 @@ public class ConfigurationRegistrar {
         propertiesParser.addProperties(descriptor, envProperties);
 
         //Placeholder resolver
-        final ArquillianDescriptor resolvedDesc = resolveSystemProperties(descriptor);
+        ArquillianDescriptor resolvedDesc = descriptor;
+
+        final List<ConfigurationPlaceholderResolver> configurationPlaceholderResolvers =
+            loadAndOrderPlaceholderResolvers();
+
+        for (ConfigurationPlaceholderResolver configurationPlaceholderResolver : configurationPlaceholderResolvers) {
+            resolvedDesc = configurationPlaceholderResolver.resolve(resolvedDesc);
+        }
 
         descriptorInst.set(resolvedDesc);
+    }
+
+    private List<ConfigurationPlaceholderResolver> loadAndOrderPlaceholderResolvers() {
+        final List<ConfigurationPlaceholderResolver> configurationPlaceholderResolvers =
+            new ArrayList<ConfigurationPlaceholderResolver>(serviceLoaderInstance.get().all(ConfigurationPlaceholderResolver.class));
+
+        Collections.sort(configurationPlaceholderResolvers, new Comparator<ConfigurationPlaceholderResolver>() {
+            public int compare(ConfigurationPlaceholderResolver firstResolver, ConfigurationPlaceholderResolver secondResolver) {
+                Integer a = firstResolver.precedence();
+                Integer b = secondResolver.precedence();
+                return b.compareTo(a);
+            }
+        });
+        return configurationPlaceholderResolvers;
     }
 
     private ArquillianDescriptor resolveDescriptor(final InputStream input) {

@@ -70,6 +70,7 @@ public abstract class AbstractManagerTestBase {
         }
 
         manager = (ManagerImpl) builder.create();
+        beforeStartManager(manager);
         manager.start();
 
         executeInApplicationScope(new Callable<Void>() {
@@ -166,6 +167,9 @@ public abstract class AbstractManagerTestBase {
     //-------------------------------------------------------------------------------------||
     // Extendables ------------------------------------------------------------------------||
     //-------------------------------------------------------------------------------------||
+
+    protected void beforeStartManager(Manager manager) {
+    }
 
     protected void addExtensions(List<Class<?>> extensions) {
     }

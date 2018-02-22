@@ -17,6 +17,7 @@
 package org.jboss.arquillian.config.impl.extension;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.config.spi.ConfigurationPlaceholderResolver;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 /**
@@ -30,13 +31,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  *
  * @author <a href="mailto:alr@jboss.org">Andrew Lee Rubinger</a>
  */
-class ConfigurationSysPropResolver {
-    /**
-     * Internal ctor, not to be called
-     */
-    private ConfigurationSysPropResolver() {
-        throw new UnsupportedOperationException("No instances permitted");
-    }
+class SystemPropertiesConfigurationPlaceholderResolver implements ConfigurationPlaceholderResolver {
 
     /**
      * Returns a new instance of {@link ArquillianDescriptor} by resolving any
@@ -48,10 +43,18 @@ class ConfigurationSysPropResolver {
      *
      * @throws IllegalArgumentException
      */
-    static ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
+    private ArquillianDescriptor resolveSystemProperties(final ArquillianDescriptor descriptor)
         throws IllegalArgumentException {
         final String descriptorAsString = descriptor.exportAsString();
         return Descriptors.importAs(ArquillianDescriptor.class)
             .fromString(StringPropertyReplacer.replaceProperties(descriptorAsString));
+    }
+
+    public ArquillianDescriptor resolve(ArquillianDescriptor arquillianDescriptor) {
+        return resolveSystemProperties(arquillianDescriptor);
+    }
+
+    public int precedence() {
+        return 0;
     }
 }
