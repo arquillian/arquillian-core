@@ -103,7 +103,7 @@ public class DeploymentExceptionHandler {
 
     private Throwable transform(Throwable exception) {
         Throwable toBeTransformed = exception;
-        if (exception instanceof DeploymentException) {
+        if (exception instanceof DeploymentException && exception.getCause() != null) {
             toBeTransformed = exception.getCause();
         }
         Collection<DeploymentExceptionTransformer> transformers =

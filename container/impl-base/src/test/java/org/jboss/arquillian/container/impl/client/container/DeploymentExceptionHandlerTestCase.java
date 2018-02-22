@@ -98,6 +98,20 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
     }
 
     @Test
+    public void shouldCallDeploymentTransformersWithEmptyCauseException() throws Exception {
+        TestExceptionDeployThrower.shouldThrow =
+            new DeploymentException("Could not handle ba", null);
+        Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class))
+            .thenReturn(Collections.singletonList(transformer));
+
+        fire(new DeployDeployment(
+            container,
+            new Deployment(new DeploymentDescription("test", ShrinkWrap.create(JavaArchive.class))
+                .setExpectedException(DeploymentException.class))));
+        Mockito.verify(transformer, Mockito.times(1)).transform(TestExceptionDeployThrower.shouldThrow);
+    }
+
+    @Test
     public void shouldTransformException() throws Exception {
         TestExceptionDeployThrower.shouldThrow = new IllegalStateException();
         Mockito.when(serviceLoader.all(DeploymentExceptionTransformer.class))
