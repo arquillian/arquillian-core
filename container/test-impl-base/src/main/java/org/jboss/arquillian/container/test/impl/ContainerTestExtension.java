@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.test.impl.client.LocalCommandService;
 import org.jboss.arquillian.container.test.impl.client.container.ClientContainerControllerCreator;
 import org.jboss.arquillian.container.test.impl.client.container.ContainerRestarter;
 import org.jboss.arquillian.container.test.impl.client.container.command.ContainerCommandObserver;
-import org.jboss.arquillian.container.test.impl.client.deployment.AnnotationDeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.impl.client.deployment.AutomaticDeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.impl.client.deployment.ClientDeployerCreator;
 import org.jboss.arquillian.container.test.impl.client.deployment.DeploymentGenerator;
@@ -84,7 +83,6 @@ public class ContainerTestExtension implements LoadableExtension {
             .service(ResourceProvider.class, DeployerProvider.class)
             .service(ResourceProvider.class, InitialContextProvider.class)
             .service(ResourceProvider.class, ContainerControllerProvider.class)
-            .service(DeploymentScenarioGenerator.class, AnnotationDeploymentScenarioGenerator.class)
             .service(DeploymentScenarioGenerator.class, AutomaticDeploymentScenarioGenerator.class);
 
         builder.observer(ContainerEventController.class)
