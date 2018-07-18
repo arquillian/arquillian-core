@@ -17,6 +17,18 @@
 package org.jboss.arquillian.core.api;
 
 /**
+ * An instance producer.
+ * <p>
+ * This is the only mechanism for providing instances to be injected.
+ * {@link org.jboss.arquillian.core.api.annotation.Inject} annotated instance producer fields must also declare a
+ * {@link org.jboss.arquillian.core.api.annotation.Scope} annotation, to indicate which context the instance will be
+ * produced for.
+ * <p>
+ * Typically, instances will be provided to the {@link #set(Object)} method during an appropriate lifecycle event.
+ * For example, application scoped instances may be set in an observer of the
+ * {@link org.jboss.arquillian.core.api.event.ManagerStarted} event. Remote loadable extensions for example may decide
+ * to register application scoped instances in an observer of the {@code BeforeSuite} event.
+ * <p>
  * <pre>
  * {@code @Inject @ApplicationScoped
  * private InstanceProducer<MyObject> myObjectInst;
