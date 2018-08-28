@@ -27,7 +27,7 @@
     <version.junit>4.12</version.junit>
     <version.mockito_all>1.10.19</version.mockito_all>
     <version.testng>6.14.3</version.testng>
-    <version.assertj>2.9.1</version.assertj>
+    <version.assertj>3.11.0</version.assertj>
   </properties>
 
   <!-- Dependency Management -->
