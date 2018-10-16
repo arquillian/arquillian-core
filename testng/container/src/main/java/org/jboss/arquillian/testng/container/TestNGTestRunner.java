@@ -46,7 +46,12 @@ public class TestNGTestRunner implements TestRunner {
         runner.setXmlSuites(
             Collections.singletonList(createSuite(testClass, methodName)));
 
-        runner.run();
+        //we catch problems in executing run method, e.g. ClassDefNotFoundError and wrap it in TestResult
+        try {
+            runner.run();
+        } catch (Throwable ex) {
+            return TestResult.failed(ex);
+        }
 
         return resultListener.getTestResult();
     }
