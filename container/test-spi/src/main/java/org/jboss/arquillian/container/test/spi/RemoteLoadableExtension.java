@@ -20,7 +20,10 @@ package org.jboss.arquillian.container.test.spi;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * RemoteLoadableExtension
+ * RemoteLoadableExtension.
+ * <p>
+ * This should be provided by a
+ * {@link org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

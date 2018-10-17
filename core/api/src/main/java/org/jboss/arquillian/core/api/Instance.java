@@ -17,6 +17,11 @@
 package org.jboss.arquillian.core.api;
 
 /**
+ * An injectable instance.
+ * <p>
+ * All {@link org.jboss.arquillian.core.api.annotation.Inject} annotated fields must have this type or be a subtype
+ * of it.
+ * <p>
  * <pre>
  * {@code @Inject
  * private Instance<MyObject> myObjectInst;
@@ -28,6 +33,9 @@ package org.jboss.arquillian.core.api;
  * }
  * }
  * </pre>
+ * <p>
+ * Instances are provided using the {@link InstanceProducer#set(Object)} method, they are not automatically detected or
+ * provided by Arquillian.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
