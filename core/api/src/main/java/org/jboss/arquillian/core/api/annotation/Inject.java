@@ -24,7 +24,22 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Inject
+ * Inject.
+ * <p>
+ * This can be used to inject instances managed by an Arquillian context.
+ * <p>
+ * Fields annotated with this must be of type {@link org.jboss.arquillian.core.api.Instance} or
+ * {@link org.jboss.arquillian.core.api.InstanceProducer}.
+ * <p>
+ * To provide an injected instance, it must be explicitly set on an injected
+ * {@link org.jboss.arquillian.core.api.InstanceProducer}, and that field must also have a {@link Scope} annotated context
+ * annotation on it, to indicate which context the instance is being produced for.
+ * <p>
+ * Note services provided by loadable extensions are not automatically available for injection. If an extension wishes to make
+ * a service injected, it must observe an appropriate lifecycle event, look the service up from the {@code ServiceLoader}, and
+ * provide the looked up service to a {@link org.jboss.arquillian.core.api.InstanceProducer} itself. Likewise, if an extension
+ * wishes to make any other component available for injection, it should provide it to an instance producer that in an
+ * appropriate lifecycle event observer.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $

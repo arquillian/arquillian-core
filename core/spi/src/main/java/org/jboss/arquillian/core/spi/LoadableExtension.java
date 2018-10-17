@@ -20,22 +20,50 @@ package org.jboss.arquillian.core.spi;
 import org.jboss.arquillian.core.spi.context.Context;
 
 /**
- * LoadableExtension
+ * LoadableExtension.
+ * <p>
+ * Loadable extensions are loaded on the local side of Arquillan. For extensions, components, observers etc to run on
+ * the remote side, use {@code RemoteLoadableExtension} instead, and provide it via an
+ * {@code AuxilliaryArchiveAppender}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 public interface LoadableExtension {
+    /**
+     * Implement to register any extensions.
+     */
     public void register(ExtensionBuilder builder);
 
     public interface ExtensionBuilder {
+        /**
+         * Register a service implementation.
+         * <p>
+         * The service can be looked up from the {@link ServiceLoader}. When instantiated, it will be injected
+         * according to any {@link org.jboss.arquillian.core.api.annotation.Inject} annotated
+         * {@link org.jboss.arquillian.core.api.Instance} fields.
+         * <p>
+         * Note that services are not automatically available for dependency injection, they must be provided
+         * explicitly to an {@link org.jboss.arquillian.core.api.InstanceProducer}.
+         */
         <T> ExtensionBuilder service(Class<T> service, Class<? extends T> impl);
 
+        /**
+         * Override a service.
+         */
         <T> ExtensionBuilder override(Class<T> service, Class<? extends T> oldServiceImpl,
             Class<? extends T> newServiceImpl);
 
+        /**
+         * Register an observer for events. This observer will be injected according to any
+         * {@link org.jboss.arquillian.core.api.annotation.Inject} annotated
+         * {@link org.jboss.arquillian.core.api.Instance} fields.
+         */
         ExtensionBuilder observer(Class<?> handler);
 
+        /**
+         * Register a context.
+         */
         ExtensionBuilder context(Class<? extends Context> context);
     }
 
