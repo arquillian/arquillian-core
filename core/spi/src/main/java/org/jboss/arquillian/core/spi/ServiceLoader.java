@@ -19,7 +19,24 @@ package org.jboss.arquillian.core.spi;
 import java.util.Collection;
 
 /**
- * ServiceLoader
+ * ServiceLoader.
+ * <p>
+ * This is the mechanism that can be used to load services registered by {@link LoadableExtension}'s. For example,
+ * to make a service available for dependency injection:
+ * <p>
+ * <pre>
+ * &#064;Inject
+ * private Instance&lt;ServiceLoader&gt; serviceLoader;
+ *
+ * &#064;Inject
+ * &#064;ApplicationScoped
+ * private InstanceProducer&lt;MyService&gt; myService;
+ *
+ * public void provideMyService(&#064;Observes ManagerStarted event) {
+ *     MyService service = serviceLoader.get().onlyOne(MyService.class, MyDefaultService.class);
+ *     myService.set(service);
+ * }
+ * </pre>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
