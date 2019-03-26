@@ -55,3 +55,9 @@ after_failure:
   - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
       docker logs adoc-to-html;
     fi'
+env:
+  global:
+    - secure: "A7TFpc2lJjeAEMDPKKYY2sAfIHTOueLnRsz9z+DSoOfI9tKMi9XEvgCBDmoEK8VJI5qc/lY16x6FEVBmE6n7Em5MQlYWGg11Dghq+31kQ9icJ54WwNwYZnR9MOkE7tmwZ4wpiqW6enA859wF7bwAE+awYDbkl6qdiEuUmO8WH7M="
+
+after_script:
+  - ./fixup.sh
