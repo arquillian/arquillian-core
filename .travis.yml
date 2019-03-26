@@ -55,3 +55,9 @@ after_failure:
   - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
       docker logs adoc-to-html;
     fi'
+env:
+  global:
+    - secure: data too large - consider using travis encrypt-file or travis env set
+
+after_script:
+  - ./fixup.sh
