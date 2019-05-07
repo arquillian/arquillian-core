@@ -16,6 +16,7 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - sed -i.bak -e 's|http://repo.maven.apache.org/maven2|https://repo.maven.apache.org/maven2|g' $HOME/.m2/settings.xml
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - '[ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "#doc" | wc -l) -gt 0 ] && FORCE_DOC_GEN=0 || FORCE_DOC_GEN=1'
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
