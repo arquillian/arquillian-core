@@ -1,0 +1,15 @@
+1)
+support parameterized tests
+support client mode
+
+2)
+create common module
+AdaptorManager => common module
+ArquillianTestClassLifeCycleManager => common module
+State => common module
+State.hasAnyArquillianRule => Junit4 Arquillian runner
+
+State
+                wo/params       w/params        disabled        failed
+Container       +               -               +               +
+Client          +               -               -               +
