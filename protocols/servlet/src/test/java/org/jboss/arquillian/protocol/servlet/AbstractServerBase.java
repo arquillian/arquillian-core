@@ -136,6 +136,10 @@ public class AbstractServerBase {
         public void invoke(Object... parameters) throws Throwable {
         }
 
+        public String getMethodName() {
+            return getMethod().getName();
+        }
+
         public Method getMethod() {
             try {
                 return this.getClass().getMethod("getMethod");

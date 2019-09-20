@@ -25,6 +25,12 @@ import java.lang.reflect.Method;
  * @version $Revision: $
  */
 public interface TestMethodExecutor {
+
+    /**
+     * The method name to invoke
+     */
+    String getMethodName();
+
     /**
      * The method to invoke.
      */

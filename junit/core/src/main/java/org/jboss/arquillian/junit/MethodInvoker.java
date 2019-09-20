@@ -18,6 +18,11 @@ abstract class MethodInvoker {
                 invokeMethod(parameters);
             }
 
+            @Override
+            public String getMethodName() {
+                return getMethod().getName();
+            }
+
             public Method getMethod() {
                 return method.getMethod();
             }

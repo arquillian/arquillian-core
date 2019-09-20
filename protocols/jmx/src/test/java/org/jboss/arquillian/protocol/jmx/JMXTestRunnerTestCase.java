@@ -152,6 +152,11 @@ public class JMXTestRunnerTestCase {
                 }
 
                 @Override
+                public String getMethodName() {
+                    return getMethod().getName();
+                }
+
+                @Override
                 public Method getMethod() {
                     return testMethod();
                 }
