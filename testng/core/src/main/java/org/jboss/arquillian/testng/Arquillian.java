@@ -49,8 +49,8 @@ import org.testng.annotations.Listeners;
 @Listeners(Arquillian.UpdateResultListener.class)
 public abstract class Arquillian implements IHookable {
     public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
-    private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
-    private static ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
+    private static InheritableThreadLocal<TestRunnerAdaptor> deployableTest = new InheritableThreadLocal<TestRunnerAdaptor>();
+    private static InheritableThreadLocal<Stack<Cycle>> cycleStack = new InheritableThreadLocal<Stack<Cycle>>() {
         protected java.util.Stack<Cycle> initialValue() {
             return new Stack<Cycle>();
         }
