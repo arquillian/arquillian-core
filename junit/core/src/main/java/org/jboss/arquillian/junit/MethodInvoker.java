@@ -20,7 +20,7 @@ abstract class MethodInvoker {
 
             @Override
             public String getMethodName() {
-                return getMethod().getName();
+                return method.getName();
             }
 
             public Method getMethod() {

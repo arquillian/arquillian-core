@@ -173,7 +173,7 @@ public abstract class Arquillian implements IHookable {
                 }
 
                 public String getMethodName() {
-                    return getMethod().getName();
+                    return testResult.getMethod().getMethodName();
                 }
 
                 public Method getMethod() {
