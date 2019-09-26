@@ -51,7 +51,7 @@ public class ProtocolTestCase extends AbstractServerBase {
     }
 
     @Test
-    public void shouldUseLogicalMethodNameAndHandleUrlEscaping() throws Exception {
+    public void shouldUseLogicalMethodNameAndSupportUrlReservedCharactersInIt() throws Exception {
         final String testMethodNameWithReservedUrlCharacters = "non standard!test&name";
 
         MockTestRunner.add(TestResult.passed());
