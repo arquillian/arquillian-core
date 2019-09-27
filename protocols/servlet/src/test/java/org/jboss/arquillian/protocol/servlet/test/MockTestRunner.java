@@ -37,6 +37,8 @@ public class MockTestRunner implements TestRunner {
     public static List<Command<?>> commands = new ArrayList<Command<?>>();
     public static List<Object> commandResults = new ArrayList<Object>();
 
+    public static List<TestRequest> testRequests = new ArrayList<TestRequest>();
+
     public static void add(Command<?> command) {
         commands.add(command);
     }
@@ -49,13 +51,33 @@ public class MockTestRunner implements TestRunner {
         wantedResults = null;
         commands.clear();
         commandResults.clear();
+        testRequests.clear();
     }
 
     public TestResult execute(Class<?> testClass, String methodName) {
+        testRequests.add(new TestRequest(testClass, methodName));
         for (Command<?> command : commands) {
             commandResults.add(new ServletCommandService().execute(command));
         }
 
         return wantedResults;
+    }
+
+    public static class TestRequest {
+        private final Class<?> testClass;
+        private final String methodName;
+
+        public TestRequest(Class<?> testClass, String methodName) {
+            this.testClass = testClass;
+            this.methodName = methodName;
+        }
+
+        public Class<?> getTestClass() {
+            return testClass;
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
     }
 }

@@ -175,6 +175,11 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
             }
 
             @Override
+            public String getMethodName() {
+                return getMethod().getName();
+            }
+
+            @Override
             public Method getMethod() {
                 return testMethod();
             }
@@ -199,6 +204,11 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
             }
 
             @Override
+            public String getMethodName() {
+                return getMethod().getName();
+            }
+
+            @Override
             public Method getMethod() {
                 return testMethod();
             }
@@ -218,6 +228,11 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
         fire(new org.jboss.arquillian.test.spi.event.suite.Test(new TestMethodExecutor() {
             @Override
             public void invoke(Object... parameters) throws Throwable {
+            }
+
+            @Override
+            public String getMethodName() {
+                return getMethod().getName();
             }
 
             @Override

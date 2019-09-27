@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -75,16 +76,18 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
         URI targetBaseURI = uriHandler.locateTestServlet(testMethodExecutor.getMethod());
 
         Class<?> testClass = testMethodExecutor.getInstance().getClass();
-        final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
-            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-            + testMethodExecutor.getMethod().getName();
-
-        final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
-            + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
-            + testMethodExecutor.getMethod().getName() + "&cmd=event";
 
         Timer eventTimer = null;
         try {
+            String urlEncodedMethodName = URLEncoder.encode(testMethodExecutor.getMethodName(), "UTF-8");
+            final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+                + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+                + urlEncodedMethodName;
+
+            final String eventUrl = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
+                + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
+                + urlEncodedMethodName + "&cmd=event";
+
             eventTimer = createCommandServicePullTimer(eventUrl);
             return executeWithRetry(url, TestResult.class);
         } catch (Exception e) {

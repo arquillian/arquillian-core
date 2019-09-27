@@ -64,7 +64,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
         }
 
         String testClass = testMethodExecutor.getInstance().getClass().getName();
-        String testMethod = testMethodExecutor.getMethod().getName();
+        String testMethod = testMethodExecutor.getMethodName();
         String testCanonicalName = testClass + "." + testMethod;
 
         NotificationListener commandListener = null;
