@@ -111,10 +111,14 @@
         <plugins>
           <plugin>
             <artifactId>maven-release-plugin</artifactId>
+            <inherited>true</inherited>
             <configuration>
               <autoVersionSubmodules>true</autoVersionSubmodules>
               <pushChanges>false</pushChanges>
               <localCheckout>true</localCheckout>
+              <preparationGoals>clean install</preparationGoals>
+              <releaseProfiles>gpg-sign,jboss-release</releaseProfiles>
+              <tagNameFormat>@{project.version}</tagNameFormat>
             </configuration>
           </plugin>
           <plugin>
@@ -134,9 +138,9 @@
               <version>true</version>
               <author>true</author>
               <keywords>true</keywords>
-              <additionalparam>-sourceclasspath
-                ${project.build.outputDirectory}
-              </additionalparam>
+              <additionalOptions>
+                <additionalOption>-sourceclasspath  ${project.build.outputDirectory}</additionalOption>
+              </additionalOptions>
               <stylesheetfile>${project.parent.parent.basedir}/javadoc/stylesheet.css</stylesheetfile>
               <javadocDirectory>${project.parent.parent.basedir}/javadoc</javadocDirectory>
             </configuration>
