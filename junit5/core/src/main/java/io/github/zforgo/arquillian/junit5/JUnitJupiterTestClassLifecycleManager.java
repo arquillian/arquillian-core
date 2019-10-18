@@ -1,10 +1,11 @@
 package io.github.zforgo.arquillian.junit5;
 
-import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
-import org.junit.jupiter.api.extension.ExtensionContext;
-
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
+
+import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLifecycleManager {
 	private static final String NAMESPACE_KEY = "arquillianNamespace";
@@ -42,6 +43,12 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
 
 	void storeResult(String uniqueId, Throwable throwable) {
 		resultStore.put(uniqueId, throwable);
+	    // TODO: find source and unwrap it where it is thrown, not here.
+	    if (throwable instanceof InvocationTargetException) {
+	        resultStore.put(uniqueId, throwable.getCause());
+	    } else {
+	        resultStore.put(uniqueId, throwable);
+	    }
 	}
 
 	Optional<Throwable> getResult(String uniqueId) {

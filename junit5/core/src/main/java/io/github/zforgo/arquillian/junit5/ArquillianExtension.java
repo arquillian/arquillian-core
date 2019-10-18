@@ -91,6 +91,8 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
 			invocation.proceed();
 		} else {
 			interceptInvocation(invocationContext, extensionContext);
+            getManager(extensionContext).getResult(extensionContext.getUniqueId())
+                .ifPresent(ExceptionUtils::throwAsUncheckedException);
 		}
 	}
 
