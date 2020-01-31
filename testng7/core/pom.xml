@@ -14,15 +14,9 @@
 
   <!-- Artifact Configuration -->
   <groupId>org.jboss.arquillian.testng</groupId>
-  <artifactId>arquillian-testng-core</artifactId>
-  <name>Arquillian TestRunner TestNG Core</name>
-  <description>TestNG Implementations for the Arquillian Project</description>
-
-
-  <!-- Properties -->
-  <properties>
-
-  </properties>
+  <artifactId>arquillian-testng7-core</artifactId>
+  <name>Arquillian TestRunner TestNG 7 Core</name>
+  <description>TestNG 7 Implementations for the Arquillian Project</description>
 
   <!-- Dependencies -->
   <dependencies>
@@ -35,16 +29,10 @@
     </dependency>
 
     <!-- External Projects -->
-    <!-- Workaround https://github.com/cbeust/testng/issues/1506#issuecomment-347178740 -->
-    <dependency>
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>${version.testng}</version>
+      <version>${version.testng7}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -55,15 +43,11 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.jboss.arquillian.test</groupId>
       <artifactId>arquillian-test-impl-base</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
 

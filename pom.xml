@@ -59,10 +59,11 @@
 
     <module>junit</module>
     <module>testng</module>
+    <module>testng7</module>
 
     <module>testenrichers</module>
     <module>protocols</module>
-  
+
     <module>bom</module>
   </modules>
 
