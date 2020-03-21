@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- vi:ts=2:sw=2:expandtab: -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- Parent -->
@@ -14,65 +15,39 @@
 
   <!-- Artifact Configuration -->
   <groupId>org.jboss.arquillian.testng</groupId>
-  <artifactId>arquillian-testng-core</artifactId>
-  <name>Arquillian TestRunner TestNG Core</name>
-  <description>TestNG Implementations for the Arquillian Project</description>
-
-
-  <!-- Properties -->
-  <properties>
-
-  </properties>
+  <artifactId>arquillian-testng7-standalone</artifactId>
+  <name>Arquillian TestRunner TestNG 7 Standalone</name>
+  <description>TestNG 7 Standalone Implementation for the Arquillian Project</description>
 
   <!-- Dependencies -->
   <dependencies>
 
     <!-- org.jboss.arquillian -->
     <dependency>
+      <groupId>org.jboss.arquillian.testng</groupId>
+      <artifactId>arquillian-testng7-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.arquillian.test</groupId>
       <artifactId>arquillian-test-spi</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <!-- External Projects -->
-    <!-- Workaround https://github.com/cbeust/testng/issues/1506#issuecomment-347178740 -->
-    <dependency>
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${version.testng}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Test -->
     <dependency>
       <groupId>org.jboss.arquillian.core</groupId>
       <artifactId>arquillian-core-impl-base</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.test</groupId>
       <artifactId>arquillian-test-impl-base</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <groupId>org.jboss.arquillian.config</groupId>
+      <artifactId>arquillian-config-impl-base</artifactId>
+      <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
