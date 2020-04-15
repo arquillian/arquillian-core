@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-parent</artifactId>
-    <version>1.6.1.Final-SNAPSHOT</version>
+    <version>1.7.0.Final-SNAPSHOT</version>
   </parent>
 
   <!-- Model Information -->
@@ -23,6 +23,9 @@
     <module>cdi</module>
     <module>ejb</module>
     <module>resource</module>
+    <module>cdi-jakarta</module>
+    <module>ejb-jakarta</module>
+    <module>resource-jakarta</module>
 
     <!-- Producers -->
     <module>initialcontext</module>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-build</artifactId>
+    <version>1.7.0.Final-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
+  </parent>
+
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Artifact Configuration -->
+  <groupId>org.jboss.arquillian.testenricher</groupId>
+  <artifactId>arquillian-testenricher-ejb-jakarta</artifactId>
+  <name>Arquillian TestEnricher Jakarta EJB</name>
+  <description>Jakarta EJB TestEnricher for the Arquillian Project</description>
+
+
+  <!-- Properties -->
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+
+    <!-- Versioning -->
+    <version.ejb.api.version>4.0.0-RC1</version.ejb.api.version>
+
+  </properties>
+
+  <!-- Dependencies -->
+  <dependencies>
+
+    <!-- org.jboss.arquillian -->
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-impl-base</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!--
+      Compile  run tests under EJB 4.0
+
+      Re-execute Maven with a new profile in the test phase.
+  -->
+  <profiles>
+    <profile>
+      <id>ejb40</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>jakarta.ejb</groupId>
+          <artifactId>jakarta.ejb-api</artifactId>
+          <version>${version.ejb.api.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <reportsDirectory>${project.build.directory}/surefire-reports/EJB40/</reportsDirectory>
+            </configuration>
+          </plugin>
+          <!-- This reexecution fails under release, since the new version does not exist in the repo
+                              <plugin>
+                                  <groupId>org.codehaus.mojo</groupId>
+                                  <artifactId>exec-maven-plugin</artifactId>
+                                  <version>1.2.1</version>
+                                  <executions>
+                                      <execution>
+                                          <phase>test</phase>
+                                          <goals>
+                                              <goal>exec</goal>
+                                          </goals>
+                                      </execution>
+                                  </executions>
+                                  <configuration>
+                                      <executable>mvn</executable>
+                                      <arguments>
+                                          <argument>test</argument>
+                                          <argument>-P</argument>
+                                          <argument>ejb30</argument>
+                                      </arguments>
+                                  </configuration>
+                              </plugin>
+          -->
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
+
