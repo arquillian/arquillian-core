@@ -158,6 +158,10 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint {
             return new HashSet<Annotation>(Arrays.asList(method.getParameterAnnotations()[position]));
         }
 
+        public <T extends Annotation> Set<T> getAnnotations(Class<T> annotationType) {
+            return AnnotatedParameter.super.getAnnotations(annotationType);
+        }
+
         /* (non-Javadoc)
          * @see javax.enterprise.inject.spi.Annotated#getBaseType()
          */
