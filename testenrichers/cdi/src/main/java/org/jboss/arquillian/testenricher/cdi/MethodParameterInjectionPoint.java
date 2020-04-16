@@ -74,10 +74,10 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint {
                 qualifiers.add(annotation);
             }
         }
-      /*
-       * TODO: ARQ-240 We should not add @Default by default, this should be handled by CDI. 
-       * Due to bug in Weld 1.0.0.SP4(fixed in trunk). Remove this when 1.1.0 is out. 
-       */
+        /*
+         * TODO: ARQ-240 We should not add @Default by default, this should be handled by CDI.
+         * Due to bug in Weld 1.0.0.SP4(fixed in trunk). Remove this when 1.1.0 is out.
+         */
         if (qualifiers.size() == 0) {
             qualifiers.add(new DefaultLiteral());
         }
@@ -156,6 +156,10 @@ public class MethodParameterInjectionPoint<T> implements InjectionPoint {
          */
         public Set<Annotation> getAnnotations() {
             return new HashSet<Annotation>(Arrays.asList(method.getParameterAnnotations()[position]));
+        }
+
+        public <T extends Annotation> Set<T> getAnnotations(Class<T> annotationType) {
+            return AnnotatedParameter.super.getAnnotations(annotationType);
         }
 
         /* (non-Javadoc)
