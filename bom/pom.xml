@@ -204,6 +204,21 @@
         <artifactId>arquillian-testenricher-initialcontext</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testenricher</groupId>
+        <artifactId>arquillian-testenricher-cdi-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testenricher</groupId>
+        <artifactId>arquillian-testenricher-ejb-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testenricher</groupId>
+        <artifactId>arquillian-testenricher-resource-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- ShrinkWrap -->
       <dependency>
