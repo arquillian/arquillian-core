@@ -1,0 +1,24 @@
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/circleci-arquillian-core
+    docker:
+      - image: circleci/openjdk:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: circleci-arquillian-core-{{ checksum "pom.xml" }}
+      - run: ./mvnw verify -q -U -DskipTests # pre-fetch dependencies (dependency:resolve fails)
+      - run: ./mvnw verify
+      - store_test_results:
+          path: target/surefire-reports
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: circleci-arquillian-core-{{ checksum "pom.xml" }}
+
+workflows:
+  version: 2.1
+  circleci_build:
+    jobs:
+      - build
