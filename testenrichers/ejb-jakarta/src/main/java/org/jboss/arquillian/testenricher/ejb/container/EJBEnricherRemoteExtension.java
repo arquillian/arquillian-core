@@ -31,7 +31,7 @@ public class EJBEnricherRemoteExtension implements RemoteLoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         // only load if EJB is on ClassPath
-        if (Validate.classExists("javax.ejb.EJB")) {
+        if (Validate.classExists("jakarta.ejb.EJB")) {
             builder.service(TestEnricher.class, EJBInjectionEnricher.class);
         }
     }
