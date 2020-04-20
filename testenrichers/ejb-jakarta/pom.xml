@@ -83,29 +83,6 @@
               <reportsDirectory>${project.build.directory}/surefire-reports/EJB40/</reportsDirectory>
             </configuration>
           </plugin>
-          <!-- This reexecution fails under release, since the new version does not exist in the repo
-                              <plugin>
-                                  <groupId>org.codehaus.mojo</groupId>
-                                  <artifactId>exec-maven-plugin</artifactId>
-                                  <version>1.2.1</version>
-                                  <executions>
-                                      <execution>
-                                          <phase>test</phase>
-                                          <goals>
-                                              <goal>exec</goal>
-                                          </goals>
-                                      </execution>
-                                  </executions>
-                                  <configuration>
-                                      <executable>mvn</executable>
-                                      <arguments>
-                                          <argument>test</argument>
-                                          <argument>-P</argument>
-                                          <argument>ejb30</argument>
-                                      </arguments>
-                                  </configuration>
-                              </plugin>
-          -->
         </plugins>
       </build>
     </profile>
