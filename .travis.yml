@@ -11,12 +11,8 @@ addons:
 language: java
 jdk:
   - openjdk8
-cache:
-  directories:
-    - $HOME/.m2
 
 before_install:
-  - sed -i.bak -e 's|http://repo.maven.apache.org/maven2|https://repo.maven.apache.org/maven2|g' $HOME/.m2/settings.xml
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - '[ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "#doc" | wc -l) -gt 0 ] && FORCE_DOC_GEN=0 || FORCE_DOC_GEN=1'
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
@@ -31,10 +27,7 @@ before_install:
       docker pull rochdev/alpine-asciidoctor:mini;
     fi'
 
-before_script: ./mvnw install -q -U -DskipTests=true
-
 script:
-  - ./mvnw clean install
   - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
       docker run -v $TRAVIS_BUILD_DIR:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor /docs/README.adoc -a generated-doc=true -a asciidoctor-source=/docs/docs -o /docs/gh-pages/index.html;
     fi'
