@@ -24,7 +24,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- Versioning -->
-
+    <version.jakarta.annotation>2.0.0-RC1</version.jakarta.annotation>
   </properties>
 
   <!-- Dependencies -->
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
-      <version>2.0.0-RC1</version>
+      <version>${version.jakarta.annotation}</version>
       <scope>provided</scope>
     </dependency>
 
