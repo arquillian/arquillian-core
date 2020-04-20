@@ -25,7 +25,8 @@
     <maven.compiler.source>1.8</maven.compiler.source>
 
     <!-- Versioning -->
-    <version.weld-core>4.0.0-SNAPSHOT</version.weld-core>
+    <!-- Weld version is to be replaced by 4.x as soon as release is out, also re-enable CDIInjectionEnricherTestCase -->
+    <version.weld-core>3.1.4.Final</version.weld-core>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.28</version.slf4j>
 
@@ -96,17 +97,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-core-impl</artifactId>
+      <groupId>org.jboss.weld.se</groupId>
+      <artifactId>weld-se-shaded</artifactId>
       <version>${version.weld-core}</version>
       <scope>test</scope>
-      <!-- ARQ-990 Removed, not needed runtime and not part of Fedora Maven Packages -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.weld</groupId>
-          <artifactId>weld-build-config</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
