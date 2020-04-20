@@ -35,7 +35,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 public class CDIEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender {
     @Override
     protected Archive<?> buildArchive() {
-        return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-cdi.jar")
+        return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-cdi-jakarta.jar")
             .addPackages(false,
                 CDIInjectionEnricher.class.getPackage(),
                 CDIEnricherRemoteExtension.class.getPackage())

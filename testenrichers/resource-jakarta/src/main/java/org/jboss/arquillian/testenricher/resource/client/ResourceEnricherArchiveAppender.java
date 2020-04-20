@@ -34,7 +34,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 public class ResourceEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender {
     @Override
     protected Archive<?> buildArchive() {
-        return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-resource.jar")
+        return ShrinkWrap.create(JavaArchive.class, "arquillian-testenricher-resource-jakarta.jar")
             .addPackage(ResourceInjectionEnricher.class.getPackage())
             .addClass(ResourceEnricherRemoteExtension.class)
             .addAsServiceProvider(RemoteLoadableExtension.class, ResourceEnricherRemoteExtension.class);
