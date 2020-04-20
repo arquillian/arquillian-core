@@ -23,7 +23,7 @@
   <properties>
 
     <!-- Versioning -->
-    <version.weld-core>3.1.4.Final</version.weld-core>
+    <version.weld-core>1.1.34.Final</version.weld-core>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.28</version.slf4j>
 
@@ -46,9 +46,9 @@
     </dependency>
 
     <dependency>
-      <groupId>jakarta.enterprise</groupId>
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <version>2.0.2</version>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
 
@@ -94,10 +94,17 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.weld.se</groupId>
-      <artifactId>weld-se-shaded</artifactId>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-core</artifactId>
       <version>${version.weld-core}</version>
       <scope>test</scope>
+      <!-- ARQ-990 Removed, not needed runtime and not part of Fedora Maven Packages -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-build-config</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
