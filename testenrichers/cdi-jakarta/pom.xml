@@ -27,6 +27,7 @@
     <!-- Versioning -->
     <!-- Weld version is to be replaced by 4.x as soon as release is out, also re-enable CDIInjectionEnricherTestCase -->
     <version.weld-core>3.1.4.Final</version.weld-core>
+    <version.jakarta.cdi-api>3.0.0-M2</version.jakarta.cdi-api>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.28</version.slf4j>
 
@@ -51,7 +52,7 @@
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <version>3.0.0-M2</version>
+      <version>${version.jakarta.cdi-api}</version>
       <scope>provided</scope>
     </dependency>
 
