@@ -212,7 +212,7 @@ public class ResourceInjectionEnricher implements TestEnricher {
             // added in Java EE 6 / Java SE 7
             Method lookup = Resource.class.getDeclaredMethod("lookup");
             return (String) lookup.invoke(resource);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             return "";
         }
     }
