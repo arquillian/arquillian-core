@@ -7,7 +7,7 @@
   <!-- Artifact Information -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-bom</artifactId>
-  <version>1.6.1.Final-SNAPSHOT</version>
+  <version>1.7.0.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian BOM</name>
   <url>http://arquillian.org</url>
@@ -202,6 +202,21 @@
       <dependency>
         <groupId>org.jboss.arquillian.testenricher</groupId>
         <artifactId>arquillian-testenricher-initialcontext</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testenricher</groupId>
+        <artifactId>arquillian-testenricher-cdi-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testenricher</groupId>
+        <artifactId>arquillian-testenricher-ejb-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testenricher</groupId>
+        <artifactId>arquillian-testenricher-resource-jakarta</artifactId>
         <version>${project.version}</version>
       </dependency>
 

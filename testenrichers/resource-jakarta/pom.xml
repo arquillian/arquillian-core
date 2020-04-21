@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-build</artifactId>
+    <version>1.7.0.Final-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
+  </parent>
+
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Artifact Configuration -->
+  <groupId>org.jboss.arquillian.testenricher</groupId>
+  <artifactId>arquillian-testenricher-resource-jakarta</artifactId>
+  <name>Arquillian TestEnricher Jakarta Resource</name>
+  <description>Jakarta Resource TestEnricher for the Arquillian Project</description>
+
+
+  <!-- Properties -->
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <!-- Versioning -->
+    <version.jakarta.annotation>2.0.0-RC1</version.jakarta.annotation>
+  </properties>
+
+  <!-- Dependencies -->
+  <dependencies>
+
+    <!-- org.jboss.arquillian -->
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-impl-base</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- External Projects -->
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>${version.jakarta.annotation}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+</project>
+
