@@ -35,7 +35,6 @@ import org.jboss.arquillian.testenricher.cdi.beans.Service;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
@@ -69,7 +68,6 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @Ignore // Re-enable after Weld 4.x can be used as dependency
     public void shouldInjectClassMembers() throws Exception {
         TestClass testClass = new TestClass();
         enricher.injectClass(testClass);
@@ -77,7 +75,6 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @Ignore // Re-enable after Weld 4.x can be used as dependency
     public void shouldInjectMethodArguments() throws Exception {
         Method testMethod = TestClass.class.getMethod("testMethod", Service.class, Service.class);
 
@@ -88,7 +85,6 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @Ignore // Re-enable after Weld 4.x can be used as dependency
     public void shouldInjectMethodArgumentsEvent() throws Exception {
         Method testMethod = TestClass.class.getMethod("testEvent", Event.class, Event.class);
 
@@ -99,7 +95,6 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @Ignore // Re-enable after Weld 4.x can be used as dependency
     public void shouldReleaseCreationalContext() throws Exception {
         TestClass testClass = new TestClass();
         enricher.injectClass(testClass);
@@ -109,7 +104,6 @@ public class CDIInjectionEnricherTestCase extends AbstractTestTestBase {
     }
 
     @Test
-    @Ignore // Re-enable after Weld 4.x can be used as dependency
     public void shouldInjectMethodArgumentsInstance() throws Exception {
         Method testMethod = TestClass.class.getMethod("testInstance", Instance.class, Instance.class);
 
