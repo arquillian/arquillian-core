@@ -27,11 +27,6 @@
     <!-- The protocol adaptor requires Java 8 -->
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <!-- The tests need to be build and run the Java 11 due to the fact that jetty 11.x which
-    supports the Java EE 9 apis requires Java 11
-    -->
-    <maven.compiler.testSource>11</maven.compiler.testSource>
-    <maven.compiler.testTarget>11</maven.compiler.testTarget>
   </properties>
 
   <!-- Dependencies -->
@@ -96,4 +91,44 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <!-- The test -->
+  <profiles>
+    <!-- Need to skip test compilation for Java8 and earlier since jetty-server is compiled under Java11 -->
+    <profile>
+      <id>jdk8</id>
+      <activation>
+        <jdk>[,9)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>test-compile</phase>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jdk11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <!-- The tests need to be build and run the Java 11 due to the fact that jetty 11.x which
+        supports the Java EE 9 apis requires Java 11
+        -->
+        <maven.compiler.testSource>11</maven.compiler.testSource>
+        <maven.compiler.testTarget>11</maven.compiler.testTarget>
+      </properties>
+    </profile>
+  </profiles>
 </project>
