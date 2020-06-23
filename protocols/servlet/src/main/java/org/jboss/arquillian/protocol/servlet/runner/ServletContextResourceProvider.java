@@ -17,7 +17,8 @@
 package org.jboss.arquillian.protocol.servlet.runner;
 
 import java.lang.annotation.Annotation;
-import javax.servlet.ServletContext;
+
+import jakarta.servlet.ServletContext;
 import org.jboss.arquillian.container.test.impl.enricher.resource.OperatesOnDeploymentAwareProvider;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -35,7 +36,7 @@ public class ServletContextResourceProvider extends OperatesOnDeploymentAwarePro
 
     @Override
     public boolean canProvide(Class<?> type) {
-        return javax.servlet.ServletContext.class.isAssignableFrom(type);
+        return jakarta.servlet.ServletContext.class.isAssignableFrom(type);
     }
 
     @Override

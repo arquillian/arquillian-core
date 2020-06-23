@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.protocol.servlet.runner;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;

@@ -26,6 +26,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
@@ -88,7 +90,7 @@ public class AbstractServerBase {
     }
 
     protected URI createBaseURL() {
-        return URI.create("http://localhost:" + server.getConnectors()[0].getPort() + "/arquillian-protocol");
+        return URI.create("http://localhost:" + ((NetworkConnector)server.getConnectors()[0]).getPort() + "/arquillian-protocol");
     }
 
     protected URL createURL(String outputMode, String testClass, String methodName) {
