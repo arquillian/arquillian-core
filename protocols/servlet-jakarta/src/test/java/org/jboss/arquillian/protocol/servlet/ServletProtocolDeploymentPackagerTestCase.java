@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.protocol.servlet.v_2_5;
+package org.jboss.arquillian.protocol.servlet;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,17 +23,15 @@ import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.api.Testable;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
-import org.jboss.arquillian.protocol.servlet.ServletMethodExecutor;
+import org.jboss.arquillian.protocol.servlet.ServletProtocolDeploymentPackager;
 import org.jboss.arquillian.protocol.servlet.TestUtil;
 import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.application.ApplicationDescriptor;
-import org.jboss.arquillian.protocol.servlet.arq514hack.descriptors.api.web.WebAppDescriptor;
 import org.jboss.arquillian.protocol.servlet.runner.ServletTestRunner;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -58,20 +56,20 @@ public class ServletProtocolDeploymentPackagerTestCase {
             processors());
 
         Assert.assertTrue(
-            "Verify that a defined JavaArchive using EE5 WebArchive protocol is build as EnterpriseArchive",
-            Validate.isArchiveOfType(EnterpriseArchive.class, archive));
+            "Verify that a defined JavaArchive using EE6 JavaArchive protocol is build as WebArchive",
+            Validate.isArchiveOfType(WebArchive.class, archive));
 
         Assert.assertTrue(
-            "Verify that the auxiliaryArchives EE Modules are placed in /",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive1.jar")));
+            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/arquillian-protocol.jar")));
 
         Assert.assertTrue(
-            "Verify that the auxiliaryArchives are placed in /lib",
-            archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
+            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive2.jar")));
 
         Assert.assertTrue(
-            "Verify that the applicationArchive is placed in /",
-            archive.contains(ArchivePaths.create("/applicationArchive.jar")));
+            "Verify that the applicationArchive is placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/applicationArchive.jar")));
 
         Assert.assertTrue(
             "Verify protocol Processor SPI was called",
@@ -82,52 +80,25 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldHandleWebArchive() throws Exception {
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
-                ShrinkWrap.create(WebArchive.class, "applicationArchive.war")
-                    .addClass(getClass()),
+                ShrinkWrap.create(WebArchive.class, "applicationArchive.war"),
                 createAuxiliaryArchives()),
             processors());
 
         Assert.assertTrue(
-            "verify that the ServletTestRunner was added to the archive",
-            archive.contains("/WEB-INF/classes/org/jboss/arquillian/protocol/servlet/runner/ServletTestRunner.class"));
-
-        String webXmlContent = TestUtil.convertToString(archive.get("WEB-INF/web.xml").getAsset().openStream());
-        Assert.assertTrue(
-            "verify that the ServletTestRunner servlet was added to the web.xml",
-            webXmlContent.contains(ServletTestRunner.class.getName()));
+            "Verify that a defined WebArchive using EE6 JavaArchive protocol is build as WebArchive",
+            Validate.isArchiveOfType(WebArchive.class, archive));
 
         Assert.assertTrue(
-            "verify that the ServletTestRunner servlet was added to the web.xml with correct name",
-            webXmlContent.contains("servlet-name>" + ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME));
+            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/arquillian-protocol.jar")));
 
         Assert.assertTrue(
-            "Verify protocol Processor SPI was called",
-            DummyProcessor.wasCalled);
-    }
-
-    @Test
-    public void shouldHandleWebArchiveWithWebXML() throws Exception {
-        Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
-            new TestDeployment(
-                ShrinkWrap.create(WebArchive.class, "applicationArchive.war")
-                    .addClass(getClass())
-                    .setWebXML(createWebDescriptor()),
-                createAuxiliaryArchives()),
-            processors());
+            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive1.jar")));
 
         Assert.assertTrue(
-            "verify that the ServletTestRunner was added to the archive",
-            archive.contains("/WEB-INF/classes/org/jboss/arquillian/protocol/servlet/runner/ServletTestRunner.class"));
-
-        System.out.println(archive.toString(Formatters.VERBOSE));
-        String webXmlContent = TestUtil.convertToString(archive.get("WEB-INF/web.xml").getAsset().openStream());
-        Assert.assertTrue(
-            "verify that the ServletTestRunner servlet was added to the web.xml",
-            webXmlContent.contains(ServletTestRunner.class.getName()));
-
-        Assert.assertTrue(
-            "verify that the ServletTestRunner servlet was added to the web.xml with correct name",
-            webXmlContent.contains("servlet-name>" + ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME));
+            "Verify that the auxiliaryArchives are placed in /WEB-INF/lib",
+            archive.contains(ArchivePaths.create("/WEB-INF/lib/auxiliaryArchive2.jar")));
 
         Assert.assertTrue(
             "Verify protocol Processor SPI was called",
@@ -143,8 +114,8 @@ public class ServletProtocolDeploymentPackagerTestCase {
             processors());
 
         Assert.assertTrue(
-            "Verify that the protocol is placed in /",
-            archive.contains(ArchivePaths.create("arquillian-protocol.war")));
+            "Verify that the auxiliaryArchives are placed in /",
+            archive.contains(ArchivePaths.create("test.war")));
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
@@ -170,7 +141,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /",
-            archive.contains(ArchivePaths.create("arquillian-protocol.war")));
+            archive.contains(ArchivePaths.create("test.war")));
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
@@ -184,12 +155,12 @@ public class ServletProtocolDeploymentPackagerTestCase {
             TestUtil.convertToString(archive.get("META-INF/application.xml").getAsset().openStream());
         Assert.assertTrue(
             "verify that the arquillian-protocol.war was added to the application.xml",
-            applicationXmlContent.contains("<web-uri>arquillian-protocol.war</web-uri>"));
+            applicationXmlContent.contains("<web-uri>test.war</web-uri>"));
 
         // ARQ-670
         Assert.assertTrue(
             "verify that the arquillian-protocol.war has correct context-root in application.xml",
-            applicationXmlContent.contains("<context-root>arquillian-protocol</context-root>"));
+            applicationXmlContent.contains("<context-root>test</context-root>"));
 
         Assert.assertTrue(
             "Verify protocol Processor SPI was called",
@@ -219,7 +190,8 @@ public class ServletProtocolDeploymentPackagerTestCase {
             "Verify that the auxiliaryArchives are placed in /lib",
             archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
 
-        String webXmlContent = TestUtil.convertToString(applicationWar.get("WEB-INF/web.xml").getAsset().openStream());
+        String webXmlContent = TestUtil.convertToString(
+            applicationWar.get("WEB-INF/lib/arquillian-protocol.jar/META-INF/web-fragment.xml").getAsset().openStream());
         Assert.assertTrue(
             "verify that the ServletTestRunner servlet was added to the web.xml of the existing web archive",
             webXmlContent.contains(ServletTestRunner.class.getName()));
@@ -272,7 +244,8 @@ public class ServletProtocolDeploymentPackagerTestCase {
             "Verify that the auxiliaryArchives are placed in /lib",
             archive.contains(ArchivePaths.create("/lib/auxiliaryArchive2.jar")));
 
-        String webXmlContent = TestUtil.convertToString(testableArchive.get("WEB-INF/web.xml").getAsset().openStream());
+        String webXmlContent = TestUtil.convertToString(
+            testableArchive.get("WEB-INF/lib/arquillian-protocol.jar/META-INF/web-fragment.xml").getAsset().openStream());
         Assert.assertTrue(
             "verify that the ServletTestRunner servlet was added to the web.xml of the existing web archive",
             webXmlContent.contains(ServletTestRunner.class.getName()));
@@ -301,18 +274,10 @@ public class ServletProtocolDeploymentPackagerTestCase {
         return archives;
     }
 
-    private Asset createWebDescriptor() {
-        return new StringAsset(
-            Descriptors.create(WebAppDescriptor.class)
-                .version("2.5")
-                .servlet("org.jboss.arquillian.test.TestServlet", "/Test")
-                .exportAsString());
-    }
-
     private Asset createApplicationDescriptor() {
         return new StringAsset(
             Descriptors.create(ApplicationDescriptor.class)
-                .version("5")
+                .version("6")
                 .ejbModule("test.jar")
                 .exportAsString());
     }
