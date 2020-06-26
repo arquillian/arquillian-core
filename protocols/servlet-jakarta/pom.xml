@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Artifact Configuration -->
-  <groupId>org.jboss.arquillian.protocols</groupId>
+  <groupId>org.jboss.arquillian.protocol</groupId>
   <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
   <name>Arquillian Protocol Jakarta Servlet 4.x</name>
   <description>Protocol handler for communicating using a servlet / http following the Servlet 4.x spec.
