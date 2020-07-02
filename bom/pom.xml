@@ -171,6 +171,23 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- TestNG 7 -->
+      <dependency>
+        <groupId>org.jboss.arquillian.testng</groupId>
+        <artifactId>arquillian-testng7-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testng</groupId>
+        <artifactId>arquillian-testng7-container</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.testng</groupId>
+        <artifactId>arquillian-testng7-standalone</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- Protocols -->
       <dependency>
         <groupId>org.jboss.arquillian.protocol</groupId>
