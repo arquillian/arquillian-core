@@ -1,9 +1,12 @@
 version: 2.1
 jobs:
   build:
+    parameters:
+      jdk-version:
+        type: string
     working_directory: ~/circleci-arquillian-core
     docker:
-      - image: circleci/openjdk:8
+      - image: circleci/openjdk:<< parameters.jdk-version >>
     steps:
       - checkout
       - restore_cache:
@@ -21,4 +24,7 @@ workflows:
   version: 2.1
   circleci_build:
     jobs:
-      - build
+      - build:
+          matrix:
+            parameters:
+              jdk-version: ["8", "11"]
