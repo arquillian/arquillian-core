@@ -522,12 +522,13 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_introduction">2.1. Introduction</a></li>
 <li><a href="#getting-started">2.2. Getting Started</a></li>
 <li><a href="#deployment-archives">2.3. Deployment Archives</a></li>
-<li><a href="#_containers">2.4. Containers</a></li>
-<li><a href="#_test_enrichers">2.5. Test Enrichers</a></li>
-<li><a href="#_rules">2.6. Rules</a></li>
-<li><a href="#_additional_features">2.7. Additional Features</a></li>
-<li><a href="#_protocols">2.8. Protocols</a></li>
-<li><a href="#_build_integration">2.9. Build Integration</a></li>
+<li><a href="#_deployment_archives_using_java_spi">2.4. Deployment Archives using Java SPI</a></li>
+<li><a href="#_containers">2.5. Containers</a></li>
+<li><a href="#_test_enrichers">2.6. Test Enrichers</a></li>
+<li><a href="#_rules">2.7. Rules</a></li>
+<li><a href="#_additional_features">2.8. Additional Features</a></li>
+<li><a href="#_protocols">2.9. Protocols</a></li>
+<li><a href="#_build_integration">2.10. Build Integration</a></li>
 </ul>
 </li>
 <li><a href="#_advanced_topics">3. Advanced Topics</a>
@@ -916,7 +917,64 @@ foregoing the use of a deployment altogether.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_containers"><a class="anchor" href="#_containers"></a>2.4. Containers</h3>
+<h3 id="_deployment_archives_using_java_spi"><a class="anchor" href="#_deployment_archives_using_java_spi"></a>2.4. Deployment Archives using Java SPI</h3>
+<div class="paragraph">
+<p>In <a href="#deployment-archives">Deployment Archives</a> you&#8217;ve read how to create an archive to deploy into container using <code>@Deployment</code> annotation.
+But you can implement your own method to generate the archive to be deployed using a Java SPI <code>org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment</code>.</p>
+</div>
+<div class="paragraph">
+<p>The service must conform next signature:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">/**
+ * Method called for generating the deployment configuration.
+ * @param testClass of current running test.
+ * @return Model object that contains all the information related to deployment configuration.
+ */</span>
+DeploymentConfiguration generateDeploymentScenario(TestClass testClass);</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+To build <code>DeploymentConfiguration</code> type you can use <code>org.jboss.arquillian.container.test.api.DeploymentConfiguration.DeploymentContentBuilder</code> class.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Remember to register the SPI by creating <code>META-INF/services/org.jboss.arquillian.container.test.spi.client.deployment.AutomaticDeployment</code> file containing the fully qualified name of your implementation.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Moreover, you can use <code>@BeforeDeployment</code> method annotation which allows you to modify the archive before it is deployed.
+The method must be public static and receive as a parameter an <code>org.jboss.shrinkwrap.api.Archive</code> which is the archive created by <code>AutomaticDeployment</code> implementation and return a modified <code>org.jboss.shrinkwrap.api.Archive</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@BeforeDeployment</span>
+<span class="directive">public</span> <span class="directive">static</span> Archive addDeploymentContent(Archive archive) {
+    <span class="comment">// Modify Archive</span>
+    <span class="keyword">return</span> archive;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_containers"><a class="anchor" href="#_containers"></a>2.5. Containers</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1009,7 +1067,7 @@ allows you to introduce any additional container to the default
 collection.</p>
 </div>
 <div class="sect3">
-<h4 id="container-selection"><a class="anchor" href="#container-selection"></a>2.4.1. Container Selection</h4>
+<h4 id="container-selection"><a class="anchor" href="#container-selection"></a>2.5.1. Container Selection</h4>
 <div class="paragraph">
 <p><em>How can a single Arquillian test be executed in different containers?
 How does Arquillian decide which container to target? And how are both
@@ -1080,7 +1138,7 @@ possible to configure the container adapter, which we&#8217;ll look at next.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="container-configuration"><a class="anchor" href="#container-configuration"></a>2.4.2. Container Configuration</h4>
+<h4 id="container-configuration"><a class="anchor" href="#container-configuration"></a>2.5.2. Container Configuration</h4>
 <div class="paragraph">
 <p>We&#8217;ve covered how a container gets selected, but how does Arquillian
 know how to locate or communicate with the container? That&#8217;s where
@@ -1146,7 +1204,7 @@ adapters</a> appendix.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="supported-containers"><a class="anchor" href="#supported-containers"></a>2.4.3. Supported Containers</h4>
+<h4 id="supported-containers"><a class="anchor" href="#supported-containers"></a>2.5.3. Supported Containers</h4>
 <div class="paragraph">
 <p>Please see the
 <a href="https://docs.jboss.org/author/display/ARQ/Container+adapters">container
@@ -1155,7 +1213,7 @@ for how to use and configure them.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="container-config-runtime-selection"><a class="anchor" href="#container-config-runtime-selection"></a>2.4.4. Container Config Runtime Selection</h4>
+<h4 id="container-config-runtime-selection"><a class="anchor" href="#container-config-runtime-selection"></a>2.5.4. Container Config Runtime Selection</h4>
 <div class="paragraph">
 <p>During execution of your Arquillian test-suite, you may have configured
 one or more containers with which you need to execute the test suite.
@@ -1231,7 +1289,7 @@ the 'arquillian.launch' system property for test execution, as follows:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_test_enrichers"><a class="anchor" href="#_test_enrichers"></a>2.5. Test Enrichers</h3>
+<h3 id="_test_enrichers"><a class="anchor" href="#_test_enrichers"></a>2.6. Test Enrichers</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1286,7 +1344,7 @@ visible result of test enrichment is injection of container resources
 and beans directly into the test class.</p>
 </div>
 <div class="sect3">
-<h4 id="dependency-injection"><a class="anchor" href="#dependency-injection"></a>2.5.1. Dependency Injection</h4>
+<h4 id="dependency-injection"><a class="anchor" href="#dependency-injection"></a>2.6.1. Dependency Injection</h4>
 <div class="paragraph">
 <p>Before Arquillian negotiates the execution of the test, it enriches the
 test class by satisfying injection points specified declaratively using
@@ -1435,7 +1493,7 @@ time-to-time.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="active-scopes"><a class="anchor" href="#active-scopes"></a>2.5.2. Active Scopes</h4>
+<h4 id="active-scopes"><a class="anchor" href="#active-scopes"></a>2.6.2. Active Scopes</h4>
 <div class="paragraph">
 <p>When running your tests the embedded Weld EE container, Arquillian
 activates scopes as follows:</p>
@@ -1460,7 +1518,7 @@ future release of Arquillian.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_rules"><a class="anchor" href="#_rules"></a>2.6. Rules</h3>
+<h3 id="_rules"><a class="anchor" href="#_rules"></a>2.7. Rules</h3>
 <div class="paragraph">
 <p>If you want to use Arquillian Testing Platform with other JUnit Runner, you can now use JUnit Rules - <code>ArquillianTestClass</code> and <code>ArquillianTest</code> - and happily let Arquillian do the heavy lifting for your tests.</p>
 </div>
@@ -1483,7 +1541,7 @@ In order to use this feature, your project needs JUnit <code>4.12</code> version
 </table>
 </div>
 <div class="sect3">
-<h4 id="_how_to_use_it"><a class="anchor" href="#_how_to_use_it"></a>2.6.1. How to use it?</h4>
+<h4 id="_how_to_use_it"><a class="anchor" href="#_how_to_use_it"></a>2.7.1. How to use it?</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">GreeterManagedBeanWithJUnitRulesTestCase</span> {
@@ -1539,7 +1597,7 @@ e.g.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_additional_features"><a class="anchor" href="#_additional_features"></a>2.7. Additional Features</h3>
+<h3 id="_additional_features"><a class="anchor" href="#_additional_features"></a>2.8. Additional Features</h3>
 <div class="paragraph">
 <p>This chapter walks through the following additional features that Arquillian
 provides to address more advanced use cases. These features may even allow you to
@@ -1585,7 +1643,7 @@ test.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="test-run-modes"><a class="anchor" href="#test-run-modes"></a>2.7.1. Test Run Modes</h4>
+<h4 id="test-run-modes"><a class="anchor" href="#test-run-modes"></a>2.8.1. Test Run Modes</h4>
 <div class="paragraph">
 <p>So far, we&#8217;ve focused on testing your application internals, but we also
 want to test how others (people, or other programs) interact with the
@@ -1696,7 +1754,7 @@ suite against a remote server if you do.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="descriptor-deployment"><a class="anchor" href="#descriptor-deployment"></a>2.7.2. Descriptor Deployment</h4>
+<h4 id="descriptor-deployment"><a class="anchor" href="#descriptor-deployment"></a>2.8.2. Descriptor Deployment</h4>
 <div class="paragraph">
 <p>We have previously seen Arquillian deploys ShrinkWrap Archives, but some
 times you need to deploy other items like a JMS Queue or a DataSource
@@ -1721,7 +1779,7 @@ you can deploy a <code>Descriptor</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="arquillian-resource-injection"><a class="anchor" href="#arquillian-resource-injection"></a>2.7.3. Arquillian Resource Injection</h4>
+<h4 id="arquillian-resource-injection"><a class="anchor" href="#arquillian-resource-injection"></a>2.8.3. Arquillian Resource Injection</h4>
 <div class="paragraph">
 <p>When dealing with multiple different environments and hidden dynamic
 container configuration you very soon come to a point where you need
@@ -1796,7 +1854,7 @@ the request URI up through the context path.
 </div>
 </div>
 <div class="sect3">
-<h4 id="multiple-deployments"><a class="anchor" href="#multiple-deployments"></a>2.7.4. Multiple Deployments</h4>
+<h4 id="multiple-deployments"><a class="anchor" href="#multiple-deployments"></a>2.8.4. Multiple Deployments</h4>
 <div class="paragraph">
 <p>Sometimes a single <code>Deployment</code> is not enough, and you need to specify
 more than one to get your test done.</p>
@@ -1830,7 +1888,7 @@ the test method by adding <code>@OperateOnDeployment("deploymentName")</code>.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="multiple-containers"><a class="anchor" href="#multiple-containers"></a>2.7.5. Multiple Containers</h4>
+<h4 id="multiple-containers"><a class="anchor" href="#multiple-containers"></a>2.8.5. Multiple Containers</h4>
 <div class="paragraph">
 <p>There are times when you need to involve multiple containers in the same
 test case, if you for instance want to test clustering. The first step
@@ -1902,7 +1960,7 @@ will connect to an isolated server started in its own JVM.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="protocol-selection"><a class="anchor" href="#protocol-selection"></a>2.7.6. Protocol Selection</h4>
+<h4 id="protocol-selection"><a class="anchor" href="#protocol-selection"></a>2.8.6. Protocol Selection</h4>
 <div class="paragraph">
 <p>A protocol is how Arquillian talks and executes the tests inside the
 container. For ease of development and configuration a container defines
@@ -1938,7 +1996,7 @@ knowing what is currently supported.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="enabling-assertions"><a class="anchor" href="#enabling-assertions"></a>2.7.7. Enabling Assertions</h4>
+<h4 id="enabling-assertions"><a class="anchor" href="#enabling-assertions"></a>2.8.7. Enabling Assertions</h4>
 <div class="paragraph">
 <p>The first time you try Arquillian, you may find that assertions that use
 the Java assert keyword are not working. Keep in mind that the test is
@@ -1988,7 +2046,7 @@ output.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_protocols"><a class="anchor" href="#_protocols"></a>2.8. Protocols</h3>
+<h3 id="_protocols"><a class="anchor" href="#_protocols"></a>2.9. Protocols</h3>
 <div class="paragraph">
 <p>In order to support running the same test locally and in remote
 containers, Arquillian uses an SPI that controls which protocol is used
@@ -2010,7 +2068,7 @@ be configured.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="local"><a class="anchor" href="#local"></a>2.8.1. Local</h4>
+<h4 id="local"><a class="anchor" href="#local"></a>2.9.1. Local</h4>
 <div class="paragraph">
 <p>The Local Protocol implementation is used by most EE5 compliant
 containers. It does nothing to the deployment. The Local Protocol is also
@@ -2074,7 +2132,7 @@ used when executing in run mode <code>as client</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="servlet-2.5"><a class="anchor" href="#servlet-2.5"></a>2.8.2. Servlet 2.5</h4>
+<h4 id="servlet-2.5"><a class="anchor" href="#servlet-2.5"></a>2.9.2. Servlet 2.5</h4>
 <div class="paragraph">
 <p>The Servlet 2.5 Protocol implementation is used by most EE5 compliant
 containers. It will attempt to add a war to the deployment.</p>
@@ -2162,7 +2220,7 @@ containers. It will attempt to add a war to the deployment.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="servlet-3.0"><a class="anchor" href="#servlet-3.0"></a>2.8.3. Servlet 3.0</h4>
+<h4 id="servlet-3.0"><a class="anchor" href="#servlet-3.0"></a>2.9.3. Servlet 3.0</h4>
 <div class="paragraph">
 <p>The Servlet 3.0 Protocol implementation is used by most EE6 compliant
 containers. It will attempt to add a web-fragment to the deployment.</p>
@@ -2250,7 +2308,7 @@ containers. It will attempt to add a web-fragment to the deployment.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_build_integration"><a class="anchor" href="#_build_integration"></a>2.9. Build Integration</h3>
+<h3 id="_build_integration"><a class="anchor" href="#_build_integration"></a>2.10. Build Integration</h3>
 <div class="paragraph">
 <p>Just because the Arquillian project uses Maven doesn&#8217;t mean you have to
 use it to run your Arquillian tests. Arquillian is designed to have
@@ -2262,7 +2320,7 @@ chapter is going to be about alternative build systems, namely <a href="#gradle"
 and <a href="#ant">Ant</a>.</p>
 </div>
 <div class="sect3">
-<h4 id="_active_build_ingredient"><a class="anchor" href="#_active_build_ingredient"></a>2.9.1. Active Build Ingredient</h4>
+<h4 id="_active_build_ingredient"><a class="anchor" href="#_active_build_ingredient"></a>2.10.1. Active Build Ingredient</h4>
 <div class="paragraph">
 <p>The secret ingredient required to activate the Arquillian test runner is
 getting the correct libraries on the classpath. (Often easier said than
@@ -2319,7 +2377,7 @@ that approach for contrast.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="maven"><a class="anchor" href="#maven"></a>2.9.2. Maven</h4>
+<h4 id="maven"><a class="anchor" href="#maven"></a>2.10.2. Maven</h4>
 <div class="paragraph">
 <p>The community has gravitated towards Maven as the preferred build tool
 for projects that use Arquillian. Details on how to setup Arquillian in
@@ -2328,7 +2386,7 @@ a Maven project is covered in detail in the
 </div>
 </div>
 <div class="sect3">
-<h4 id="gradle"><a class="anchor" href="#gradle"></a>2.9.3. Gradle</h4>
+<h4 id="gradle"><a class="anchor" href="#gradle"></a>2.10.3. Gradle</h4>
 <div class="paragraph">
 <p><a href="http://gradle.org">Gradle</a> is a build tool that allows you to create
 declarative, maintainable, concise and highly-performing builds. More
@@ -2931,13 +2989,13 @@ into a Gradle build, we&#8217;d love to hear it on the
 </div>
 </div>
 <div class="sect3">
-<h4 id="ant-ivy"><a class="anchor" href="#ant-ivy"></a>2.9.4. Ant + Ivy</h4>
+<h4 id="ant-ivy"><a class="anchor" href="#ant-ivy"></a>2.10.4. Ant + Ivy</h4>
 <div class="paragraph">
 <p>WRITE ME</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ant"><a class="anchor" href="#ant"></a>2.9.5. Ant</h4>
+<h4 id="ant"><a class="anchor" href="#ant"></a>2.10.5. Ant</h4>
 <div class="paragraph">
 <p>This guide will detail how to use Arquillian using ant. We will use
 maven to download all the required jars.</p>
@@ -3041,7 +3099,7 @@ In case you want to add an additional observer that will be applied only to one 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-02-05 15:40:07 UTC
+Last updated 2020-07-06 11:49:17 UTC
 </div>
 </div>
 </body>
