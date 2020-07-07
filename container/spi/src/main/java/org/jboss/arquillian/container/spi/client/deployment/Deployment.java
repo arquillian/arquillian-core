@@ -49,6 +49,10 @@ public class Deployment {
         return deploymentError != null;
     }
 
+    public Throwable getDeploymentError() {
+        return deploymentError;
+    }
+
     public void deployedWithError(Throwable deploymentError) {
         this.deployed = true;
         this.deploymentError = deploymentError;
