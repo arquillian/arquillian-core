@@ -26,7 +26,7 @@
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13</version.junit>
     <version.mockito_all>1.10.19</version.mockito_all>
-    <version.testng>6.14.3</version.testng>
+    <version.testng>7.1.0</version.testng>
     <version.testng7>7.1.0</version.testng7>
     <version.assertj>2.9.1</version.assertj>
   </properties>
