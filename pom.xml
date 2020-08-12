@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>36</version>
+    <version>37</version>
     <relativePath />
   </parent>
 
@@ -23,6 +23,9 @@
 
   <properties>
     <!-- jboss-parent override -->
+    <!-- 3.8.1-jboss-1 is causing issues with test deps -->
+    <version.compiler.plugin>3.8.0-jboss-2</version.compiler.plugin>
+
     <maven.compiler.target>1.6</maven.compiler.target>
     <maven.compiler.source>1.6</maven.compiler.source>
 
