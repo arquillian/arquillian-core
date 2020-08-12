@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.testng;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -29,6 +30,7 @@ import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
@@ -177,7 +179,26 @@ public abstract class Arquillian implements IHookable {
                 }
 
                 public Method getMethod() {
-                    return testResult.getMethod().getMethod();
+                	final ITestNGMethod testNGMethod = testResult.getMethod();
+                	// ITestNGMethod.getMethod() is deprecated since TestNG 6.0.1
+                	// and was removed in TestNG 7.0.0, replaced by getConstructorOrMethod().
+                	Method method = null;
+                	try {
+                		method = testNGMethod.getClass().getMethod("getMethod");
+					} catch (NoSuchMethodException e) {
+						try {
+							method = testNGMethod.getClass().getMethod("getConstructorOrMethod");
+						} catch (NoSuchMethodException e1) {
+							throw new RuntimeException(e1);
+						}
+					}
+                	try {
+						return (Method) method.invoke(testNGMethod);
+					} catch (IllegalAccessException e) {
+						throw new RuntimeException(e);
+					} catch (InvocationTargetException e) {
+						throw new RuntimeException(e);
+					}
                 }
 
                 public Object getInstance() {
