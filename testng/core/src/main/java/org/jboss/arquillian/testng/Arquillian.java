@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.testng;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
@@ -179,26 +178,32 @@ public abstract class Arquillian implements IHookable {
                 }
 
                 public Method getMethod() {
-                	final ITestNGMethod testNGMethod = testResult.getMethod();
-                	// ITestNGMethod.getMethod() is deprecated since TestNG 6.0.1
-                	// and was removed in TestNG 7.0.0, replaced by getConstructorOrMethod().
-                	Method method = null;
-                	try {
-                		method = testNGMethod.getClass().getMethod("getMethod");
-					} catch (NoSuchMethodException e) {
-						try {
-							method = testNGMethod.getClass().getMethod("getConstructorOrMethod");
-						} catch (NoSuchMethodException e1) {
-							throw new RuntimeException(e1);
-						}
-					}
-                	try {
-						return (Method) method.invoke(testNGMethod);
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
-					} catch (InvocationTargetException e) {
-						throw new RuntimeException(e);
-					}
+                    // ITestNGMethod.getMethod() is deprecated since TestNG 6.0.1
+                    // and was removed in TestNG 7.0.0, replaced by getConstructorOrMethod().getMethod().
+                    try {
+                        return getMethodOldTestNG();
+                    }
+                    catch (Exception e) {
+                        try {
+                            return getMethodNewTestNG();
+                        } catch (Exception e1) {
+                            throw new RuntimeException(e1);
+                        }
+                    }
+                }
+                
+                public Method getMethodOldTestNG() throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
+                    final ITestNGMethod testNGMethod = testResult.getMethod();
+                    final Method getMethod = testNGMethod.getClass().getMethod("getMethod");
+                    return (Method) getMethod.invoke(testNGMethod);
+                }
+                
+                public Method getMethodNewTestNG() throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
+                    final ITestNGMethod testNGMethod = testResult.getMethod();
+                    final Method getConstructorOrMethod = testNGMethod.getClass().getMethod("getConstructorOrMethod");
+                    final Object contructorOrMethodObject = getConstructorOrMethod.invoke(testNGMethod);
+                    final Method getMethod = contructorOrMethodObject.getClass().getMethod("getMethod");
+                    return (Method) getMethod.invoke(contructorOrMethodObject);
                 }
 
                 public Object getInstance() {
