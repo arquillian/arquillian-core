@@ -26,7 +26,7 @@
 
     <!-- Versioning -->
     <version.weld-core>4.0.0.Alpha3</version.weld-core>
-    <version.jakarta.cdi-api>3.0.0-M2</version.jakarta.cdi-api>
+    <version.jakarta.cdi-api>3.0.0</version.jakarta.cdi-api>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.28</version.slf4j>
 
