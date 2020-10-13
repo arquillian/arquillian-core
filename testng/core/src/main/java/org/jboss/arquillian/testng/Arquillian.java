@@ -29,6 +29,7 @@ import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
@@ -177,7 +178,32 @@ public abstract class Arquillian implements IHookable {
                 }
 
                 public Method getMethod() {
-                    return testResult.getMethod().getMethod();
+                    // ITestNGMethod.getMethod() is deprecated since TestNG 6.0.1
+                    // and was removed in TestNG 7.0.0, replaced by getConstructorOrMethod().getMethod().
+                    try {
+                        return getMethodOldTestNG();
+                    }
+                    catch (Exception e) {
+                        try {
+                            return getMethodNewTestNG();
+                        } catch (Exception e1) {
+                            throw new RuntimeException(e1);
+                        }
+                    }
+                }
+                
+                public Method getMethodOldTestNG() throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
+                    final ITestNGMethod testNGMethod = testResult.getMethod();
+                    final Method getMethod = testNGMethod.getClass().getMethod("getMethod");
+                    return (Method) getMethod.invoke(testNGMethod);
+                }
+                
+                public Method getMethodNewTestNG() throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
+                    final ITestNGMethod testNGMethod = testResult.getMethod();
+                    final Method getConstructorOrMethod = testNGMethod.getClass().getMethod("getConstructorOrMethod");
+                    final Object contructorOrMethodObject = getConstructorOrMethod.invoke(testNGMethod);
+                    final Method getMethod = contructorOrMethodObject.getClass().getMethod("getMethod");
+                    return (Method) getMethod.invoke(contructorOrMethodObject);
                 }
 
                 public Object getInstance() {
