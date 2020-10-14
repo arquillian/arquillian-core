@@ -23,7 +23,7 @@
   <properties>
     <!-- Versioning -->
     <version.jetty_jetty>11.0.0-alpha0</version.jetty_jetty>
-    <version.servlet-api>5.0.0-M2</version.servlet-api>
+    <version.servlet-api>5.0.0</version.servlet-api>
     <!-- The protocol adaptor requires Java 8 -->
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
