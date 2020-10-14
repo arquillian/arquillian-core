@@ -15,7 +15,7 @@
   <!-- Artifact Information -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-parent</artifactId>
-  <version>1.7.0.Final-SNAPSHOT</version>
+  <version>1.7.0.Alpha4</version>
   <packaging>pom</packaging>
   <name>Arquillian Aggregator</name>
   <url>http://arquillian.org</url>
