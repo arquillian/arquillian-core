@@ -22,7 +22,7 @@
   <!-- Properties -->
   <properties>
     <!-- Versioning -->
-    <version.jetty_jetty>8.1.2.v20120308</version.jetty_jetty>
+    <version.jetty_jetty>9.4.32.v20200930</version.jetty_jetty>
 
   </properties>
 
