@@ -13,7 +13,7 @@
 image:https://travis-ci.org/arquillian/arquillian-core.svg?branch=master["Build Status", link="https://travis-ci.org/arquillian/arquillian-core"]
 
 ifndef::generated-doc[]
-To read complete documentation visit http://arquillian.org/arquillian-core/
+To read complete documentation visit https://arquillian.org/arquillian-core/
 endif::generated-doc[]
 
 
@@ -55,4 +55,4 @@ endif::generated-doc[]
 * http://arquillian.org[Project Site]
 * http://arquillian.org/guides[Guides]
 * http://discuss.arquillian.org/[Forum]
-* https://jira.jboss.org/jira/browse/ARQ[Issue Tracker]
+* https://issues.redhat.com/browse/ARQ[Issue Tracker]
