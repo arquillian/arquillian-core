@@ -1,4 +1,4 @@
-package io.github.zforgo.arquillian.junit5;
+package org.arquillian.junit5;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;

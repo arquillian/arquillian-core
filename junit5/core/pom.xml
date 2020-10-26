@@ -2,35 +2,42 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <!-- Parent -->
   <parent>
-    <groupId>io.github.zforgo.arquillian.junit5</groupId>
-    <artifactId>arquillian-junit5-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-build</artifactId>
+    <version>1.7.0.Final-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
+  <groupId>org.jboss.arquillian.junit5</groupId>
   <artifactId>arquillian-junit5-core</artifactId>
 
-  <name>core</name>
+  <name>Arquillian TestRunner JUnit 5 Core</name>
+
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
   <dependencies>
     <!-- org.jboss.arquillian -->
     <dependency>
       <groupId>org.jboss.arquillian.test</groupId>
       <artifactId>arquillian-test-spi</artifactId>
-      <version>${arquillian.version}</version>
+      <version>${project.version}</version>
     </dependency>
-
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${version.junit5}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-engine</artifactId>
-      <version>${version.junit5.platform}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
 </project>

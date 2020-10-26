@@ -1,4 +1,4 @@
-package io.github.zforgo.arquillian.junit5.extension;
+package org.arquillian.junit5.extension;
 
 import java.lang.reflect.Method;
 

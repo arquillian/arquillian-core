@@ -1,11 +1,11 @@
-package io.github.zforgo.arquillian.junit5;
+package org.arquillian.junit5;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import io.github.zforgo.arquillian.junit5.extension.RunModeEvent;
+import org.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;

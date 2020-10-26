@@ -1,12 +1,12 @@
-package io.github.zforgo.arquillian.junit5.container;
+package org.arquillian.junit5.container;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.github.zforgo.arquillian.junit5.ArquillianExtension;
-import io.github.zforgo.arquillian.junit5.IdentifiedTestException;
+import org.arquillian.junit5.ArquillianExtension;
+import org.arquillian.junit5.IdentifiedTestException;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.engine.descriptor.MethodBasedTestDescriptor;

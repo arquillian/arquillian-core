@@ -1,8 +1,8 @@
-package io.github.zforgo.arquillian.junit5.container;
+package org.arquillian.junit5.container;
 
 
-import io.github.zforgo.arquillian.junit5.ArquillianExtension;
-import io.github.zforgo.arquillian.junit5.ArquillianTestClassLifecycleManager;
+import org.arquillian.junit5.ArquillianExtension;
+import org.arquillian.junit5.ArquillianTestClassLifecycleManager;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;

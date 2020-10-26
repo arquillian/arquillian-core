@@ -154,6 +154,18 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- JUnit5 -->
+      <dependency>
+        <groupId>org.jboss.arquillian.junit5</groupId>
+        <artifactId>arquillian-junit5-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.junit5</groupId>
+        <artifactId>arquillian-junit5-container</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- TestNG -->
       <dependency>
         <groupId>org.jboss.arquillian.testng</groupId>

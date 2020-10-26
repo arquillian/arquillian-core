@@ -61,6 +61,7 @@
     <module>container</module>
 
     <module>junit</module>
+    <module>junit5</module>
     <module>testng</module>
 
     <module>testenrichers</module>

@@ -25,6 +25,8 @@
     <!-- Arquillian Core common Deps, Test related -->
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13.1</version.junit>
+    <version.junit5>5.7.0</version.junit5>
+    <version.junit5.platform>1.7.0</version.junit5.platform>
     <version.mockito_all>1.10.19</version.mockito_all>
     <version.testng>7.3.0</version.testng>
     <version.assertj>2.9.1</version.assertj>
@@ -53,6 +55,32 @@
         <version>${version.shrinkwrap_descriptors}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${version.junit5}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${version.junit5}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-engine</artifactId>
+        <version>${version.junit5.platform}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-testkit</artifactId>
+        <version>${version.junit5.platform}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+        <version>${version.junit5.platform}</version>
       </dependency>
 
       <dependency>
@@ -102,7 +130,7 @@
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java15</artifactId>
+            <artifactId>java18</artifactId>
             <version>1.0</version>
           </signature>
         </configuration>

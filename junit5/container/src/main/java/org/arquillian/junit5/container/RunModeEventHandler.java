@@ -1,6 +1,6 @@
-package io.github.zforgo.arquillian.junit5.container;
+package org.arquillian.junit5.container;
 
-import io.github.zforgo.arquillian.junit5.extension.RunModeEvent;
+import org.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.core.api.Instance;

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.zforgo.arquillian.junit5;
+package org.arquillian.junit5;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 

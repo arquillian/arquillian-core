@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-parent</artifactId>
+    <version>1.7.0.Final-SNAPSHOT</version>
+  </parent>
+
+  <!-- Model Information -->
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.github.zforgo.arquillian.junit5</groupId>
+  <!-- Artifact Information -->
+  <groupId>org.jboss.arquillian.junit5</groupId>
   <artifactId>arquillian-junit5-parent</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Arquillian TestRunner JUnit Jupiter Aggregator</name>
@@ -15,76 +23,48 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <arquillian.version>1.5.0.Final</arquillian.version>
-    <version.junit5>5.7.0</version.junit5>
-    <version.junit5.platform>1.7.0</version.junit5.platform>
-    <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-build</artifactId>
-        <version>${arquillian.version}</version>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-bom</artifactId>
-        <version>${arquillian.version}</version>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.0.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-              <goal>test-jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+<!--  <build>-->
+<!--    <plugins>-->
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-source-plugin</artifactId>-->
+<!--        <version>3.0.1</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <id>attach-sources</id>-->
+<!--            <goals>-->
+<!--              <goal>jar-no-fork</goal>-->
+<!--              <goal>test-jar-no-fork</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
 
-    </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M3</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.junit.platform</groupId>
-              <artifactId>junit-platform-launcher</artifactId>
-              <version>${version.junit5.platform}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.junit.platform</groupId>
-              <artifactId>junit-platform-engine</artifactId>
-              <version>${version.junit5.platform}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${version.junit5}</version>
-    </dependency>
-
-  </dependencies>
+<!--    </plugins>-->
+<!--    <pluginManagement>-->
+<!--      <plugins>-->
+<!--        <plugin>-->
+<!--          <groupId>org.apache.maven.plugins</groupId>-->
+<!--          <artifactId>maven-surefire-plugin</artifactId>-->
+<!--          <version>3.0.0-M3</version>-->
+<!--          <dependencies>-->
+<!--            <dependency>-->
+<!--              <groupId>org.junit.platform</groupId>-->
+<!--              <artifactId>junit-platform-launcher</artifactId>-->
+<!--              <version>${version.junit5.platform}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--              <groupId>org.junit.platform</groupId>-->
+<!--              <artifactId>junit-platform-engine</artifactId>-->
+<!--              <version>${version.junit5.platform}</version>-->
+<!--            </dependency>-->
+<!--          </dependencies>-->
+<!--        </plugin>-->
+<!--      </plugins>-->
+<!--    </pluginManagement>-->
+<!--  </build>-->
 
 
   <modules>

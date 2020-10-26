@@ -1,4 +1,4 @@
-package io.github.zforgo.arquillian.junit5;
+package org.arquillian.junit5;
 
 import java.util.Map;
 
