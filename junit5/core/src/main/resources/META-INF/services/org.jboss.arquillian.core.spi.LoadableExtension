@@ -1,1 +1,1 @@
-io.github.zforgo.arquillian.junit5.extension.JUnitJupiterCoreExtension
+org.jboss.arquillian.junit5.extension.JUnitJupiterCoreExtension

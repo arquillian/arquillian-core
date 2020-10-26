@@ -1,4 +1,4 @@
-package org.arquillian.junit5.extension;
+package org.jboss.arquillian.junit5.extension;
 
 import org.jboss.arquillian.core.spi.LoadableExtension;
 

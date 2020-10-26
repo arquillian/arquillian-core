@@ -1,8 +1,8 @@
-package org.arquillian.junit5.container;
+package org.jboss.arquillian.junit5.container;
 
 
-import org.arquillian.junit5.ArquillianExtension;
-import org.arquillian.junit5.ArquillianTestClassLifecycleManager;
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.jboss.arquillian.junit5.ArquillianTestClassLifecycleManager;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;

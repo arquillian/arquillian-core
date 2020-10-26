@@ -1,4 +1,4 @@
-package org.arquillian.junit5;
+package org.jboss.arquillian.junit5;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;

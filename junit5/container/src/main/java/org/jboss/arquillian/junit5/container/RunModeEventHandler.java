@@ -1,6 +1,6 @@
-package org.arquillian.junit5.container;
+package org.jboss.arquillian.junit5.container;
 
-import org.arquillian.junit5.extension.RunModeEvent;
+import org.jboss.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.core.api.Instance;
