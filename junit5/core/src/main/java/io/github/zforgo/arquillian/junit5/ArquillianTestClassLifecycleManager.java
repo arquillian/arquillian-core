@@ -9,8 +9,8 @@ public abstract class ArquillianTestClassLifecycleManager extends AdaptorManager
     @Override
     protected void handleSuiteLevelFailure(Throwable initializationException) {
         throw new RuntimeException(
-            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
-            initializationException);
+                "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
+                initializationException);
     }
 
     @Override

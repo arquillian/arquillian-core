@@ -9,11 +9,11 @@ import org.jboss.arquillian.core.api.annotation.Observes;
 
 public class RunModeEventHandler {
 
-	@Inject
-	private Instance<Deployment> deployment;
+    @Inject
+    private Instance<Deployment> deployment;
 
-	public void handleEvent(@Observes RunModeEvent event) {
-		boolean runAsClient = RunModeUtils.isRunAsClient(deployment.get(), event.getTestClass(), event.getTestMethod());
-		event.setRunAsClient(runAsClient);
-	}
+    public void handleEvent(@Observes RunModeEvent event) {
+        boolean runAsClient = RunModeUtils.isRunAsClient(deployment.get(), event.getTestClass(), event.getTestMethod());
+        event.setRunAsClient(runAsClient);
+    }
 }

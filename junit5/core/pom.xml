@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>io.github.zforgo.arquillian.junit5</groupId>
-		<artifactId>arquillian-junit5-parent</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
-	</parent>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.zforgo.arquillian.junit5</groupId>
+    <artifactId>arquillian-junit5-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>arquillian-junit5-core</artifactId>
+  <artifactId>arquillian-junit5-core</artifactId>
 
-	<name>core</name>
-	<dependencies>
-		<!-- org.jboss.arquillian -->
-		<dependency>
-			<groupId>org.jboss.arquillian.test</groupId>
-			<artifactId>arquillian-test-spi</artifactId>
-			<version>${arquillian.version}</version>
-		</dependency>
+  <name>core</name>
+  <dependencies>
+    <!-- org.jboss.arquillian -->
+    <dependency>
+      <groupId>org.jboss.arquillian.test</groupId>
+      <artifactId>arquillian-test-spi</artifactId>
+      <version>${arquillian.version}</version>
+    </dependency>
 
 
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>${version.junit5}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-engine</artifactId>
-			<version>${version.junit5.platform}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${version.junit5}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-engine</artifactId>
+      <version>${version.junit5.platform}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

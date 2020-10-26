@@ -10,7 +10,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -66,6 +66,7 @@ public class State {
      * Surefire due to how groups are handled in Surefire.
      */
     private static boolean runningInEclipse = false;
+
     private static ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>();
 
     static {
@@ -83,6 +84,34 @@ public class State {
 
     public static boolean isNotRunningInEclipse() {
         return !runningInEclipse;
+    }
+
+    public static void caughtTestException(Throwable throwable) {
+        if (throwable == null) {
+            caughtTestException.remove();
+        } else {
+            caughtTestException.set(throwable);
+        }
+    }
+
+    public static boolean hasTestException() {
+        return getTestException() != null;
+    }
+
+    public static Throwable getTestException() {
+        return caughtTestException.get();
+    }
+
+    public static Throwable caughtExceptionAfterJunit() {
+        return caughtExceptionAfterJunit.get();
+    }
+
+    public static void caughtExceptionAfterJunit(Throwable afterException) {
+        if (afterException == null) {
+            caughtExceptionAfterJunit.remove();
+        } else {
+            caughtExceptionAfterJunit.set(afterException);
+        }
     }
 
     static void runnerStarted() {
@@ -125,34 +154,6 @@ public class State {
 
     static Throwable getInitializationException() {
         return caughtInitializationException.get();
-    }
-
-    public static void caughtTestException(Throwable throwable) {
-        if (throwable == null) {
-            caughtTestException.remove();
-        } else {
-            caughtTestException.set(throwable);
-        }
-    }
-
-    public static boolean hasTestException() {
-        return getTestException() != null;
-    }
-
-    public static Throwable getTestException() {
-        return caughtTestException.get();
-    }
-
-    public static Throwable caughtExceptionAfterJunit() {
-        return caughtExceptionAfterJunit.get();
-    }
-
-    public static void caughtExceptionAfterJunit(Throwable afterException) {
-        if (afterException == null) {
-            caughtExceptionAfterJunit.remove();
-        } else {
-            caughtExceptionAfterJunit.set(afterException);
-        }
     }
 
     static void clean() {

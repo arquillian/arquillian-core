@@ -2,6 +2,7 @@ package io.github.zforgo.arquillian.junit5;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
+
 //TODO move to common
 abstract class AdaptorManager {
 
@@ -18,7 +19,7 @@ abstract class AdaptorManager {
                 try {
                     // ARQ-1742 If exceptions happen during boot
                     TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder
-                        .build();
+                            .build();
                     // don't set it if beforeSuite fails
                     adaptor.beforeSuite();
                     State.testAdaptor(adaptor);
@@ -58,7 +59,7 @@ abstract class AdaptorManager {
 
     protected abstract void handleBeforeSuiteFailure(Exception e) throws Exception;
 
-    protected abstract void setAdaptor(TestRunnerAdaptor testRunnerAdaptor);
-
     protected abstract TestRunnerAdaptor getAdaptor();
+
+    protected abstract void setAdaptor(TestRunnerAdaptor testRunnerAdaptor);
 }
