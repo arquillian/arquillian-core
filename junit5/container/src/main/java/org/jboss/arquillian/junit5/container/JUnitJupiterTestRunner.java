@@ -38,10 +38,12 @@ public class JUnitJupiterTestRunner implements TestRunner {
                     .selectors(DiscoverySelectors.selectClass(testClass.getCanonicalName()))
                     .configurationParameter(ArquillianExtension.RUNNING_INSIDE_ARQUILLIAN, "true")
                     .filters((PostDiscoveryFilter) object -> {
-                        Method m = ((MethodBasedTestDescriptor) object).getTestMethod();
-                        if (m.getName().equals(methodName)) {
-                            matchCounter.incrementAndGet();
-                            return FilterResult.included("Matched method name");
+                        if (object instanceof MethodBasedTestDescriptor) {
+                            Method m = ((MethodBasedTestDescriptor) object).getTestMethod();
+                            if (m.getName().equals(methodName)) {
+                                matchCounter.incrementAndGet();
+                                return FilterResult.included("Matched method name");
+                            }
                         }
                         return FilterResult.excluded("Not matched");
                     })
