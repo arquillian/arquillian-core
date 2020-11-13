@@ -24,7 +24,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- Versioning -->
-    <version.jakarta.annotation>2.0.0-RC1</version.jakarta.annotation>
+    <version.jakarta.annotation>2.0.0</version.jakarta.annotation>
   </properties>
 
   <!-- Dependencies -->
