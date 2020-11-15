@@ -124,7 +124,9 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
 
             @Override
             public void invoke(Object... parameters) throws InvocationTargetException, IllegalAccessException {
-                getMethod().invoke(getInstance(), invocationContext.getArguments().toArray());
+                Method method = getMethod();
+                method.setAccessible(true);
+                method.invoke(getInstance(), invocationContext.getArguments().toArray());
             }
         });
         populateResults(result, extensionContext);
