@@ -11,7 +11,7 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
     private static final String NAMESPACE_KEY = "arquillianNamespace";
 
     private static final String ADAPTOR_KEY = "testRunnerAdaptor";
-    private static final String AUTO_CLOSER_KEY = "autoCloserObject";
+    private static final String SUITE_FINALIZER_KEY = "autoCloserObject";
 
     private static final String INTERCEPTED_TEMPLATE_NAMESPACE_KEY = "interceptedTestTemplates";
 
@@ -37,13 +37,10 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
     @Override
     protected void setAdaptor(TestRunnerAdaptor testRunnerAdaptor) {
         store.put(ADAPTOR_KEY, testRunnerAdaptor);
-    }
 
-    @Override
-    protected void setCloseable(SuiteShutdownInvoker close) {
-        store.getOrComputeIfAbsent(AUTO_CLOSER_KEY, key -> {
+        store.getOrComputeIfAbsent(SUITE_FINALIZER_KEY, key -> {
             System.out.println("\n\n\n\nStoring closeabe\n\n\n\n");
-            return close;
+            return new SuiteFinalizer(this, testRunnerAdaptor);
         });
     }
 

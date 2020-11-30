@@ -22,10 +22,7 @@ abstract class AdaptorManager {
                             .build();
                     // don't set it if beforeSuite fails
                     adaptor.beforeSuite();
-                    SuiteShutdownInvoker close = new SuiteShutdownInvoker(this, adaptor);
-                    setAdaptor(adaptor);
-                    setCloseable(close);
-//                    State.testAdaptor(adaptor);
+                    State.testAdaptor(adaptor);
                 } catch (Exception e) {
                     // caught exception during BeforeSuite, mark this as failed
                     State.caughtInitializationException(e);
@@ -64,6 +61,4 @@ abstract class AdaptorManager {
 
     protected abstract TestRunnerAdaptor getAdaptor();
     protected abstract void setAdaptor(TestRunnerAdaptor testRunnerAdaptor);
-    
-    protected abstract void setCloseable(SuiteShutdownInvoker close);
 }
