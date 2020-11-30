@@ -37,7 +37,6 @@ abstract class AdaptorManager {
     }
 
     void shutdown(TestRunnerAdaptor adaptor) {
-        System.out.println("\n\n\nSHUTDONN!!! " + adaptor + "\n\n\n");
         try {
             if (State.isLastRunner()) {
                 try {
@@ -60,5 +59,6 @@ abstract class AdaptorManager {
     protected abstract void handleBeforeSuiteFailure(Exception e) throws Exception;
 
     protected abstract TestRunnerAdaptor getAdaptor();
+
     protected abstract void setAdaptor(TestRunnerAdaptor testRunnerAdaptor);
 }

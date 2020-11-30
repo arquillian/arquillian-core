@@ -11,7 +11,8 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
     private static final String NAMESPACE_KEY = "arquillianNamespace";
 
     private static final String ADAPTOR_KEY = "testRunnerAdaptor";
-    private static final String SUITE_FINALIZER_KEY = "autoCloserObject";
+
+    private static final String SUITE_FINALIZER_KEY = "suiteFinalizer";
 
     private static final String INTERCEPTED_TEMPLATE_NAMESPACE_KEY = "interceptedTestTemplates";
 
@@ -38,10 +39,9 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
     protected void setAdaptor(TestRunnerAdaptor testRunnerAdaptor) {
         store.put(ADAPTOR_KEY, testRunnerAdaptor);
 
-        store.getOrComputeIfAbsent(SUITE_FINALIZER_KEY, key -> {
-            System.out.println("\n\n\n\nStoring closeabe\n\n\n\n");
-            return new SuiteFinalizer(this, testRunnerAdaptor);
-        });
+        // Install finalizer for suite.
+        // It will be installed only once and will be closed after all tests
+        store.getOrComputeIfAbsent(SUITE_FINALIZER_KEY, key -> new SuiteFinalizer(this, testRunnerAdaptor));
     }
 
     boolean isRegisteredTemplate(final Method method) {
