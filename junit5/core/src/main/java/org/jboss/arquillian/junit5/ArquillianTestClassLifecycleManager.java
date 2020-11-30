@@ -28,9 +28,9 @@ public abstract class ArquillianTestClassLifecycleManager extends AdaptorManager
         initializeAdaptor();
 
         // initialization ok, run children
-//        if (State.hasTestAdaptor()) {
-//            setAdaptor(State.getTestAdaptor());
-//        }
+        if (State.hasTestAdaptor()) {
+            setAdaptor(State.getTestAdaptor());
+        }
 
         getAdaptor().beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
     }
@@ -39,7 +39,6 @@ public abstract class ArquillianTestClassLifecycleManager extends AdaptorManager
         TestRunnerAdaptor adaptor = getAdaptor();
         if (adaptor != null) {
             adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
-//            shutdown(adaptor);
         }
         State.runnerFinished();
     }

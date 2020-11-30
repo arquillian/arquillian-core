@@ -2,14 +2,13 @@ package org.jboss.arquillian.junit5;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 //TODO move to common
 abstract class AdaptorManager {
 
     void initializeAdaptor() throws Exception {
         // first time we're being initialized
-        if (!haveAdaptor()) {
+        if (!State.hasTestAdaptor()) {
             // no, initialization has been attempted before and failed, refuse
             // to do anything else
             if (State.hasInitializationException()) {
@@ -23,7 +22,7 @@ abstract class AdaptorManager {
                             .build();
                     // don't set it if beforeSuite fails
                     adaptor.beforeSuite();
-                    AutoCloserObject close = new AutoCloserObject(this);
+                    SuiteShutdownInvoker close = new SuiteShutdownInvoker(this, adaptor);
                     setAdaptor(adaptor);
                     setCloseable(close);
 //                    State.testAdaptor(adaptor);
@@ -35,16 +34,15 @@ abstract class AdaptorManager {
             }
         }
 
-//        if (State.hasTestAdaptor()) {
-//            setAdaptor(State.getTestAdaptor());
-//        }
+        if (State.hasTestAdaptor()) {
+            setAdaptor(State.getTestAdaptor());
+        }
     }
 
     void shutdown(TestRunnerAdaptor adaptor) {
         System.out.println("\n\n\nSHUTDONN!!! " + adaptor + "\n\n\n");
-//        State.runnerFinished();
         try {
-//            if (State.isLastRunner()) {
+            if (State.isLastRunner()) {
                 try {
                     if (adaptor != null) {
                         adaptor.afterSuite();
@@ -53,7 +51,7 @@ abstract class AdaptorManager {
                 } finally {
                     State.clean();
                 }
-//            }
+            }
             setAdaptor(null);
         } catch (Exception e) {
             throw new RuntimeException("Could not run @AfterSuite", e);
@@ -66,7 +64,6 @@ abstract class AdaptorManager {
 
     protected abstract TestRunnerAdaptor getAdaptor();
     protected abstract void setAdaptor(TestRunnerAdaptor testRunnerAdaptor);
-    protected abstract boolean haveAdaptor();
     
-    protected abstract void setCloseable(AutoCloserObject close);
+    protected abstract void setCloseable(SuiteShutdownInvoker close);
 }
