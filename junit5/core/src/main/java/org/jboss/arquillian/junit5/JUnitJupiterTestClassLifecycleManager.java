@@ -8,14 +8,18 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLifecycleManager {
+    private static final String GLOBAL_NAMESPACE_KEY = "arquillianNamespace";
     private static final String NAMESPACE_KEY = "arquillianNamespace";
 
     private static final String ADAPTOR_KEY = "testRunnerAdaptor";
+    private static final String AUTO_CLOSER_KEY = "autoCloserObject";
 
     private static final String INTERCEPTED_TEMPLATE_NAMESPACE_KEY = "interceptedTestTemplates";
 
     private static final String RESULT_NAMESPACE_KEY = "results";
 
+    private ExtensionContext.Store rootStore;
+    
     private ExtensionContext.Store store;
 
     private ExtensionContext.Store templateStore;
@@ -23,7 +27,8 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
     private ExtensionContext.Store resultStore;
 
     JUnitJupiterTestClassLifecycleManager(ExtensionContext context) {
-        store = context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY));
+        rootStore = context.getRoot().getStore(ExtensionContext.Namespace.create(GLOBAL_NAMESPACE_KEY));
+        store = context.getRoot().getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY));
         templateStore = context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
         resultStore = context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, RESULT_NAMESPACE_KEY));
     }
@@ -36,6 +41,19 @@ public class JUnitJupiterTestClassLifecycleManager extends ArquillianTestClassLi
     @Override
     protected void setAdaptor(TestRunnerAdaptor testRunnerAdaptor) {
         store.put(ADAPTOR_KEY, testRunnerAdaptor);
+    }
+
+    @Override
+    protected boolean haveAdaptor() {
+        return store.get(ADAPTOR_KEY) != null;
+    }
+
+    @Override
+    protected void setCloseable(AutoCloserObject close) {
+        rootStore.getOrComputeIfAbsent(AUTO_CLOSER_KEY, key -> {
+            System.out.println("\n\n\n\nStoring closeabe\n\n\n\n");
+            return close;
+        });
     }
 
     boolean isRegisteredTemplate(final Method method) {

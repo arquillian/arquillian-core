@@ -2,13 +2,14 @@ package org.jboss.arquillian.junit5;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 //TODO move to common
 abstract class AdaptorManager {
 
     void initializeAdaptor() throws Exception {
         // first time we're being initialized
-        if (!State.hasTestAdaptor()) {
+        if (!haveAdaptor()) {
             // no, initialization has been attempted before and failed, refuse
             // to do anything else
             if (State.hasInitializationException()) {
@@ -22,7 +23,10 @@ abstract class AdaptorManager {
                             .build();
                     // don't set it if beforeSuite fails
                     adaptor.beforeSuite();
-                    State.testAdaptor(adaptor);
+                    AutoCloserObject close = new AutoCloserObject(this);
+                    setAdaptor(adaptor);
+                    setCloseable(close);
+//                    State.testAdaptor(adaptor);
                 } catch (Exception e) {
                     // caught exception during BeforeSuite, mark this as failed
                     State.caughtInitializationException(e);
@@ -31,15 +35,16 @@ abstract class AdaptorManager {
             }
         }
 
-        if (State.hasTestAdaptor()) {
-            setAdaptor(State.getTestAdaptor());
-        }
+//        if (State.hasTestAdaptor()) {
+//            setAdaptor(State.getTestAdaptor());
+//        }
     }
 
     void shutdown(TestRunnerAdaptor adaptor) {
-        State.runnerFinished();
+        System.out.println("\n\n\nSHUTDONN!!! " + adaptor + "\n\n\n");
+//        State.runnerFinished();
         try {
-            if (State.isLastRunner()) {
+//            if (State.isLastRunner()) {
                 try {
                     if (adaptor != null) {
                         adaptor.afterSuite();
@@ -48,7 +53,7 @@ abstract class AdaptorManager {
                 } finally {
                     State.clean();
                 }
-            }
+//            }
             setAdaptor(null);
         } catch (Exception e) {
             throw new RuntimeException("Could not run @AfterSuite", e);
@@ -60,6 +65,8 @@ abstract class AdaptorManager {
     protected abstract void handleBeforeSuiteFailure(Exception e) throws Exception;
 
     protected abstract TestRunnerAdaptor getAdaptor();
-
     protected abstract void setAdaptor(TestRunnerAdaptor testRunnerAdaptor);
+    protected abstract boolean haveAdaptor();
+    
+    protected abstract void setCloseable(AutoCloserObject close);
 }
