@@ -39,7 +39,7 @@ public abstract class ArquillianTestClassLifecycleManager extends AdaptorManager
         TestRunnerAdaptor adaptor = getAdaptor();
         if (adaptor != null) {
             adaptor.afterClass(testClass, LifecycleMethodExecutor.NO_OP);
-            shutdown(adaptor);
         }
+        State.runnerFinished();
     }
 }

@@ -37,7 +37,6 @@ abstract class AdaptorManager {
     }
 
     void shutdown(TestRunnerAdaptor adaptor) {
-        State.runnerFinished();
         try {
             if (State.isLastRunner()) {
                 try {
