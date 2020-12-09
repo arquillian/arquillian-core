@@ -20,23 +20,27 @@ import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ExceptionUtils;
 
+import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
+
 public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
 
     private static final String CHAIN_EXCEPTION_MESSAGE_PREFIX = "Chain of InvocationInterceptors never called invocation";
 
-    private static Predicate<ExtensionContext> isInsideArquillian = (context -> Boolean.parseBoolean(context.getConfigurationParameter(RUNNING_INSIDE_ARQUILLIAN).orElse("false")));
-
-    private JUnitJupiterTestClassLifecycleManager lifecycleManager;
+    private static final Predicate<ExtensionContext> isInsideArquillian = (context -> Boolean.parseBoolean(context.getConfigurationParameter(RUNNING_INSIDE_ARQUILLIAN).orElse("false")));
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        getManager(context).beforeTestClassPhase(context.getRequiredTestClass());
+        getManager(context).getAdaptor().beforeClass(
+            context.getRequiredTestClass(),
+            LifecycleMethodExecutor.NO_OP);
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        getManager(context).afterTestClassPhase(context.getRequiredTestClass());
+        getManager(context).getAdaptor().afterClass(
+            context.getRequiredTestClass(),
+            LifecycleMethodExecutor.NO_OP);
     }
 
     @Override
@@ -98,13 +102,6 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         throw throwable;
     }
 
-    private JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) {
-        if (lifecycleManager == null) {
-            lifecycleManager = new JUnitJupiterTestClassLifecycleManager(context);
-        }
-        return lifecycleManager;
-    }
-
     private void interceptInvocation(ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
         TestResult result = getManager(extensionContext).getAdaptor().test(new TestMethodExecutor() {
             @Override
@@ -132,13 +129,14 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         populateResults(result, extensionContext);
     }
 
-    private void populateResults(TestResult result, ExtensionContext context) {
+    private void populateResults(TestResult result, ExtensionContext context) throws Exception {
         if (Optional.ofNullable(result.getThrowable()).isPresent()) {
+            final JUnitJupiterTestClassLifecycleManager manager = getManager(context);
             if (result.getThrowable() instanceof IdentifiedTestException) {
                 ((IdentifiedTestException) result.getThrowable()).getCollectedExceptions()
-                        .forEach((id, throwable) -> getManager(context).storeResult(id, throwable));
+                        .forEach(manager::storeResult);
             } else {
-                getManager(context).storeResult(context.getUniqueId(), result.getThrowable());
+                manager.storeResult(context.getUniqueId(), result.getThrowable());
             }
         }
     }
