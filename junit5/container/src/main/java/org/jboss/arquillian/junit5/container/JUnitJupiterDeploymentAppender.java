@@ -20,7 +20,7 @@ public class JUnitJupiterDeploymentAppender extends CachedAuxilliaryArchiveAppen
                         "org.junit",
                         "org/opentest4j",
                         ArquillianExtension.class.getPackage().getName(),
-                    JUnitJupiterTestClassLifecycleManager.class.getPackage().getName())
+                        JUnitJupiterTestClassLifecycleManager.class.getPackage().getName())
                 .addAsServiceProvider(
                         TestRunner.class,
                         JUnitJupiterTestRunner.class)
