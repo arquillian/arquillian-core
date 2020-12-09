@@ -2,9 +2,9 @@ package org.jboss.arquillian.junit5.container;
 
 
 import org.jboss.arquillian.junit5.ArquillianExtension;
-import org.jboss.arquillian.junit5.ArquillianTestClassLifecycleManager;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
+import org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -20,7 +20,7 @@ public class JUnitJupiterDeploymentAppender extends CachedAuxilliaryArchiveAppen
                         "org.junit",
                         "org/opentest4j",
                         ArquillianExtension.class.getPackage().getName(),
-                        ArquillianTestClassLifecycleManager.class.getPackage().getName())
+                    JUnitJupiterTestClassLifecycleManager.class.getPackage().getName())
                 .addAsServiceProvider(
                         TestRunner.class,
                         JUnitJupiterTestRunner.class)
