@@ -26,8 +26,8 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
     private Throwable caughtInitializationException;
 
     JUnitJupiterTestClassLifecycleManager(ExtensionContext context) {
-        templateStore = context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
-        resultStore = context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, RESULT_NAMESPACE_KEY));
+        templateStore = context.getRoot().getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
+        resultStore = context.getRoot().getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, RESULT_NAMESPACE_KEY));
     }
 
     private static ExtensionContext.Store getRootStore(ExtensionContext context) {
