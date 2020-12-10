@@ -20,6 +20,9 @@ import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ExceptionUtils;
 
+import static org.jboss.arquillian.junit5.ContextStoreHelper.getResult;
+import static org.jboss.arquillian.junit5.ContextStoreHelper.isRegisteredTemplate;
+import static org.jboss.arquillian.junit5.ContextStoreHelper.storeResult;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
 public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler {
@@ -73,11 +76,11 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                 interceptInvocation(invocationContext, extensionContext);
             } else {
                 // Run as container (but only once)
-                if (!manager.isRegisteredTemplate(invocationContext.getExecutable())) {
+                if (!isRegisteredTemplate(extensionContext, invocationContext.getExecutable())) {
                     interceptInvocation(invocationContext, extensionContext);
                 }
                 // Otherwise get result
-                manager.getResult(extensionContext.getUniqueId())
+                getResult(extensionContext, extensionContext.getUniqueId())
                     .ifPresent(ExceptionUtils::throwAsUncheckedException);
             }
         }
@@ -89,7 +92,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             invocation.proceed();
         } else {
             interceptInvocation(invocationContext, extensionContext);
-            getManager(extensionContext).getResult(extensionContext.getUniqueId())
+            getResult(extensionContext, extensionContext.getUniqueId())
                     .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
     }
@@ -129,14 +132,13 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         populateResults(result, extensionContext);
     }
 
-    private void populateResults(TestResult result, ExtensionContext context) throws Exception {
+    private void populateResults(TestResult result, ExtensionContext context) {
         if (Optional.ofNullable(result.getThrowable()).isPresent()) {
-            final JUnitJupiterTestClassLifecycleManager manager = getManager(context);
             if (result.getThrowable() instanceof IdentifiedTestException) {
                 ((IdentifiedTestException) result.getThrowable()).getCollectedExceptions()
-                        .forEach(manager::storeResult);
+                        .forEach((uniqueId, throwable) -> storeResult(context, uniqueId, throwable));
             } else {
-                manager.storeResult(context.getUniqueId(), result.getThrowable());
+                storeResult(context, context.getUniqueId(), result.getThrowable());
             }
         }
     }
