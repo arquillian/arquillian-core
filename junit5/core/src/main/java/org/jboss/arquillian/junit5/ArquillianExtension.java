@@ -66,19 +66,19 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             invocation.proceed();
         } else {
             RunModeEvent runModeEvent = new RunModeEvent(extensionContext.getRequiredTestInstance(), extensionContext.getRequiredTestMethod());
-            getManager(extensionContext).getAdaptor().fireCustomLifecycle(runModeEvent);
+            final JUnitJupiterTestClassLifecycleManager manager = getManager(extensionContext);
+            manager.getAdaptor().fireCustomLifecycle(runModeEvent);
             if (runModeEvent.isRunAsClient()) {
                 // Run as client
                 interceptInvocation(invocationContext, extensionContext);
             } else {
                 // Run as container (but only once)
-                if (!getManager(extensionContext).isRegisteredTemplate(invocationContext.getExecutable())) {
+                if (!manager.isRegisteredTemplate(invocationContext.getExecutable())) {
                     interceptInvocation(invocationContext, extensionContext);
                 }
                 // Otherwise get result
-                getManager(extensionContext)
-                        .getResult(extensionContext.getUniqueId())
-                        .ifPresent(ExceptionUtils::throwAsUncheckedException);
+                manager.getResult(extensionContext.getUniqueId())
+                    .ifPresent(ExceptionUtils::throwAsUncheckedException);
             }
         }
     }

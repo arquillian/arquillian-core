@@ -74,10 +74,14 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
         }
     }
 
-    protected void handleSuiteLevelFailure() {
+    private void handleSuiteLevelFailure() {
         throw new RuntimeException(
             "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
             caughtInitializationException);
+    }
+
+    private boolean hasInitializationException() {
+        return caughtInitializationException != null;
     }
 
     private void handleBeforeSuiteFailure(Exception e) throws Exception {
@@ -85,8 +89,8 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
         throw e;
     }
 
-    protected TestRunnerAdaptor getAdaptor() {
-        return adaptor; 
+    TestRunnerAdaptor getAdaptor() {
+        return adaptor;
     }
 
     boolean isRegisteredTemplate(final Method method) {
@@ -109,9 +113,5 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
 
     Optional<Throwable> getResult(String uniqueId) {
         return Optional.ofNullable(resultStore.getOrDefault(uniqueId, Throwable.class, null));
-    }
-
-    private boolean hasInitializationException() {
-        return caughtInitializationException != null;
     }
 }
