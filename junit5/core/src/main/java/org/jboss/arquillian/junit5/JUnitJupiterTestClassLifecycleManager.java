@@ -4,7 +4,7 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import static org.jboss.arquillian.junit5.ContextStoreHelper.getRootStore;
+import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 
 public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.Store.CloseableResource {
     private static final String MANAGER_KEY = "testRunnerManager";
@@ -17,7 +17,7 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
     }
     
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
-        ExtensionContext.Store store = getRootStore(context);
+        ExtensionContext.Store store = getContextStore(context).getRootStore();
         JUnitJupiterTestClassLifecycleManager instance = store.get(MANAGER_KEY, JUnitJupiterTestClassLifecycleManager.class);
         if (instance == null) {
             instance = new JUnitJupiterTestClassLifecycleManager();

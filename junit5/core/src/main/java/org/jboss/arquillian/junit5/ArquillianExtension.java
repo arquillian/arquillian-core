@@ -20,9 +20,7 @@ import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ExceptionUtils;
 
-import static org.jboss.arquillian.junit5.ContextStoreHelper.getResult;
-import static org.jboss.arquillian.junit5.ContextStoreHelper.isRegisteredTemplate;
-import static org.jboss.arquillian.junit5.ContextStoreHelper.storeResult;
+import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
 public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler {
@@ -75,12 +73,13 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                 // Run as client
                 interceptInvocation(invocationContext, extensionContext);
             } else {
+                ContextStore contextStore = getContextStore(extensionContext);
                 // Run as container (but only once)
-                if (!isRegisteredTemplate(extensionContext, invocationContext.getExecutable())) {
+                if (!contextStore.isRegisteredTemplate(invocationContext.getExecutable())) {
                     interceptInvocation(invocationContext, extensionContext);
                 }
                 // Otherwise get result
-                getResult(extensionContext, extensionContext.getUniqueId())
+                contextStore.getResult(extensionContext.getUniqueId())
                     .ifPresent(ExceptionUtils::throwAsUncheckedException);
             }
         }
@@ -92,7 +91,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             invocation.proceed();
         } else {
             interceptInvocation(invocationContext, extensionContext);
-            getResult(extensionContext, extensionContext.getUniqueId())
+            getContextStore(extensionContext).getResult(extensionContext.getUniqueId())
                     .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
     }
@@ -134,11 +133,12 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
 
     private void populateResults(TestResult result, ExtensionContext context) {
         if (Optional.ofNullable(result.getThrowable()).isPresent()) {
+            ContextStore contextStore = getContextStore(context);
             if (result.getThrowable() instanceof IdentifiedTestException) {
                 ((IdentifiedTestException) result.getThrowable()).getCollectedExceptions()
-                        .forEach((uniqueId, throwable) -> storeResult(context, uniqueId, throwable));
+                        .forEach(contextStore::storeResult);
             } else {
-                storeResult(context, context.getUniqueId(), result.getThrowable());
+                contextStore.storeResult(context.getUniqueId(), result.getThrowable());
             }
         }
     }
