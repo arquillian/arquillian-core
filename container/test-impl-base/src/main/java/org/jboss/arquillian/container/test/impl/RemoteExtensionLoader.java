@@ -219,6 +219,8 @@ public class RemoteExtensionLoader implements ExtensionLoader {
                         }
                         line = reader.readLine();
                     }
+                } catch (IOException exc) {
+                    throw new RuntimeException("Could not read file: " + url);
                 } finally {
                     if (reader != null) {
                         reader.close();

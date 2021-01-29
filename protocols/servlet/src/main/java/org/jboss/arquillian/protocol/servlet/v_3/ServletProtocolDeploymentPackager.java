@@ -19,6 +19,7 @@ package org.jboss.arquillian.protocol.servlet.v_3;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.container.test.spi.TestDeployment;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
@@ -91,7 +92,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager {
     private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives,
         JavaArchive protocol, Processor processor) {
         return handleArchive(
-            ShrinkWrap.create(WebArchive.class, "test.war")
+            ShrinkWrap.create(WebArchive.class, UUID.randomUUID().toString() + ".war")
                 .addAsLibrary(applicationArchive),
             auxiliaryArchives,
             protocol,
