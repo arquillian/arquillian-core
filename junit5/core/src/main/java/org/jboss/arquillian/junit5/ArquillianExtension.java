@@ -95,6 +95,46 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                     .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
     }
+    
+    @Override
+    public void interceptBeforeEachMethod(Invocation<Void> invocation,
+      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+      if (isInsideArquillian.test(extensionContext)) {
+        invocation.proceed();
+      } else {
+        invocation.skip();
+      }
+    }
+    
+    @Override
+    public void interceptAfterEachMethod(Invocation<Void> invocation,
+      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+      if (isInsideArquillian.test(extensionContext)) {
+        invocation.proceed();
+      } else {
+        invocation.skip();
+      }
+    }
+    
+    @Override
+    public void interceptBeforeAllMethod(Invocation<Void> invocation,
+      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+      if (isInsideArquillian.test(extensionContext)) {
+        invocation.proceed();
+      } else {
+        invocation.skip();
+      }
+    }
+    
+    @Override
+    public void interceptAfterAllMethod(Invocation<Void> invocation,
+      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+      if (isInsideArquillian.test(extensionContext)) {
+        invocation.proceed();
+      } else {
+        invocation.skip();
+      }
+    }
 
     @Override
     public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
