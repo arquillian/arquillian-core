@@ -118,7 +118,7 @@ public abstract class AbstractDeploymentScenarioGenerator implements DeploymentS
     }
 
     private void logWarningIfArchiveHasUnexpectedFileExtension(final DeploymentDescription deployment) {
-        if (!Validate.archiveHasExpectedFileExtension(deployment.getArchive())) {
+        if ((deployment.getArchive() != null) && (!Validate.archiveHasExpectedFileExtension(deployment.getArchive()))) {
             log.warning("Deployment archive of type " + deployment.getArchive().getClass().getSimpleName()
                 + " has been given an unexpected file extension. Archive name: " + deployment.getArchive().getName()
                 + ", deployment name: " + deployment.getName() + ". It might not be wrong, but the container will"

@@ -114,7 +114,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /",
-            archive.contains(ArchivePaths.create("test.war")));
+            archive.contains(ArchivePaths.create(JarNameProcessor.jarName)));
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
@@ -140,7 +140,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /",
-            archive.contains(ArchivePaths.create("test.war")));
+            archive.contains(ArchivePaths.create(JarNameProcessor.jarName)));
 
         Assert.assertTrue(
             "Verify that the auxiliaryArchives are placed in /lib",
@@ -154,12 +154,13 @@ public class ServletProtocolDeploymentPackagerTestCase {
             TestUtil.convertToString(archive.get("META-INF/application.xml").getAsset().openStream());
         Assert.assertTrue(
             "verify that the arquillian-jakarta-servlet-protocol.war was added to the application.xml",
-            applicationXmlContent.contains("<web-uri>test.war</web-uri>"));
+            applicationXmlContent.contains(String.format("<web-uri>%s</web-uri>", JarNameProcessor.jarName)));
 
         // ARQ-670
         Assert.assertTrue(
             "verify that the arquillian-jakarta-servlet-protocol.war has correct context-root in application.xml",
-            applicationXmlContent.contains("<context-root>test</context-root>"));
+            applicationXmlContent.contains(String.format("<context-root>%s</context-root>",
+                    JarNameProcessor.jarName.replaceFirst(".war$", ""))));
 
         Assert.assertTrue(
             "Verify protocol Processor SPI was called",
@@ -284,6 +285,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     private Collection<ProtocolArchiveProcessor> processors() {
         List<ProtocolArchiveProcessor> pros = new ArrayList<ProtocolArchiveProcessor>();
         pros.add(new DummyProcessor());
+        pros.add(new JarNameProcessor());
         return pros;
     }
 
@@ -297,6 +299,15 @@ public class ServletProtocolDeploymentPackagerTestCase {
         @Override
         public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {
             wasCalled = true;
+        }
+    }
+
+    private static class JarNameProcessor implements ProtocolArchiveProcessor {
+        static String jarName;
+
+        @Override
+        public void process(TestDeployment testDeployment, Archive<?> protocolArchive) {
+            jarName = protocolArchive.getName();
         }
     }
 }
