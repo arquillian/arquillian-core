@@ -92,7 +92,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager {
     private Archive<?> handleArchive(JavaArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives,
         JavaArchive protocol, Processor processor) {
         return handleArchive(
-            ShrinkWrap.create(WebArchive.class, UUID.randomUUID().toString() + ".war")
+            ShrinkWrap.create(WebArchive.class, "test-" + UUID.randomUUID().toString() + ".war")
                 .addAsLibrary(applicationArchive),
             auxiliaryArchives,
             protocol,
