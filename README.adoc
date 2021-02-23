@@ -33,7 +33,7 @@ Arquillian brings the test to the runtime so you don’t have to manage the runt
 * Executing the tests inside (or against) the container
 * Capturing the results and returning them to the test runner for reporting
 
-To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
+To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, JUnit 5, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
 
 ifdef::generated-doc[]
 == Guide
