@@ -66,10 +66,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             // run inside arquillian
             invocation.proceed();
         } else {
-            RunModeEvent runModeEvent = new RunModeEvent(extensionContext.getRequiredTestInstance(), extensionContext.getRequiredTestMethod());
-            final JUnitJupiterTestClassLifecycleManager manager = getManager(extensionContext);
-            manager.getAdaptor().fireCustomLifecycle(runModeEvent);
-            if (runModeEvent.isRunAsClient()) {
+            if (isRunAsClient(extensionContext)) {
                 // Run as client
                 interceptInvocation(invocationContext, extensionContext);
             } else {
@@ -95,44 +92,44 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                     .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
     }
-    
+
     @Override
     public void interceptBeforeEachMethod(Invocation<Void> invocation,
       ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (isInsideArquillian.test(extensionContext)) {
+      if (isInsideArquillian.test(extensionContext) || isRunAsClient(extensionContext)) {
         invocation.proceed();
       } else {
         invocation.skip();
       }
     }
-    
+
     @Override
     public void interceptAfterEachMethod(Invocation<Void> invocation,
       ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (isInsideArquillian.test(extensionContext)) {
+      if (isInsideArquillian.test(extensionContext) || isRunAsClient(extensionContext)) {
         invocation.proceed();
       } else {
         invocation.skip();
       }
     }
-    
+
     @Override
     public void interceptBeforeAllMethod(Invocation<Void> invocation,
       ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
       if (isInsideArquillian.test(extensionContext)) {
-        invocation.proceed();
-      } else {
         invocation.skip();
+      } else {
+        invocation.proceed();
       }
     }
-    
+
     @Override
     public void interceptAfterAllMethod(Invocation<Void> invocation,
       ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
       if (isInsideArquillian.test(extensionContext)) {
-        invocation.proceed();
-      } else {
         invocation.skip();
+      } else {
+        invocation.proceed();
       }
     }
 
@@ -181,5 +178,12 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                 contextStore.storeResult(context.getUniqueId(), result.getThrowable());
             }
         }
+    }
+
+    private boolean isRunAsClient(ExtensionContext extensionContext) throws Exception {
+        RunModeEvent runModeEvent = new RunModeEvent(extensionContext.getRequiredTestInstance(), extensionContext.getRequiredTestMethod());
+        final JUnitJupiterTestClassLifecycleManager manager = getManager(extensionContext);
+        manager.getAdaptor().fireCustomLifecycle(runModeEvent);
+        return runModeEvent.isRunAsClient();
     }
 }
