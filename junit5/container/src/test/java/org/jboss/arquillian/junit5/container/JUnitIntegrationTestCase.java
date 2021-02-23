@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
 
     @Test
-    public void should_execute_extensions() throws Exception {
+    public void shouldExecuteExtensions() throws Exception {
         // given
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
