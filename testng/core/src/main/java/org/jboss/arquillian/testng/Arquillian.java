@@ -50,30 +50,35 @@ import org.testng.annotations.Listeners;
 @Listeners(Arquillian.UpdateResultListener.class)
 public abstract class Arquillian implements IHookable {
     public static final String ARQUILLIAN_DATA_PROVIDER = "ARQUILLIAN_DATA_PROVIDER";
-    private static InheritableThreadLocal<TestRunnerAdaptor> deployableTest = new InheritableThreadLocal<TestRunnerAdaptor>();
-    private static InheritableThreadLocal<Stack<Cycle>> cycleStack = new InheritableThreadLocal<Stack<Cycle>>() {
+    // InheritableThreadLocal caused ConcurrentModificationException and
+    // duplicate Engine nodes with Inherited (on the Client)
+    private static final ThreadLocal<TestRunnerAdaptor> deployableTest = new ThreadLocal<TestRunnerAdaptor>() {
+        @Override
+        protected TestRunnerAdaptor initialValue() {
+            TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
+            try {
+                adaptor.beforeSuite();
+                return adaptor;
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    };
+    // InheritableThreadLocal caused missed undeploys (on the client)
+    private static final ThreadLocal<Stack<Cycle>> cycleStack = new ThreadLocal<Stack<Cycle>>() {
+        @Override
         protected java.util.Stack<Cycle> initialValue() {
             return new Stack<Cycle>();
         }
-
-        ;
     };
 
     @BeforeSuite(groups = "arquillian", inheritGroups = true)
     public void arquillianBeforeSuite() throws Exception {
-        if (deployableTest.get() == null) {
-            TestRunnerAdaptor adaptor = TestRunnerAdaptorBuilder.build();
-            adaptor.beforeSuite();
-            deployableTest.set(adaptor); // don't set TestRunnerAdaptor if beforeSuite fails
-            cycleStack.get().push(Cycle.BEFORE_SUITE);
-        }
+        cycleStack.get().push(Cycle.BEFORE_SUITE);
     }
 
     @AfterSuite(groups = "arquillian", inheritGroups = true, alwaysRun = true)
     public void arquillianAfterSuite() throws Exception {
-        if (deployableTest.get() == null) {
-            return; // beforeSuite failed
-        }
         if (cycleStack.get().empty()) {
             return;
         }
@@ -84,15 +89,12 @@ public abstract class Arquillian implements IHookable {
         }
         deployableTest.get().afterSuite();
         deployableTest.get().shutdown();
-        deployableTest.set(null);
         deployableTest.remove();
-        cycleStack.set(null);
         cycleStack.remove();
     }
 
     @BeforeClass(groups = "arquillian", inheritGroups = true)
     public void arquillianBeforeClass() throws Exception {
-        verifyTestRunnerAdaptorHasBeenSet();
         cycleStack.get().push(Cycle.BEFORE_CLASS);
         deployableTest.get().beforeClass(getClass(), LifecycleMethodExecutor.NO_OP);
     }
@@ -107,13 +109,11 @@ public abstract class Arquillian implements IHookable {
         } else {
             cycleStack.get().pop();
         }
-        verifyTestRunnerAdaptorHasBeenSet();
         deployableTest.get().afterClass(getClass(), LifecycleMethodExecutor.NO_OP);
     }
 
     @BeforeMethod(groups = "arquillian", inheritGroups = true)
     public void arquillianBeforeTest(Method testMethod) throws Exception {
-        verifyTestRunnerAdaptorHasBeenSet();
         cycleStack.get().push(Cycle.BEFORE);
         deployableTest.get().before(this, testMethod, LifecycleMethodExecutor.NO_OP);
     }
@@ -128,15 +128,15 @@ public abstract class Arquillian implements IHookable {
         } else {
             cycleStack.get().pop();
         }
-        verifyTestRunnerAdaptorHasBeenSet();
         deployableTest.get().after(this, testMethod, LifecycleMethodExecutor.NO_OP);
     }
 
+    @Override
     public void run(final IHookCallBack callback, final ITestResult testResult) {
-        verifyTestRunnerAdaptorHasBeenSet();
         TestResult result;
         try {
             result = deployableTest.get().test(new TestMethodExecutor() {
+                @Override
                 public void invoke(Object... parameters) throws Throwable {
                /*
                 *  The parameters are stored in the InvocationHandler, so we can't set them on the test result directly.
@@ -173,31 +173,33 @@ public abstract class Arquillian implements IHookable {
                     }
                 }
 
+                @Override
                 public String getMethodName() {
                     return testResult.getMethod().getMethodName();
                 }
 
+                @Override
                 public Method getMethod() {
                     // ITestNGMethod.getMethod() is deprecated since TestNG 6.0.1
                     // and was removed in TestNG 7.0.0, replaced by getConstructorOrMethod().getMethod().
                     try {
                         return getMethodOldTestNG();
                     }
-                    catch (Exception e) {
+                    catch (ReflectiveOperationException e) {
                         try {
                             return getMethodNewTestNG();
-                        } catch (Exception e1) {
+                        } catch (ReflectiveOperationException e1) {
                             throw new RuntimeException(e1);
                         }
                     }
                 }
-                
+
                 public Method getMethodOldTestNG() throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
                     final ITestNGMethod testNGMethod = testResult.getMethod();
                     final Method getMethod = testNGMethod.getClass().getMethod("getMethod");
                     return (Method) getMethod.invoke(testNGMethod);
                 }
-                
+
                 public Method getMethodNewTestNG() throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
                     final ITestNGMethod testNGMethod = testResult.getMethod();
                     final Method getConstructorOrMethod = testNGMethod.getClass().getMethod("getConstructorOrMethod");
@@ -206,6 +208,7 @@ public abstract class Arquillian implements IHookable {
                     return (Method) getMethod.invoke(contructorOrMethodObject);
                 }
 
+                @Override
                 public Object getInstance() {
                     return Arquillian.this;
                 }
@@ -244,14 +247,7 @@ public abstract class Arquillian implements IHookable {
         return values;
     }
 
-    private void verifyTestRunnerAdaptorHasBeenSet() {
-        if (deployableTest.get() == null) {
-            throw new IllegalStateException("No TestRunnerAdaptor found, @BeforeSuite has not been called");
-        }
-    }
-
     private static enum Cycle
-
     {
         BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
     }
