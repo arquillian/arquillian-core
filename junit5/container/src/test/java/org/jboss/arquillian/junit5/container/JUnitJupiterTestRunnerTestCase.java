@@ -110,4 +110,13 @@ public class JUnitJupiterTestRunnerTestCase {
     Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
     Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
   }
+
+  @Test
+  public void shouldNotReturnExceptionToClientIfAsumptionPassingInNestedClass() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(TestScenarios.NestedTestScenarios.class, "shouldPassOnAssumptionInNested");
+
+    Assertions.assertEquals(TestResult.Status.PASSED, result.getStatus());
+    Assertions.assertNull(result.getThrowable());
+  }
 }
