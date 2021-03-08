@@ -92,6 +92,8 @@ public class JUnitJupiterTestRunner implements TestRunner {
                             testExecutionResult.getThrowable().orElseGet(() -> new TestAbortedException("Aborted"))
                     );
                     break;
+                case SUCCESSFUL:
+                  break;
             }
         }
 
