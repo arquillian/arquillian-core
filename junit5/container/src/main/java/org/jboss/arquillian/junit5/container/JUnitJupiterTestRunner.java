@@ -35,7 +35,7 @@ public class JUnitJupiterTestRunner implements TestRunner {
             Launcher launcher = LauncherFactory.create();
             launcher.registerTestExecutionListeners(listener);
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                    .selectors(DiscoverySelectors.selectClass(testClass.getCanonicalName()))
+                    .selectors(DiscoverySelectors.selectClass(testClass))
                     .configurationParameter(ArquillianExtension.RUNNING_INSIDE_ARQUILLIAN, "true")
                     .filters((PostDiscoveryFilter) object -> {
                         if (object instanceof MethodBasedTestDescriptor) {
