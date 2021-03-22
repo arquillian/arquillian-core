@@ -223,7 +223,7 @@ public abstract class Arquillian implements IHookable {
                 testResult.setThrowable(result.getThrowable());
 
                 // setting status as failed.
-                testResult.setStatus(2);
+                testResult.setStatus(ITestResult.FAILURE);
             }
 
             // calculate test end time. this is overwritten in the testng invoker..
