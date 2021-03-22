@@ -27,6 +27,9 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
@@ -78,6 +81,8 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
         Class<?> testClass = testMethodExecutor.getInstance().getClass();
 
         Timer eventTimer = null;
+        Lock timerLock = new ReentrantLock();
+        AtomicBoolean isCanceled = new AtomicBoolean();
         try {
             String urlEncodedMethodName = URLEncoder.encode(testMethodExecutor.getMethodName(), "UTF-8");
             final String url = targetBaseURI.toASCIIString() + ARQUILLIAN_SERVLET_MAPPING
@@ -88,7 +93,7 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
                 + "?outputMode=serializedObject&className=" + testClass.getName() + "&methodName="
                 + urlEncodedMethodName + "&cmd=event";
 
-            eventTimer = createCommandServicePullTimer(eventUrl);
+            eventTimer = createCommandServicePullTimer(eventUrl, timerLock, isCanceled);
             return executeWithRetry(url, TestResult.class);
         } catch (Exception e) {
             throw new IllegalStateException("Error launching test " + testClass.getName() + " "
@@ -96,6 +101,12 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
         } finally {
             if (eventTimer != null) {
                 eventTimer.cancel();
+                timerLock.lock();
+                try {
+                    isCanceled.set(true);
+                } finally {
+                    timerLock.unlock();
+                }
             }
         }
     }
@@ -188,7 +199,8 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
     protected void prepareHttpConnection(HttpURLConnection connection) {
     }
 
-    protected Timer createCommandServicePullTimer(final String eventUrl) {
+    protected Timer createCommandServicePullTimer(final String eventUrl,
+            final Lock timerLock, final AtomicBoolean isCanceled) {
         if (config.getPullInMilliSeconds() == null || config.getPullInMilliSeconds() <= 0) {
             log.warning("The Servlet Protocol has been configured with a pullInMilliSeconds interval of " +
                 config.getPullInMilliSeconds() + ". The effect of this is that the Command Service has been disabled." +
@@ -200,7 +212,11 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
         eventTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                timerLock.lock();
                 try {
+                    if (isCanceled.get()) {
+                        return;
+                    }
                     Object o = execute(eventUrl, Object.class, null);
                     if (o != null) {
                         if (o instanceof Command) {
@@ -214,6 +230,8 @@ public class ServletMethodExecutor implements ContainerMethodExecutor {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                } finally {
+                    timerLock.unlock();
                 }
             }
         }, 0, config.getPullInMilliSeconds());
