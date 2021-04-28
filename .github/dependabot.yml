@@ -1,0 +1,36 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "11:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: javax.enterprise:cdi-api
+    versions:
+    - "< 3, >= 2.a"
+  - dependency-name: org.assertj:assertj-core
+    versions:
+    - "< 4, >= 3.a"
+  - dependency-name: org.jboss.weld:weld-core
+    versions:
+    - "< 3, >= 2.a"
+  - dependency-name: org.eclipse.jetty:jetty-servlet
+    versions:
+    - 11.0.0
+    - 11.0.1
+  - dependency-name: org.eclipse.jetty:jetty-server
+    versions:
+    - 11.0.0
+    - 11.0.1
+  - dependency-name: org.jboss.arquillian.test:arquillian-test-impl-base:tests
+    versions:
+    - 1.7.0.Alpha6
+    - 1.7.0.Alpha7
+    - 1.7.0.Alpha8
+  - dependency-name: org.jboss.arquillian.core:arquillian-core-impl-base:tests
+    versions:
+    - 1.7.0.Alpha6
+    - 1.7.0.Alpha7
+    - 1.7.0.Alpha8
