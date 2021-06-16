@@ -25,7 +25,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
 
     <!-- Versioning -->
-    <version.weld-core>4.0.0.Final</version.weld-core>
+    <version.weld-core>4.0.1.Final</version.weld-core>
     <version.jakarta.cdi-api>3.0.0-M2</version.jakarta.cdi-api>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.30</version.slf4j>
