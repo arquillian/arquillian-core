@@ -23,7 +23,7 @@
   <properties>
 
     <!-- Versioning -->
-    <version.weld-core>1.1.34.Final</version.weld-core>
+    <version.weld-core>2.4.3.Final</version.weld-core>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.30</version.slf4j>
 
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
       <scope>provided</scope>
     </dependency>
 
