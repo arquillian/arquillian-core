@@ -121,8 +121,9 @@ public class CDIInjectionEnricher implements TestEnricher {
     @SuppressWarnings("unchecked")
     protected void injectNonContextualInstance(BeanManager manager, Object instance) {
         CreationalContext<Object> creationalContext = getCreationalContext();
-        InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager.createInjectionTarget(manager
-            .createAnnotatedType(instance.getClass()));
+        InjectionTarget<Object> injectionTarget = (InjectionTarget<Object>) manager
+                .getInjectionTargetFactory(manager.createAnnotatedType(instance.getClass()))
+                .createInjectionTarget(null);
         injectionTarget.inject(instance, creationalContext);
     }
 }
