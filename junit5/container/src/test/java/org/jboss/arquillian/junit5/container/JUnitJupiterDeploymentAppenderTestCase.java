@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class JUnitJupiterDeploymentAppenderTestCase {
 
   @Test
-  public void shouldGenerateDependencies() throws Exception {
+  public void shouldGenerateDependencies() {
     Archive<?> archive = new JUnitJupiterDeploymentAppender().createAuxiliaryArchive();
 
     Assertions.assertTrue(
