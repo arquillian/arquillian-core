@@ -27,7 +27,7 @@ public class ResourceInjectionEnricherTestCase {
 
     {
         injectionValueMap.put("primitive_char", '1');
-        injectionValueMap.put("primitive_byte", new Byte("1"));
+        injectionValueMap.put("primitive_byte", Byte.valueOf("1"));
         injectionValueMap.put("primitive_int", 10);
         injectionValueMap.put("primitive_short", (short) 10);
         injectionValueMap.put("primitive_long", 10L);

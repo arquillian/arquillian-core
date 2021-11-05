@@ -97,8 +97,8 @@ public class IntegrationTestCase {
         public void on(@Observes String name) {
             try {
                 context.get().activate("A");
-                object.set(new Float(2.2));
-                event.fire(new Integer(100));
+                object.set((float) 2.2);
+                event.fire(100);
             } finally {
                 context.get().deactivate();
             }
@@ -122,7 +122,7 @@ public class IntegrationTestCase {
         private InstanceProducer<Double> doub;
 
         public void on(@Observes Float integer) {
-            doub.set(new Double(2.0));
+            doub.set(2.0);
             wasCalled = true;
         }
     }
