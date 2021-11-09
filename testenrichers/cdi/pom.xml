@@ -23,7 +23,7 @@
   <properties>
 
     <!-- Versioning -->
-    <version.weld-core>2.4.3.Final</version.weld-core>
+    <version.weld-core>2.4.8.Final</version.weld-core>
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>1.7.31</version.slf4j>
 
