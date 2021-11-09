@@ -28,7 +28,6 @@ import org.jboss.arquillian.container.test.spi.command.CommandCallback;
  * BaseServletProtocol
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class BaseServletProtocol implements Protocol<ServletProtocolConfiguration> {
     /* (non-Javadoc)
@@ -44,7 +43,7 @@ public abstract class BaseServletProtocol implements Protocol<ServletProtocolCon
      */
     @Override
     public ProtocolDescription getDescription() {
-        return new ProtocolDescription(getProtcolName());
+        return new ProtocolDescription(getProtocolName());
     }
 
     /* (non-Javadoc)
@@ -62,5 +61,5 @@ public abstract class BaseServletProtocol implements Protocol<ServletProtocolCon
         return new ServletMethodExecutor(protocolConfiguration, contexts, callback);
     }
 
-    protected abstract String getProtcolName();
+    protected abstract String getProtocolName();
 }
