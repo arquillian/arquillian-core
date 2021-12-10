@@ -29,7 +29,7 @@
     <version.junit5>5.8.1</version.junit5>
     <version.mockito_all>1.10.19</version.mockito_all>
     <version.testng>7.4.0</version.testng>
-    <version.assertj>2.9.1</version.assertj>
+    <version.assertj>3.21.0</version.assertj>
   </properties>
 
   <!-- Dependency Management -->
