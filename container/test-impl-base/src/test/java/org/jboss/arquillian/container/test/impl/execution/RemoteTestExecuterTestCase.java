@@ -27,6 +27,7 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolDefinition;
 import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistry;
+import org.jboss.arquillian.container.test.impl.domain.ProtocolRegistryTestCase;
 import org.jboss.arquillian.container.test.impl.execution.event.RemoteExecutionEvent;
 import org.jboss.arquillian.container.test.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
@@ -46,7 +47,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 /**
@@ -103,6 +104,7 @@ public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase {
 
         Mockito.when(deploymentDescription.getProtocol()).thenReturn(new ProtocolDescription("TEST"));
         Mockito.when(protocolRegistry.getProtocol(Mockito.any(ProtocolDescription.class))).thenReturn(protocolDefinition);
+        Mockito.when(protocolDefinition.createProtocolConfiguration()).thenReturn(new ProtocolRegistryTestCase.DummyProtocolConfiguration());
         Mockito.when(protocolDefinition.getProtocol()).thenReturn(protocol);
         Mockito.when(protocol.getExecutor(
             Mockito.any(ProtocolConfiguration.class),
@@ -113,10 +115,6 @@ public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase {
                 return new TestContainerMethodExecutor((CommandCallback) invocation.getArguments()[2]);
             }
         });
-
-        Mockito.when(testExecutor.getInstance()).thenReturn(this);
-        Mockito.when(testExecutor.getMethod()).thenReturn(
-            getTestMethod("shouldReactivePreviousContextsOnRemoteEvents"));
     }
 
     @Test
