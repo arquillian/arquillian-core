@@ -35,7 +35,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.VarargMatcher;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -121,8 +121,8 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
     @Test
     public void shouldBeAbleToInjectBaseContext() throws Exception {
         Mockito.when(resourceProvider.lookup(
-            (ArquillianResource) Mockito.any(),
-            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+                Mockito.any(ArquillianResource.class),
+                Mockito.any(ResourceProvider.ClassInjection.class)))
             .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -139,9 +139,9 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         Method resourceMethod = ObjectClass.class.getMethod("test", Object.class);
 
         Mockito.when(
-            resourceProvider.lookup(
-                (ArquillianResource) Mockito.any(),
-                Mockito.argThat(new MethodInjectionAnnotationMatcher())))
+                resourceProvider.lookup(
+                    Mockito.any(ArquillianResource.class),
+                    Mockito.any(ResourceProvider.MethodInjection.class)))
             .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -157,12 +157,11 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         Field resource2Field = ObjectClass2.class.getField("resource2");
 
         Mockito.when(
-            resourceProvider.lookup(
-                (ArquillianResource) Mockito.any(),
-                Mockito.argThat(
-                    new CustomAnnotationMatcher(
-                        resource2Field.getAnnotation(ArquillianTestQualifier.class),
-                        ResourceProvider.ClassInjection.class))))
+                resourceProvider.lookup(
+                    Mockito.any(ArquillianResource.class),
+                    Mockito.any(resource2Field.getAnnotation(ArquillianTestQualifier.class).getClass()),
+                    Mockito.any(ResourceProvider.ClassInjection.class)
+                ))
             .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -180,13 +179,13 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         Mockito.when(resourceProvider1.canProvide(Object.class)).thenReturn(true);
 
         Mockito.when(resourceProvider.lookup(
-            (ArquillianResource) Mockito.any(),
-            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+                Mockito.any(ArquillianResource.class),
+                Mockito.any(ResourceProvider.ClassInjection.class)))
             .thenReturn(null);
 
         Mockito.when(resourceProvider1.lookup(
-            (ArquillianResource) Mockito.any(),
-            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+                Mockito.any(ArquillianResource.class),
+                Mockito.any(ResourceProvider.ClassInjection.class)))
             .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -205,13 +204,13 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         Mockito.when(resourceProvider1.canProvide(Object.class)).thenReturn(true);
 
         Mockito.when(resourceProvider.lookup(
-            (ArquillianResource) Mockito.any(),
-            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+                Mockito.any(ArquillianResource.class),
+                Mockito.any(ResourceProvider.ClassInjection.class)))
             .thenReturn(null);
 
         Mockito.when(resourceProvider1.lookup(
-            (ArquillianResource) Mockito.any(),
-            Mockito.argThat(new ClassInjectionAnnotationMatcher())))
+                Mockito.any(ArquillianResource.class),
+                Mockito.any(ResourceProvider.ClassInjection.class)))
             .thenReturn(null);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -238,12 +237,11 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         Method resourceMethod = ObjectClass.class.getMethod("testWithQualifier", Object.class);
 
         Mockito.when(
-            resourceProvider.lookup(
-                (ArquillianResource) Mockito.any(),
-                Mockito.argThat(
-                    new CustomAnnotationMatcher(
-                        resourceMethod.getParameterAnnotations()[0][1],
-                        ResourceProvider.MethodInjection.class))))
+                resourceProvider.lookup(
+                    Mockito.any(ArquillianResource.class),
+                    Mockito.any(resourceMethod.getParameterAnnotations()[0][1].getClass()),
+                    Mockito.any(ResourceProvider.MethodInjection.class)
+                ))
             .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
@@ -257,15 +255,6 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
     @Test
     public void shouldThrowExceptionWhenUsedMethodScopeInjectionOnArquillianResource() throws Exception {
         Method resourceMethod = ObjectClass3.class.getMethod("testWithInjectionQualifier", Object.class);
-
-        Mockito.when(
-            resourceProvider.lookup(
-                (ArquillianResource) Mockito.any(),
-                Mockito.argThat(
-                    new CustomAnnotationMatcher(
-                        resourceMethod.getParameterAnnotations()[0][1],
-                        ResourceProvider.MethodInjection.class))))
-            .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
         injector.get().inject(enricher);
@@ -283,13 +272,6 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
 
     @Test
     public void shouldThrowExceptionWhenUsedClassScopeInjectionOnArquillianResource() {
-
-        Mockito.when(
-            resourceProvider.lookup(
-                (ArquillianResource) Mockito.any(),
-                Mockito.argThat(
-                    new ClassInjectionAnnotationMatcher())))
-            .thenReturn(resource);
 
         TestEnricher enricher = new ArquillianResourceTestEnricher();
         injector.get().inject(enricher);
@@ -335,50 +317,6 @@ public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase
         public Object resource;
 
         public void testWithInjectionQualifier(@ArquillianResource @ResourceProvider.MethodInjection Object resource) {
-        }
-    }
-
-    private class ClassInjectionAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher {
-        private static final long serialVersionUID = 7468313136186740343L;
-
-        @Override
-        public boolean matches(Object varargArgument) {
-            Class<?> qualifier = ((Annotation) varargArgument).annotationType();
-
-            return qualifier.equals(ResourceProvider.ClassInjection.class);
-        }
-    }
-
-    private class MethodInjectionAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher {
-        private static final long serialVersionUID = 7468313136186740343L;
-
-        @Override
-        public boolean matches(Object varargArgument) {
-            Class<?> qualifier = ((Annotation) varargArgument).annotationType();
-
-            return qualifier.equals(ResourceProvider.MethodInjection.class);
-        }
-    }
-
-    private class CustomAnnotationMatcher extends ArgumentMatcher<Annotation[]> implements VarargMatcher {
-        private static final long serialVersionUID = 7468313136186740343L;
-
-        private Annotation additionalQualifier;
-
-        private Class<? extends Annotation> injectionScope;
-
-        public CustomAnnotationMatcher(Annotation additionalQualifier, Class<? extends Annotation> injectionScope) {
-            this.additionalQualifier = additionalQualifier;
-            this.injectionScope = injectionScope;
-        }
-
-        @Override
-        public boolean matches(Object varargArgument) {
-            Annotation[] annotations = (Annotation[]) varargArgument;
-
-            return annotations.length == 2
-                && annotations[0].annotationType().equals(additionalQualifier.annotationType())
-                && annotations[1].annotationType().equals(injectionScope);
         }
     }
 }

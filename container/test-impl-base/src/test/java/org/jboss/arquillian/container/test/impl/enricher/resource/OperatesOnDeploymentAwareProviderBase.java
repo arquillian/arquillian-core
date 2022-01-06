@@ -114,16 +114,12 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
         Mockito.when(registry.getContainer(
             new TargetDescription("X")))
             .thenReturn(new ContainerImpl("X", deployableContainer, new ContainerDefImpl("X")));
-        Mockito.when(registry.getContainer(
-            new TargetDescription("Z")))
-            .thenReturn(new ContainerImpl("Z", deployableContainer, new ContainerDefImpl("Z")));
 
         Deployment deploymentZ = new Deployment(new DeploymentDescription("Z", ShrinkWrap.create(JavaArchive.class))
             .setTarget(new TargetDescription("Z")));
         Deployment deploymentX = new Deployment(new DeploymentDescription("X", ShrinkWrap.create(JavaArchive.class))
             .setTarget(new TargetDescription("X")));
 
-        Mockito.when(scenario.deployment(new DeploymentTargetDescription("Z"))).thenReturn(deploymentZ);
         Mockito.when(scenario.deployment(new DeploymentTargetDescription("X"))).thenReturn(deploymentX);
 
         ContainerContext containerContext = getManager().getContext(ContainerContext.class);

@@ -25,7 +25,7 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * ArquillianTestEnricherTestCase

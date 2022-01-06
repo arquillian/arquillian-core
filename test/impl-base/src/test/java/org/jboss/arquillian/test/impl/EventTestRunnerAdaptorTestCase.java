@@ -97,7 +97,6 @@ public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase {
         Object testInstance = this;
 
         TestMethodExecutor testExecutor = Mockito.mock(TestMethodExecutor.class);
-        Mockito.when(testExecutor.getInstance()).thenReturn(testInstance);
         Mockito.when(testExecutor.getMethod()).thenReturn(testMethod);
 
         // ApplicationContext is auto started, deactivate to be future proof
