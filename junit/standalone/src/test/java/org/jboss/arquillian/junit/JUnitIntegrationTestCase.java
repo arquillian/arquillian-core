@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
