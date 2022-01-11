@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 // TODO: should have a complete 'integration' test case with Arquillian.class / InContainer vs Client
 @RunWith(MockitoJUnitRunner.class)
