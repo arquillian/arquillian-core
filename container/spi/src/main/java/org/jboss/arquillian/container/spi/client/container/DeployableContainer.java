@@ -31,11 +31,14 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
     // ControllableContainer
     Class<T> getConfigurationClass();
 
-    void setup(T configuration);
+    default void setup(T configuration) {
+    }
 
-    void start() throws LifecycleException;
+    default void start() throws LifecycleException {
+    }
 
-    void stop() throws LifecycleException;
+    default void stop() throws LifecycleException {
+    }
 
     // DeployableContainer
     ProtocolDescription getDefaultProtocol();
@@ -45,7 +48,9 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
     void undeploy(Archive<?> archive) throws DeploymentException;
 
     // Admin ?
-    void deploy(Descriptor descriptor) throws DeploymentException;
+    default void deploy(Descriptor descriptor) throws DeploymentException {
+    }
 
-    void undeploy(Descriptor descriptor) throws DeploymentException;
+    default void undeploy(Descriptor descriptor) throws DeploymentException {
+    }
 }
