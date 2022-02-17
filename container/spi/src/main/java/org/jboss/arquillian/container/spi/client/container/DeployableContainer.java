@@ -22,7 +22,13 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
- * DeployableContainer
+ * This interface defines a DeployableContainer in Arquillian.
+ *
+ * <p>
+ * Methods to get the configuration class, the default protocol and to deploy
+ * and undeploy an archive are required to be implemented. Other
+ * methods such as setup, start and stop default to NOOP, as not every
+ * type of container needs setup or an explicit start and stop.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
