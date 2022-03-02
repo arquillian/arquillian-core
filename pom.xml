@@ -26,8 +26,8 @@
     <!-- 3.8.1-jboss-1 is causing issues with test deps -->
     <version.compiler.plugin>3.8.0-jboss-2</version.compiler.plugin>
 
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
 
     <!-- External Deps -->
     <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>

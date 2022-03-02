@@ -21,13 +21,13 @@
 
   <!-- Properties -->
   <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
 
     <!-- Versioning -->
-    <version.weld-core>4.0.3.Final</version.weld-core>
-    <version.jakarta.cdi-api>3.0.0</version.jakarta.cdi-api>
-    <version.javax-el>2.2</version.javax-el>
+    <version.weld-core>5.0.0.CR2</version.weld-core>
+    <version.jakarta.cdi-api>4.0.0-RC5</version.jakarta.cdi-api>
+    <version.jakarta-el>5.0.0-RC1</version.jakarta-el>
     <version.slf4j>1.7.36</version.slf4j>
 
   </properties>
@@ -109,9 +109,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.el</groupId>
-      <artifactId>el-api</artifactId>
-      <version>${version.javax-el}</version>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+      <version>${version.jakarta-el}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
