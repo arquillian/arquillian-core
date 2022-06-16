@@ -23,7 +23,7 @@
   <properties>
 
     <!-- Arquillian Core common Deps, Test related -->
-    <version.javax.inject>1</version.javax.inject>
+    <version.javax.inject>1.0-PFD-1</version.javax.inject>
     <version.junit>4.13.2</version.junit>
     <version.junit5.platform>1.8.2</version.junit5.platform>
     <version.junit5>5.8.2</version.junit5>
