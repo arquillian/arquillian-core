@@ -22,7 +22,7 @@
   <!-- Properties -->
   <properties>
     <!-- Versioning -->
-    <version.jetty_jetty>11.0.10</version.jetty_jetty>
+    <version.jetty_jetty>11.0.11</version.jetty_jetty>
     <version.resteasy>6.0.3.Final</version.resteasy>
     <version.restfulws-api>3.0.0</version.restfulws-api>
     <!-- The protocol adaptor requires Java 8 -->
