@@ -198,6 +198,11 @@
         <artifactId>arquillian-protocol-jmx</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.protocol</groupId>
+        <artifactId>arquillian-protocol-rest-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- Enrichers -->
       <dependency>
