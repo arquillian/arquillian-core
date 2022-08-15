@@ -124,7 +124,7 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
 
     private URL toURL(HTTPContext context) {
         try {
-            return new URI("http", null, context.getHost(), context.getPort(), null, null, null).toURL();
+            return new URI(context.getScheme(), null, context.getHost(), context.getPort(), null, null, null).toURL();
         } catch (Exception e) {
             throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
         }

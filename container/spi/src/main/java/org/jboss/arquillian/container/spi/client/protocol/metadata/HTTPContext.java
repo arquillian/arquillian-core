@@ -31,14 +31,32 @@ import java.util.Set;
 public class HTTPContext extends NamedContext {
     private final String host;
     private final int port;
+    private final String scheme;
 
     private final Set<Servlet> servlets;
 
     public HTTPContext(String host, int port) {
-        this("no-named", host, port);
+        this("no-named", host, port, false);
+    }
+
+    public HTTPContext(String host, int port, boolean secure) {
+        this("no-named", host, port, secure);
     }
 
     public HTTPContext(String name, String host, int port) {
+        this(name, host, port, false);
+    }
+
+    /**
+     * Creates a new HTTP context.
+     *
+     * @param name   the name for the context
+     * @param host   the host for the context
+     * @param port   the port for the context
+     * @param secure whether this is a secure context. {@code true} will result in a https scheme, otherwise http will
+     *               be used for the scheme
+     */
+    public HTTPContext(String name, String host, int port, boolean secure) {
         super(name);
 
         if (host == null) {
@@ -46,6 +64,7 @@ public class HTTPContext extends NamedContext {
         }
         this.host = host;
         this.port = port;
+        this.scheme = secure ? "https" : "http";
         this.servlets = new HashSet<Servlet>();
     }
 
@@ -85,9 +104,18 @@ public class HTTPContext extends NamedContext {
         return null;
     }
 
+    /**
+     * Returns the scheme used for the connection.
+     *
+     * @return the scheme used for the connection
+     */
+    public String getScheme() {
+        return scheme;
+    }
+
     @Override
     public String toString() {
-        return "HTTPContext [host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
+        return "HTTPContext [scheme=" + scheme + ", host=" + host + ", port=" + port + ", servlets=" + toString(servlets) + "]";
     }
 
     private String toString(Set<Servlet> servlets) {
