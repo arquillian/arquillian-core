@@ -55,6 +55,17 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
     }
 
     @Test
+    public void shouldBeAbleToInjectBaseContextURLSecure() throws Exception {
+        URLBaseContextClass test = execute(
+            URLBaseContextClass.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+                .addContext(new HTTPContext("TEST", 8080, true)));
+
+        Assert.assertEquals("https://TEST:8080", test.url.toExternalForm());
+    }
+
+    @Test
     public void shouldBeAbleToInjectBaseContextURLQualified() throws Exception {
         URLBaseContextClassQualified test = execute(
             URLBaseContextClassQualified.class,
@@ -77,6 +88,18 @@ public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProvid
                     .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test"))));
 
         Assert.assertEquals("http://TEST:8080/test/", test.url.toExternalForm());
+    }
+
+    @Test
+    public void shouldBeAbleToInjectServletContextURLSecure() throws Exception {
+        URLServletContextClass test = execute(
+            URLServletContextClass.class,
+            ProtocolMetaData.class,
+            new ProtocolMetaData()
+                .addContext(new HTTPContext("TEST", 8080, true)
+                    .add(new Servlet(URLServletContextClass.class.getSimpleName(), "/test"))));
+
+        Assert.assertEquals("https://TEST:8080/test/", test.url.toExternalForm());
     }
 
     @Test
