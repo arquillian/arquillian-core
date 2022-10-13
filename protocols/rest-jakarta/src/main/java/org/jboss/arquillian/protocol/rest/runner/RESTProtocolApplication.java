@@ -20,7 +20,7 @@ import java.util.Set;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
-@ApplicationPath("/")
+@ApplicationPath("/ArquillianRESTRunnerEE9")
 public class RESTProtocolApplication extends Application {
 
     @Override
