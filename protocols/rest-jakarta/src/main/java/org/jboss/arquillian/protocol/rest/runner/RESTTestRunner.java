@@ -47,7 +47,7 @@ import jakarta.ws.rs.core.Response.Status;
  * 
  * A conversion of the ServletTestRunner to use RESTful Web Services instead.
  */
-@Path("/ArquillianRESTRunnerEE9")
+@Path("")
 public class RESTTestRunner {
     public static final String PARA_METHOD_NAME = "methodName";
     public static final String PARA_CLASS_NAME = "className";
