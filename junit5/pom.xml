@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-parent</artifactId>
-    <version>1.7.0.Alpha13</version>
+    <version>1.7.0.Final-SNAPSHOT</version>
   </parent>
 
   <!-- Model Information -->
