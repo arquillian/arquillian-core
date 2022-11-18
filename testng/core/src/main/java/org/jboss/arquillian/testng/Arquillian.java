@@ -213,6 +213,10 @@ public abstract class Arquillian implements IHookable {
                     return Arquillian.this;
                 }
             });
+
+            // calculate test end time. this is overwritten in the testng invoker..
+            testResult.setEndMillis((result.getStart() - result.getEnd()) + testResult.getStartMillis());
+
             Throwable throwable = result.getThrowable();
             if (throwable != null) {
                 if (result.getStatus() == Status.SKIPPED) {
@@ -224,20 +228,18 @@ public abstract class Arquillian implements IHookable {
 
                 // setting status as failed.
                 testResult.setStatus(ITestResult.FAILURE);
-            }
-
-            // calculate test end time. this is overwritten in the testng invoker..
-            testResult.setEndMillis((result.getStart() - result.getEnd()) + testResult.getStartMillis());
-            switch(result.getStatus()) {
-                case PASSED:
-                    testResult.setStatus(ITestResult.SUCCESS);
-                    break;
-                case FAILED:
-                    testResult.setStatus(ITestResult.FAILURE);
-                    break;
-                case SKIPPED:
-                    testResult.setStatus(ITestResult.SKIP);
-                    break;
+            } else {
+                switch (result.getStatus()) {
+                    case PASSED:
+                        testResult.setStatus(ITestResult.SUCCESS);
+                        break;
+                    case FAILED:
+                        testResult.setStatus(ITestResult.FAILURE);
+                        break;
+                    case SKIPPED:
+                        testResult.setStatus(ITestResult.SKIP);
+                        break;
+                }
             }
         } catch (Exception e) {
             testResult.setStatus(ITestResult.FAILURE);
