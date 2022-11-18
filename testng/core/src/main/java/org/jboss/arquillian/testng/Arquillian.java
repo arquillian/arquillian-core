@@ -240,6 +240,7 @@ public abstract class Arquillian implements IHookable {
                     break;
             }
         } catch (Exception e) {
+            testResult.setStatus(ITestResult.FAILURE);
             testResult.setThrowable(e);
         }
     }
