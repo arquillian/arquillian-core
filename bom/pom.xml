@@ -47,8 +47,10 @@
     <version.shrinkwrap_descriptors>2.0.0</version.shrinkwrap_descriptors>
     <version.shrinkwrap_resolver>3.1.4</version.shrinkwrap_resolver>
 
+    <jboss.releases.repo.id>jboss-releases-repository</jboss.releases.repo.id>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
+    <jboss.snapshots.repo.id>jboss-snapshots-repository</jboss.snapshots.repo.id>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
     </jboss.snapshots.repo.url>
 
