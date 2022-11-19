@@ -58,7 +58,8 @@ public class AbstractServerBase {
         ServletContextHandler root = new ServletContextHandler(server, "/arquillian-protocol", ServletContextHandler.SESSIONS);
         ServletHolder holder = new ServletHolder(HttpServletDispatcher.class); 
         holder.setInitParameter("jakarta.ws.rs.Application", RESTProtocolApplication.class.getName());
-		root.addServlet(holder, "/");
+        holder.setInitParameter("resteasy.servlet.mapping.prefix", RESTMethodExecutor.ARQUILLIAN_REST_MAPPING);
+		root.addServlet(holder, RESTMethodExecutor.ARQUILLIAN_REST_MAPPING);
         server.start();
     }
 
