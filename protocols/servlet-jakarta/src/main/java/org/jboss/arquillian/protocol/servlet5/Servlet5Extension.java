@@ -31,7 +31,8 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 public class Servlet5Extension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
-        builder.service(Protocol.class, org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol.class);
+        builder.service(Protocol.class, org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol.class)
+            .service(Protocol.class, org.jboss.arquillian.protocol.servlet5.v_6.ServletProtocol.class);
 
         if (Validate.classExists("jakarta.servlet.ServletContext")) {
             builder.service(ResourceProvider.class, ServletContextResourceProvider.class);
