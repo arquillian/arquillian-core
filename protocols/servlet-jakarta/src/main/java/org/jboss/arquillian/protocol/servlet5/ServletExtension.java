@@ -28,7 +28,7 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Servlet5Extension implements LoadableExtension {
+public class ServletExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
         builder.service(Protocol.class, org.jboss.arquillian.protocol.servlet5.v_5.ServletProtocol.class)
