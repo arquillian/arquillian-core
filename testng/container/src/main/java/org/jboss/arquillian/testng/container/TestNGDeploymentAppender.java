@@ -59,6 +59,12 @@ public class TestNGDeploymentAppender extends CachedAuxilliaryArchiveAppender {
             Filters.includeAll(),
             "com.beust");
 
+        // Attempt to add org.slf4j, internal TestNG package 7.5+ use slf4j
+        optionalPackages(
+            archive,
+            Filters.includeAll(),
+            "org.slf4j");
+
         return archive;
     }
 
