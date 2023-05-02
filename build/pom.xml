@@ -25,11 +25,11 @@
     <!-- Arquillian Core common Deps, Test related -->
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13.2</version.junit>
-    <version.junit5.platform>1.9.1</version.junit5.platform>
-    <version.junit5>5.9.1</version.junit5>
-    <version.mockito>4.9.0</version.mockito>
+    <version.junit5.platform>1.9.2</version.junit5.platform>
+    <version.junit5>5.9.2</version.junit5>
+    <version.mockito>4.10.0</version.mockito>
     <version.testng>7.5</version.testng>
-    <version.assertj>3.23.1</version.assertj>
+    <version.assertj>3.24.2</version.assertj>
   </properties>
 
   <!-- Dependency Management -->
