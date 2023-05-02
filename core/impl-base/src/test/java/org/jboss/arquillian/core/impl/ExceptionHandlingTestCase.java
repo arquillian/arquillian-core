@@ -48,16 +48,16 @@ public class ExceptionHandlingTestCase extends AbstractManagerTestBase {
     @Test
     public void shouldOnlyFireSameExceptionOnce() throws Exception {
         try {
-            fire(new Double(0.0));
+            fire(0.0);
         } catch (Exception e) {
             if (!(e instanceof TestException)) {
                 Assert.fail("Wrong Exception thrown " + e);
             }
         }
 
-        Assert.assertEquals(new Integer(1), TestEventFire.called);
-        Assert.assertEquals(new Integer(1), TestExceptionThrower.called);
-        Assert.assertEquals(new Integer(1), TestExceptionHandler.called);
+        Assert.assertEquals(Integer.valueOf(1), TestEventFire.called);
+        Assert.assertEquals(Integer.valueOf(1), TestExceptionThrower.called);
+        Assert.assertEquals(Integer.valueOf(1), TestExceptionHandler.called);
     }
 
     public static class TestEventFire {
@@ -68,7 +68,7 @@ public class ExceptionHandlingTestCase extends AbstractManagerTestBase {
 
         public void handle(@Observes Double event) throws Exception {
             called++;
-            integer.fire(new Integer(10));
+            integer.fire(10);
         }
     }
 

@@ -25,11 +25,11 @@
     <!-- Arquillian Core common Deps, Test related -->
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13.2</version.junit>
-    <version.junit5.platform>1.7.2</version.junit5.platform>
-    <version.junit5>5.7.2</version.junit5>
-    <version.mockito_all>1.10.19</version.mockito_all>
-    <version.testng>7.4.0</version.testng>
-    <version.assertj>2.9.1</version.assertj>
+    <version.junit5.platform>1.9.3</version.junit5.platform>
+    <version.junit5>5.9.3</version.junit5>
+    <version.mockito>4.10.0</version.mockito>
+    <version.testng>7.5</version.testng>
+    <version.assertj>3.24.2</version.assertj>
   </properties>
 
   <!-- Dependency Management -->
@@ -94,13 +94,13 @@
       <dependency>
         <groupId>com.beust</groupId>
         <artifactId>jcommander</artifactId>
-        <version>1.81</version>
+        <version>1.82</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>${version.mockito_all}</version>
+        <artifactId>mockito-core</artifactId>
+        <version>${version.mockito}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -117,7 +117,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.20</version>
+        <version>1.22</version>
         <executions>
           <execution>
             <id>signature-check</id>

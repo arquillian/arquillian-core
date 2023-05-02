@@ -22,7 +22,13 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
- * DeployableContainer
+ * This interface defines a DeployableContainer in Arquillian.
+ *
+ * <p>
+ * Methods to get the configuration class, the default protocol and to deploy
+ * and undeploy an archive are required to be implemented. Other
+ * methods such as setup, start and stop default to NOOP, as not every
+ * type of container needs setup or an explicit start and stop.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @version $Revision: $
@@ -31,11 +37,14 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
     // ControllableContainer
     Class<T> getConfigurationClass();
 
-    void setup(T configuration);
+    default void setup(T configuration) {
+    }
 
-    void start() throws LifecycleException;
+    default void start() throws LifecycleException {
+    }
 
-    void stop() throws LifecycleException;
+    default void stop() throws LifecycleException {
+    }
 
     // DeployableContainer
     ProtocolDescription getDefaultProtocol();
@@ -45,7 +54,9 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
     void undeploy(Archive<?> archive) throws DeploymentException;
 
     // Admin ?
-    void deploy(Descriptor descriptor) throws DeploymentException;
+    default void deploy(Descriptor descriptor) throws DeploymentException {
+    }
 
-    void undeploy(Descriptor descriptor) throws DeploymentException;
+    default void undeploy(Descriptor descriptor) throws DeploymentException {
+    }
 }

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-build</artifactId>
+    <version>1.7.0.Final-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
+  </parent>
+
+  <!-- Model Version -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Artifact Configuration -->
+  <groupId>org.jboss.arquillian.protocol</groupId>
+  <artifactId>arquillian-protocol-rest-jakarta</artifactId>
+  <name>Arquillian Protocol REST 3.x</name>
+  <description>Protocol handler for communicating using REST following the Jakarta RESTful Web Services 3.x spec and jakarta.ws.rs.* apis
+  </description>
+
+  <!-- Properties -->
+  <properties>
+    <!-- Versioning -->
+    <version.jetty_jetty>11.0.14</version.jetty_jetty>
+    <version.resteasy>6.2.3.Final</version.resteasy>
+    <version.restfulws-api>3.0.0</version.restfulws-api>
+    <!-- The protocol adaptor requires Java 8 -->
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
+  <!-- Dependencies -->
+  <dependencies>
+
+    <!-- org.jboss.arquillian -->
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-container-test-impl-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+      <artifactId>shrinkwrap-descriptors-spi</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- restfulws api -->
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>${version.restfulws-api}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-impl-base</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${version.jetty_jetty}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${version.jetty_jetty}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-servlet-initializer</artifactId>
+      <version>${version.resteasy}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-core</artifactId>
+      <version>${version.resteasy}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- The test -->
+  <profiles>
+    <!-- Need to skip test compilation for Java8 and earlier since jetty-server is compiled under Java11 -->
+    <profile>
+      <id>jdk8</id>
+      <activation>
+        <jdk>[,9)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>test-compile</phase>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jdk11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <!-- The tests need to be build and run the Java 11 due to the fact that jetty 11.x which
+        supports the Java EE 9 apis requires Java 11
+        -->
+        <maven.compiler.testSource>11</maven.compiler.testSource>
+        <maven.compiler.testTarget>11</maven.compiler.testTarget>
+      </properties>
+    </profile>
+  </profiles>
+</project>

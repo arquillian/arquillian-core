@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.container.test.impl.domain;
 
-import java.util.HashMap;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
 import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
@@ -26,7 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashMap;
 
 /**
  * DomainModelTestCase
@@ -44,7 +45,6 @@ public class ProtocolRegistryTestCase {
     @Before
     public void setup() throws Exception {
         Mockito.when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
-        Mockito.when(protocol.getProtocolConfigurationClass()).thenReturn(DummyProtocolConfiguration.class);
     }
 
     @Test

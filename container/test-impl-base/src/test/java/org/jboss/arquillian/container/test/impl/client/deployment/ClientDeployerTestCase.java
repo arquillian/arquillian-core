@@ -38,7 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * ClientDeployerTestCase
@@ -64,15 +64,9 @@ public class ClientDeployerTestCase extends AbstractContainerTestTestBase {
         ContainerRegistry reg = Mockito.mock(ContainerRegistry.class);
         Container container = Mockito.mock(Container.class);
         Mockito.when(container.getState()).thenReturn(State.STARTED);
-        Mockito.when(container.getName()).thenReturn("_DEFAULT_");
         Container containerStopped = Mockito.mock(Container.class);
-        Mockito.when(containerStopped.getState()).thenReturn(State.STOPPED);
-        Mockito.when(containerStopped.getName()).thenReturn("_CONTAINER_STOPPED_");
 
-        Mockito.when(reg.getContainer("_DEFAULT_")).thenReturn(container);
-        Mockito.when(reg.getContainer("_CONTAINER_STOPPED_")).thenReturn(containerStopped);
         Mockito.when(reg.getContainer(new TargetDescription("_DEFAULT_"))).thenReturn(container);
-        Mockito.when(reg.getContainer(new TargetDescription("_CONTAINER_STOPPED_"))).thenReturn(containerStopped);
 
         bind(ApplicationScoped.class, DeploymentScenario.class, new DeploymentScenario());
         bind(ApplicationScoped.class, ContainerRegistry.class, reg);

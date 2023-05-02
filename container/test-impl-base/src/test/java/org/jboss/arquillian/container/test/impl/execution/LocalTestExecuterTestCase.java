@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * InContainerExecuterTestCase
@@ -54,7 +54,6 @@ public class LocalTestExecuterTestCase extends AbstractContainerTestTestBase {
     public void shouldReturnPassed() throws Throwable {
         bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
 
-        Mockito.when(testExecutor.getInstance()).thenReturn(this);
         Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldReturnPassed"));
 
@@ -81,7 +80,6 @@ public class LocalTestExecuterTestCase extends AbstractContainerTestTestBase {
 
         Exception exception = new Exception();
 
-        Mockito.when(testExecutor.getInstance()).thenReturn(this);
         Mockito.when(testExecutor.getMethod()).thenReturn(
             getTestMethod("shouldReturnFailedOnException"));
         Mockito.doThrow(exception).when(testExecutor).invoke();

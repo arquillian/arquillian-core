@@ -26,7 +26,7 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * ContainerRestarterTestCase

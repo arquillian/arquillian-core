@@ -53,30 +53,30 @@ public class TestScenarios {
   }
 
   @Test
-  public void shouldSkipOnAssumption() throws Exception {
+  public void shouldSkipOnAssumption() {
     Assumptions.assumeTrue(false);
   }
 
   @Test
-  public void shouldPassOnAssumption() throws Exception {
+  public void shouldPassOnAssumption() {
     Assumptions.assumeTrue(true);
   }
 
   @Test
-  public void shouldPassOnException() throws Exception {
+  public void shouldPassOnException() {
     Assertions.assertThrows(IllegalArgumentException.class, () -> {
       throw new IllegalArgumentException();
     });
   }
 
   @Test
-  public void shouldFailOnException() throws Exception {
+  public void shouldFailOnException() {
     Assertions.assertThrows(IllegalArgumentException.class, () -> {
     });
   }
 
   @Test
-  public void shouldFailExpectedWrongException() throws Exception {
+  public void shouldFailExpectedWrongException() {
     Assertions.assertThrows(IllegalArgumentException.class, () -> {
       throw new UnsupportedOperationException();
     });
@@ -86,7 +86,7 @@ public class TestScenarios {
   class NestedTestScenarios {
 
     @Test
-    public void shouldPassOnAssumptionInNested() throws Exception {
+    public void shouldPassOnAssumptionInNested() {
       Assumptions.assumeTrue(true);
     }
   }

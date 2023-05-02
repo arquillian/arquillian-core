@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class JUnitJupiterTestRunnerTestCase {
 
   @Test
-  public void shouldReturnExceptionToClientIfFailingOnWrongExceptionThrown() throws Exception {
+  public void shouldReturnExceptionToClientIfFailingOnWrongExceptionThrown() {
     JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
     TestResult result = runner.execute(TestScenarios.class, "shouldFailExpectedWrongException");
 

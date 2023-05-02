@@ -23,13 +23,12 @@ import org.jboss.arquillian.protocol.servlet5.BaseServletProtocol;
  * ServletProtocol
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletProtocol extends BaseServletProtocol {
     public static final String PROTOCOL_NAME = "Servlet 5.0";
 
     @Override
-    protected String getProtcolName() {
+    protected String getProtocolName() {
         return PROTOCOL_NAME;
     }
 

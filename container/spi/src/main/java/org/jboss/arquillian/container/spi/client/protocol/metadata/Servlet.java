@@ -34,6 +34,7 @@ public class Servlet {
 
     private final String contextRoot;
 
+    private String scheme;
     private String host;
 
     private int port;
@@ -68,6 +69,7 @@ public class Servlet {
         if (context.getHost() == null) {
             throw new IllegalArgumentException(context.getClass().getSimpleName() + " host must not be null");
         }
+        this.scheme = context.getScheme();
         this.host = context.getHost();
         this.port = context.getPort();
     }
@@ -105,7 +107,7 @@ public class Servlet {
     }
 
     private String getBaseURIAsString() {
-        return HTTP_SCHEME + host + ":" + port + contextRoot + "/";
+        return scheme + "://" + host + ":" + port + contextRoot + "/";
     }
 
     /**

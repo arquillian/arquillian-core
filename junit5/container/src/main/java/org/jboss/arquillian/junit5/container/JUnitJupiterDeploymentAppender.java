@@ -13,7 +13,7 @@ import org.junit.platform.engine.TestEngine;
 public class JUnitJupiterDeploymentAppender extends CachedAuxilliaryArchiveAppender {
     @Override
     protected Archive<?> buildArchive() {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "arquillian-junit5.jar")
+        return ShrinkWrap.create(JavaArchive.class, "arquillian-junit5.jar")
                 .addPackages(
                         true,
                         "org.junit",
@@ -23,6 +23,5 @@ public class JUnitJupiterDeploymentAppender extends CachedAuxilliaryArchiveAppen
                         TestRunner.class,
                         JUnitJupiterTestRunner.class)
                 .addAsServiceProvider(TestEngine.class, JupiterTestEngine.class);
-        return archive;
     }
 }

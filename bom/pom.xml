@@ -47,8 +47,10 @@
     <version.shrinkwrap_descriptors>2.0.0</version.shrinkwrap_descriptors>
     <version.shrinkwrap_resolver>3.1.4</version.shrinkwrap_resolver>
 
+    <jboss.releases.repo.id>jboss-releases-repository</jboss.releases.repo.id>
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
     </jboss.releases.repo.url>
+    <jboss.snapshots.repo.id>jboss-snapshots-repository</jboss.snapshots.repo.id>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
     </jboss.snapshots.repo.url>
 
@@ -198,6 +200,11 @@
         <artifactId>arquillian-protocol-jmx</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.protocol</groupId>
+        <artifactId>arquillian-protocol-rest-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- Enrichers -->
       <dependency>
@@ -282,12 +289,12 @@
 
   <distributionManagement>
     <repository>
-      <id>jboss-releases-repository</id>
+      <id>${jboss.releases.repo.id}</id>
       <name>JBoss Releases Repository</name>
       <url>${jboss.releases.repo.url}</url>
     </repository>
     <snapshotRepository>
-      <id>jboss-snapshots-repository</id>
+      <id>${jboss.snapshots.repo.id}</id>
       <name>JBoss Snapshots Repository</name>
       <url>${jboss.snapshots.repo.url}</url>
     </snapshotRepository>

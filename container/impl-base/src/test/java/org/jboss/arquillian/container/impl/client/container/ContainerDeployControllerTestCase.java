@@ -17,7 +17,6 @@
  */
 package org.jboss.arquillian.container.impl.client.container;
 
-import java.util.List;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
@@ -58,10 +57,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -112,9 +113,7 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
     @Before
     public void setup() throws Exception {
         when(deployableContainer1.deploy(isA(Archive.class))).thenReturn(protocolMetaData);
-        when(deployableContainer1.getConfigurationClass()).thenReturn(DummyContainerConfiguration.class);
         when(deployableContainer2.deploy(isA(Archive.class))).thenReturn(protocolMetaData);
-        when(deployableContainer2.getConfigurationClass()).thenReturn(DummyContainerConfiguration.class);
         when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer1, deployableContainer2);
         when(container1.getContainerName()).thenReturn(CONTAINER_1_NAME);
         when(container2.getContainerName()).thenReturn(CONTAINER_2_NAME);

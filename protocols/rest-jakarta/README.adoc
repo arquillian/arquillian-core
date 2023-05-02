@@ -1,0 +1,10 @@
+= Jakarta EE 9 REST 3 API Protocol
+
+This is a port of the servlet jakarta protocol handler for communicating using a REST application following the Jakarta RESTful Web Services 3.x spec.
+
+== Issues
+This relies on a release of org.eclipse.jetty:jetty-server that supports the Jakarta Servlet 5.x spec. The current
+11.0.0-alpha0 release in turn requires Java 11, so this module required Java 8 to compile the module artifact, but
+it requires Java 11 to build and run the modules tests.
+
+https://github.com/eclipse/jetty.project

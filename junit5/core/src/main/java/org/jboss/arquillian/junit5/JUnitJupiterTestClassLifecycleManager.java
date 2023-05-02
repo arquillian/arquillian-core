@@ -8,14 +8,14 @@ import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 
 public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.Store.CloseableResource {
     private static final String MANAGER_KEY = "testRunnerManager";
-    
+
     private TestRunnerAdaptor adaptor;
 
     private Throwable caughtInitializationException;
 
     private JUnitJupiterTestClassLifecycleManager() {
     }
-    
+
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
         ExtensionContext.Store store = getContextStore(context).getRootStore();
         JUnitJupiterTestClassLifecycleManager instance = store.get(MANAGER_KEY, JUnitJupiterTestClassLifecycleManager.class);
@@ -26,16 +26,16 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
         }
         // no, initialization has been attempted before and failed, refuse
         // to do anything else
-        if (instance.hasInitializationException())
+        if (instance.hasInitializationException()) {
             instance.handleSuiteLevelFailure();
+        }
         return instance;
     }
 
     private void initializeAdaptor() throws Exception {
         try {
             // ARQ-1742 If exceptions happen during boot
-            adaptor = TestRunnerAdaptorBuilder
-                .build();
+            adaptor = TestRunnerAdaptorBuilder.build();
             // don't set it if beforeSuite fails
             adaptor.beforeSuite();
         } catch (Exception e) {
@@ -46,11 +46,13 @@ public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.S
 
     @Override
     public void close() {
+        if (adaptor == null) {
+            return;
+        }
+
         try {
-            if (adaptor != null) {
-                adaptor.afterSuite();
-                adaptor.shutdown();
-            }
+            adaptor.afterSuite();
+            adaptor.shutdown();
         } catch (Exception e) {
             throw new RuntimeException("Could not run @AfterSuite", e);
         }
