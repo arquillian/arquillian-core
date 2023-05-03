@@ -30,11 +30,13 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.api.Secured;
 
 /**
  * URLResourceProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
  * @version $Revision: $
  */
 public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
@@ -48,14 +50,17 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
 
     @Override
     public Object doLookup(ArquillianResource resource, Annotation... qualifiers) {
-        return locateURL(resource, locateTargetQualification(qualifiers));
+        return locateURL(resource, qualifiers);
     }
 
-    private Object locateURL(ArquillianResource resource, TargetsContainer targets) {
+    private Object locateURL(ArquillianResource resource, Annotation[] qualifiers) {
         ProtocolMetaData metaData = protocolMetadata.get();
         if (metaData == null) {
             return null;
         }
+
+        TargetsContainer targets = locateTargetQualification(qualifiers);
+        Secured secured = locateSecureQualification(qualifiers);
         if (metaData.hasContext(HTTPContext.class)) {
             HTTPContext context = null;
             if (targets != null) {
@@ -74,13 +79,13 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
                 if (servlet == null) {
                     return null;
                 }
-                return toURL(servlet);
+                return toURL(servlet, secured);
             }
             // TODO: evaluate, if all servlets are in the same context, and only one context exists, we can find the context
             else if (allInSameContext(context.getServlets())) {
-                return toURL(context.getServlets().get(0));
+                return toURL(context.getServlets().get(0), secured);
             } else {
-                return toURL(context);
+                return toURL(context, secured);
             }
         }
         return null;
@@ -106,6 +111,15 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
         return null;
     }
 
+    private Secured locateSecureQualification(Annotation[] qualifiers) {
+        for(Annotation qualifier : qualifiers) {
+            if(Secured.class.isAssignableFrom(qualifier.annotationType())) {
+                return Secured.class.cast(qualifier);
+            }
+        }
+        return null;
+    }
+
     private boolean allInSameContext(List<Servlet> servlets) {
         Set<String> context = new HashSet<String>();
         for (Servlet servlet : servlets) {
@@ -114,17 +128,24 @@ public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
         return context.size() == 1;
     }
 
-    private URL toURL(Servlet servlet) {
+    private URL toURL(Servlet servlet, Secured secured) {
         try {
-            return servlet.getBaseURI().toURL();
+            URI baseURI = servlet.getBaseURI();
+            String scheme = (secured == null) ? baseURI.getScheme() : secured.scheme();
+            int port = (secured == null) ? baseURI.getPort() : secured.port();
+            return new URI(scheme, baseURI.getUserInfo(), baseURI.getHost(),
+                port, baseURI.getPath(), baseURI.getQuery(),
+                baseURI.getFragment()).toURL();
         } catch (Exception e) {
             throw new RuntimeException("Could not convert Servlet to URL, " + servlet, e);
         }
     }
 
-    private URL toURL(HTTPContext context) {
+    private URL toURL(HTTPContext context, Secured secured) {
         try {
-            return new URI(context.getScheme(), null, context.getHost(), context.getPort(), null, null, null).toURL();
+            String scheme = (secured == null) ? context.getScheme() : secured.scheme();
+            int port = (secured == null) ? context.getPort() : secured.port();
+            return new URI(scheme, null, context.getHost(), port, null, null, null).toURL();
         } catch (Exception e) {
             throw new RuntimeException("Could not convert HTTPContext to URL, " + context, e);
         }
