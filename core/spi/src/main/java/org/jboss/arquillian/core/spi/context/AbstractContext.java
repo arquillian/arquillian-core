@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import org.jboss.arquillian.core.spi.ThreadLocalUtil;
 import org.jboss.arquillian.core.spi.Validate;
 
 /**
@@ -105,10 +107,15 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T> {
                 deactivateAll();
             }
             activeStore.remove();
+
+            //Force cleanup ThreadLocal:
+            ThreadLocalUtil.forceCleanupThreadLocal(activeStore);
+
             for (Map.Entry<T, ObjectStore> entry : stores.entrySet()) {
                 entry.getValue().clear();
             }
             stores.clear();
+
         }
     }
 
