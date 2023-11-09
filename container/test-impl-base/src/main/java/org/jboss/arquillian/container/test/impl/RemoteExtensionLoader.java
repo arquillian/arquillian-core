@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -185,7 +186,10 @@ public class RemoteExtensionLoader implements ExtensionLoader {
             Enumeration<URL> enumeration = loader.getResources(serviceFile);
             while (enumeration.hasMoreElements()) {
                 final URL url = enumeration.nextElement();
-                final InputStream is = url.openStream();
+                URLConnection jarConnection = url.openConnection();
+                //Don't cache the file (avoids file leaks on GlassFish).
+                jarConnection.setUseCaches(false);
+                final InputStream is = jarConnection.getInputStream();
                 BufferedReader reader = null;
 
                 try {
@@ -222,6 +226,9 @@ public class RemoteExtensionLoader implements ExtensionLoader {
                 } catch (IOException exc) {
                     throw new RuntimeException("Could not read file: " + url);
                 } finally {
+                    if (is != null) {
+                       is.close();
+                    }
                     if (reader != null) {
                         reader.close();
                     }
