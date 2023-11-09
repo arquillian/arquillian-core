@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-build</artifactId>
-    <version>1.7.1.Final-SNAPSHOT</version>
+    <version>1.7.3.Final-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
@@ -23,7 +23,7 @@
   <properties>
     <!-- Versioning -->
     <version.jetty_jetty>11.0.14</version.jetty_jetty>
-    <version.resteasy>6.2.3.Final</version.resteasy>
+    <version.resteasy>6.2.4.Final</version.resteasy>
     <version.restfulws-api>3.0.0</version.restfulws-api>
     <!-- The protocol adaptor requires Java 8 -->
     <maven.compiler.target>1.8</maven.compiler.target>

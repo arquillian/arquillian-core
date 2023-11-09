@@ -66,19 +66,18 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             // run inside arquillian
             invocation.proceed();
         } else {
+            ContextStore contextStore = getContextStore(extensionContext);
             if (isRunAsClient(extensionContext)) {
                 // Run as client
                 interceptInvocation(invocationContext, extensionContext);
             } else {
-                ContextStore contextStore = getContextStore(extensionContext);
                 // Run as container (but only once)
                 if (!contextStore.isRegisteredTemplate(invocationContext.getExecutable())) {
                     interceptInvocation(invocationContext, extensionContext);
                 }
-                // Otherwise get result
-                contextStore.getResult(extensionContext.getUniqueId())
-                    .ifPresent(ExceptionUtils::throwAsUncheckedException);
             }
+            contextStore.getResult(extensionContext.getUniqueId())
+                .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
     }
 
