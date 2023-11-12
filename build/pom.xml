@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-parent</artifactId>
-    <version>1.7.2.Final-SNAPSHOT</version>
+    <version>1.7.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -25,8 +25,8 @@
     <!-- Arquillian Core common Deps, Test related -->
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13.2</version.junit>
-    <version.junit5.platform>1.9.3</version.junit5.platform>
-    <version.junit5>5.9.3</version.junit5>
+    <version.junit5.platform>1.10.1</version.junit5.platform>
+    <version.junit5>5.10.1</version.junit5>
     <version.mockito>4.10.0</version.mockito>
     <version.testng>7.5</version.testng>
     <version.assertj>3.24.2</version.assertj>
@@ -65,6 +65,11 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
+        <version>${version.junit5}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
         <version>${version.junit5}</version>
       </dependency>
       <dependency>
