@@ -83,7 +83,7 @@ public class BeansXMLProtocolProcessorTestCase {
         WebArchive protocol = ShrinkWrap.create(WebArchive.class);
 
         new BeansXMLProtocolProcessor().process(
-            new TestDeployment(protocol, new ArrayList<Archive<?>>()), protocol);
+            new TestDeployment(null, protocol, new ArrayList<Archive<?>>()), protocol);
 
         Assert.assertFalse(protocol.contains("WEB-INF/beans.xml"));
     }
@@ -97,7 +97,7 @@ public class BeansXMLProtocolProcessorTestCase {
         WebArchive protocol = deployment.as(WebArchive.class);
 
         new BeansXMLProtocolProcessor().process(
-            new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
+            new TestDeployment(null, deployment, new ArrayList<Archive<?>>()), protocol);
 
         Assert.assertTrue(protocol.contains("WEB-INF/beans.xml"));
 
@@ -117,7 +117,7 @@ public class BeansXMLProtocolProcessorTestCase {
             .addAsWebInfResource(new StringAsset(beansXmlContent), "beans.xml");
 
         new BeansXMLProtocolProcessor().process(
-            new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
+            new TestDeployment(null, deployment, new ArrayList<Archive<?>>()), protocol);
 
         Assert.assertTrue(protocol.contains("WEB-INF/beans.xml"));
 
@@ -137,7 +137,7 @@ public class BeansXMLProtocolProcessorTestCase {
             .addAsManifestResource(new StringAsset(beansXmlContent), "beans.xml");
 
         new BeansXMLProtocolProcessor().process(
-            new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
+            new TestDeployment(null, deployment, new ArrayList<Archive<?>>()), protocol);
 
         Assert.assertTrue(protocol.contains("META-INF/beans.xml"));
 
@@ -157,7 +157,7 @@ public class BeansXMLProtocolProcessorTestCase {
 
     public void runAndAsset(Archive<?> deployment, Archive<?> protocol, boolean shouldBeFound, String expectedLocation) {
         new BeansXMLProtocolProcessor().process(
-            new TestDeployment(deployment, new ArrayList<Archive<?>>()), protocol);
+            new TestDeployment(null, deployment, new ArrayList<Archive<?>>()), protocol);
 
         System.out.println(protocol.toString(true));
         Assert.assertEquals(

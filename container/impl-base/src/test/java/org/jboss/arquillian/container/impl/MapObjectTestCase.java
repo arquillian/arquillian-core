@@ -18,7 +18,7 @@
 package org.jboss.arquillian.container.impl;
 
 import java.util.HashMap;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jboss.arquillian.config.descriptor.api.Multiline;
 import org.junit.Test;
 

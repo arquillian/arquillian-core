@@ -139,7 +139,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager {
                 .addAsModule(wrappedWar);
 
             if (applicationArchive.contains(APPLICATION_XML_PATH)) {
-                ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
+                ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).fromStream(
                     applicationArchive.get(APPLICATION_XML_PATH).getAsset().openStream());
 
                 applicationXml.webModule(wrappedWar.getName(), ServletUtil.calculateContextRoot(wrappedWar.getName()));
