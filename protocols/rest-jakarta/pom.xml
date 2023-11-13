@@ -23,8 +23,8 @@
   <properties>
     <!-- Versioning -->
     <version.jetty_jetty>11.0.14</version.jetty_jetty>
-    <version.resteasy>6.2.4.Final</version.resteasy>
-    <version.restfulws-api>3.0.0</version.restfulws-api>
+    <version.resteasy>6.2.6.Final</version.resteasy>
+    <version.restfulws-api>3.1.0</version.restfulws-api>
     <!-- The protocol adaptor requires Java 8 -->
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -96,6 +96,13 @@
       <version>${version.jetty_jetty}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-slf4j-impl</artifactId>
+      <version>${version.jetty_jetty}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-servlet-initializer</artifactId>
