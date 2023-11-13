@@ -20,6 +20,7 @@ public class ClassWithArquillianClassAndMethodRuleWithExpectedExceptionRule {
     @Rule
     public ArquillianTest arquillianTest = new ArquillianTest();
 
+    @SuppressWarnings("deprecation")
     @Rule
     public ExpectedException e = ExpectedException.none();
 

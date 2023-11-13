@@ -23,7 +23,7 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
