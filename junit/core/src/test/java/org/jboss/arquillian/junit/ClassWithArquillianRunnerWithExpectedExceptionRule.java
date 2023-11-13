@@ -30,6 +30,7 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 @RunWith(Arquillian.class)
 public class ClassWithArquillianRunnerWithExpectedExceptionRule {
+    @SuppressWarnings("deprecation")
     @Rule
     public ExpectedException e = ExpectedException.none();
 

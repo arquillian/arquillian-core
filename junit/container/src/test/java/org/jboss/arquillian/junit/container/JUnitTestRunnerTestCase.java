@@ -24,7 +24,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.rules.ExpectedException;
 
 public class JUnitTestRunnerTestCase {
@@ -145,6 +145,7 @@ public class JUnitTestRunnerTestCase {
 
         public static Exception exceptionThrownInAfter;
 
+        @SuppressWarnings("deprecation")
         @Rule
         public ExpectedException e = ExpectedException.none();
 
