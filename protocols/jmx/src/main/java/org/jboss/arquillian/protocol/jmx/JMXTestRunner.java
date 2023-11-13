@@ -122,7 +122,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
 
     private TestResult runTestMethodInternal(String className, String methodName, Map<String, String> protocolProps) {
         currentCall.set(className + methodName);
-        TestResult result = new TestResult();
+        TestResult result = null;
         try {
             TestRunner runner = mockTestRunner;
             if (runner == null) {
@@ -136,12 +136,11 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
             log.fine("Execute: " + className + "." + methodName);
             result = doRunTestMethod(runner, testClass, methodName, protocolProps);
         } catch (Throwable th) {
-            result.setStatus(Status.FAILED);
+            result = TestResult.failed(th);
             result.setEnd(System.currentTimeMillis());
-            result.setThrowable(th);
         } finally {
             log.fine("Result: " + result);
-            if (result.getStatus() == Status.FAILED) {
+            if (result != null && result.getStatus() == Status.FAILED) {
                 log.log(Level.SEVERE, "Failed: " + className + "." + methodName, result.getThrowable());
             }
         }
