@@ -532,7 +532,7 @@ public class ArquillianDescriptorPropertiesTestCase {
     private ArquillianDescriptor create(String xml) throws Exception {
         validateXML(desc.exportAsString());
 
-        return Descriptors.importAs(ArquillianDescriptor.class).from(xml);
+        return Descriptors.importAs(ArquillianDescriptor.class).fromString(xml);
     }
 
     private void validateXML(String xml) throws Exception {
