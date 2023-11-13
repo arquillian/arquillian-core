@@ -90,7 +90,7 @@ public class JUnitTestBaseClass {
             .before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         doAnswer(new ExecuteLifecycle()).when(adaptor)
             .after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new TestExecuteLifecycle(new TestResult(Status.PASSED))).when(adaptor)
+        doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor)
             .test(any(TestMethodExecutor.class));
     }
 

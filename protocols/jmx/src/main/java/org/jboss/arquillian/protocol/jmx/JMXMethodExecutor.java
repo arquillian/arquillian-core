@@ -80,8 +80,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
             result =
                 Serializer.toObject(TestResult.class, testRunner.runTestMethod(testClass, testMethod, protocolProps));
         } catch (final Throwable th) {
-            result = new TestResult(Status.FAILED);
-            result.setThrowable(th);
+            result = TestResult.failed(th);
         } finally {
             result.setEnd(System.currentTimeMillis());
             if (objectName != null && commandListener != null) {

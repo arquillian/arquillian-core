@@ -45,7 +45,7 @@ public class TestNGIntegrationTestCase extends TestNGTestBaseClass {
     @Ignore("ARQ-582")
     public void shouldNotCallAnyMethodsWithoutLifecycleHandlers() throws Exception {
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
-        when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(new TestResult(Status.PASSED));
+        when(adaptor.test(isA(TestMethodExecutor.class))).thenReturn(TestResult.passed());
 
         TestListenerAdapter result = run(adaptor, ArquillianClass1.class);
 
