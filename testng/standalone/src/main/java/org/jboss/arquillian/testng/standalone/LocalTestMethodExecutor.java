@@ -45,16 +45,14 @@ public class LocalTestMethodExecutor {
     private InstanceProducer<TestResult> testResult;
 
     public void execute(@Observes Test event) throws Exception {
-        TestResult result = new TestResult();
+        TestResult result = TestResult.passed();
         try {
             event.getTestMethodExecutor().invoke(
                 enrichArguments(
                     event.getTestMethod(),
                     serviceLoader.get().all(TestEnricher.class)));
-            result.setStatus(Status.PASSED);
         } catch (Throwable e) {
-            result.setStatus(Status.FAILED);
-            result.setThrowable(e);
+            result = TestResult.failed(e);
         } finally {
             result.setEnd(System.currentTimeMillis());
         }

@@ -18,7 +18,7 @@
 package org.jboss.arquillian.container.impl.client.container;
 
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;

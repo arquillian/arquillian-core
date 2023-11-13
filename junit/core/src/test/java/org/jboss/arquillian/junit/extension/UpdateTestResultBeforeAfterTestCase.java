@@ -16,7 +16,7 @@
  */
 package org.jboss.arquillian.junit.extension;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
