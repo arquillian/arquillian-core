@@ -21,8 +21,6 @@
 
   <modules>
     <module>servlet</module>
-    <module>servlet-jakarta</module>
     <module>jmx</module>
-    <module>rest-jakarta</module>
   </modules>
 </project>

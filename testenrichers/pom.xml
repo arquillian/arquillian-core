@@ -23,9 +23,6 @@
     <module>cdi</module>
     <module>ejb</module>
     <module>resource</module>
-    <module>cdi-jakarta</module>
-    <module>ejb-jakarta</module>
-    <module>resource-jakarta</module>
 
     <!-- Producers -->
     <module>initialcontext</module>
