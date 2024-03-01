@@ -141,11 +141,11 @@ public class Arquillian extends BlockJUnit4ClassRunner {
 
     /*
     * Override BeforeClass/AfterClass and Before/After handling.
-    * 
+    *
     * Let super create the Before/After chain against a EmptyStatement so our newly created Statement
-    * only contains the method that are of interest to us(@Before..etc). 
+    * only contains the method that are of interest to us(@Before..etc).
     * They can then optionally be executed if we get expected callback.
-    * 
+    *
     */
 
     @Override

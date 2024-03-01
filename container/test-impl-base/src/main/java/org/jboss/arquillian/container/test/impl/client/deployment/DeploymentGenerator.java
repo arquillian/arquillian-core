@@ -180,8 +180,8 @@ public class DeploymentGenerator {
             /*
              * Quick Fix: https://jira.jboss.org/jira/browse/ARQ-118
              * Keep in mind when rewriting for https://jira.jboss.org/jira/browse/ARQ-94
-             * that a ShrinkWrap archive might not support a Container if even tho the 
-             * ContianerBase implements it. Check the Archive Interface..  
+             * that a ShrinkWrap archive might not support a Container if even tho the
+             * ContianerBase implements it. Check the Archive Interface..
              */
             }
             description.setTestableArchive(
