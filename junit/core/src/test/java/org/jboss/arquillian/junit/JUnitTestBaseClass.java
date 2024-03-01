@@ -131,7 +131,7 @@ public class JUnitTestBaseClass {
         method.invoke(null, adaptor);
     }
 
-    public static enum Cycle
+    public enum Cycle
 
     {
         BEFORE_CLASS_RULE, BEFORE_RULE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_RULE, AFTER_CLASS_RULE;

@@ -126,7 +126,7 @@ public class ExceptionProxyTestCase {
     private static class ExtendedIllegalArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 1L;
 
-        public ExtendedIllegalArgumentException(Exception throwable) {
+        ExtendedIllegalArgumentException(Exception throwable) {
             super(throwable);
         }
     }

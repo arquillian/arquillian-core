@@ -261,7 +261,7 @@ public abstract class Arquillian implements IHookable {
         return values;
     }
 
-    private static enum Cycle
+    private enum Cycle
     {
         BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
     }

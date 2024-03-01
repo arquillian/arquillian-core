@@ -33,9 +33,9 @@ public interface LoadableExtension {
     /**
      * Implement to register any extensions.
      */
-    public void register(ExtensionBuilder builder);
+    void register(ExtensionBuilder builder);
 
-    public interface ExtensionBuilder {
+    interface ExtensionBuilder {
         /**
          * Register a service implementation.
          * <p>
@@ -67,7 +67,7 @@ public interface LoadableExtension {
         ExtensionBuilder context(Class<? extends Context> context);
     }
 
-    public static class Validate {
+    class Validate {
         public static boolean classExists(String className) {
             try {
                 Class.forName(className);
