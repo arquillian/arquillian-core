@@ -103,8 +103,7 @@ public class EJBInjectionEnricher implements TestEnricher {
                 ejbAnnotation);
 
             for (Field field : annotatedFields) {
-                if (field.get(testCase) == null) // only try to lookup fields that are not already set
-                {
+                if (field.get(testCase) == null) { // only try to lookup fields that are not already set
                     EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
                     try {
                         String mappedName = fieldAnnotation.mappedName();
