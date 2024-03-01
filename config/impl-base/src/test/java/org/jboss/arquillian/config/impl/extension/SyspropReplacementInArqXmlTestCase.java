@@ -16,29 +16,10 @@
  */
 package org.jboss.arquillian.config.impl.extension;
 
-import java.util.Arrays;
-import java.util.List;
-import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.impl.AssertXPath;
-import org.jboss.arquillian.config.spi.ConfigurationPlaceholderResolver;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.spi.Manager;
-import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.core.spi.context.Context;
-import org.jboss.arquillian.core.test.AbstractManagerTestBase;
-import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
-import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-import org.jboss.arquillian.test.spi.context.ClassContext;
-import org.jboss.arquillian.test.spi.context.SuiteContext;
-import org.jboss.arquillian.test.spi.context.TestContext;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Test Cases to ensure that the arquillian.xml loaded by
