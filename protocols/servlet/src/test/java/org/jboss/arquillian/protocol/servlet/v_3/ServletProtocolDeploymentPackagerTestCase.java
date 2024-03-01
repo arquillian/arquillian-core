@@ -300,7 +300,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     private static class DummyProcessor implements ProtocolArchiveProcessor {
         public static boolean wasCalled = false;
 
-        public DummyProcessor() {
+        DummyProcessor() {
             wasCalled = false;
         }
 

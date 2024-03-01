@@ -49,7 +49,7 @@ public class ToolingDeploymentFormatterTestCase {
         System.out.println(content);
     }
 
-    public static interface Service {
+    public interface Service {
 
     }
 

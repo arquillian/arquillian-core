@@ -76,7 +76,7 @@ public class ThreadedExecutorService implements org.jboss.arquillian.core.api.th
         private Callable<T> delegate;
         private ContextSnapshot state;
 
-        public ContextualCallable(Callable<T> delegate, ContextSnapshot state) {
+        ContextualCallable(Callable<T> delegate, ContextSnapshot state) {
             this.delegate = delegate;
             this.state = state;
         }

@@ -229,7 +229,7 @@ class PropertiesParser {
     }
 
     private class Extension extends Handler {
-        public Extension(String expression) {
+        Extension(String expression) {
             super(expression);
         }
 
@@ -249,7 +249,7 @@ class PropertiesParser {
     }
 
     private class Container extends Handler {
-        public Container(String expression) {
+        Container(String expression) {
             super(expression);
         }
 

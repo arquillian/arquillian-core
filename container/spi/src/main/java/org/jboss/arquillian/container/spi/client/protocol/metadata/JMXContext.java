@@ -104,7 +104,7 @@ public class JMXContext extends NamedContext {
     private static class JMXConnectorReference extends WeakReference<MBeanServerConnection> {
         private JMXConnector connector;
 
-        public JMXConnectorReference(final MBeanServerConnection connection, JMXConnector connector) {
+        JMXConnectorReference(final MBeanServerConnection connection, JMXConnector connector) {
             super(connection);
             this.connector = connector;
         }

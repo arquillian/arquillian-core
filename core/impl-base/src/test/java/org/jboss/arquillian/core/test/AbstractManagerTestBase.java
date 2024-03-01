@@ -297,7 +297,7 @@ public abstract class AbstractManagerTestBase {
         private Map<Class<? extends Context>, Boolean> activeContexts;
         private String threadName;
 
-        public EventRecording() {
+        EventRecording() {
             threadName = Thread.currentThread().getName();
             activeContexts = new HashMap<Class<? extends Context>, Boolean>();
         }

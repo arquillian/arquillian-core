@@ -25,7 +25,7 @@ package org.jboss.arquillian.test.spi;
  * @version $Revision: $
  */
 public interface LifecycleMethodExecutor {
-    public static final LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor() {
+    LifecycleMethodExecutor NO_OP = new LifecycleMethodExecutor() {
         public void invoke() throws Throwable {
         }
     };

@@ -364,7 +364,7 @@ public class Arquillian extends BlockJUnit4ClassRunner {
     private static class StatementLifecycleExecutor implements LifecycleMethodExecutor {
         private Statement statement;
 
-        public StatementLifecycleExecutor(Statement statement) {
+        StatementLifecycleExecutor(Statement statement) {
             this.statement = statement;
         }
 

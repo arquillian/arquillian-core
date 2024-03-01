@@ -193,7 +193,7 @@ public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBas
 
         private DeploymentException deploymentException;
 
-        public MyDeploymentException(String message, Throwable cause) {
+        MyDeploymentException(String message, Throwable cause) {
             super(message);
             this.deploymentException = new DeploymentException("Could not deploy", cause);
         }

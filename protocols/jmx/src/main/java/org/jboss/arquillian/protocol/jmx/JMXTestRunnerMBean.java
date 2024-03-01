@@ -46,7 +46,7 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
      * @deprecated
      */
     @Deprecated
-    public byte[] runTestMethod(String className, String methodName);
+    byte[] runTestMethod(String className, String methodName);
 
     /**
      * Runs a test method on the given test class
@@ -60,7 +60,7 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
      *
      * @return a serialized {@link TestResult}
      */
-    public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps);
+    byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps);
 
     /**
      * Broadcast {@link Command} commands to any listeners

@@ -163,7 +163,7 @@ public class TestNGTestBaseClass {
         method.invoke(null, adaptor);
     }
 
-    public static enum Cycle
+    public enum Cycle
 
     {
         BEFORE_SUITE, BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS, AFTER_SUITE
