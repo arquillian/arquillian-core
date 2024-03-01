@@ -18,7 +18,6 @@ package org.jboss.arquillian.testng;
 
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
-import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
 import org.junit.Ignore;
