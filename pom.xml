@@ -30,6 +30,11 @@
     <!-- External Deps -->
     <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
     <version.shrinkwrap_descriptors>2.0.0</version.shrinkwrap_descriptors>
+
+    <!-- Checkstyle plugin -->
+    <version.org.apache.maven-checkstyle-plugin>3.3.1</version.org.apache.maven-checkstyle-plugin>
+    <version.com.puppycrawl.checkstyle>9.3</version.com.puppycrawl.checkstyle>
+    <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
   </properties>
 
   <issueManagement>
@@ -70,6 +75,40 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${version.org.apache.maven-checkstyle-plugin}</version>
+        <dependencies>
+          <dependency>
+            <!-- The puppycrawl dependency is needed to override the version using JDK11 from the parent -->
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${version.com.puppycrawl.checkstyle}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.wildfly.checkstyle</groupId>
+            <artifactId>wildfly-checkstyle-config</artifactId>
+            <version>${version.org.wildfly.checkstyle-config}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>check-style</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>checkstyle</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <linkXRef>false</linkXRef>
+          <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
