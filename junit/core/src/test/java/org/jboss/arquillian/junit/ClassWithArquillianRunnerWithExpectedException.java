@@ -27,35 +27,29 @@ import org.junit.runner.RunWith;
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
 @RunWith(Arquillian.class)
-public class ClassWithArquillianRunnerWithExpectedException
-{
+public class ClassWithArquillianRunnerWithExpectedException {
    @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
+   public static void beforeClass() throws Throwable {
       wasCalled(Cycle.BEFORE_CLASS);
    }
 
    @AfterClass
-   public static void afterClass() throws Throwable
-   {
+   public static void afterClass() throws Throwable {
       wasCalled(Cycle.AFTER_CLASS);
    }
 
    @Before
-   public void before() throws Throwable
-   {
+   public void before() throws Throwable {
       wasCalled(Cycle.BEFORE);
    }
 
    @After
-   public void after() throws Throwable
-   {
+   public void after() throws Throwable {
       wasCalled(Cycle.AFTER);
    }
 
    @Test(expected = IllegalArgumentException.class)
-   public void shouldBeInvoked() throws Throwable
-   {
+   public void shouldBeInvoked() throws Throwable {
       wasCalled(Cycle.TEST);
       throw new IllegalArgumentException();
    }

@@ -36,8 +36,7 @@ public class ArchiveDeploymentToolingExporter {
 
     public void export(@Observes BeforeDeploy event) throws Exception {
         String deploymentOutputFolder = System.getProperty(ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER);
-        if (deploymentOutputFolder == null) // tooling not activated, nothing to do
-        {
+        if (deploymentOutputFolder == null) { // tooling not activated, nothing to do
             return;
         }
         Archive<?> deployment = event.getDeployment().getTestableArchive(); // deployment not in context?, nothing to do

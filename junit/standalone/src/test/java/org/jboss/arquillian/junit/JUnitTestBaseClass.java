@@ -126,9 +126,7 @@ public class JUnitTestBaseClass {
         method.invoke(null, adaptor);
     }
 
-    public enum Cycle
-
-    {
+    public enum Cycle {
         BEFORE_CLASS, BEFORE, TEST, AFTER, AFTER_CLASS
     }
 

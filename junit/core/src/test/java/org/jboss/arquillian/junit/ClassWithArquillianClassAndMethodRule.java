@@ -11,8 +11,7 @@ import org.junit.Test;
 
 import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 
-public class ClassWithArquillianClassAndMethodRule
-{
+public class ClassWithArquillianClassAndMethodRule {
    @ClassRule
    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
 
@@ -20,32 +19,27 @@ public class ClassWithArquillianClassAndMethodRule
    public ArquillianTest arquillianTest = new ArquillianTest();
 
    @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
+   public static void beforeClass() throws Throwable {
       wasCalled(Cycle.BEFORE_CLASS);
    }
 
    @AfterClass
-   public static void afterClass() throws Throwable
-   {
+   public static void afterClass() throws Throwable {
       wasCalled(Cycle.AFTER_CLASS);
    }
 
    @Before
-   public void before() throws Throwable
-   {
+   public void before() throws Throwable {
       wasCalled(Cycle.BEFORE);
    }
 
    @After
-   public void after() throws Throwable
-   {
+   public void after() throws Throwable {
       wasCalled(Cycle.AFTER);
    }
 
    @Test
-   public void shouldBeInvoked() throws Throwable
-   {
+   public void shouldBeInvoked() throws Throwable {
       wasCalled(Cycle.TEST);
    }
 }

@@ -43,8 +43,7 @@ public class FilteredURLClassLoader extends URLClassLoader {
                     c = super.findClass(name);
                 }
             }
-            if (c != null) // class found locally
-            {
+            if (c != null) { // class found locally
                 return c;
             }
         }

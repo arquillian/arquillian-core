@@ -38,11 +38,9 @@ import static org.mockito.Mockito.verify;
  * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InitializationExceptionTestCase extends JUnitTestBaseClass
-{
+public class InitializationExceptionTestCase extends JUnitTestBaseClass {
    @Test
-   public void shouldKeepInitializationExceptionBetweenTestCases() throws Exception
-   {
+   public void shouldKeepInitializationExceptionBetweenTestCases() throws Exception {
       String exceptionMessage = "TEST_EXCEPTION_BEFORE_SUITE_FAILING";
       TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
       doThrow(new Exception(exceptionMessage)).when(adaptor).beforeSuite();

@@ -153,8 +153,7 @@ public final class StringPropertyReplacer {
                 // No content
                 if (start + 2 == i) {
                     buffer.append("${}"); // REVIEW: Correct?
-                } else // Collect the system property
-                {
+                } else { // Collect the system property
                     String value;
 
                     String key = string.substring(start + 2, i);

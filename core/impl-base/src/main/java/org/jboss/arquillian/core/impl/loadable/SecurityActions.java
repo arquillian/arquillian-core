@@ -329,9 +329,7 @@ final class SecurityActions {
     /**
      * Single instance to get the TCCL
      */
-    private enum GetTcclAction implements PrivilegedAction<ClassLoader>
-
-    {
+    private enum GetTcclAction implements PrivilegedAction<ClassLoader> {
         INSTANCE;
 
         public ClassLoader run() {
