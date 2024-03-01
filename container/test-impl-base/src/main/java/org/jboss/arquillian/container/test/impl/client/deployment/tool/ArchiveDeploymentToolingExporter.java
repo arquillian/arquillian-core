@@ -44,13 +44,13 @@ public class ArchiveDeploymentToolingExporter {
         if (deployment == null) {
             return;
         }
-/*      
+    /*
       TestClass testClass = event.getTestClass();
       String deploymentContent = deployment.toString(new ToolingDeploymentFormatter(testClass.getJavaClass()));
       writeOutToFile(
-            new File(deploymentOutputFolder + "/" + testClass.getName() + ".xml"), 
+            new File(deploymentOutputFolder + "/" + testClass.getName() + ".xml"),
             deploymentContent);
-*/
+    */
     }
 
     protected void writeOutToFile(File target, String content) {

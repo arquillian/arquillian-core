@@ -45,14 +45,14 @@ public class TestNGDeploymentAppender extends CachedAuxilliaryArchiveAppender {
             .addAsServiceProvider(
                 TestRunner.class,
                 TestNGTestRunner.class);
-   
+
       /* Attempt to add Guice if on classpath. TestNG 5.12 > use Guice */
         // exclude AOP Alliance reference, not provided as part of TestNG jar
         optionalPackages(
             archive,
             Filters.exclude(".*/InterceptorStackCallback\\$InterceptedMethodInvocation.*"),
             "com.google.inject");
-         
+
       /* Attempt to add com.beust, internal TestNG package 5.14 > */
         optionalPackages(
             archive,
