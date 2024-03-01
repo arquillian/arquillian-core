@@ -107,7 +107,6 @@ public class EJBInjectionEnricher implements TestEnricher {
                     EJB fieldAnnotation = (EJB) field.getAnnotation(ejbAnnotation);
                     try {
                         String mappedName = fieldAnnotation.mappedName();
-                        ;
                         String beanName = fieldAnnotation.beanName();
                         String lookup = attemptToGet31LookupField(fieldAnnotation);
 
