@@ -36,7 +36,7 @@ import org.junit.Test;
  * @version $Revision: $
  */
 public class DeploymentScenarioTestCase {
-    private final static String DEFAULT_NAME = DeploymentTargetDescription.DEFAULT.getName();
+    private static final String DEFAULT_NAME = DeploymentTargetDescription.DEFAULT.getName();
 
     /**
      * Defaulting rules for Deployment in a scenario
