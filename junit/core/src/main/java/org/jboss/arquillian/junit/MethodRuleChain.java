@@ -14,14 +14,14 @@ import org.junit.runners.model.Statement;
  *
  * <pre>
  * public static class MethodRuleChainUse {
- * 	&#064;Rule
- * 	public MethodRuleChain chain= MethodRuleChain.outer(new ArquillianTest())
- * 	                                .around(new TestWatchman())
+ * &#064;Rule
+ * public MethodRuleChain chain= MethodRuleChain.outer(new ArquillianTest())
+ *                                 .around(new TestWatchman())
  *
- * 	&#064;Test
- * 	public void example() {
- * 		assertTrue(true);
- *     }
+ * &#064;Test
+ * public void example() {
+ *   assertTrue(true);
+ *   }
  * }
  * </pre>
  *

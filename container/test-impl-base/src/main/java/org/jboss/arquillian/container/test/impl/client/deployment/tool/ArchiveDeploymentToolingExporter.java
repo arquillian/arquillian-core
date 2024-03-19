@@ -36,21 +36,20 @@ public class ArchiveDeploymentToolingExporter {
 
     public void export(@Observes BeforeDeploy event) throws Exception {
         String deploymentOutputFolder = System.getProperty(ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER);
-        if (deploymentOutputFolder == null) // tooling not activated, nothing to do
-        {
+        if (deploymentOutputFolder == null) { // tooling not activated, nothing to do
             return;
         }
         Archive<?> deployment = event.getDeployment().getTestableArchive(); // deployment not in context?, nothing to do
         if (deployment == null) {
             return;
         }
-/*      
+    /*
       TestClass testClass = event.getTestClass();
       String deploymentContent = deployment.toString(new ToolingDeploymentFormatter(testClass.getJavaClass()));
       writeOutToFile(
-            new File(deploymentOutputFolder + "/" + testClass.getName() + ".xml"), 
+            new File(deploymentOutputFolder + "/" + testClass.getName() + ".xml"),
             deploymentContent);
-*/
+    */
     }
 
     protected void writeOutToFile(File target, String content) {

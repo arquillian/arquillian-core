@@ -76,7 +76,7 @@ public class EJBInjectionEnricherBase {
      * @author PedroKowalski
      */
     @Local
-    public static interface ExemplaryEJB {
+    public interface ExemplaryEJB {
     }
 
     /**

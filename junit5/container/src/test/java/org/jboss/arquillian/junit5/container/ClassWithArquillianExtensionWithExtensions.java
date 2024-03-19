@@ -42,7 +42,7 @@ public class ClassWithArquillianExtensionWithExtensions {
     public void afterAll(ExtensionContext context) throws Exception {
       wasCalled(Cycle.AFTER_CLASS_RULE);
     }
-    
+
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
       wasCalled(Cycle.BEFORE_CLASS_RULE);

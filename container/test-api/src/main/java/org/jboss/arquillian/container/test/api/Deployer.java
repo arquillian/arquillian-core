@@ -84,7 +84,7 @@ public interface Deployer {
      * @param name
      *     The name of the deployment
      */
-    public void deploy(String name);
+    void deploy(String name);
 
     /**
      * Get the Deployment byte content.
@@ -94,7 +94,7 @@ public interface Deployer {
      *
      * @return a Zipped Stream of the Archive
      */
-    public InputStream getDeployment(String name);
+    InputStream getDeployment(String name);
 
     /**
      * UnDeploy a named deployment.<br/>
@@ -103,5 +103,5 @@ public interface Deployer {
      * @param name
      *     The name of the deployment
      */
-    public void undeploy(String name);
+    void undeploy(String name);
 }

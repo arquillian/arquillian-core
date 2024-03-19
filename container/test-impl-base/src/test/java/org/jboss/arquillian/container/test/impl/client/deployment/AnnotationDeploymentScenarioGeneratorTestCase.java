@@ -49,7 +49,7 @@ import org.junit.Test;
  */
 public class AnnotationDeploymentScenarioGeneratorTestCase {
 
-    private final static String expectedLogPartForArchiveWithUnexpectedFileExtension = "unexpected file extension";
+    private static final String expectedLogPartForArchiveWithUnexpectedFileExtension = "unexpected file extension";
     private static Logger log = Logger.getLogger(AbstractDeploymentScenarioGenerator.class.getName());
     private static OutputStream logCapturingStream;
     private static StreamHandler customLogHandler;

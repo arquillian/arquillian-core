@@ -105,7 +105,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor {
     private class CallbackNotificationListener implements NotificationListener {
         private ObjectName serviceName;
 
-        public CallbackNotificationListener(ObjectName serviceName) {
+        CallbackNotificationListener(ObjectName serviceName) {
             this.serviceName = serviceName;
         }
 
