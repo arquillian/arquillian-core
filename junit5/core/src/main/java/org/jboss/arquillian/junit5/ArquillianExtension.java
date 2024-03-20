@@ -96,7 +96,10 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     public void interceptBeforeEachMethod(Invocation<Void> invocation,
       ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
       if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-        invocation.proceed();
+        getManager(extensionContext).getAdaptor().before(
+            extensionContext.getRequiredTestInstance(),
+            extensionContext.getRequiredTestMethod(),
+                invocation::proceed);
       } else {
         invocation.skip();
       }
@@ -106,7 +109,10 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     public void interceptAfterEachMethod(Invocation<Void> invocation,
       ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
       if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-        invocation.proceed();
+          getManager(extensionContext).getAdaptor().after(
+              extensionContext.getRequiredTestInstance(),
+              extensionContext.getRequiredTestMethod(),
+              invocation::proceed);
       } else {
         invocation.skip();
       }
