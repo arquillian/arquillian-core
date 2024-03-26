@@ -47,17 +47,17 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         getManager(context).getAdaptor().before(
-                context.getRequiredTestInstance(),
-                context.getRequiredTestMethod(),
-                LifecycleMethodExecutor.NO_OP);
+            context.getRequiredTestInstance(),
+            context.getRequiredTestMethod(),
+            LifecycleMethodExecutor.NO_OP);
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         getManager(context).getAdaptor().after(
-                context.getRequiredTestInstance(),
-                context.getRequiredTestMethod(),
-                LifecycleMethodExecutor.NO_OP);
+            context.getRequiredTestInstance(),
+            context.getRequiredTestMethod(),
+            LifecycleMethodExecutor.NO_OP);
     }
 
     @Override
@@ -88,48 +88,48 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         } else {
             interceptInvocation(invocationContext, extensionContext);
             getContextStore(extensionContext).getResult(extensionContext.getUniqueId())
-                    .ifPresent(ExceptionUtils::throwAsUncheckedException);
+                .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
     }
 
     @Override
     public void interceptBeforeEachMethod(Invocation<Void> invocation,
-      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-        invocation.proceed();
-      } else {
-        invocation.skip();
-      }
+                                          ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
+            invocation.proceed();
+        } else {
+            invocation.skip();
+        }
     }
 
     @Override
     public void interceptAfterEachMethod(Invocation<Void> invocation,
-      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-        invocation.proceed();
-      } else {
-        invocation.skip();
-      }
+                                         ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
+            invocation.proceed();
+        } else {
+            invocation.skip();
+        }
     }
 
     @Override
     public void interceptBeforeAllMethod(Invocation<Void> invocation,
-      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (IS_INSIDE_ARQUILLIAN.test(extensionContext)) {
-        invocation.skip();
-      } else {
-        invocation.proceed();
-      }
+                                         ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        if (IS_INSIDE_ARQUILLIAN.test(extensionContext)) {
+            invocation.skip();
+        } else {
+            invocation.proceed();
+        }
     }
 
     @Override
     public void interceptAfterAllMethod(Invocation<Void> invocation,
-      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (IS_INSIDE_ARQUILLIAN.test(extensionContext)) {
-        invocation.skip();
-      } else {
-        invocation.proceed();
-      }
+                                        ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        if (IS_INSIDE_ARQUILLIAN.test(extensionContext)) {
+            invocation.skip();
+        } else {
+            invocation.proceed();
+        }
     }
 
     @Override
@@ -172,7 +172,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             ContextStore contextStore = getContextStore(context);
             if (result.getThrowable() instanceof IdentifiedTestException) {
                 ((IdentifiedTestException) result.getThrowable()).getCollectedExceptions()
-                        .forEach(contextStore::storeResult);
+                    .forEach(contextStore::storeResult);
             } else {
                 contextStore.storeResult(context.getUniqueId(), result.getThrowable());
             }
