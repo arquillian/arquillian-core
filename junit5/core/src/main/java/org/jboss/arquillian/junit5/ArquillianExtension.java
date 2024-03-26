@@ -10,9 +10,7 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
@@ -23,7 +21,7 @@ import org.junit.platform.commons.util.ExceptionUtils;
 import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
-public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler {
+public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, InvocationInterceptor, TestExecutionExceptionHandler {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
 
     private static final String CHAIN_EXCEPTION_MESSAGE_PREFIX = "Chain of InvocationInterceptors never called invocation";
@@ -41,22 +39,6 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     public void afterAll(ExtensionContext context) throws Exception {
         getManager(context).getAdaptor().afterClass(
             context.getRequiredTestClass(),
-            LifecycleMethodExecutor.NO_OP);
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        getManager(context).getAdaptor().before(
-            context.getRequiredTestInstance(),
-            context.getRequiredTestMethod(),
-            LifecycleMethodExecutor.NO_OP);
-    }
-
-    @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        getManager(context).getAdaptor().after(
-            context.getRequiredTestInstance(),
-            context.getRequiredTestMethod(),
             LifecycleMethodExecutor.NO_OP);
     }
 
@@ -95,9 +77,21 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     @Override
     public void interceptBeforeEachMethod(Invocation<Void> invocation,
                                           ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        // Instead of implementing org.junit.jupiter.api.extension.BeforeEachCallback.beforeEach handle events within the interceptor
         if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-            invocation.proceed();
+            // Since the invocation is going to proceed, the invocation must happen within the context of SPI before()
+            getManager(extensionContext).getAdaptor().before(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                invocation::proceed);
         } else {
+            // Ensure the SPI before() is called, but given that the execution is going to be skipped
+            getManager(extensionContext).getAdaptor().before(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                LifecycleMethodExecutor.NO_OP);
+
+            // and ensure that the contract of the org.junit.jupiter.api.extension.InvocationInterceptor will be fulfilled.
             invocation.skip();
         }
     }
@@ -106,8 +100,16 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     public void interceptAfterEachMethod(Invocation<Void> invocation,
                                          ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
         if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-            invocation.proceed();
+            getManager(extensionContext).getAdaptor().after(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                invocation::proceed);
         } else {
+            getManager(extensionContext).getAdaptor().after(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                LifecycleMethodExecutor.NO_OP);
+
             invocation.skip();
         }
     }
