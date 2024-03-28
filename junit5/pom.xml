@@ -27,6 +27,7 @@
   <modules>
     <module>core</module>
     <module>container</module>
+    <module>integration-test</module>
   </modules>
 
 </project>
