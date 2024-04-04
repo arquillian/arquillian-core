@@ -470,14 +470,14 @@ public class PropertiesParserTestCase {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfDescriptorIsNull() {
-	new PropertiesParser().addProperties(null, System.getProperties());
+        new PropertiesParser().addProperties(null, System.getProperties());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfPropertiesIsNull() {
-	new PropertiesParser().addProperties(desc, null);
+        new PropertiesParser().addProperties(desc, null);
     }
-    
+
     private void validate(String property, String value, ValueCallback callback) {
         validate(property, value, value, callback);
     }
