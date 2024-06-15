@@ -103,4 +103,25 @@ public class ServletCommandServiceTestCase extends AbstractServerBase {
             "Timeout exception should have been thrown",
             result.getThrowable().getMessage().contains("timeout"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNoConfig() throws Exception {
+	new ServletMethodExecutor(null, createContexts(), new TestCommandCallback());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNoContexts() {
+	new ServletMethodExecutor(new ServletProtocolConfiguration(), null, new TestCommandCallback());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNoCallback() throws Exception {
+	new ServletMethodExecutor(new ServletProtocolConfiguration(), createContexts(), null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNoExecutor() throws Exception {
+	ServletMethodExecutor executor = new ServletMethodExecutor(new ServletProtocolConfiguration(), createContexts(), new TestCommandCallback());
+	executor.invoke(null);
+    }
 }
