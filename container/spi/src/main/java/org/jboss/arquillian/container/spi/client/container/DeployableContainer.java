@@ -37,6 +37,17 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
     // ControllableContainer
     Class<T> getConfigurationClass();
 
+    /**
+     * Provide a mapping instance that takes the {@link org.jboss.arquillian.config.descriptor.api.ContainerDef}
+     * for the arquillian.xml or other configured descriptor and populates the container configuration
+     * instance from the descriptor values.
+     *
+     * @return A possibly null ConfigurationMapper. If null, the default logic to map from string based
+     * properties as implemented in org.jboss.arquillian.container.impl.MapObject will be used.
+     */
+    default ConfigurationMapper getConfigurationMapper() {
+        return null;
+    }
     default void setup(T configuration) {
     }
 
