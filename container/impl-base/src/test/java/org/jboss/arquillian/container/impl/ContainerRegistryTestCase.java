@@ -16,10 +16,12 @@
  */
 package org.jboss.arquillian.container.impl;
 
+import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.ConfigurationMapper;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
@@ -141,6 +143,46 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
     }
 
     @Test
+    public void shouldBeAbleToCreateContainerConfigurationCustomMapper() throws Exception {
+        ServiceLoader serviceLoader = Mockito.mock(ServiceLoader.class);
+        DeployableContainer<CustomContainerConfiguration> deployableContainer =
+            Mockito.mock(DeployableContainer.class);
+
+        Mockito.when(serviceLoader.onlyOne(Mockito.same(DeployableContainer.class))).thenReturn(deployableContainer);
+        Mockito.when(deployableContainer.getConfigurationClass()).thenReturn(CustomContainerConfiguration.class);
+        Mockito.when(deployableContainer.getConfigurationMapper()).thenReturn(new CustomMapper());
+
+        String name = "custom-container";
+        String prop = "prop-value";
+        String[] hosts = {"host1", "host2", "host3"};
+
+        ContainerRegistry registry = new LocalContainerRegistry(injector.get());
+        ContainerDefImpl containerDef = new ContainerDefImpl(ARQUILLIAN_XML);
+        containerDef.setContainerName(name);
+        containerDef.property("property", prop);
+        containerDef.property("hosts", "host1,host2,host3");
+
+        registry.create(containerDef, serviceLoader);
+
+        Container<CustomContainerConfiguration> container = registry.getContainer(new TargetDescription(name));
+
+        Assert.assertEquals(
+            "Verify that the only registered container is returned as default",
+            name, container.getName());
+
+        CustomContainerConfiguration config = container.createDeployableConfiguration();
+        Assert.assertEquals(
+            "Verify that the custom configuration 'property' was populated",
+            prop,
+            config.getProperty());
+
+        Assert.assertArrayEquals(
+            "Verify that the custom configuration 'hosts' was populated",
+            hosts,
+            config.getHosts());
+    }
+
+    @Test
     public void shouldBeAbleToSpecifyTarget() throws Exception {
         String name = "some-name";
 
@@ -195,6 +237,25 @@ public class ContainerRegistryTestCase extends AbstractContainerTestBase {
 
     private static class PrivateDummyContainerConfiguration extends DummyContainerConfiguration {
         private PrivateDummyContainerConfiguration() {
+        }
+    }
+    private static class CustomContainerConfiguration extends DummyContainerConfiguration {
+        private String[] hosts;
+        public String[] getHosts() {
+            return hosts;
+        }
+        public void setHosts(String[] hosts) {
+            this.hosts = hosts;
+        }
+    }
+    private static class CustomMapper implements ConfigurationMapper<CustomContainerConfiguration> {
+        @Override
+        public void populateConfiguration(CustomContainerConfiguration containerConfiguration, ContainerDef definition) {
+            String property = definition.getContainerProperty("property");
+            containerConfiguration.setProperty(property);
+            String hostsString = definition.getContainerProperty("hosts");
+            String[] hosts = hostsString.split(",");
+            containerConfiguration.setHosts(hosts);
         }
     }
 }
