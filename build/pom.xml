@@ -28,7 +28,7 @@
     <version.junit5.platform>1.10.1</version.junit5.platform>
     <version.junit5>5.10.1</version.junit5>
     <version.mockito>4.10.0</version.mockito>
-    <version.testng>7.5</version.testng>
+    <version.testng>7.10.2</version.testng>
     <version.assertj>3.24.2</version.assertj>
   </properties>
 
