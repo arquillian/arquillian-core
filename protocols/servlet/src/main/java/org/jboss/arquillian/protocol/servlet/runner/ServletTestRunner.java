@@ -201,7 +201,9 @@ public class ServletTestRunner extends HttpServlet {
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (Exception e2) {
-                throw new RuntimeException("Could not write to output", e2);
+                RuntimeException runtimeException = new RuntimeException("Could not write to output", e2);
+                runtimeException.addSuppressed(e);
+                throw runtimeException;
             }
         }
     }

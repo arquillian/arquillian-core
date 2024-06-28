@@ -20,6 +20,7 @@ import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ServerKillProcessor;
+import org.jboss.arquillian.container.spi.client.container.ConfigurationMapper;
 import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -47,25 +48,25 @@ import org.jboss.arquillian.core.spi.Validate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ContainerImpl implements Container {
+public class ContainerImpl<T extends ContainerConfiguration> implements Container<T> {
     @Inject
     private Event<ContainerEvent> event;
 
     @Inject
     @ContainerScoped
-    private InstanceProducer<Container> containerProducer;
+    private InstanceProducer<Container<T>> containerProducer;
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
 
-    private DeployableContainer<?> deployableContainer;
+    private DeployableContainer<T> deployableContainer;
     private String name;
     private State state = State.STOPPED;
     private Throwable failureCause;
 
     private ContainerDef containerConfiguration;
 
-    public ContainerImpl(String name, DeployableContainer<?> deployableContainer, ContainerDef containerConfiguration) {
+    public ContainerImpl(String name, DeployableContainer<T> deployableContainer, ContainerDef containerConfiguration) {
         Validate.notNull(name, "Name must be specified");
         Validate.notNull(deployableContainer, "DeployableContainer must be specified");
         Validate.notNull(containerConfiguration, "ConfigurationConfiguration must be specified");
@@ -87,7 +88,7 @@ public class ContainerImpl implements Container {
      * @see org.jboss.arquillian.container.impl.ContainerT#getDeployableContainer()
      */
     @Override
-    public DeployableContainer<?> getDeployableContainer() {
+    public DeployableContainer<T> getDeployableContainer() {
         return deployableContainer;
     }
 
@@ -103,10 +104,15 @@ public class ContainerImpl implements Container {
      * @see org.jboss.arquillian.container.impl.ContainerT#createDeployableConfiguration()
      */
     @Override
-    public ContainerConfiguration createDeployableConfiguration() throws Exception {
-        ContainerConfiguration config = SecurityActions.newInstance(
-            deployableContainer.getConfigurationClass(), new Class<?>[0], new Object[0]);
-        MapObject.populate(config, containerConfiguration.getContainerProperties());
+    public T createDeployableConfiguration() throws Exception {
+        Class<T> configClass = (Class<T>) deployableContainer.getConfigurationClass();
+        T config = SecurityActions.newInstance(configClass, new Class<?>[0], new Object[0]);
+        ConfigurationMapper<T> mapper = deployableContainer.getConfigurationMapper();
+        if(mapper != null) {
+            mapper.populateConfiguration(config, containerConfiguration);
+        } else {
+            MapObject.populate(config, containerConfiguration.getContainerProperties());
+        }
         config.validate();
         return config;
     }
