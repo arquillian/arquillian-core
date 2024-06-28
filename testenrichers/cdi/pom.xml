@@ -25,8 +25,9 @@
     <!-- Versioning -->
     <version.weld-core>2.4.8.Final</version.weld-core>
     <version.javax-el>2.2</version.javax-el>
-    <version.slf4j>2.0.1</version.slf4j>
+    <version.slf4j>2.0.12</version.slf4j>
 
+    <java11.opensargs></java11.opensargs>
   </properties>
 
   <!-- Dependencies -->
@@ -119,5 +120,30 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-</project>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            ${java11.opensargs}
+          </argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>not-java8</id>
+      <activation>
+        <jdk>[11,]</jdk>
+      </activation>
+      <properties>
+        <java11.opensargs>--add-opens java.base/java.lang=ALL-UNNAMED</java11.opensargs>
+      </properties>
+    </profile>
+  </profiles>
+</project>

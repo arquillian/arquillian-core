@@ -1,0 +1,100 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+
+  arquillian-build-jdk8:
+    name: Integration - JDK 8
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      SNAPSHOT_VERSION: ${{ steps.arq-version.outputs.SNAPSHOT_VERSION }}
+    steps:
+      - name: Checkout arquillian-core
+        uses: actions/checkout@v4
+      - name: Setup JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+          cache: maven
+      - name: Build with Maven
+        run: mvn --batch-mode --no-transfer-progress clean verify
+      - name: Version save
+        id: arq-version
+        run: |
+          VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "SNAPSHOT_VERSION=$VERSION" >> $GITHUB_OUTPUT        
+          echo "Arquillian version: $VERSION"
+      - name: Artifact upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: arquillian
+          path: ~/.m2/repository/org/jboss/
+
+  arquillian-build-jdk11:
+    name: Integration - JDK 11
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Build with Maven
+        uses: actions/checkout@v4
+      - name: Setup JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: 11
+          distribution: temurin
+          cache: maven
+      - name: Build with Maven
+        run: mvn --batch-mode --no-transfer-progress clean verify
+
+  arquillian-build-jdk17:
+    name: Integration - JDK 17
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Build with Maven
+        uses: actions/checkout@v4
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Build with Maven
+        run: mvn --batch-mode --no-transfer-progress clean verify
+
+  integration-wildfly-job:
+    runs-on: ubuntu-latest
+    name: Integration verification for WildFly
+    needs: arquillian-build-jdk8
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: arquillian
+          path: ~/.m2/repository/org/jboss
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Checkout WildFly
+        uses: actions/checkout@v4
+        with:
+          repository: wildfly/wildfly
+      - name: Run WildFly Integration Testsuite
+        env:
+          SNAPSHOT_VERSION: ${{ needs.arquillian-build-jdk8.outputs.SNAPSHOT_VERSION }}
+        run: |
+          mvn clean install -Dquickly -Dversion.org.jboss.arquillian.core="$SNAPSHOT_VERSION"
+          mvn clean verify -f testsuite/integration -DallTests -Dversion.org.jboss.arquillian.core="$SNAPSHOT_VERSION"

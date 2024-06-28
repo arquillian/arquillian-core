@@ -121,6 +121,16 @@ public class BaseServletProtocolTestCase {
         handler.locateTestServlet(testMethod);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionWhenNoConfig() throws Exception {
+	new ServletURIHandler(null, to(new HTTPContext("127.0.0.1", 8080).add(new Servlet(ServletMethodExecutor.ARQUILLIAN_SERVLET_NAME, "test"))));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionOnNoContexts() throws Exception {
+	new ServletURIHandler(new ServletProtocolConfiguration(), null);
+    }
+
     private Collection<HTTPContext> to(HTTPContext... inputs) {
         List<HTTPContext> contexts = new ArrayList<HTTPContext>();
         Collections.addAll(contexts, inputs);

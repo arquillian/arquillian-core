@@ -302,6 +302,11 @@ public class ServletProtocolDeploymentPackagerTestCase {
             processors());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldVerifyExceptionOnEmptyVersion() throws Exception {
+	Descriptors.create(WebAppDescriptor.class).version("");
+    }
+
     private Collection<Archive<?>> createAuxiliaryArchives() {
         List<Archive<?>> archives = new ArrayList<Archive<?>>();
         archives.add(ShrinkWrap.create(JavaArchive.class, "auxiliaryArchive1.jar"));
