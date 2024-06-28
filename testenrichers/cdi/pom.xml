@@ -27,6 +27,7 @@
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>2.0.12</version.slf4j>
 
+    <java11.opensargs></java11.opensargs>
   </properties>
 
   <!-- Dependencies -->
@@ -119,7 +120,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -127,10 +128,22 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>
-            --add-opens java.base/java.lang=ALL-UNNAMED
+            ${java11.opensargs}
           </argLine>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>not-java8</id>
+      <activation>
+        <jdk>[11,]</jdk>
+      </activation>
+      <properties>
+        <java11.opensargs>--add-opens java.base/java.lang=ALL-UNNAMED</java11.opensargs>
+      </properties>
+    </profile>
+  </profiles>
 </project>
