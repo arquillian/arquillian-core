@@ -30,8 +30,7 @@ import static org.jboss.arquillian.junit.JUnitTestBaseClass.wasCalled;
 public class ClassWithArquillianRunner {
 
    @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
+   public static void beforeClass() throws Throwable {
       wasCalled(Cycle.BEFORE_CLASS);
    }
 

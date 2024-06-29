@@ -18,7 +18,7 @@ class ContextStore {
     private ContextStore(ExtensionContext context) {
         this.context = context;
     }
-    
+
     static ContextStore getContextStore(ExtensionContext context) {
         return new ContextStore(context);
     }
