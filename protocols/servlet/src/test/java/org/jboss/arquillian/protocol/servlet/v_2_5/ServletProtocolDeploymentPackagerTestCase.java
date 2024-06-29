@@ -53,6 +53,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldHandleJavaArchive() throws Exception {
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(JavaArchive.class, "applicationArchive.jar"),
                 createAuxiliaryArchives()),
             processors());
@@ -82,6 +83,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldHandleWebArchive() throws Exception {
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(WebArchive.class, "applicationArchive.war")
                     .addClass(getClass()),
                 createAuxiliaryArchives()),
@@ -109,6 +111,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldHandleWebArchiveWithWebXML() throws Exception {
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(WebArchive.class, "applicationArchive.war")
                     .addClass(getClass())
                     .setWebXML(createWebDescriptor()),
@@ -138,6 +141,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldHandleEnterpriseArchive() throws Exception {
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear"),
                 createAuxiliaryArchives()),
             processors());
@@ -163,6 +167,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldHandleEnterpriseArchiveWithApplicationXML() throws Exception {
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                     .setApplicationXML(createApplicationDescriptor()),
                 createAuxiliaryArchives()),
@@ -202,6 +207,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
 
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                     .addAsModule(applicationWar),
                 createAuxiliaryArchives()),
@@ -232,7 +238,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionOnUnknownArchiveType() throws Exception {
         new ServletProtocolDeploymentPackager().generateDeployment(
-            new TestDeployment(ShrinkWrap.create(ResourceAdapterArchive.class), new ArrayList<Archive<?>>()),
+            new TestDeployment(null, ShrinkWrap.create(ResourceAdapterArchive.class), new ArrayList<Archive<?>>()),
             processors()
         );
     }
@@ -241,6 +247,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldThrowExceptionOnEnterpriseArchiveWithMultipleWebArchive() throws Exception {
         new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                     .addAsModule(ShrinkWrap.create(WebArchive.class))
                     .addAsModule(ShrinkWrap.create(WebArchive.class)),
@@ -254,6 +261,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
 
         Archive<?> archive = new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                     .addAsModule(testableArchive)
                     .addAsModule(ShrinkWrap.create(WebArchive.class)),
@@ -286,11 +294,17 @@ public class ServletProtocolDeploymentPackagerTestCase {
     public void shouldThrowExceptionOnEnterpriseArchiveWithMultipleMarkedWebArchives() throws Exception {
         new ServletProtocolDeploymentPackager().generateDeployment(
             new TestDeployment(
+                null,
                 ShrinkWrap.create(EnterpriseArchive.class, "applicationArchive.ear")
                     .addAsModule(Testable.archiveToTest(ShrinkWrap.create(WebArchive.class)))
                     .addAsModule(Testable.archiveToTest(ShrinkWrap.create(WebArchive.class))),
                 createAuxiliaryArchives()),
             processors());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldVerifyExceptionOnEmptyVersion() throws Exception {
+	Descriptors.create(WebAppDescriptor.class).version("");
     }
 
     private Collection<Archive<?>> createAuxiliaryArchives() {

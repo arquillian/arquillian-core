@@ -80,7 +80,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager {
     private Archive<?> handleArchive(WebArchive applicationArchive, Collection<Archive<?>> auxiliaryArchives,
         WebArchive protocol, Processor processor) {
         if (applicationArchive.contains(WEB_XML_PATH)) {
-            WebAppDescriptor applicationWebXml = Descriptors.importAs(WebAppDescriptor.class).from(
+            WebAppDescriptor applicationWebXml = Descriptors.importAs(WebAppDescriptor.class).fromStream(
                 applicationArchive.get(WEB_XML_PATH).getAsset().openStream());
 
             // SHRINKWRAP-187, to eager on not allowing overrides, delete it first
@@ -154,7 +154,7 @@ public class ServletProtocolDeploymentPackager implements DeploymentPackager {
                         new StringAsset(WebUtils.createNewDescriptor().exportAsString())));
 
             if (applicationArchive.contains(APPLICATION_XML_PATH)) {
-                ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).from(
+                ApplicationDescriptor applicationXml = Descriptors.importAs(ApplicationDescriptor.class).fromStream(
                     applicationArchive.get(APPLICATION_XML_PATH).getAsset().openStream());
 
                 applicationXml.webModule(protocol.getName(), ServletUtil.calculateContextRoot(protocol.getName()));

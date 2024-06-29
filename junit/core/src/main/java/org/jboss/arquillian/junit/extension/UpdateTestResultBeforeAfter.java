@@ -22,7 +22,7 @@ import org.jboss.arquillian.junit.State;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
 import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 
 /**
  * Update the TestResult based on result After going through the JUnit chain.

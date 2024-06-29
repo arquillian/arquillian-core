@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>39</version>
+    <version>46</version>
     <relativePath />
   </parent>
 
@@ -15,7 +15,7 @@
   <!-- Artifact Information -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-parent</artifactId>
-  <version>1.7.3.Final-SNAPSHOT</version>
+  <version>1.8.2.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Aggregator</name>
   <url>http://arquillian.org</url>
@@ -157,6 +157,19 @@
           </plugin>
         </plugins>
       </build>
+
+      <distributionManagement>
+        <repository>
+          <id>${jboss.releases.repo.id}</id>
+          <name>JBoss Releases Repository</name>
+          <url>${jboss.releases.repo.url}</url>
+        </repository>
+        <snapshotRepository>
+          <id>${jboss.snapshots.repo.id}</id>
+          <name>JBoss Snapshots Repository</name>
+          <url>${jboss.snapshots.repo.url}</url>
+        </snapshotRepository>
+      </distributionManagement>
     </profile>
   </profiles>
 </project>

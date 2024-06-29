@@ -18,7 +18,7 @@
 package org.jboss.arquillian.container.test.impl.client.container;
 
 import java.util.List;
-import junit.framework.Assert;
+
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.Container;
@@ -44,6 +44,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
