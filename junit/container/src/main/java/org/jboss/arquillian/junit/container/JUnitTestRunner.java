@@ -92,7 +92,6 @@ public class JUnitTestRunner implements TestRunner {
             // AssumptionViolatedException might not be Serializable. Recreate with only String message.
             exception = new AssumptionViolatedException(failure.getException().getMessage());
             exception.setStackTrace(failure.getException().getStackTrace());
-            ;
         }
 
         @Override

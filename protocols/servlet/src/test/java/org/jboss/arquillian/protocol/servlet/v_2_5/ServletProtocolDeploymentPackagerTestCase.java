@@ -304,7 +304,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldVerifyExceptionOnEmptyVersion() throws Exception {
-	Descriptors.create(WebAppDescriptor.class).version("");
+        Descriptors.create(WebAppDescriptor.class).version("");
     }
 
     private Collection<Archive<?>> createAuxiliaryArchives() {
@@ -340,7 +340,7 @@ public class ServletProtocolDeploymentPackagerTestCase {
     private static class DummyProcessor implements ProtocolArchiveProcessor {
         public static boolean wasCalled = false;
 
-        public DummyProcessor() {
+        DummyProcessor() {
             wasCalled = false;
         }
 

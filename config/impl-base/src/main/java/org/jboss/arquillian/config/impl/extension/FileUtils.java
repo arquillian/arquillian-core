@@ -95,7 +95,7 @@ class FileUtils {
         private String name;
         private boolean isDefault;
 
-        public FileName(String name, boolean isDefault) {
+        FileName(String name, boolean isDefault) {
             this.name = name;
             this.isDefault = isDefault;
         }

@@ -139,7 +139,7 @@ public abstract class AbstractContext<T> implements Context, IdBoundContext<T> {
         private X id;
         private ObjectStore store;
 
-        public StoreHolder(X id, ObjectStore store) {
+        StoreHolder(X id, ObjectStore store) {
             this.id = id;
             this.store = store;
         }

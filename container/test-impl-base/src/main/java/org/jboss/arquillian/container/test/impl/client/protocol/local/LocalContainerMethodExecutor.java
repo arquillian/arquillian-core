@@ -42,8 +42,8 @@ public class LocalContainerMethodExecutor implements ContainerMethodExecutor {
      */
     public TestResult invoke(TestMethodExecutor testMethodExecutor) {
       /*
-       *  TODO: when we fire a LocalExecutionEvent from a ContainerMethodExecutor, 
-       *  both the LocalTestExecutor and RemoteTestExecutor will set the same TestResult. 
+       *  TODO: when we fire a LocalExecutionEvent from a ContainerMethodExecutor,
+       *  both the LocalTestExecutor and RemoteTestExecutor will set the same TestResult.
        */
         event.fire(new LocalExecutionEvent(testMethodExecutor));
         return testResult.get();

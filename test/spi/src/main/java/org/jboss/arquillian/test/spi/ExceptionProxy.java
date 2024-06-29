@@ -194,8 +194,7 @@ public class ExceptionProxy implements Externalizable {
                         SecurityActions.setFieldValue(Throwable.class, original, "cause", cause);
                     }
                 }
-            } catch (Throwable e) // Possible ClassNotFoundExcpetion / NoClassDefFoundError
-            {
+            } catch (Throwable e) { // Possible ClassNotFoundExcpetion / NoClassDefFoundError
                 // ignore, could not load class on client side, move on and create a fake 'proxy' later
                 serializationProcessException = e;
             }

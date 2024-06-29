@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  */
 public interface TestExecutionDecider {
 
-    static final TestExecutionDecider EXECUTE = new TestExecutionDecider() {
+    TestExecutionDecider EXECUTE = new TestExecutionDecider() {
 
         @Override
         public ExecutionDecision decide(Method testMethod) {

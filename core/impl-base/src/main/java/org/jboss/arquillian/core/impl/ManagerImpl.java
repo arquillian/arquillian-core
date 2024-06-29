@@ -349,8 +349,7 @@ public class ManagerImpl implements Manager {
         runtimeLogger.debug(event, true);
         try {
             List<ObserverMethod> observers = resolveObservers(event.getClass());
-            if (observers.size() == 0) // no one is handling this Exception, throw it out.
-            {
+            if (observers.size() == 0) { // no one is handling this Exception, throw it out.
                 UncheckedThrow.throwUnchecked(event);
             }
             for (int i = 0; i < observers.size(); i++) {
