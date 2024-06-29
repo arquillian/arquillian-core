@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>arquillian-build</artifactId>
-    <version>1.8.1.Final-SNAPSHOT</version>
+    <version>1.8.1.Final</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
@@ -27,7 +27,7 @@
     <version.javax-el>2.2</version.javax-el>
     <version.slf4j>2.0.13</version.slf4j>
 
-    <java11.opensargs></java11.opensargs>
+    <java11.opensargs />
   </properties>
 
   <!-- Dependencies -->
