@@ -4,8 +4,7 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ThreadLocalUtil
-{
+public class ThreadLocalUtil {
     private static Logger log = Logger.getLogger(ThreadLocalUtil.class.getName());
 
     /**
@@ -14,8 +13,7 @@ public class ThreadLocalUtil
      *
      * @param threadLocal This is the threadlocal variable to be cleaned up.
      */
-    public static void forceCleanupThreadLocal(ThreadLocal<?> threadLocal)
-    {
+    public static void forceCleanupThreadLocal(ThreadLocal<?> threadLocal) {
       //Get all threads:
       ThreadGroup rootGroup = Thread.currentThread().getThreadGroup();
       ThreadGroup parentGroup;
