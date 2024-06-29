@@ -30,7 +30,7 @@ import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface Container {
+public interface Container<T extends ContainerConfiguration> {
 
     /**
      * @return the name
@@ -40,7 +40,7 @@ public interface Container {
     /**
      * @return the deployableContainer
      */
-    DeployableContainer<?> getDeployableContainer();
+    DeployableContainer<T> getDeployableContainer();
 
     /**
      * @return the containerConfiguration
@@ -50,7 +50,7 @@ public interface Container {
     /**
      * @return the configuration
      */
-    ContainerConfiguration createDeployableConfiguration() throws Exception;
+    T createDeployableConfiguration() throws Exception;
 
     boolean hasProtocolConfiguration(ProtocolDescription description);
 

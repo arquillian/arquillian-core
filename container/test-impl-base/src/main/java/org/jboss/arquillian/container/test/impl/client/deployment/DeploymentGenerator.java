@@ -19,8 +19,11 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
@@ -38,6 +41,7 @@ import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPacka
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -154,13 +158,58 @@ public class DeploymentGenerator {
             }
             List<Archive<?>> auxiliaryArchives = loadAuxiliaryArchives(description);
 
-            ProtocolDefinition protocolDefinition = protoReg.getProtocol(description.getProtocol());
-            if (protocolDefinition == null) {
-                protocolDefinition = protoReg.getProtocol(
-                    containerRegistry.get()
-                        .getContainer(description.getTarget())
-                        .getDeployableContainer()
-                        .getDefaultProtocol());
+            // First look to the target container
+            Container container = containerRegistry.get().getContainer(description.getTarget());
+            if(container == null) {
+                throwNoContainerFound(description.getTarget());
+            }
+            ProtocolDefinition protocolDefinition = null;
+            ProtocolConfiguration protocolConfig = null;
+            ProtocolDescription protocolDescription = description.getProtocol();
+            if(protocolDescription == ProtocolDescription.DEFAULT) {
+                // Map to the actual ProtocolDescription if this is the DEFAULT placeholder
+                ProtocolDefinition defaultDef = protoReg.getProtocol(protocolDescription);
+                // There may not be any default protocol
+                if(defaultDef != null) {
+                    protocolDescription = defaultDef.getProtocolDescription();
+                }
+            }
+            if(container.hasProtocolConfiguration(protocolDescription)) {
+                ProtocolDef pdef = container.getProtocolConfiguration(protocolDescription);
+                try {
+                    protocolDefinition = protoReg.getProtocol(protocolDescription);
+                    protocolConfig = protocolDefinition.createProtocolConfiguration(pdef.getProtocolProperties());
+                } catch (Exception e) {
+                    ValidationException ve = new ValidationException("Unable to create protocol configuration for protocol " + protocolDescription.getName());
+                    ve.initCause(e);
+                    throw ve;
+                }
+            }
+            // If the container had no protocol, try the protocol registry
+            if(protocolDefinition == null) {
+                protocolDefinition = protoReg.getProtocol(protocolDescription);
+                if(protocolDefinition != null) {
+                    try {
+                        protocolConfig = protocolDefinition.createProtocolConfiguration();
+                    } catch (Exception e) {
+                        ValidationException ve = new ValidationException("Unable to create protocol configuration for protocol " + protocolDescription.getName());
+                        ve.initCause(e);
+                        throw ve;
+                    }
+                }
+            }
+            // Lastly see if there is a default protocol on the DeployableContainer
+            if(protocolDefinition == null) {
+                DeployableContainer<?> deployableContainer = container.getDeployableContainer();
+                ProtocolDescription defaultDef = deployableContainer.getDefaultProtocol();
+                protocolDefinition = protoReg.getProtocol(defaultDef);
+                try {
+                    protocolConfig = protocolDefinition.createProtocolConfiguration();
+                } catch (Exception e) {
+                    ValidationException ve = new ValidationException("Unable to create protocol configuration for protocol " + protocolDescription.getName());
+                    ve.initCause(e);
+                    throw ve;
+                }
             }
             Protocol<?> protocol = protocolDefinition.getProtocol();
             DeploymentPackager packager = protocol.getPackager();
@@ -184,10 +233,13 @@ public class DeploymentGenerator {
              * ContianerBase implements it. Check the Archive Interface..
              */
             }
-            description.setTestableArchive(
-                packager.generateDeployment(
-                    new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives),
-                    serviceLoader.get().all(ProtocolArchiveProcessor.class)));
+            // Load the ProtocolArchiveProcessors
+            Collection<ProtocolArchiveProcessor> archiveProcessors = serviceLoader.get().all(ProtocolArchiveProcessor.class);
+            // Create the testable archive
+            TestDeployment testDeployment = new TestDeployment(deployment.getDescription(), applicationArchive, auxiliaryArchives);
+            testDeployment.setProtocolConfiguration(protocolConfig);
+            Archive<?> testArchive = packager.generateDeployment(testDeployment, archiveProcessors);
+            description.setTestableArchive(testArchive);
         }
     }
 

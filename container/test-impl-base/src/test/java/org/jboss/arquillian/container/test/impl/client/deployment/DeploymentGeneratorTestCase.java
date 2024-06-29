@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.jboss.arquillian.config.descriptor.api.ContainerDef;
+import org.jboss.arquillian.config.descriptor.api.ProtocolDef;
 import org.jboss.arquillian.config.descriptor.impl.ContainerDefImpl;
 import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.spi.Container;
@@ -43,7 +46,9 @@ import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiv
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
+import org.jboss.arquillian.container.test.spi.client.deployment.ProtocolArchiveProcessor;
 import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
+import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfiguration;
 import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
@@ -134,6 +139,41 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         fire(createEvent(DeploymentWithDefaults.class));
 
         verify(deployableContainer, times(0)).getDefaultProtocol();
+    }
+
+    @Test
+    public void shouldUseContainerProtocolIfFound() {
+        Container container = addContainer("test-contianer-with-protocol");
+        ContainerDef containerDef = container.getContainerConfiguration();
+        containerDef.setMode("suite");
+        AltDeploymentPackager packager1 = new AltDeploymentPackager();
+        addProtocolWithPackager(PROTOCOL_NAME_1, false, packager1, Collections.singletonMap("mode", "default"));
+        // Now add a container local protocol with a custom config
+        ProtocolDef protocolDef = containerDef.protocol(PROTOCOL_NAME_1)
+                .property("mode", "custom");
+
+        fire(createEvent(DeploymentWithProtocol.class));
+
+        verify(deployableContainer, times(0)).getDefaultProtocol();
+        TheProtocolConfiguration config = (TheProtocolConfiguration) packager1.getConfig();
+        Assert.assertEquals("custom", config.getMode());
+    }
+    @Test
+    public void shouldUseContainerDefaultProtocolIfFound() {
+        Container container = addContainer("test-contianer-with-protocol");
+        ContainerDef containerDef = container.getContainerConfiguration();
+        containerDef.setMode("suite");
+        AltDeploymentPackager packager1 = new AltDeploymentPackager();
+        addProtocolWithPackager(PROTOCOL_NAME_1, true, packager1, Collections.singletonMap("mode", "default"));
+        // Now add a container local protocol with a custom config
+        ProtocolDef protocolDef = containerDef.protocol(PROTOCOL_NAME_1)
+            .property("mode", "custom");
+
+        fire(createEvent(DeploymentWithDefaults.class));
+
+        verify(deployableContainer, times(0)).getDefaultProtocol();
+        TheProtocolConfiguration config = (TheProtocolConfiguration) packager1.getConfig();
+        Assert.assertEquals("custom", config.getMode());
     }
 
     @Test
@@ -338,11 +378,22 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
     }
 
     private ProtocolDefinition addProtocol(String name, boolean shouldBeDefault) {
-        Protocol<?> protocol = mock(Protocol.class);
+        Protocol<TheProtocolConfiguration> protocol = mock(Protocol.class);
         when(protocol.getPackager()).thenReturn(packager);
         when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
+        when(protocol.getProtocolConfigurationClass()).thenReturn(TheProtocolConfiguration.class);
 
         Map<String, String> config = Collections.emptyMap();
+        return protocolRegistry.addProtocol(new ProtocolDefinition(protocol, config, shouldBeDefault))
+            .getProtocol(new ProtocolDescription(name));
+    }
+    private ProtocolDefinition addProtocolWithPackager(String name, boolean shouldBeDefault,
+                                                       DeploymentPackager packager, Map<String, String> config) {
+        Protocol<TheProtocolConfiguration> protocol = mock(Protocol.class);
+        when(protocol.getPackager()).thenReturn(packager);
+        when(protocol.getDescription()).thenReturn(new ProtocolDescription(name));
+        when(protocol.getProtocolConfigurationClass()).thenReturn(TheProtocolConfiguration.class);
+
         return protocolRegistry.addProtocol(new ProtocolDefinition(protocol, config, shouldBeDefault))
             .getProtocol(new ProtocolDescription(name));
     }
@@ -364,6 +415,15 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
             return ShrinkWrap.create(JavaArchive.class);
         }
     }
+    private static class DeploymentWithProtocol {
+        @SuppressWarnings("unused")
+        @Deployment
+        @OverProtocol(PROTOCOL_NAME_1)
+        public static JavaArchive deploy() {
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+
 
     @Observer({ObserverClass.class, SecondObserverClass.class})
     private static class DeploymentWithObserver {
@@ -516,6 +576,28 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         @Override
         public void process(Archive<?> applicationArchive, TestClass testClass) {
             called();
+        }
+    }
+
+    public static class TheProtocolConfiguration implements ProtocolConfiguration {
+        private String mode;
+
+        public String getMode() {
+            return mode;
+        }
+        public void setMode(String mode) {
+            this.mode = mode;
+        }
+    }
+    private static class AltDeploymentPackager implements DeploymentPackager {
+        private ProtocolConfiguration config = null;
+        @Override
+        public Archive<?> generateDeployment(TestDeployment testDeployment, Collection<ProtocolArchiveProcessor> processors) {
+            config = testDeployment.getProtocolConfiguration();
+            return testDeployment.getApplicationArchive();
+        }
+        public ProtocolConfiguration getConfig() {
+            return config;
         }
     }
 }
