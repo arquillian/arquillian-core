@@ -42,3 +42,4 @@ For long outputs such as stacktraces please use HTML5 `<details>`
  OS name: "linux", version: "4.7.7-200.fc24.x86_64", arch: "amd64", family: "unix"
 </details>
 ```
+Thanks
