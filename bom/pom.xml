@@ -15,7 +15,7 @@
 
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.jboss.com/jira/browse/ARQ</url>
+    <url>https://issues.redhat.com/browse/ARQ</url>
   </issueManagement>
 
   <licenses>
