@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
   <name>Arquillian BOM</name>
   <url>http://arquillian.org</url>
-  <description>Arquillian Bill Of Material</description>
+  <description>Arquillian Bill Of Materials</description>
 
   <issueManagement>
     <system>jira</system>
