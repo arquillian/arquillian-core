@@ -34,11 +34,11 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         server-id: jboss-snapshots-repository # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }}/.github/settings.xml # location for the settings.xml file
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
     - name: Publish to JBoss Nexus Maven Snapshot Repo
-      run: mvn deploy -Prelease
+      run: mvn -s .github/settings.xml deploy -Prelease
       
