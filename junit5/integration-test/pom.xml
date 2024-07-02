@@ -19,6 +19,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <payara.start.skip>${skipITs}</payara.start.skip>
     <payara.version>5.2024.6</payara.version>
+    <publishedVersion>1.8.1.Final</publishedVersion>
   </properties>
 
   <name>Arquillian JUnit 5 Container Integration Test</name>
@@ -67,13 +68,13 @@
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-cdi-jakarta</artifactId>
-      <version>${project.version}</version>
+      <version>${publishedVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-ejb-jakarta</artifactId>
-      <version>${project.version}</version>
+      <version>${publishedVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -85,13 +86,13 @@
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-resource-jakarta</artifactId>
-      <version>${project.version}</version>
+      <version>${publishedVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-      <version>${project.version}</version>
+      <version>${publishedVersion}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
