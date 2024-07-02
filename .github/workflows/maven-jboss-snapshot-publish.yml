@@ -3,7 +3,20 @@
 
 name: Maven JBoss Snapshot Package
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      jboss_user:
+        description: 'JBoss Nexus Repo Username'
+        required: true
+      jboss_password:
+        description: 'JBoss Nexus Repo Password'
+        required: true
+
+
+env:
+  JBOSS_ACTOR: ${{ github.event.inputs.jboss_user }}
+  JBOSS_PASSWORD: ${{ github.event.inputs.jboss_password }}
 
 jobs:
   build:
@@ -21,7 +34,7 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         server-id: jboss-snapshots-repository # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+        settings-path: ${{ github.workspace }}/.github/settings.xml # location for the settings.xml file
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
