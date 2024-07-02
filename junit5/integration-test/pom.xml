@@ -8,7 +8,7 @@
 
   <parent>
     <groupId>org.jboss.arquillian</groupId>
-    <version>1.7.1.Final-SNAPSHOT</version>
+    <version>1.8.2.Final-SNAPSHOT</version>
     <artifactId>arquillian-build</artifactId>
     <relativePath>../../build</relativePath>
   </parent>
@@ -18,31 +18,12 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <payara.start.skip>${skipITs}</payara.start.skip>
-    <payara.version>5.2022.5</payara.version>
+    <payara.version>5.2024.6</payara.version>
   </properties>
 
   <name>Arquillian JUnit 5 Container Integration Test</name>
 
   <dependencies>
-    <dependency>
-      <groupId>jakarta.inject</groupId>
-      <artifactId>jakarta.inject-api</artifactId>
-      <version>1.0.3</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.activation</groupId>
-      <artifactId>jakarta.activation-api</artifactId>
-      <version>1.2.2</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>2.3.3</version>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -60,7 +41,7 @@
     <dependency>
       <groupId>fish.payara.arquillian</groupId>
       <artifactId>arquillian-payara-server-remote</artifactId>
-      <version>2.4.1</version>
+      <version>3.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -85,13 +66,13 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
-      <artifactId>arquillian-testenricher-cdi</artifactId>
+      <artifactId>arquillian-testenricher-cdi-jakarta</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
-      <artifactId>arquillian-testenricher-ejb</artifactId>
+      <artifactId>arquillian-testenricher-ejb-jakarta</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -103,13 +84,13 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
-      <artifactId>arquillian-testenricher-resource</artifactId>
+      <artifactId>arquillian-testenricher-resource-jakarta</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
-      <artifactId>arquillian-protocol-servlet</artifactId>
+      <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -134,7 +115,7 @@
       <!-- Download / Unpack Payara -->
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.7.1</version>
         <executions>
           <execution>
             <phase>pre-integration-test</phase>
@@ -196,7 +177,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <version>3.3.0</version>
           <executions>
             <execution>
               <id>integration-test</id>
@@ -216,7 +197,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.3.0</version>
           <configuration>
             <executable>${basedir}/target/payara5/bin/asadmin</executable>
             <skip>${payara.start.skip}</skip>
