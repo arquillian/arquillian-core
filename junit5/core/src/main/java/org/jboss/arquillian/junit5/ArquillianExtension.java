@@ -93,23 +93,28 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     }
 
     @Override
-    public void interceptBeforeEachMethod(Invocation<Void> invocation,
-      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-        invocation.proceed();
-      } else {
-        invocation.skip();
-      }
+    public void interceptBeforeEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
+            // Since the invocation is going to proceed, the invocation must happen within the context of SPI before()
+            getManager(extensionContext).getAdaptor().before(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                invocation::proceed);
+        } else {
+            invocation.skip();
+        }
     }
 
     @Override
-    public void interceptAfterEachMethod(Invocation<Void> invocation,
-      ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-      if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-        invocation.proceed();
-      } else {
-        invocation.skip();
-      }
+    public void interceptAfterEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
+            getManager(extensionContext).getAdaptor().after(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                invocation::proceed);
+        } else {
+            invocation.skip();
+        }
     }
 
     @Override
