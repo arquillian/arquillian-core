@@ -1,0 +1,11 @@
+<settings>
+   <servers>
+
+    <server>
+      <id>jboss-snapshots-repository</id>
+      <username>${env.JBOSS_ACTOR}</username>
+      <password>${env.JBOSS_PASSWORD}</password>
+    </server>
+
+  </servers>
+</settings>
