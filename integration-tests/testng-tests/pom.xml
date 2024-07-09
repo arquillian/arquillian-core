@@ -33,7 +33,7 @@
   <name>Arquillian Core: TestNG Integration Tests</name>
 
   <properties>
-    <version.org.testng>7.5</version.org.testng>
+    <version.org.testng>7.5.1</version.org.testng>
   </properties>
 
   <dependencies>
