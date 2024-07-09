@@ -155,6 +155,18 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>allow-snapshots</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
+      <repositories>
+        <repository>
+          <id>snapshots-repo</id>
+          <url>${jboss.snapshots.repo.url}</url>
+          <releases><enabled>false</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+      </repositories>
+    </profile>
 
     <profile>
       <id>wildfly</id>
