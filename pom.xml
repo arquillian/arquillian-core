@@ -15,7 +15,7 @@
   <!-- Artifact Information -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-parent</artifactId>
-  <version>1.8.2.Final-SNAPSHOT</version>
+  <version>1.9.0.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Aggregator</name>
   <url>http://arquillian.org</url>
@@ -146,6 +146,14 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <modules>
+        <!-- Attempt to ensure the BOM is always built last on Windows -->
+        <module>bom</module>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
     <profile>
       <id>release</id>
       <build>

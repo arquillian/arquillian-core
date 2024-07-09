@@ -39,7 +39,6 @@ import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.core.spi.Manager;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
 import org.jboss.arquillian.core.spi.ObserverMethod;
-import org.jboss.arquillian.core.spi.ThreadLocalUtil;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.core.spi.context.ApplicationContext;
 import org.jboss.arquillian.core.spi.context.Context;
@@ -280,9 +279,6 @@ public class ManagerImpl implements Manager {
             runtimeLogger.clear();
 
             handledThrowables.remove();
-
-            //Force cleanup ThreadLocal:
-            ThreadLocalUtil.forceCleanupThreadLocal(handledThrowables);
         }
         if (shutdownException != null) {
             UncheckedThrow.throwUnchecked(shutdownException);

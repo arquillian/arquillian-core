@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~
+  ~ Copyright 2024 Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>46</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>org.jboss.arquillian</groupId>
+  <artifactId>integration-tests</artifactId>
+  <version>1.9.0.Final-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Arquillian Core: Implementation Integration Tests</name>
+  <description>Tests for implementations of Arquillian Core</description>
+
+  <modules>
+    <module>common</module>
+    <module>junit4-tests</module>
+    <module>junit5-tests</module>
+    <module>testng-tests</module>
+  </modules>
+
+  <properties>
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <maven.test.skip>false</maven.test.skip>
+    <skipTests>${maven.test.skip}</skipTests>
+
+    <!-- Dependency versions -->
+    <version.jakarta.ee>10.0.0</version.jakarta.ee>
+    <version.org.jboss.arquillian>${project.version}</version.org.jboss.arquillian>
+    <version.org.jboss.arquillian.jakarta>1.8.1.Final</version.org.jboss.arquillian.jakarta>
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>jakarta.platform</groupId>
+        <artifactId>jakarta.jakartaee-bom</artifactId>
+        <version>${version.jakarta.ee}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${version.org.jboss.arquillian}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.jakarta</groupId>
+        <artifactId>arquillian-jakarta-bom</artifactId>
+        <version>${version.org.jboss.arquillian.jakarta}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>common-tests</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies/>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <!-- Skip default tests -->
+            <skip>true</skip>
+            <redirectTestOutputToFile>${maven.test.redirectTestOutputToFile}</redirectTestOutputToFile>
+          </configuration>
+          <executions>
+            <execution>
+              <id>cdi-tests</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <phase>test</phase>
+              <configuration>
+                <skip>${skipTests}</skip>
+                <includes>
+                  <include>org.jboss.arquillian.integration.test.cdi.*Test</include>
+                </includes>
+              </configuration>
+            </execution>
+            <execution>
+              <id>manual-mode-tests</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <phase>test</phase>
+              <configuration>
+                <skip>${skipTests}</skip>
+                <includes>
+                  <include>org.jboss.arquillian.integration.test.manual.*Test</include>
+                </includes>
+                <systemPropertyVariables>
+                  <arquillian.xml>manual-mode-arquillian.xml</arquillian.xml>
+                </systemPropertyVariables>
+              </configuration>
+            </execution>
+            <execution>
+              <id>resource-injection-tests</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <phase>test</phase>
+              <configuration>
+                <skip>${skipTests}</skip>
+                <includes>
+                  <include>org.jboss.arquillian.integration.test.resource.injection.*Test</include>
+                </includes>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>wildfly</id>
+      <properties>
+        <skip.provision.server>${skipTests}</skip.provision.server>
+
+        <!-- Versions -->
+        <version.org.wildfly.arquillian>5.1.0.Beta3</version.org.wildfly.arquillian>
+        <version.wildfly-maven-plugin>5.0.0.Final</version.wildfly-maven-plugin>
+
+        <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-managed</artifactId>
+          <version>${version.org.wildfly.arquillian}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <jboss.home>${jboss.home}</jboss.home>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.wildfly.plugins</groupId>
+            <artifactId>wildfly-maven-plugin</artifactId>
+            <version>${version.wildfly-maven-plugin}</version>
+            <configuration>
+              <skip>${skip.provision.server}</skip>
+              <jboss-home>${jboss.home}</jboss-home>
+              <provisioning-dir>${jboss.home}</provisioning-dir>
+              <feature-packs>
+                <feature-pack>
+                  <groupId>org.wildfly</groupId>
+                  <artifactId>wildfly-ee-galleon-pack</artifactId>
+                </feature-pack>
+              </feature-packs>
+              <channels>
+                <channel>
+                  <manifest>
+                    <groupId>org.wildfly.channels</groupId>
+                    <artifactId>wildfly-ee</artifactId>
+                  </manifest>
+                </channel>
+              </channels>
+              <layers>
+                <layer>ee-core-profile-server</layer>
+              </layers>
+              <galleon-options>
+                <jboss-fork-embedded>true</jboss-fork-embedded>
+              </galleon-options>
+            </configuration>
+            <executions>
+              <execution>
+                <id>provision-wildfly</id>
+                <goals>
+                  <goal>provision</goal>
+                </goals>
+                <phase>process-test-classes</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>payara</id>
+      <properties>
+        <skip.provision.server>${skipTests}</skip.provision.server>
+
+        <!-- Versions -->
+        <version.fish.payara>6.2024.6</version.fish.payara>
+        <version.fish.payara.arquillian>3.0</version.fish.payara.arquillian>
+
+        <payara.home>${project.build.directory}${file.separator}payara6</payara.home>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>fish.payara.arquillian</groupId>
+          <artifactId>arquillian-payara-server-managed</artifactId>
+          <version>${version.fish.payara.arquillian}</version>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins><plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>unpack</id>
+              <phase>process-test-classes</phase>
+              <goals>
+                <goal>unpack</goal>
+              </goals>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <groupId>fish.payara.distributions</groupId>
+                    <artifactId>payara</artifactId>
+                    <version>${version.fish.payara}</version>
+                    <type>zip</type>
+                    <overWrite>true</overWrite>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                  </artifactItem>
+                </artifactItems>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <payara.home>${payara.home}</payara.home>
+                <arq.host>localhost</arq.host>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
