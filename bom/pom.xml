@@ -11,11 +11,11 @@
   <packaging>pom</packaging>
   <name>Arquillian BOM</name>
   <url>http://arquillian.org</url>
-  <description>Arquillian Bill Of Material</description>
+  <description>Arquillian Bill Of Materials</description>
 
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.jboss.com/jira/browse/ARQ</url>
+    <url>https://issues.redhat.com/browse/ARQ</url>
   </issueManagement>
 
   <licenses>
@@ -42,18 +42,10 @@
   </developers>
 
   <properties>
-
-    <version.shrinkwrap_core>1.2.6</version.shrinkwrap_core>
-    <version.shrinkwrap_descriptors>2.0.0</version.shrinkwrap_descriptors>
-    <version.shrinkwrap_resolver>3.3.0</version.shrinkwrap_resolver>
-
     <jboss.releases.repo.id>jboss-releases-repository</jboss.releases.repo.id>
-    <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
-    </jboss.releases.repo.url>
+    <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
     <jboss.snapshots.repo.id>jboss-snapshots-repository</jboss.snapshots.repo.id>
-    <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/
-    </jboss.snapshots.repo.url>
-
+    <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
   </properties>
 
   <dependencyManagement>
@@ -216,33 +208,6 @@
         <groupId>org.jboss.arquillian.testenricher</groupId>
         <artifactId>arquillian-testenricher-initialcontext</artifactId>
         <version>${project.version}</version>
-      </dependency>
-
-      <!-- ShrinkWrap -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap</groupId>
-        <artifactId>shrinkwrap-bom</artifactId>
-        <version>${version.shrinkwrap_core}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <!-- ShrinkWrap Resolver -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-bom</artifactId>
-        <version>${version.shrinkwrap_resolver}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <!-- ShrinkWrap Descriptors -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-        <artifactId>shrinkwrap-descriptors-bom</artifactId>
-        <version>${version.shrinkwrap_descriptors}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
 
     </dependencies>
