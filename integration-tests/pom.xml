@@ -31,7 +31,7 @@
 
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>integration-tests</artifactId>
-  <version>1.9.0.Final-SNAPSHOT</version>
+  <version>1.9.1.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Core: Implementation Integration Tests</name>
   <description>Tests for implementations of Arquillian Core</description>
@@ -45,12 +45,11 @@
 
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <maven.test.skip>false</maven.test.skip>
-    <skipTests>${maven.test.skip}</skipTests>
+    <skipItTests>false</skipItTests>
+    <skipTests>${skipItTests}</skipTests>
 
     <!-- Dependency versions -->
     <version.jakarta.ee>10.0.0</version.jakarta.ee>
-    <version.org.jboss.arquillian>${project.version}</version.org.jboss.arquillian>
     <version.org.jboss.arquillian.jakarta>1.8.1.Final</version.org.jboss.arquillian.jakarta>
 
   </properties>
@@ -67,7 +66,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>${version.org.jboss.arquillian}</version>
+        <version>${project.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
