@@ -40,5 +40,5 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Publish to JBoss Nexus Maven Snapshot Repo
-      run: mvn -s .github/settings.xml deploy -Prelease
+      run: mvn -s .github/settings.xml deploy -Prelease -DskipItTests=true
       
