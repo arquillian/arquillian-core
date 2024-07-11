@@ -78,6 +78,9 @@ public @interface Deployment {
 
     /**
      * Defines if this deployment should be wrapped up based on the protocol so the testcase can be executed incontainer.
+     * <p>
+     * Setting this to {@code false} for a deployment used in {@link RunAsClient} tests allows you to avoid needing to
+     * package client-side test resources in the deployment.
      */
     boolean testable() default true;
 }
