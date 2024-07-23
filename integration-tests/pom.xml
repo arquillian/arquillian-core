@@ -29,7 +29,7 @@
 
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>integration-tests</artifactId>
-  <version>1.9.1.Final</version>
+  <version>1.9.2.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Core: Implementation Integration Tests</name>
   <description>Tests for implementations of Arquillian Core</description>
@@ -286,9 +286,4 @@
       </build>
     </profile>
   </profiles>
-
-
-  <scm>
-    <tag>1.9.1.Final</tag>
-  </scm>
 </project>
