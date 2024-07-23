@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.container.test.impl.client.deployment;
 
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +58,11 @@ import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observer;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -109,7 +115,7 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         Injector injector = injectorInst.get();
 
         final List<DeploymentScenarioGenerator> deploymentScenarioGenerators = new ArrayList<DeploymentScenarioGenerator>();
-        deploymentScenarioGenerators.add(new AnnotationDeploymentScenarioGenerator());
+        deploymentScenarioGenerators.add(injector.inject(new AnnotationDeploymentScenarioGenerator()));
         when(serviceLoader.all(DeploymentScenarioGenerator.class))
             .thenReturn(deploymentScenarioGenerators);
         when(serviceLoader.onlyOne(eq(DeployableContainer.class))).thenReturn(deployableContainer);
@@ -121,6 +127,13 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
             .thenReturn(create(AuxiliaryArchiveProcessor.class, injector.inject(new TestAuxiliaryArchiveProcessor())));
         when(serviceLoader.all(eq(ApplicationArchiveProcessor.class)))
             .thenReturn(create(ApplicationArchiveProcessor.class, injector.inject(new TestApplicationArchiveAppender())));
+        when(serviceLoader.all(TestEnricher.class))
+            .thenReturn(create(TestEnricher.class, injector.inject(new ArquillianResourceTestEnricher())));
+        final List<ResourceProvider> resourceProviders = new ArrayList<>();
+        resourceProviders.add(new TestStringResourceProvider());
+        resourceProviders.add(new TestBigDecimalResourceProvider());
+        when(serviceLoader.all(ResourceProvider.class))
+            .thenReturn(resourceProviders);
 
         containerRegistry = new LocalContainerRegistry(injector);
         protocolRegistry = new ProtocolRegistry();
@@ -255,6 +268,37 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         fire(createEvent(DeploymentMultipleSameNameArchiveDifferentTarget.class));
 
         verifyScenario("X", "Y");
+    }
+
+    /**
+     * https://github.com/arquillian/arquillian-core/issues/602
+     */
+    @Test
+    public void shouldAllowDeployMethodWithArqResource() {
+        addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
+
+        fire(createEvent(DeploymentWithArqResoureArg.class));
+        verifyScenario("DeploymentWithArqResoureArg");
+    }
+    @Test
+    public void shouldAllowDeployMethodWithMultipleArqResource() {
+        addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
+
+        fire(createEvent(DeploymentWithArqResoureArgsDifferentProviders.class));
+        verifyScenario("DeploymentWithArqResoureArgsDifferentProviders");
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailDeployMethodWithNonArqResource() {
+        addContainer(CONTAINER_NAME_1).getContainerConfiguration().setMode("suite");
+        addProtocol(PROTOCOL_NAME_1, true);
+
+        fire(createEvent(DeploymentWithBadArg.class));
+        // Should not get here
+        Assert.fail("Should have failed with IllegalArgumentException");
     }
 
     @Test // ARQ-971
@@ -527,6 +571,32 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
             return ShrinkWrap.create(JavaArchive.class);
         }
     }
+    private static class DeploymentWithArqResoureArg {
+        @Deployment(name = "DeploymentWithArqResoureArg", managed = false, testable = false)
+        @TargetsContainer(CONTAINER_NAME_1)
+        public static JavaArchive deploy(@ArquillianResource String resource) {
+            Assert.assertEquals("deploy-method-resource", resource);
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+    private static class DeploymentWithArqResoureArgsDifferentProviders {
+        @Deployment(name = "DeploymentWithArqResoureArgsDifferentProviders", managed = false, testable = false)
+        @TargetsContainer(CONTAINER_NAME_1)
+        public static JavaArchive deploy(@ArquillianResource String resource, @ArquillianResource BigDecimal pi) {
+            Assert.assertEquals("deploy-method-resource", resource);
+            Assert.assertEquals("3.14159265358979323846", pi.toPlainString());
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
+    private static class DeploymentWithBadArg {
+        @Deployment(name = "DeploymentWithBadArg", managed = false, testable = false)
+        @TargetsContainer(CONTAINER_NAME_1)
+        public static JavaArchive deploy(String resource) {
+            // Should not be called
+            Assert.fail("DeploymentWithBadArg.deploy(String) should not be called");
+            return ShrinkWrap.create(JavaArchive.class);
+        }
+    }
 
     private static class CallMap {
         private Set<Class<?>> calls = new HashSet<Class<?>>();
@@ -598,6 +668,29 @@ public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {
         }
         public ProtocolConfiguration getConfig() {
             return config;
+        }
+    }
+
+    private static class TestStringResourceProvider implements ResourceProvider {
+        @Override
+        public boolean canProvide(Class<?> type) {
+            return String.class.isAssignableFrom(type);
+        }
+
+        @Override
+        public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+            return "deploy-method-resource";
+        }
+    }
+    private static class TestBigDecimalResourceProvider implements ResourceProvider {
+        @Override
+        public boolean canProvide(Class<?> type) {
+            return BigDecimal.class.isAssignableFrom(type);
+        }
+
+        @Override
+        public Object lookup(ArquillianResource resource, Annotation... qualifiers) {
+            return new BigDecimal("3.14159265358979323846");
         }
     }
 }

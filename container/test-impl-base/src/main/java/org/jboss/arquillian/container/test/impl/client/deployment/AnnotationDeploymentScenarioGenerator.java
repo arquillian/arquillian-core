@@ -18,7 +18,9 @@ package org.jboss.arquillian.container.test.impl.client.deployment;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,7 +29,13 @@ import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.execution.ExecUtils;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
@@ -39,9 +47,10 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @version $Revision: $
  */
 public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
+    @Inject
+    private Instance<ServiceLoader> serviceLoader;
 
     protected List<DeploymentConfiguration> generateDeploymentContent(TestClass testClass) {
-
         List<DeploymentConfiguration> deployments = new ArrayList<DeploymentConfiguration>();
         Method[] deploymentMethods = testClass.getMethods(Deployment.class);
 
@@ -71,26 +80,48 @@ public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentSce
                     + ". "
                     + deploymentMethod);
         }
-        if (deploymentMethod.getParameterTypes().length != 0) {
-            throw new IllegalArgumentException("Method annotated with "
-                + Deployment.class.getName()
-                + " can not accept parameters. "
-                + deploymentMethod);
+            // This will throw IllegalArgumentException if check fails
+            hasZeroOrOnlyArquillianResourceArgs(deploymentMethod);
+    }
+
+    private void hasZeroOrOnlyArquillianResourceArgs(Method deploymentMethod) throws IllegalArgumentException{
+        boolean isOk = deploymentMethod.getParameterTypes().length == 0;
+        if (!isOk) {
+            ArrayList<String> badArgs = new ArrayList<>();
+            for (Parameter param : deploymentMethod.getParameters()) {
+                if (param.getAnnotation(ArquillianResource.class) == null) {
+                    badArgs.add(param.getName());
+                }
+            }
+            if (!badArgs.isEmpty()) {
+                throw new IllegalArgumentException("Method annotated with "
+                    + Deployment.class.getName()
+                    + " can not accept parameters that are not annotated with "
+                    + ArquillianResource.class.getName()
+                    + ". "
+                    + deploymentMethod
+                    + " has invalid parameters: "
+                    + badArgs);
+            }
         }
     }
 
     /**
-     * @param deploymentMethod
-     * @return
+     * Call the deployment method and generate the deployment content and return a {@link DeploymentConfiguration}
+     * populated with the content and any relevant deployment method annotation information
+     * @param deploymentMethod - {@link Deployment} annotated method
+     * @return configured {@link DeploymentConfiguration}
      */
     private DeploymentConfiguration generateDeploymentContent(Method deploymentMethod) {
 
         Deployment deploymentAnnotation = deploymentMethod.getAnnotation(Deployment.class);
         DeploymentConfiguration.DeploymentContentBuilder deploymentContentBuilder = null;
         if (Archive.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deploymentContentBuilder = new DeploymentConfiguration.DeploymentContentBuilder(invoke(Archive.class, deploymentMethod));
+            Archive<?> archive = invoke(Archive.class, deploymentMethod);
+            deploymentContentBuilder = new DeploymentConfiguration.DeploymentContentBuilder(archive);
         } else if (Descriptor.class.isAssignableFrom(deploymentMethod.getReturnType())) {
-            deploymentContentBuilder = new DeploymentConfiguration.DeploymentContentBuilder(invoke(Descriptor.class, deploymentMethod));
+            Descriptor descriptor = invoke(Descriptor.class, deploymentMethod);
+            deploymentContentBuilder = new DeploymentConfiguration.DeploymentContentBuilder(descriptor);
         }
 
         if (deploymentMethod.isAnnotationPresent(OverProtocol.class)) {
@@ -118,12 +149,19 @@ public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentSce
 
 
     /**
-     * @param deploymentMethod
-     * @return
+     * Invoke the deployment method to generate the test archive or descriptor
+     * @param type - the expected return type
+     * @param deploymentMethod - class deployment method
+     * @return the generated archive or descriptor
      */
     private <T> T invoke(Class<T> type, Method deploymentMethod) {
         try {
-            return type.cast(deploymentMethod.invoke(null));
+            Object[] args = null;
+            if(deploymentMethod.getParameterCount() > 0) {
+                Collection<TestEnricher> enrichers = serviceLoader.get().all(TestEnricher.class);
+                args = ExecUtils.enrichArguments(deploymentMethod, enrichers);
+            }
+            return type.cast(deploymentMethod.invoke(null, args));
         } catch (Exception e) {
             throw new RuntimeException("Could not invoke deployment method: " + deploymentMethod, e);
         }
