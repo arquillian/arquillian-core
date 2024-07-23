@@ -90,6 +90,7 @@ public class ContainerTestExtension implements LoadableExtension {
         builder.observer(ContainerEventController.class)
             .observer(ContainerRestarter.class)
             .observer(DeploymentGenerator.class)
+            .observer(AnnotationDeploymentScenarioGenerator.class)
             .observer(ArchiveDeploymentToolingExporter.class)
             .observer(ProtocolRegistryCreator.class)
             .observer(ClientContainerControllerCreator.class)

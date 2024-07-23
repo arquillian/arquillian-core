@@ -132,7 +132,7 @@ public class ContainerEventController {
     }
 
    /*
-    * Internal Helpers needed to extract @OperatesOnDeployment from TestMethod.
+    * Internal Helpers needed to extract @OperateOnDeployment from TestMethod.
     *
     * TODO: This should not rely on direct Reflection, but rather access the metadata through some
     * common metadata layer.

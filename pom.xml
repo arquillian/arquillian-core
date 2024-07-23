@@ -15,7 +15,7 @@
   <!-- Artifact Information -->
   <groupId>org.jboss.arquillian</groupId>
   <artifactId>arquillian-parent</artifactId>
-  <version>1.8.2.Final-SNAPSHOT</version>
+  <version>1.9.1.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Aggregator</name>
   <url>http://arquillian.org</url>
@@ -147,7 +147,16 @@
 
   <profiles>
     <profile>
+      <id>integration-tests</id>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
+    <profile>
       <id>release</id>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
       <build>
         <plugins>
           <plugin>
@@ -159,6 +168,7 @@
               <localCheckout>true</localCheckout>
               <preparationGoals>clean install</preparationGoals>
               <releaseProfiles>gpg-sign,jboss-release</releaseProfiles>
+              <arguments>-DskipItTests=true</arguments>
               <tagNameFormat>@{project.version}</tagNameFormat>
             </configuration>
           </plugin>

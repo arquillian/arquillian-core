@@ -3,7 +3,7 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - '*'
+      - main
   pull_request:
     branches:
       - '*'
@@ -66,6 +66,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Build with Maven
+        run: mvn --batch-mode --no-transfer-progress clean verify
+
+  arquillian-build-jdk21:
+    name: Integration - JDK 21
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Build with Maven
+        uses: actions/checkout@v4
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
           distribution: temurin
           cache: maven
       - name: Build with Maven
