@@ -149,13 +149,14 @@
     <profile>
       <id>integration-tests</id>
       <modules>
-        <!-- Attempt to ensure the BOM is always built last on Windows -->
-        <module>bom</module>
         <module>integration-tests</module>
       </modules>
     </profile>
     <profile>
       <id>release</id>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
       <build>
         <plugins>
           <plugin>
@@ -167,6 +168,7 @@
               <localCheckout>true</localCheckout>
               <preparationGoals>clean install</preparationGoals>
               <releaseProfiles>gpg-sign,jboss-release</releaseProfiles>
+              <arguments>-DskipItTests=true</arguments>
               <tagNameFormat>@{project.version}</tagNameFormat>
             </configuration>
           </plugin>

@@ -31,6 +31,7 @@ import org.jboss.arquillian.core.api.event.ManagerStopping;
 import org.jboss.arquillian.core.api.threading.ExecutorService;
 import org.jboss.arquillian.core.impl.context.ApplicationContextImpl;
 import org.jboss.arquillian.core.impl.threading.ThreadedExecutorService;
+import org.jboss.arquillian.core.spi.ArquillianThreadLocal;
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.EventPoint;
 import org.jboss.arquillian.core.spi.Extension;
@@ -66,8 +67,8 @@ public class ManagerImpl implements Manager {
      * the higher level event will get the exception and re-fire it on the bus. We need to keep track of which exceptions
      * has been handled in the call chain so we can re-throw without re-firing on a higher level.
      */
-    private ThreadLocal<Set<Class<? extends Throwable>>> handledThrowables =
-        new ThreadLocal<Set<Class<? extends Throwable>>>() {
+    private ArquillianThreadLocal<Set<Class<? extends Throwable>>> handledThrowables =
+        new ArquillianThreadLocal<Set<Class<? extends Throwable>>>() {
             @Override
             protected Set<Class<? extends Throwable>> initialValue() {
                 return new HashSet<Class<? extends Throwable>>();
@@ -279,6 +280,8 @@ public class ManagerImpl implements Manager {
             runtimeLogger.clear();
 
             handledThrowables.remove();
+            //Force cleanup:
+            handledThrowables.clear();
         }
         if (shutdownException != null) {
             UncheckedThrow.throwUnchecked(shutdownException);

@@ -22,7 +22,7 @@ import org.jboss.arquillian.core.spi.context.Context;
 /**
  * LoadableExtension.
  * <p>
- * Loadable extensions are loaded on the local side of Arquillan. For extensions, components, observers etc to run on
+ * Loadable extensions are loaded on the local side of Arquillian. For extensions, components, observers etc to run on
  * the remote side, use {@code RemoteLoadableExtension} instead, and provide it via an
  * {@code AuxilliaryArchiveAppender}.
  *
@@ -58,6 +58,9 @@ public interface LoadableExtension {
          * Register an observer for events. This observer will be injected according to any
          * {@link org.jboss.arquillian.core.api.annotation.Inject} annotated
          * {@link org.jboss.arquillian.core.api.Instance} fields.
+         * Note: the handler does not have to have any use of {@link org.jboss.arquillian.core.api.annotation.Observer}
+         * and this can be used to simply register a class that has needs to be instantiated and injected.
+         * @param handler A class with observer methods and/or Instance fields
          */
         ExtensionBuilder observer(Class<?> handler);
 
