@@ -234,7 +234,7 @@
 
         <!-- Versions -->
         <version.fish.payara>6.2024.6</version.fish.payara>
-        <version.fish.payara.arquillian>3.0</version.fish.payara.arquillian>
+        <version.fish.payara.arquillian>3.1</version.fish.payara.arquillian>
 
         <payara.home>${project.build.directory}${file.separator}payara6</payara.home>
       </properties>
