@@ -1,6 +1,7 @@
 package org.jboss.arquillian.junit5.container;
 
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.container.test.spi.TestRunner;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
@@ -22,6 +23,8 @@ public class JUnitJupiterDeploymentAppender extends CachedAuxilliaryArchiveAppen
                 .addAsServiceProvider(
                         TestRunner.class,
                         JUnitJupiterTestRunner.class)
-                .addAsServiceProvider(TestEngine.class, JupiterTestEngine.class);
+                .addAsServiceProvider(TestEngine.class, JupiterTestEngine.class)
+                // The remote extension for in-container tests
+                .addAsServiceProvider(RemoteLoadableExtension.class, JUnitJupiterRemoteExtension.class);
     }
 }

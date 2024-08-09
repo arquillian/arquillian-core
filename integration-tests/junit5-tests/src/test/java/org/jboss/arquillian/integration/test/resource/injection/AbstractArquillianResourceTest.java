@@ -31,7 +31,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -65,7 +64,6 @@ abstract class AbstractArquillianResourceTest {
     }
 
     @Test
-    @Disabled("https://github.com/arquillian/arquillian-core/issues/312")
     public void checkParameterUrl(@ArquillianResource final URL url) {
         Assertions.assertNotNull(url, "The URL should have been injected");
         Assertions.assertEquals(TestEnvironment.protocol(), url.getProtocol());
@@ -83,7 +81,6 @@ abstract class AbstractArquillianResourceTest {
     }
 
     @Test
-    @Disabled("https://github.com/arquillian/arquillian-core/issues/312")
     public void checkParameterUri(@ArquillianResource final URI uri) {
         Assertions.assertNotNull(uri, "The URI should have been injected");
         checkHost(uri.getHost());
