@@ -109,6 +109,19 @@
               </configuration>
             </execution>
             <execution>
+              <id>lifecycle-tests</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <phase>test</phase>
+              <configuration>
+                <skip>${skipTests}</skip>
+                <includes>
+                  <include>org.jboss.arquillian.integration.test.lifecycle.*Test</include>
+                </includes>
+              </configuration>
+            </execution>
+            <execution>
               <id>manual-mode-tests</id>
               <goals>
                 <goal>test</goal>
