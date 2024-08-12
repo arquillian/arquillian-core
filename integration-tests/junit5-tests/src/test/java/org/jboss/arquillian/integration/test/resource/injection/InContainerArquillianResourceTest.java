@@ -28,6 +28,7 @@ import org.jboss.arquillian.integration.test.common.TestEnvironment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
@@ -49,6 +50,7 @@ public class InContainerArquillianResourceTest extends AbstractArquillianResourc
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "javax.naming.Context.parameter", matches = "skip")
     public void checkContextParameter(@ArquillianResource final Context context) throws Exception {
         Assertions.assertNotNull(context, "The Context should have been injected");
         final Object bm = context.lookup("java:comp/BeanManager");
@@ -63,6 +65,7 @@ public class InContainerArquillianResourceTest extends AbstractArquillianResourc
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "javax.naming.Context.parameter", matches = "skip")
     public void checkInitialContextParameter(@ArquillianResource final InitialContext initialContext) throws Exception {
         Assertions.assertNotNull(initialContext, "The InitialContext should have been injected");
         final Object bm = initialContext.lookup("java:comp/BeanManager");
