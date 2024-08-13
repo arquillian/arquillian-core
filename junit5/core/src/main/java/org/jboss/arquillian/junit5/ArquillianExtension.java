@@ -9,12 +9,16 @@ import org.jboss.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
+import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.platform.commons.JUnitException;
@@ -23,12 +27,13 @@ import org.junit.platform.commons.util.ExceptionUtils;
 import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
-public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler {
+public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler, ParameterResolver {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
 
     private static final String CHAIN_EXCEPTION_MESSAGE_PREFIX = "Chain of InvocationInterceptors never called invocation";
 
-    private static final Predicate<ExtensionContext> IS_INSIDE_ARQUILLIAN = (context -> Boolean.parseBoolean(context.getConfigurationParameter(RUNNING_INSIDE_ARQUILLIAN).orElse("false")));
+    private static final Predicate<ExtensionContext> IS_INSIDE_ARQUILLIAN = (context -> Boolean.parseBoolean(context.getConfigurationParameter(RUNNING_INSIDE_ARQUILLIAN)
+        .orElse("false")));
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
@@ -46,18 +51,31 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        getManager(context).getAdaptor().before(
-                context.getRequiredTestInstance(),
-                context.getRequiredTestMethod(),
-                LifecycleMethodExecutor.NO_OP);
+        // Get the adapter, test instance and method
+        final TestRunnerAdaptor adapter = getManager(context)
+            .getAdaptor();
+        final Object instance = context.getRequiredTestInstance();
+        final Method method = context.getRequiredTestMethod();
+        // Create a new parameter holder
+        final MethodParameters methodParameters = ContextStore.getContextStore(context).createMethodParameters();
+        // Fired to set the MethodParameters on the producer
+        adapter.fireCustomLifecycle(new MethodParameterProducerEvent(instance, method, methodParameters));
+        adapter.before(
+            instance,
+            method,
+            LifecycleMethodExecutor.NO_OP);
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        getManager(context).getAdaptor().after(
+        try {
+            getManager(context).getAdaptor().after(
                 context.getRequiredTestInstance(),
                 context.getRequiredTestMethod(),
                 LifecycleMethodExecutor.NO_OP);
+        } finally {
+            ContextStore.getContextStore(context).removeMethodParameters();
+        }
     }
 
     @Override
@@ -189,5 +207,41 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         final JUnitJupiterTestClassLifecycleManager manager = getManager(extensionContext);
         manager.getAdaptor().fireCustomLifecycle(runModeEvent);
         return runModeEvent.isRunAsClient();
+    }
+
+    @Override
+    public boolean supportsParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) throws ParameterResolutionException {
+        try {
+            // Get the parameter holder
+            final MethodParameters holder = ContextStore.getContextStore(extensionContext).getMethodParameters();
+            if (holder == null) {
+                throw createParameterResolutionException(parameterContext, null);
+            }
+            return holder.get(parameterContext.getIndex()) != null;
+        } catch (Exception e) {
+            throw createParameterResolutionException(parameterContext, e);
+        }
+    }
+
+    @Override
+    public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) throws ParameterResolutionException {
+        try {
+            // Get the parameter holder
+            final MethodParameters holder = ContextStore.getContextStore(extensionContext).getMethodParameters();
+            if (holder == null) {
+                throw createParameterResolutionException(parameterContext, null);
+            }
+            return holder.get(parameterContext.getIndex());
+        } catch (Exception e) {
+            throw createParameterResolutionException(parameterContext, e);
+        }
+    }
+
+    private static ParameterResolutionException createParameterResolutionException(final ParameterContext parameterContext, final Throwable cause) {
+        final String msg = String.format("Failed to resolve parameter %s", parameterContext.getParameter().getName());
+        if (cause == null) {
+            return new ParameterResolutionException(msg);
+        }
+        return new ParameterResolutionException(msg, cause);
     }
 }
