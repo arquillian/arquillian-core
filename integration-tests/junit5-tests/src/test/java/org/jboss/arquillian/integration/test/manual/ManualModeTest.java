@@ -30,7 +30,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.integration.test.common.TestEnvironment;
 import org.jboss.arquillian.integration.test.common.app.EchoResource;
 import org.jboss.arquillian.integration.test.common.app.RestActivator;
-import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.jboss.arquillian.junit5.container.annotation.ArquillianTest;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -39,12 +39,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
  */
-@ExtendWith(ArquillianExtension.class)
+@ArquillianTest
 @RunAsClient
 public class ManualModeTest {
     private static final String CONTAINER_NAME = "default";
