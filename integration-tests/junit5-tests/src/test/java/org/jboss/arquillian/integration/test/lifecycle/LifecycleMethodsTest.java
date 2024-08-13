@@ -17,13 +17,14 @@ package org.jboss.arquillian.integration.test.lifecycle;
 
 import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit5.ArquillianExtension;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.CLIENT;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.SERVER;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.TMP_FILE_ASSET_NAME;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.appendToFile;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.checkRunsWhere;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.getTmpFilePath;
+
+import org.jboss.arquillian.junit5.container.annotation.ArquillianTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -41,7 +42,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  * @author lprimak
  */
 @ExtendWith(FileWriterExtension.class)
-@ExtendWith(ArquillianExtension.class)
+@ArquillianTest
 public class LifecycleMethodsTest {
     @Inject
     Greeter greeter;
