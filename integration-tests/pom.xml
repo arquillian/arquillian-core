@@ -172,7 +172,7 @@
         <skip.provision.server>${skipTests}</skip.provision.server>
 
         <!-- Versions -->
-        <version.org.wildfly.arquillian>5.1.0.Beta4</version.org.wildfly.arquillian>
+        <version.org.wildfly.arquillian>5.1.0.Beta6</version.org.wildfly.arquillian>
         <version.wildfly-maven-plugin>5.0.0.Final</version.wildfly-maven-plugin>
 
         <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
