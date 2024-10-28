@@ -18,6 +18,8 @@
 package org.jboss.arquillian.container.test.impl.client;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
+
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -66,7 +68,7 @@ public class ContainerEventController {
     private Instance<ContainerRegistry> containerRegistry;
 
     @Inject
-    private Instance<DeploymentScenario> deploymentScenario;
+    private volatile Instance<DeploymentScenario> deploymentScenario;
 
     @Inject
     private Event<ContainerMultiControlEvent> container;
@@ -141,7 +143,7 @@ public class ContainerEventController {
         DeploymentTargetDescription deploymentTarget = locateDeployment(method);
 
         ContainerRegistry containerRegistry = this.containerRegistry.get();
-        DeploymentScenario deploymentScenario = this.deploymentScenario.get();
+        DeploymentScenario deploymentScenario = Objects.requireNonNull(this.deploymentScenario.get(), "deploymentScenario cannot be null");
 
         Deployment deployment = deploymentScenario.deployment(deploymentTarget);
         if (deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT) {

@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.shrinkwrap.api.Archive;
 
@@ -32,7 +34,7 @@ public class DeploymentScenario {
     private final List<Deployment> deployments;
 
     public DeploymentScenario() {
-        this.deployments = new ArrayList<Deployment>();
+        this.deployments = new CopyOnWriteArrayList<>();
     }
 
     public DeploymentScenario addDeployment(DeploymentDescription deployment) {
