@@ -167,7 +167,8 @@ public class JavaSPIExtensionLoader implements ExtensionLoader {
             while (enumeration.hasMoreElements()) {
                 final URL url = enumeration.nextElement();
                 URLConnection jarConnection = url.openConnection();
-                //Don't cache the file (avoids file leaks on GlassFish).
+                // Avoid caching the file; in combination with Windows OS, can cause file leaks on some EE servers (GF)
+                // See WELD-2800 for more details
                 jarConnection.setUseCaches(false);
                 final InputStream is = jarConnection.getInputStream();
                 BufferedReader reader = null;
