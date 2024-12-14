@@ -33,7 +33,7 @@
 
     <!-- Checkstyle plugin -->
     <version.org.apache.maven-checkstyle-plugin>3.4.0</version.org.apache.maven-checkstyle-plugin>
-    <version.com.puppycrawl.checkstyle>9.3</version.com.puppycrawl.checkstyle>
+    <version.com.puppycrawl.checkstyle>10.21.0</version.com.puppycrawl.checkstyle>
     <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
   </properties>
 
