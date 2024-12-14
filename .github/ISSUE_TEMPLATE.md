@@ -4,8 +4,7 @@ Thanks for interest in Arquillian Project. What kind of issue would like you to 
 Question
 
 Please ask questions about how to use something, or to understand why something isn't
-working as you expect it to, on Stack Overflow using the arquillian tag. Alternatively you
-can go to our forum under jboss.org domain https://developer.jboss.org/en/arquillian
+working as you expect it to, in the Discussions tab (https://github.com/arquillian/arquillian-core/discussions)
 
 Bug report / Enhancement
 
