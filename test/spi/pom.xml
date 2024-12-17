@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- Parent -->
   <parent>
@@ -53,5 +55,46 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Configure the compiler plugin to not compile the SomeNonClientSideException class into
+      the test-classes directory so that the standard test runtime will not see it.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- Override the default-testCompile execution to exclude SomeNonClientSideException.java -->
+            <id>default-testCompile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <testExcludes>
+                <testExclude>org/jboss/arquillian/test/spi/serveronly/**</testExclude>
+              </testExcludes>
+            </configuration>
+          </execution>
+          <execution>
+            <!-- A custom test-compile execution to output the SomeNonClientSideException.class to target/serveronly-classes -->
+            <id>serveronly-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <testIncludes>
+                <testInclude>org/jboss/arquillian/test/spi/serveronly/**</testInclude>
+              </testIncludes>
+              <outputDirectory>${project.build.directory}/serveronly-classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
 
