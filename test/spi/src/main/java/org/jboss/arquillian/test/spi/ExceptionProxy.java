@@ -75,6 +75,7 @@ public class ExceptionProxy implements Externalizable {
     private List<String> causeHierarchy;
 
     public static class Version implements Serializable {
+        private static final long serialVersionUID = 1L;
         int version = 2;
     }
 
