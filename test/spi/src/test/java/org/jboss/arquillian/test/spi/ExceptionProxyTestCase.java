@@ -62,34 +62,48 @@ public class ExceptionProxyTestCase {
         proxy(new UnsatisfiedResolutionException(new Exception(MSG)));
     }
 
+    /**
+     * This tests that an exception that fails to serialize can be proxied and
+     * the client can see the message
+     * @throws Exception
+     */
     @Test
     public void shouldSerializeNonSerializableExceptions() throws Exception {
         ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonSerializableException()));
         Throwable t = proxy.createException();
 
-        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+        Assert.assertEquals(NonSerializableException.class, t.getClass());
         Assert.assertTrue(
-            "Verify Proxy message contain root exception of serialization problem",
-            t.getMessage().contains("java.io.NotSerializableException"));
+            "NonSerializableException should have a message",
+            t.getMessage().contains("UnsupportedOperationException"));
+        // Since the cause is set by the NonSerializableException.ctor, this should be seen
+        Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+        // The proxy should have a serializationProcessException
         Assert.assertTrue(
-            "Verify Proxy message contain root cause of serialization problem",
-            t.getMessage().contains("BufferedInputStream"));
+            "Verify Proxy message contain root cause of deserialization problem",
+            proxy.getSerializationProcessException().getMessage().contains("BufferedInputStream"));
     }
 
+    /**
+     * This tests that an exception that fails to de-serialize
+     * can be proxied and the client can see the message
+     * @throws Exception
+     */
     @Test
     public void shouldSerializeNonDeSerializableExceptions() throws Exception {
         ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonDeserializableExtension("Test")));
         Throwable t = proxy.createException();
 
-        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+        Assert.assertEquals(NonDeserializableExtension.class, t.getClass());
         Assert.assertTrue(
-            "Verify Proxy message contain root exception of deserialization problem",
-            t.getMessage().contains("NonDeserializableExtension"));
+            "The exception should have original message",
+            t.getMessage().contains("Test"));
+        // Since the cause is set by the NonDeserializableExtension.ctor, this should be seen
+        Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+        // The proxy should have a serializationProcessException
         Assert.assertTrue(
             "Verify Proxy message contain root cause of deserialization problem",
-            t.getMessage().contains("Could not de-serialize"));
-        // This is not valid if the exception is not serializable
-        //Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+            proxy.getSerializationProcessException().getMessage().contains("Could not de-serialize"));
     }
 
     @Test
@@ -103,8 +117,14 @@ public class ExceptionProxyTestCase {
         Assert.assertEquals(ClassNotFoundException.class, t.getCause().getCause().getClass());
     }
 
+    /**
+     * Test that the client can handle a server exception that is not on the client classpath by
+     * being able to see the common exception supertypes that are on the client classpath.
+     * @throws Throwable
+     */
     @Test
     public void handleExceptionClassNotOnClientClasspath() throws Throwable {
+        // Create the exception using a classloader that is not the client classloader
         Throwable serverException = causeServerException();
         System.out.println("Loaded server exception: " + serverException);
         ExceptionProxy proxy = serialize(ExceptionProxy.createForException(serverException));
@@ -112,8 +132,8 @@ public class ExceptionProxyTestCase {
         System.out.println("Client exception from proxy: " + t);
         System.out.println("Client exception trace from proxy:");
         t.printStackTrace();
-        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
-        Assert.assertEquals(ClassNotFoundException.class, t.getCause().getClass());
+        Assert.assertEquals(IException.class, t.getClass());
+        //Assert.assertEquals(ClassNotFoundException.class, t.getCause().getClass());
     }
 
     private Throwable causeServerException() throws Exception {
