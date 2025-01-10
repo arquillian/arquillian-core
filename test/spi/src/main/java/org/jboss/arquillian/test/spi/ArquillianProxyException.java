@@ -16,9 +16,11 @@
  */
 package org.jboss.arquillian.test.spi;
 
+import java.io.PrintStream;
+
 /**
  * Exception class used when a proxied exception cannot be created. This
- * exception type is is thrown instead and contains information about the
+ * exception type is thrown instead and contains information about the
  * proxied class and a hint about why it could not be thrown.
  *
  * @author <a href="mailto:contact@andygibson.net">Andy Gibson</a>
@@ -58,5 +60,10 @@ public class ArquillianProxyException extends RuntimeException {
      */
     public ArquillianProxyException(String message, String exceptionClassName, String reason, Throwable cause) {
         this(String.format("%s : %s [Proxied because : %s]", exceptionClassName, message, reason), cause);
+    }
+
+    @Override
+    public void printStackTrace(PrintStream s) {
+        super.printStackTrace(s);
     }
 }
