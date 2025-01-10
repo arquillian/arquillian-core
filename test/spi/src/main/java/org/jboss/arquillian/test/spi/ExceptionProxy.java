@@ -25,7 +25,9 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Takes an exception class and creates a proxy that can be used to rebuild the
@@ -41,41 +43,52 @@ import java.lang.reflect.InvocationTargetException;
  * created</li>
  * <li>If the exception class exists, but doesn't have a suitable constructor
  * then another exception is thrown referencing the original exception</li>
- * <li>If the exception class exists, but is not throwable, another exception is
- * thrown referencing the original exception</li>
- * <li>If the exception class doesn't exist, another exception is raised instead
+ * <li>If the exception class doesn't exist, one of its superclasses is used
  * </li>
  * </ul>
  *
  * @author <a href="mailto:contact@andygibson.net">Andy Gibson</a>
  */
 public class ExceptionProxy implements Externalizable {
-
+    // The serialVersionUID of the ExceptionProxy that existed in Arquillian 1.9.1.Final
     private static final long serialVersionUID = 2321010311438950147L;
 
+    // This is the className of the exception in the container passed into TestResult#setThrowable(Throwable)
     private String className;
-
+    // This is the message of the exception in the container passed into TestResult#setThrowable(Throwable)
     private String message;
-
+    // This is the stack trace of the exception in the container passed into TestResult#setThrowable(Throwable)
     private StackTraceElement[] trace;
-
+    // This is a proxy to the cause exception in the container, not used post 1.9.1.Final
     private ExceptionProxy causeProxy;
-
+    // This is the causeProxy#createException() instance
     private Throwable cause;
-
+    // This only exists if the original container exception could be deserialized in the client
     private Throwable original;
-
+    // This would exist if the original exception could not be serialized in the container
     private Throwable serializationProcessException = null;
+    // New fields added in 1.9.2.Final
+    private Version version;
+    // The list of superclasses of the exception class that was serialized
+    private List<String> exceptionHierarchy;
+
+    public static class Version implements Serializable {
+        private static final long serialVersionUID = 1L;
+        int version = 2;
+    }
 
     public ExceptionProxy() {
+        version = new Version();
     }
 
     public ExceptionProxy(Throwable throwable) {
+        this.version = new Version();
         this.className = throwable.getClass().getName();
         this.message = throwable.getMessage();
         this.trace = throwable.getStackTrace();
-        this.causeProxy = ExceptionProxy.createForException(throwable.getCause());
+        //this.causeProxy = ExceptionProxy.createForException(throwable.getCause());
         this.original = throwable;
+        this.exceptionHierarchy = getExceptionHierarchy(throwable);
     }
 
     /**
@@ -92,6 +105,7 @@ public class ExceptionProxy implements Externalizable {
         if (throwable == null) {
             return null;
         }
+        //System.out.println("ExceptionProxy.createForException, throwable=" + throwable);
         return new ExceptionProxy(throwable);
     }
 
@@ -106,14 +120,16 @@ public class ExceptionProxy implements Externalizable {
 
     /**
      * Constructs an instance of the proxied exception based on the class name,
-     * message, stack trace and if applicable, the cause.
+     * message, stack trace and if applicable, and the cause if the cause could be
+     * deserialized in the client. Otherwise, this returns an ArquillianProxyException
      *
-     * @return The constructed {@link Throwable} instance
+     * @return The constructed {@link Throwable} instance if one exists, null otherwise
      */
     public Throwable createException() {
         if (!hasException()) {
             return null;
         }
+        //System.out.println("ExceptionProxy.createException, this=" + this);
         if (original != null) {
             return original;
         }
@@ -143,7 +159,71 @@ public class ExceptionProxy implements Externalizable {
                 cause = causeProxy.createException();
             }
         }
-        return cause;
+        return serializationProcessException;
+    }
+
+    // Accessors to the fields of the ExceptionProxy
+    public String getClassName() {
+        return className;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public StackTraceElement[] getTrace() {
+        return trace;
+    }
+
+    public ExceptionProxy getCauseProxy() {
+        return causeProxy;
+    }
+
+    public Throwable getOriginal() {
+        return original;
+    }
+
+    public Throwable getSerializationProcessException() {
+        return serializationProcessException;
+    }
+
+    public Version getVersion() {
+        return version;
+    }
+
+    public List<String> getExceptionHierarchy() {
+        return exceptionHierarchy;
+    }
+
+    /**
+     * Override to provide the full details of the exception being proxied
+     * @return The full details of the exception being proxied
+     */
+    @Override
+    public String toString() {
+        StringBuilder tmp = new StringBuilder();
+        tmp.append("ExceptionProxy("+className+")");
+        if(message != null) {
+            tmp.append("msg: ").append(message);
+        }
+        if(causeProxy != null) {
+            tmp.append("\ncause: ").append(causeProxy);
+        }
+        if(trace != null) {
+            for(StackTraceElement element : trace) {
+                tmp.append("\n\tat ").append(element);
+            }
+        }
+        if(exceptionHierarchy != null) {
+            tmp.append("\nexceptionHierarchy: ");
+            for(String t : exceptionHierarchy) {
+                tmp.append("\n\t").append(t);
+            }
+        }
+        if(serializationProcessException != null) {
+            tmp.append("\nserializationProcessException: ").append(serializationProcessException);
+        }
+        return tmp.toString();
     }
 
     /**
@@ -162,83 +242,108 @@ public class ExceptionProxy implements Externalizable {
      */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        className = (String) in.readObject();
-        message = (String) in.readObject();
-        trace = (StackTraceElement[]) in.readObject();
-        causeProxy = (ExceptionProxy) in.readObject();
-
-      /*
-       * Attempt to deserialize the original Exception. It might fail due to ClassNotFoundExceptions, ignore and move on
-       */
-        byte[] originalExceptionData = (byte[]) in.readObject();
-        if (originalExceptionData != null && originalExceptionData.length > 0) {
+        // Read the first object to see if it is the version object
+        Object firstObject = in.readObject();
+        if (firstObject instanceof Version) {
+            version = (Version) firstObject;
+            className = (String) in.readObject();
+            message = (String) in.readObject();
+            trace = (StackTraceElement[]) in.readObject();
+            exceptionHierarchy = (List<String>) in.readObject();
+            // Try to deserialize the original exception
             try {
-                ByteArrayInputStream originalIn = new ByteArrayInputStream(originalExceptionData);
-                ObjectInputStream input = new ObjectInputStream(originalIn);
-                //           // Uncomment to run ExceptionProxySerializationTestCase
-                //            {
-                //               @Override
-                //               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
-                //               {
-                //                  return Class.forName(desc.getName(), false, Thread.currentThread().getContextClassLoader());
-                //               }
-                //            };
-                original = (Throwable) input.readObject();
-
-                if (causeProxy != null) {
-                    // reset the cause, so we can de-serialize them individual
-                    Throwable cause = causeProxy.createException();
-                    if (original instanceof InvocationTargetException) {
-                        SecurityActions.setFieldValue(InvocationTargetException.class, original, "target", cause);
-                    } else {
-                        SecurityActions.setFieldValue(Throwable.class, original, "cause", cause);
-                    }
+                byte[] originalExceptionData = (byte[]) in.readObject();
+                if (originalExceptionData != null && originalExceptionData.length > 0) {
+                    ByteArrayInputStream originalIn = new ByteArrayInputStream(originalExceptionData);
+                    ObjectInputStream input = new ObjectInputStream(originalIn);
+                    original = (Throwable) input.readObject();
                 }
-            } catch (Throwable e) { // Possible ClassNotFoundExcpetion / NoClassDefFoundError
-                // ignore, could not load class on client side, move on and create a fake 'proxy' later
-                serializationProcessException = e;
+            } catch (Throwable e) {
+                this.serializationProcessException = e;
             }
-        }
-        // Override with the remote serialization issue cause if exists
-        Throwable tmpSerializationProcessException = (Throwable) in.readObject();
-        if (tmpSerializationProcessException != null) {
-            serializationProcessException = tmpSerializationProcessException;
+            // Override with the remote serialization issue cause if exists
+            Throwable tmpSerializationProcessException = (Throwable) in.readObject();
+            if (tmpSerializationProcessException != null) {
+                serializationProcessException = tmpSerializationProcessException;
+            }
+
+            // If we were not able to create original from originalExceptionData, try to create it from exceptionHierarchy
+            if(original == null) {
+                original = buildOriginalException();
+            }
+        } else {
+            serializationProcessException = new IOException("Unknown version of ExceptionProxy");
         }
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(version);
         out.writeObject(className);
         out.writeObject(message);
         out.writeObject(trace);
-        out.writeObject(causeProxy);
-
+        out.writeObject(exceptionHierarchy);
         byte[] originalBytes = new byte[0];
-        if (original != null) {
-            try {
-                // reset the cause, so we can serialize the exception chain individual
-                SecurityActions.setFieldValue(Throwable.class, original, "cause", null);
-            } catch (Exception e) {
-                // move on, try to serialize anyway
-            }
-
-            try {
-                ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
-                ObjectOutputStream output = new ObjectOutputStream(originalOut);
-                output.writeObject(original);
-                output.flush();
-                originalBytes = originalOut.toByteArray();
-            } catch (NotSerializableException e) {
-                // in case some class breaks Serialization contract
-                serializationProcessException = e;
-            }
+        try {
+            /* Try to serialize the original exception. Here we do it in a separate try-catch block to avoid
+            because default serialization will serialize whatever it can and leave non-serializable fields out.
+            We have to make the write of the root exception atomic.
+            */
+            ByteArrayOutputStream originalOut = new ByteArrayOutputStream();
+            ObjectOutputStream output = new ObjectOutputStream(originalOut);
+            output.writeObject(original);
+            output.flush();
+            originalBytes = originalOut.toByteArray();
+        } catch (NotSerializableException e) {
+            // ignore, could not serialize original exception
+            this.serializationProcessException = e;
         }
         out.writeObject(originalBytes);
         out.writeObject(serializationProcessException);
     }
 
-    @Override
-    public String toString() {
-        return super.toString() + String.format("[class=%s, message=%s],cause = %s", className, message, causeProxy);
+    /**
+     * Get the exception hierarchy for the exception class being proxied.
+     *
+     * @return list of exception types in the hierarchy
+     */
+    protected List<String> getExceptionHierarchy(Throwable t) {
+        List<String> hierarchy = new ArrayList<>();
+        Class<?> tclass = t.getClass();
+        while(Throwable.class.isAssignableFrom(tclass)) {
+            hierarchy.add(tclass.getName());
+            tclass = tclass.getSuperclass();
+        }
+        return hierarchy;
+    }
+    /**
+     * Build the original exception based on the exception class name. This first
+     * tries to use a ctor with a message, then a default ctor.
+     *
+     * @return the original exception
+     */
+    protected Throwable buildOriginalException() {
+        Throwable original = null;
+        for(String tclassName : exceptionHierarchy) {
+            try {
+                Class<? extends Throwable> tclass = Class.forName(tclassName).asSubclass(Throwable.class);
+                try {
+                    original = tclass.getDeclaredConstructor(String.class).newInstance(message);
+                    original.setStackTrace(trace);
+                    break;
+                } catch (Exception e) {
+                    try {
+                        original = tclass.getDeclaredConstructor().newInstance();
+                        original.setStackTrace(trace);
+                        break;
+                    } catch (Exception ex) {
+                        // ignore, could not load class on client side, try next base class
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                // ignore, could not load class on client side, try next base class
+            }
+        }
+        return original;
     }
 }

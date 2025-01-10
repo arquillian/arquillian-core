@@ -20,6 +20,7 @@ package org.jboss.arquillian.test.spi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
@@ -28,11 +29,17 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * ExceptionProxyTestCase
+ * Updated for https://github.com/arquillian/arquillian-core/issues/641
+ * where the exception seen by a client that did not have the exception class
+ * thrown from a server was not on the client classpath.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
@@ -55,34 +62,48 @@ public class ExceptionProxyTestCase {
         proxy(new UnsatisfiedResolutionException(new Exception(MSG)));
     }
 
+    /**
+     * This tests that an exception that fails to serialize can be proxied and
+     * the client can see the message
+     * @throws Exception
+     */
     @Test
     public void shouldSerializeNonSerializableExceptions() throws Exception {
         ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonSerializableException()));
         Throwable t = proxy.createException();
 
-        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+        Assert.assertEquals(NonSerializableException.class, t.getClass());
         Assert.assertTrue(
-            "Verify Proxy message contain root exception of serialization problem",
-            t.getMessage().contains("java.io.NotSerializableException"));
-        Assert.assertTrue(
-            "Verify Proxy message contain root cause of serialization problem",
-            t.getMessage().contains("BufferedInputStream"));
+            "NonSerializableException should have a message",
+            t.getMessage().contains("UnsupportedOperationException"));
+        // Since the cause is set by the NonSerializableException.ctor, this should be seen
         Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+        // The proxy should have a serializationProcessException
+        Assert.assertTrue(
+            "Verify Proxy message contain root cause of deserialization problem",
+            proxy.getSerializationProcessException().getMessage().contains("BufferedInputStream"));
     }
 
+    /**
+     * This tests that an exception that fails to de-serialize
+     * can be proxied and the client can see the message
+     * @throws Exception
+     */
     @Test
     public void shouldSerializeNonDeSerializableExceptions() throws Exception {
         ExceptionProxy proxy = serialize(ExceptionProxy.createForException(new NonDeserializableExtension("Test")));
         Throwable t = proxy.createException();
 
-        Assert.assertEquals(ArquillianProxyException.class, t.getClass());
+        Assert.assertEquals(NonDeserializableExtension.class, t.getClass());
         Assert.assertTrue(
-            "Verify Proxy message contain root exception of deserialization problem",
-            t.getMessage().contains("NonDeserializableExtension"));
+            "The exception should have original message",
+            t.getMessage().contains("Test"));
+        // Since the cause is set by the NonDeserializableExtension.ctor, this should be seen
+        Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+        // The proxy should have a serializationProcessException
         Assert.assertTrue(
             "Verify Proxy message contain root cause of deserialization problem",
-            t.getMessage().contains("Could not de-serialize"));
-        Assert.assertEquals(UnsupportedOperationException.class, t.getCause().getClass());
+            proxy.getSerializationProcessException().getMessage().contains("Could not de-serialize"));
     }
 
     @Test
@@ -96,12 +117,50 @@ public class ExceptionProxyTestCase {
         Assert.assertEquals(ClassNotFoundException.class, t.getCause().getCause().getClass());
     }
 
+    /**
+     * Test that the client can handle a server exception that is not on the client classpath by
+     * being able to see the common exception supertypes that are on the client classpath.
+     * @throws Throwable
+     */
+    @Test
+    public void handleExceptionClassNotOnClientClasspath() throws Throwable {
+        // Create the exception using a classloader that is not the client classloader
+        Throwable serverException = causeServerException();
+        System.out.println("Loaded server exception: " + serverException);
+        ExceptionProxy proxy = serialize(ExceptionProxy.createForException(serverException));
+        Throwable t = proxy.createException();
+        System.out.println("Client exception from proxy: " + t);
+        System.out.println("Client exception trace from proxy:");
+        t.printStackTrace();
+        Assert.assertEquals(IException.class, t.getClass());
+        //Assert.assertEquals(ClassNotFoundException.class, t.getCause().getClass());
+    }
+
+    private Throwable causeServerException() throws Exception {
+        // Create a ClassLoader for the target/serveronly-classes dir
+        File serverOnlyClasses = new File("target/serveronly-classes");
+        Assert.assertTrue("target/serveronly-classes should exist", serverOnlyClasses.exists());
+        URL[] serveronlyCP = {serverOnlyClasses.toURL()};
+        URLClassLoader classLoader = new URLClassLoader(serveronlyCP, getClass().getClassLoader());
+        Class<IBean> exClass = (Class<IBean>) classLoader.loadClass("org.jboss.arquillian.test.spi.serveronly.SomeBean");
+        IBean bean = exClass.newInstance();
+        Throwable exception = null;
+        try {
+            bean.invoke();
+        } catch (Exception e) {
+            exception = e;
+        }
+        return exception;
+    }
+
     private ExceptionProxy serialize(ExceptionProxy proxy) throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(output);
         out.writeObject(proxy);
+        out.close();
+        byte[] data = output.toByteArray();
 
-        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(output.toByteArray()));
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
         return (ExceptionProxy) in.readObject();
     }
 
@@ -122,7 +181,10 @@ public class ExceptionProxyTestCase {
         }
     }
 
-    // Simulate org.jboss.weld.exceptions.IllegalArgumentException
+    /** Simulate org.jboss.weld.exceptions.IllegalArgumentException
+     * Note, this does not simulate the case of weld implementation classes not
+     * being on the test client classpath, which is the norm.
+     */
     private static class ExtendedIllegalArgumentException extends IllegalArgumentException {
         private static final long serialVersionUID = 1L;
 
