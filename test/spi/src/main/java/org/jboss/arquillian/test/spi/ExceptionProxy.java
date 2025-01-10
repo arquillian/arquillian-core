@@ -105,6 +105,7 @@ public class ExceptionProxy implements Externalizable {
         if (throwable == null) {
             return null;
         }
+        //System.out.println("ExceptionProxy.createForException, throwable=" + throwable);
         return new ExceptionProxy(throwable);
     }
 
@@ -128,6 +129,7 @@ public class ExceptionProxy implements Externalizable {
         if (!hasException()) {
             return null;
         }
+        //System.out.println("ExceptionProxy.createException, this=" + this);
         if (original != null) {
             return original;
         }
@@ -191,6 +193,37 @@ public class ExceptionProxy implements Externalizable {
 
     public List<String> getExceptionHierarchy() {
         return exceptionHierarchy;
+    }
+
+    /**
+     * Override to provide the full details of the exception being proxied
+     * @return The full details of the exception being proxied
+     */
+    @Override
+    public String toString() {
+        StringBuilder tmp = new StringBuilder();
+        tmp.append("ExceptionProxy("+className+")");
+        if(message != null) {
+            tmp.append("msg: ").append(message);
+        }
+        if(causeProxy != null) {
+            tmp.append("\ncause: ").append(causeProxy);
+        }
+        if(trace != null) {
+            for(StackTraceElement element : trace) {
+                tmp.append("\n\tat ").append(element);
+            }
+        }
+        if(exceptionHierarchy != null) {
+            tmp.append("\nexceptionHierarchy: ");
+            for(String t : exceptionHierarchy) {
+                tmp.append("\n\t").append(t);
+            }
+        }
+        if(serializationProcessException != null) {
+            tmp.append("\nserializationProcessException: ").append(serializationProcessException);
+        }
+        return tmp.toString();
     }
 
     /**
@@ -267,11 +300,6 @@ public class ExceptionProxy implements Externalizable {
         }
         out.writeObject(originalBytes);
         out.writeObject(serializationProcessException);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + String.format("[class=%s, message=%s],cause = %s", className, message, causeProxy);
     }
 
     /**
