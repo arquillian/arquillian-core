@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>integration-tests</artifactId>
-    <version>1.9.3.Final</version>
+    <version>1.9.4.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
