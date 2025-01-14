@@ -36,7 +36,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class URLResourceProviderTestCase extends OperatesOnDeploymentAwareProviderBase {

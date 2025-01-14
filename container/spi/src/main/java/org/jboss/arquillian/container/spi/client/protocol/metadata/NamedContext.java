@@ -21,7 +21,6 @@ package org.jboss.arquillian.container.spi.client.protocol.metadata;
  * NamedContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class NamedContext {
 

@@ -37,7 +37,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
  * {@link ArquillianDescriptor}<br/>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerRestarter {
     private int testClassesCount = 0;

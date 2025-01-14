@@ -35,7 +35,6 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * Enricher that provide EJB class and setter method injection.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EJBInjectionEnricher implements TestEnricher {
     private static final String ANNOTATION_NAME = "javax.ejb.EJB";

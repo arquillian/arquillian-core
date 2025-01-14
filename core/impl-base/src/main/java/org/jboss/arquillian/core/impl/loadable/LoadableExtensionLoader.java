@@ -38,7 +38,6 @@ import org.jboss.arquillian.core.spi.event.ManagerProcessing;
  * LoadableExtensionLoader
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class LoadableExtensionLoader {
     private static Logger log = Logger.getLogger(LoadableExtensionLoader.class.getName());

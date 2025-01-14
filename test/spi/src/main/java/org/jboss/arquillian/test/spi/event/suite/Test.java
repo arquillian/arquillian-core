@@ -22,7 +22,6 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * Event fired to execute the Test method
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class Test extends TestEvent {
     private TestMethodExecutor testMethodExecutor;

@@ -26,7 +26,6 @@ import org.jboss.arquillian.test.spi.event.suite.Test;
  * TestExecutor for running in container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerTestExecuter {
     @Inject

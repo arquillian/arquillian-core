@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.impl;
  * ContainerCreationException
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerCreationException extends RuntimeException {
     private static final long serialVersionUID = 7783398740102071179L;

@@ -31,7 +31,6 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * ContainerExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerExtension implements LoadableExtension {
     @Override

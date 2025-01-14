@@ -23,7 +23,6 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
  * Events fired After the Test method execution
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AfterTestLifecycleEvent extends TestLifecycleEvent {
     /**

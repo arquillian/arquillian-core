@@ -29,7 +29,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * BeanManagerLookup
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeanManagerProducer {
     private static final String STANDARD_BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";

@@ -23,7 +23,6 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * ObjectStore
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class HashObjectStore implements ObjectStore {
     private ConcurrentHashMap<Class<?>, Object> store;

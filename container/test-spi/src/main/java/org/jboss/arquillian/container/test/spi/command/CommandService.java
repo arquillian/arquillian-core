@@ -21,7 +21,6 @@ package org.jboss.arquillian.container.test.spi.command;
  * CommandService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface CommandService {
     <T> T execute(Command<T> command);

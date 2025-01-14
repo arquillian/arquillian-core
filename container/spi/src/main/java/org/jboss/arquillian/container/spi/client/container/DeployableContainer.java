@@ -31,7 +31,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * type of container needs setup or an explicit start and stop.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface DeployableContainer<T extends ContainerConfiguration> {
     // ControllableContainer

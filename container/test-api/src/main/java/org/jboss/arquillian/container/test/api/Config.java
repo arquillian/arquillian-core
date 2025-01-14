@@ -27,7 +27,6 @@ import java.util.Map;
  * {@link ContainerController#start(String, Map)}
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class Config {
     private Map<String, String> props;

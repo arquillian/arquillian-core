@@ -21,7 +21,6 @@ package org.jboss.arquillian.core.spi;
  * {@link InjectionPoint#set(Instance)}
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class InvocationException extends RuntimeException {
     private static final long serialVersionUID = -3326267058243382414L;

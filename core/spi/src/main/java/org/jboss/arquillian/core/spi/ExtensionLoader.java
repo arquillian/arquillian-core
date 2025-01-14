@@ -25,7 +25,6 @@ import java.util.Set;
  * Extension point used to load the boot strap extensions.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ExtensionLoader {
     Collection<LoadableExtension> load();

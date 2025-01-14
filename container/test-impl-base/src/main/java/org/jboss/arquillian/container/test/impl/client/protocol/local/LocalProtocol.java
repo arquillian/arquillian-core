@@ -31,7 +31,6 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * A Protocol that invokes the {@link TestMethodExecutor#invoke()} directly.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class LocalProtocol implements Protocol<LocalProtocolConfiguration> {
     public static final String NAME = "Local";

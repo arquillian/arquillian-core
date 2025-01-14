@@ -26,7 +26,6 @@ import org.junit.Test;
  * MapObjectTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class MapObjectTestCase {
     private static final String VAL_STRING = "test123";

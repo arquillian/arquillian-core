@@ -22,7 +22,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * DSL Grammar to construct / alter Application XML Descriptors
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ApplicationDescriptor extends Descriptor {
 

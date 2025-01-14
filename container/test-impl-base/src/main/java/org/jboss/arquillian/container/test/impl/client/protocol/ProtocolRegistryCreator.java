@@ -34,7 +34,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * Responsible for creating and filling the ProtocolRegistry.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ProtocolRegistryCreator {
     @Inject

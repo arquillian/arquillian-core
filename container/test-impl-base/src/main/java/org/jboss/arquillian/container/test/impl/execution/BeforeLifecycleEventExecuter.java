@@ -26,7 +26,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
  * not kept In Container.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  * @see AfterLifecycleEventExecuter
  */
 public class BeforeLifecycleEventExecuter {

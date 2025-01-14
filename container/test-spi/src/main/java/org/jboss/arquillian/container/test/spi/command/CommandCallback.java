@@ -21,7 +21,6 @@ package org.jboss.arquillian.container.test.spi.command;
  * RemoteEventCallback
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface CommandCallback {
     void fired(Command<?> event);

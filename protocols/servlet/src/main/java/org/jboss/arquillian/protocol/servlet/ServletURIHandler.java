@@ -27,7 +27,6 @@ import org.jboss.arquillian.container.test.api.TargetsContainer;
  * ServletURIHandler
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletURIHandler {
 

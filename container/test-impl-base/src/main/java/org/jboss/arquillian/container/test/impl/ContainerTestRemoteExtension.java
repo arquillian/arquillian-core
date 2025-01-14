@@ -36,7 +36,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * ContainerTestExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerTestRemoteExtension extends TestExtension implements RemoteLoadableExtension {
     @Override

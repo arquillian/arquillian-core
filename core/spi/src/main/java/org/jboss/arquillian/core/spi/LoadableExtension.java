@@ -27,7 +27,6 @@ import org.jboss.arquillian.core.spi.context.Context;
  * {@code AuxilliaryArchiveAppender}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface LoadableExtension {
     /**

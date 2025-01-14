@@ -53,7 +53,6 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
  * {@link TestResult}<br/>
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  * @see DeployableContainer
  */
 public class RemoteTestExecuter {

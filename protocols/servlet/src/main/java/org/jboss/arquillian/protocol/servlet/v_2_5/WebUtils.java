@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
  * Common util for Web.xml 2.5 manipulation
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 class WebUtils {
     private WebUtils() {

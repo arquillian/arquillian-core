@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
  * in the context of this web module.
  *
  * @author robert.panzer
- * @version $Revision: $
  */
 public final class Testable {
 

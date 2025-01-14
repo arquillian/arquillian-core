@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.formatter.Formatter;
  * ToolingDeploymentFormatter
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ToolingDeploymentFormatter implements Formatter {
     private Class<?> testClass;

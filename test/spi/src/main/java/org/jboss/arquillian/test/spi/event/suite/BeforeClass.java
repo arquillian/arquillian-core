@@ -22,7 +22,6 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
  * Event fired Before the Class execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeforeClass extends ClassLifecycleEvent {
 

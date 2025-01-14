@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * - Create a EAR, WAR
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface DeploymentPackager {
     /**

@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * ContainerDefImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerDefImpl extends ArquillianDescriptorImpl implements ContainerDef {
     private Node container;

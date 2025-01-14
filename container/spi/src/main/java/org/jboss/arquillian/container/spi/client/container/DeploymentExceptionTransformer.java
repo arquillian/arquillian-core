@@ -22,7 +22,6 @@ package org.jboss.arquillian.container.spi.client.container;
  * deployment exceptions. This should transform from the container specific exception to the real cause.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface DeploymentExceptionTransformer {
     /**

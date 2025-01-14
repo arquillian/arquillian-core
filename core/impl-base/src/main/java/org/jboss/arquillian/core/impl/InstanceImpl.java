@@ -23,7 +23,6 @@ import org.jboss.arquillian.core.api.InstanceProducer;
  * InstanceImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class InstanceImpl<T> implements InstanceProducer<T> {
     private ManagerImpl manager;

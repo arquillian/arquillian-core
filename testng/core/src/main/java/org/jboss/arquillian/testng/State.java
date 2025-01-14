@@ -21,7 +21,6 @@ package org.jboss.arquillian.testng;
  * State
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class State {
     private static ThreadLocal<Throwable> caughtExceptionAfter = new ThreadLocal<Throwable>();

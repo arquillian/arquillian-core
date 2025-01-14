@@ -27,7 +27,6 @@ import org.jboss.arquillian.test.spi.context.SuiteContext;
  * SuiteContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class SuiteContextImpl extends AbstractContext<String> implements SuiteContext {
     private static final String SUITE_CONTEXT_ID = "suite";

@@ -25,7 +25,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * ServletRemoteExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletRemoteExtension implements RemoteLoadableExtension {
     @Override

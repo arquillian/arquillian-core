@@ -40,7 +40,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * ContainerRegistryCreator
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerRegistryCreator {
     static final String ARQUILLIAN_LAUNCH_PROPERTY = "arquillian.launch";

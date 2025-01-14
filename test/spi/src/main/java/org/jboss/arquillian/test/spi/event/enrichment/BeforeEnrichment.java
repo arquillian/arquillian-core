@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
  * BeforeEnrichment
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeforeEnrichment extends EnrichmentEvent {
     public BeforeEnrichment(Object instance) {

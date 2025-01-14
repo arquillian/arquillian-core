@@ -30,7 +30,6 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
  * ContainerContainerControllerCreator
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class ContainerContainerControllerCreator {
     @Inject

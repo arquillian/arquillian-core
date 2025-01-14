@@ -35,7 +35,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * InContainerExecuterTestCase
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class LocalTestExecuterTestCase extends AbstractContainerTestTestBase {

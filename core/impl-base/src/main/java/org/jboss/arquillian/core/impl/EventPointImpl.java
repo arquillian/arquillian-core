@@ -27,7 +27,6 @@ import org.jboss.arquillian.core.spi.InvocationException;
  * EventPointImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EventPointImpl implements EventPoint {
     private Object target;

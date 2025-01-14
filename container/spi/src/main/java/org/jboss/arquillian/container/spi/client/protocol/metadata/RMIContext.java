@@ -22,7 +22,6 @@ import javax.naming.InitialContext;
  * RMIContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class RMIContext extends NamedContext {
     private String ip;

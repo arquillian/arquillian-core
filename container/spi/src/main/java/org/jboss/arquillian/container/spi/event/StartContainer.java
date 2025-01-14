@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.spi.Container;
  * StartContainer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class StartContainer extends ContainerControlEvent {
     public StartContainer(Container container) {

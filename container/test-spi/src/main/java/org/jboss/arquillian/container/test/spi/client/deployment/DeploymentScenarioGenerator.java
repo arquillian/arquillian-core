@@ -24,7 +24,6 @@ import org.jboss.arquillian.test.spi.TestClass;
  * Extension point for extracting {@link DeploymentDescription}'s from a {@link TestClass}
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface DeploymentScenarioGenerator {
     /**

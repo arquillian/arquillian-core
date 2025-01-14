@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
  * AfterEnrichment
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AfterEnrichment extends EnrichmentEvent {
     public AfterEnrichment(Object instance) {

@@ -42,7 +42,6 @@ package org.jboss.arquillian.core.api;
  * </pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface InstanceProducer<T> extends Instance<T> {
     void set(T value);

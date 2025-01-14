@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * Processor
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class Processor {
     private TestDeployment deployment;

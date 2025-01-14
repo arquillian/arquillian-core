@@ -22,7 +22,6 @@ import org.jboss.arquillian.core.spi.context.IdBoundContext;
  * TestContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface TestContext extends IdBoundContext<Object> {
 

@@ -30,7 +30,6 @@ import org.jboss.arquillian.core.spi.ObserverMethod;
  * ObjectObserver
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ObserverImpl implements ObserverMethod, Comparable<ObserverMethod> {
     private static Logger log = Logger.getLogger(ObserverMethod.class.getName());

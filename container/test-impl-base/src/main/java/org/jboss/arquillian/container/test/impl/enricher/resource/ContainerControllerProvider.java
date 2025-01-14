@@ -28,7 +28,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * ContainerControllerProvider
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class ContainerControllerProvider implements ResourceProvider {
     @Inject

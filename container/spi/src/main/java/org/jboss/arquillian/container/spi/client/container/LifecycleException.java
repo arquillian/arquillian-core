@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi.client.container;
  * LifecycleException
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class LifecycleException extends Exception {
     private static final long serialVersionUID = 1L;

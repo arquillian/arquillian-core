@@ -26,7 +26,6 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
  * JMXCommandService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JMXCommandService implements CommandService {
     private static long TIMEOUT = 30000;

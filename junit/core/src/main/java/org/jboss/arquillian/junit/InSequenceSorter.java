@@ -24,7 +24,6 @@ import org.junit.runners.model.FrameworkMethod;
  * InOrderSorter
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 class InSequenceSorter implements Comparator<FrameworkMethod> {
     @Override

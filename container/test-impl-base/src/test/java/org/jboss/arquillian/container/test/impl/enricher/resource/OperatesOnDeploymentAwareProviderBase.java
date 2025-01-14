@@ -52,7 +52,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * OperatesOnDeploymentAwareProviderTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractContainerTestTestBase {

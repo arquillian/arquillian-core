@@ -24,7 +24,6 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * ConfigExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ConfigExtension implements LoadableExtension {
     @Override

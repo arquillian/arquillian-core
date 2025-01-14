@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * DefaultProtocolDefImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DefaultProtocolDefImpl extends ArquillianDescriptorImpl implements DefaultProtocolDef {
     private Node protocol;

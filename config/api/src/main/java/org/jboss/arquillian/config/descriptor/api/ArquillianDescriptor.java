@@ -23,7 +23,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * ArquillianDescriptor
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ArquillianDescriptor extends Descriptor {
     EngineDef engine();

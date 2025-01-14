@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * MixedServiceLoader
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServiceRegistryLoader implements ServiceLoader {
     private Injector injector;
