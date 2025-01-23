@@ -29,7 +29,6 @@ import org.jboss.arquillian.test.spi.TestResult;
  * TestRunner that will return what you want for testing
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class MockTestRunner implements TestRunner {
     public static TestResult wantedResults;

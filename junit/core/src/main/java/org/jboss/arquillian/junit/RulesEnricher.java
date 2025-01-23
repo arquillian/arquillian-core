@@ -44,7 +44,6 @@ import org.junit.rules.TestRule;
  * about to be executed<br/>
  *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- * @version $Revision: $
  */
 public class RulesEnricher {
 

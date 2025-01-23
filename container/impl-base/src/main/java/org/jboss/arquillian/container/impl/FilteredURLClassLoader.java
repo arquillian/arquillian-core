@@ -23,7 +23,6 @@ import java.net.URLClassLoader;
  * FilteredURLClassLoader
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class FilteredURLClassLoader extends URLClassLoader {
 

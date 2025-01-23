@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * AbstractCommand
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class AbstractCommand<T> implements Command<T>, Serializable {
     private static final long serialVersionUID = 1L;

@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * ExtensionDefImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ExtensionDefImpl extends ArquillianDescriptorImpl implements ExtensionDef {
     private Node extension;

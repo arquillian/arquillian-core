@@ -30,7 +30,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * ClientDeployerRegister
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ClientDeployerCreator {
     @Inject

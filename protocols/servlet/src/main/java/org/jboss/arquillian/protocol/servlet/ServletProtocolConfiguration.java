@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfigura
  * ServletProtocolConfiguration
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletProtocolConfiguration implements ProtocolConfiguration {
     private String scheme = null;

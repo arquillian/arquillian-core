@@ -33,7 +33,6 @@ import org.junit.Test;
  * ServletProtocolTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BaseServletProtocolTestCase {
     @Test

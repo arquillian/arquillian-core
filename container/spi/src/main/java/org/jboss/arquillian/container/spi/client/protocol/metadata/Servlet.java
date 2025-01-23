@@ -24,7 +24,6 @@ import java.net.URI;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:ian@ianbrandt.com">Ian Brandt</a>
- * @version $Revision: $
  */
 public class Servlet {
     static final String HTTP_SCHEME = "http://";

@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * Used by tooling to show a view of the ShrinkWrap archive.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ArchiveDeploymentToolingExporter {
     static final String ARQUILLIAN_TOOLING_DEPLOYMENT_FOLDER = "arquillian.tooling.deployment.folder";

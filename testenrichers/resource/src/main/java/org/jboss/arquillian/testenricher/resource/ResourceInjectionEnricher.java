@@ -36,7 +36,6 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * Field Resources will only be injected if the current value is NULL or primitive default value.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ResourceInjectionEnricher implements TestEnricher {
     private static final String RESOURCE_LOOKUP_PREFIX = "java:comp/env";

@@ -22,7 +22,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * SPI used for modules who need to add classes/resources to the deployed archive.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface AuxiliaryArchiveAppender {
     /**

@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi.client.container;
  * DeploymentException
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeploymentException extends Exception {
     private static final long serialVersionUID = 1L;

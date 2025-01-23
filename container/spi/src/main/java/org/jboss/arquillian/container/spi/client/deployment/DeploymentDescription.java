@@ -24,7 +24,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * Deployment
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeploymentDescription {
     private String name;

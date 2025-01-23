@@ -6,7 +6,6 @@ import org.jboss.arquillian.test.spi.TestClass;
 /**
  * SPI that all automatic deployment implementators must implements in order to generate the archive to be used by Arquillian deployer.
  *
- * @version $Revision: $
  */
 public interface AutomaticDeployment {
 

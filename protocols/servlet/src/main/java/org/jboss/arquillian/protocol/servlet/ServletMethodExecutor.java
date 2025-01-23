@@ -42,7 +42,6 @@ import org.jboss.arquillian.test.spi.TestResult;
  * ServletMethodExecutor
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletMethodExecutor implements ContainerMethodExecutor {
     public static final String ARQUILLIAN_SERVLET_NAME = "ArquillianServletRunner";

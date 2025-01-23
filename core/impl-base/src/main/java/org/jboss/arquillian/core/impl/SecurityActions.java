@@ -32,7 +32,6 @@ import java.util.List;
  * A set of privileged actions that are not to leak out
  * of this package
  *
- * @version $Revision: $
  */
 final class SecurityActions {
 

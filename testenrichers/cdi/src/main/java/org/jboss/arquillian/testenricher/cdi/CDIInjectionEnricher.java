@@ -31,7 +31,6 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
  * Enricher that provide JSR-299 CDI class and method argument injection.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class CDIInjectionEnricher implements TestEnricher {
     private static final String ANNOTATION_NAME = "javax.inject.Inject";

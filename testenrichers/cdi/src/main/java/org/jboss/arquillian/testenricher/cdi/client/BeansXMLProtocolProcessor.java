@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  * deployment.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeansXMLProtocolProcessor implements ProtocolArchiveProcessor {
     /* (non-Javadoc)

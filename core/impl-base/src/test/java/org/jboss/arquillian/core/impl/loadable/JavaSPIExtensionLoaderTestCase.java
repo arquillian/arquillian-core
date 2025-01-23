@@ -35,7 +35,6 @@ import org.junit.Test;
  * JavaSPIExtensionLoaderTestCase
  *
  * @author Davide D'Alto
- * @version $Revision: $
  */
 public class JavaSPIExtensionLoaderTestCase {
 

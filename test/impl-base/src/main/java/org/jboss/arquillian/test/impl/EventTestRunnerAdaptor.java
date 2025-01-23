@@ -49,7 +49,6 @@ import org.jboss.arquillian.test.spi.execution.TestExecutionDecider;
  * EventTestRunnerAdaptor
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EventTestRunnerAdaptor implements TestRunnerAdaptor {
     private Manager manager;

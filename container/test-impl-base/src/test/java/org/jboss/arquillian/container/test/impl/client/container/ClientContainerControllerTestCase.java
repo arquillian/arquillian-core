@@ -60,7 +60,6 @@ import static org.mockito.Mockito.when;
  * ClientContainerControllerTestCase
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ClientContainerControllerTestCase extends AbstractContainerTestTestBase {

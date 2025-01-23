@@ -32,7 +32,6 @@ import org.jboss.arquillian.test.spi.context.TestContext;
  * AbstractTestTestBase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class AbstractTestTestBase extends AbstractManagerTestBase {
     @Override

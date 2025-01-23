@@ -35,7 +35,6 @@ import org.junit.Test;
  * Verify the behavior of the ServiceLoader exposed by the ServiceRegistry.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServiceRegistryLoaderTestCase extends AbstractManagerTestBase {
     @Inject

@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * ManagerTestContextImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ManagerTest2ContextImpl extends AbstractContext<String> implements ManagerTest2Context {
     /* (non-Javadoc)

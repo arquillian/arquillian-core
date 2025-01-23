@@ -30,7 +30,6 @@ import org.jboss.arquillian.core.spi.EventContext;
  * Activates and DeActivates the Container and Deployment contexts.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerDeploymentContextHandler {
     @Inject

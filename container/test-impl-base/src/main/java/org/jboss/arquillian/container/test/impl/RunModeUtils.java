@@ -30,7 +30,6 @@ import org.jboss.arquillian.test.spi.TestClass;
  * RunModeUtils
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public final class RunModeUtils {
     private static Logger log = Logger.getLogger(RunModeUtils.class.getName());

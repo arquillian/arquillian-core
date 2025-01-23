@@ -24,7 +24,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * DeployerEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeployerEvent extends ContainerEvent {
     private DeploymentDescription deployment;

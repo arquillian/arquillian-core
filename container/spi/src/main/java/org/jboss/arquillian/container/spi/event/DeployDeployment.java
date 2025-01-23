@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.spi.client.deployment.Deployment;
  * DeployToContainer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeployDeployment extends DeploymentEvent {
     public DeployDeployment(Container container, Deployment deployment) {

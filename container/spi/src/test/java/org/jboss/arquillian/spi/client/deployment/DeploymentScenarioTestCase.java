@@ -33,7 +33,6 @@ import org.junit.Test;
  * DeploymentScenarioTest
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeploymentScenarioTestCase {
     private static final String DEFAULT_NAME = DeploymentTargetDescription.DEFAULT.getName();

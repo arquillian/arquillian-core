@@ -20,7 +20,6 @@ package org.jboss.arquillian.test.spi.event.suite;
  * Event fired After the Suite execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AfterSuite extends SuiteEvent {
     public AfterSuite() {

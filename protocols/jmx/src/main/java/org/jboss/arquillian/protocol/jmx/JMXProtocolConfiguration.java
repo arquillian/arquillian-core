@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.test.spi.client.protocol.ProtocolConfigura
  * JMXProtocolConfiguration
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JMXProtocolConfiguration implements ProtocolConfiguration {
 }

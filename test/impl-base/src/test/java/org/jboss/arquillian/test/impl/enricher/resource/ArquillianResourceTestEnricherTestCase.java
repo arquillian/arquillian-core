@@ -56,7 +56,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author Vineet Reynolds
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ArquillianResourceTestEnricherTestCase extends AbstractTestTestBase {

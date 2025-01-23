@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
  * SPI used to enrich the runtime test object.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface TestEnricher {
     /**

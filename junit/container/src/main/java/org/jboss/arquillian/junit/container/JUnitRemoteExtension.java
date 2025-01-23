@@ -24,7 +24,6 @@ import org.jboss.arquillian.junit.RulesEnricher;
  * JUnitRemoteExtension
  *
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- * @version $Revision: $
  */
 public class JUnitRemoteExtension implements RemoteLoadableExtension {
     @Override

@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi;
  * ConfigurationException
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
- * @version $Revision: $
  */
 public class ConfigurationException extends RuntimeException {
 

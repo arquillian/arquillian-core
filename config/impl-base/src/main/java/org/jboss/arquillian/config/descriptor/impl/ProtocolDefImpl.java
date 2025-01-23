@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * ProtocolDefImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ProtocolDefImpl extends ContainerDefImpl implements ProtocolDef {
     private Node protocol;

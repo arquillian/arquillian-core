@@ -50,7 +50,6 @@ import org.jboss.arquillian.core.spi.event.ManagerProcessing;
  * ManagerImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ManagerImpl implements Manager {
     //-------------------------------------------------------------------------------------||

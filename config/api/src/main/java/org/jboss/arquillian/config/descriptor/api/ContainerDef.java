@@ -23,7 +23,6 @@ import java.util.Map;
  * ContainerDescription
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ContainerDef extends ArquillianDescriptor {
     String getContainerName();

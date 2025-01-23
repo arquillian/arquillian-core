@@ -54,7 +54,6 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
  * Event dispatcher between Test lifecyle events and Container control events.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerEventController {
     @Inject

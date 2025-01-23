@@ -23,7 +23,6 @@ import java.util.List;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @version $Revision: $
  */
 public interface ServletMappingDef extends ServletDef {
     String getServletName();

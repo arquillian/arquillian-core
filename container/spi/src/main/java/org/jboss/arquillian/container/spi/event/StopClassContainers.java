@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi.event;
  * StopClassContainers
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class StopClassContainers implements ContainerMultiControlEvent {
 

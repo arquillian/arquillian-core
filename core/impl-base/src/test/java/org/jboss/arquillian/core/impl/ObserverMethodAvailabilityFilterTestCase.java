@@ -28,7 +28,6 @@ import org.junit.Test;
  * ObserverMethodAvailabilityFilterTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ObserverMethodAvailabilityFilterTestCase extends AbstractManagerTestBase {
     @Override

@@ -30,7 +30,6 @@ import org.junit.Test;
  * InstanceImplTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class InstanceImplTestCase {
     @Test

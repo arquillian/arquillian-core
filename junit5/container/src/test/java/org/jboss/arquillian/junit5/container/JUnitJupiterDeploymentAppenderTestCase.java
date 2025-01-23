@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
  * JUnitJupiterDeploymentAppenderTestCase
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JUnitJupiterDeploymentAppenderTestCase {
 

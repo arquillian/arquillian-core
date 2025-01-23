@@ -26,7 +26,6 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
  * OperationResult
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerOperationResult<T> {
     private List<Operation<T>> operations;

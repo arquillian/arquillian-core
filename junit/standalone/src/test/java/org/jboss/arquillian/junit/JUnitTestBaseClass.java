@@ -40,7 +40,6 @@ import static org.mockito.Mockito.doAnswer;
  * JUnitTestBaseClass
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JUnitTestBaseClass {
     /*

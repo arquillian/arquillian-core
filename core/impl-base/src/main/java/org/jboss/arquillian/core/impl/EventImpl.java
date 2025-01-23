@@ -23,7 +23,6 @@ import org.jboss.arquillian.core.spi.Manager;
  * EventImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EventImpl<T> implements Event<T> {
     private Manager manager;

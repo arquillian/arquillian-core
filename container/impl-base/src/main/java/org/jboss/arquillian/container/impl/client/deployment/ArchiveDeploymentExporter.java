@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
  * Used for debugging the deployment.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ArchiveDeploymentExporter {
     private static final Logger log = Logger.getLogger(ArchiveDeploymentExporter.class.getName());

@@ -24,7 +24,6 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * InitialContextExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class InitialContextExtension implements LoadableExtension {
     @Override

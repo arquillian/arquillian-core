@@ -25,7 +25,6 @@ package org.jboss.arquillian.core.spi;
  * The NonManagedObserver is executed inside the interceptor chain but after all other observers.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface NonManagedObserver<T> {
     void fired(T event);

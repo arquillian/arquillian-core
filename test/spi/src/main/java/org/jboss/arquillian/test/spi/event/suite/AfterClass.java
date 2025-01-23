@@ -22,7 +22,6 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
  * Event fired After the Class execution.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AfterClass extends ClassLifecycleEvent {
     /**

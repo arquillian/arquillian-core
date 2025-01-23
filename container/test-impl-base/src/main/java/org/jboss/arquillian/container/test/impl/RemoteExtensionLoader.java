@@ -46,7 +46,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * ServiceLoader implementation that use META-INF/services/interface files to registered Services.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class RemoteExtensionLoader implements ExtensionLoader {
     //-------------------------------------------------------------------------------------||

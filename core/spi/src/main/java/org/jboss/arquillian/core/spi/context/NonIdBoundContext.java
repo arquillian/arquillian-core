@@ -20,7 +20,6 @@ package org.jboss.arquillian.core.spi.context;
  * IdBoundContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface NonIdBoundContext extends Context {
     void activate();

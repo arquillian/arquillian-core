@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.InvocationException;
  * FieldInjectionPointImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class InjectionPointImpl implements InjectionPoint {
     private Object target;

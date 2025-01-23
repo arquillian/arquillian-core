@@ -26,7 +26,6 @@ import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
  * ResourceEnricherExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ResourceEnricherExtension implements LoadableExtension {
     @Override

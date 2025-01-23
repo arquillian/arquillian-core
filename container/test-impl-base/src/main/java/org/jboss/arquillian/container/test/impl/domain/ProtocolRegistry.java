@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * A registry holding all found {@link Protocol}s.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ProtocolRegistry {
     private List<ProtocolDefinition> protocols;

@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * AbstractContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class AbstractContext<T> implements Context, IdBoundContext<T> {
     private static Logger log = Logger.getLogger("Context");

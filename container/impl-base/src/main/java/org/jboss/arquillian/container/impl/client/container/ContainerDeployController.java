@@ -56,7 +56,6 @@ import org.jboss.arquillian.core.api.annotation.Observes;
  * and handle them inside the same context.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerDeployController {
     @Inject

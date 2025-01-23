@@ -22,7 +22,6 @@ import java.util.Map;
  * ProtocolDescription
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ProtocolDef extends ContainerDef {
     String getType();
