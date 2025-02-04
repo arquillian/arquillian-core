@@ -43,6 +43,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.EventContext;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterSuite;
 import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
@@ -68,7 +69,8 @@ public class ContainerEventController {
     private Instance<ContainerRegistry> containerRegistry;
 
     @Inject
-    private volatile Instance<DeploymentScenario> deploymentScenario;
+    @TestScoped
+    private Instance<DeploymentScenario> deploymentScenario;
 
     @Inject
     private Event<ContainerMultiControlEvent> container;
@@ -138,7 +140,6 @@ public class ContainerEventController {
     * TODO: This should not rely on direct Reflection, but rather access the metadata through some
     * common metadata layer.
     */
-
     private void lookup(Method method, ResultCallback callback) {
         DeploymentTargetDescription deploymentTarget = locateDeployment(method);
 
