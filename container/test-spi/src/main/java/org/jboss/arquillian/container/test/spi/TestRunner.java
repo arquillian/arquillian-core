@@ -24,7 +24,6 @@ import org.jboss.arquillian.test.spi.TestResult;
  * A Generic way to start the test framework.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface TestRunner {
     /**

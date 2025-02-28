@@ -40,7 +40,6 @@ import org.jboss.shrinkwrap.api.exporter.ZipExporter;
  * ClientDeployer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ClientDeployer implements Deployer {
     @Inject

@@ -33,7 +33,6 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
  * A Handler for enriching the Test instance.<br/>
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestInstanceEnricher {
     @Inject

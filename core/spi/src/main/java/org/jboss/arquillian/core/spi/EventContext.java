@@ -21,7 +21,6 @@ package org.jboss.arquillian.core.spi;
  * EventContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface EventContext<T> {
     T getEvent();

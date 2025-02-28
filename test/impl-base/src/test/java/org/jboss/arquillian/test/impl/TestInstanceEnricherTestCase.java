@@ -35,7 +35,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * Verifies that the TestEnricher SPI is called.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestInstanceEnricherTestCase extends AbstractTestTestBase {

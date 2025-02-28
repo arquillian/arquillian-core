@@ -42,7 +42,6 @@ import org.jboss.arquillian.test.spi.TestResult;
  * - serializedObject
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletTestRunner extends HttpServlet {
     public static final String PARA_METHOD_NAME = "methodName";

@@ -24,7 +24,6 @@ import org.jboss.arquillian.core.spi.event.Event;
  * EnrichmentEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EnrichmentEvent implements Event {
     private Object instance;

@@ -23,7 +23,6 @@ import org.testng.annotations.DataProvider;
  * TestEnricherDataProvider
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestEnricherDataProvider {
 

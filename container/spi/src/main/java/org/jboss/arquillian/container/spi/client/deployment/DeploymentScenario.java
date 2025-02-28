@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.api.Archive;
 
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeploymentScenario {
     private final List<Deployment> deployments;

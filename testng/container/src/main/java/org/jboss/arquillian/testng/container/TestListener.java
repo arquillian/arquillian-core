@@ -25,7 +25,6 @@ import org.testng.ITestResult;
  * TestListener
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestListener implements ITestListener {
 

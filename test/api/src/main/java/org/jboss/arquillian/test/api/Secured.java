@@ -34,7 +34,6 @@ import java.lang.annotation.Target;
  * </code></pre>
  *
  * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
- * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)

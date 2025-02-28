@@ -31,7 +31,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * This extension point allowed the CDI enricher to add a beans.xml to the protocol.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ProtocolArchiveProcessor {
     /**

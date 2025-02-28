@@ -23,7 +23,6 @@ import org.jboss.arquillian.protocol.servlet.BaseServletProtocol;
  * ServletProtocol
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletProtocol extends BaseServletProtocol {
     private static final String PROTOCOL_NAME = "Servlet 3.0";

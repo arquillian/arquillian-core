@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.spi.ConfigurationException;
  * Container configuration that can be validated
  *
  * @author <a href="mailto:german.escobarc@gmail.com">German Escobar</a>
- * @version $Revision: $
  */
 public interface ContainerConfiguration {
 

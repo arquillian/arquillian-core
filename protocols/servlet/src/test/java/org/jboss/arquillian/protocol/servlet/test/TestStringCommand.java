@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.test.spi.command.Command;
  * TestRemoteCommand
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestStringCommand implements Command<String>, Serializable {
     private static final long serialVersionUID = 1L;

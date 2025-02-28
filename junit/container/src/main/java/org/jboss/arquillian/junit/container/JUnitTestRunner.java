@@ -37,7 +37,6 @@ import org.junit.runner.notification.RunListener;
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @author thomas.diesler@jboss.com
- * @version $Revision: $
  */
 public class JUnitTestRunner implements TestRunner {
     /**

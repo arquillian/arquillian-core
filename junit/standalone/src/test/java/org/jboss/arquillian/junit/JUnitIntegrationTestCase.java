@@ -32,7 +32,6 @@ import static org.mockito.Mockito.verify;
  * Verify the that JUnit integration adaptor fires the expected events even when Handlers are failing.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class JUnitIntegrationTestCase extends JUnitTestBaseClass {

@@ -21,7 +21,6 @@ package org.jboss.arquillian.test.spi;
  * UnknownException
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class UnknownException extends Exception {
     private static final UnknownObject serialVersionUID = new UnknownObject();

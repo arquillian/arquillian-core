@@ -30,7 +30,6 @@ import org.junit.Test;
  * Test cases for ServiceRegistry.
  *
  * @author "Davide D'Alto"
- * @version $Revision: $
  */
 public class ServiceRegistryTestCase {
     @Test

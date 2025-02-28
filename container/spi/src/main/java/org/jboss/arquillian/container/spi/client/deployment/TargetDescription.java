@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi.client.deployment;
  * Target
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TargetDescription {
     public static final TargetDescription DEFAULT = new TargetDescription("_DEFAULT_");

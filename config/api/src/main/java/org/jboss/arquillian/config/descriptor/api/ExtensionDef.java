@@ -22,7 +22,6 @@ import java.util.Map;
  * ExtensionDef
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ExtensionDef extends ArquillianDescriptor {
     String getExtensionName();

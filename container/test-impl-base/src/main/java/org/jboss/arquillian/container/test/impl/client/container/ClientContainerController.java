@@ -41,7 +41,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
  * ClientContainerController
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class ClientContainerController implements ContainerController {
 

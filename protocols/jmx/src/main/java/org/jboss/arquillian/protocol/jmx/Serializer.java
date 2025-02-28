@@ -27,7 +27,6 @@ import java.io.ObjectOutputStream;
  * Serializer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 final class Serializer {
     public static byte[] toByteArray(Object object) {

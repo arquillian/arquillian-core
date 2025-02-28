@@ -26,7 +26,6 @@ import org.jboss.arquillian.container.test.spi.command.CommandCallback;
  * Interface that defines a Arquillian Protocol.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface Protocol<T extends ProtocolConfiguration> {
     /**

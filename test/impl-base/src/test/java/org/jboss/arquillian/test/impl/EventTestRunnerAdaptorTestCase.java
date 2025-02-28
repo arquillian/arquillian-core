@@ -49,7 +49,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * Verifies that the {@link EventTestRunnerAdaptor} creates and fires the proper events.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EventTestRunnerAdaptorTestCase extends AbstractTestTestBase {

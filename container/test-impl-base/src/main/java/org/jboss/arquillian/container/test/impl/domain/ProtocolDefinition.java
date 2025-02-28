@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * ProtocolDefinition
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ProtocolDefinition {
     private Protocol<?> protocol;

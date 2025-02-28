@@ -85,7 +85,6 @@ import static org.mockito.Mockito.when;
  * DeploymentGeneratorTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DeploymentGeneratorTestCase extends AbstractContainerTestTestBase {

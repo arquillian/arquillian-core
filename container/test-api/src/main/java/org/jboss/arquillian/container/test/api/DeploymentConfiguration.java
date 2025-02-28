@@ -10,7 +10,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  *
  * It wraps all possible annotations that can be used in a {@link Deployment } method.
  *
- * @version $Revision: $
  */
 public class DeploymentConfiguration {
 

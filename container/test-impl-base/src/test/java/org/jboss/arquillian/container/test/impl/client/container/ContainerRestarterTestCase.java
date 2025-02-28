@@ -32,7 +32,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * ContainerRestarterTestCase
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerRestarterTestCase extends AbstractContainerTestTestBase {

@@ -43,7 +43,6 @@ import org.junit.Before;
  * AbstractServerBase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AbstractServerBase {
     private Server server;

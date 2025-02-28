@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
  * TestMethodExecutor
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface TestMethodExecutor {
 

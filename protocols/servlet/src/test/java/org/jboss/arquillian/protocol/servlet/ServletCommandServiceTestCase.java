@@ -31,7 +31,6 @@ import org.junit.Test;
  * ServletCommandServiceTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletCommandServiceTestCase extends AbstractServerBase {
     @Test

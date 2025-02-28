@@ -30,7 +30,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * URLResourceProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerURLResourceProvider implements ResourceProvider {
     @Inject

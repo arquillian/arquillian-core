@@ -24,7 +24,6 @@ import org.jboss.arquillian.core.spi.event.Event;
  * Base for events fired in the Container life cycle
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerEvent implements Event {
     private DeployableContainer<?> deployableContainer;

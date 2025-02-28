@@ -28,7 +28,6 @@ import org.jboss.arquillian.core.spi.EventContext;
  * ContainerCommandObserver
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class ContainerCommandObserver {
     @Inject

@@ -44,7 +44,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * the standard Arquillian API annotations.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AnnotationDeploymentScenarioGenerator extends AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
     @Inject

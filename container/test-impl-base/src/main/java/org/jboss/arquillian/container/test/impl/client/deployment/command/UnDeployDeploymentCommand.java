@@ -21,7 +21,6 @@ package org.jboss.arquillian.container.test.impl.client.deployment.command;
  * DeployDeployment
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class UnDeployDeploymentCommand extends AbstractCommand<String> {
     private static final long serialVersionUID = 1L;

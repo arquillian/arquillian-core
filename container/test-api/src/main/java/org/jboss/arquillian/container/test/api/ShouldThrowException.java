@@ -41,7 +41,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * will force a @{@link RunAsClient} test run mode, unless you explicitly mark <code>testable = true</code>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)

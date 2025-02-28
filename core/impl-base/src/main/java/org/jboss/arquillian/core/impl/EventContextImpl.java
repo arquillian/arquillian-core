@@ -29,7 +29,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * EventContextImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EventContextImpl<T> implements EventContext<T> {
     private ManagerImpl manager;

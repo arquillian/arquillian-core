@@ -27,7 +27,6 @@ import org.jboss.arquillian.test.spi.context.ClassContext;
  * ClassContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ClassContextImpl extends AbstractContext<Class<?>> implements ClassContext {
     /* (non-Javadoc)

@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.test.spi.command.CommandService;
  * JMXExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JMXExtension implements RemoteLoadableExtension {
     @Override

@@ -27,7 +27,6 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * ApplicationContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ApplicationContextImpl extends AbstractContext<String> implements ApplicationContext {
     private static final String APP_CONTEXT_ID = "app";

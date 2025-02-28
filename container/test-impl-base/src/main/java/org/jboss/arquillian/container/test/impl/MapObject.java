@@ -30,7 +30,6 @@ import org.jboss.arquillian.config.descriptor.api.Multiline;
  * MapObjectPopulator
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class MapObject {
 

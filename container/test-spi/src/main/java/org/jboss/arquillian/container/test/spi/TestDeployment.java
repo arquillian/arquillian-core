@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.Node;
  * With convenience methods for working / manipulating the Archives.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestDeployment {
     private DeploymentDescription deploymentDescription;

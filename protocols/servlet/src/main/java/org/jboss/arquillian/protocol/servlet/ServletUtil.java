@@ -27,7 +27,6 @@ import org.jboss.shrinkwrap.api.ArchivePaths;
  * ServletUtil
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public final class ServletUtil {
     public static final ArchivePath WEB_XML_PATH = ArchivePaths.create("WEB-INF/web.xml");

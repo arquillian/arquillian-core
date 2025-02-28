@@ -22,7 +22,6 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * LocalExecutionEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class LocalExecutionEvent implements ExecutionEvent {
     private TestMethodExecutor executor;

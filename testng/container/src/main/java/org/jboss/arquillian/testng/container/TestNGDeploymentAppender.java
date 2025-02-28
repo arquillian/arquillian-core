@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * TestNGDeploymentAppender
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestNGDeploymentAppender extends CachedAuxilliaryArchiveAppender {
     @Override

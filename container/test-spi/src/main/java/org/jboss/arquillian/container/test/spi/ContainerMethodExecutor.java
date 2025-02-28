@@ -28,7 +28,6 @@ import org.jboss.arquillian.test.spi.TestResult;
  * ie http/servlet, jmx, rmi etc.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ContainerMethodExecutor {
     /**

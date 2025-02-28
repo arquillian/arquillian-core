@@ -31,7 +31,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * Package up the JUnit / Arquillian JUnit related dependencies.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JUnitDeploymentAppender extends CachedAuxilliaryArchiveAppender {
     @Override

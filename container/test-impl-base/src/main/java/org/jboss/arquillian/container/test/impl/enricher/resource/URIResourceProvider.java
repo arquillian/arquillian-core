@@ -27,7 +27,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
  * URIResourceProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class URIResourceProvider extends URLResourceProvider {
     @Override

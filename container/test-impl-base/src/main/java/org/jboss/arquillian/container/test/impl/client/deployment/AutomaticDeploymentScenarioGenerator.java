@@ -17,7 +17,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * {@link DeploymentScenarioGenerator} that builds a {@link DeploymentScenario} based on
  * the {@link AutomaticDeployment} registered services.
  *
- * @version $Revision: $
  */
 public class AutomaticDeploymentScenarioGenerator extends AbstractDeploymentScenarioGenerator implements DeploymentScenarioGenerator {
 

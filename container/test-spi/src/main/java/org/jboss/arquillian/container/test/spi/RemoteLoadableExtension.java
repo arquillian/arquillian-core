@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.spi.LoadableExtension;
  * {@link org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface RemoteLoadableExtension extends LoadableExtension {
 

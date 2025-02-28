@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * Event fired After the DeployableContainer is killed.
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class AfterKill extends ContainerEvent {
     public AfterKill(DeployableContainer<?> deployableContainer) {

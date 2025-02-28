@@ -35,7 +35,6 @@ import static java.security.AccessController.doPrivileged;
  * ContainerDeployer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerDeployer implements Deployer {
     @Inject

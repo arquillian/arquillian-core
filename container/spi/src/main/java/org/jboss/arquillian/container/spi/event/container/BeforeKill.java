@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * Event fired Before the DeployableContainer is killed.
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class BeforeKill extends ContainerEvent {
     public BeforeKill(DeployableContainer<?> deployableContainer) {
