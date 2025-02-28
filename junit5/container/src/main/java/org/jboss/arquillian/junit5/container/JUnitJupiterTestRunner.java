@@ -68,6 +68,7 @@ public class JUnitJupiterTestRunner implements TestRunner {
 
     private static class ArquillianTestMethodExecutionListener implements TestExecutionListener {
         private final Map<String, Throwable> exceptions = new HashMap<>();
+        private Throwable fatalError;
 
         public void executionSkipped(TestIdentifier testIdentifier, String reason) {
             exceptions.put(testIdentifier.getUniqueId(), new TestAbortedException(reason));
@@ -77,6 +78,9 @@ public class JUnitJupiterTestRunner implements TestRunner {
             TestExecutionResult.Status status = testExecutionResult.getStatus();
 
             if (!testIdentifier.isTest()) {
+                if (status != TestExecutionResult.Status.SUCCESSFUL) {
+                    fatalError = testExecutionResult.getThrowable().orElseGet(() -> new Exception("Failed"));
+                }
                 return;
             }
             switch (status) {
@@ -98,6 +102,9 @@ public class JUnitJupiterTestRunner implements TestRunner {
         }
 
         private TestResult getTestResult() {
+            if (fatalError != null) {
+                return TestResult.failed(fatalError);
+            }
             return exceptions.isEmpty() ? TestResult.passed() : TestResult.failed(new IdentifiedTestException(exceptions));
         }
     }
