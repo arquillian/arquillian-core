@@ -22,7 +22,6 @@ import java.util.Map;
  * DefaultProtocolDescription
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface DefaultProtocolDef extends ArquillianDescriptor {
     String getType();

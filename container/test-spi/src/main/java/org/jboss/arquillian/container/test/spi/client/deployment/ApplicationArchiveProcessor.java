@@ -26,7 +26,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * - Annotations to help define meta data for the deployment
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ApplicationArchiveProcessor {
     /**

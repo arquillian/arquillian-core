@@ -28,7 +28,6 @@ import org.jboss.arquillian.test.spi.event.suite.Before;
  * ClientTestInstanceEnricher, a TestInstanceEnricher that is aware of RunModes.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ClientTestInstanceEnricher extends TestInstanceEnricher {
     @Inject

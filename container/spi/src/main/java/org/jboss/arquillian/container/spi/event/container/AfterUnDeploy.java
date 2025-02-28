@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
  * Event fired After DeployableContainer undeployment.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AfterUnDeploy extends DeployerEvent {
     public AfterUnDeploy(DeployableContainer<?> deployableContainer, DeploymentDescription deployment) {

@@ -37,7 +37,6 @@ import org.jboss.arquillian.test.api.Secured;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="http://community.jboss.org/people/silenius">Samuel Santos</a>
- * @version $Revision: $
  */
 public class URLResourceProvider extends OperatesOnDeploymentAwareProvider {
     @Inject

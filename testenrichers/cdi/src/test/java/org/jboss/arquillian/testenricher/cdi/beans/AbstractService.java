@@ -23,7 +23,6 @@ import javax.annotation.PreDestroy;
  * AbstractService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class AbstractService<T> implements Service<T> {
     private boolean released = false;

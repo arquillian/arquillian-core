@@ -26,7 +26,6 @@ import org.testng.annotations.ITestAnnotation;
  * RemoveDependsOnMethodTransformer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class RemoveDependsOnTransformer implements IAnnotationTransformer {
 

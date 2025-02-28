@@ -31,7 +31,6 @@ import org.jboss.arquillian.test.spi.event.suite.Test;
  * TestExecuter for running on the client side. Can switch between Local and Remote test execution.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ClientTestExecuter {
     @Inject

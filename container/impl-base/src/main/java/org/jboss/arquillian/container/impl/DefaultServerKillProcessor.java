@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.spi.ServerKillProcessor;
  * DefaultServerKillProcessor
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class DefaultServerKillProcessor implements ServerKillProcessor {
     private final Logger log = Logger.getLogger(DefaultServerKillProcessor.class.getName());

@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * Event fired Before the DeployableContainer is setup.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeforeSetup extends ContainerEvent {
     public BeforeSetup(DeployableContainer<?> deployableContainer) {

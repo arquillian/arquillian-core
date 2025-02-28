@@ -29,7 +29,6 @@ import org.testng.internal.annotations.TestAnnotation;
  * to the given test method to enable method argument injection support.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestDataProviderTransformer implements IAnnotationTransformer {
 

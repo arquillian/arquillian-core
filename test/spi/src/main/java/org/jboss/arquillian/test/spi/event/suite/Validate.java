@@ -22,7 +22,6 @@ package org.jboss.arquillian.test.spi.event.suite;
  * Validation utility
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 final class Validate {
     private Validate() {

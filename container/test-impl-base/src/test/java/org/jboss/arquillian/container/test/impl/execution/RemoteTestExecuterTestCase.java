@@ -54,7 +54,6 @@ import org.mockito.stubbing.Answer;
  * TestExecutorHandlerTestCase
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteTestExecuterTestCase extends AbstractContainerTestTestBase {

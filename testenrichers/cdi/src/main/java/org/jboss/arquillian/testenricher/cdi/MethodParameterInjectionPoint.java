@@ -37,7 +37,6 @@ import javax.enterprise.util.AnnotationLiteral;
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
  * @author Pete Muir
- * @version $Revision: $
  */
 public class MethodParameterInjectionPoint<T> implements InjectionPoint {
     private Method method;

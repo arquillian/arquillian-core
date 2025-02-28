@@ -29,7 +29,6 @@ import org.junit.Test;
  * ObserverInterceptorTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ObserverInterceptorTestCase extends AbstractManagerTestBase {
     public static List<String> callStack = new ArrayList<String>();

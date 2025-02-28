@@ -24,7 +24,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.Node;
  * EngineDefImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EngineDefImpl extends ArquillianDescriptorImpl implements EngineDef {
     private static final String exportPath = "property@name=deploymentExportPath";

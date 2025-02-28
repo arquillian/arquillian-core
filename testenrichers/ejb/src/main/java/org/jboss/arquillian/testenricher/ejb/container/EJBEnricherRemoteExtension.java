@@ -25,7 +25,6 @@ import org.jboss.arquillian.testenricher.ejb.EJBInjectionEnricher;
  * EJBEnricherRemoteExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class EJBEnricherRemoteExtension implements RemoteLoadableExtension {
     @Override

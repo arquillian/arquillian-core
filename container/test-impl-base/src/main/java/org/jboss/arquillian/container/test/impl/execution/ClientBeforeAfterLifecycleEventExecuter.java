@@ -43,7 +43,6 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
  * (compared to other Arquillian @Observers)<br/>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  * @see BeforeLifecycleEventExecuter
  */
 public class ClientBeforeAfterLifecycleEventExecuter {

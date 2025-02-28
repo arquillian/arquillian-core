@@ -45,7 +45,6 @@ import org.testng.annotations.Listeners;
  * Arquillian
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @Listeners(Arquillian.UpdateResultListener.class)
 public abstract class Arquillian implements IHookable {

@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
  * Event fired Before the DeployableContainer is stopped.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeforeStop extends ContainerEvent {
     public BeforeStop(DeployableContainer<?> deployableContainer) {

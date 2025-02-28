@@ -33,7 +33,6 @@ import org.junit.Test;
  * TODO: this should be implemented looking at Producers and Consumers, but currently a simple precedence is used.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ExtensionOrderTestCase {
     private static List<String> callOrder = new ArrayList<String>();

@@ -31,7 +31,6 @@ import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptorImplBase;
  * ArquillianDescriptor
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ArquillianDescriptorImpl extends NodeDescriptorImplBase implements ArquillianDescriptor {
     //-------------------------------------------------------------------------------------||

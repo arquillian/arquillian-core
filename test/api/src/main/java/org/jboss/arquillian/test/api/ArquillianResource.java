@@ -50,7 +50,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * </code></pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @Inherited
 @Documented

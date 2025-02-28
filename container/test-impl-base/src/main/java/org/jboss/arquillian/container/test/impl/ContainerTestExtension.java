@@ -60,7 +60,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * This Extension Overrides the original TestExtension. Needed to change the behavior of TestEnricher to be RunMode aware
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerTestExtension implements LoadableExtension {
     @Override

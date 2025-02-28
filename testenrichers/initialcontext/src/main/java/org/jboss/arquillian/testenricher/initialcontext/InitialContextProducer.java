@@ -30,7 +30,6 @@ import org.jboss.arquillian.core.api.event.ManagerStarted;
  * ContainerInitialContextProducer
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class InitialContextProducer {
     @Inject

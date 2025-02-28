@@ -64,7 +64,6 @@ import static org.mockito.Mockito.when;
  * ContainerLifecycleControllerTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @RunWith(MockitoJUnitRunner.class)

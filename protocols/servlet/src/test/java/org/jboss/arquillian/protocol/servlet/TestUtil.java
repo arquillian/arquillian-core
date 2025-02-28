@@ -27,7 +27,6 @@ import java.net.URL;
  * Internal helper for testcase to do http request
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestUtil {
     private TestUtil() {

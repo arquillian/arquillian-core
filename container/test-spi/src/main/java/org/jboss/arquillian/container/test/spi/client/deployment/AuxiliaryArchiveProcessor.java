@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.api.Archive;
  * - Add beans.xml to EE modules
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface AuxiliaryArchiveProcessor {
     /**

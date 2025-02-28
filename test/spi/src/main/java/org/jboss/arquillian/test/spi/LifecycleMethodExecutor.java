@@ -22,7 +22,6 @@ package org.jboss.arquillian.test.spi;
  * Used to e.g. veto invocation of @Before/@After methods on the Client side.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface LifecycleMethodExecutor {
     LifecycleMethodExecutor NO_OP = () -> {

@@ -44,7 +44,6 @@ import org.mockito.junit.MockitoJUnitRunner;
  * DeploymentExceptionHandlerTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DeploymentExceptionHandlerTestCase extends AbstractContainerTestBase {

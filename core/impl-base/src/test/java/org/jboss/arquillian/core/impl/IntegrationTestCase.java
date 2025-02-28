@@ -35,7 +35,6 @@ import org.junit.Test;
  * IntegrationTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class IntegrationTestCase {
     @Test

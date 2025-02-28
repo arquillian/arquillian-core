@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.spi.context.ObjectStore;
  * ManagerTestContextImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ManagerTestContextImpl extends AbstractContext<String> implements ManagerTestContext {
     private static final String SUITE_CONTEXT_ID = "managerTest";

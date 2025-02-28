@@ -26,7 +26,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
  * LocalCommandService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class LocalCommandService implements CommandService {
     @Inject

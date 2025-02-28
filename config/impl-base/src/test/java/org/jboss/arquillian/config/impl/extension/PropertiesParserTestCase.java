@@ -28,7 +28,6 @@ import org.junit.Test;
  * SystemPropertiesReaderTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class PropertiesParserTestCase {
     private static final String ENGINE_PROP_DEPLOYMENTS = "arq.engine.deploymentExportPath";

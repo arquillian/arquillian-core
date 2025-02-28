@@ -43,7 +43,6 @@ import org.junit.runners.model.Statement;
  * Main Arquillian JUnit runner
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class Arquillian extends BlockJUnit4ClassRunner {
     private TestRunnerAdaptor adaptor;
@@ -335,7 +334,6 @@ public class Arquillian extends BlockJUnit4ClassRunner {
      * fail, a {@link MultipleFailureException} will be thrown.
      *
      * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
-     * @version $Revision: $
      */
     private void multiExecute(Statement... statements) throws Throwable {
         List<Throwable> exceptions = new ArrayList<Throwable>();

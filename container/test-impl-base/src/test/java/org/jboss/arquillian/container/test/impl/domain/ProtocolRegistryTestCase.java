@@ -33,7 +33,6 @@ import java.util.HashMap;
  * DomainModelTestCase
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ProtocolRegistryTestCase {

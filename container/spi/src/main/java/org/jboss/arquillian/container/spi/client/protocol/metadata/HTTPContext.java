@@ -26,7 +26,6 @@ import java.util.Set;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:ian@ianbrandt.com">Ian Brandt</a>
- * @version $Revision: $
  */
 public class HTTPContext extends NamedContext {
     private final String host;

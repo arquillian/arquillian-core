@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.test.impl.client.deployment.command.Abstra
  * StartContainerCommand
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class StartContainerCommand extends AbstractCommand<String> {
     private static final long serialVersionUID = 1L;

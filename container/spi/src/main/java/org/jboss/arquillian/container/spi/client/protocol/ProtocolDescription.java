@@ -20,7 +20,6 @@ package org.jboss.arquillian.container.spi.client.protocol;
  * A simple named reference to a {@link Protocol}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ProtocolDescription {
     public static final ProtocolDescription DEFAULT = new ProtocolDescription("_DEFAULT_");

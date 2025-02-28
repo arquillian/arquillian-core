@@ -23,7 +23,6 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
  * Describes a Event with the capability of Vetoing the execution of a method.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface LifecycleEvent extends Event {
     /**

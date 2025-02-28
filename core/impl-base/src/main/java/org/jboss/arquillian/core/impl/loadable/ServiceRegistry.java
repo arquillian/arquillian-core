@@ -29,7 +29,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author Davide D'Alto
- * @version $Revision: $
  */
 public class ServiceRegistry {
     private final Injector injector;

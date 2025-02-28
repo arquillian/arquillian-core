@@ -45,7 +45,6 @@ import static org.jboss.arquillian.protocol.servlet.ServletUtil.WEB_XML_PATH;
  * ServletProtocolDeploymentPackager
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ServletProtocolDeploymentPackager implements DeploymentPackager {
 

@@ -25,7 +25,6 @@ import org.jboss.arquillian.core.spi.context.Context;
  * ManagerBuilder
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ManagerBuilder {
     private static final String MANAGER_IMPL_CLASS = "org.jboss.arquillian.core.impl.ManagerImpl";

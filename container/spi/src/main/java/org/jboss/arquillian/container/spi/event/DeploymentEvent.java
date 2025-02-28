@@ -25,7 +25,6 @@ import org.jboss.arquillian.container.spi.client.deployment.Deployment;
  * DeploymentEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class DeploymentEvent extends ContainerControlEvent {
     private Deployment deployment;

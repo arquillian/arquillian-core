@@ -54,7 +54,6 @@ import java.util.Map;
  * Only containers configured to be in mode manual or custom can be controlled via the ContainerController.
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public interface ContainerController {
     void start(String containerQualifier);

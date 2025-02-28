@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
  * Base for events fired in the Test execution cycle.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestEvent extends ClassEvent {
     private Object testInstance;

@@ -28,7 +28,6 @@ import org.jboss.arquillian.testenricher.cdi.CreationalContextDestroyer;
  * CDIEnricherExtension
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class CDIEnricherExtension implements LoadableExtension {
     @Override

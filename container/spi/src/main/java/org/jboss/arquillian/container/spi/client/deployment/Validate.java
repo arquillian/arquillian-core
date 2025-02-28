@@ -33,7 +33,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
  * @author <a href="mailto:tommy.tynja@diabol.se">Tommy Tynj&auml;</a>
- * @version $Revision: $
  */
 public final class Validate {
     private static Map<Class<? extends Archive<?>>, String> archiveExpressions;

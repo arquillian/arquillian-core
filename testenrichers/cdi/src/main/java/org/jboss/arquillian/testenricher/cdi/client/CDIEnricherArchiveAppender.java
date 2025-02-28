@@ -30,7 +30,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * CDIEnricherArchiveAppender
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class CDIEnricherArchiveAppender extends CachedAuxilliaryArchiveAppender {
     @Override

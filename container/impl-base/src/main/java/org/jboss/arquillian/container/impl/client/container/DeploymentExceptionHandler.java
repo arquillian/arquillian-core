@@ -34,7 +34,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * the {@link Deployment}.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class DeploymentExceptionHandler {
     @Inject

@@ -46,7 +46,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * Container
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ContainerImpl<T extends ContainerConfiguration> implements Container<T> {
     @Inject

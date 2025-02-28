@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
  * Wraps a class to be run, providing method validation and annotation searching.
  *
  * @author thomas.diesler@jboss.com
- * @version $Revision: $
  */
 public class TestClass {
     private Class<?> testClass;

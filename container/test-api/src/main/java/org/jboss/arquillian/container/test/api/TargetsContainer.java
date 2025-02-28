@@ -59,7 +59,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * when targeting that container. Only one container can be set as default within a group.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)

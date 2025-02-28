@@ -24,7 +24,6 @@ import org.jboss.arquillian.core.spi.event.Event;
  * ContainerControlEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class ContainerControlEvent implements Event {
     private Container container;

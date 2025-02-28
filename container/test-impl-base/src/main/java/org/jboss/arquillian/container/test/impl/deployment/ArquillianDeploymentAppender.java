@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * Appender to package up Arquillian api/spi/impl and ShrinkWrap api/spi/impl
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ArquillianDeploymentAppender extends CachedAuxilliaryArchiveAppender {
     @Override

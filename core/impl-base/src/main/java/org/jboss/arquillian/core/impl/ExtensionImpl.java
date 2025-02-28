@@ -31,7 +31,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * ExtensionImpl
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ExtensionImpl implements Extension {
     private Object target;

@@ -42,7 +42,6 @@ import org.junit.Test;
  * thrown from a server was not on the client classpath.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class ExceptionProxyTestCase {
     public static String MSG = "_TEST_";

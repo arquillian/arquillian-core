@@ -23,7 +23,6 @@ import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescriptio
  * Event fired Before DeployableContainer undeployment.
  *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class BeforeUnDeploy extends DeployerEvent {
     public BeforeUnDeploy(DeployableContainer<?> deployableContainer, DeploymentDescription deployment) {

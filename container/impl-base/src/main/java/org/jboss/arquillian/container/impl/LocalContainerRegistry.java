@@ -32,7 +32,6 @@ import org.jboss.arquillian.core.spi.Validate;
  * ContainerManager
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class LocalContainerRegistry implements ContainerRegistry {
     private List<Container> containers;

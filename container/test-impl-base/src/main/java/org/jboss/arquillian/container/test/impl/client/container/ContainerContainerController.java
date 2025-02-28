@@ -32,7 +32,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
  * ContainerContainerController
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public class ContainerContainerController implements ContainerController {
     @Inject

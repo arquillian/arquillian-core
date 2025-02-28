@@ -22,7 +22,6 @@ import org.jboss.arquillian.core.spi.ManagerBuilder;
  * DeployableTestBuilder
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class TestRunnerAdaptorBuilder {
     private static final String DEFAULT_EXTENSION_CLASS =

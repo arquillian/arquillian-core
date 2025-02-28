@@ -23,7 +23,6 @@ import org.jboss.arquillian.test.spi.TestMethodExecutor;
  * ExecutionEvent
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface ExecutionEvent extends Event {
 

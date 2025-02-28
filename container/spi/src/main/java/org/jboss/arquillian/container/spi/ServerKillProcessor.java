@@ -24,7 +24,6 @@ package org.jboss.arquillian.container.spi;
  * this is dedicated for hard-kill of server instances.
  *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
  */
 public interface ServerKillProcessor {
 

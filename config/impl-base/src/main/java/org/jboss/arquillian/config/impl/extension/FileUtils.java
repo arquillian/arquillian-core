@@ -28,7 +28,6 @@ import java.util.Properties;
  * FileUtils
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 class FileUtils {
     static Properties loadArquillianProperties(String propertyName, String defaultName) {

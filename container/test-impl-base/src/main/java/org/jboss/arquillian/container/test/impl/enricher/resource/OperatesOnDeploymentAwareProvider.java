@@ -37,7 +37,6 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  * OperatesOnDeploymentAwareProvider
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public abstract class OperatesOnDeploymentAwareProvider implements ResourceProvider {
     @Inject

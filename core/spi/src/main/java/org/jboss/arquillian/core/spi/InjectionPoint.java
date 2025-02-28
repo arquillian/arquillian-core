@@ -23,7 +23,6 @@ import org.jboss.arquillian.core.api.Instance;
  * FieldInjectionPoint
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public interface InjectionPoint extends Typed {
     Class<? extends Annotation> getScope();

@@ -30,7 +30,6 @@ import org.w3c.dom.NodeList;
  * Simple helper for Xpath related Assertions.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public final class AssertXPath {
     /**

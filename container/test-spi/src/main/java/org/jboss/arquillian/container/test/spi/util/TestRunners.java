@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.test.spi.TestRunner;
  * Helper factory for loading TestRunners in container.
  *
  * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public final class TestRunners {
     // Hide ctor

@@ -33,7 +33,6 @@ import javax.management.remote.JMXServiceURL;
  * JMXContext
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
- * @version $Revision: $
  */
 public class JMXContext extends NamedContext {
     private static final Logger log = Logger.getLogger(JMXContext.class.getName());
