@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -165,7 +166,11 @@ public class JavaSPIExtensionLoader implements ExtensionLoader {
             Enumeration<URL> enumeration = loader.getResources(serviceFile);
             while (enumeration.hasMoreElements()) {
                 final URL url = enumeration.nextElement();
-                final InputStream is = url.openStream();
+                URLConnection jarConnection = url.openConnection();
+                // Avoid caching the file; in combination with Windows OS, this can cause file leaks on some EE servers (GlassFish)
+                // See https://github.com/arquillian/arquillian-core/pull/637 for more details
+                jarConnection.setUseCaches(false);
+                final InputStream is = jarConnection.getInputStream();
                 BufferedReader reader = null;
 
                 try {
