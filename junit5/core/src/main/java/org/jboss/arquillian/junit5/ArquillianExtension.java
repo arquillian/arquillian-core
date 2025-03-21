@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -27,7 +28,7 @@ import org.junit.platform.commons.util.ExceptionUtils;
 import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
-public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, InvocationInterceptor, TestExecutionExceptionHandler, ParameterResolver {
+public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, InvocationInterceptor, TestExecutionExceptionHandler, ParameterResolver {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
 
     private static final String CHAIN_EXCEPTION_MESSAGE_PREFIX = "Chain of InvocationInterceptors never called invocation";
@@ -76,6 +77,16 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         } finally {
             ContextStore.getContextStore(context).removeMethodParameters();
         }
+    }
+
+    @Override
+    public void beforeTestExecution(final ExtensionContext context) throws Exception {
+        // Get the adapter, test instance and method
+        final TestRunnerAdaptor adapter = getManager(context)
+            .getAdaptor();
+        final Object instance = context.getRequiredTestInstance();
+        final Method method = context.getRequiredTestMethod();
+        adapter.fireCustomLifecycle(new BeforeTestExecutionEvent(instance, method));
     }
 
     @Override
