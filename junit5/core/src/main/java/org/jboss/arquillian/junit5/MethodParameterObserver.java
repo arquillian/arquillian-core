@@ -76,9 +76,11 @@ public class MethodParameterObserver {
             final Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
             for (TestEnricher enricher : testEnrichers) {
                 final Object[] values = enricher.resolve(testMethod);
-                for (int i = 0; i < values.length; i++) {
-                    if (values[i] != null) {
-                        methodParameters.add(i, values[i]);
+                if (values != null) {
+                    for (int i = 0; i < values.length; i++) {
+                        if (values[i] != null) {
+                            methodParameters.add(i, values[i]);
+                        }
                     }
                 }
             }
