@@ -173,7 +173,7 @@
 
         <!-- Versions -->
         <version.org.wildfly.arquillian>5.1.0.Beta9</version.org.wildfly.arquillian>
-        <version.wildfly-maven-plugin>5.1.0.Beta2</version.wildfly-maven-plugin>
+        <version.wildfly-maven-plugin>5.1.2.Final</version.wildfly-maven-plugin>
 
         <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
       </properties>
