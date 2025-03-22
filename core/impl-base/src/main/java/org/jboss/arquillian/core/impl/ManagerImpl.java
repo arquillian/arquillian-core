@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
@@ -70,13 +72,13 @@ public class ManagerImpl implements Manager {
         new ArquillianThreadLocal<Set<Class<? extends Throwable>>>() {
             @Override
             protected Set<Class<? extends Throwable>> initialValue() {
-                return new HashSet<Class<? extends Throwable>>();
+                return new HashSet<>();
             }
         };
 
     ManagerImpl(final Collection<Class<? extends Context>> contextClasses, final Collection<Class<?>> extensionClasses) {
-        this.contexts = new ArrayList<Context>();
-        this.extensions = new ArrayList<Extension>();
+        this.contexts = new CopyOnWriteArrayList<>();
+        this.extensions = new CopyOnWriteArrayList<>();
         this.runtimeLogger = new RuntimeLogger();
 
         try {
@@ -129,7 +131,7 @@ public class ManagerImpl implements Manager {
                 context.activate();
                 activatedApplicationContext = true;
             }
-            new EventContextImpl<T>(this, interceptorObservers, observers, nonManagedObserver, event,
+            new EventContextImpl<>(this, interceptorObservers, observers, nonManagedObserver, event,
                 runtimeLogger).proceed();
         } catch (Exception e) {
             Throwable fireException = e;
