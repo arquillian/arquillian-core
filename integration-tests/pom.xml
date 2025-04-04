@@ -48,7 +48,7 @@
 
     <!-- Dependency versions -->
     <version.jakarta.ee>10.0.0</version.jakarta.ee>
-    <version.org.jboss.arquillian.jakarta>1.8.1.Final</version.org.jboss.arquillian.jakarta>
+    <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
 
   </properties>
 
