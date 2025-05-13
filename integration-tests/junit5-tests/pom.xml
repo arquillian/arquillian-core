@@ -30,16 +30,12 @@
   <artifactId>junit5-tests</artifactId>
   <name>Arquillian Core: JUnit 5 Integration Tests</name>
 
-  <properties>
-    <version.org.junit>5.12.1</version.org.junit>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>${version.org.junit}</version>
+        <version>${version.junit5}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
