@@ -31,7 +31,7 @@
   <name>Arquillian Core: JUnit 5 Integration Tests</name>
 
   <properties>
-    <version.org.junit>5.12.1</version.org.junit>
+    <version.org.junit>5.12.2</version.org.junit>
   </properties>
 
   <dependencyManagement>
