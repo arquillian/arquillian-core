@@ -49,6 +49,7 @@
     <!-- Dependency versions -->
     <version.jakarta.ee>10.0.0</version.jakarta.ee>
     <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
+    <version.org.kohsuke.metainf-services>1.11</version.org.kohsuke.metainf-services>
 
   </properties>
 
@@ -82,7 +83,14 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies />
+  <dependencies>
+    <dependency>
+      <groupId>org.kohsuke.metainf-services</groupId>
+      <artifactId>metainf-services</artifactId>
+      <version>${version.org.kohsuke.metainf-services}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement>
@@ -155,6 +163,18 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.kohsuke.metainf-services</groupId>
+              <artifactId>metainf-services</artifactId>
+              <version>${version.org.kohsuke.metainf-services}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
