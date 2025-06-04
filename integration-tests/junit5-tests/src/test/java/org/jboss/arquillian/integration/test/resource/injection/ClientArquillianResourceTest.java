@@ -24,6 +24,7 @@ import java.nio.file.Path;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.integration.test.common.TestEnvironment;
+import org.jboss.arquillian.integration.test.common.ext.TestArquillianResource;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ import org.junit.jupiter.api.io.TempDir;
 @RunAsClient
 public class ClientArquillianResourceTest extends AbstractArquillianResourceTest {
 
+    @ArquillianResource
+    private TestArquillianResource resource;
+
     @Test
     public void checkMultipleParameters(@ArquillianResource final URL url, @TempDir final Path tempDir) {
         Assertions.assertNotNull(url, "The URL should have been injected");
@@ -43,5 +47,12 @@ public class ClientArquillianResourceTest extends AbstractArquillianResourceTest
         Assertions.assertEquals(TestEnvironment.port(), url.getPort());
         Assertions.assertEquals("/" + DEPLOYMENT_NAME + "/", url.getPath());
         Assertions.assertNotNull(tempDir, "The temp dir should have been injected");
+    }
+
+    @Test
+    @RunAsClient
+    public void containerGlobalResource() {
+        Assertions.assertNotNull(resource, "Expected the TestArquillianResource to be injected");
+        Assertions.assertEquals("ContainerScoped", resource.containerName());
     }
 }

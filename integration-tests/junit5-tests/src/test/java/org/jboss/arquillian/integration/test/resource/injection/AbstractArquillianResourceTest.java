@@ -22,9 +22,13 @@ package org.jboss.arquillian.integration.test.resource.injection;
 import java.net.URI;
 import java.net.URL;
 
+import org.jboss.arquillian.container.test.api.ContainerController;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.integration.test.common.TestEnvironment;
 import org.jboss.arquillian.integration.test.common.app.Greeter;
+import org.jboss.arquillian.integration.test.common.ext.TestArquillianResource;
 import org.jboss.arquillian.junit5.container.annotation.ArquillianTest;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -32,6 +36,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 /**
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
@@ -51,6 +56,15 @@ abstract class AbstractArquillianResourceTest {
         return ShrinkWrap.create(WebArchive.class, DEPLOYMENT_NAME + ".war")
             .addClasses(Greeter.class, AbstractArquillianResourceTest.class, TestEnvironment.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    @Test
+    @RunAsClient
+    // Disabling this seems to be required as the lookup to inject the resource is done for some reason in Payara
+    @DisabledIfSystemProperty(named = "javax.naming.Context.parameter", matches = "skip")
+    public void containerResource(@ArquillianResource TestArquillianResource resource) {
+        Assertions.assertNotNull(resource, "Expected the TestArquillianResource to be injected");
+        Assertions.assertEquals("ContainerScoped", resource.containerName());
     }
 
     @Test
@@ -85,6 +99,17 @@ abstract class AbstractArquillianResourceTest {
         checkHost(uri.getHost());
         Assertions.assertEquals(TestEnvironment.port(), uri.getPort());
         Assertions.assertEquals("/" + DEPLOYMENT_NAME + "/", uri.getPath());
+    }
+
+    @Test
+    public void deployerInjection(@ArquillianResource final Deployer deployer) {
+        Assertions.assertNotNull(deployer, "The deployer should have been injected");
+    }
+
+    @Test
+    public void containerControllerInjection(@ArquillianResource final ContainerController container) {
+        Assertions.assertNotNull(container, "The container should have been injected");
+        Assertions.assertTrue(container.isStarted("default"));
     }
 
     protected void checkHost(final String host) {
