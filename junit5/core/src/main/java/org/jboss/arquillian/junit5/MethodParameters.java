@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
  */
-class MethodParameters implements ExtensionContext.Store.CloseableResource {
+class MethodParameters implements AutoCloseable, ExtensionContext.Store.CloseableResource {
     private final Map<Integer, Object> parameters;
 
     MethodParameters() {

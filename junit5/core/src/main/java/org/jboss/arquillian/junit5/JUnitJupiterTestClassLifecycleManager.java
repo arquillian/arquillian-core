@@ -6,7 +6,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 
-public class JUnitJupiterTestClassLifecycleManager implements ExtensionContext.Store.CloseableResource {
+public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
+    ExtensionContext.Store.CloseableResource {
     private static final String MANAGER_KEY = "testRunnerManager";
 
     private TestRunnerAdaptor adaptor;
