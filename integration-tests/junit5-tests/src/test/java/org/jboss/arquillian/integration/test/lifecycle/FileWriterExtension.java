@@ -36,7 +36,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *
  * @author lprimak
  */
-public class FileWriterExtension implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
+    ExtensionContext.Store.CloseableResource {
     private static Path TMP_FILE_PATH;
     static final String TMP_FILE_ASSET_NAME = "temporaryFileAsset";
 
@@ -57,7 +58,7 @@ public class FileWriterExtension implements BeforeAllCallback, ExtensionContext.
     }
 
     @Override
-    public void close() throws Throwable {
+    public void close() throws IOException {
         if (isRunningOnServer()) {
             return;
         }
