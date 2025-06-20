@@ -1,8 +1,8 @@
 package org.jboss.arquillian.junit5;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import org.jboss.arquillian.junit5.extension.RunModeEvent;
@@ -21,17 +21,13 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
-import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
-import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ExceptionUtils;
 
 import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
-public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, InvocationInterceptor, TestExecutionExceptionHandler, ParameterResolver {
+public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, InvocationInterceptor, ParameterResolver {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
-
-    private static final String CHAIN_EXCEPTION_MESSAGE_PREFIX = "Chain of InvocationInterceptors never called invocation";
 
     private static final Predicate<ExtensionContext> IS_INSIDE_ARQUILLIAN = (context -> Boolean.parseBoolean(context.getConfigurationParameter(RUNNING_INSIDE_ARQUILLIAN)
         .orElse("false")));
@@ -98,11 +94,11 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             ContextStore contextStore = getContextStore(extensionContext);
             if (isRunAsClient(extensionContext)) {
                 // Run as client
-                interceptInvocation(invocationContext, extensionContext);
+                interceptInvocation(invocation, extensionContext);
             } else {
                 // Run as container (but only once)
                 if (!contextStore.isRegisteredTemplate(invocationContext.getExecutable())) {
-                    interceptInvocation(invocationContext, extensionContext);
+                    interceptInvocation(invocation, extensionContext);
                 }
             }
             contextStore.getResult(extensionContext.getUniqueId())
@@ -115,7 +111,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         if (IS_INSIDE_ARQUILLIAN.test(extensionContext)) {
             invocation.proceed();
         } else {
-            interceptInvocation(invocationContext, extensionContext);
+            interceptInvocation(invocation, extensionContext);
             getContextStore(extensionContext).getResult(extensionContext.getUniqueId())
                 .ifPresent(ExceptionUtils::throwAsUncheckedException);
         }
@@ -166,15 +162,8 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         }
     }
 
-    @Override
-    public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
-        if (throwable instanceof JUnitException && throwable.getMessage().startsWith(CHAIN_EXCEPTION_MESSAGE_PREFIX)) {
-            return;
-        }
-        throw throwable;
-    }
-
-    private void interceptInvocation(ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
+    private void interceptInvocation(Invocation<?> invocation, ExtensionContext extensionContext) throws Throwable {
+        final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
         TestResult result = getManager(extensionContext).getAdaptor().test(new TestMethodExecutor() {
             @Override
             public String getMethodName() {
@@ -192,13 +181,31 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             }
 
             @Override
-            public void invoke(Object... parameters) throws InvocationTargetException, IllegalAccessException {
-                Method method = getMethod();
-                method.setAccessible(true);
-                method.invoke(getInstance(), invocationContext.getArguments().toArray());
+            public void invoke(Object... parameters) throws Throwable {
+                proceedInvoked.set(true);
+                invocation.proceed();
             }
         });
         populateResults(result, extensionContext);
+        // Check if Invocation.proceed() was invoked. If it was, we don't need to execute any further. If it wasn't,
+        // we need to check the test status and react to the status.
+        if (!proceedInvoked.get()) {
+            if (result.getStatus() == TestResult.Status.FAILED) {
+                final Throwable throwable = result.getThrowable();
+                if (throwable != null) {
+                    // The test has failed and the exception was set.
+                    throw throwable;
+                }
+                // This should likely not happen, but we do need to fail
+                throw new AssertionError(String.format("The test %s.%s has failed with an unknown error.",
+                    extensionContext.getTestClass().map(Class::getName).orElse("<unknown>"),
+                    extensionContext.getTestMethod().map(Method::getName).orElse("<unknown>")));
+            } else {
+                // The test method is being invoked elsewhere. We will skip this invocation and allow it to be
+                // proceeded elsewhere.
+                invocation.skip();
+            }
+        }
     }
 
     private void populateResults(TestResult result, ExtensionContext context) {
