@@ -25,7 +25,7 @@ import org.opentest4j.TestAbortedException;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
 /**
- * Implments serveral Junit5 extension API interfaces to adapt Juni5 tests into Arquillian.
+ * Implements several Junit5 extension API interfaces to adapt Juni5 tests into Arquillian.
  */
 public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, InvocationInterceptor, ParameterResolver {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
