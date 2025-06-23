@@ -26,7 +26,6 @@
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13.2</version.junit>
     <version.junit5>5.13.1</version.junit5>
-    <version.junit5.platform>1.13.1</version.junit5.platform>
     <version.mockito>4.10.0</version.mockito>
     <version.testng>7.5</version.testng>
     <version.assertj>3.27.3</version.assertj>
@@ -57,43 +56,23 @@
         <scope>import</scope>
       </dependency>
 
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${version.junit5}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${version.junit5}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-params</artifactId>
-        <version>${version.junit5}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.platform</groupId>
-        <artifactId>junit-platform-engine</artifactId>
-        <version>${version.junit5.platform}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.platform</groupId>
-        <artifactId>junit-platform-testkit</artifactId>
-        <version>${version.junit5.platform}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.platform</groupId>
-        <artifactId>junit-platform-launcher</artifactId>
-        <version>${version.junit5.platform}</version>
-      </dependency>
-
+      <!-- JUnit 4.x -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
         <scope>test</scope>
       </dependency>
+
+      <!-- JUnit 5.x -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${version.junit5}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <!-- Workaround https://github.com/cbeust/testng/issues/1506#issuecomment-347178740 -->
       <!-- JCommander 1.66 is missing in Maven Central, thus taking newer one first -->
       <dependency>
