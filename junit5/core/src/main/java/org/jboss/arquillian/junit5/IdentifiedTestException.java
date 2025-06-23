@@ -2,6 +2,9 @@ package org.jboss.arquillian.junit5;
 
 import java.util.Map;
 
+/**
+ * A exception thrown when a test has failed
+ */
 public class IdentifiedTestException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 

@@ -129,6 +129,24 @@ public class JUnitTestBaseClass {
         }
     }
 
+    protected TestExecutionSummary runSuite(TestRunnerAdaptor adaptor, Class<?> suiteClass) throws Exception {
+        try {
+            setAdaptor(adaptor);
+
+            LauncherDiscoveryRequestBuilder builder = LauncherDiscoveryRequestBuilder.request()
+                .selectors(DiscoverySelectors.selectClass(suiteClass));
+            LauncherDiscoveryRequest request = builder.build();
+            SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
+
+            Launcher launcher = LauncherFactory.create();
+            launcher.registerTestExecutionListeners(summaryListener);
+            launcher.execute(request);
+            return summaryListener.getSummary();
+        } finally {
+            setAdaptor(null);
+        }
+    }
+
     // force set the TestRunnerAdaptor to use
     private void setAdaptor(TestRunnerAdaptor adaptor) throws Exception {
         Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);

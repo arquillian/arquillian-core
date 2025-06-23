@@ -6,6 +6,23 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
 
+/**
+ * Manages the lifecycle of JUnit Jupiter test classes within the Arquillian framework.
+ * This class implements both {@link AutoCloseable} and {@link ExtensionContext.Store.CloseableResource}
+ * for junit5 prior to 5.13.0 to ensure proper resource cleanup.
+ *
+ * <p>The manager is responsible for:</p>
+ * <ul>
+ *   <li>Initializing and managing the Arquillian{@link TestRunnerAdaptor}</li>
+ *   <li>Handling test suite lifecycle events (beforeSuite, afterSuite)</li>
+ *   <li>Providing access to the test runner adaptor for test execution</li>
+ *   <li>Managing initialization failures and error handling</li>
+ * </ul>
+ *
+ * <p>This class uses a singleton pattern per test context, ensuring that only one
+ * manager instance exists per test suite execution.</p>
+ */
+
 public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
     ExtensionContext.Store.CloseableResource {
     private static final String MANAGER_KEY = "testRunnerManager";
@@ -68,12 +85,23 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
     private boolean hasInitializationException() {
         return caughtInitializationException != null;
     }
-
+    /**
+     * Handles initialization failures that occur during the beforeSuite phase.
+     * This method captures the exception and stores it for later retrieval,
+     * preventing repeated initialization attempts.
+     *
+     * @param e the exception that occurred during initialization
+     */
     private void handleBeforeSuiteFailure(Exception e) throws Exception {
         caughtInitializationException = e;
         throw e;
     }
 
+    /**
+     * Retrieves the TestRunnerAdaptor instance managed by this lifecycle manager.
+     *
+     * @return the TestRunnerAdaptor instance, or null if initialization failed
+     */
     TestRunnerAdaptor getAdaptor() {
         return adaptor;
     }

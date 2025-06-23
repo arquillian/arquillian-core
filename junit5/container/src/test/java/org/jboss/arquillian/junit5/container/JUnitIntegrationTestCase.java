@@ -41,4 +41,21 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         assertCycle(1, Cycle.BEFORE_RULE, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS,
             Cycle.AFTER_RULE, Cycle.BEFORE_CLASS_RULE, Cycle.AFTER_CLASS_RULE);
     }
+
+    @Test
+    public void runJunit5Suite() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+
+        // when
+        TestExecutionSummary result = runSuite(adaptor, ExampleSuite.class);
+
+        // then
+        Assertions.assertEquals(4, result.getTestsFoundCount());
+        Assertions.assertEquals(1, result.getTestsSucceededCount());
+        Assertions.assertEquals(1, result.getTestsFailedCount());
+        Assertions.assertEquals(1, result.getTestsSkippedCount());
+        Assertions.assertEquals(1, result.getTestsAbortedCount());
+    }
 }
