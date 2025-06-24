@@ -23,29 +23,13 @@
   <parent>
     <groupId>org.jboss.arquillian</groupId>
     <artifactId>integration-tests</artifactId>
-    <version>1.9.6.Final-SNAPSHOT</version>
+    <version>1.10.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>common-tests</artifactId>
   <name>Arquillian Core: Common integration tests</name>
   <description />
-
-  <properties>
-    <version.org.junit>5.12.2</version.org.junit>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>${version.org.junit}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>

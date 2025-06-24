@@ -20,7 +20,6 @@
 package org.jboss.arquillian.integration.test.common.ext;
 
 import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
-import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.container.spi.event.container.AfterStart;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;

@@ -20,16 +20,15 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <groupId>org.jboss</groupId>
-    <artifactId>jboss-parent</artifactId>
-    <version>49</version>
-    <relativePath />
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-build</artifactId>
+    <version>1.10.0.Final-SNAPSHOT</version>
+    <relativePath>../build/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.jboss.arquillian</groupId>
   <artifactId>integration-tests</artifactId>
-  <version>1.9.6.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Core: Implementation Integration Tests</name>
   <description>Tests for implementations of Arquillian Core</description>
@@ -282,31 +281,32 @@
       </dependencies>
 
       <build>
-        <plugins><plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>unpack</id>
-              <phase>process-test-classes</phase>
-              <goals>
-                <goal>unpack</goal>
-              </goals>
-              <configuration>
-                <artifactItems>
-                  <artifactItem>
-                    <groupId>fish.payara.distributions</groupId>
-                    <artifactId>payara</artifactId>
-                    <version>${version.fish.payara}</version>
-                    <type>zip</type>
-                    <overWrite>true</overWrite>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                  </artifactItem>
-                </artifactItems>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack</id>
+                <phase>process-test-classes</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>fish.payara.distributions</groupId>
+                      <artifactId>payara</artifactId>
+                      <version>${version.fish.payara}</version>
+                      <type>zip</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${project.build.directory}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
