@@ -265,7 +265,7 @@
         <skip.provision.server>${skipTests}</skip.provision.server>
 
         <!-- Versions -->
-        <version.fish.payara>6.2025.6</version.fish.payara>
+        <version.fish.payara>6.2025.7</version.fish.payara>
         <version.fish.payara.arquillian>3.1</version.fish.payara.arquillian>
 
         <payara.home>${project.build.directory}${file.separator}payara6</payara.home>
