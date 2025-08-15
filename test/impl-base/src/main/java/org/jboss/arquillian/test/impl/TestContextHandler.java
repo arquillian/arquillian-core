@@ -17,10 +17,11 @@
  */
 package org.jboss.arquillian.test.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -59,7 +60,7 @@ public class TestContextHandler {
 
     // Since there can be multiple AfterTestLifecycleEvents (After/AfterRules)
     // and we don't know which is the last one, perform the clean up in AfterClass.
-    private Map<Class<?>, Set<Object>> activatedTestContexts = new HashMap<Class<?>, Set<Object>>();
+    private Map<Class<?>, Set<Object>> activatedTestContexts = new ConcurrentHashMap<>();
 
     public void createSuiteContext(@Observes(precedence = 100) EventContext<SuiteEvent> context) {
         SuiteContext suiteContext = this.suiteContextInstance.get();
