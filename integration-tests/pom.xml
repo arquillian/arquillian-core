@@ -41,6 +41,8 @@
   </modules>
 
   <properties>
+    <maven.compiler.release>11</maven.compiler.release>
+
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <skipItTests>false</skipItTests>
     <skipTests>${skipItTests}</skipTests>
@@ -50,6 +52,9 @@
     <version.org.jboss.arquillian.jakarta>10.0.0.Final</version.org.jboss.arquillian.jakarta>
     <version.org.kohsuke.metainf-services>1.11</version.org.kohsuke.metainf-services>
 
+    <!-- Do NOT deploy any of the ITs modules -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
   </properties>
 
   <dependencyManagement>
@@ -172,12 +177,6 @@
               <version>${version.org.kohsuke.metainf-services}</version>
             </path>
           </annotationProcessorPaths>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
