@@ -192,7 +192,7 @@
 
         <!-- Versions -->
         <version.org.wildfly.arquillian>5.1.0.Beta11</version.org.wildfly.arquillian>
-        <version.wildfly-maven-plugin>5.1.3.Final</version.wildfly-maven-plugin>
+        <version.wildfly-maven-plugin>5.1.4.Final</version.wildfly-maven-plugin>
 
         <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
       </properties>
