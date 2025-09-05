@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>49</version>
+    <version>50</version>
     <relativePath />
   </parent>
 
@@ -23,9 +23,7 @@
 
   <properties>
     <!-- jboss-parent override -->
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <version.javadoc.plugin>3.4.0</version.javadoc.plugin>
+    <maven.compiler.release>8</maven.compiler.release>
 
     <!-- External Deps -->
     <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
@@ -163,13 +161,11 @@
             <artifactId>maven-release-plugin</artifactId>
             <inherited>true</inherited>
             <configuration>
-              <autoVersionSubmodules>true</autoVersionSubmodules>
               <pushChanges>false</pushChanges>
               <localCheckout>true</localCheckout>
               <preparationGoals>clean install</preparationGoals>
               <releaseProfiles>gpg-sign,jboss-release</releaseProfiles>
               <arguments>-DskipItTests=true</arguments>
-              <tagNameFormat>@{project.version}</tagNameFormat>
             </configuration>
           </plugin>
           <plugin>
