@@ -1,6 +1,8 @@
 package org.jboss.arquillian.junit5;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
@@ -141,13 +143,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                     result = interceptInvocation(invocation, extensionContext);
                 }
             }
-            if (result != null && result.getStatus() != TestResult.Status.PASSED) {
-                if(result.getThrowable() != null) {
-                    throw result.getThrowable();
-                } else {
-                    throw new TestAbortedException(result.getDescription());
-                }
-            }
+            throwError(result);
         }
     }
 
@@ -165,13 +161,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             invocation.proceed();
         } else {
             TestResult result = interceptInvocation(invocation, extensionContext);
-            if (result.getStatus() != TestResult.Status.PASSED) {
-                if(result.getThrowable() != null) {
-                    throw result.getThrowable();
-                } else {
-                    throw new TestAbortedException(result.getDescription());
-                }
-            }
+            throwError(result);
         }
     }
 
@@ -363,5 +353,36 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             return new ParameterResolutionException(msg);
         }
         return new ParameterResolutionException(msg, cause);
+    }
+
+    private static void throwError(final TestResult result) throws Throwable {
+        if (result == null || result.getStatus() == TestResult.Status.PASSED) {
+            return;
+        }
+        if (result.getStatus() == TestResult.Status.SKIPPED) {
+            throw new TestAbortedException(result.getDescription());
+        }
+        if (result.getStatus() == TestResult.Status.FAILED) {
+            throw failedAssertion(result.getThrowable()).orElseGet(() -> {
+                if (result.getThrowable() != null) {
+                    return result.getThrowable();
+                }
+                return new AssertionError(result.getDescription());
+            });
+        }
+        // We should not reach this, but it's a safeguard in case a new status is ever added and missed here
+        throw new AssertionError(result.getDescription());
+    }
+
+    private static Optional<Throwable> failedAssertion(Throwable exception) {
+        if (exception instanceof IdentifiedTestException) {
+            IdentifiedTestException identified = (IdentifiedTestException) exception;
+            Collection<Throwable> exceptions = identified.getCollectedExceptions().values();
+            if (exceptions.stream().allMatch(AssertionError.class::isInstance)) {
+                return exceptions.stream().filter(AssertionError.class::isInstance)
+                    .findFirst();
+            }
+        }
+        return Optional.empty();
     }
 }
