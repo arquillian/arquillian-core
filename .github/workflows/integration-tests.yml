@@ -43,12 +43,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: surefire-reports-${{ matrix.os }}-${{ matrix.java }}
+          name: wildfly-surefire-reports-${{ matrix.os }}-${{ matrix.java }}
           path: '**/surefire-reports/*'
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: server-logs-${{ matrix.os }}-${{ matrix.java }}
+          name: wildfly-server-logs-${{ matrix.os }}-${{ matrix.java }}
           path: '**/server.log'
 
   payara-integration:
@@ -75,10 +75,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: surefire-reports-${{ matrix.os }}-${{ matrix.java }}
+          name: paraya-surefire-reports-${{ matrix.os }}-${{ matrix.java }}
           path: '**/surefire-reports/*'
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: server-logs-${{ matrix.os }}-${{ matrix.java }}
+          name: paraya-server-logs-${{ matrix.os }}-${{ matrix.java }}
           path: '**/server.log'
