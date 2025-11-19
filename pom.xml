@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>49</version>
+    <version>51</version>
     <relativePath />
   </parent>
 
@@ -18,14 +18,20 @@
   <version>1.10.1.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Arquillian Aggregator</name>
-  <url>http://arquillian.org</url>
-  <description>Arquillian Aggregator</description>
+  <url>https://arquillian.org</url>
+  <description>Arquillian is an innovative and highly extensible testing platform for the JVM that enables developers to easily create automated integration, functional and acceptance tests for Java middleware.</description>
+  <organization>
+    <name>Arquillian Community</name>
+    <url>https://arquillian.org</url>
+  </organization>
 
   <properties>
-    <!-- jboss-parent override -->
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <version.javadoc.plugin>3.4.0</version.javadoc.plugin>
+    <!-- jboss-parent overrides -->
+    <maven.compiler.release>8</maven.compiler.release>
+    <nexus.repository.release>arquillian</nexus.repository.release>
+    <nexus.staging.tag>arquillian-core-${project.version}</nexus.staging.tag>
+    <!-- temporary plugin version bump to remove after jboss-parent upgrade -->
+    <version.nxrm3.plugin>1.0.12</version.nxrm3.plugin>
 
     <!-- External Deps -->
     <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
@@ -38,14 +44,14 @@
   </properties>
 
   <issueManagement>
-    <system>jira</system>
+    <system>Jira</system>
     <url>https://issues.redhat.com/browse/ARQ</url>
   </issueManagement>
 
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
 
@@ -163,13 +169,10 @@
             <artifactId>maven-release-plugin</artifactId>
             <inherited>true</inherited>
             <configuration>
-              <autoVersionSubmodules>true</autoVersionSubmodules>
               <pushChanges>false</pushChanges>
               <localCheckout>true</localCheckout>
               <preparationGoals>clean install</preparationGoals>
-              <releaseProfiles>gpg-sign,jboss-release</releaseProfiles>
               <arguments>-DskipItTests=true</arguments>
-              <tagNameFormat>@{project.version}</tagNameFormat>
             </configuration>
           </plugin>
           <plugin>
@@ -206,19 +209,6 @@
           </plugin>
         </plugins>
       </build>
-
-      <distributionManagement>
-        <repository>
-          <id>${jboss.releases.repo.id}</id>
-          <name>JBoss Releases Repository</name>
-          <url>${jboss.releases.repo.url}</url>
-        </repository>
-        <snapshotRepository>
-          <id>${jboss.snapshots.repo.id}</id>
-          <name>JBoss Snapshots Repository</name>
-          <url>${jboss.snapshots.repo.url}</url>
-        </snapshotRepository>
-      </distributionManagement>
     </profile>
   </profiles>
 </project>
