@@ -27,7 +27,7 @@ jobs:
       - name: Checkout arquillian-core
         uses: actions/checkout@v4
       - name: Setup JDK ${{ matrix.java }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ matrix.java }}
           distribution: temurin
