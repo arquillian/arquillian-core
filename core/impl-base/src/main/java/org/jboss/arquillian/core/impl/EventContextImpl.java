@@ -17,8 +17,9 @@
  */
 package org.jboss.arquillian.core.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.jboss.arquillian.core.spi.EventContext;
 import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.arquillian.core.spi.NonManagedObserver;
@@ -32,8 +33,8 @@ import org.jboss.arquillian.core.spi.Validate;
  */
 public class EventContextImpl<T> implements EventContext<T> {
     private ManagerImpl manager;
-    private List<ObserverMethod> interceptors;
-    private List<ObserverMethod> observers;
+    private List<ObserverMethod> interceptors = new CopyOnWriteArrayList<>();
+    private List<ObserverMethod> observers = new CopyOnWriteArrayList<>();
     private NonManagedObserver<T> nonManagedObserver;
     private RuntimeLogger runtimeLogger;
 
@@ -70,8 +71,12 @@ public class EventContextImpl<T> implements EventContext<T> {
         Validate.notNull(runtimeLogger, "Runtime logger must be specified");
 
         this.manager = manager;
-        this.interceptors = interceptors == null ? new ArrayList<ObserverMethod>() : interceptors;
-        this.observers = observers == null ? new ArrayList<ObserverMethod>() : observers;
+        if(interceptors!=null) {
+            this.interceptors.addAll(interceptors);
+        }
+        if(observers!=null) {
+            this.observers.addAll(observers);
+        }
         this.nonManagedObserver = nonManagedObserver;
         this.event = event;
         this.runtimeLogger = runtimeLogger;
