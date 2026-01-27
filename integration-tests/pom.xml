@@ -259,15 +259,46 @@
     </profile>
 
     <profile>
-      <id>payara</id>
+      <!-- Payara 6 (Jakarta EE 10) - supports JDK 11+. Activate with -Dpayara.version=6 -->
+      <id>payara6</id>
+      <activation>
+        <property>
+          <name>payara.version</name>
+          <value>6</value>
+        </property>
+      </activation>
+      <properties>
+        <version.fish.payara>6.2025.10</version.fish.payara>
+        <payara.home>${project.build.directory}${file.separator}payara6</payara.home>
+      </properties>
+    </profile>
+
+    <profile>
+      <!-- Payara 7 (Jakarta EE 11) - requires JDK 21+. Activate with -Dpayara.version=7 -->
+      <id>payara7</id>
+      <activation>
+        <property>
+          <name>payara.version</name>
+          <value>7</value>
+        </property>
+      </activation>
+      <properties>
+        <version.fish.payara>7.2026.1</version.fish.payara>
+        <payara.home>${project.build.directory}${file.separator}payara7</payara.home>
+      </properties>
+    </profile>
+
+    <profile>
+      <!-- Common Payara configuration - activates automatically when payara.version is set -->
+      <id>payara-common</id>
+      <activation>
+        <property>
+          <name>payara.version</name>
+        </property>
+      </activation>
       <properties>
         <skip.provision.server>${skipTests}</skip.provision.server>
-
-        <!-- Versions -->
-        <version.fish.payara>6.2025.10</version.fish.payara>
         <version.fish.payara.arquillian>3.1</version.fish.payara.arquillian>
-
-        <payara.home>${project.build.directory}${file.separator}payara6</payara.home>
       </properties>
 
       <dependencies>
