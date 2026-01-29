@@ -50,7 +50,7 @@ jobs:
           path: '**/server.log'
 
   payara-integration:
-    name: 'Payara ${{ matrix.payara }} Integration Tests (${{ matrix.os }}, ${{ matrix.java }})'
+    name: 'Payara Integration Tests (${{ matrix.os }}, ${{ matrix.java }})'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
@@ -60,18 +60,8 @@ jobs:
           - ubuntu-latest
           - windows-latest
         java:
-          - 11
-          - 17
+          # Payara 7 requires JDK 21+ (Jakarta EE 11)
           - 21
-        payara:
-          - 6
-          - 7
-        exclude:
-          # Payara 7 requires JDK 21+ (compiled with class file version 65)
-          - java: 11
-            payara: 7
-          - java: 17
-            payara: 7
 
     steps:
       - uses: actions/checkout@v6
@@ -81,16 +71,16 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: temurin
           cache: maven
-      - name: Build with Maven Java ${{ matrix.java }} - Payara ${{ matrix.payara }} - ${{ matrix.os }}
+      - name: Build with Maven Java ${{ matrix.java }} - ${{ matrix.os }}
         run:  |
-          ./mvnw -V clean install -U -B -fae '-Dpayara.version=${{ matrix.payara }}' '-T1' '-Pintegration-tests'
+          ./mvnw -V clean install -U -B -fae '-Ppayara' '-T1' '-Pintegration-tests'
       - uses: actions/upload-artifact@v6
         if: failure()
         with:
-          name: ${{ matrix.os }}-${{ matrix.java }}-payara-${{ matrix.payara }}-surefire-reports
+          name: ${{ matrix.os }}-${{ matrix.java }}-payara-surefire-reports
           path: '**/surefire-reports/*'
       - uses: actions/upload-artifact@v6
         if: failure()
         with:
-          name: ${{ matrix.os }}-${{ matrix.java }}-payara-${{ matrix.payara }}-server-logs
+          name: ${{ matrix.os }}-${{ matrix.java }}-payara-server-logs
           path: '**/server.log'
