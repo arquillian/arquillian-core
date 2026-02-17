@@ -1,0 +1,31 @@
+= Arquillian JUnit Jupiter Integration
+
+This module provides Arquillian integration for JUnit Jupiter.
+
+== JUnit Compatibility
+
+This module supports the *JUnit Jupiter* platform.
+
+[IMPORTANT]
+====
+Despite the `junit5` naming convention, this module provides first-class support for both **JUnit 5** and **JUnit 6**.
+The module name reflects the integration origin rather than a version limitation.
+====
+
+== JDK Compatibility
+
+The minimum JDK requirement depends on the version of JUnit used:
+
+* **Using JUnit 5.x** requires **Java SE 8** or later.
+* **Using JUnit 6.x** requires **Java SE 17** or later.
+
+== Usage
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.jboss.arquillian.junit5</groupId>
+    <artifactId>arquillian-junit5-container</artifactId>
+    <version>${org.arquillian.version}</version>
+</dependency>
+----
