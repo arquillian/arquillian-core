@@ -12,7 +12,7 @@
 
   <!-- Artifact Information -->
   <groupId>org.jboss.arquillian.junit5</groupId>
-  <artifactId>arquillian-junit5-parent</artifactId>
+  <artifactId>arquillian-junit-jupiter-parent</artifactId>
   <packaging>pom</packaging>
 
   <name>Arquillian TestRunner JUnit Jupiter Aggregator</name>

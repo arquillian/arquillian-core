@@ -70,8 +70,10 @@
     <module>container</module>
 
     <module>junit</module>
-    <module>junit5</module>
+    <module>junit-jupiter</module>
     <module>testng</module>
+
+    <module>relocations</module>
 
     <module>testenrichers</module>
     <module>protocols</module>

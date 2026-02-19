@@ -10,9 +10,9 @@
   </parent>
 
   <groupId>org.jboss.arquillian.junit5</groupId>
-  <artifactId>arquillian-junit5-core</artifactId>
+  <artifactId>arquillian-junit-jupiter-core</artifactId>
 
-  <name>Arquillian TestRunner JUnit 5 Core</name>
+  <name>Arquillian TestRunner JUnit Jupiter Core</name>
 
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
