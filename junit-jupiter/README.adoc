@@ -23,7 +23,7 @@ The minimum JDK requirement depends on the version of JUnit used:
 [source,xml]
 ----
 <dependency>
-    <groupId>org.jboss.arquillian.junit5</groupId>
+    <groupId>org.jboss.arquillian.jupiter</groupId>
     <artifactId>arquillian-junit-jupiter-container</artifactId>
     <version>${org.arquillian.version}</version>
 </dependency>

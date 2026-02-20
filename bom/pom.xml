@@ -130,7 +130,7 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- JUnit -->
+      <!-- JUnit 4.x -->
       <dependency>
         <groupId>org.jboss.arquillian.junit</groupId>
         <artifactId>arquillian-junit-core</artifactId>
@@ -149,17 +149,17 @@
 
       <!-- JUnit Jupiter -->
       <dependency>
-        <groupId>org.jboss.arquillian.junit5</groupId>
+        <groupId>org.jboss.arquillian.jupiter</groupId>
         <artifactId>arquillian-junit-jupiter-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jboss.arquillian.junit5</groupId>
+        <groupId>org.jboss.arquillian.jupiter</groupId>
         <artifactId>arquillian-junit-jupiter-container</artifactId>
         <version>${project.version}</version>
       </dependency>
 
-      <!-- JUnit5 (deprecated, relocated to arquillian-junit-jupiter-*) -->
+      <!-- JUnit 5.x (relocated to arquillian-junit-jupiter-*) -->
       <dependency>
         <groupId>org.jboss.arquillian.junit5</groupId>
         <artifactId>arquillian-junit5-core</artifactId>

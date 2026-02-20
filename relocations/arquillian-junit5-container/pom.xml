@@ -13,19 +13,19 @@
   <artifactId>arquillian-junit5-container</artifactId>
 
   <name>Arquillian JUnit 5 Container (Relocated)</name>
-  <description>This artifact has been relocated to org.jboss.arquillian.junit5:arquillian-junit-jupiter-container</description>
+  <description>This artifact has been relocated to org.jboss.arquillian.jupiter:arquillian-junit-jupiter-container</description>
 
   <distributionManagement>
     <relocation>
-      <groupId>org.jboss.arquillian.junit5</groupId>
+      <groupId>org.jboss.arquillian.jupiter</groupId>
       <artifactId>arquillian-junit-jupiter-container</artifactId>
-      <message>This artifact has been relocated to org.jboss.arquillian.junit5:arquillian-junit-jupiter-container</message>
+      <message>This artifact has been relocated to org.jboss.arquillian.jupiter:arquillian-junit-jupiter-container</message>
     </relocation>
   </distributionManagement>
 
   <dependencies>
     <dependency>
-      <groupId>org.jboss.arquillian.junit5</groupId>
+      <groupId>org.jboss.arquillian.jupiter</groupId>
       <artifactId>arquillian-junit-jupiter-container</artifactId>
       <version>${project.version}</version>
     </dependency>

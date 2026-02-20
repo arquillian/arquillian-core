@@ -9,7 +9,7 @@
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.jboss.arquillian.junit5</groupId>
+  <groupId>org.jboss.arquillian.jupiter</groupId>
   <artifactId>arquillian-junit-jupiter-container</artifactId>
 
   <name>Arquillian TestRunner JUnit Jupiter Container</name>
@@ -63,7 +63,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.arquillian.junit5</groupId>
+      <groupId>org.jboss.arquillian.jupiter</groupId>
       <artifactId>arquillian-junit-jupiter-core</artifactId>
       <version>${project.version}</version>
     </dependency>
