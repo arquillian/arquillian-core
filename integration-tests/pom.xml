@@ -263,7 +263,7 @@
       <id>payara</id>
       <properties>
         <skip.provision.server>${skipTests}</skip.provision.server>
-        <version.fish.payara>7.2026.1</version.fish.payara>
+        <version.fish.payara>7.2026.2</version.fish.payara>
         <version.fish.payara.arquillian>3.1</version.fish.payara.arquillian>
         <payara.home>${project.build.directory}${file.separator}payara7</payara.home>
       </properties>
