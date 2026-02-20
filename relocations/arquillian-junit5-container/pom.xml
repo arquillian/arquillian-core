@@ -4,13 +4,13 @@
 
   <parent>
     <groupId>org.jboss.arquillian</groupId>
-    <artifactId>arquillian-build</artifactId>
+    <artifactId>arquillian-relocations-parent</artifactId>
     <version>1.10.1.Final-SNAPSHOT</version>
-    <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.jboss.arquillian.junit5</groupId>
   <artifactId>arquillian-junit5-container</artifactId>
+  <packaging>pom</packaging>
 
   <name>Arquillian JUnit 5 Container (Relocated)</name>
   <description>This artifact has been relocated to org.jboss.arquillian.jupiter:arquillian-junit-jupiter-container</description>
@@ -22,13 +22,5 @@
       <message>This artifact has been relocated to org.jboss.arquillian.jupiter:arquillian-junit-jupiter-container</message>
     </relocation>
   </distributionManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.arquillian.jupiter</groupId>
-      <artifactId>arquillian-junit-jupiter-container</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
 
 </project>
