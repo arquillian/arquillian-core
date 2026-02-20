@@ -25,7 +25,7 @@
     <!-- Arquillian Core common Deps, Test related -->
     <version.javax.inject>1</version.javax.inject>
     <version.junit>4.13.2</version.junit>
-    <version.junit5>5.14.3</version.junit5>
+    <version.junit-jupiter>5.14.3</version.junit-jupiter>
     <version.mockito>4.11.0</version.mockito>
     <version.testng>7.5</version.testng>
     <version.assertj>3.27.7</version.assertj>
@@ -68,7 +68,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>${version.junit5}</version>
+        <version>${version.junit-jupiter}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -121,4 +121,15 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <!-- Profile to test with JUnit 6 (requires Java 17+) -->
+    <profile>
+      <id>junit6</id>
+      <properties>
+        <version.junit-jupiter>6.0.2</version.junit-jupiter>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>

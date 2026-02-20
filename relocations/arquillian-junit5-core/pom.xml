@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-relocations-parent</artifactId>
+    <version>1.10.1.Final-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.jboss.arquillian.junit5</groupId>
+  <artifactId>arquillian-junit5-core</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Arquillian JUnit 5 Core (Relocated)</name>
+  <description>This artifact has been relocated to org.jboss.arquillian.jupiter:arquillian-junit-jupiter-core</description>
+
+  <distributionManagement>
+    <relocation>
+      <groupId>org.jboss.arquillian.jupiter</groupId>
+      <artifactId>arquillian-junit-jupiter-core</artifactId>
+      <message>This artifact has been relocated to org.jboss.arquillian.jupiter:arquillian-junit-jupiter-core</message>
+    </relocation>
+  </distributionManagement>
+
+</project>
