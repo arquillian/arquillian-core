@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Artifact Information -->
-  <groupId>org.jboss.arquillian.junit5</groupId>
+  <groupId>org.jboss.arquillian.jupiter</groupId>
   <artifactId>arquillian-junit-jupiter-parent</artifactId>
   <packaging>pom</packaging>
 

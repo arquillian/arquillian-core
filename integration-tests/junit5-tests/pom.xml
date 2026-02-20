@@ -43,7 +43,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.arquillian.junit5</groupId>
+      <groupId>org.jboss.arquillian.jupiter</groupId>
       <artifactId>arquillian-junit-jupiter-container</artifactId>
       <scope>test</scope>
     </dependency>
