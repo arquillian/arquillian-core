@@ -107,7 +107,7 @@ the tests, you activate one of those groups, which in turn selects a
 target container. The profile is activated either using either a
 commandline flag (-P) or a preference in the IDE.
 
-The http://arquillian.org/getting_started/[Getting Started Guide]
+The https://arquillian.org/getting_started/[Getting Started Guide]
 explains how to setup and use Maven profiles for this purpose in more
 detail.
 

@@ -53,8 +53,7 @@
     <version.org.kohsuke.metainf-services>1.11</version.org.kohsuke.metainf-services>
 
     <!-- Do NOT deploy any of the ITs modules -->
-    <maven.deploy.skip>true</maven.deploy.skip>
-    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+    <central.skipPublishing>true</central.skipPublishing>
   </properties>
 
   <dependencyManagement>

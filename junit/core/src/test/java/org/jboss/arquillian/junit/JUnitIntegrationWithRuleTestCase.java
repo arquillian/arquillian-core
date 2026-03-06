@@ -308,8 +308,8 @@ public class JUnitIntegrationWithRuleTestCase extends JUnitTestBaseClass {
             "TestClass: org.jboss.arquillian.junit.ClassWithArquillianClassAndMethodRuleAndWithArquillianRunner contains "
                 + "Arquillian runner and Arquillian Rule. Arquillian doesn't support @RunWith(Arquillian.class) and "
                 + "ArquillianTestClass or ArquillianTest to use at the same time. You have to decide whether you want use "
-                + "runner: http://arquillian.org/arquillian-core/#how-it-works or "
-                + "rules : http://arquillian.org/arquillian-core/#_how_to_use_it"));
+                + "runner: https://arquillian.org/arquillian-core/#how-it-works or "
+                + "rules : https://arquillian.org/arquillian-core/#_how_to_use_it"));
     }
 
     @Test

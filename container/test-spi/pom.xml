@@ -16,7 +16,7 @@
   <groupId>org.jboss.arquillian.container</groupId>
   <artifactId>arquillian-container-test-spi</artifactId>
   <name>Arquillian Container Test SPI</name>
-  <description>Integration with the Test extention for the container extension.</description>
+  <description>Integration with the Test extension for the container extension.</description>
 
 
   <!-- Properties -->

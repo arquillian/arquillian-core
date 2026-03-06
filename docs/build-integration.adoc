@@ -66,7 +66,7 @@ that approach for contrast.
 The community has gravitated towards Maven as the preferred build tool
 for projects that use Arquillian. Details on how to setup Arquillian in
 a Maven project is covered in detail in the
-http://arquillian.org/guides/[Arquillian Guides].
+https://arquillian.org/guides/[Arquillian Guides].
 
 [[gradle]]
 ==== Gradle

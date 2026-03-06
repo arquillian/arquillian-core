@@ -16,7 +16,7 @@
   <groupId>org.jboss.arquillian.container</groupId>
   <artifactId>arquillian-container-test-api</artifactId>
   <name>Arquillian Container Test API</name>
-  <description>Integration with the Test extention for the container extension.</description>
+  <description>Integration with the Test extension for the container extension.</description>
 
 
   <!-- Properties -->

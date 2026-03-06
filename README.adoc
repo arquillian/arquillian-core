@@ -50,7 +50,7 @@ endif::generated-doc[]
 
 == Useful URLs
 
-* http://arquillian.org[Project Site]
-* http://arquillian.org/guides[Guides]
+* https://arquillian.org[Project Site]
+* https://arquillian.org/guides[Guides]
 * http://discuss.arquillian.org/[Forum]
 * https://issues.redhat.com/browse/ARQ[Issue Tracker]

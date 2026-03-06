@@ -5,8 +5,8 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>51</version>
-    <relativePath />
+    <version>52</version>
+    <relativePath/>
   </parent>
 
   <!-- Model Information -->
@@ -28,10 +28,29 @@
   <properties>
     <!-- jboss-parent overrides -->
     <maven.compiler.release>8</maven.compiler.release>
-    <nexus.repository.release>arquillian</nexus.repository.release>
-    <nexus.staging.tag>arquillian-core-${project.version}</nexus.staging.tag>
-    <!-- temporary plugin version bump to remove after jboss-parent upgrade -->
-    <version.nxrm3.plugin>1.0.12</version.nxrm3.plugin>
+    <jdk.min.version>${maven.compiler.release}</jdk.min.version>
+
+    <!-- Central Publishing Plugin -->
+    <version.central.publishing.maven.plugin>0.10.0</version.central.publishing.maven.plugin>
+
+    <!-- maven-release-plugin configuration -->
+    <autoVersionSubmodules>true</autoVersionSubmodules>
+    <releaseProfiles>central-release</releaseProfiles>
+    <signTag>true</signTag>
+    <tagNameFormat>@{project.version}</tagNameFormat>
+    <arguments>-DskipItTests=true -Dcentral.autoPublish=${central.autoPublish} -Dcentral.waitUntil=${central.waitUntil}</arguments>
+    <!-- Temporarily keep SCM changes manual -->
+    <pushChanges>false</pushChanges>
+    <localCheckout>true</localCheckout>
+
+    <!-- Maven Central properties -->
+    <central.sonatype.url>https://central.sonatype.com</central.sonatype.url>
+    <central.serverId>central</central.serverId>
+    <central.deploymentName>arquillian-core-${project.version}</central.deploymentName>
+    <!-- Temporarily keep publishing manual -->
+    <central.autoPublish>false</central.autoPublish>
+    <central.waitUntil>validated</central.waitUntil>
+    <central.skipPublishing>false</central.skipPublishing>
 
     <!-- External Deps -->
     <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
@@ -61,6 +80,15 @@
     <url>git://github.com/arquillian/arquillian-core.git</url>
     <tag>HEAD</tag>
   </scm>
+
+  <developers>
+    <developer>
+      <id>arquillian.org</id>
+      <name>Arquillian Community</name>
+      <organization>arquillian.org</organization>
+      <organizationUrl>https://arquillian.org</organizationUrl>
+    </developer>
+  </developers>
 
   <modules>
     <module>build</module>
@@ -159,56 +187,10 @@
       </modules>
     </profile>
     <profile>
-      <id>release</id>
+      <id>central-release</id>
       <modules>
         <module>integration-tests</module>
       </modules>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-release-plugin</artifactId>
-            <inherited>true</inherited>
-            <configuration>
-              <pushChanges>false</pushChanges>
-              <localCheckout>true</localCheckout>
-              <preparationGoals>clean install</preparationGoals>
-              <arguments>-DskipItTests=true</arguments>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-              <docletArtifact>
-                <groupId>nl.talsmasoftware</groupId>
-                <artifactId>umldoclet</artifactId>
-                <version>2.0.18</version>
-              </docletArtifact>
-              <useStandardDocletOptions>true</useStandardDocletOptions>
-              <charset>UTF-8</charset>
-              <encoding>UTF-8</encoding>
-              <docencoding>UTF-8</docencoding>
-              <breakiterator>true</breakiterator>
-              <version>true</version>
-              <author>true</author>
-              <keywords>true</keywords>
-              <additionalOptions>
-                <additionalOption>-sourceclasspath  ${project.build.outputDirectory}</additionalOption>
-              </additionalOptions>
-              <stylesheetfile>${project.parent.parent.basedir}/javadoc/stylesheet.css</stylesheetfile>
-              <javadocDirectory>${project.parent.parent.basedir}/javadoc</javadocDirectory>
-            </configuration>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>
