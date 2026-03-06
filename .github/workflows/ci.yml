@@ -34,3 +34,25 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn --batch-mode --no-transfer-progress clean verify
+
+  # Test JUnit Jupiter module with JUnit 6 (requires Java 17+)
+  junit6-verify:
+    name: Verify JUnit Jupiter with JUnit 6 - JDK ${{ matrix.java }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        java:
+          - 17
+          - 21
+    steps:
+      - name: Checkout arquillian-core
+        uses: actions/checkout@v6
+      - name: Setup JDK ${{ matrix.java }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+          cache: maven
+      - name: Build with JUnit 6
+        run: mvn --batch-mode --no-transfer-progress clean verify -Pjunit6 -pl junit-jupiter/core,junit-jupiter/container -am

@@ -9,10 +9,10 @@
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.jboss.arquillian.junit5</groupId>
-  <artifactId>arquillian-junit5-container</artifactId>
+  <groupId>org.jboss.arquillian.jupiter</groupId>
+  <artifactId>arquillian-junit-jupiter-container</artifactId>
 
-  <name>Arquillian TestRunner JUnit 5 Container</name>
+  <name>Arquillian TestRunner JUnit Jupiter Container</name>
 
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -63,8 +63,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.arquillian.junit5</groupId>
-      <artifactId>arquillian-junit5-core</artifactId>
+      <groupId>org.jboss.arquillian.jupiter</groupId>
+      <artifactId>arquillian-junit-jupiter-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
