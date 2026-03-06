@@ -24,160 +24,160 @@
       <dependency>
         <groupId>org.jboss.arquillian.core</groupId>
         <artifactId>arquillian-core-api</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.core</groupId>
         <artifactId>arquillian-core-spi</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.core</groupId>
         <artifactId>arquillian-core-impl-base</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- Config -->
       <dependency>
         <groupId>org.jboss.arquillian.config</groupId>
         <artifactId>arquillian-config-api</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.config</groupId>
         <artifactId>arquillian-config-spi</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.config</groupId>
         <artifactId>arquillian-config-impl-base</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- Test -->
       <dependency>
         <groupId>org.jboss.arquillian.test</groupId>
         <artifactId>arquillian-test-api</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.test</groupId>
         <artifactId>arquillian-test-spi</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.test</groupId>
         <artifactId>arquillian-test-impl-base</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- Container -->
       <dependency>
         <groupId>org.jboss.arquillian.container</groupId>
         <artifactId>arquillian-container-spi</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.container</groupId>
         <artifactId>arquillian-container-impl-base</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- Container Test -->
       <dependency>
         <groupId>org.jboss.arquillian.container</groupId>
         <artifactId>arquillian-container-test-api</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.container</groupId>
         <artifactId>arquillian-container-test-spi</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.container</groupId>
         <artifactId>arquillian-container-test-impl-base</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- JUnit -->
       <dependency>
         <groupId>org.jboss.arquillian.junit</groupId>
         <artifactId>arquillian-junit-core</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.junit</groupId>
         <artifactId>arquillian-junit-container</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.junit</groupId>
         <artifactId>arquillian-junit-standalone</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- JUnit5 -->
       <dependency>
         <groupId>org.jboss.arquillian.junit5</groupId>
         <artifactId>arquillian-junit5-core</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.junit5</groupId>
         <artifactId>arquillian-junit5-container</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- TestNG -->
       <dependency>
         <groupId>org.jboss.arquillian.testng</groupId>
         <artifactId>arquillian-testng-core</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.testng</groupId>
         <artifactId>arquillian-testng-container</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.testng</groupId>
         <artifactId>arquillian-testng-standalone</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- Protocols -->
       <dependency>
         <groupId>org.jboss.arquillian.protocol</groupId>
         <artifactId>arquillian-protocol-servlet</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.protocol</groupId>
         <artifactId>arquillian-protocol-jmx</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
       <!-- Enrichers -->
       <dependency>
         <groupId>org.jboss.arquillian.testenricher</groupId>
         <artifactId>arquillian-testenricher-cdi</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.testenricher</groupId>
         <artifactId>arquillian-testenricher-ejb</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.testenricher</groupId>
         <artifactId>arquillian-testenricher-resource</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.arquillian.testenricher</groupId>
         <artifactId>arquillian-testenricher-initialcontext</artifactId>
-        <version>${project.version}</version>
+        <version>1.10.1.Final-SNAPSHOT</version>
       </dependency>
 
     </dependencies>

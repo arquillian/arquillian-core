@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# Copyright The WildFly Authors
+# Copyright The Arquillian Authors
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -64,8 +64,7 @@ DRY_RUN=false
 FORCE=false
 DEVEL_VERSION=""
 RELEASE_VERSION=""
-SCRIPT_PATH=$(realpath "${0}")
-SCRIPT_DIR=$(dirname "${SCRIPT_PATH}")
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 MVN="${SCRIPT_DIR}/mvnw"
 LOCAL_REPO="/tmp/m2/repository/$(basename "${SCRIPT_DIR}")"
 VERBOSE=false
