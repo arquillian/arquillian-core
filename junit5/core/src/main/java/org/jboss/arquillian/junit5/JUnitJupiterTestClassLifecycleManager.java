@@ -27,11 +27,12 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
     ExtensionContext.Store.CloseableResource {
     private static final String MANAGER_KEY = "testRunnerManager";
 
-    private TestRunnerAdaptor adaptor;
+    private volatile TestRunnerAdaptor adaptor;
 
     private Throwable caughtInitializationException;
 
-    private JUnitJupiterTestClassLifecycleManager() {
+    private JUnitJupiterTestClassLifecycleManager() throws Exception {
+        initializeAdaptor();
     }
 
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
@@ -40,7 +41,6 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
         if (instance == null) {
             instance = new JUnitJupiterTestClassLifecycleManager();
             store.put(MANAGER_KEY, instance);
-            instance.initializeAdaptor();
         }
         // no, initialization has been attempted before and failed, refuse
         // to do anything else
