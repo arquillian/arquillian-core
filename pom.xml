@@ -35,7 +35,9 @@
 
     <!-- maven-release-plugin configuration -->
     <autoVersionSubmodules>true</autoVersionSubmodules>
-    <releaseProfiles>central-release</releaseProfiles>
+    <!-- n.b. add integration-tests explicitly here as they are not enabled in default build so that the versions are updated during release -->
+    <releaseProfiles>integration-tests,central-release</releaseProfiles>
+    <preparationProfiles>${releaseProfiles}</preparationProfiles>
     <signTag>true</signTag>
     <tagNameFormat>@{project.version}</tagNameFormat>
     <arguments>-DskipItTests=true -Dcentral.autoPublish=${central.autoPublish} -Dcentral.waitUntil=${central.waitUntil}</arguments>
@@ -182,12 +184,6 @@
   <profiles>
     <profile>
       <id>integration-tests</id>
-      <modules>
-        <module>integration-tests</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>central-release</id>
       <modules>
         <module>integration-tests</module>
       </modules>
