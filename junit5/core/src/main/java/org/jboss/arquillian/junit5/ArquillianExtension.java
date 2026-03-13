@@ -249,8 +249,8 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      * @param extensionContext the current extension context
      * @throws Throwable if any error occurs
      */
-     private TestResult interceptInvocation(Invocation<?> invocation, ExtensionContext extensionContext) throws Throwable {
-            final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
+    private TestResult interceptInvocation(Invocation<?> invocation, ExtensionContext extensionContext) throws Throwable {
+        final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
         TestRunnerAdaptor adaptor = getManager(extensionContext).getAdaptor();
         TestResult result = adaptor.test(new TestMethodExecutor() {
             @Override
@@ -274,12 +274,12 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                 invocation.proceed();
             }
         });
-         // Check if Invocation.proceed() was invoked. If it was, we don't need to execute any further. If it wasn't,
-         // we will skip the rest of the interceptors as the interceptors should have been run in the container.
-         if (!proceedInvoked.get()) {
-             invocation.skip();
-         }
-         return result;
+        // Check if Invocation.proceed() was invoked. If it was, we don't need to execute any further. If it wasn't,
+        // we will skip the rest of the interceptors as the interceptors should have been run in the container.
+        if (!proceedInvoked.get()) {
+            invocation.skip();
+        }
+        return result;
     }
 
     /**
