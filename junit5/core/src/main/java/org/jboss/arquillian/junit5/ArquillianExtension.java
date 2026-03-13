@@ -27,7 +27,7 @@ import org.opentest4j.TestAbortedException;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
 /**
- * Implements several Junit5 extension API interfaces to adapt Juni5 tests into Arquillian.
+ * Implements several JUnit 5 extension API interfaces to adapt JUnit 5 tests for Arquillian.
  */
 public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, InvocationInterceptor, ParameterResolver {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
@@ -177,10 +177,29 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     public void interceptBeforeEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
         if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
             // Since the invocation is going to proceed, the invocation must happen within the context of SPI before()
-            getManager(extensionContext).getAdaptor().before(
-                extensionContext.getRequiredTestInstance(),
-                extensionContext.getRequiredTestMethod(),
-                invocation::proceed);
+            final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
+            try {
+                getManager(extensionContext).getAdaptor().before(
+                    extensionContext.getRequiredTestInstance(),
+                    extensionContext.getRequiredTestMethod(),
+                    () -> {
+                        proceedInvoked.set(true);
+                        invocation.proceed();
+                    });
+            } catch (Throwable t) {
+                // If before() threw before invoking the LifecycleMethodExecutor (e.g. due to a ServerSetupTask
+                // assumption failure), the JUnit 5 invocation was never consumed. Call skip() so JUnit does not
+                // generate "Chain of InvocationInterceptors never called invocation".
+                if (!proceedInvoked.get()) {
+                    invocation.skip();
+                }
+                throw t;
+            }
+            // If before() returned normally without calling the LifecycleMethodExecutor (e.g. DONT_EXECUTE
+            // decision after a failed deployment setup), the invocation must still be consumed.
+            if (!proceedInvoked.get()) {
+                invocation.skip();
+            }
         } else {
             invocation.skip();
         }
@@ -197,10 +216,24 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     @Override
     public void interceptAfterEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
         if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-            getManager(extensionContext).getAdaptor().after(
-                extensionContext.getRequiredTestInstance(),
-                extensionContext.getRequiredTestMethod(),
-                invocation::proceed);
+            final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
+            try {
+                getManager(extensionContext).getAdaptor().after(
+                    extensionContext.getRequiredTestInstance(),
+                    extensionContext.getRequiredTestMethod(),
+                    () -> {
+                        proceedInvoked.set(true);
+                        invocation.proceed();
+                    });
+            } catch (Throwable t) {
+                if (!proceedInvoked.get()) {
+                    invocation.skip();
+                }
+                throw t;
+            }
+            if (!proceedInvoked.get()) {
+                invocation.skip();
+            }
         } else {
             invocation.skip();
         }
@@ -249,8 +282,8 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      * @param extensionContext the current extension context
      * @throws Throwable if any error occurs
      */
-     private TestResult interceptInvocation(Invocation<?> invocation, ExtensionContext extensionContext) throws Throwable {
-            final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
+    private TestResult interceptInvocation(Invocation<?> invocation, ExtensionContext extensionContext) throws Throwable {
+        final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
         TestRunnerAdaptor adaptor = getManager(extensionContext).getAdaptor();
         TestResult result = adaptor.test(new TestMethodExecutor() {
             @Override
@@ -274,12 +307,12 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
                 invocation.proceed();
             }
         });
-         // Check if Invocation.proceed() was invoked. If it was, we don't need to execute any further. If it wasn't,
-         // we will skip the rest of the interceptors as the interceptors should have been run in the container.
-         if (!proceedInvoked.get()) {
-             invocation.skip();
-         }
-         return result;
+        // Check if Invocation.proceed() was invoked. If it was, we don't need to execute any further. If it wasn't,
+        // we will skip the rest of the interceptors as the interceptors should have been run in the container.
+        if (!proceedInvoked.get()) {
+            invocation.skip();
+        }
+        return result;
     }
 
     /**
