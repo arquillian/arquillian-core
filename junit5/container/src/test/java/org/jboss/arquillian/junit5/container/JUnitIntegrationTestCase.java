@@ -16,13 +16,24 @@
  */
 package org.jboss.arquillian.junit5.container;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.lang.reflect.Method;
+
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
-import static org.mockito.Mockito.mock;
-
+/**
+ * @author Johannes Beck
+ * @author Radoslav Husar
+ */
 public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
 
     @Test
@@ -40,6 +51,29 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         Assertions.assertEquals(0, result.getTestsSkippedCount());
         assertCycle(1, Cycle.BEFORE_RULE, Cycle.BEFORE_CLASS, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER, Cycle.AFTER_CLASS,
             Cycle.AFTER_RULE, Cycle.BEFORE_CLASS_RULE, Cycle.AFTER_CLASS_RULE);
+    }
+
+    /**
+     * Verifies that {@code TestRunnerAdaptor.before()} and {@code TestRunnerAdaptor.after()} are each called
+     * exactly once per test method and not duplicated.
+     * See <a href="https://github.com/arquillian/arquillian-core/issues/745">GH issue</a>.
+     */
+    @Disabled("https://github.com/arquillian/arquillian-core/issues/745")
+    @Test
+    public void shouldCallBeforeAndAfterExactlyOncePerTest() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+
+        // when
+        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionWithExtensions.class);
+
+        // then — single @Test method, so before()/after() must be called exactly once
+        Assertions.assertEquals(1, result.getTestsSucceededCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+
+        verify(adaptor, times(1)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(1)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
     }
 
     @Test
