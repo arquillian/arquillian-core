@@ -23,8 +23,8 @@ import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
  * manager instance exists per test suite execution.</p>
  */
 
-public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
-    ExtensionContext.Store.CloseableResource {
+@SuppressWarnings("deprecation") // CloseableResource is deprecated since JUnit 5.13; remove when dropping JUnit 5.13 support
+public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, ExtensionContext.Store.CloseableResource {
     private static final String MANAGER_KEY = "testRunnerManager";
 
     private TestRunnerAdaptor adaptor;
