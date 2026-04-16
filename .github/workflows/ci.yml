@@ -18,7 +18,6 @@ jobs:
         # Keep this list as: all supported LTS JDKs, the latest GA JDK, and optionally the latest EA JDK (if available).
         # Reference: https://adoptium.net/support/
         java:
-          - 8
           - 11
           - 17
           - 21

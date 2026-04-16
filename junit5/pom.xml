@@ -18,12 +18,6 @@
   <name>Arquillian TestRunner JUnit Jupiter Aggregator</name>
   <description>Arquillian JUnit Jupiter Aggregator</description>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
-
   <modules>
     <module>core</module>
     <module>container</module>

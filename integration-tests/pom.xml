@@ -41,8 +41,6 @@
   </modules>
 
   <properties>
-    <maven.compiler.release>11</maven.compiler.release>
-
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <skipItTests>false</skipItTests>
     <skipTests>${skipItTests}</skipTests>

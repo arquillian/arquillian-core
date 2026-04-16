@@ -27,7 +27,7 @@
 
   <properties>
     <!-- jboss-parent overrides -->
-    <maven.compiler.release>8</maven.compiler.release>
+    <maven.compiler.release>11</maven.compiler.release>
     <jdk.min.version>${maven.compiler.release}</jdk.min.version>
 
     <!-- Central Publishing Plugin -->
