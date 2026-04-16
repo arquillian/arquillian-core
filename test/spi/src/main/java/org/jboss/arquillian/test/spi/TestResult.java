@@ -39,7 +39,10 @@ public final class TestResult implements Serializable {
     private long start;
     private long end;
 
-    @Deprecated
+    /**
+     * @deprecated Use {@link #passed(String)} or {@link #skipped(String)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.1.12.Final")
     public TestResult(Status status, String description) {
         this(status);
         this.description = description;
@@ -49,8 +52,10 @@ public final class TestResult implements Serializable {
      * Create a empty result.<br/>
      * <br/>
      * Start time is set to Current Milliseconds.
+     *
+     * @deprecated Use {@link #passed()}, {@link #failed(Throwable)}, or {@link #skipped()} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.1.12.Final")
     public TestResult() {
         this(null);
     }
@@ -62,8 +67,10 @@ public final class TestResult implements Serializable {
      *
      * @param status
      *     The result status.
+     *
+     * @deprecated Use {@link #passed()}, {@link #failed(Throwable)}, or {@link #skipped()} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.1.12.Final")
     public TestResult(Status status) {
         this(status, (Throwable) null);
     }
@@ -77,8 +84,10 @@ public final class TestResult implements Serializable {
      *     The result status.
      * @param throwable
      *     thrown exception if any
+     *
+     * @deprecated Use {@link #passed()}, {@link #failed(Throwable)}, or {@link #skipped(Throwable)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.1.12.Final")
     public TestResult(Status status, Throwable throwable) {
         this.status = status;
         setThrowable(throwable);
@@ -86,30 +95,37 @@ public final class TestResult implements Serializable {
         this.start = System.currentTimeMillis();
     }
 
+    @SuppressWarnings("removal")
     public static TestResult passed() {
         return new TestResult(Status.PASSED);
     }
 
+    @SuppressWarnings("removal")
     public static TestResult passed(String description) {
         return new TestResult(Status.PASSED, description);
     }
 
+    @SuppressWarnings("removal")
     public static TestResult skipped(Throwable cause) {
         return new TestResult(Status.SKIPPED, cause);
     }
 
+    @SuppressWarnings("removal")
     public static TestResult skipped(String description) {
         return new TestResult(Status.SKIPPED, description);
     }
 
+    @SuppressWarnings("removal")
     public static TestResult skipped() {
         return new TestResult(Status.SKIPPED);
     }
 
+    @SuppressWarnings("removal")
     public static TestResult failed(Throwable cause) {
         return new TestResult(Status.FAILED, cause);
     }
 
+    @SuppressWarnings("removal")
     public static TestResult flatten(Collection<TestResult> results) {
         final TestResult combinedResult = new TestResult(Status.PASSED);
         final Map<Status, TestResult> resultsPerStatus = new HashMap<Status, TestResult>();
@@ -162,7 +178,6 @@ public final class TestResult implements Serializable {
         return status;
     }
 
-    @Deprecated
     public TestResult setStatus(Status status) {
         this.status = status;
         return this;
@@ -172,7 +187,11 @@ public final class TestResult implements Serializable {
         return description;
     }
 
-    @Deprecated
+    /**
+     * @deprecated Use the static factory methods {@link #passed(String)} or {@link #skipped(String)}
+     * to create a TestResult with a description instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.1.12.Final")
     public void setDescription(String description) {
         this.description = description;
     }

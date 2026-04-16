@@ -38,7 +38,13 @@ public class ProtocolMetaData {
         return false;
     }
 
-    @Deprecated
+    /**
+     * Returns the first context of the given type. Note that multiple contexts of the same type may exist;
+     * this method only returns the first match.
+     *
+     * @deprecated Use {@link #getContexts(Class)} instead, which returns all matching contexts.
+     */
+    @Deprecated(forRemoval = true, since = "1.0.0.CR8")
     public <T> T getContext(Class<T> clazz) {
         for (Object obj : contexts) {
             if (clazz.isInstance(obj)) {
