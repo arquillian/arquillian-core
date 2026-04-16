@@ -72,7 +72,7 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  */
-@SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
+@SuppressWarnings({"unchecked", "rawtypes", "removal"})
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerDeployControllerTestCase extends AbstractContainerTestBase {
     private static final String CONTAINER_1_NAME = "container_1";
@@ -156,7 +156,7 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
         extensions.add(ContainerDeploymentContextHandler.class);
     }
 
-    @SuppressWarnings("deprecation") // Suppress DeployableContainer#deploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
+    @SuppressWarnings("removal") // Suppress DeployableContainer#deploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
     @Test
     public void shouldDeployAllManagedDeployments() throws Exception {
         registry.create(container1, serviceLoader).setState(State.STARTED);
@@ -193,7 +193,7 @@ public class ContainerDeployControllerTestCase extends AbstractContainerTestBase
             scenario.deployment(new DeploymentTargetDescription(DEPLOYMENT_4_NAME)).getDescription().getDescriptor());
     }
 
-    @SuppressWarnings("deprecation") // Suppress DeployableContainer#undeploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
+    @SuppressWarnings("removal") // Suppress DeployableContainer#undeploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
     @Test
     public void shouldUnDeployAllManagedDeployments() throws Exception {
         registry.create(container1, serviceLoader).setState(State.STARTED);

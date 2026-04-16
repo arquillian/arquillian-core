@@ -94,6 +94,7 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
     }
 
     @Override
+    @SuppressWarnings("removal")
     public byte[] runTestMethod(String className, String methodName) {
         TestResult result = runTestMethodInternal(className, methodName, new HashMap<String, String>());
         return Serializer.toByteArray(result);

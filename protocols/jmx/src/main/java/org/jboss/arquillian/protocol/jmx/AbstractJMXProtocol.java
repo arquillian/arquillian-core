@@ -54,7 +54,7 @@ public abstract class AbstractJMXProtocol<T extends JMXProtocolConfiguration> im
     @Override
     public ContainerMethodExecutor getExecutor(T config, ProtocolMetaData metaData, CommandCallback callback) {
         if (metaData.hasContext(JMXContext.class)) {
-            MBeanServerConnection mbeanServer = metaData.getContext(JMXContext.class).getConnection();
+            MBeanServerConnection mbeanServer = metaData.getContexts(JMXContext.class).iterator().next().getConnection();
 
             Map<String, String> protocolProps = new HashMap<String, String>();
             try {

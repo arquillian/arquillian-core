@@ -32,7 +32,6 @@ public class RemoveDependsOnTransformer implements IAnnotationTransformer {
     /* (non-Javadoc)
      * @see org.testng.IAnnotationTransformer#transform(org.testng.annotations.ITestAnnotation, java.lang.Class, java.lang.reflect.Constructor, java.lang.reflect.Method)
      */
-    @SuppressWarnings("rawtypes")
     @Override
     public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
         annotation.setDependsOnGroups(new String[0]);
