@@ -54,7 +54,7 @@ public class State {
     private static ThreadLocal<Integer> lastCreatedRunner = new ThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
-            return new Integer(0);
+            return Integer.valueOf(0);
         }
     };
 
