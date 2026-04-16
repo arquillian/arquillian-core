@@ -100,7 +100,7 @@ public class ProtocolDefinition {
      */
     public ProtocolConfiguration createProtocolConfiguration(Map<String, String> configuration) throws Exception {
         Validate.notNull(configuration, "ProtocolConfiguration must be specified");
-        ProtocolConfiguration config = protocol.getProtocolConfigurationClass().newInstance();
+        ProtocolConfiguration config = protocol.getProtocolConfigurationClass().getDeclaredConstructor().newInstance();
         MapObject.populate(config, configuration);
         return config;
     }
