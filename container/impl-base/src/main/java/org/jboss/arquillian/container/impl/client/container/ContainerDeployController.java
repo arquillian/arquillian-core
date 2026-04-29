@@ -113,7 +113,7 @@ public class ContainerDeployController {
         });
     }
 
-    @SuppressWarnings("deprecation") // Suppress DeployableContainer#deploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
+    @SuppressWarnings("removal") // Suppress DeployableContainer#deploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
     public void deploy(@Observes final DeployDeployment event) throws Exception {
         executeOperation(new Callable<Void>() {
             @Inject
@@ -166,7 +166,7 @@ public class ContainerDeployController {
         });
     }
 
-    @SuppressWarnings("deprecation") // Suppress DeployableContainer#deploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
+    @SuppressWarnings("removal") // Suppress DeployableContainer#deploy(org.jboss.shrinkwrap.descriptor.api.Descriptor)
     public void undeploy(@Observes final UnDeployDeployment event) throws Exception {
         executeOperation(new Callable<Void>() {
             @Inject

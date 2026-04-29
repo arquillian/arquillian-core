@@ -30,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
  */
+@SuppressWarnings("deprecation") // CloseableResource is deprecated since JUnit 5.13; remove when dropping JUnit 5.13 support
 class MethodParameters implements AutoCloseable, ExtensionContext.Store.CloseableResource {
     private final Map<Integer, Object> parameters;
 
