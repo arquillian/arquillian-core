@@ -29,3 +29,34 @@ The minimum JDK requirement depends on the version of JUnit used:
     <version>${org.arquillian.version}</version>
 </dependency>
 ----
+
+== Configuration
+
+=== `arquillian.junit5.manager.perClass`
+
+System property. Default: `false`.
+
+When `false` (the default), a single `TestRunnerAdaptor` / Arquillian `Manager`
+is shared across every test class in the JUnit run. `BeforeSuite` /
+`AfterSuite` fire once per JVM. This matches the classic Arquillian model and
+is the correct setting for shared managed external containers (WildFly,
+Payara, GlassFish, …) that boot once and run every test class against the
+same instance.
+
+When `true`, each test class gets its own `TestRunnerAdaptor` and underlying
+`Manager`. `BeforeSuite` / `AfterSuite` therefore fire once per class. Enable
+this for **parallel class execution**
+(`junit.jupiter.execution.parallel.mode.classes.default=concurrent`) against
+isolating embedded containers that allocate their own resources per class
+(e.g. embedded Jetty on port `0`). A shared manager in that mode would leak
+thread-local context activations between classes running on different
+threads.
+
+Enable it from Maven Surefire:
+
+[source,xml]
+----
+<systemPropertyVariables>
+    <arquillian.junit5.manager.perClass>true</arquillian.junit5.manager.perClass>
+</systemPropertyVariables>
+----
