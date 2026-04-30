@@ -4,23 +4,18 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
-
 /**
- * Manages the lifecycle of JUnit Jupiter test classes within the Arquillian framework.
- * This class implements both {@link AutoCloseable} and {@link ExtensionContext.Store.CloseableResource}
- * for junit5 prior to 5.13.0 to ensure proper resource cleanup.
+ * Owns the {@link TestRunnerAdaptor} for a single JUnit Jupiter test class.
  *
- * <p>The manager is responsible for:</p>
- * <ul>
- *   <li>Initializing and managing the Arquillian{@link TestRunnerAdaptor}</li>
- *   <li>Handling test suite lifecycle events (beforeSuite, afterSuite)</li>
- *   <li>Providing access to the test runner adaptor for test execution</li>
- *   <li>Managing initialization failures and error handling</li>
- * </ul>
+ * <p>The manager is cached in the root store under a {@link ExtensionContext.Namespace}
+ * keyed by the test class, so each class gets its own {@code TestRunnerAdaptor}
+ * and underlying {@code Manager}. This matters under parallel class execution:
+ * a shared {@code Manager} would leak thread-local context activations between
+ * classes running on different threads.</p>
  *
- * <p>This class uses a singleton pattern per test context, ensuring that only one
- * manager instance exists per test suite execution.</p>
+ * <p>Implementing {@link ExtensionContext.Store.CloseableResource} lets JUnit
+ * call {@link #close()} (and therefore {@code afterSuite}) when it tears down
+ * the root context at the end of the run.</p>
  */
 
 public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
@@ -35,14 +30,23 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
     }
 
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
-        ExtensionContext.Store store = getContextStore(context).getRootStore();
-        JUnitJupiterTestClassLifecycleManager instance = store.get(MANAGER_KEY, JUnitJupiterTestClassLifecycleManager.class);
-        if (instance == null) {
-            instance = new JUnitJupiterTestClassLifecycleManager();
-            store.put(MANAGER_KEY, instance);
-            instance.initializeAdaptor();
-        }
-        // no, initialization has been attempted before and failed, refuse
+        ExtensionContext.Store store = context.getRoot().getStore(
+            ExtensionContext.Namespace.create(
+                JUnitJupiterTestClassLifecycleManager.class,
+                context.getRequiredTestClass()));
+        JUnitJupiterTestClassLifecycleManager instance = store.getOrComputeIfAbsent(
+            MANAGER_KEY,
+            key -> {
+                JUnitJupiterTestClassLifecycleManager mgr = new JUnitJupiterTestClassLifecycleManager();
+                try {
+                    mgr.initializeAdaptor();
+                } catch (Exception e) {
+                    mgr.caughtInitializationException = e;
+                }
+                return mgr;
+            },
+            JUnitJupiterTestClassLifecycleManager.class);
+        // initialization has been attempted before and failed, refuse
         // to do anything else
         if (instance.hasInitializationException()) {
             instance.handleSuiteLevelFailure();
