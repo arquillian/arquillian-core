@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
@@ -75,8 +76,8 @@ public class ManagerImpl implements Manager {
         };
 
     ManagerImpl(final Collection<Class<? extends Context>> contextClasses, final Collection<Class<?>> extensionClasses) {
-        this.contexts = new ArrayList<Context>();
-        this.extensions = new ArrayList<Extension>();
+        this.contexts = new CopyOnWriteArrayList<Context>();
+        this.extensions = new CopyOnWriteArrayList<Extension>();
         this.runtimeLogger = new RuntimeLogger();
 
         try {
