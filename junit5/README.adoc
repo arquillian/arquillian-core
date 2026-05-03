@@ -34,7 +34,13 @@ The minimum JDK requirement depends on the version of JUnit used:
 
 === `arquillian.junit5.manager.perClass`
 
-System property. Default: `false`.
+JUnit configuration parameter. Default: `false`.
+
+The value is read via JUnit's
+`ExtensionContext.getConfigurationParameter(String)`, so it can be supplied
+through any of the JUnit Platform's standard channels — a JVM system property
+(`-Darquillian.junit5.manager.perClass=true`), a `junit-platform.properties`
+file on the test classpath, or Launcher-supplied configuration.
 
 When `false` (the default), a single `TestRunnerAdaptor` / Arquillian `Manager`
 is shared across every test class in the JUnit run. `BeforeSuite` /
@@ -52,7 +58,14 @@ isolating embedded containers that allocate their own resources per class
 thread-local context activations between classes running on different
 threads.
 
-Enable it from Maven Surefire:
+Enable it via `src/test/resources/junit-platform.properties`:
+
+[source,properties]
+----
+arquillian.junit5.manager.perClass=true
+----
+
+Or from Maven Surefire:
 
 [source,xml]
 ----

@@ -8,8 +8,13 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * Owns the Arquillian {@link TestRunnerAdaptor} that the JUnit Jupiter
  * extension drives.
  *
- * <p>Two caching modes, selected by the system property
- * {@value #PER_CLASS_MANAGER_PROPERTY} (default {@code false}):</p>
+ * <p>Two caching modes, selected by the JUnit configuration parameter
+ * {@value #PER_CLASS_MANAGER_PROPERTY} (default {@code false}). Because the
+ * value is read via
+ * {@link ExtensionContext#getConfigurationParameter(String)}, it can be set
+ * as a JVM system property ({@code -Darquillian.junit5.manager.perClass=true}),
+ * in a {@code junit-platform.properties} file on the test classpath, or via
+ * any other mechanism the JUnit Platform Launcher supports.</p>
  *
  * <ul>
  *   <li><b>Singleton (default)</b> — one {@code TestRunnerAdaptor} for the
@@ -18,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *   Arquillian model and is required for shared managed external containers
  *   (WildFly, Payara, GlassFish) that boot once and serve every test class.</li>
  *
- *   <li><b>Per-class</b> (property set to {@code true}) — a separate
+ *   <li><b>Per-class</b> (parameter set to {@code true}) — a separate
  *   {@code TestRunnerAdaptor} per test class, cached on the root store under
  *   a namespace keyed by the class. {@code BeforeSuite} / {@code AfterSuite}
  *   fire once per class. Required for parallel class execution against
@@ -36,14 +41,14 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
     ExtensionContext.Store.CloseableResource {
     /**
-     * System property that enables per-test-class caching of the
-     * {@link TestRunnerAdaptor}. Defaults to {@code false}.
+     * JUnit configuration parameter that enables per-test-class caching of
+     * the {@link TestRunnerAdaptor}. Defaults to {@code false}. Resolved via
+     * {@link ExtensionContext#getConfigurationParameter(String)} — accepts a
+     * JVM system property or an entry in {@code junit-platform.properties}.
      *
      * @see JUnitJupiterTestClassLifecycleManager
      */
     public static final String PER_CLASS_MANAGER_PROPERTY = "arquillian.junit5.manager.perClass";
-
-    private static final boolean PER_CLASS_MANAGER = Boolean.getBoolean(PER_CLASS_MANAGER_PROPERTY);
 
     private static final String MANAGER_KEY = "testRunnerManager";
 
@@ -55,7 +60,10 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
     }
 
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
-        ExtensionContext.Namespace namespace = PER_CLASS_MANAGER
+        boolean perClassManager = context.getConfigurationParameter(PER_CLASS_MANAGER_PROPERTY)
+            .map(Boolean::parseBoolean)
+            .orElse(false);
+        ExtensionContext.Namespace namespace = perClassManager
             ? ExtensionContext.Namespace.create(
                 JUnitJupiterTestClassLifecycleManager.class,
                 context.getRequiredTestClass())
