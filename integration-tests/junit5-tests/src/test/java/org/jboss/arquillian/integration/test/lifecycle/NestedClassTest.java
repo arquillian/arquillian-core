@@ -27,7 +27,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.ClassOrderer;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
@@ -43,7 +42,10 @@ import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtensio
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.CLIENT;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.SERVER;
 
-@Disabled("https://github.com/arquillian/arquillian-core/issues/773")
+/**
+ * Verifies that JUnit Jupiter {@code @Nested} inner class tests run in the container (SERVER),
+ * sharing the deployment and lifecycle of the enclosing test class.
+ */
 @ExtendWith(FileWriterExtension.class)
 @ArquillianTest
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
