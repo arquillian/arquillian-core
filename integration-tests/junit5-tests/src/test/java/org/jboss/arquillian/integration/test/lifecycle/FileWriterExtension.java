@@ -33,12 +33,16 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- *
  * @author lprimak
  */
 public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
     ExtensionContext.Store.CloseableResource {
+
+    private static final String ARQUILLIAN_LIFECYCLE_TEST = "arquillianLifecycleTest";
+
     private static Path TMP_FILE_PATH;
+    private Class<?> testClass;
+
     static final String TMP_FILE_ASSET_NAME = "temporaryFileAsset";
 
     enum RunsWhere {
@@ -48,13 +52,20 @@ public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        Class<?> clazz = extensionContext.getRequiredTestClass();
+        if (clazz.getAnnotation(ExpectedTrace.class) == null) {
+            // for @Nested classes
+            return;
+        }
+        testClass = clazz;
         if (!isRunningOnServer()) {
-            Path tempDir = Files.createTempDirectory("arquillianLifecycleTest");
+            Path tempDir = Files.createTempDirectory(ARQUILLIAN_LIFECYCLE_TEST);
             initTmpFileName(tempDir);
             assertTrue(tempDir.toFile().delete(), "Cleanup Failed");
             createTmpFile();
         }
-        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).put(this.getClass().getName(), this);
+        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL)
+                .put(this.getClass().getName() + "." + testClass.getName(), this);
     }
 
     @Override
@@ -62,22 +73,23 @@ public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
         if (isRunningOnServer()) {
             return;
         }
-        String contents;
-        try (FileReader fileReader = new FileReader(getTmpFilePath().toFile())) {
-            char[] buf = new char[1000];
-            int length = fileReader.read(buf);
-            contents = new String(buf, 0, length - 1);
-        }
+        String contents = readFromFile();
         Path tempDir = getTmpFilePath().getParent();
         Files.walk(tempDir).map(Path::toFile).forEach(File::delete);
         assertTrue(tempDir.toFile().delete(), "Cleanup Failed");
-        assertEquals("before_all,before_each,test_one,after_each,before_each,test_two,after_each,after_all", contents);
+
+        ExpectedTrace annotation = testClass.getAnnotation(ExpectedTrace.class);
+        if (annotation == null) {
+            throw new IllegalStateException("Test class " + testClass.getName() + " must be annotated with @"
+                    + ExpectedTrace.class.getSimpleName());
+        }
+        assertEquals(annotation.value(), contents);
     }
 
     static void initTmpFileName(Path tmpDirBase) {
         TMP_FILE_PATH = tmpDirBase.getParent().resolve(
-                tmpDirBase.getFileName() + "-arquillianLifecycleTest")
-            .resolve("lifecycleOutput");
+                tmpDirBase.getFileName() + "-" + ARQUILLIAN_LIFECYCLE_TEST)
+                .resolve("lifecycleOutput");
     }
 
     void createTmpFile() throws IOException {
@@ -103,6 +115,19 @@ public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
     static void appendToFile(String str) {
         try (FileWriter fw = new FileWriter(getTmpFilePath().toFile(), true)) {
             fw.append(str + ",");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    static String readFromFile() {
+        try (FileReader fileReader = new FileReader(getTmpFilePath().toFile())) {
+            char[] buf = new char[10000];
+            int length = fileReader.read(buf);
+            if (length <= 0) {
+                return "";
+            }
+            return new String(buf, 0, length - 1);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

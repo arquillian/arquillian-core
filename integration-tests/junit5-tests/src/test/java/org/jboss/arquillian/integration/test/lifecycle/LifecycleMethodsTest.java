@@ -17,25 +17,25 @@ package org.jboss.arquillian.integration.test.lifecycle;
 
 import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
-import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.CLIENT;
-import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.SERVER;
-import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.TMP_FILE_ASSET_NAME;
-import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.appendToFile;
-import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.checkRunsWhere;
-import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.getTmpFilePath;
-
 import org.jboss.arquillian.junit5.container.annotation.ArquillianTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.TMP_FILE_ASSET_NAME;
+import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.appendToFile;
+import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.checkRunsWhere;
+import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.getTmpFilePath;
+import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.CLIENT;
+import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.SERVER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -43,6 +43,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @ExtendWith(FileWriterExtension.class)
 @ArquillianTest
+@ExpectedTrace("before_all,before_each,test_one,after_each,before_each,test_two,after_each,after_all")
 public class LifecycleMethodsTest {
     @Inject
     Greeter greeter;
@@ -88,11 +89,11 @@ public class LifecycleMethodsTest {
         checkRunsWhere(CLIENT);
     }
 
-
     @Deployment
     static JavaArchive createDeployment() {
         JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
                 .addClass(FileWriterExtension.class)
+                .addClass(ExpectedTrace.class)
                 .addClass(Greeter.class)
                 .addAsResource(new StringAsset(getTmpFilePath().toString()), TMP_FILE_ASSET_NAME);
         return jar;
