@@ -1,5 +1,7 @@
 package org.jboss.arquillian.junit5;
 
+import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Optional;
@@ -11,6 +13,7 @@ import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import org.opentest4j.TestAbortedException;
 
-import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
-
 /**
  * Implements several JUnit 5 extension API interfaces to adapt JUnit 5 tests for Arquillian.
  */
@@ -38,11 +39,18 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     /**
      * Called before all tests in the test class are executed.
      *
+     * <p>{@code @Nested} inner classes are skipped because the outer test class already fired
+     * {@code BeforeClass}, which generated the deployment and activated the class-scoped context.
+     * Firing it again for the inner class would create a separate, empty deployment scenario.</p>
+     *
      * @param context the current extension context
      * @throws Exception if any error occurs
      */
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
+        if (isNestedTestClass(context)) {
+            return;
+        }
         getManager(context).getAdaptor().beforeClass(
             context.getRequiredTestClass(),
             LifecycleMethodExecutor.NO_OP);
@@ -51,11 +59,17 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     /**
      * Called after all tests in the test class have been executed.
      *
+     * <p>{@code @Nested} inner classes are skipped because the outer test class handles
+     * undeployment and class-scoped context cleanup in its own {@code AfterClass} event.</p>
+     *
      * @param context the current extension context
      * @throws Exception if any error occurs
      */
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
+        if (isNestedTestClass(context)) {
+            return;
+        }
         getManager(context).getAdaptor().afterClass(
             context.getRequiredTestClass(),
             LifecycleMethodExecutor.NO_OP);
@@ -405,6 +419,15 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         }
         // We should not reach this, but it's a safeguard in case a new status is ever added and missed here
         throw new AssertionError(result.getDescription());
+    }
+
+    /**
+     * Returns {@code true} if the test class in the given context is a JUnit 5 {@code @Nested} inner class.
+     * Nested classes share the deployment and lifecycle of their enclosing test class, so Arquillian
+     * must not fire class-level events ({@code BeforeClass}/{@code AfterClass}) for them independently.
+     */
+    private static boolean isNestedTestClass(ExtensionContext context) {
+        return context.getRequiredTestClass().isAnnotationPresent(Nested.class);
     }
 
     private static Optional<Throwable> failedAssertion(Throwable exception) {
