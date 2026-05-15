@@ -15,6 +15,9 @@
  */
 package org.jboss.arquillian.integration.test.lifecycle;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -27,20 +30,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * @author lprimak
  */
-public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
-    ExtensionContext.Store.CloseableResource {
+public class FileWriterExtension implements BeforeAllCallback, AutoCloseable {
 
     private static final String ARQUILLIAN_LIFECYCLE_TEST = "arquillianLifecycleTest";
 
     private static Path TMP_FILE_PATH;
+    private Path instanceTmpFilePath;
     private Class<?> testClass;
 
     static final String TMP_FILE_ASSET_NAME = "temporaryFileAsset";
@@ -63,6 +64,7 @@ public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
             initTmpFileName(tempDir);
             assertTrue(tempDir.toFile().delete(), "Cleanup Failed");
             createTmpFile();
+            instanceTmpFilePath = TMP_FILE_PATH;
         }
         extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL)
                 .put(this.getClass().getName() + "." + testClass.getName(), this);
@@ -73,8 +75,8 @@ public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
         if (isRunningOnServer()) {
             return;
         }
-        String contents = readFromFile();
-        Path tempDir = getTmpFilePath().getParent();
+        String contents = readFromFile(instanceTmpFilePath);
+        Path tempDir = instanceTmpFilePath.getParent();
         Files.walk(tempDir).map(Path::toFile).forEach(File::delete);
         assertTrue(tempDir.toFile().delete(), "Cleanup Failed");
 
@@ -120,8 +122,8 @@ public class FileWriterExtension implements BeforeAllCallback, AutoCloseable,
         }
     }
 
-    static String readFromFile() {
-        try (FileReader fileReader = new FileReader(getTmpFilePath().toFile())) {
+    private static String readFromFile(Path path) {
+        try (FileReader fileReader = new FileReader(path.toFile())) {
             char[] buf = new char[10000];
             int length = fileReader.read(buf);
             if (length <= 0) {
