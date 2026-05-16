@@ -50,8 +50,17 @@ import org.junit.jupiter.api.TestMethodOrder;
         @TraceStep(name = "nested_test", runsWhere = SERVER, order = 10),
         @TraceStep(name = "inner_after_each", runsWhere = SERVER, order = 11),
         @TraceStep(name = "after_each", runsWhere = SERVER, order = 12),
-        @TraceStep(name = "inner_after_all", runsWhere = CLIENT, order = 13),
-        @TraceStep(name = "after_all", runsWhere = CLIENT, order = 14),
+        @TraceStep(name = "deep_before_all", runsWhere = CLIENT, order = 13),
+        @TraceStep(name = "before_each", runsWhere = SERVER, order = 14),
+        @TraceStep(name = "inner_before_each", runsWhere = SERVER, order = 15),
+        @TraceStep(name = "deep_before_each", runsWhere = SERVER, order = 16),
+        @TraceStep(name = "deeply_nested_test", runsWhere = SERVER, order = 17),
+        @TraceStep(name = "deep_after_each", runsWhere = SERVER, order = 18),
+        @TraceStep(name = "inner_after_each", runsWhere = SERVER, order = 19),
+        @TraceStep(name = "after_each", runsWhere = SERVER, order = 20),
+        @TraceStep(name = "deep_after_all", runsWhere = CLIENT, order = 21),
+        @TraceStep(name = "inner_after_all", runsWhere = CLIENT, order = 22),
+        @TraceStep(name = "after_all", runsWhere = CLIENT, order = 23),
 })
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -92,6 +101,8 @@ class ServerSideLifecycleTest extends AbstractLifecycleTest {
     @Nested
     @Order(3)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class InnerTest {
 
         @BeforeAll
@@ -105,6 +116,7 @@ class ServerSideLifecycleTest extends AbstractLifecycleTest {
         }
 
         @Test
+        @Order(1)
         void nestedTest() {
             appendToFile("nested_test");
         }
@@ -117,6 +129,37 @@ class ServerSideLifecycleTest extends AbstractLifecycleTest {
         @AfterAll
         void innerAfterAll() {
             appendToFile("inner_after_all");
+        }
+
+        @Nested
+        @Order(2)
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+        class DeeplyNestedTest {
+
+            @BeforeAll
+            void deepBeforeAll() {
+                appendToFile("deep_before_all");
+            }
+
+            @BeforeEach
+            void deepBeforeEach() {
+                appendToFile("deep_before_each");
+            }
+
+            @Test
+            void deeplyNestedTest() {
+                appendToFile("deeply_nested_test");
+            }
+
+            @AfterEach
+            void deepAfterEach() {
+                appendToFile("deep_after_each");
+            }
+
+            @AfterAll
+            void deepAfterAll() {
+                appendToFile("deep_after_all");
+            }
         }
     }
 }
