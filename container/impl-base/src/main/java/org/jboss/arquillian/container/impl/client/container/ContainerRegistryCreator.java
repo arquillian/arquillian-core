@@ -186,7 +186,7 @@ public class ContainerRegistryCreator {
                         +
                         ". The .launch file extension caused warnings when found in Eclipse due to conflicts with the Eclipse Launch Profile files. "
                         +
-                        "See https://issues.jboss.org/browse/ARQ-1607 for more information.");
+                        "See https://redhat.atlassian.net/browse/ARQ-1607 for more information.");
             }
         }
         return qualifier;

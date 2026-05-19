@@ -1,5 +1,5 @@
 = Arquillian - So you can rule your code. Not the bugs.
-:asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-core/master/docs
+:asciidoctor-source: https://raw.githubusercontent.com/arquillian/arquillian-core/main/docs
 :numbered:
 :sectlink:
 :sectanchors:
@@ -31,7 +31,7 @@ Arquillian brings the test to the runtime so you don’t have to manage the runt
 * Executing the tests inside (or against) the container
 * Capturing the results and returning them to the test runner for reporting
 
-To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, JUnit 5, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
+To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, JUnit 5 and 6, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.
 
 ifdef::generated-doc[]
 == Guide
@@ -50,7 +50,8 @@ endif::generated-doc[]
 
 == Useful URLs
 
-* https://arquillian.org[Project Site]
-* https://arquillian.org/guides[Guides]
-* http://discuss.arquillian.org/[Forum]
-* https://issues.redhat.com/browse/ARQ[Issue Tracker]
+* https://github.com/orgs/arquillian/discussions[User Forum – GitHub Discussions]
+* https://github.com/arquillian/arquillian-core/issues[Issue Tracker – GitHub Issues]
+* https://redhat.atlassian.net/browse/ARQ[Issue Tracker – Jira]
+* https://arquillian.org[Project Site] (pending updates)
+* https://arquillian.org/guides[Guides] (pending updates)

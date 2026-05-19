@@ -166,7 +166,7 @@ multiple internal objects.
 
 WARNING: Note that `@ArquillianResource` injection of URLs is only supported
 for in-container tests since Arquillian version 1.1.9.Final
-(see https://issues.jboss.org/browse/ARQ-540[ARQ-540]).
+(see https://redhat.atlassian.net/browse/ARQ-540[ARQ-540]).
 
 When you need to get a hold of the request URI (up through the context
 path) your `Deployment` defined, e.g. "http://localhost:8080/test", you
