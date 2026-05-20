@@ -28,7 +28,6 @@ import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
@@ -56,7 +55,6 @@ public class JUnitJupiterRepeatedTestCase extends JUnitTestBaseClass {
         }).when(adaptor).fireCustomLifecycle(any(TestLifecycleEvent.class));
     }
 
-    @Disabled("https://github.com/arquillian/arquillian-core/issues/771")
     @Test
     public void shouldExecuteRepeatedTestExactlyThreeTimes() throws Exception {
         // given
@@ -72,6 +70,22 @@ public class JUnitJupiterRepeatedTestCase extends JUnitTestBaseClass {
         verify(adaptor, times(1)).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
         verify(adaptor, times(3)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         verify(adaptor, times(3)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(1)).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldReportFailuresForAllRepetitions() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        doAnswer(invocation -> TestResult.failed(new AssertionError("expected failure")))
+            .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionAndRepeatedTest.class);
+
+        // then — all 3 repetitions must report as failed
+        Assertions.assertEquals(3, result.getTestsFailedCount());
         verify(adaptor, times(1)).test(any(TestMethodExecutor.class));
     }
 
