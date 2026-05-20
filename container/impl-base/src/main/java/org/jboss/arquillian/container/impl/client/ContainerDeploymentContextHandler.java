@@ -17,10 +17,12 @@
  */
 package org.jboss.arquillian.container.impl.client;
 
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
 import org.jboss.arquillian.container.spi.event.ContainerControlEvent;
 import org.jboss.arquillian.container.spi.event.DeploymentEvent;
+import org.jboss.arquillian.container.spi.event.UnDeployDeployment;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
@@ -70,6 +72,24 @@ public class ContainerDeploymentContextHandler {
             context.proceed();
         } finally {
             deploymentContext.deactivate();
+        }
+    }
+
+    /**
+     * Destroy the {@link DeploymentContext} after undeploy.
+     *
+     * @param context the events context
+     */
+    public void destroyDeploymentContext(@Observes EventContext<UnDeployDeployment> context) {
+        final DeploymentContext deploymentContext = this.deploymentContext.get();
+        try {
+            // Let undeploy happen first
+            context.proceed();
+        } finally {
+            // After undeploy completes, destroy the context
+            final UnDeployDeployment event = context.getEvent();
+            final Deployment deployment = event.getDeployment();
+            deploymentContext.destroy(deployment);
         }
     }
 }
