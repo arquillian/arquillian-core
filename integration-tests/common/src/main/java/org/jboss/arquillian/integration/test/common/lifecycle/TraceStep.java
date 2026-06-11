@@ -14,15 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.integration.test.lifecycle;
+package org.jboss.arquillian.integration.test.common.lifecycle;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Represents a single expected step in a lifecycle trace sequence.
+ * Used within a framework-specific composed annotation to declare the expected
+ * order of lifecycle method invocations during a test run.
+ *
+ * @see RunsWhere
+ */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@interface ExpectedTrace {
-    String value();
+@Target({})
+public @interface TraceStep {
+    /**
+     * The name of the lifecycle step.
+     */
+    String name();
+
+    /**
+     * Where this step is expected to execute.
+     */
+    RunsWhere runsWhere();
+
+    /**
+     * Ordering index for this step. Consecutive steps sharing the same
+     * {@code order} value form a permutable group whose elements may
+     * appear in any order. Steps with unique order values are fixed in
+     * position. Values must be non-decreasing, start at 0, and have no
+     * gaps.
+     */
+    int order();
 }
