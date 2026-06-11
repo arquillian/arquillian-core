@@ -16,12 +16,10 @@
  */
 package org.jboss.arquillian.integration.test.lifecycle.mixed;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.integration.test.lifecycle.api.AbstractLifecycleTest;
 import org.jboss.arquillian.integration.test.lifecycle.api.ArquillianIntegrationTest;
 import org.jboss.arquillian.integration.test.common.lifecycle.TraceStep;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -92,11 +90,6 @@ import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.S
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MixedRunModeLifecycleTest extends AbstractLifecycleTest {
-
-    @Deployment
-    static JavaArchive createDeployment() {
-        return createBaseDeployment();
-    }
 
     @BeforeAll
     static void beforeAllServer() {

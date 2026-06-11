@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.integration.test.lifecycle.api;
 
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere;
 import org.jboss.arquillian.integration.test.common.lifecycle.TraceFileManager;
 import org.jboss.arquillian.integration.test.common.lifecycle.TraceStep;
@@ -26,7 +27,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 public abstract class AbstractLifecycleTest {
 
-    protected static JavaArchive createBaseDeployment() {
+    @Deployment
+    protected static JavaArchive deploy() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addClasses(AbstractLifecycleTest.class, FileWriterExtension.class,
                         ArquillianIntegrationTest.class, TraceStep.class, RunsWhere.class,

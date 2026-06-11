@@ -19,16 +19,13 @@ package org.jboss.arquillian.integration.test.lifecycle.server;
 import org.jboss.arquillian.integration.test.lifecycle.api.AbstractLifecycleTest;
 import org.jboss.arquillian.integration.test.lifecycle.api.ArquillianIntegrationTest;
 import org.jboss.arquillian.integration.test.common.lifecycle.TraceStep;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.jboss.arquillian.integration.test.lifecycle.api.FileWriterExtension.appendToFile;
 import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.SERVER;
@@ -37,27 +34,17 @@ import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.S
 @ArquillianIntegrationTest({
         @TraceStep(name = "before_all", runsWhere = SERVER, order = 0),
         @TraceStep(name = "before_each", runsWhere = SERVER, order = 1),
-        @TraceStep(name = "repeated_test_1", runsWhere = SERVER, order = 2),
+        @TraceStep(name = "parameterized_test", runsWhere = SERVER, order = 2),
         @TraceStep(name = "after_each", runsWhere = SERVER, order = 3),
         @TraceStep(name = "before_each", runsWhere = SERVER, order = 4),
-        @TraceStep(name = "repeated_test_1", runsWhere = SERVER, order = 5),
+        @TraceStep(name = "parameterized_test", runsWhere = SERVER, order = 5),
         @TraceStep(name = "after_each", runsWhere = SERVER, order = 6),
         @TraceStep(name = "before_each", runsWhere = SERVER, order = 7),
-        @TraceStep(name = "repeated_test_1", runsWhere = SERVER, order = 8),
+        @TraceStep(name = "parameterized_test", runsWhere = SERVER, order = 8),
         @TraceStep(name = "after_each", runsWhere = SERVER, order = 9),
-        @TraceStep(name = "before_each", runsWhere = SERVER, order = 10),
-        @TraceStep(name = "repeated_test_2", runsWhere = SERVER, order = 11),
-        @TraceStep(name = "after_each", runsWhere = SERVER, order = 12),
-        @TraceStep(name = "before_each", runsWhere = SERVER, order = 13),
-        @TraceStep(name = "repeated_test_2", runsWhere = SERVER, order = 14),
-        @TraceStep(name = "after_each", runsWhere = SERVER, order = 15),
-        @TraceStep(name = "before_each", runsWhere = SERVER, order = 16),
-        @TraceStep(name = "repeated_test_2", runsWhere = SERVER, order = 17),
-        @TraceStep(name = "after_each", runsWhere = SERVER, order = 18),
-        @TraceStep(name = "after_all", runsWhere = SERVER, order = 19),
+        @TraceStep(name = "after_all", runsWhere = SERVER, order = 10),
 })
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ServerSideRepeatedTestTest extends AbstractLifecycleTest {
+class ServerSideParameterizedTestTest extends AbstractLifecycleTest {
 
     @BeforeAll
     static void beforeAll() {
@@ -69,16 +56,10 @@ class ServerSideRepeatedTestTest extends AbstractLifecycleTest {
         appendToFile("before_each");
     }
 
-    @Order(1)
-    @RepeatedTest(3)
-    void repeatedTest() {
-        appendToFile("repeated_test_1");
-    }
-
-    @Order(2)
-    @RepeatedTest(3)
-    void anotherRepeatedTest() {
-        appendToFile("repeated_test_2");
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "b", "c"})
+    void parameterizedTest(String value) {
+        appendToFile("parameterized_test");
     }
 
     @AfterEach
@@ -90,5 +71,4 @@ class ServerSideRepeatedTestTest extends AbstractLifecycleTest {
     static void afterAll() {
         appendToFile("after_all");
     }
-
 }

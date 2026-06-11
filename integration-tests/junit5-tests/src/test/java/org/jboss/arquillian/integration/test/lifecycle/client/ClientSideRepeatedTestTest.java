@@ -16,12 +16,10 @@
  */
 package org.jboss.arquillian.integration.test.lifecycle.client;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.integration.test.lifecycle.api.AbstractLifecycleTest;
 import org.jboss.arquillian.integration.test.lifecycle.api.ArquillianIntegrationTest;
 import org.jboss.arquillian.integration.test.common.lifecycle.TraceStep;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -59,11 +57,6 @@ import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.C
 @RunAsClient
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ClientSideRepeatedTestTest extends AbstractLifecycleTest {
-
-    @Deployment
-    static JavaArchive createDeployment() {
-        return createBaseDeployment();
-    }
 
     @BeforeAll
     static void beforeAll() {

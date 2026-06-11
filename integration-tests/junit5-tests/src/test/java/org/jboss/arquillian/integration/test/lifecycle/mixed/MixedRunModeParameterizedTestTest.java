@@ -25,10 +25,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.jboss.arquillian.integration.test.lifecycle.api.FileWriterExtension.appendToFile;
 import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.CLIENT;
@@ -40,39 +41,39 @@ import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.S
         @TraceStep(name = "before_all_client", runsWhere = CLIENT, order = 0),
         @TraceStep(name = "before_each_server", runsWhere = SERVER, order = 1),
         @TraceStep(name = "before_each_client", runsWhere = CLIENT, order = 1),
-        @TraceStep(name = "repeated_server", runsWhere = SERVER, order = 2),
+        @TraceStep(name = "parameterized_server", runsWhere = SERVER, order = 2),
         @TraceStep(name = "after_each_server", runsWhere = SERVER, order = 3),
         @TraceStep(name = "after_each_client", runsWhere = CLIENT, order = 3),
         @TraceStep(name = "before_each_server", runsWhere = SERVER, order = 4),
         @TraceStep(name = "before_each_client", runsWhere = CLIENT, order = 4),
-        @TraceStep(name = "repeated_server", runsWhere = SERVER, order = 5),
+        @TraceStep(name = "parameterized_server", runsWhere = SERVER, order = 5),
         @TraceStep(name = "after_each_server", runsWhere = SERVER, order = 6),
         @TraceStep(name = "after_each_client", runsWhere = CLIENT, order = 6),
         @TraceStep(name = "before_each_server", runsWhere = SERVER, order = 7),
         @TraceStep(name = "before_each_client", runsWhere = CLIENT, order = 7),
-        @TraceStep(name = "repeated_server", runsWhere = SERVER, order = 8),
+        @TraceStep(name = "parameterized_server", runsWhere = SERVER, order = 8),
         @TraceStep(name = "after_each_server", runsWhere = SERVER, order = 9),
         @TraceStep(name = "after_each_client", runsWhere = CLIENT, order = 9),
         @TraceStep(name = "before_each_server", runsWhere = SERVER, order = 10),
         @TraceStep(name = "before_each_client", runsWhere = CLIENT, order = 10),
-        @TraceStep(name = "repeated_client", runsWhere = CLIENT, order = 11),
+        @TraceStep(name = "parameterized_client", runsWhere = CLIENT, order = 11),
         @TraceStep(name = "after_each_server", runsWhere = SERVER, order = 12),
         @TraceStep(name = "after_each_client", runsWhere = CLIENT, order = 12),
         @TraceStep(name = "before_each_server", runsWhere = SERVER, order = 13),
         @TraceStep(name = "before_each_client", runsWhere = CLIENT, order = 13),
-        @TraceStep(name = "repeated_client", runsWhere = CLIENT, order = 14),
+        @TraceStep(name = "parameterized_client", runsWhere = CLIENT, order = 14),
         @TraceStep(name = "after_each_server", runsWhere = SERVER, order = 15),
         @TraceStep(name = "after_each_client", runsWhere = CLIENT, order = 15),
         @TraceStep(name = "before_each_server", runsWhere = SERVER, order = 16),
         @TraceStep(name = "before_each_client", runsWhere = CLIENT, order = 16),
-        @TraceStep(name = "repeated_client", runsWhere = CLIENT, order = 17),
+        @TraceStep(name = "parameterized_client", runsWhere = CLIENT, order = 17),
         @TraceStep(name = "after_each_server", runsWhere = SERVER, order = 18),
         @TraceStep(name = "after_each_client", runsWhere = CLIENT, order = 18),
         @TraceStep(name = "after_all_server", runsWhere = SERVER, order = 19),
         @TraceStep(name = "after_all_client", runsWhere = CLIENT, order = 19),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MixedRunModeRepeatedTestTest extends AbstractLifecycleTest {
+class MixedRunModeParameterizedTestTest extends AbstractLifecycleTest {
 
     @BeforeAll
     static void beforeAllServer() {
@@ -97,16 +98,18 @@ class MixedRunModeRepeatedTestTest extends AbstractLifecycleTest {
     }
 
     @Order(1)
-    @RepeatedTest(3)
-    void repeatedServer() {
-        appendToFile("repeated_server");
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "b", "c"})
+    void parameterizedServer(String value) {
+        appendToFile("parameterized_server");
     }
 
     @Order(2)
-    @RepeatedTest(3)
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "b", "c"})
     @RunAsClient
-    void repeatedClient() {
-        appendToFile("repeated_client");
+    void parameterizedClient(String value) {
+        appendToFile("parameterized_client");
     }
 
     @AfterEach

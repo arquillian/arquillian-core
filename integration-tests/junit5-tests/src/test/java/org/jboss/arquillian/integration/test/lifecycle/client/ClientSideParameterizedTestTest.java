@@ -24,14 +24,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.ClassOrderer;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.jboss.arquillian.integration.test.lifecycle.api.FileWriterExtension.appendToFile;
 import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.CLIENT;
@@ -39,24 +33,18 @@ import static org.jboss.arquillian.integration.test.common.lifecycle.RunsWhere.C
 @ArquillianIntegrationTest({
         @TraceStep(name = "before_all", runsWhere = CLIENT, order = 0),
         @TraceStep(name = "before_each", runsWhere = CLIENT, order = 1),
-        @TraceStep(name = "test_one", runsWhere = CLIENT, order = 2),
+        @TraceStep(name = "parameterized_test", runsWhere = CLIENT, order = 2),
         @TraceStep(name = "after_each", runsWhere = CLIENT, order = 3),
         @TraceStep(name = "before_each", runsWhere = CLIENT, order = 4),
-        @TraceStep(name = "test_two", runsWhere = CLIENT, order = 5),
+        @TraceStep(name = "parameterized_test", runsWhere = CLIENT, order = 5),
         @TraceStep(name = "after_each", runsWhere = CLIENT, order = 6),
-        @TraceStep(name = "inner_before_all", runsWhere = CLIENT, order = 7),
-        @TraceStep(name = "before_each", runsWhere = CLIENT, order = 8),
-        @TraceStep(name = "inner_before_each", runsWhere = CLIENT, order = 9),
-        @TraceStep(name = "nested_test", runsWhere = CLIENT, order = 10),
-        @TraceStep(name = "inner_after_each", runsWhere = CLIENT, order = 11),
-        @TraceStep(name = "after_each", runsWhere = CLIENT, order = 12),
-        @TraceStep(name = "inner_after_all", runsWhere = CLIENT, order = 13),
-        @TraceStep(name = "after_all", runsWhere = CLIENT, order = 14),
+        @TraceStep(name = "before_each", runsWhere = CLIENT, order = 7),
+        @TraceStep(name = "parameterized_test", runsWhere = CLIENT, order = 8),
+        @TraceStep(name = "after_each", runsWhere = CLIENT, order = 9),
+        @TraceStep(name = "after_all", runsWhere = CLIENT, order = 10),
 })
 @RunAsClient
-@TestClassOrder(ClassOrderer.OrderAnnotation.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ClientSideLifecycleTest extends AbstractLifecycleTest {
+class ClientSideParameterizedTestTest extends AbstractLifecycleTest {
 
     @BeforeAll
     static void beforeAll() {
@@ -68,16 +56,10 @@ class ClientSideLifecycleTest extends AbstractLifecycleTest {
         appendToFile("before_each");
     }
 
-    @Test
-    @Order(1)
-    void testOne() {
-        appendToFile("test_one");
-    }
-
-    @Test
-    @Order(2)
-    void testTwo() {
-        appendToFile("test_two");
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "b", "c"})
+    void parameterizedTest(String value) {
+        appendToFile("parameterized_test");
     }
 
     @AfterEach
@@ -88,36 +70,5 @@ class ClientSideLifecycleTest extends AbstractLifecycleTest {
     @AfterAll
     static void afterAll() {
         appendToFile("after_all");
-    }
-
-    @Nested
-    @Order(3)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class InnerTest {
-
-        @BeforeAll
-        void innerBeforeAll() {
-            appendToFile("inner_before_all");
-        }
-
-        @BeforeEach
-        void innerBeforeEach() {
-            appendToFile("inner_before_each");
-        }
-
-        @Test
-        void nestedTest() {
-            appendToFile("nested_test");
-        }
-
-        @AfterEach
-        void innerAfterEach() {
-            appendToFile("inner_after_each");
-        }
-
-        @AfterAll
-        void innerAfterAll() {
-            appendToFile("inner_after_all");
-        }
     }
 }
