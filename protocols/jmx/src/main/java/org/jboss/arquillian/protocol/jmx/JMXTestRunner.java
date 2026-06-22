@@ -94,12 +94,14 @@ public class JMXTestRunner extends NotificationBroadcasterSupport implements JMX
     }
 
     @Override
+    @SuppressWarnings("removal")
     public byte[] runTestMethod(String className, String methodName) {
         TestResult result = runTestMethodInternal(className, methodName, new HashMap<String, String>());
         return Serializer.toByteArray(result);
     }
 
     @Override
+    @SuppressWarnings("removal")
     public byte[] runTestMethod(String className, String methodName, Map<String, String> protocolProps) {
         // detect if deprecated method is overridden in sub class, if so call it instead
         try {

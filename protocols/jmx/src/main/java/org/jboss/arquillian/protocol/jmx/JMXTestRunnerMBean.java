@@ -43,9 +43,9 @@ public interface JMXTestRunnerMBean extends NotificationBroadcaster {
      *
      * @return a serialized {@link TestResult}
      *
-     * @deprecated
+     * @deprecated Use {@link #runTestMethod(String, String, java.util.Map)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.1.8.Final")
     byte[] runTestMethod(String className, String methodName);
 
     /**

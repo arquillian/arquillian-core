@@ -139,10 +139,10 @@ public class ExceptionProxyTestCase {
         // Create a ClassLoader for the target/serveronly-classes dir
         File serverOnlyClasses = new File("target/serveronly-classes");
         Assert.assertTrue("target/serveronly-classes should exist", serverOnlyClasses.exists());
-        URL[] serveronlyCP = {serverOnlyClasses.toURL()};
+        URL[] serveronlyCP = {serverOnlyClasses.toURI().toURL()};
         URLClassLoader classLoader = new URLClassLoader(serveronlyCP, getClass().getClassLoader());
         Class<IBean> exClass = (Class<IBean>) classLoader.loadClass("org.jboss.arquillian.test.spi.serveronly.SomeBean");
-        IBean bean = exClass.newInstance();
+        IBean bean = exClass.getDeclaredConstructor().newInstance();
         Throwable exception = null;
         try {
             bean.invoke();

@@ -44,7 +44,11 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 public class ContainerRegistryCreator {
     static final String ARQUILLIAN_LAUNCH_PROPERTY = "arquillian.launch";
     static final String ARQUILLIAN_LAUNCH_DEFAULT = "arquillian.launch_file";
-    @Deprecated
+    /**
+     * @deprecated Use {@link #ARQUILLIAN_LAUNCH_DEFAULT} instead. The {@code .launch} file extension caused warnings
+     * in Eclipse due to conflicts with Eclipse Launch Profile files (ARQ-1607).
+     */
+    @Deprecated(forRemoval = true, since = "1.1.5.Final")
     static final String ARQUILLIAN_LAUNCH_DEFAULT_DEPRECATED = "arquillian.launch";
 
     private Logger log = Logger.getLogger(ContainerRegistryCreator.class.getName());
@@ -169,6 +173,7 @@ public class ContainerRegistryCreator {
         }
     }
 
+    @SuppressWarnings("removal")
     private String getActivatedConfiguration() {
         if (exists(SecurityActions.getProperty(ARQUILLIAN_LAUNCH_PROPERTY))) {
             return SecurityActions.getProperty(ARQUILLIAN_LAUNCH_PROPERTY);

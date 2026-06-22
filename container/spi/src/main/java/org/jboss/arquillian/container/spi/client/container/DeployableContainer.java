@@ -190,7 +190,7 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
      * @throws DeploymentException if deployment fails
      * @deprecated for removal. This method will be removed in a future version. Use {@link #deploy(Archive)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.10.1.Final")
     default void deploy(Descriptor descriptor) throws DeploymentException {
         // The default implementation is a no-op.
     }
@@ -217,7 +217,7 @@ public interface DeployableContainer<T extends ContainerConfiguration> {
      * @throws DeploymentException if undeployment fails
      * @deprecated for removal. This method will be removed in a future version. Use {@link #undeploy(Archive)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.10.1.Final")
     default void undeploy(Descriptor descriptor) throws DeploymentException {
         // The default implementation is a no-op.
     }
