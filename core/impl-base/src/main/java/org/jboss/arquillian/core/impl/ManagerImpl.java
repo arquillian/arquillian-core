@@ -22,8 +22,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.event.ManagerStarted;
@@ -59,6 +61,7 @@ public class ManagerImpl implements Manager {
     private final RuntimeLogger runtimeLogger;
     private final List<Context> contexts;
     private final List<Extension> extensions;
+    private final Map<Class<?>, List<Object>> listenerRegistry = new ConcurrentHashMap<Class<?>, List<Object>>();
     /*
      * Hack:
      * Events can be fired nested. If a nested handler throws a exception, the exception is fired on the bus for handling.
@@ -329,6 +332,27 @@ public class ManagerImpl implements Manager {
         extensions.add(newExtension);
     }
 
+    @Override
+    public <T> void addListener(Class<T> listenerType, T listener) {
+        Validate.notNull(listenerType, "Listener type must be specified");
+        Validate.notNull(listener, "Listener must be specified");
+        if (!listenerRegistry.containsKey(listenerType)) {
+            listenerRegistry.putIfAbsent(listenerType, Collections.synchronizedList(new ArrayList<Object>()));
+        }
+        listenerRegistry.get(listenerType).add(listener);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getListeners(Class<T> listenerType) {
+        Validate.notNull(listenerType, "Listener type must be specified");
+        List<Object> listeners = listenerRegistry.get(listenerType);
+        if (listeners == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList((List<T>) listeners);
+    }
+
     public void removeExtension(Class<?> extensionClass) {
         for (Extension extension : extensions) {
             Object target = ((ExtensionImpl) extension).getTarget();
@@ -410,6 +434,8 @@ public class ManagerImpl implements Manager {
         executeInApplicationContext(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
+                ManagerImpl.this.bind(
+                    ApplicationScoped.class, Manager.class, ManagerImpl.this);
                 ManagerImpl.this.bind(
                     ApplicationScoped.class, Injector.class, InjectorImpl.of(ManagerImpl.this));
                 ManagerImpl.this.bind(

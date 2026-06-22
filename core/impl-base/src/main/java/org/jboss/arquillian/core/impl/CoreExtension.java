@@ -15,32 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.test.impl;
+package org.jboss.arquillian.core.impl;
 
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.impl.context.ClassContextImpl;
-import org.jboss.arquillian.test.impl.context.SuiteContextImpl;
-import org.jboss.arquillian.test.impl.context.TestContextImpl;
-import org.jboss.arquillian.test.impl.enricher.resource.ArquillianResourceTestEnricher;
-import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
- * TestExtension
+ * CoreExtension
  *
- * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author Arquillian
  */
-public class TestExtension implements LoadableExtension {
+public class CoreExtension implements LoadableExtension {
     @Override
     public void register(ExtensionBuilder builder) {
-        builder.context(SuiteContextImpl.class)
-            .context(ClassContextImpl.class)
-            .context(TestContextImpl.class);
-
-        builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
-
-        builder.observer(TestContextHandler.class)
-            .observer(TestInstanceEnricher.class)
-            .observer(TestLifecycleListenerAdaptor.class)
-            .observer(TestEnrichmentListenerAdaptor.class);
+        builder.observer(ManagerLifecycleListenerAdaptor.class);
     }
 }
