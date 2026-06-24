@@ -12,7 +12,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * {@value #PER_CLASS_MANAGER_PROPERTY} (default {@code false}). Because the
  * value is read via
  * {@link ExtensionContext#getConfigurationParameter(String)}, it can be set
- * as a JVM system property ({@code -Darquillian.junit5.manager.perClass=true}),
+ * as a JVM system property
+ * ({@code -Darquillian.junit.jupiter.manager.perClass=true}),
  * in a {@code junit-platform.properties} file on the test classpath, or via
  * any other mechanism the JUnit Platform Launcher supports.</p>
  *
@@ -48,7 +49,7 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable,
      *
      * @see JUnitJupiterTestClassLifecycleManager
      */
-    public static final String PER_CLASS_MANAGER_PROPERTY = "arquillian.junit5.manager.perClass";
+    public static final String PER_CLASS_MANAGER_PROPERTY = "arquillian.junit.jupiter.manager.perClass";
 
     private static final String MANAGER_KEY = "testRunnerManager";
 
