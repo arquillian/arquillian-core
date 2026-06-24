@@ -32,14 +32,14 @@ The minimum JDK requirement depends on the version of JUnit used:
 
 == Configuration
 
-=== `arquillian.junit5.manager.perClass`
+=== `arquillian.junit.jupiter.manager.perClass`
 
 JUnit configuration parameter. Default: `false`.
 
 The value is read via JUnit's
 `ExtensionContext.getConfigurationParameter(String)`, so it can be supplied
 through any of the JUnit Platform's standard channels — a JVM system property
-(`-Darquillian.junit5.manager.perClass=true`), a `junit-platform.properties`
+(`-Darquillian.junit.jupiter.manager.perClass=true`), a `junit-platform.properties`
 file on the test classpath, or Launcher-supplied configuration.
 
 When `false` (the default), a single `TestRunnerAdaptor` / Arquillian `Manager`
@@ -62,7 +62,7 @@ Enable it via `src/test/resources/junit-platform.properties`:
 
 [source,properties]
 ----
-arquillian.junit5.manager.perClass=true
+arquillian.junit.jupiter.manager.perClass=true
 ----
 
 Or from Maven Surefire:
@@ -70,6 +70,6 @@ Or from Maven Surefire:
 [source,xml]
 ----
 <systemPropertyVariables>
-    <arquillian.junit5.manager.perClass>true</arquillian.junit5.manager.perClass>
+    <arquillian.junit.jupiter.manager.perClass>true</arquillian.junit.jupiter.manager.perClass>
 </systemPropertyVariables>
 ----
