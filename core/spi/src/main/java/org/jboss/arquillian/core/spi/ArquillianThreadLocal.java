@@ -1,13 +1,22 @@
 package org.jboss.arquillian.core.spi;
 
-import java.util.Hashtable;
-
 /**
- * Mapping for ThreadId to a value. Same as "ThreadLocal", but with simpler cleanup.
- *
+ * Thread-local value holder backed by a real {@link ThreadLocal}.
+ * A prior implementation used a map keyed by thread id, which leaked stale
+ * values when a pool recycled a thread's id.
  */
 public class ArquillianThreadLocal<T> {
-  private Hashtable<Long, T> table = new Hashtable<Long, T>();
+
+  private volatile ThreadLocal<T> delegate = newDelegate();
+
+  private ThreadLocal<T> newDelegate() {
+    return new ThreadLocal<T>() {
+      @Override
+      protected T initialValue() {
+        return ArquillianThreadLocal.this.initialValue();
+      }
+    };
+  }
 
   protected T initialValue() {
     return null;
@@ -22,38 +31,21 @@ public class ArquillianThreadLocal<T> {
    * @return the current thread's value of this thread-local
    */
   public T get() {
-    Thread t = Thread.currentThread();
-    long threadId = t.getId();
-
-    if (table.containsKey(threadId)) {
-        return table.get(threadId);
-    }
-    else {
-      T value = initialValue();
-      table.put(threadId, value);
-      return value;
-    }
+    return delegate.get();
   }
 
   /**
-   * Removes the current thread's value for this thread-local
-   * variable.
-   *
+   * Removes the current thread's value for this thread-local variable.
    */
-   public void remove() {
-     Thread t = Thread.currentThread();
-     long threadId = t.getId();
+  public void remove() {
+    delegate.remove();
+  }
 
-     if (table.containsKey(threadId)) {
-       table.remove(threadId);
-     }
-   }
-
-   /**
-    * Clears the cache
-    */
-   public void clear() {
-     table.clear();
-   }
+  /**
+   * Drops every thread's value by swapping in a fresh backing {@link ThreadLocal};
+   * subsequent {@link #get()} calls go back through {@link #initialValue()}.
+   */
+  public void clear() {
+    delegate = newDelegate();
+  }
 }
-
