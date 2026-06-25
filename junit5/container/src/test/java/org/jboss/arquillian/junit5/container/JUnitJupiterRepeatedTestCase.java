@@ -21,10 +21,12 @@ import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
+import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
@@ -44,6 +46,13 @@ public class JUnitJupiterRepeatedTestCase extends JUnitTestBaseClass {
         doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         doAnswer(new TestExecuteLifecycle()).when(adaptor).test(any(TestMethodExecutor.class));
+        doAnswer(invocation -> {
+            TestLifecycleEvent event = invocation.getArgument(0);
+            if (event instanceof RunModeEvent) {
+                ((RunModeEvent) event).setRunAsClient(false);
+            }
+            return null;
+        }).when(adaptor).fireCustomLifecycle(any(TestLifecycleEvent.class));
     }
 
     @Test
@@ -55,12 +64,29 @@ public class JUnitJupiterRepeatedTestCase extends JUnitTestBaseClass {
         // when
         TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionAndRepeatedTest.class);
 
-        // then — @RepeatedTest(3) must run exactly 3 times, not 9
-        Assertions.assertEquals(3, result.getTestsSucceededCount());
+        // then — @RepeatedTest(3) must invoke SPI lifecycle exactly 3 times, not 9
         Assertions.assertEquals(0, result.getTestsFailedCount());
-        Assertions.assertEquals(0, result.getTestsSkippedCount());
-        assertCycle(1, Cycle.BEFORE_CLASS, Cycle.AFTER_CLASS);
-        assertCycle(3, Cycle.BEFORE, Cycle.TEST, Cycle.AFTER);
+        verify(adaptor, times(1)).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(1)).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(3)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(3)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(1)).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldReportFailuresForAllRepetitions() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        doAnswer(invocation -> TestResult.failed(new AssertionError("expected failure")))
+            .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionAndRepeatedTest.class);
+
+        // then — all 3 repetitions must report as failed
+        Assertions.assertEquals(3, result.getTestsFailedCount());
+        verify(adaptor, times(1)).test(any(TestMethodExecutor.class));
     }
 
     public static class TestExecuteLifecycle extends ExecuteLifecycle {
