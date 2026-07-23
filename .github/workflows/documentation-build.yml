@@ -1,0 +1,42 @@
+name: Build documentation
+
+on:
+  pull_request:
+    paths:
+      - README.adoc
+      - 'docs/**'
+      - .github/workflows/documentation-build.yml
+      - .github/workflows/documentation-publish.yml
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      - name: Install Asciidoctor
+        run: gem install asciidoctor --version 2.0.26 --no-document
+
+      - name: Build documentation
+        run: |
+          mkdir -p target/docs
+          asciidoctor README.adoc \
+            --attribute generated-doc=true \
+            --attribute asciidoctor-source=docs \
+            --out-file target/docs/index.html
+          test -s target/docs/index.html
+          grep -q '<title>Arquillian - So you can rule your code. Not the bugs.</title>' target/docs/index.html
