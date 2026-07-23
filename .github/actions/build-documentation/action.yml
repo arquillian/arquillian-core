@@ -1,0 +1,25 @@
+name: Build documentation
+description: Builds the Arquillian documentation using Asciidoctor
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.4'
+
+    - name: Install Asciidoctor
+      run: gem install asciidoctor --version 2.0.26 --no-document
+      shell: bash
+
+    - name: Build documentation
+      run: |
+        mkdir -p target/docs
+        asciidoctor README.adoc \
+          --attribute generated-doc=true \
+          --attribute asciidoctor-source=docs \
+          --out-file target/docs/index.html
+        test -s target/docs/index.html
+        grep -q '<title>Arquillian - So you can rule your code. Not the bugs.</title>' target/docs/index.html
+      shell: bash

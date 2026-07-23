@@ -1,0 +1,28 @@
+name: Build documentation
+
+on:
+  pull_request:
+    paths:
+      - README.adoc
+      - 'docs/**'
+      - .github/actions/build-documentation/action.yml
+      - .github/workflows/documentation-build.yml
+      - .github/workflows/documentation-publish.yml
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Build documentation
+        uses: ./.github/actions/build-documentation

@@ -1,0 +1,63 @@
+name: Publish documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.adoc
+      - 'docs/**'
+      - .github/actions/build-documentation/action.yml
+      - .github/workflows/documentation-build.yml
+      - .github/workflows/documentation-publish.yml
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Build documentation
+        uses: ./.github/actions/build-documentation
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v7
+        with:
+          name: documentation
+          path: target/docs/index.html
+          if-no-files-found: error
+
+  publish:
+    name: Publish documentation
+    if: github.repository == 'arquillian/arquillian-core'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Download documentation
+        uses: actions/download-artifact@v8
+        with:
+          name: documentation
+          path: target/docs
+
+      - name: Publish to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: target/docs
+          git-config-name: alien-ike
+          git-config-email: arquillian-team@lists.jboss.org
