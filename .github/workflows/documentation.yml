@@ -1,0 +1,92 @@
+name: Publish documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.adoc
+      - 'docs/**'
+      - .github/workflows/documentation.yml
+  pull_request:
+    paths:
+      - README.adoc
+      - 'docs/**'
+      - .github/workflows/documentation.yml
+  workflow_dispatch:
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      - name: Install Asciidoctor
+        run: gem install asciidoctor --version 2.0.26 --no-document
+
+      - name: Build documentation
+        run: |
+          mkdir -p site
+          asciidoctor README.adoc \
+            --attribute generated-doc=true \
+            --attribute asciidoctor-source=docs \
+            --out-file site/index.html
+          test -s site/index.html
+          grep -q '<title>Arquillian - So you can rule your code. Not the bugs.</title>' site/index.html
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v7
+        with:
+          name: documentation
+          path: site/index.html
+          if-no-files-found: error
+
+  publish:
+    name: Publish documentation
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download documentation
+        uses: actions/download-artifact@v8
+        with:
+          name: documentation
+          path: site
+
+      - name: Publish to gh-pages
+        env:
+          GH_PAGES_DIR: ${{ runner.temp }}/gh-pages
+        run: |
+          git fetch origin gh-pages
+          git worktree add "$GH_PAGES_DIR" origin/gh-pages
+          cp site/index.html "$GH_PAGES_DIR/index.html"
+          cd "$GH_PAGES_DIR"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'Documentation is already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Publish documentation for ${GITHUB_SHA::7}"
+          git push origin HEAD:gh-pages
