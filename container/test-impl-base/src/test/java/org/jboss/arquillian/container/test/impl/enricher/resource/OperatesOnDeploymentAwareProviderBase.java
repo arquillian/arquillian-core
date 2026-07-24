@@ -92,7 +92,7 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
         TestEnricher enricher = new ArquillianResourceTestEnricher();
         injector.get().inject(enricher);
 
-        X test = enrichType.cast(enrichType.newInstance());
+        X test = enrichType.cast(enrichType.getDeclaredConstructor().newInstance());
         enricher.enrich(test);
         return test;
     }
@@ -140,7 +140,7 @@ public abstract class OperatesOnDeploymentAwareProviderBase extends AbstractCont
             TestEnricher enricher = new ArquillianResourceTestEnricher();
             injector.get().inject(enricher);
 
-            X test = enrichType.cast(enrichType.newInstance());
+            X test = enrichType.cast(enrichType.getDeclaredConstructor().newInstance());
             enricher.enrich(test);
 
             return test;

@@ -53,8 +53,9 @@ public class TestDeployment {
      * @param auxiliaryArchives
      *     All extra library {@link Archive}s defined by extensions / core / frameworks.
      *
-     * @deprecated
+     * @deprecated Use {@link #TestDeployment(DeploymentDescription, Archive, Collection)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.0.0.CR7")
     public TestDeployment(Archive<?> applicationArchive, Collection<Archive<?>> auxiliaryArchives) {
         this(null, applicationArchive, auxiliaryArchives);
     }

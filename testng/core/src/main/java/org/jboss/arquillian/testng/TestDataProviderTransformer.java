@@ -35,7 +35,6 @@ public class TestDataProviderTransformer implements IAnnotationTransformer {
     /* (non-Javadoc)
      * @see org.testng.IAnnotationTransformer#transform(org.testng.annotations.ITestAnnotation, java.lang.Class, java.lang.reflect.Constructor, java.lang.reflect.Method)
      */
-    @SuppressWarnings("rawtypes")
     public void transform(ITestAnnotation testAnnotation, Class clazz, Constructor constructor, Method method) {
         if (testAnnotation.getDataProviderClass() == null) {
             if (testAnnotation instanceof TestAnnotation) {

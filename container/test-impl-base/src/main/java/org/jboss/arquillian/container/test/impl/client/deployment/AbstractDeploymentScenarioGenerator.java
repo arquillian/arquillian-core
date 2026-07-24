@@ -112,7 +112,7 @@ public abstract class AbstractDeploymentScenarioGenerator implements DeploymentS
         // sort them by order
         Collections.sort(deploymentDescriptions, new Comparator<DeploymentDescription>() {
             public int compare(DeploymentDescription d1, DeploymentDescription d2) {
-                return new Integer(d1.getOrder()).compareTo(d2.getOrder());
+                return Integer.valueOf(d1.getOrder()).compareTo(d2.getOrder());
             }
         });
     }
