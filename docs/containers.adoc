@@ -26,11 +26,11 @@ tests count, you want to execute them in the target environment, or
 container.
 
 _So what is the container that Arquillian uses? Is it some proprietary testing
-container that emulates the behavior of the technology (Java EE)?_
+container that emulates the behavior of the technology (Jakarta EE)?_
 
-Nope! It's pluggable. It can be your target runtime, such as JBoss AS,
+Nope! It's pluggable. It can be your target runtime, such as WildFly,
 GlassFish or Tomcat. Or it can even been an embedded container such as
-OpenEJB, GlassFish Embedded or Weld SE. You can even use one container
+GlassFish Embedded or Weld SE. You can even use one container
 for development and another for continuous integration.
 
 This portability is made possible by a RPC-style (or local, if
@@ -53,10 +53,9 @@ plugins!
 
 A container is further classified by its capabilities:
 
-* Java EE application server (e.g., JBoss AS, GlassFish, WebLogic)
+* Jakarta EE application server (e.g., WildFly, GlassFish, Open Liberty)
 * Servlet container (e.g., Tomcat, Jetty)
-* standalone bean container (e.g., OpenEJB, Weld SE)
-* OSGi container
+* standalone bean container (e.g., Weld SE)
 
 Arquillian can control a variety of containers out of the box. If the
 container you are using isn't supported, Arquillian provides an SPI that
@@ -107,7 +106,7 @@ the tests, you activate one of those groups, which in turn selects a
 target container. The profile is activated either using either a
 commandline flag (-P) or a preference in the IDE.
 
-The https://arquillian.org/getting_started/[Getting Started Guide]
+The https://arquillian.org/guides/getting_started[Getting Started Guide]
 explains how to setup and use Maven profiles for this purpose in more
 detail.
 
@@ -132,12 +131,12 @@ requirement.
 
 Let's imagine that we're working for the company `example.com` and in
 our environment we have two servers; `test.example.com` and
-`hudson.example.com`. `test.example.com` is the JBoss instance we use
-for our integration tests and `hudson.example.com` is our continuous
+`ci.example.com`. `test.example.com` is the WildFly instance we use
+for our integration tests and `ci.example.com` is our continuous
 integration server that we want to run our integration suite from. By
 default, Arquillian will use localhost, so we need to tell it to use
-`test.example.com` to run the tests. The JBoss AS container by default
-use the Servlet protocol, so we have to override the default
+`test.example.com` to run the tests. The WildFly container by default
+uses the Servlet protocol, so we have to override the default
 configuration.
 
 [source,xml]
@@ -147,9 +146,10 @@ configuration.
     xmlns="http://jboss.org/schema/arquillian"
     xsi:schemaLocation="http://jboss.org/schema/arquillian http://www.jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-    <container qualifier="jbossas" default="true">
+    <container qualifier="wildfly" default="true">
         <configuration>
-            <property name="providerUrl">jnp://test.example.com:1099</property>
+            <property name="managementAddress">test.example.com</property>
+            <property name="managementPort">9990</property>
         </configuration>
         <protocol type="Servlet 3.0">
             <property name="host">test.example.com</property>
@@ -160,29 +160,30 @@ configuration.
 </arquillian>
 ----
 
-That should do it! Here we use the JBoss AS 6.0 Remote container which
-default use the Servlet 3.0 protocol implementation. We override the
+That should do it! Here we use the WildFly Remote container which by
+default uses the Servlet 3.0 protocol implementation. We override the
 default Servlet configuration to say that the http requests for this
 container can be executed over `test.example.com:8181`, but we also need
 to configure the container so it knows where to deploy our archives. We
 could for example have configured the Servlet protocol to communicate
-with a Apache server in front of the JBoss AS Server if we wanted to.
+with a reverse proxy in front of the WildFly server if we wanted to.
 Each container has different configuration options.
 
-// TODO Fix the Link
-For a complete overview of all the containers and their configuration
-options, see the
-https://docs.jboss.org/author/display/ARQ/Container+adapters[container
-adapters] appendix.
+For a complete overview of a given container's configuration options,
+consult the documentation of that container adapter. The adapters are
+maintained outside of Arquillian Core; the WildFly adapters, for
+example, live in the
+https://github.com/wildfly/wildfly-arquillian[wildfly-arquillian]
+project.
 
 [[supported-containers]]
 ==== Supported Containers
 
-// TODO Fix the Link
-Please see the
-https://docs.jboss.org/author/display/ARQ/Container+adapters[container
-adapters] appendix for a list of supported containers, including details
-for how to use and configure them.
+Container adapters are released independently of Arquillian Core, so
+the list of supported containers is not fixed by this documentation. See
+the https://arquillian.org/modules/[Arquillian modules] listing for
+adapters and the documentation of each adapter for details on how to use
+and configure it.
 
 [[container-config-runtime-selection]]
 ==== Container Config Runtime Selection
@@ -201,32 +202,32 @@ using Java system properties.
 ----
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns="http://jboss.org/schema/arquillian"
-   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+   xmlns="http://jboss.org/schema/arquillian"
+   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-   <container qualifier="jbossas_managed" default="true">
-      <protocol type="Servlet 3.0">
-         <property name="executionType">MANAGED</property>
-      </protocol>
-      <configuration>
-         <property name="jbossHome">${project.baseDir}/target/jboss-as-7.1.1.Final/</property>
-         <property name="allowConnectingToRunningServer">true</property>
-      </configuration>
-   </container>
-   
-   <container qualifier="jetty">
-      <configuration>
-          <more configuration>...</more configuration>
-      </configuration>
-   </container>
+   <container qualifier="wildfly_managed" default="true">
+      <protocol type="Servlet 3.0">
+         <property name="executionType">MANAGED</property>
+      </protocol>
+      <configuration>
+         <property name="jbossHome">${project.baseDir}/target/wildfly/</property>
+         <property name="allowConnectingToRunningServer">true</property>
+      </configuration>
+   </container>
+
+   <container qualifier="jetty">
+      <configuration>
+         <!-- container specific configuration properties -->
+      </configuration>
+   </container>
 </arquillian>
 ----
 
 ===== Activating a configuration via the command line
 
 The -Darquillian.launch system property is what controls arquillian.xml
-configuration selection. If you are running tests from Eclipse or
-directly from the command like, you should add the -D system property to
+configuration selection. If you are running tests from your IDE or
+directly from the command line, you should add the -D system property to
 your launch configuration or command.
 
 ===== Activating a configuration via Maven
@@ -238,17 +239,17 @@ the 'arquillian.launch' system property for test execution, as follows:
 [source,xml]
 ----
 <profile>
-         <id>JBOSS_AS_MANAGED_7.X</id>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration>
-                     <systemPropertyVariables>
-                        <arquillian.launch>jbossas_managed</arquillian.launch>
-                     </systemPropertyVariables>
-                  </configuration>
-               </plugin>
-  ...
+   <id>wildfly-managed</id>
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <systemPropertyVariables>
+                  <arquillian.launch>wildfly_managed</arquillian.launch>
+               </systemPropertyVariables>
+            </configuration>
+         </plugin>
+         ...
 ----

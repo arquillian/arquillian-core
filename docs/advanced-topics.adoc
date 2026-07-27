@@ -27,6 +27,12 @@ In case you want to add an additional observer that will be applied only to one 
 
 [source,java]
 ----
+// JUnit Jupiter (JUnit 5 and 6)
+@ExtendWith(ArquillianExtension.class)
+@Observer(MyObserver.class)
+public class MyTestCase {
+
+// JUnit 4
 @RunWith(Arquillian.class)
 @Observer(MyObserver.class)
 public class MyTestCase {

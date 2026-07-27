@@ -71,7 +71,7 @@ https://arquillian.org/guides/[Arquillian Guides].
 [[gradle]]
 ==== Gradle
 
-http://gradle.org[Gradle] is a build tool that allows you to create
+https://gradle.org[Gradle] is a build tool that allows you to create
 declarative, maintainable, concise and highly-performing builds. More
 importantly, in this context, Gradle gives you all the freedom you need
 instead of imposing a rigid build lifecycle on you. You'll get a glimpse
@@ -82,7 +82,7 @@ We'll be contrasting two strategies for running Arquillian tests from
 Gradle:
 
 1.  Container-specific test tasks
-2.  Test "profiles" via build fragment imports
+2.  Test "profiles" via a project property
 
 The first strategy is the recommended one since it gives you the benefit
 of being able to run your tests on multiple containers in the same
@@ -91,154 +91,92 @@ familiar to Maven users. Of course, Gradle is so flexible that there are
 likely other solutions for this problem. We invite you to give us
 feedback if you find a better way (or another way worth documenting).
 
+NOTE: The examples below use the Groovy DSL (`build.gradle`) and assume a
+reasonably recent Gradle version. Container adapters are released
+independently of Arquillian Core, so substitute the adapter coordinates
+and versions that match the container you are targeting.
+
 Let's get the common build stuff out of the way, then dive into the two
 strategies listed above.
 
-===== apply from: common
+===== The common build
 
-The simplest Gradle build for a Java project is a sparse one line.
+The simplest Gradle build for a Java project is a sparse few lines.
 
-[source,java]
+[source,groovy]
 ----
-apply plugin: JavaPlugin
-----
-
-Put this line into a file named build.gradle at the root of the project,
-which is the standard location of the Gradle build file. (Perhaps after
-seeing this configuration you'll understand the reference in the section
-title).
-
-Next we'll add the Maven Central and JBoss Community repository
-definitions, so that we can pull down dependent libraries. The latter
-repository hosts the Arquillian artifacts.
-
-[source,java]
-----
-apply plugin: JavaPlugin
+plugins {
+    id 'java'
+}
 
 repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
+    mavenCentral()
 }
 ----
 
-If your SCM (e.g., SVN, Git) is already ignoring the target directory,
-you may want to move the Gradle build output underneath this folder,
-rather than allowing Gradle to use it's default build directory, build.
-Let's add that configuration to the common build logic as well:
+Put this into a file named build.gradle at the root of the project,
+which is the standard location of the Gradle build file. Arquillian and
+the common container adapters are all published to Maven Central, so no
+extra repository declarations are needed.
 
-[source,java]
+We recommend centralizing version numbers at the top of your build to
+make upgrading your dependencies easy. Better still, let the Arquillian
+BOM manage them for you:
+
+[source,groovy]
 ----
-apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
+ext {
+    // substitute the current releases
+    arquillianVersion = '<arquillian.version>'
+    junitVersion = '<junit.version>'
+    jakartaeeVersion = '<jakartaee.version>'
+    weldAdapterVersion = '<weld.adapter.version>'
+    weldVersion = '<weld.version>'
+    wildflyArquillianVersion = '<wildfly.arquillian.version>'
 }
-----
 
-If you are using Gradle alongside Maven, you shouldn't set the buildDir
-to target since Gradle organizes compiled classes different than Maven
-does, possibly leading to conflicts (Though, the behavior of Gradle can
-also be customized).
-
-We also recommend that you centralize version numbers at the top of your
-build to make upgrading your dependency easy. This list will grow as you
-add other containers, but we'll seed the list for the examples below:
-
-[source,java]
-----
-apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-...
-----
-
-We also need to add the unit test library (JUnit or TestNG) and the
-corresponding Arquillian integration:
-
-[source,java]
-----
 dependencies {
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
+    testImplementation platform("org.jboss.arquillian:arquillian-bom:${arquillianVersion}")
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
+
+    testImplementation 'org.jboss.arquillian.junit5:arquillian-junit5-container'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
 ----
+
+Both BOMs are imported with `platform(...)`, so the individual Arquillian
+and JUnit dependencies below are declared without a version.
+
+TIP: Use `org.jboss.arquillian.junit:arquillian-junit-container` instead if
+your tests are written against JUnit 4, or
+`org.jboss.arquillian.testng:arquillian-testng-container` for TestNG.
+Testing on a Jakarta EE 9+ container? Import
+`org.jboss.arquillian.jakarta:arquillian-jakarta-bom` and use the
+`org.jboss.arquillian.jakarta` artifacts instead.
 
 In this example, we'll assume the project is compiling against APIs that
-are provided by the target container runtime, so we need to add a
-dependency configuration (aka scope) to include libraries on the compile
-classpath but excluded from the runtime classpath. In the future, Gradle
-will include support for such a scope. Until then, we'll define one
-ourselves in the configurations closure.
+are provided by the target container runtime. Gradle has a built-in
+`compileOnly` configuration for exactly that — libraries on the compile
+classpath but excluded from the runtime classpath:
 
-[source,java]
+[source,groovy]
 ----
-configurations {
-   compileOnly
-}
-----
-
-We also need to add the dependencies associated with that configuration
-to the compile classpaths using the sourceSets closure:
-
-[source,java]
-----
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}
-----
-
-Here's the Gradle build all together now:
-
-[source,java]
-----
-apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha3', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-}
-
-configurations {
-   compileOnly
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
+dependencies {
+    compileOnly "jakarta.platform:jakarta.jakartaee-api:${jakartaeeVersion}"
 }
 ----
 
 Now that the foundation of a build is in place (or you've added these
-elements to your existing Gradle build), we are ready to configuring the
+elements to your existing Gradle build), we are ready to configure the
 container-specific test tasks. In the first approach, we'll create a
 unique dependency configuration and task for each container.
 
+[[strategy-container-specific-test-tasks]]
 ===== Strategy #1: Container-Specific Test Tasks
 
 Each project in Gradle is made up of one or more tasks. A task
@@ -250,324 +188,137 @@ Gradle allows you to define any number of test tasks, each having its
 own classpath configuration. We'll use this to configure test executions
 for each container.
 
-Let's assume that we want to run the tests against the following three
-Arquillian-supported containers:
+Let's assume that we want to run the tests against two
+Arquillian-supported containers, a managed WildFly and Weld SE. We'll
+need two components for each container:
 
-* Weld EE Embedded 1.1
-* Remote JBoss AS 6
-* Embedded GlassFish 3
+1.  A dependency configuration extending the test runtime classpath
+2.  A test task using that configuration
 
-We'll need three components for each container:
+We'll start with the Weld SE container. Starting from the Gradle build
+defined in the previous section, we first define a configuration for the
+test runtime dependencies.
 
-1.  Dependency configuration (scope)
-2.  Runtime dependencies
-3.  Custom test task
-
-We'll start with the Weld EE Embedded container. Starting from the
-Gradle build defined in the previous section, we first define a
-configuration for the test runtime dependencies.
-
-[source,java]
+[source,groovy]
 ----
 configurations {
-   compileOnly
-   weldEmbeddedTestRuntime { extendsFrom testRuntime }
+    weldTestRuntime.extendsFrom testRuntimeClasspath
+    wildflyTestRuntime.extendsFrom testRuntimeClasspath
 }
 ----
 
-Next we add the dependencies for compiling against the Java EE API and
-running Arquillian tests in the Weld EE Embedded container:
+Next we add the container adapter and container runtime for each:
 
-[source,java]
+[source,groovy]
 ----
 dependencies {
-   compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
+    weldTestRuntime "org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"
+    weldTestRuntime "org.jboss.weld.se:weld-se-core:${weldVersion}"
 
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
-
-   // temporarily downgrade the weld-ee-embedded-1.1 container
-   weldEmbeddedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-weld-ee-embedded-1.1', version: '1.0.0.Alpha3'
-   weldEmbeddedTestRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-   weldEmbeddedTestRuntime group: 'org.jboss.weld', name: 'weld-core', version: libraryVersions.weld
-   weldEmbeddedTestRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: libraryVersions.slf4j
-   weldEmbeddedTestRuntime group: 'log4j', name: 'log4j', version: libraryVersions.log4j
+    wildflyTestRuntime "org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"
 }
 ----
 
-Finally, we define the test task:
+Finally, we define a test task per container:
 
-[source,java]
+[source,groovy]
 ----
-task weldEmbeddedTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + configurations.weldEmbeddedTestRuntime
+tasks.register('weldTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.output + sourceSets.main.output + configurations.weldTestRuntime
+    useJUnitPlatform()
+}
+
+tasks.register('wildflyTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.output + sourceSets.main.output + configurations.wildflyTestRuntime
+    useJUnitPlatform()
+    systemProperty 'jboss.home', "${buildDir}/wildfly"
 }
 ----
 
-This task will execute in the lifecycle setup by the Java plugin in
-place of the normal test task. You run it as follows:
+You run a task as follows:
 
-[source,java]
+[source,console]
 ----
-gradle weldEmbeddedTest
-----
-
-Or, more simply:
-
-[source,java]
-----
-gradle wET
+gradle weldTest
 ----
 
-Now we just repeat this setup for the other containers.
+Or, using Gradle's abbreviated task names:
+
+[source,console]
+----
+gradle wT
+----
 
 Since you are creating custom test tasks, you likely want to configure
-the default test task to either exclude Arquillian tests are to use a
-default container, perhaps Weld EE Embedded in this case.
+the default `test` task to either exclude Arquillian tests or to use a
+default container.
 
-Here's the full build file with the tasks for our three target
-containers:
+It's now possible to run the Arquillian tests against both containers in
+sequence using a single Gradle command:
 
-[source,java]
+[source,console]
 ----
-apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/repositories/deprecated'
-}
-
-configurations {
-   compileOnly
-   weldEmbeddedTestRuntime { extendsFrom testRuntime }
-   jbossasRemoteTestRuntime { extendsFrom testRuntime, compileOnly }
-   glassfishEmbeddedTestRuntime { extendsFrom testRuntime }
-}
-
-dependencies {
-   compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
-
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
-
-   // temporarily downgrade the weld-ee-embedded-1.1 container
-   weldEmbeddedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-weld-ee-embedded-1.1', version: '1.0.0.Alpha3'
-   weldEmbeddedTestRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-   weldEmbeddedTestRuntime group: 'org.jboss.weld', name: 'weld-core', version: libraryVersions.weld
-   weldEmbeddedTestRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: libraryVersions.slf4j
-   weldEmbeddedTestRuntime group: 'log4j', name: 'log4j', version: libraryVersions.log4j
-
-   jbossasRemoteTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-jbossas-remote-6', version: libraryVersions.arquillian
-   jbossasRemoteTestRuntime group: 'org.jboss.jbossas', name: 'jboss-as-server', classifier: 'client', version: libraryVersions.jbossas, transitive: false
-   jbossasRemoteTestRuntime group: 'org.jboss.jbossas', name: 'jboss-as-profileservice', classifier: 'client', version: libraryVersions.jbossas
-
-   glassfishEmbeddedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-glassfish-embedded-3', version: libraryVersions.arquillian
-   glassfishEmbeddedTestRuntime group: 'org.glassfish.extras', name: 'glassfish-embedded-all', version: libraryVersions.glassfish
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}
-
-task weldEmbeddedTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + configurations.weldEmbeddedTestRuntime
-}
-
-task jbossasRemoteTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + files('src/test/resources-jbossas') + configurations.jbossasRemoteTestRuntime
-}
-
-task glassfishEmbeddedTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + configurations.glassfishEmbeddedTestRuntime
-}
-----
-
-Notice we've added an extra resources directory for remote JBoss AS 6 to
-include the required jndi.properties file. That's a special
-configuration for the remote JBoss AS containers, though won't be
-required after Arquillian 1.0.0.Alpha4.
-
-It's now possible to run the Arquillian tests against each of the three
-containers in sequence using this Gradle command (make sure a JBoss AS
-is started in the background):
-
-[source,java]
-----
-gradle weldEmbeddedTest jbossasRemoteTest glassfishEmbeddedTest
+gradle weldTest wildflyTest
 ----
 
 Pretty cool, huh?
 
 Now let's look at another way to solve this problem.
 
+[[strategy-test-profiles]]
 ===== Strategy #2: Test Profiles
 
 Another way to approach integrating Arquillian into a Gradle build is to
 emulate the behavior of Maven profiles. In this case, we won't be adding
-any extra tasks, rather overriding the Java plugin configuration and
-provided tasks.
+any extra tasks, rather overriding the configuration of the test task
+provided by the Java plugin.
 
 A Maven profile effectively overrides portions of the build
 configuration and is activated using a command option (or some other
-profile activation setting).
+profile activation setting). In Gradle, a project property passed with
+`-P` serves the same purpose.
 
-Once again, let's assume that we want to run the tests against the
-following three Arquillian-supported containers:
+We then create a partial Gradle build file for each container that
+contains the container-specific dependencies and configuration. Create a
+file named weld-profile.gradle:
 
-* Weld EE Embedded 1.1
-* Remote JBoss AS 6
-* Embedded GlassFish 3
-
-All we need to do is customize the test runtime classpath for each
-container. First, let's setup the common compile-time dependencies in
-the main build file:
-
-[source,java]
-----
-apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha3', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-}
-
-configurations {
-   compileOnly
-}
-
-dependencies {
-   group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}
-----
-
-We then need to create a partial Gradle build file for each container
-that contains the container-specific dependencies and configuration.
-Let's start with Weld EE Embedded.
-
-Create a file named weld-ee-embedded-profile.gradle and populate it with
-the following contents:
-
-[source,java]
+[source,groovy]
 ----
 dependencies {
-   // temporarily downgrade the weld-ee-embedded-1.1 container
-   testRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-weld-ee-embedded-1.1', version: '1.0.0.Alpha3'
-   testRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-   testRuntime group: 'org.jboss.weld', name: 'weld-core', version: libraryVersions.weld
-   testRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: libraryVersions.slf4j
-   testRuntime group: 'log4j', name: 'log4j', version: libraryVersions.log4j
+    testRuntimeOnly "org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"
+    testRuntimeOnly "org.jboss.weld.se:weld-se-core:${weldVersion}"
 }
 ----
 
-Here's the partial build file for Remote JBoss AS, named
-jbossas-remote-profile.gradle:
+And one for WildFly, named wildfly-profile.gradle:
 
-[source,java]
+[source,groovy]
 ----
 dependencies {
-   testRuntime group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
-   testRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-jbossas-remote-6', version: libraryVersions.arquillian
-   testRuntime group: 'org.jboss.jbossas', name: 'jboss-as-server', classifier: 'client', version: libraryVersions.jbossas, transitive: false
-   testRuntime group: 'org.jboss.jbossas', name: 'jboss-as-profileservice', classifier: 'client', version: libraryVersions.jbossas
+    testRuntimeOnly "org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"
 }
 
 test {
-   classpath = sourceSets.test.classes + sourceSets.main.classes + files('src/test/resources-jbossas') + configurations.testRuntime
+    systemProperty 'jboss.home', "${buildDir}/wildfly"
 }
 ----
 
-And finally the one for Embedded GlassFish, named
-glassfish-embedded-profile.gradle:
+Now we import the appropriate partial Gradle build into the main build.
+The file is selected based on the value of the project property named
+`profile`:
 
-[source,java]
+[source,groovy]
 ----
-dependencies {
-   testRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-glassfish-embedded-3', version: libraryVersions.arquillian
-   testRuntime group: 'org.glassfish.extras', name: 'glassfish-embedded-all', version: libraryVersions.glassfish
-}
+apply from: "${profile}-profile.gradle"
 ----
 
-Now we need to import the appropriate partial Gradle build into the main
-build. The file will be selected based on the value of the project
-property named profile.
+Tests are run in the Weld SE runtime using this command:
 
-[source,java]
+[source,console]
 ----
-apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-apply from: profile + '-profile.gradle'
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-}
-
-configurations {
-   compileOnly
-}
-
-dependencies {
-   compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
-
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}
-----
-
-Tests are run in the Weld EE Embedded runtime using this command:
-
-[source,java]
-----
-gradle test -Pprofile=weld-ee-embedded
+gradle test -Pprofile=weld
 ----
 
 That's pretty much the same experience you get when you use Maven (and a
@@ -582,23 +333,44 @@ execution
 
 If you have a better idea of how to integrate an Arquillian test suite
 into a Gradle build, we'd love to hear it on the
-http://community.jboss.org/en/arquillian[Arquillian discussion forums].
-
-[[ant-ivy]]
-==== Ant + Ivy
-
-WRITE ME
+https://github.com/orgs/arquillian/discussions[Arquillian discussion forums].
 
 [[ant]]
 ==== Ant
 
-This guide will detail how to use Arquillian using ant. We will use
-maven to download all the required jars.
+Arquillian has no Ant-specific integration, and needs none: the
+`<junit>`, `<junitlauncher>` and `<testng>` tasks all accept an
+arbitrary classpath, which is the only thing Arquillian requires.
 
-Overview of Steps
+The approach is the same as for any other build tool — resolve the
+Arquillian container integration, the container runtime or deployment
+client and your test framework onto a path, then hand that path to the
+test task. Since Arquillian is distributed via Maven Central, the
+simplest way to resolve those artifacts is with
+https://ant.apache.org/ivy/[Apache Ivy] or the
+https://maven.apache.org/resolver-ant-tasks/[Maven Artifact Resolver Ant
+Tasks], rather than by managing jars by hand.
 
-1.  Setup Example Maven project
-2.  Get All Arquillian dependency jars
-3.  configure ant scripts
+Sketching the JUnit Jupiter case:
 
-Work in progress. Please return.
+[source,xml]
+----
+<path id="arquillian.test.path">
+    <fileset dir="lib/test" includes="**/*.jar"/>
+    <pathelement location="${build.classes.dir}"/>
+    <pathelement location="${build.test.classes.dir}"/>
+    <!-- arquillian.xml and other test resources -->
+    <pathelement location="${test.resources.dir}"/>
+</path>
+
+<junitlauncher haltOnFailure="true">
+    <classpath refid="arquillian.test.path"/>
+    <testclasses outputdir="${build.test.reports.dir}">
+        <fileset dir="${build.test.classes.dir}" includes="**/*TestCase.class"/>
+    </testclasses>
+</junitlauncher>
+----
+
+Swapping the target container is a matter of pointing `lib/test` (or the
+resolved Ivy configuration) at a different container adapter, exactly as
+a Maven profile or a Gradle configuration would.

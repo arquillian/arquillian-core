@@ -12,7 +12,7 @@ endif::[]
 
 * <<core-principles, Core Principles>>
 * <<how-it-works, How It Works>>
-* <<integration-testing-in java-ee, Integration Testing In Java EE>>
+* <<integration-testing-in-jakarta-ee, Integration Testing In Jakarta EE>>
 
 We believe that integration and functional testing should be no more
 complex or daunting than unit testing. We created Arquillian to make
@@ -20,14 +20,16 @@ that vision a reality.
 
 *Arquillian is a revolutionary testing platform for Java and the JVM
 that enables developers to easily write and execute integration and
-functional tests for Java middleware, ranging from Java EE and beyond.*
+functional tests for Java middleware, ranging from Jakarta EE and
+beyond.*
 
 Arquillian picks up where unit tests leave off, focusing on the
 integration of application code inside a real runtime environment. Much
-the same way Java EE 5 simplified the server programming model by
-providing declarative services for POJOs, Arquillian equips tests with
-container lifecycle management and test case enrichment. Using
-Arquillian, you can focus on the test, not the plumbing.
+the same way the enterprise Java platform simplified the server
+programming model by providing declarative services for POJOs,
+Arquillian equips tests with container lifecycle management and test
+case enrichment. Using Arquillian, you can focus on the test, not the
+plumbing.
 
 In short, Arquillian aims to make integration and functional testing a
 breeze.
@@ -60,17 +62,41 @@ or executing the "test" goal from the build tool.
 [[how-it-works]]
 ==== How It Works
 
-Using Arquillian, you write a basic test case and annotate it with
-declarative behavior that says, "`@RunWith` Arquillian". This
-declaration tells Arquillian to take over execution of the test when
-it's launched.
+Using Arquillian, you write a basic test case and declare that
+Arquillian should run it. This declaration tells Arquillian to take over
+execution of the test when it's launched. How you write it depends on
+the test framework you use, and Arquillian supports all of them
+side by side:
+
+[source,java]
+----
+// JUnit Jupiter (JUnit 5 and 6)
+@ExtendWith(ArquillianExtension.class)
+public class GreeterTestCase {
+
+// JUnit 4
+@RunWith(Arquillian.class)
+public class GreeterTestCase {
+
+// TestNG
+public class GreeterTestCase extends Arquillian {
+----
+
+[NOTE]
+====
+Examples throughout this guide are written for JUnit Jupiter. Unless a
+section says otherwise, the same example works on JUnit 4 by swapping
+`@ExtendWith(ArquillianExtension.class)` for `@RunWith(Arquillian.class)`
+and using the JUnit 4 `Assert` methods, and on TestNG by extending
+`Arquillian`.
+====
 
 __That's when the real magic happens__.
 
 Launching an Arquillian test is as simple as right-clicking the test
-class in the IDE and selecting _Run As > Test (e.g., JUnit, TestNG,
-Spock, etc)_. Based on the classpath configuration, Arquillian starts or
-binds to the target container (JBoss AS, GlassFish, OpenEJB, etc) and
+class in the IDE and selecting _Run As > Test (e.g., JUnit, TestNG)_.
+Based on the classpath configuration, Arquillian starts or
+binds to the target container (WildFly, GlassFish, Open Liberty, etc) and
 deploys the test archive defined in the `@Deployment` method. The
 archive includes the test case along with the specified classes,
 resources and libraries. Your test then executes inside the container
@@ -83,14 +109,14 @@ transports them back to the test runner for reporting.
 NOTE: Arquillian also has a client run mode, which only deploys the test archive, not the test case.
 
 
-Aside from a few extra declarations (i.e., `@RunWith` and
-`@Deployment`), an Arquillian test looks like any other unit test and
-launched like any other unit test.
+Aside from a few extra declarations (i.e., the Arquillian runner
+declaration and `@Deployment`), an Arquillian test looks like any other
+unit test and launched like any other unit test.
 
-[[integration-testing-in-java-ee]]
-==== Integration Testing In Java EE
+[[integration-testing-in-jakarta-ee]]
+==== Integration Testing In Jakarta EE
 
-Integration testing is very important in Java EE. The reason is
+Integration testing is very important in Jakarta EE. The reason is
 two-fold:
 
 * Business components often interact with resources or sub-system
@@ -107,15 +133,15 @@ injection, etc) is a non-starter because the developer has no idea what
 to even use. Clearly there is a need for a simple solution, and
 Arquillian fills that void.
 
-Some might argue that, as of Java EE 5, the business logic performed by
-most Java EE components can now be tested outside of the container
-because they are POJOs. But let's not forget that in order to isolate
-the business logic in Java EE components from infrastructure services
-(transactions, security, etc), many of those services were pushed into
-declarative programming constructs. At some point you want to make sure
-that the infrastructure services are applied correctly and that the
-business logic functions properly within that context, justifying the
-second reason that integration testing is important in Java EE.
+Some might argue that the business logic performed by most Jakarta EE
+components can be tested outside of the container because they are
+POJOs. But let's not forget that in order to isolate the business logic
+in Jakarta EE components from infrastructure services (transactions,
+security, etc), many of those services were pushed into declarative
+programming constructs. At some point you want to make sure that the
+infrastructure services are applied correctly and that the business
+logic functions properly within that context, justifying the second
+reason that integration testing is important in Jakarta EE.
 
 [[testing-the-real-component]]
 ===== Testing The Real Component
@@ -181,6 +207,6 @@ the classpath hell that typically haunts test runners (Eclipse, Maven),
 it also gives you the option to focus on the interaction between an
 subset of production classes, or to easily swap in alternative classes.
 Within that grouping you get the self-assembly of services provided by
-Java EE---the very integration which is being tested.
+Jakarta EE---the very integration which is being tested.
 
 Let's move on and consider some typical usage scenarios for Arquillian.
