@@ -73,7 +73,7 @@ JUnit Jupiter (JUnit 5 and 6):
 [source,java]
 ----
 @ExtendWith(ArquillianExtension.class)
-public class LocalRunServletTestCase {
+class LocalRunServletTestCase {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
@@ -81,7 +81,7 @@ public class LocalRunServletTestCase {
     }
 
     @Test
-    public void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
+    void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
         String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
         Assertions.assertEquals(
             "hello",

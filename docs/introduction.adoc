@@ -72,7 +72,7 @@ side by side:
 ----
 // JUnit Jupiter (JUnit 5 and 6)
 @ExtendWith(ArquillianExtension.class)
-public class GreeterTestCase {
+class GreeterTestCase {
 
 // JUnit 4
 @RunWith(Arquillian.class)

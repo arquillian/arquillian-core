@@ -155,7 +155,7 @@ and JUnit dependencies below are declared without a version.
 TIP: Use `org.jboss.arquillian.junit:arquillian-junit-container` instead if
 your tests are written against JUnit 4, or
 `org.jboss.arquillian.testng:arquillian-testng-container` for TestNG.
-Testing on a Jakarta EE 9+ container? Import
+If you are testing on a Jakarta EE 9+ container, import
 `org.jboss.arquillian.jakarta:arquillian-jakarta-bom` and use the
 `org.jboss.arquillian.jakarta` artifacts instead.
 

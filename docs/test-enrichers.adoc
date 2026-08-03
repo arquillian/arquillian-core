@@ -61,7 +61,7 @@ Here's an example of a field injection in a test class, on JUnit Jupiter
 [source,java]
 ----
 @ExtendWith(ArquillianExtension.class)
-public class GreeterTestCase {
+class GreeterTestCase {
     @Inject
     private Greeter greeter;
 
@@ -87,7 +87,7 @@ Here's an example of a method argument injection in a test method:
 [source,java]
 ----
 @Test
-public void testGreeting(Greeter greeter) {
+void testGreeting(Greeter greeter) {
   ...
 }
 ----
