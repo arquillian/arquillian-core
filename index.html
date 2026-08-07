@@ -452,7 +452,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_test_enrichers">2.6. Test Enrichers</a></li>
 <li><a href="#_rules">2.7. Rules</a></li>
 <li><a href="#_additional_features">2.8. Additional Features</a></li>
-<li><a href="#_protocols">2.9. Protocols</a></li>
+<li><a href="#protocols">2.9. Protocols</a></li>
 <li><a href="#_build_integration">2.10. Build Integration</a></li>
 </ul>
 </li>
@@ -507,7 +507,7 @@ easily create automated integration, functional and acceptance tests for Java mi
 </ul>
 </div>
 <div class="paragraph">
-<p>To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, JUnit 5 and 6, TestNG 5), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.</p>
+<p>To avoid introducing unnecessary complexity into the developer’s build environment, Arquillian integrates seamlessly with familiar testing frameworks (e.g., JUnit 4, JUnit 5 and 6, TestNG 7), allowing tests to be launched using existing IDE, Ant and Maven test plugins — without any add-ons.</p>
 </div>
 </div>
 </div>
@@ -525,7 +525,7 @@ easily create automated integration, functional and acceptance tests for Java mi
 <p><a href="#how-it-works">How It Works</a></p>
 </li>
 <li>
-<p><a href="#integration-testing-in java-ee">Integration Testing In Java EE</a></p>
+<p><a href="#integration-testing-in-jakarta-ee">Integration Testing In Jakarta EE</a></p>
 </li>
 </ul>
 </div>
@@ -537,15 +537,17 @@ that vision a reality.</p>
 <div class="paragraph">
 <p><strong>Arquillian is a revolutionary testing platform for Java and the JVM
 that enables developers to easily write and execute integration and
-functional tests for Java middleware, ranging from Java EE and beyond.</strong></p>
+functional tests for Java middleware, ranging from Jakarta EE and
+beyond.</strong></p>
 </div>
 <div class="paragraph">
 <p>Arquillian picks up where unit tests leave off, focusing on the
 integration of application code inside a real runtime environment. Much
-the same way Java EE 5 simplified the server programming model by
-providing declarative services for POJOs, Arquillian equips tests with
-container lifecycle management and test case enrichment. Using
-Arquillian, you can focus on the test, not the plumbing.</p>
+the same way the enterprise Java platform simplified the server
+programming model by providing declarative services for POJOs,
+Arquillian equips tests with container lifecycle management and test
+case enrichment. Using Arquillian, you can focus on the test, not the
+plumbing.</p>
 </div>
 <div class="paragraph">
 <p>In short, Arquillian aims to make integration and functional testing a
@@ -590,19 +592,52 @@ or executing the "test" goal from the build tool.</p>
 <div class="sect3">
 <h4 id="how-it-works"><a class="anchor" href="#how-it-works"></a>2.1.2. How It Works</h4>
 <div class="paragraph">
-<p>Using Arquillian, you write a basic test case and annotate it with
-declarative behavior that says, "`@RunWith` Arquillian". This
-declaration tells Arquillian to take over execution of the test when
-it&#8217;s launched.</p>
+<p>Using Arquillian, you write a basic test case and declare that
+Arquillian should run it. This declaration tells Arquillian to take over
+execution of the test when it&#8217;s launched. How you write it depends on
+the test framework you use, and Arquillian supports all of them
+side by side:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">// JUnit Jupiter (JUnit 5 and 6)
+@ExtendWith(ArquillianExtension.class)
+class GreeterTestCase {
+
+// JUnit 4
+@RunWith(Arquillian.class)
+public class GreeterTestCase {
+
+// TestNG
+public class GreeterTestCase extends Arquillian {</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Examples throughout this guide are written for JUnit Jupiter. Unless a
+section says otherwise, the same example works on JUnit 4 by swapping
+<code>@ExtendWith(ArquillianExtension.class)</code> for <code>@RunWith(Arquillian.class)</code>
+and using the JUnit 4 <code>Assert</code> methods, and on TestNG by extending
+<code>Arquillian</code>.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p><em>That&#8217;s when the real magic happens</em>.</p>
 </div>
 <div class="paragraph">
 <p>Launching an Arquillian test is as simple as right-clicking the test
-class in the IDE and selecting <em>Run As &gt; Test (e.g., JUnit, TestNG,
-Spock, etc)</em>. Based on the classpath configuration, Arquillian starts or
-binds to the target container (JBoss AS, GlassFish, OpenEJB, etc) and
+class in the IDE and selecting <em>Run As &gt; Test (e.g., JUnit, TestNG)</em>.
+Based on the classpath configuration, Arquillian starts or
+binds to the target container (WildFly, GlassFish, Open Liberty, etc) and
 deploys the test archive defined in the <code>@Deployment</code> method. The
 archive includes the test case along with the specified classes,
 resources and libraries. Your test then executes inside the container
@@ -625,15 +660,15 @@ Arquillian also has a client run mode, which only deploys the test archive, not 
 </table>
 </div>
 <div class="paragraph">
-<p>Aside from a few extra declarations (i.e., <code>@RunWith</code> and
-<code>@Deployment</code>), an Arquillian test looks like any other unit test and
-launched like any other unit test.</p>
+<p>Aside from a few extra declarations (i.e., the Arquillian runner
+declaration and <code>@Deployment</code>), an Arquillian test looks like any other
+unit test and launched like any other unit test.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="integration-testing-in-java-ee"><a class="anchor" href="#integration-testing-in-java-ee"></a>2.1.3. Integration Testing In Java EE</h4>
+<h4 id="integration-testing-in-jakarta-ee"><a class="anchor" href="#integration-testing-in-jakarta-ee"></a>2.1.3. Integration Testing In Jakarta EE</h4>
 <div class="paragraph">
-<p>Integration testing is very important in Java EE. The reason is
+<p>Integration testing is very important in Jakarta EE. The reason is
 two-fold:</p>
 </div>
 <div class="ulist">
@@ -659,15 +694,15 @@ to even use. Clearly there is a need for a simple solution, and
 Arquillian fills that void.</p>
 </div>
 <div class="paragraph">
-<p>Some might argue that, as of Java EE 5, the business logic performed by
-most Java EE components can now be tested outside of the container
-because they are POJOs. But let&#8217;s not forget that in order to isolate
-the business logic in Java EE components from infrastructure services
-(transactions, security, etc), many of those services were pushed into
-declarative programming constructs. At some point you want to make sure
-that the infrastructure services are applied correctly and that the
-business logic functions properly within that context, justifying the
-second reason that integration testing is important in Java EE.</p>
+<p>Some might argue that the business logic performed by most Jakarta EE
+components can be tested outside of the container because they are
+POJOs. But let&#8217;s not forget that in order to isolate the business logic
+in Jakarta EE components from infrastructure services (transactions,
+security, etc), many of those services were pushed into declarative
+programming constructs. At some point you want to make sure that the
+infrastructure services are applied correctly and that the business
+logic functions properly within that context, justifying the second
+reason that integration testing is important in Jakarta EE.</p>
 </div>
 <div class="sect4">
 <h5 id="testing-the-real-component"><a class="anchor" href="#testing-the-real-component"></a>Testing The Real Component</h5>
@@ -741,7 +776,7 @@ the classpath hell that typically haunts test runners (Eclipse, Maven),
 it also gives you the option to focus on the interaction between an
 subset of production classes, or to easily swap in alternative classes.
 Within that grouping you get the self-assembly of services provided by
-Java EE---the very integration which is being tested.</p>
+Jakarta EE---the very integration which is being tested.</p>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s move on and consider some typical usage scenarios for Arquillian.</p>
@@ -754,9 +789,9 @@ Java EE---the very integration which is being tested.</p>
 <div class="paragraph">
 <p>We promised that integration and functional testing with Arquillian is
 no more complex than writing a unit test. Now it&#8217;s time to prove it to
-you. We&#8217;ve prepared a series of guides designed exclusively to teach you
-how to use Arquillian. You&#8217;ll have the tests running from both Maven and
-Eclipse by the end of the first guide.</p>
+you. We&#8217;ve prepared a series of guides designed exclusively to teach you
+how to use Arquillian. You&#8217;ll have the tests running from both Maven and
+your IDE by the end of the first guide.</p>
 </div>
 <div class="paragraph">
 <p>Head over to the <a href="https://arquillian.org/guides/getting_started">Getting
@@ -926,12 +961,12 @@ container.</p>
 </div>
 <div class="paragraph">
 <p><em>So what is the container that Arquillian uses? Is it some proprietary testing
-container that emulates the behavior of the technology (Java EE)?</em></p>
+container that emulates the behavior of the technology (Jakarta EE)?</em></p>
 </div>
 <div class="paragraph">
-<p>Nope! It&#8217;s pluggable. It can be your target runtime, such as JBoss AS,
+<p>Nope! It&#8217;s pluggable. It can be your target runtime, such as WildFly,
 GlassFish or Tomcat. Or it can even been an embedded container such as
-OpenEJB, GlassFish Embedded or Weld SE. You can even use one container
+GlassFish Embedded or Weld SE. You can even use one container
 for development and another for continuous integration.</p>
 </div>
 <div class="paragraph">
@@ -969,16 +1004,13 @@ plugins!</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Java EE application server (e.g., JBoss AS, GlassFish, WebLogic)</p>
+<p>Jakarta EE application server (e.g., WildFly, GlassFish, Open Liberty)</p>
 </li>
 <li>
 <p>Servlet container (e.g., Tomcat, Jetty)</p>
 </li>
 <li>
-<p>standalone bean container (e.g., OpenEJB, Weld SE)</p>
-</li>
-<li>
-<p>OSGi container</p>
+<p>standalone bean container (e.g., Weld SE)</p>
 </li>
 </ul>
 </div>
@@ -1050,7 +1082,7 @@ target container. The profile is activated either using either a
 commandline flag (-P) or a preference in the IDE.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="https://arquillian.org/getting_started/">Getting Started Guide</a>
+<p>The <a href="https://arquillian.org/guides/getting_started">Getting Started Guide</a>
 explains how to setup and use Maven profiles for this purpose in more
 detail.</p>
 </div>
@@ -1080,12 +1112,12 @@ requirement.</p>
 <div class="paragraph">
 <p>Let&#8217;s imagine that we&#8217;re working for the company <code>example.com</code> and in
 our environment we have two servers; <code>test.example.com</code> and
-<code>hudson.example.com</code>. <code>test.example.com</code> is the JBoss instance we use
-for our integration tests and <code>hudson.example.com</code> is our continuous
+<code>ci.example.com</code>. <code>test.example.com</code> is the WildFly instance we use
+for our integration tests and <code>ci.example.com</code> is our continuous
 integration server that we want to run our integration suite from. By
 default, Arquillian will use localhost, so we need to tell it to use
-<code>test.example.com</code> to run the tests. The JBoss AS container by default
-use the Servlet protocol, so we have to override the default
+<code>test.example.com</code> to run the tests. The WildFly container by default
+uses the Servlet protocol, so we have to override the default
 configuration.</p>
 </div>
 <div class="listingblock">
@@ -1095,9 +1127,10 @@ configuration.</p>
     xmlns="http://jboss.org/schema/arquillian"
     xsi:schemaLocation="http://jboss.org/schema/arquillian http://www.jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
 
-    &lt;container qualifier="jbossas" default="true"&gt;
+    &lt;container qualifier="wildfly" default="true"&gt;
         &lt;configuration&gt;
-            &lt;property name="providerUrl"&gt;jnp://test.example.com:1099&lt;/property&gt;
+            &lt;property name="managementAddress"&gt;test.example.com&lt;/property&gt;
+            &lt;property name="managementPort"&gt;9990&lt;/property&gt;
         &lt;/configuration&gt;
         &lt;protocol type="Servlet 3.0"&gt;
             &lt;property name="host"&gt;test.example.com&lt;/property&gt;
@@ -1109,29 +1142,32 @@ configuration.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>That should do it! Here we use the JBoss AS 6.0 Remote container which
-default use the Servlet 3.0 protocol implementation. We override the
+<p>That should do it! Here we use the WildFly Remote container which by
+default uses the Servlet 3.0 protocol implementation. We override the
 default Servlet configuration to say that the http requests for this
 container can be executed over <code>test.example.com:8181</code>, but we also need
 to configure the container so it knows where to deploy our archives. We
 could for example have configured the Servlet protocol to communicate
-with a Apache server in front of the JBoss AS Server if we wanted to.
+with a reverse proxy in front of the WildFly server if we wanted to.
 Each container has different configuration options.</p>
 </div>
 <div class="paragraph">
-<p>For a complete overview of all the containers and their configuration
-options, see the
-<a href="https://docs.jboss.org/author/display/ARQ/Container+adapters">container
-adapters</a> appendix.</p>
+<p>For a complete overview of a given container&#8217;s configuration options,
+consult the documentation of that container adapter. The adapters are
+maintained outside of Arquillian Core; the WildFly adapters, for
+example, live in the
+<a href="https://github.com/wildfly/wildfly-arquillian">wildfly-arquillian</a>
+project.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="supported-containers"><a class="anchor" href="#supported-containers"></a>2.5.3. Supported Containers</h4>
 <div class="paragraph">
-<p>Please see the
-<a href="https://docs.jboss.org/author/display/ARQ/Container+adapters">container
-adapters</a> appendix for a list of supported containers, including details
-for how to use and configure them.</p>
+<p>Container adapters are released independently of Arquillian Core, so
+the list of supported containers is not fixed by this documentation. See
+the <a href="https://arquillian.org/modules/">Arquillian modules</a> listing for
+adapters and the documentation of each adapter for details on how to use
+and configure it.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1151,24 +1187,24 @@ using Java system properties.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
 &lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns="http://jboss.org/schema/arquillian"
-   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+   xmlns="http://jboss.org/schema/arquillian"
+   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
 
-   &lt;container qualifier="jbossas_managed" default="true"&gt;
-      &lt;protocol type="Servlet 3.0"&gt;
-         &lt;property name="executionType"&gt;MANAGED&lt;/property&gt;
-      &lt;/protocol&gt;
-      &lt;configuration&gt;
-         &lt;property name="jbossHome"&gt;${project.baseDir}/target/jboss-as-7.1.1.Final/&lt;/property&gt;
-         &lt;property name="allowConnectingToRunningServer"&gt;true&lt;/property&gt;
-      &lt;/configuration&gt;
-   &lt;/container&gt;
-   
-   &lt;container qualifier="jetty"&gt;
-      &lt;configuration&gt;
-          &lt;more configuration&gt;...&lt;/more configuration&gt;
-      &lt;/configuration&gt;
-   &lt;/container&gt;
+   &lt;container qualifier="wildfly_managed" default="true"&gt;
+      &lt;protocol type="Servlet 3.0"&gt;
+         &lt;property name="executionType"&gt;MANAGED&lt;/property&gt;
+      &lt;/protocol&gt;
+      &lt;configuration&gt;
+         &lt;property name="jbossHome"&gt;${project.baseDir}/target/wildfly/&lt;/property&gt;
+         &lt;property name="allowConnectingToRunningServer"&gt;true&lt;/property&gt;
+      &lt;/configuration&gt;
+   &lt;/container&gt;
+
+   &lt;container qualifier="jetty"&gt;
+      &lt;configuration&gt;
+         &lt;!-- container specific configuration properties --&gt;
+      &lt;/configuration&gt;
+   &lt;/container&gt;
 &lt;/arquillian&gt;</code></pre>
 </div>
 </div>
@@ -1177,8 +1213,8 @@ using Java system properties.</p>
 <h5 id="_activating_a_configuration_via_the_command_line"><a class="anchor" href="#_activating_a_configuration_via_the_command_line"></a>Activating a configuration via the command line</h5>
 <div class="paragraph">
 <p>The -Darquillian.launch system property is what controls arquillian.xml
-configuration selection. If you are running tests from Eclipse or
-directly from the command like, you should add the -D system property to
+configuration selection. If you are running tests from your IDE or
+directly from the command line, you should add the -D system property to
 your launch configuration or command.</p>
 </div>
 </div>
@@ -1192,19 +1228,19 @@ the 'arquillian.launch' system property for test execution, as follows:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml">&lt;profile&gt;
-         &lt;id&gt;JBOSS_AS_MANAGED_7.X&lt;/id&gt;
-         &lt;build&gt;
-            &lt;plugins&gt;
-               &lt;plugin&gt;
-                  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-                  &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
-                  &lt;configuration&gt;
-                     &lt;systemPropertyVariables&gt;
-                        &lt;arquillian.launch&gt;jbossas_managed&lt;/arquillian.launch&gt;
-                     &lt;/systemPropertyVariables&gt;
-                  &lt;/configuration&gt;
-               &lt;/plugin&gt;
-  ...</code></pre>
+   &lt;id&gt;wildfly-managed&lt;/id&gt;
+   &lt;build&gt;
+      &lt;plugins&gt;
+         &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;configuration&gt;
+               &lt;systemPropertyVariables&gt;
+                  &lt;arquillian.launch&gt;wildfly_managed&lt;/arquillian.launch&gt;
+               &lt;/systemPropertyVariables&gt;
+            &lt;/configuration&gt;
+         &lt;/plugin&gt;
+         ...</code></pre>
 </div>
 </div>
 </div>
@@ -1288,7 +1324,22 @@ annotations.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>Here&#8217;s an example of a field injection in a test class:</p>
+<p>Here&#8217;s an example of a field injection in a test class, on JUnit Jupiter
+(JUnit 5 and 6):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">@ExtendWith(ArquillianExtension.class)
+class GreeterTestCase {
+    @Inject
+    private Greeter greeter;
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and the same test on JUnit 4:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1307,7 +1358,7 @@ public class GreeterTestCase {
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java">@Test
-public void testGreeting(Greeter greeter) {
+void testGreeting(Greeter greeter) {
   ...
 }</code></pre>
 </div>
@@ -1326,10 +1377,10 @@ the box:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>@Resource</code> - Java EE resource injections</p>
+<p><code>@Resource</code> - Jakarta EE resource injections</p>
 </li>
 <li>
-<p><code>@EJB</code> - EJB session bean reference injections</p>
+<p><code>@EJB</code> - Enterprise bean reference injections</p>
 </li>
 <li>
 <p><code>@Inject</code>, <code>@Resource</code>, <code>@EJB</code>, <code>@PersistenceContext</code> and
@@ -1341,20 +1392,47 @@ the box:</p>
 <p>The first two enrichers use JNDI to lookup the instance to inject. The
 CDI injections are handled by treating the test class as a bean capable
 of receiving standard CDI injections (non-contextual injection). Since
-CDI requires containers to satisfy all Java EE injection points on a CDI
-bean, the <code>@Resource</code>, <code>@EJB</code>, <code>@PersistenceContext</code> and
+CDI requires containers to satisfy all Jakarta EE injection points on a
+CDI bean, the <code>@Resource</code>, <code>@EJB</code>, <code>@PersistenceContext</code> and
 <code>@PersistenceUnit</code> injections are supported transitively by the CDI
 enricher. In fact, because of CDI&#8217;s tight integration with the
 container, <code>@EJB</code> injections in the test class are satisfied according
 to specification when the CDI enricher is available.</p>
+</div>
+<div class="paragraph">
+<p>Arquillian also ships an enricher that makes a JNDI <code>Context</code> available
+via <code>@ArquillianResource</code>, for cases where you want to perform lookups
+by hand:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">@ArquillianResource
+private Context context;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Arquillian Core itself is built against the <code>javax.<strong></code> packages.
+Artifacts transformed to the <code>jakarta.</strong></code> namespace are published
+separately under the <code>org.jboss.arquillian.jakarta</code> group id, with their
+own versioning and BOM (<code>arquillian-jakarta-bom</code>). Use those when
+testing on a Jakarta EE 9 or newer container.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect5">
 <h6 id="resource-injection"><a class="anchor" href="#resource-injection"></a>Resource Injection</h6>
 <div class="paragraph">
 <p>The <code>@Resource</code> annotation gives you access to any object which is
 available via JNDI. It follows the standard rules for <code>@Resource</code> (as
-defined in the Section 2.3 of the Common Annotations for the Java
-Platform specification).</p>
+defined in the Jakarta Annotations specification, formerly known as
+Common Annotations for the Java Platform).</p>
 </div>
 </div>
 <div class="sect5">
@@ -1383,9 +1461,10 @@ unqualified interface name + "/no-interface"</code></pre>
 fail.</p>
 </div>
 <div class="paragraph">
-<p>At the moment, the lookup for an EJB session reference relies on some
-common naming convention of EJB beans. In the future the lookup will
-rely on the standard JNDI naming conventions established in Java EE 6.</p>
+<p>Note that this lookup relies on common naming conventions for enterprise
+beans rather than purely on the portable <code>java:global</code> JNDI names. Where
+possible, prefer the CDI enricher, which resolves <code>@EJB</code> injection points
+through the container itself.</p>
 </div>
 </div>
 <div class="sect5">
@@ -1402,7 +1481,8 @@ add a beans.xml to the archive:</p>
 public static JavaArchive createTestArchive() {
    return ShrinkWrap.create(JavaArchive.class, "test.jar")
       .addClass(NameOfClassUnderTest.class)
-      .addAsManifestResource(EmptyAsset.INSTANCE, Paths.create("beans.xml"))</code></pre>
+      .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1417,8 +1497,8 @@ time-to-time.</p>
 <div class="sect3">
 <h4 id="active-scopes"><a class="anchor" href="#active-scopes"></a>2.6.2. Active Scopes</h4>
 <div class="paragraph">
-<p>When running your tests the embedded Weld EE container, Arquillian
-activates scopes as follows:</p>
+<p>When running your tests in an embedded CDI container such as Weld SE,
+Arquillian activates scopes as follows:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1444,6 +1524,22 @@ future release of Arquillian.</p>
 <div class="paragraph">
 <p>If you want to use Arquillian Testing Platform with other JUnit Runner, you can now use JUnit Rules - <code>ArquillianTestClass</code> and <code>ArquillianTest</code> - and happily let Arquillian do the heavy lifting for your tests.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Rules are a JUnit 4 concept. On JUnit Jupiter (JUnit 5 and 6) there is
+no such restriction — <code>ArquillianExtension</code> is a JUnit extension and composes
+with other extensions directly, so use
+<code>@ExtendWith(ArquillianExtension.class)</code> (or the <code>@ArquillianTest</code>
+shorthand) instead.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>To get the similar functionality what the <code>@RunWith(Arquillian.class)</code> is offering you should require both rules i.e. <code>ArquillianTestClass</code> and <code>ArquillianTest</code>.
 If you are trying to run tests with one rule, it won&#8217;t work as per expectations. We are not enforcing user to define both rules as implementations of <code>MethodRuleChain</code>
@@ -1457,7 +1553,8 @@ we can&#8217;t check if your MethodRuleChain has <code>ArquillianTest</code> Rul
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-In order to use this feature, your project needs JUnit <code>4.12</code> version.
+In order to use this feature, your project needs JUnit <code>4.12</code> or later
+(Arquillian builds and tests against <code>4.13.2</code>).
 </td>
 </tr>
 </table>
@@ -1503,8 +1600,8 @@ In order to use this feature, your project needs JUnit <code>4.12</code> version
 However while using above Junit Rules you can&#8217;t inject method scoped Arquillian resources.
 Unfortunately it is not possible to have one rule acting as both test class and test method rule. For more info
  see this <a href="https://github.com/junit-team/junit4/issues/351#issuecomment-102084524">comment</a>.
-In order to use any other JUnit Method Rule with <code>ArquillianTest</code> Rule, you have to use it with <code>RuleChain</code>
-having <code>ArquillianTest</code> as outer Rule.
+In order to use any other JUnit Method Rule with <code>ArquillianTest</code> Rule, you have to use it with
+<code>org.jboss.arquillian.junit.MethodRuleChain</code> having <code>ArquillianTest</code> as the outer Rule.
 e.g.
 </td>
 </tr>
@@ -1512,8 +1609,9 @@ e.g.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">   @Rule
-   public MethodRule testWatchman = MethodRuleChain.outer(new ArquillianTest().around(new TestWatchman());</code></pre>
+<pre class="CodeRay highlight"><code data-lang="java">@Rule
+public MethodRuleChain chain = MethodRuleChain.outer(new ArquillianTest())
+                                              .around(new MyOtherMethodRule());</code></pre>
 </div>
 </div>
 </div>
@@ -1594,7 +1692,7 @@ remotely. In this mode, the test executes in the remote container.</p>
 <p><em>Arquillian uses this mode by default.</em></p>
 </div>
 <div class="paragraph">
-<p>See the Complete Protocol Reference for an overview of the expected
+<p>See <a href="#protocols">Protocols</a> for an overview of the expected
 output of the packaging process when you provide a <code>@Deployment</code>.</p>
 </div>
 </div>
@@ -1610,7 +1708,34 @@ outside, as your clients see it. The only thing Arquillian does is to
 control the lifecycle of your <code>@Deployment</code>.</p>
 </div>
 <div class="paragraph">
-<p>Here is an example calling a Servlet using the <code>as client</code> mode.</p>
+<p>Here is an example calling a Servlet using the <code>as client</code> mode, on
+JUnit Jupiter (JUnit 5 and 6):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">@ExtendWith(ArquillianExtension.class)
+class LocalRunServletTestCase {
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClass(TestServlet.class);
+    }
+
+    @Test
+    void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
+        String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
+        Assertions.assertEquals(
+            "hello",
+            body,
+            "Verify that the servlet was deployed and returns the expected result");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same test written for JUnit 4 — note that the runner declaration
+differs and that JUnit 4&#8217;s <code>Assert</code> takes the message as the <strong>first</strong>
+argument rather than the last:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1620,7 +1745,7 @@ public class LocalRunServletTestCase {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClass(TestServlet.class);
-   }
+    }
 
     @Test
     public void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
@@ -1629,7 +1754,7 @@ public class LocalRunServletTestCase {
             "Verify that the servlet was deployed and returns the expected result",
             "hello",
             body);
-   }
+    }
 }</code></pre>
 </div>
 </div>
@@ -1720,8 +1845,8 @@ multiple internal objects.</p>
 </td>
 <td class="content">
 Note that <code>@ArquillianResource</code> injection of URLs is only supported
-for in-container tests since Arquillian version 1.1.9.Final
-(see <a href="https://redhat.atlassian.net/browse/ARQ-540">ARQ-540</a>).
+for in-container tests since Arquillian version 1.1.9.Final
+(see <a href="https://redhat.atlassian.net/browse/ARQ-540">ARQ-540</a>).
 </td>
 </tr>
 </table>
@@ -1820,11 +1945,13 @@ Arquillian configuration.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
-&lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+&lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://jboss.org/schema/arquillian"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
     &lt;group qualifier="tomcat-cluster" default="true"&gt;
         &lt;container qualifier="container-1" default="true"&gt;
             &lt;configuration&gt;
-                &lt;property name="tomcatHome"&gt;target/tomcat-embedded-6-standby&lt;/property&gt;
+                &lt;property name="tomcatHome"&gt;target/tomcat-standby&lt;/property&gt;
                 &lt;property name="workDir"&gt;work&lt;/property&gt;
                 &lt;property name="bindHttpPort"&gt;8880&lt;/property&gt;
                 &lt;property name="unpackArchive"&gt;true&lt;/property&gt;
@@ -1832,7 +1959,7 @@ Arquillian configuration.</p>
         &lt;/container&gt;
         &lt;container qualifier="container-2"&gt;
             &lt;configuration&gt;
-                &lt;property name="tomcatHome"&gt;target/tomcat-embedded-6-active-1&lt;/property&gt;
+                &lt;property name="tomcatHome"&gt;target/tomcat-active-1&lt;/property&gt;
                 &lt;property name="workDir"&gt;work&lt;/property&gt;
                 &lt;property name="bindHttpPort"&gt;8881&lt;/property&gt;
                 &lt;property name="unpackArchive"&gt;true&lt;/property&gt;
@@ -1911,10 +2038,11 @@ can not communicate with the container using the default protocol due to
 e.g. firewall settings.</p>
 </div>
 <div class="paragraph">
-<p>Arquillian only supports Servlet 2.5 and Servlet 3.0 at this time. EJB
-3.0 and 3.1 are planned. But you might implement your own Protocol. For
-doing this, please see the Complete Protocol Reference for the better
-knowing what is currently supported.</p>
+<p>Arquillian Core ships the Local, Servlet 2.5 and Servlet 3.0 protocols,
+plus a JMX protocol base that container adapters build on. Container
+adapters may contribute further protocols, and you can implement your
+own. See <a href="#protocols">Protocols</a> for what each of the bundled protocols
+does and how it can be configured.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1932,30 +2060,45 @@ test classes to avoid assertions to be enabled throughout the
 container&#8217;s source code.</p>
 </div>
 <div class="sect4">
-<h5 id="enabling-assertions-in-jboss-as"><a class="anchor" href="#enabling-assertions-in-jboss-as"></a>Enabling Assertions In JBoss AS</h5>
+<h5 id="enabling-assertions-in-wildfly"><a class="anchor" href="#enabling-assertions-in-wildfly"></a>Enabling Assertions In WildFly</h5>
 <div class="paragraph">
-<p>If you are using JBoss AS, the quickest way to setup debug mode is to
-add the following line to the end of $JBOSS_AS_HOME/bin/run.conf
+<p>If you are using WildFly, the quickest way to enable assertions is to
+add the following line to the end of $JBOSS_HOME/bin/standalone.conf
 (Unix/Linux):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">JAVA_OPTS="$JAVA_OPTS -ea"</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">JAVA_OPTS="$JAVA_OPTS -ea"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>or before the line :JAVA_OPTS_SET in $JBOSS_AS_HOME/bin/run.conf.bat
+<p>or before the line :JAVA_OPTS_SET in $JBOSS_HOME/bin/standalone.conf.bat
 (Windows)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">set "JAVA_OPTS=%JAVA_OPTS% -ea"</code></pre>
+<pre class="CodeRay highlight"><code data-lang="batch">set "JAVA_OPTS=%JAVA_OPTS% -ea"</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Keep in mind your container will always run with assertions enabled
 after making this change. You might want to consider putting some logic
-in the run.conf* file.</p>
+in the standalone.conf* file.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+With a managed container adapter you can usually pass <code>-ea</code> through
+the adapter&#8217;s own configuration instead — for example the <code>javaVmArguments</code>
+property of the WildFly managed adapter — which keeps the change scoped
+to the test run.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>As an alternative, we recommend using the 'Assert' object that comes
@@ -1968,7 +2111,7 @@ output.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_protocols"><a class="anchor" href="#_protocols"></a>2.9. Protocols</h3>
+<h3 id="protocols"><a class="anchor" href="#protocols"></a>2.9. Protocols</h3>
 <div class="paragraph">
 <p>In order to support running the same test locally and in remote
 containers, Arquillian uses an SPI that controls which protocol is used
@@ -1987,14 +2130,19 @@ be configured.</p>
 <li>
 <p><a href="#servlet-3.0">Servlet 3.0</a></p>
 </li>
+<li>
+<p><a href="#jmx">JMX</a></p>
+</li>
 </ul>
 </div>
 <div class="sect3">
 <h4 id="local"><a class="anchor" href="#local"></a>2.9.1. Local</h4>
 <div class="paragraph">
-<p>The Local Protocol implementation is used by most EE5 compliant
-containers. It does nothing to the deployment. The Local Protocol is also
-used when executing in run mode <code>as client</code>.</p>
+<p>The Local Protocol does nothing to the deployment and invokes the test
+method directly in the test runner&#8217;s JVM. It is the default for
+containers that have no web component to talk to, such as embedded CDI
+containers. Tests running in <code>as client</code> mode are invoked the same way,
+whatever protocol the container declares.</p>
 </div>
 <div class="paragraph">
 <p><strong>Packaging rules</strong></p>
@@ -2056,8 +2204,9 @@ used when executing in run mode <code>as client</code>.</p>
 <div class="sect3">
 <h4 id="servlet-2.5"><a class="anchor" href="#servlet-2.5"></a>2.9.2. Servlet 2.5</h4>
 <div class="paragraph">
-<p>The Servlet 2.5 Protocol implementation is used by most EE5 compliant
-containers. It will attempt to add a war to the deployment.</p>
+<p>The Servlet 2.5 Protocol implementation targets containers that only
+provide the Servlet 2.5 programming model (no web fragments). It will
+attempt to add a war to the deployment.</p>
 </div>
 <div class="paragraph">
 <p><strong>Packaging rules</strong></p>
@@ -2120,6 +2269,12 @@ containers. It will attempt to add a war to the deployment.</p>
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">scheme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Used to override the Deployments default scheme (e.g. <code>https</code>).</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">host</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
@@ -2137,6 +2292,14 @@ containers. It will attempt to add a war to the deployment.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Used to override the Deployments default contextRoot.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pullInMilliSeconds</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interval at which the protocol&#8217;s command service polls the container for
+ remote events. Used by extensions that exchange data between the
+ container and the client.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2144,8 +2307,9 @@ containers. It will attempt to add a war to the deployment.</p>
 <div class="sect3">
 <h4 id="servlet-3.0"><a class="anchor" href="#servlet-3.0"></a>2.9.3. Servlet 3.0</h4>
 <div class="paragraph">
-<p>The Servlet 3.0 Protocol implementation is used by most EE6 compliant
-containers. It will attempt to add a web-fragment to the deployment.</p>
+<p>The Servlet 3.0 Protocol implementation is the default for most modern
+containers, including all Jakarta EE ones. It will attempt to add a
+web-fragment to the deployment.</p>
 </div>
 <div class="paragraph">
 <p><strong>Packaging rules</strong></p>
@@ -2207,6 +2371,12 @@ containers. It will attempt to add a web-fragment to the deployment.</p>
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">scheme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Used to override the Deployments default scheme (e.g. <code>https</code>).</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">host</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
@@ -2224,8 +2394,35 @@ containers. It will attempt to add a web-fragment to the deployment.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Used to override the Deployments default contextRoot.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pullInMilliSeconds</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interval at which the protocol&#8217;s command service polls the container for
+ remote events. Used by extensions that exchange data between the
+ container and the client.</p></td>
+</tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jmx"><a class="anchor" href="#jmx"></a>2.9.4. JMX</h4>
+<div class="paragraph">
+<p>Arquillian Core ships the base of a JMX protocol
+(<code>org.jboss.arquillian.protocol.jmx.AbstractJMXProtocol</code>) rather than a
+ready-to-use protocol. It communicates with the container over a JMX
+<code>MBeanServerConnection</code> instead of over HTTP, which makes it a fit for
+containers that have no web component (an OSGi framework, for instance).</p>
+</div>
+<div class="paragraph">
+<p>Because the way an MBean server is located is entirely container
+specific, container adapters subclass <code>AbstractJMXProtocol</code>, supply the
+protocol name via <code>getProtocolName()</code> and provide the
+<code>MBeanServerConnection</code>. Consult the documentation of your container
+adapter to find out whether it offers a JMX protocol and what its name
+is, as that name is what you pass to <code>@OverProtocol</code> or to the
+<code>&lt;protocol type="&#8230;&#8203;"&gt;</code> element in <code>arquillian.xml</code>.</p>
 </div>
 </div>
 </div>
@@ -2310,7 +2507,7 @@ a Maven project is covered in detail in the
 <div class="sect3">
 <h4 id="gradle"><a class="anchor" href="#gradle"></a>2.10.3. Gradle</h4>
 <div class="paragraph">
-<p><a href="http://gradle.org">Gradle</a> is a build tool that allows you to create
+<p><a href="https://gradle.org">Gradle</a> is a build tool that allows you to create
 declarative, maintainable, concise and highly-performing builds. More
 importantly, in this context, Gradle gives you all the freedom you need
 instead of imposing a rigid build lifecycle on you. You&#8217;ll get a glimpse
@@ -2327,7 +2524,7 @@ Gradle:</p>
 <p>Container-specific test tasks</p>
 </li>
 <li>
-<p>Test "profiles" via build fragment imports</p>
+<p>Test "profiles" via a project property</p>
 </li>
 </ol>
 </div>
@@ -2339,169 +2536,121 @@ familiar to Maven users. Of course, Gradle is so flexible that there are
 likely other solutions for this problem. We invite you to give us
 feedback if you find a better way (or another way worth documenting).</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The examples below use the Groovy DSL (<code>build.gradle</code>) and assume a
+reasonably recent Gradle version. Container adapters are released
+independently of Arquillian Core, so substitute the adapter coordinates
+and versions that match the container you are targeting.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Let&#8217;s get the common build stuff out of the way, then dive into the two
 strategies listed above.</p>
 </div>
 <div class="sect4">
-<h5 id="_apply_from_common"><a class="anchor" href="#_apply_from_common"></a>apply from: common</h5>
+<h5 id="_the_common_build"><a class="anchor" href="#_the_common_build"></a>The common build</h5>
 <div class="paragraph">
-<p>The simplest Gradle build for a Java project is a sparse one line.</p>
+<p>The simplest Gradle build for a Java project is a sparse few lines.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Put this line into a file named build.gradle at the root of the project,
-which is the standard location of the Gradle build file. (Perhaps after
-seeing this configuration you&#8217;ll understand the reference in the section
-title).</p>
-</div>
-<div class="paragraph">
-<p>Next we&#8217;ll add the Maven Central and JBoss Community repository
-definitions, so that we can pull down dependent libraries. The latter
-repository hosts the Arquillian artifacts.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id 'java'
+}
 
 repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
+    mavenCentral()
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If your SCM (e.g., SVN, Git) is already ignoring the target directory,
-you may want to move the Gradle build output underneath this folder,
-rather than allowing Gradle to use it&#8217;s default build directory, build.
-Let&#8217;s add that configuration to the common build logic as well:</p>
+<p>Put this into a file named build.gradle at the root of the project,
+which is the standard location of the Gradle build file. Arquillian and
+the common container adapters are all published to Maven Central, so no
+extra repository declarations are needed.</p>
+</div>
+<div class="paragraph">
+<p>We recommend centralizing version numbers at the top of your build to
+make upgrading your dependencies easy. Better still, let the Arquillian
+BOM manage them for you:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
+<pre class="CodeRay highlight"><code data-lang="groovy">ext {
+    // substitute the current releases
+    arquillianVersion = '&lt;arquillian.version&gt;'
+    junitVersion = '&lt;junit.version&gt;'
+    jakartaeeVersion = '&lt;jakartaee.version&gt;'
+    weldAdapterVersion = '&lt;weld.adapter.version&gt;'
+    weldVersion = '&lt;weld.version&gt;'
+    wildflyArquillianVersion = '&lt;wildfly.arquillian.version&gt;'
+}
 
-buildDir = 'target/gradle-build'
+dependencies {
+    testImplementation platform("org.jboss.arquillian:arquillian-bom:${arquillianVersion}")
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
 
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
+    testImplementation 'org.jboss.arquillian.junit5:arquillian-junit5-container'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you are using Gradle alongside Maven, you shouldn&#8217;t set the buildDir
-to target since Gradle organizes compiled classes different than Maven
-does, possibly leading to conflicts (Though, the behavior of Gradle can
-also be customized).</p>
+<p>Both BOMs are imported with <code>platform(&#8230;&#8203;)</code>, so the individual Arquillian
+and JUnit dependencies below are declared without a version.</p>
 </div>
-<div class="paragraph">
-<p>We also recommend that you centralize version numbers at the top of your
-build to make upgrading your dependency easy. This list will grow as you
-add other containers, but we&#8217;ll seed the list for the examples below:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We also need to add the unit test library (JUnit or TestNG) and the
-corresponding Arquillian integration:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">dependencies {
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
-}</code></pre>
-</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use <code>org.jboss.arquillian.junit:arquillian-junit-container</code> instead if
+your tests are written against JUnit 4, or
+<code>org.jboss.arquillian.testng:arquillian-testng-container</code> for TestNG.
+If you are testing on a Jakarta EE 9+ container, import
+<code>org.jboss.arquillian.jakarta:arquillian-jakarta-bom</code> and use the
+<code>org.jboss.arquillian.jakarta</code> artifacts instead.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>In this example, we&#8217;ll assume the project is compiling against APIs that
-are provided by the target container runtime, so we need to add a
-dependency configuration (aka scope) to include libraries on the compile
-classpath but excluded from the runtime classpath. In the future, Gradle
-will include support for such a scope. Until then, we&#8217;ll define one
-ourselves in the configurations closure.</p>
+are provided by the target container runtime. Gradle has a built-in
+<code>compileOnly</code> configuration for exactly that — libraries on the compile
+classpath but excluded from the runtime classpath:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">configurations {
-   compileOnly
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We also need to add the dependencies associated with that configuration
-to the compile classpaths using the sourceSets closure:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Here&#8217;s the Gradle build all together now:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha3', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-}
-
-configurations {
-   compileOnly
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    compileOnly "jakarta.platform:jakarta.jakartaee-api:${jakartaeeVersion}"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Now that the foundation of a build is in place (or you&#8217;ve added these
-elements to your existing Gradle build), we are ready to configuring the
+elements to your existing Gradle build), we are ready to configure the
 container-specific test tasks. In the first approach, we&#8217;ll create a
 unique dependency configuration and task for each container.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_strategy_1_container_specific_test_tasks"><a class="anchor" href="#_strategy_1_container_specific_test_tasks"></a>Strategy #1: Container-Specific Test Tasks</h5>
+<h5 id="strategy-container-specific-test-tasks"><a class="anchor" href="#strategy-container-specific-test-tasks"></a>Strategy #1: Container-Specific Test Tasks</h5>
 <div class="paragraph">
 <p>Each project in Gradle is made up of one or more tasks. A task
 represents some atomic piece of work which a build performs. Examples
@@ -2513,196 +2662,93 @@ own classpath configuration. We&#8217;ll use this to configure test executions
 for each container.</p>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s assume that we want to run the tests against the following three
-Arquillian-supported containers:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Weld EE Embedded 1.1</p>
-</li>
-<li>
-<p>Remote JBoss AS 6</p>
-</li>
-<li>
-<p>Embedded GlassFish 3</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>We&#8217;ll need three components for each container:</p>
+<p>Let&#8217;s assume that we want to run the tests against two
+Arquillian-supported containers, a managed WildFly and Weld SE. We&#8217;ll
+need two components for each container:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Dependency configuration (scope)</p>
+<p>A dependency configuration extending the test runtime classpath</p>
 </li>
 <li>
-<p>Runtime dependencies</p>
-</li>
-<li>
-<p>Custom test task</p>
+<p>A test task using that configuration</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>We&#8217;ll start with the Weld EE Embedded container. Starting from the
-Gradle build defined in the previous section, we first define a
-configuration for the test runtime dependencies.</p>
+<p>We&#8217;ll start with the Weld SE container. Starting from the Gradle build
+defined in the previous section, we first define a configuration for the
+test runtime dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">configurations {
-   compileOnly
-   weldEmbeddedTestRuntime { extendsFrom testRuntime }
+<pre class="CodeRay highlight"><code data-lang="groovy">configurations {
+    weldTestRuntime.extendsFrom testRuntimeClasspath
+    wildflyTestRuntime.extendsFrom testRuntimeClasspath
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Next we add the dependencies for compiling against the Java EE API and
-running Arquillian tests in the Weld EE Embedded container:</p>
+<p>Next we add the container adapter and container runtime for each:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">dependencies {
-   compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    weldTestRuntime "org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"
+    weldTestRuntime "org.jboss.weld.se:weld-se-core:${weldVersion}"
 
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
+    wildflyTestRuntime "org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, we define a test task per container:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">tasks.register('weldTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.output + sourceSets.main.output + configurations.weldTestRuntime
+    useJUnitPlatform()
+}
 
-   // temporarily downgrade the weld-ee-embedded-1.1 container
-   weldEmbeddedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-weld-ee-embedded-1.1', version: '1.0.0.Alpha3'
-   weldEmbeddedTestRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-   weldEmbeddedTestRuntime group: 'org.jboss.weld', name: 'weld-core', version: libraryVersions.weld
-   weldEmbeddedTestRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: libraryVersions.slf4j
-   weldEmbeddedTestRuntime group: 'log4j', name: 'log4j', version: libraryVersions.log4j
+tasks.register('wildflyTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.output + sourceSets.main.output + configurations.wildflyTestRuntime
+    useJUnitPlatform()
+    systemProperty 'jboss.home', "${buildDir}/wildfly"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Finally, we define the test task:</p>
+<p>You run a task as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">task weldEmbeddedTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + configurations.weldEmbeddedTestRuntime
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="console">gradle weldTest</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This task will execute in the lifecycle setup by the Java plugin in
-place of the normal test task. You run it as follows:</p>
+<p>Or, using Gradle&#8217;s abbreviated task names:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">gradle weldEmbeddedTest</code></pre>
+<pre class="CodeRay highlight"><code data-lang="console">gradle wT</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Or, more simply:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">gradle wET</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now we just repeat this setup for the other containers.</p>
 </div>
 <div class="paragraph">
 <p>Since you are creating custom test tasks, you likely want to configure
-the default test task to either exclude Arquillian tests are to use a
-default container, perhaps Weld EE Embedded in this case.</p>
+the default <code>test</code> task to either exclude Arquillian tests or to use a
+default container.</p>
 </div>
 <div class="paragraph">
-<p>Here&#8217;s the full build file with the tasks for our three target
-containers:</p>
+<p>It&#8217;s now possible to run the Arquillian tests against both containers in
+sequence using a single Gradle command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/repositories/deprecated'
-}
-
-configurations {
-   compileOnly
-   weldEmbeddedTestRuntime { extendsFrom testRuntime }
-   jbossasRemoteTestRuntime { extendsFrom testRuntime, compileOnly }
-   glassfishEmbeddedTestRuntime { extendsFrom testRuntime }
-}
-
-dependencies {
-   compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
-
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
-
-   // temporarily downgrade the weld-ee-embedded-1.1 container
-   weldEmbeddedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-weld-ee-embedded-1.1', version: '1.0.0.Alpha3'
-   weldEmbeddedTestRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-   weldEmbeddedTestRuntime group: 'org.jboss.weld', name: 'weld-core', version: libraryVersions.weld
-   weldEmbeddedTestRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: libraryVersions.slf4j
-   weldEmbeddedTestRuntime group: 'log4j', name: 'log4j', version: libraryVersions.log4j
-
-   jbossasRemoteTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-jbossas-remote-6', version: libraryVersions.arquillian
-   jbossasRemoteTestRuntime group: 'org.jboss.jbossas', name: 'jboss-as-server', classifier: 'client', version: libraryVersions.jbossas, transitive: false
-   jbossasRemoteTestRuntime group: 'org.jboss.jbossas', name: 'jboss-as-profileservice', classifier: 'client', version: libraryVersions.jbossas
-
-   glassfishEmbeddedTestRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-glassfish-embedded-3', version: libraryVersions.arquillian
-   glassfishEmbeddedTestRuntime group: 'org.glassfish.extras', name: 'glassfish-embedded-all', version: libraryVersions.glassfish
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}
-
-task weldEmbeddedTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + configurations.weldEmbeddedTestRuntime
-}
-
-task jbossasRemoteTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + files('src/test/resources-jbossas') + configurations.jbossasRemoteTestRuntime
-}
-
-task glassfishEmbeddedTest(type: Test) {
-   testClassesDir = sourceSets.test.classesDir
-   classpath = sourceSets.test.classes + sourceSets.main.classes + configurations.glassfishEmbeddedTestRuntime
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Notice we&#8217;ve added an extra resources directory for remote JBoss AS 6 to
-include the required jndi.properties file. That&#8217;s a special
-configuration for the remote JBoss AS containers, though won&#8217;t be
-required after Arquillian 1.0.0.Alpha4.</p>
-</div>
-<div class="paragraph">
-<p>It&#8217;s now possible to run the Arquillian tests against each of the three
-containers in sequence using this Gradle command (make sure a JBoss AS
-is started in the background):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">gradle weldEmbeddedTest jbossasRemoteTest glassfishEmbeddedTest</code></pre>
+<pre class="CodeRay highlight"><code data-lang="console">gradle weldTest wildflyTest</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2713,175 +2759,62 @@ is started in the background):</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_strategy_2_test_profiles"><a class="anchor" href="#_strategy_2_test_profiles"></a>Strategy #2: Test Profiles</h5>
+<h5 id="strategy-test-profiles"><a class="anchor" href="#strategy-test-profiles"></a>Strategy #2: Test Profiles</h5>
 <div class="paragraph">
 <p>Another way to approach integrating Arquillian into a Gradle build is to
 emulate the behavior of Maven profiles. In this case, we won&#8217;t be adding
-any extra tasks, rather overriding the Java plugin configuration and
-provided tasks.</p>
+any extra tasks, rather overriding the configuration of the test task
+provided by the Java plugin.</p>
 </div>
 <div class="paragraph">
 <p>A Maven profile effectively overrides portions of the build
 configuration and is activated using a command option (or some other
-profile activation setting).</p>
+profile activation setting). In Gradle, a project property passed with
+<code>-P</code> serves the same purpose.</p>
 </div>
 <div class="paragraph">
-<p>Once again, let&#8217;s assume that we want to run the tests against the
-following three Arquillian-supported containers:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Weld EE Embedded 1.1</p>
-</li>
-<li>
-<p>Remote JBoss AS 6</p>
-</li>
-<li>
-<p>Embedded GlassFish 3</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>All we need to do is customize the test runtime classpath for each
-container. First, let&#8217;s setup the common compile-time dependencies in
-the main build file:</p>
+<p>We then create a partial Gradle build file for each container that
+contains the container-specific dependencies and configuration. Create a
+file named weld-profile.gradle:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha3', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-}
-
-configurations {
-   compileOnly
-}
-
-dependencies {
-   group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    testRuntimeOnly "org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"
+    testRuntimeOnly "org.jboss.weld.se:weld-se-core:${weldVersion}"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>We then need to create a partial Gradle build file for each container
-that contains the container-specific dependencies and configuration.
-Let&#8217;s start with Weld EE Embedded.</p>
-</div>
-<div class="paragraph">
-<p>Create a file named weld-ee-embedded-profile.gradle and populate it with
-the following contents:</p>
+<p>And one for WildFly, named wildfly-profile.gradle:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">dependencies {
-   // temporarily downgrade the weld-ee-embedded-1.1 container
-   testRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-weld-ee-embedded-1.1', version: '1.0.0.Alpha3'
-   testRuntime group: 'org.jboss.spec', name: 'jboss-javaee-6.0', version: libraryVersions.jbossJavaeeSpec
-   testRuntime group: 'org.jboss.weld', name: 'weld-core', version: libraryVersions.weld
-   testRuntime group: 'org.slf4j', name: 'slf4j-log4j12', version: libraryVersions.slf4j
-   testRuntime group: 'log4j', name: 'log4j', version: libraryVersions.log4j
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Here&#8217;s the partial build file for Remote JBoss AS, named
-jbossas-remote-profile.gradle:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">dependencies {
-   testRuntime group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
-   testRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-jbossas-remote-6', version: libraryVersions.arquillian
-   testRuntime group: 'org.jboss.jbossas', name: 'jboss-as-server', classifier: 'client', version: libraryVersions.jbossas, transitive: false
-   testRuntime group: 'org.jboss.jbossas', name: 'jboss-as-profileservice', classifier: 'client', version: libraryVersions.jbossas
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    testRuntimeOnly "org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"
 }
 
 test {
-   classpath = sourceSets.test.classes + sourceSets.main.classes + files('src/test/resources-jbossas') + configurations.testRuntime
+    systemProperty 'jboss.home', "${buildDir}/wildfly"
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>And finally the one for Embedded GlassFish, named
-glassfish-embedded-profile.gradle:</p>
+<p>Now we import the appropriate partial Gradle build into the main build.
+The file is selected based on the value of the project property named
+<code>profile</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">dependencies {
-   testRuntime group: 'org.jboss.arquillian.container', name: 'arquillian-glassfish-embedded-3', version: libraryVersions.arquillian
-   testRuntime group: 'org.glassfish.extras', name: 'glassfish-embedded-all', version: libraryVersions.glassfish
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">apply from: "${profile}-profile.gradle"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Now we need to import the appropriate partial Gradle build into the main
-build. The file will be selected based on the value of the project
-property named profile.</p>
+<p>Tests are run in the Weld SE runtime using this command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">apply plugin: JavaPlugin
-
-buildDir = 'target/gradle-build'
-
-libraryVersions = [
-   junit: '4.8.1', arquillian: '1.0.0.Alpha4', jbossJavaeeSpec: '1.0.0.Beta7', weld: '1.0.1-Final',
-   slf4j: '1.5.8', log4j: '1.2.14', jbossas: '6.0.0.Final', glassfish: '3.0.1-b20', cdi: '1.0-SP1'
-]
-
-apply from: profile + '-profile.gradle'
-
-repositories {
-   mavenCentral()
-   mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public'
-}
-
-configurations {
-   compileOnly
-}
-
-dependencies {
-   compileOnly group: 'javax.enterprise', name: 'cdi-api', version: libraryVersions.cdi
-
-   testCompile group: 'junit', name: 'junit', version: libraryVersions.junit
-   testCompile group: 'org.jboss.arquillian', name: 'arquillian-junit', version: libraryVersions.arquillian
-}
-
-sourceSets {
-   main {
-      compileClasspath = configurations.compile + configurations.compileOnly
-   }
-   test {
-      compileClasspath = compileClasspath + configurations.compileOnly
-   }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Tests are run in the Weld EE Embedded runtime using this command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">gradle test -Pprofile=weld-ee-embedded</code></pre>
+<pre class="CodeRay highlight"><code data-lang="console">gradle test -Pprofile=weld</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2906,40 +2839,52 @@ execution</p>
 <div class="paragraph">
 <p>If you have a better idea of how to integrate an Arquillian test suite
 into a Gradle build, we&#8217;d love to hear it on the
-<a href="http://community.jboss.org/en/arquillian">Arquillian discussion forums</a>.</p>
+<a href="https://github.com/orgs/arquillian/discussions">Arquillian discussion forums</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ant-ivy"><a class="anchor" href="#ant-ivy"></a>2.10.4. Ant + Ivy</h4>
+<h4 id="ant"><a class="anchor" href="#ant"></a>2.10.4. Ant</h4>
 <div class="paragraph">
-<p>WRITE ME</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="ant"><a class="anchor" href="#ant"></a>2.10.5. Ant</h4>
-<div class="paragraph">
-<p>This guide will detail how to use Arquillian using ant. We will use
-maven to download all the required jars.</p>
+<p>Arquillian has no Ant-specific integration, and needs none: the
+<code>&lt;junit&gt;</code>, <code>&lt;junitlauncher&gt;</code> and <code>&lt;testng&gt;</code> tasks all accept an
+arbitrary classpath, which is the only thing Arquillian requires.</p>
 </div>
 <div class="paragraph">
-<p>Overview of Steps</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Setup Example Maven project</p>
-</li>
-<li>
-<p>Get All Arquillian dependency jars</p>
-</li>
-<li>
-<p>configure ant scripts</p>
-</li>
-</ol>
+<p>The approach is the same as for any other build tool — resolve the
+Arquillian container integration, the container runtime or deployment
+client and your test framework onto a path, then hand that path to the
+test task. Since Arquillian is distributed via Maven Central, the
+simplest way to resolve those artifacts is with
+<a href="https://ant.apache.org/ivy/">Apache Ivy</a> or the
+<a href="https://maven.apache.org/resolver-ant-tasks/">Maven Artifact Resolver Ant
+Tasks</a>, rather than by managing jars by hand.</p>
 </div>
 <div class="paragraph">
-<p>Work in progress. Please return.</p>
+<p>Sketching the JUnit Jupiter case:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">&lt;path id="arquillian.test.path"&gt;
+    &lt;fileset dir="lib/test" includes="**/*.jar"/&gt;
+    &lt;pathelement location="${build.classes.dir}"/&gt;
+    &lt;pathelement location="${build.test.classes.dir}"/&gt;
+    &lt;!-- arquillian.xml and other test resources --&gt;
+    &lt;pathelement location="${test.resources.dir}"/&gt;
+&lt;/path&gt;
+
+&lt;junitlauncher haltOnFailure="true"&gt;
+    &lt;classpath refid="arquillian.test.path"/&gt;
+    &lt;testclasses outputdir="${build.test.reports.dir}"&gt;
+        &lt;fileset dir="${build.test.classes.dir}" includes="**/*TestCase.class"/&gt;
+    &lt;/testclasses&gt;
+&lt;/junitlauncher&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Swapping the target container is a matter of pointing <code>lib/test</code> (or the
+resolved Ivy configuration) at a different container adapter, exactly as
+a Maven profile or a Gradle configuration would.</p>
 </div>
 </div>
 </div>
@@ -2979,7 +2924,13 @@ In case you want to add an additional observer that will be applied only to one 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@RunWith(Arquillian.class)
+<pre class="CodeRay highlight"><code data-lang="java">// JUnit Jupiter (JUnit 5 and 6)
+@ExtendWith(ArquillianExtension.class)
+@Observer(MyObserver.class)
+class MyTestCase {
+
+// JUnit 4
+@RunWith(Arquillian.class)
 @Observer(MyObserver.class)
 public class MyTestCase {</code></pre>
 </div>
@@ -3024,7 +2975,7 @@ public class MyTestCase {</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-23 09:53:38 UTC
+Last updated 2026-08-07 13:56:52 UTC
 </div>
 </div>
 </body>
