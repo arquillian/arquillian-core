@@ -55,7 +55,21 @@ Injection points are recognized in the following two locations:
 1.  Field (any visibility)
 2.  `@Test` method argument
 
-Here's an example of a field injection in a test class:
+Here's an example of a field injection in a test class, on JUnit Jupiter
+(JUnit 5 and 6):
+
+[source,java]
+----
+@ExtendWith(ArquillianExtension.class)
+class GreeterTestCase {
+    @Inject
+    private Greeter greeter;
+
+    ...
+}
+----
+
+and the same test on JUnit 4:
 
 [source,java]
 ----
@@ -73,7 +87,7 @@ Here's an example of a method argument injection in a test method:
 [source,java]
 ----
 @Test
-public void testGreeting(Greeter greeter) {
+void testGreeting(Greeter greeter) {
   ...
 }
 ----
@@ -87,28 +101,44 @@ method argument.
 There are three injection-based enrichers provided by Arquillian out of
 the box:
 
-* `@Resource` - Java EE resource injections
-* `@EJB` - EJB session bean reference injections
+* `@Resource` - Jakarta EE resource injections
+* `@EJB` - Enterprise bean reference injections
 * `@Inject`, `@Resource`, `@EJB`, `@PersistenceContext` and
 `@PersistenceUnit` - CDI-supported injections
 
 The first two enrichers use JNDI to lookup the instance to inject. The
 CDI injections are handled by treating the test class as a bean capable
 of receiving standard CDI injections (non-contextual injection). Since
-CDI requires containers to satisfy all Java EE injection points on a CDI
-bean, the `@Resource`, `@EJB`, `@PersistenceContext` and
+CDI requires containers to satisfy all Jakarta EE injection points on a
+CDI bean, the `@Resource`, `@EJB`, `@PersistenceContext` and
 `@PersistenceUnit` injections are supported transitively by the CDI
 enricher. In fact, because of CDI's tight integration with the
 container, `@EJB` injections in the test class are satisfied according
 to specification when the CDI enricher is available.
+
+Arquillian also ships an enricher that makes a JNDI `Context` available
+via `@ArquillianResource`, for cases where you want to perform lookups
+by hand:
+
+[source,java]
+----
+@ArquillianResource
+private Context context;
+----
+
+NOTE: Arquillian Core itself is built against the `javax.*` packages.
+Artifacts transformed to the `jakarta.*` namespace are published
+separately under the `org.jboss.arquillian.jakarta` group id, with their
+own versioning and BOM (`arquillian-jakarta-bom`). Use those when
+testing on a Jakarta EE 9 or newer container.
 
 [[resource-injection]]
 ====== Resource Injection
 
 The `@Resource` annotation gives you access to any object which is
 available via JNDI. It follows the standard rules for `@Resource` (as
-defined in the Section 2.3 of the Common Annotations for the Java
-Platform specification).
+defined in the Jakarta Annotations specification, formerly known as
+Common Annotations for the Java Platform).
 
 [[ejb-injection]]
 ====== EJB Injection (without CDI support)
@@ -134,9 +164,10 @@ unqualified interface name + "/no-interface"
 If no matching beans were found in those locations the injection will
 fail.
 
-At the moment, the lookup for an EJB session reference relies on some
-common naming convention of EJB beans. In the future the lookup will
-rely on the standard JNDI naming conventions established in Java EE 6.
+Note that this lookup relies on common naming conventions for enterprise
+beans rather than purely on the portable `java:global` JNDI names. Where
+possible, prefer the CDI enricher, which resolves `@EJB` injection points
+through the container itself.
 
 [[cdi-injection]]
 ====== CDI Injection
@@ -152,7 +183,8 @@ add a beans.xml to the archive:
 public static JavaArchive createTestArchive() {
    return ShrinkWrap.create(JavaArchive.class, "test.jar")
       .addClass(NameOfClassUnderTest.class)
-      .addAsManifestResource(EmptyAsset.INSTANCE, Paths.create("beans.xml"))
+      .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+}
 ----
 
 In an application that takes full advantage of CDI, you can likely get
@@ -163,8 +195,8 @@ time-to-time.
 [[active-scopes]]
 ==== Active Scopes
 
-When running your tests the embedded Weld EE container, Arquillian
-activates scopes as follows:
+When running your tests in an embedded CDI container such as Weld SE,
+Arquillian activates scopes as follows:
 
 * Application scope - Active for all methods in a test class
 * Session scope - Active for all methods in a test class
