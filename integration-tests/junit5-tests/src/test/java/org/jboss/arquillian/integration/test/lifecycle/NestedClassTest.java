@@ -43,8 +43,11 @@ import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtensio
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.SERVER;
 
 /**
- * Verifies that JUnit Jupiter {@code @Nested} inner class tests run in the container (SERVER),
- * sharing the deployment and lifecycle of the enclosing test class.
+ * Verifies that JUnit Jupiter {@code @Nested} inner class, including a deeper level nesting,
+ * tests run in the container (SERVER), sharing the deployment and lifecycle of the enclosing test class.
+ *
+ * @author Marek Skacelik
+ * @author Radoslav Husar
  */
 @ExtendWith(FileWriterExtension.class)
 @ArquillianTest
@@ -53,6 +56,7 @@ import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtensio
 @ExpectedTrace("before_all,"
         + "outer_before_each,outer_test,outer_after_each,"
         + "outer_before_each,inner_before_each,nested_test,inner_after_each,outer_after_each,"
+        + "outer_before_each,inner_before_each,deep_before_each,deeply_nested_test,deep_after_each,inner_after_each,outer_after_each,"
         + "after_all")
 class NestedClassTest {
 
@@ -91,6 +95,7 @@ class NestedClassTest {
 
     @Nested
     @Order(2)
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class InnerTest {
 
         @BeforeEach
@@ -106,9 +111,33 @@ class NestedClassTest {
         }
 
         @Test
+        @Order(1)
         void nestedTest() {
             appendToFile("nested_test");
             checkRunsWhere(SERVER);
+        }
+
+        @Nested
+        @Order(2)
+        class DeeplyNestedTest {
+
+            @BeforeEach
+            void deepBeforeEach() {
+                appendToFile("deep_before_each");
+                checkRunsWhere(SERVER);
+            }
+
+            @AfterEach
+            void deepAfterEach() {
+                appendToFile("deep_after_each");
+                checkRunsWhere(SERVER);
+            }
+
+            @Test
+            void deeplyNestedTest() {
+                appendToFile("deeply_nested_test");
+                checkRunsWhere(SERVER);
+            }
         }
     }
 
