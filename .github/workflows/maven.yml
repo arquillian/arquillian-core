@@ -1,4 +1,4 @@
-name: CI
+name: Maven
 
 on:
   push:
@@ -7,6 +7,16 @@ on:
   pull_request:
     branches:
       - '*'
+  merge_group:
+    types:
+      - checks_requested
+
+permissions:
+  contents: read
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
   build-and-verify:
@@ -22,6 +32,7 @@ jobs:
           - 17
           - 21
           - 25
+          - 26
     steps:
       - name: Checkout arquillian-core
         uses: actions/checkout@v7
@@ -33,9 +44,16 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn --batch-mode --no-transfer-progress clean verify
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ${{ matrix.java }}-test-reports
+          path: |
+            **/surefire-reports/*
+            **/failsafe-reports/*
 
   # Test JUnit Jupiter module with JUnit 6.x (requires Java 17+)
-  junit6-verify:
+  build-and-verify-junit6:
     name: Verify JUnit Jupiter with JUnit 6.x - JDK ${{ matrix.java }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -44,6 +62,8 @@ jobs:
         java:
           - 17
           - 21
+          - 25
+          - 26
     steps:
       - name: Checkout arquillian-core
         uses: actions/checkout@v7
@@ -55,3 +75,10 @@ jobs:
           cache: maven
       - name: Build with JUnit 6.x
         run: mvn --batch-mode --no-transfer-progress clean verify -Pjunit6 -pl junit5/core,junit5/container -am
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ${{ matrix.java }}-test-reports-junit6
+          path: |
+            **/surefire-reports/*
+            **/failsafe-reports/*

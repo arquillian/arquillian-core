@@ -53,7 +53,7 @@ remotely. In this mode, the test executes in the remote container.
 
 _Arquillian uses this mode by default._
 
-See the Complete Protocol Reference for an overview of the expected
+See <<protocols, Protocols>> for an overview of the expected
 output of the packaging process when you provide a `@Deployment`.
 
 [[client-mode]]
@@ -67,7 +67,33 @@ in your JVM as expected and you're free to test the container from the
 outside, as your clients see it. The only thing Arquillian does is to
 control the lifecycle of your `@Deployment`.
 
-Here is an example calling a Servlet using the `as client` mode.
+Here is an example calling a Servlet using the `as client` mode, on
+JUnit Jupiter (JUnit 5 and 6):
+
+[source,java]
+----
+@ExtendWith(ArquillianExtension.class)
+class LocalRunServletTestCase {
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClass(TestServlet.class);
+    }
+
+    @Test
+    void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
+        String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
+        Assertions.assertEquals(
+            "hello",
+            body,
+            "Verify that the servlet was deployed and returns the expected result");
+    }
+}
+----
+
+The same test written for JUnit 4 — note that the runner declaration
+differs and that JUnit 4's `Assert` takes the message as the *first*
+argument rather than the last:
 
 [source,java]
 ----
@@ -77,7 +103,7 @@ public class LocalRunServletTestCase {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClass(TestServlet.class);
-   }
+    }
 
     @Test
     public void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
@@ -86,7 +112,7 @@ public class LocalRunServletTestCase {
             "Verify that the servlet was deployed and returns the expected result",
             "hello",
             body);
-   }
+    }
 }
 ----
 
@@ -165,8 +191,8 @@ this in your test, Arquillian provides something we call
 multiple internal objects.
 
 WARNING: Note that `@ArquillianResource` injection of URLs is only supported
-for in-container tests since Arquillian version 1.1.9.Final
-(see https://redhat.atlassian.net/browse/ARQ-540[ARQ-540]).
+for in-container tests since Arquillian version 1.1.9.Final
+(see https://redhat.atlassian.net/browse/ARQ-540[ARQ-540]).
 
 When you need to get a hold of the request URI (up through the context
 path) your `Deployment` defined, e.g. "http://localhost:8080/test", you
@@ -246,11 +272,13 @@ Arquillian configuration.
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://jboss.org/schema/arquillian"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <group qualifier="tomcat-cluster" default="true">
         <container qualifier="container-1" default="true">
             <configuration>
-                <property name="tomcatHome">target/tomcat-embedded-6-standby</property>
+                <property name="tomcatHome">target/tomcat-standby</property>
                 <property name="workDir">work</property>
                 <property name="bindHttpPort">8880</property>
                 <property name="unpackArchive">true</property>
@@ -258,7 +286,7 @@ Arquillian configuration.
         </container>
         <container qualifier="container-2">
             <configuration>
-                <property name="tomcatHome">target/tomcat-embedded-6-active-1</property>
+                <property name="tomcatHome">target/tomcat-active-1</property>
                 <property name="workDir">work</property>
                 <property name="bindHttpPort">8881</property>
                 <property name="unpackArchive">true</property>
@@ -331,10 +359,11 @@ packaging requirements hinder how you define your archive, or you simply
 can not communicate with the container using the default protocol due to
 e.g. firewall settings.
 
-Arquillian only supports Servlet 2.5 and Servlet 3.0 at this time. EJB
-3.0 and 3.1 are planned. But you might implement your own Protocol. For
-doing this, please see the Complete Protocol Reference for the better
-knowing what is currently supported.
+Arquillian Core ships the Local, Servlet 2.5 and Servlet 3.0 protocols,
+plus a JMX protocol base that container adapters build on. Container
+adapters may contribute further protocols, and you can implement your
+own. See <<protocols, Protocols>> for what each of the bundled protocols
+does and how it can be configured.
 
 [[enabling-assertions]]
 ==== Enabling Assertions
@@ -349,29 +378,34 @@ container. You may want to consider specifying the package names of your
 test classes to avoid assertions to be enabled throughout the
 container's source code.
 
-[[enabling-assertions-in-jboss-as]]
-===== Enabling Assertions In JBoss AS
+[[enabling-assertions-in-wildfly]]
+===== Enabling Assertions In WildFly
 
-If you are using JBoss AS, the quickest way to setup debug mode is to
-add the following line to the end of $JBOSS_AS_HOME/bin/run.conf
+If you are using WildFly, the quickest way to enable assertions is to
+add the following line to the end of $JBOSS_HOME/bin/standalone.conf
 (Unix/Linux):
 
-[source,java]
+[source,bash]
 ----
 JAVA_OPTS="$JAVA_OPTS -ea"
 ----
 
-or before the line :JAVA_OPTS_SET in $JBOSS_AS_HOME/bin/run.conf.bat
+or before the line :JAVA_OPTS_SET in $JBOSS_HOME/bin/standalone.conf.bat
 (Windows)
 
-[source,java]
+[source,batch]
 ----
 set "JAVA_OPTS=%JAVA_OPTS% -ea"
 ----
 
 Keep in mind your container will always run with assertions enabled
 after making this change. You might want to consider putting some logic
-in the run.conf* file.
+in the standalone.conf* file.
+
+TIP: With a managed container adapter you can usually pass `-ea` through
+the adapter's own configuration instead — for example the `javaVmArguments`
+property of the WildFly managed adapter — which keeps the change scoped
+to the test run.
 
 As an alternative, we recommend using the 'Assert' object that comes
 with your test framework instead to avoid the whole issue. Also keep in

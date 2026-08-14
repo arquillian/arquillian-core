@@ -7,6 +7,7 @@ ifdef::env-github,env-browser[]
 :outfilesuffix: .adoc
 endif::[]
 
+[[protocols]]
 === Protocols
 :icons: font
 
@@ -19,13 +20,16 @@ be configured.
 * <<local, Local>>
 * <<servlet-2.5, Servlet 2.5>>
 * <<servlet-3.0, Servlet 3.0>>
+* <<jmx, JMX>>
 
 [[local]]
 ==== Local
 
-The Local Protocol implementation is used by most EE5 compliant
-containers. It does nothing to the deployment. The Local Protocol is also
-used when executing in run mode `as client`.
+The Local Protocol does nothing to the deployment and invokes the test
+method directly in the test runner's JVM. It is the default for
+containers that have no web component to talk to, such as embedded CDI
+containers. Tests running in `as client` mode are invoked the same way,
+whatever protocol the container declares.
 
 *Packaging rules*
 
@@ -58,8 +62,9 @@ used when executing in run mode `as client`.
 [[servlet-2.5]]
 ==== Servlet 2.5
 
-The Servlet 2.5 Protocol implementation is used by most EE5 compliant
-containers. It will attempt to add a war to the deployment.
+The Servlet 2.5 Protocol implementation targets containers that only
+provide the Servlet 2.5 programming model (no web fragments). It will
+attempt to add a war to the deployment.
 
 *Packaging rules*
 
@@ -93,6 +98,11 @@ containers. It will attempt to add a war to the deployment.
 |===
 |Name |Type |Default |Description
 
+|scheme
+|String
+|none
+|Used to override the Deployments default scheme (e.g. `https`).
+
 |host
 |String
 |none
@@ -107,13 +117,21 @@ containers. It will attempt to add a war to the deployment.
 |String
 |none
 |Used to override the Deployments default contextRoot.
+
+|pullInMilliSeconds
+|int
+|100
+|Interval at which the protocol's command service polls the container for
+ remote events. Used by extensions that exchange data between the
+ container and the client.
 |===
 
 [[servlet-3.0]]
 ==== Servlet 3.0
 
-The Servlet 3.0 Protocol implementation is used by most EE6 compliant
-containers. It will attempt to add a web-fragment to the deployment.
+The Servlet 3.0 Protocol implementation is the default for most modern
+containers, including all Jakarta EE ones. It will attempt to add a
+web-fragment to the deployment.
 
 *Packaging rules*
 
@@ -146,6 +164,11 @@ containers. It will attempt to add a web-fragment to the deployment.
 |===
 |Name |Type |Default |Description
 
+|scheme
+|String
+|none
+|Used to override the Deployments default scheme (e.g. `https`).
+
 |host
 |String
 |none
@@ -160,4 +183,28 @@ containers. It will attempt to add a web-fragment to the deployment.
 |String
 |none
 |Used to override the Deployments default contextRoot.
+
+|pullInMilliSeconds
+|int
+|100
+|Interval at which the protocol's command service polls the container for
+ remote events. Used by extensions that exchange data between the
+ container and the client.
 |===
+
+[[jmx]]
+==== JMX
+
+Arquillian Core ships the base of a JMX protocol
+(`org.jboss.arquillian.protocol.jmx.AbstractJMXProtocol`) rather than a
+ready-to-use protocol. It communicates with the container over a JMX
+`MBeanServerConnection` instead of over HTTP, which makes it a fit for
+containers that have no web component (an OSGi framework, for instance).
+
+Because the way an MBean server is located is entirely container
+specific, container adapters subclass `AbstractJMXProtocol`, supply the
+protocol name via `getProtocolName()` and provide the
+`MBeanServerConnection`. Consult the documentation of your container
+adapter to find out whether it offers a JMX protocol and what its name
+is, as that name is what you pass to `@OverProtocol` or to the
+`<protocol type="...">` element in `arquillian.xml`.
