@@ -17,6 +17,7 @@
 package org.jboss.arquillian.core.spi;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Manager
@@ -49,4 +50,9 @@ public interface Manager {
     void addExtension(Class<?> extension) throws Exception;
 
     void removeExtension(Class<?> extension) throws Exception;
+
+    // Listener SPI
+    <T> void addListener(Class<T> listenerType, T listener);
+
+    <T> List<T> getListeners(Class<T> listenerType);
 }
