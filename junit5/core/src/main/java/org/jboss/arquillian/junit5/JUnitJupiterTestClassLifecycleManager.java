@@ -82,10 +82,10 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, Ext
                 return mgr;
             },
             JUnitJupiterTestClassLifecycleManager.class);
-        // initialization has been attempted before and failed, refuse
-        // to do anything else
+        // initialization was attempted before and failed; surface the original
+        // failure and don't retry (the failed instance stays cached)
         if (instance.hasInitializationException()) {
-            instance.handleSuiteLevelFailure();
+            instance.rethrowInitializationException();
         }
         return instance;
     }
@@ -116,10 +116,16 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, Ext
         }
     }
 
-    private void handleSuiteLevelFailure() {
-        throw new RuntimeException(
-            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
-            caughtInitializationException);
+    private void rethrowInitializationException() throws Exception {
+        // Rethrow the original failure so callers see the real exception type,
+        // as they did before per-class managers were introduced.
+        if (caughtInitializationException instanceof Exception) {
+            throw (Exception) caughtInitializationException;
+        }
+        if (caughtInitializationException instanceof Error) {
+            throw (Error) caughtInitializationException;
+        }
+        throw new RuntimeException(caughtInitializationException);
     }
 
     private boolean hasInitializationException() {
