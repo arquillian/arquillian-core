@@ -126,7 +126,7 @@
               <configuration>
                 <skip>${skipTests}</skip>
                 <includes>
-                  <include>org.jboss.arquillian.integration.test.lifecycle.*Test</include>
+                  <include>org.jboss.arquillian.integration.test.lifecycle.**.*Test</include>
                 </includes>
               </configuration>
             </execution>
