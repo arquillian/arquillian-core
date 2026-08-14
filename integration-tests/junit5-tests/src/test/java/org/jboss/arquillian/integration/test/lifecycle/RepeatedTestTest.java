@@ -21,7 +21,6 @@ import org.jboss.arquillian.junit5.container.annotation.ArquillianTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -31,7 +30,6 @@ import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtensio
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.getTmpFilePath;
 import static org.jboss.arquillian.integration.test.lifecycle.FileWriterExtension.RunsWhere.SERVER;
 
-@Disabled("https://github.com/arquillian/arquillian-core/issues/771")
 @ExtendWith(FileWriterExtension.class)
 @ArquillianTest
 @ExpectedTrace("repeated_test,repeated_test,repeated_test")

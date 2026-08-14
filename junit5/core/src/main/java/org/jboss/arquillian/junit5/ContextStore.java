@@ -2,6 +2,7 @@ package org.jboss.arquillian.junit5;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 class ContextStore {
@@ -26,17 +27,20 @@ class ContextStore {
     }
 
     private ExtensionContext.Store getTemplateStore() {
-        return context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
+        ExtensionContext templateContext = context.getParent().orElse(context);
+        return templateContext.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
     }
 
     boolean isRegisteredTemplate(Method method) {
-        final ExtensionContext.Store templateStore = getTemplateStore();
+        return getTemplateStore().get(method.toGenericString()) != null;
+    }
 
-        final boolean isRegistered = templateStore.getOrDefault(method.toGenericString(), boolean.class, false);
-        if (!isRegistered) {
-            templateStore.put(method.toGenericString(), true);
-        }
-        return isRegistered;
+    void registerTemplateResult(Method method, TestResult result) {
+        getTemplateStore().put(method.toGenericString(), result != null ? result : TestResult.passed());
+    }
+
+    TestResult getRegisteredTemplateResult(Method method) {
+        return getTemplateStore().get(method.toGenericString(), TestResult.class);
     }
 
     /**
