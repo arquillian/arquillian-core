@@ -60,8 +60,8 @@ public class ContainerImpl<T extends ContainerConfiguration> implements Containe
 
     private DeployableContainer<T> deployableContainer;
     private String name;
-    private volatile State state = State.STOPPED;
-    private volatile Throwable failureCause;
+    private State state = State.STOPPED;
+    private Throwable failureCause;
 
     private ContainerDef containerConfiguration;
 
