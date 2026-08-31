@@ -182,6 +182,11 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     /**
      * Intercepts the execution of a @BeforeEach method.
      *
+     * <p>Delegates to {@code adaptor.before()} so that the registered lifecycle event observer
+     * (e.g. {@code ClientBeforeAfterLifecycleEventExecuter}) decides whether to invoke the method.
+     * The observer covers run-as-client, local-container and remote-container scenarios;
+     * the interceptor does not duplicate that decision.</p>
+     *
      * @param invocation the invocation to proceed or skip
      * @param invocationContext the reflective invocation context
      * @param extensionContext the current extension context
@@ -189,38 +194,33 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      */
     @Override
     public void interceptBeforeEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-            // Since the invocation is going to proceed, the invocation must happen within the context of SPI before()
-            final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
-            try {
-                getManager(extensionContext).getAdaptor().before(
-                    extensionContext.getRequiredTestInstance(),
-                    extensionContext.getRequiredTestMethod(),
-                    () -> {
-                        proceedInvoked.set(true);
-                        invocation.proceed();
-                    });
-            } catch (Throwable t) {
-                // If before() threw before invoking the LifecycleMethodExecutor (e.g. due to a ServerSetupTask
-                // assumption failure), the JUnit 5 invocation was never consumed. Call skip() so JUnit does not
-                // generate "Chain of InvocationInterceptors never called invocation".
-                if (!proceedInvoked.get()) {
-                    invocation.skip();
-                }
-                throw t;
-            }
-            // If before() returned normally without calling the LifecycleMethodExecutor (e.g. DONT_EXECUTE
-            // decision after a failed deployment setup), the invocation must still be consumed.
+        final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
+        try {
+            getManager(extensionContext).getAdaptor().before(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                () -> {
+                    proceedInvoked.set(true);
+                    invocation.proceed();
+                });
+        } catch (Throwable t) {
             if (!proceedInvoked.get()) {
                 invocation.skip();
             }
-        } else {
+            throw t;
+        }
+        if (!proceedInvoked.get()) {
             invocation.skip();
         }
     }
 
     /**
      * Intercepts the execution of an @AfterEach method.
+     *
+     * <p>Delegates to {@code adaptor.after()} so that the registered lifecycle event observer
+     * (e.g. {@code ClientBeforeAfterLifecycleEventExecuter}) decides whether to invoke the method.
+     * The observer covers run-as-client, local-container and remote-container scenarios;
+     * the interceptor does not duplicate that decision.</p>
      *
      * @param invocation the invocation to proceed or skip
      * @param invocationContext the reflective invocation context
@@ -229,26 +229,22 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      */
     @Override
     public void interceptAfterEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-            final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
-            try {
-                getManager(extensionContext).getAdaptor().after(
-                    extensionContext.getRequiredTestInstance(),
-                    extensionContext.getRequiredTestMethod(),
-                    () -> {
-                        proceedInvoked.set(true);
-                        invocation.proceed();
-                    });
-            } catch (Throwable t) {
-                if (!proceedInvoked.get()) {
-                    invocation.skip();
-                }
-                throw t;
-            }
+        final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
+        try {
+            getManager(extensionContext).getAdaptor().after(
+                extensionContext.getRequiredTestInstance(),
+                extensionContext.getRequiredTestMethod(),
+                () -> {
+                    proceedInvoked.set(true);
+                    invocation.proceed();
+                });
+        } catch (Throwable t) {
             if (!proceedInvoked.get()) {
                 invocation.skip();
             }
-        } else {
+            throw t;
+        }
+        if (!proceedInvoked.get()) {
             invocation.skip();
         }
     }
