@@ -18,6 +18,7 @@ package org.jboss.arquillian.container.test.api;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -76,17 +77,36 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * &#64;Test &#64;OperateOnDeployment("Y") &#64;RunAsClient
  * public void shouldExecuteInY(&#64;ArquillianResource &#64;OperateOnDeployment("X") URL deploymentXURLContext) { ... }
  * </code></pre>
+ * <p>
+ * When applied at the class level, all test methods in the class will operate on the specified deployment
+ * unless overridden by a method-level annotation.
+ * <p>
+ * Usage Example for class level:<br/>
+ * <pre><code>
+ * &#64;OperateOnDeployment("X")
+ * public class MyTestCase {
+ *
+ *     &#64;Test
+ *     public void shouldExecuteInX() { ... }
+ *
+ *     &#64;Test &#64;OperateOnDeployment("Y")
+ *     public void shouldExecuteInY() { ... }
+ * }
+ * </code></pre>
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author Radoslav Husar
  */
+@Inherited
 @Documented
 @Retention(RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 public @interface OperateOnDeployment {
+
     /**
-     * Refer to the deployment name this should operate on.
+     * The name of the deployment this element should operate on.
      *
-     * @return The Deployment name this method operates on
+     * @return the deployment name
      *
      * @see Deployment#name()
      */
