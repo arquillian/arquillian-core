@@ -51,7 +51,7 @@ import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
- * Event dispatcher between Test lifecyle events and Container control events.
+ * Event dispatcher between Test lifecycle events and Container control events.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  */
@@ -145,7 +145,7 @@ public class ContainerEventController {
 
         Deployment deployment = deploymentScenario.deployment(deploymentTarget);
         if (deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT) {
-            // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
+            // trying to operate on a non-existing DeploymentTarget (which is not the DEFAULT)
             throw new IllegalStateException(
                 "No deployment found in "
                     + DeploymentScenario.class.getSimpleName()
@@ -157,6 +157,8 @@ public class ContainerEventController {
                     + OperateOnDeployment.class.getSimpleName()
                     + " annotation on method "
                     + method.getName()
+                    + " or its declaring class "
+                    + method.getDeclaringClass().getSimpleName()
                     + " match a defined "
                     +
                     "@"
@@ -171,13 +173,14 @@ public class ContainerEventController {
 
     // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
     private DeploymentTargetDescription locateDeployment(Method method) {
-        DeploymentTargetDescription target = null;
         if (method.isAnnotationPresent(OperateOnDeployment.class)) {
-            target = new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
-        } else {
-            target = DeploymentTargetDescription.DEFAULT;
+            return new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
         }
-        return target;
+        Class<?> declaringClass = method.getDeclaringClass();
+        if (declaringClass.isAnnotationPresent(OperateOnDeployment.class)) {
+            return new DeploymentTargetDescription(declaringClass.getAnnotation(OperateOnDeployment.class).value());
+        }
+        return DeploymentTargetDescription.DEFAULT;
     }
 
     private abstract class ResultCallback {
