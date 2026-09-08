@@ -282,4 +282,74 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void shouldInvokeTestInDeploymentContextFromClassLevelAnnotation() throws Exception {
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            this, classLevelOperatesOnDeploymentMethod()));
+
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, ContainerContext.class);
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, DeploymentContext.class);
+    }
+
+    @Test
+    public void shouldMethodLevelOverrideClassLevelAnnotation() throws Exception {
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            this, methodLevelOverridesClassLevelMethod()));
+
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, ContainerContext.class);
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, DeploymentContext.class);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionIfClassLevelOperatesOnNonExistingDeployment() throws Exception {
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            this, classLevelNonExistingDeploymentMethod()));
+    }
+
+    private Method classLevelOperatesOnDeploymentMethod() {
+        try {
+            return ClassLevelAnnotatedTest.class.getDeclaredMethod("testMethod");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Method methodLevelOverridesClassLevelMethod() {
+        try {
+            return ClassLevelAnnotatedWithOverrideTest.class.getDeclaredMethod("testMethod");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Method classLevelNonExistingDeploymentMethod() {
+        try {
+            return ClassLevelNonExistingDeploymentTest.class.getDeclaredMethod("testMethod");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @OperateOnDeployment(DEPLOYMENT_1_NAME)
+    private static class ClassLevelAnnotatedTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    @OperateOnDeployment("NON_EXISTING_DEPLOYMENT")
+    private static class ClassLevelAnnotatedWithOverrideTest {
+        @OperateOnDeployment(DEPLOYMENT_1_NAME)
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    @OperateOnDeployment("NON_EXISTING_DEPLOYMENT")
+    private static class ClassLevelNonExistingDeploymentTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
 }
