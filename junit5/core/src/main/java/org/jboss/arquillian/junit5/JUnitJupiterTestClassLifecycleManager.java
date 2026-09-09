@@ -4,27 +4,53 @@ import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptorBuilder;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import static org.jboss.arquillian.junit5.ContextStore.getContextStore;
-
 /**
- * Manages the lifecycle of JUnit Jupiter test classes within the Arquillian framework.
- * This class implements both {@link AutoCloseable} and {@link ExtensionContext.Store.CloseableResource}
- * for junit5 prior to 5.13.0 to ensure proper resource cleanup.
+ * Owns the Arquillian {@link TestRunnerAdaptor} that the JUnit Jupiter
+ * extension drives.
  *
- * <p>The manager is responsible for:</p>
+ * <p>Two caching modes, selected by the JUnit configuration parameter
+ * {@value #PER_CLASS_MANAGER_PROPERTY} (default {@code false}). Because the
+ * value is read via
+ * {@link ExtensionContext#getConfigurationParameter(String)}, it can be set
+ * as a JVM system property
+ * ({@code -Darquillian.junit.jupiter.manager.perClass=true}),
+ * in a {@code junit-platform.properties} file on the test classpath, or via
+ * any other mechanism the JUnit Platform Launcher supports.</p>
+ *
  * <ul>
- *   <li>Initializing and managing the Arquillian{@link TestRunnerAdaptor}</li>
- *   <li>Handling test suite lifecycle events (beforeSuite, afterSuite)</li>
- *   <li>Providing access to the test runner adaptor for test execution</li>
- *   <li>Managing initialization failures and error handling</li>
+ *   <li><b>Singleton (default)</b> — one {@code TestRunnerAdaptor} for the
+ *   whole JUnit run, cached on the root store. {@code BeforeSuite} /
+ *   {@code AfterSuite} fire once per JVM. This matches the classic
+ *   Arquillian model and is required for shared managed external containers
+ *   (WildFly, Payara, GlassFish) that boot once and serve every test class.</li>
+ *
+ *   <li><b>Per-class</b> (parameter set to {@code true}) — a separate
+ *   {@code TestRunnerAdaptor} per test class, cached on the root store under
+ *   a namespace keyed by the class. {@code BeforeSuite} / {@code AfterSuite}
+ *   fire once per class. Required for parallel class execution against
+ *   isolating embedded containers that allocate their own resources per class
+ *   (e.g. embedded Jetty on port {@code 0}). A shared manager would leak
+ *   thread-local context activations between classes running on different
+ *   threads.</li>
  * </ul>
  *
- * <p>This class uses a singleton pattern per test context, ensuring that only one
- * manager instance exists per test suite execution.</p>
+ * <p>Implementing {@link ExtensionContext.Store.CloseableResource} lets JUnit
+ * invoke {@link #close()} (and therefore {@code afterSuite}) when it tears
+ * down the root context at the end of the run.</p>
  */
 
 @SuppressWarnings("deprecation") // CloseableResource is deprecated since JUnit 5.13; remove when dropping JUnit 5.13 support
 public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, ExtensionContext.Store.CloseableResource {
+    /**
+     * JUnit configuration parameter that enables per-test-class caching of
+     * the {@link TestRunnerAdaptor}. Defaults to {@code false}. Resolved via
+     * {@link ExtensionContext#getConfigurationParameter(String)} — accepts a
+     * JVM system property or an entry in {@code junit-platform.properties}.
+     *
+     * @see JUnitJupiterTestClassLifecycleManager
+     */
+    public static final String PER_CLASS_MANAGER_PROPERTY = "arquillian.junit.jupiter.manager.perClass";
+
     private static final String MANAGER_KEY = "testRunnerManager";
 
     private TestRunnerAdaptor adaptor;
@@ -35,17 +61,31 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, Ext
     }
 
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
-        ExtensionContext.Store store = getContextStore(context).getRootStore();
-        JUnitJupiterTestClassLifecycleManager instance = store.get(MANAGER_KEY, JUnitJupiterTestClassLifecycleManager.class);
-        if (instance == null) {
-            instance = new JUnitJupiterTestClassLifecycleManager();
-            store.put(MANAGER_KEY, instance);
-            instance.initializeAdaptor();
-        }
-        // no, initialization has been attempted before and failed, refuse
-        // to do anything else
+        boolean perClassManager = context.getConfigurationParameter(PER_CLASS_MANAGER_PROPERTY)
+            .map(Boolean::parseBoolean)
+            .orElse(false);
+        ExtensionContext.Namespace namespace = perClassManager
+            ? ExtensionContext.Namespace.create(
+                JUnitJupiterTestClassLifecycleManager.class,
+                context.getRequiredTestClass())
+            : ExtensionContext.Namespace.create(JUnitJupiterTestClassLifecycleManager.class);
+        ExtensionContext.Store store = context.getRoot().getStore(namespace);
+        JUnitJupiterTestClassLifecycleManager instance = store.getOrComputeIfAbsent(
+            MANAGER_KEY,
+            key -> {
+                JUnitJupiterTestClassLifecycleManager mgr = new JUnitJupiterTestClassLifecycleManager();
+                try {
+                    mgr.initializeAdaptor();
+                } catch (Exception e) {
+                    mgr.caughtInitializationException = e;
+                }
+                return mgr;
+            },
+            JUnitJupiterTestClassLifecycleManager.class);
+        // initialization was attempted before and failed; surface the original
+        // failure and don't retry (the failed instance stays cached)
         if (instance.hasInitializationException()) {
-            instance.handleSuiteLevelFailure();
+            instance.rethrowInitializationException();
         }
         return instance;
     }
@@ -76,10 +116,16 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, Ext
         }
     }
 
-    private void handleSuiteLevelFailure() {
-        throw new RuntimeException(
-            "Arquillian initialization has already been attempted, but failed. See previous exceptions for cause",
-            caughtInitializationException);
+    private void rethrowInitializationException() throws Exception {
+        // Rethrow the original failure so callers see the real exception type,
+        // as they did before per-class managers were introduced.
+        if (caughtInitializationException instanceof Exception) {
+            throw (Exception) caughtInitializationException;
+        }
+        if (caughtInitializationException instanceof Error) {
+            throw (Error) caughtInitializationException;
+        }
+        throw new RuntimeException(caughtInitializationException);
     }
 
     private boolean hasInitializationException() {
