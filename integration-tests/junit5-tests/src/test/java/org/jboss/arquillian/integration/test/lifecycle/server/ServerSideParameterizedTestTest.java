@@ -27,11 +27,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@Disabled("https://github.com/arquillian/arquillian-core/issues/771")
 @ArquillianIntegrationTest({
         @TraceStep(name = "before_all", runsWhere = CLIENT, order = 0),
         @TraceStep(name = "before_each", runsWhere = SERVER, order = 1),

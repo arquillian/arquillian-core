@@ -14,23 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit5.container;
-
-import org.jboss.arquillian.junit5.ArquillianExtension;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+package org.jboss.arquillian.junit5.container.fixtures;
 
 import static org.jboss.arquillian.junit5.container.JUnitTestBaseClass.Cycle;
 import static org.jboss.arquillian.junit5.container.JUnitTestBaseClass.wasCalled;
 
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+
 @ExtendWith(ArquillianExtension.class)
-public class ClassWithArquillianExtensionAndParameterizedTest {
+@ExtendWith(ClassWithArquillianExtensionWithExtensions.MethodRule.class)
+@ExtendWith(ClassWithArquillianExtensionWithExtensions.ClassRule.class)
+public class ClassWithArquillianExtensionWithExtensions {
+
+  public static class ClassRule implements AfterAllCallback, BeforeAllCallback {
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+      wasCalled(Cycle.AFTER_CLASS_RULE);
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+      wasCalled(Cycle.BEFORE_CLASS_RULE);
+    }
+  }
+
+  public static class MethodRule implements AfterEachCallback, BeforeEachCallback {
+    @Override
+    public void afterEach(ExtensionContext context) throws Exception {
+      wasCalled(Cycle.AFTER_RULE);
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+      wasCalled(Cycle.BEFORE_RULE);
+    }
+  }
 
   @BeforeAll
   public static void beforeClass() throws Throwable {
@@ -52,16 +81,8 @@ public class ClassWithArquillianExtensionAndParameterizedTest {
     wasCalled(Cycle.AFTER);
   }
 
-  @ParameterizedTest
-  @ValueSource(strings = {"one", "two"})
-  public void failingTest() throws Throwable {
-    wasCalled(Cycle.TEST);
-    Assertions.fail("Intentionally failing the test.");
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"one", "two"})
-  public void succeedingTest() throws Throwable {
+  @Test
+  public void shouldBeInvoked() throws Throwable {
     wasCalled(Cycle.TEST);
   }
 }

@@ -18,6 +18,8 @@ package org.jboss.arquillian.testng.container;
 
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.testng.container.fixtures.ShouldProvideConfigurationFailureToTestRunner;
+import org.jboss.arquillian.testng.container.fixtures.ShouldProvideVariousTestResultsToTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testng.SkipException;

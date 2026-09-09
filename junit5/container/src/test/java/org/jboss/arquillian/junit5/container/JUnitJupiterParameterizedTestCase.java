@@ -19,35 +19,33 @@ package org.jboss.arquillian.junit5.container;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.lang.reflect.Method;
+import java.util.Map;
 
+import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithArquillianExtensionAndParameterizedTest;
 import org.jboss.arquillian.junit5.extension.RunModeEvent;
-import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
-import org.mockito.invocation.InvocationOnMock;
 
-@Disabled("https://github.com/arquillian/arquillian-core/issues/771")
 public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
+
+    private static final String EXPECTED_DETAIL_MESSAGE = "expected: <3.14> but was: <2.71>";
+    private static final AssertionError ASSERTION_ERROR = new AssertionError(EXPECTED_DETAIL_MESSAGE);
+    private static final Class<?> FIXTURE_CLASS = ClassWithArquillianExtensionAndParameterizedTest.class;
+    private static final String TEST_METHOD_ID_FORMAT = "[engine:junit-jupiter]"
+            + "/[class:" + FIXTURE_CLASS.getName() + "]"
+            + "/[test-template:parameterizedTest(java.lang.String)]"
+            + "/[test-template-invocation:#%d]";
 
     @Override
     protected void executeAllLifeCycles(TestRunnerAdaptor adaptor) throws Exception {
-        doAnswer(new ExecuteLifecycle()).when(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).before(any(Object.class),
-                any(Method.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class),
-                any(Method.class), any(LifecycleMethodExecutor.class));
-        doAnswer(new TestExecuteLifecycle()).when(adaptor).test(any(TestMethodExecutor.class));
         doAnswer(invocation -> {
             TestLifecycleEvent event = invocation.getArgument(0);
             if (event instanceof RunModeEvent) {
@@ -58,35 +56,83 @@ public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
     }
 
     @Test
-    public void shouldExecuteParameterizedTestOnceInContainer() throws Exception {
+    public void shouldPassAllInvocations() throws Exception {
         // given
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
+        doAnswer(invocation -> TestResult.passed())
+                .when(adaptor).test(any(TestMethodExecutor.class));
 
         // when
-        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionAndParameterizedTest.class);
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then
+        Assertions.assertEquals(3, result.getTestsSucceededCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldFailAllInvocations() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        // Run 1: ClassWithArquillianExtensionAndParameterizedTest.parameterizedTest:29 failed:
+        // expected: <3.14> but was: <2.71>
+        // Run 2: ClassWithArquillianExtensionAndParameterizedTest.parameterizedTest:29 failed:
+        // expected: <3.14> but was: <2.71>
+        // Run 3: ClassWithArquillianExtensionAndParameterizedTest.parameterizedTest:29 failed:
+        // expected: <3.14> but was: <2.71>
+        doAnswer(invocation -> TestResult.failed(new IdentifiedTestException(Map.of(
+                uniqueId(1), ASSERTION_ERROR,
+                uniqueId(2), ASSERTION_ERROR,
+                uniqueId(3), ASSERTION_ERROR))))
+                .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then
+        Assertions.assertEquals(0, result.getTestsSucceededCount());
+        Assertions.assertEquals(3, result.getTestsFailedCount());
+        for (int i = 0; i < result.getFailures().size();) {
+            TestExecutionSummary.Failure failure = result.getFailures().get(i++);
+            Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[" + i + "]"),
+                    "Run " + i + ": expected the display name to contain [" + i + "]");
+            Assertions.assertTrue(failure.getException().getMessage().contains(EXPECTED_DETAIL_MESSAGE),
+                    "Run " + i + ": expected failure message");
+        }
+        verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldFailOnlySecondInvocation() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        // Run 1: Pass
+        // Run 2: ClassWithArquillianExtensionAndParameterizedTest.parameterizedTest:29 failed:
+        // expected: <3.14> but was: <2.71>
+        // Run 3: Pass
+        doAnswer(invocation -> TestResult
+                .failed(new IdentifiedTestException(Map.of(uniqueId(2), ASSERTION_ERROR))))
+                .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
 
         // then
         Assertions.assertEquals(2, result.getTestsSucceededCount());
-        Assertions.assertEquals(2, result.getTestsFailedCount());
-        Assertions.assertEquals(0, result.getTestsSkippedCount());
-        verify(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        verify(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
-        verify(adaptor, times(4)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-        verify(adaptor, times(4)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
-        verify(adaptor, times(2)).test(any(TestMethodExecutor.class));
+        Assertions.assertEquals(1, result.getTestsFailedCount());
+        TestExecutionSummary.Failure failure = result.getFailures().get(0);
+        Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[2]"),
+                "Run 2: expected the 2nd invocation to be the failed one");
+        Assertions.assertTrue(failure.getException().getMessage().contains(EXPECTED_DETAIL_MESSAGE),
+                "Run 2: expected failure message");
+        verify(adaptor).test(any(TestMethodExecutor.class));
     }
 
-    public static class TestExecuteLifecycle extends ExecuteLifecycle {
-
-        @Override
-        public Object answer(InvocationOnMock invocation) throws Throwable {
-            try {
-                super.answer(invocation);
-            } catch (Throwable t) {
-                return TestResult.failed(t);
-            }
-            return TestResult.passed();
-        }
+    private static String uniqueId(int invocation) {
+        return String.format(TEST_METHOD_ID_FORMAT, invocation);
     }
 }

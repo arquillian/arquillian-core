@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.testng.container;
+package org.jboss.arquillian.testng.container.fixtures;
 
 import java.lang.reflect.Method;
 import org.testng.Assert;

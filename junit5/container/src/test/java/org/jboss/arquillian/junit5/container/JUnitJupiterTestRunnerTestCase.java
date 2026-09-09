@@ -17,6 +17,7 @@
 package org.jboss.arquillian.junit5.container;
 
 import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.junit5.container.fixtures.TestScenarios;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

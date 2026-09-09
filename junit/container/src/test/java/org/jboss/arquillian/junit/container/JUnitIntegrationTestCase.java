@@ -16,6 +16,7 @@
  */
 package org.jboss.arquillian.junit.container;
 
+import org.jboss.arquillian.junit.container.fixtures.ClassWithArquillianRunnerWithRules;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.Assert;
 import org.junit.Test;
