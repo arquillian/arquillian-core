@@ -103,12 +103,12 @@ public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
         // then
         Assertions.assertEquals(0, result.getTestsSucceededCount());
         Assertions.assertEquals(3, result.getTestsFailedCount());
-        for (int i = 0; i < result.getFailures().size();) {
-            TestExecutionSummary.Failure failure = result.getFailures().get(i++);
-            Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[" + i + "]"),
-                    "Run " + i + ": expected the display name to contain [" + i + "]");
+        for (int run = 1; run <= result.getFailures().size(); run++) {
+            TestExecutionSummary.Failure failure = result.getFailures().get(run - 1);
+            Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[" + run + "]"),
+                    "Run " + run + ": expected the display name to contain [" + run + "]");
             Assertions.assertTrue(failure.getException().getMessage().contains(EXPECTED_DETAIL_MESSAGE),
-                    "Run " + i + ": expected failure message");
+                    "Run " + run + ": expected failure message");
         }
         verify(adaptor).test(any(TestMethodExecutor.class));
     }
