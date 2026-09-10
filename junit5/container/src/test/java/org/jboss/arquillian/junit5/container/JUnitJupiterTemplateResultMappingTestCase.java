@@ -19,6 +19,7 @@ package org.jboss.arquillian.junit5.container;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Map;
@@ -93,5 +94,25 @@ public class JUnitJupiterTemplateResultMappingTestCase extends JUnitTestBaseClas
         Assertions.assertEquals(0, result.getTestsSucceededCount());
         Assertions.assertEquals(3, result.getTestsFailedCount());
         verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldContactContainerOnlyOnceWhenTheRoundTripThrows() throws Exception {
+        // given a container round trip that throws instead of returning a TestResult, e.g. an unreachable container
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        final IllegalStateException containerFailure = new IllegalStateException("Container is not reachable");
+        doAnswer(invocation -> {
+            throw containerFailure;
+        }).when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then every repetition fails, but the container is contacted exactly once rather than once per repetition
+        Assertions.assertEquals(0, result.getTestsSucceededCount());
+        Assertions.assertEquals(3, result.getTestsFailedCount());
+        result.getFailures().forEach(failure -> Assertions.assertSame(containerFailure, failure.getException()));
+        verify(adaptor, times(1)).test(any(TestMethodExecutor.class));
     }
 }
