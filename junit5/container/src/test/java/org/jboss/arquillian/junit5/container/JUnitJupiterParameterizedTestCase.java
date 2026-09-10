@@ -19,11 +19,14 @@ package org.jboss.arquillian.junit5.container;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.junit5.container.fixtures.ClassWithArquillianExtensionAndParameterizedTest;
 import org.jboss.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -69,6 +72,11 @@ public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
         // then
         Assertions.assertEquals(3, result.getTestsSucceededCount());
         Assertions.assertEquals(0, result.getTestsFailedCount());
+        // The lifecycle still runs per invocation, only the test itself is dispatched to the container once
+        verify(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(3)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(3)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         verify(adaptor).test(any(TestMethodExecutor.class));
     }
 
