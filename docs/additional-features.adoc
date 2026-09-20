@@ -261,6 +261,24 @@ public void testRunningInDep1() {}
 public void testRunningInDep2() {}
 ----
 
+`@OperateOnDeployment` can also be placed on the test class itself. All test
+methods of the class then operate on that `Deployment`, unless they declare
+their own `@OperateOnDeployment`, which takes precedence. The class level
+target is inherited by subclasses and by JUnit Jupiter `@Nested` test classes.
+
+[source,java]
+----
+@OperateOnDeployment("dep1")
+public class MyTestCase {
+
+    @Test
+    public void testRunningInDep1() {}
+
+    @Test @OperateOnDeployment("dep2")
+    public void testRunningInDep2() {}
+}
+----
+
 [[multiple-containers]]
 ==== Multiple Containers
 

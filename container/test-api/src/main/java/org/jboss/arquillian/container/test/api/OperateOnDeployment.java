@@ -54,7 +54,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * public void shouldExecuteInY() { ... }
  * </code></pre>
  * <p>
- * Additionally you can reference another deployments metadata from within another context by qualifiing
+ * Additionally, you can reference another deployment's metadata from within another context by qualifying
  * OperateOnDeployment on ArquillianResource injection points.
  * <p>
  * <p>
@@ -94,10 +94,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * }
  * </code></pre>
  * <p>
- * A class level deployment target is inherited by sub classes and, for JUnit 5 <code>&#64;Nested</code> test classes,
- * by nested classes that do not declare one themselves.
+ * A class level deployment target is inherited by subclasses and by JUnit Jupiter {@code @Nested} test classes,
+ * unless these declare one themselves.
  * <p>
- * A class level deployment target is resolved per test method, only when that method does not declare its own
+ * A class level deployment target is resolved per test method only when that method does not declare its own
  * target. A class level target that every test method overrides is therefore never resolved and never validated
  * against the defined deployments.
  *
