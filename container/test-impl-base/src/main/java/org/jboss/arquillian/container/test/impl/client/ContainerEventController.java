@@ -176,6 +176,9 @@ public class ContainerEventController {
 
     // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
     private DeploymentTargetDescription locateDeployment(Class<?> testClass, Method method) {
+        // A method level annotation always wins over a class level one; the class level target is only resolved when
+        // the method does not declare one, so a class level target that no test method actually uses is never
+        // validated against the DeploymentScenario.
         OperateOnDeployment operateOnDeployment = method.getAnnotation(OperateOnDeployment.class);
 
         // Resolve from the actual test class rather than the declaring class of the method so that a target declared

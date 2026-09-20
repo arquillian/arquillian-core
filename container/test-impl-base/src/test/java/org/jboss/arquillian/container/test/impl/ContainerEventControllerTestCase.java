@@ -359,6 +359,20 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
             declaredTestMethod(ClassLevelNonExistingDeploymentTest.class)));
     }
 
+    @Test
+    public void shouldNotValidateClassLevelDeploymentOverriddenByMethodLevel() throws Exception {
+        addSecondDeployment();
+
+        // A class level target is resolved lazily, per test method. A method that overrides it with its own
+        // @OperateOnDeployment never resolves the class level name, so an unused - and here non existing - class level
+        // target is not validated against the DeploymentScenario and does not fail the test
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new ClassLevelNonExistingDeploymentWithOverrideTest(),
+            declaredTestMethod(ClassLevelNonExistingDeploymentWithOverrideTest.class)));
+
+        assertActiveDeployment(DEPLOYMENT_1_NAME);
+    }
+
     /**
      * Adds a second deployment to the scenario, which also means no deployment matches
      * {@link org.jboss.arquillian.container.spi.client.deployment.DeploymentTargetDescription#DEFAULT} anymore, so
@@ -439,6 +453,14 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
 
     @OperateOnDeployment(NON_EXISTING_DEPLOYMENT_NAME)
     private static class ClassLevelNonExistingDeploymentTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    @OperateOnDeployment(NON_EXISTING_DEPLOYMENT_NAME)
+    private static class ClassLevelNonExistingDeploymentWithOverrideTest {
+        @OperateOnDeployment(DEPLOYMENT_1_NAME)
         @SuppressWarnings("unused")
         private void testMethod() {
         }

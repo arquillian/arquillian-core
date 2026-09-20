@@ -96,6 +96,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>
  * A class level deployment target is inherited by sub classes and, for JUnit 5 <code>&#64;Nested</code> test classes,
  * by nested classes that do not declare one themselves.
+ * <p>
+ * A class level deployment target is resolved per test method, only when that method does not declare its own
+ * target. A class level target that every test method overrides is therefore never resolved and never validated
+ * against the defined deployments.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author Radoslav Husar
