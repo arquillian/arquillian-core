@@ -93,6 +93,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *     public void shouldExecuteInY() { ... }
  * }
  * </code></pre>
+ * <p>
+ * A class level deployment target is inherited by sub classes and, for JUnit 5 <code>&#64;Nested</code> test classes,
+ * by nested classes that do not declare one themselves.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author Radoslav Husar

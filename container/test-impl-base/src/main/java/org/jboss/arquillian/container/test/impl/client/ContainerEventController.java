@@ -122,11 +122,12 @@ public class ContainerEventController {
     }
 
     private void createContext(EventContext<? extends TestEvent> context) {
+        TestEvent event = context.getEvent();
         try {
-            lookup(context.getEvent().getTestMethod(), new Activate());
+            lookup(event, new Activate());
             context.proceed();
         } finally {
-            lookup(context.getEvent().getTestMethod(), new DeActivate());
+            lookup(event, new DeActivate());
         }
     }
 
@@ -137,8 +138,10 @@ public class ContainerEventController {
     * common metadata layer.
     */
 
-    private void lookup(Method method, ResultCallback callback) {
-        DeploymentTargetDescription deploymentTarget = locateDeployment(method);
+    private void lookup(TestEvent event, ResultCallback callback) {
+        Method method = event.getTestMethod();
+        Class<?> testClass = event.getTestInstance().getClass();
+        DeploymentTargetDescription deploymentTarget = locateDeployment(testClass, method);
 
         ContainerRegistry containerRegistry = this.containerRegistry.get();
         DeploymentScenario deploymentScenario = this.deploymentScenario.get();
@@ -157,8 +160,8 @@ public class ContainerEventController {
                     + OperateOnDeployment.class.getSimpleName()
                     + " annotation on method "
                     + method.getName()
-                    + " or its declaring class "
-                    + method.getDeclaringClass().getSimpleName()
+                    + " or on class "
+                    + testClass.getName()
                     + " match a defined "
                     +
                     "@"
@@ -172,15 +175,20 @@ public class ContainerEventController {
     }
 
     // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
-    private DeploymentTargetDescription locateDeployment(Method method) {
-        if (method.isAnnotationPresent(OperateOnDeployment.class)) {
-            return new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
+    private DeploymentTargetDescription locateDeployment(Class<?> testClass, Method method) {
+        OperateOnDeployment operateOnDeployment = method.getAnnotation(OperateOnDeployment.class);
+
+        // Resolve from the actual test class rather than the declaring class of the method so that a target declared
+        // on a subclass also applies to test methods inherited from a superclass. @Inherited covers the superclass
+        // chain, walking the enclosing classes covers JUnit 5 @Nested classes.
+        for (Class<?> current = testClass; operateOnDeployment == null && current != null;
+            current = current.getEnclosingClass()) {
+            operateOnDeployment = current.getAnnotation(OperateOnDeployment.class);
         }
-        Class<?> declaringClass = method.getDeclaringClass();
-        if (declaringClass.isAnnotationPresent(OperateOnDeployment.class)) {
-            return new DeploymentTargetDescription(declaringClass.getAnnotation(OperateOnDeployment.class).value());
-        }
-        return DeploymentTargetDescription.DEFAULT;
+
+        return operateOnDeployment == null
+            ? DeploymentTargetDescription.DEFAULT
+            : new DeploymentTargetDescription(operateOnDeployment.value());
     }
 
     private abstract class ResultCallback {
