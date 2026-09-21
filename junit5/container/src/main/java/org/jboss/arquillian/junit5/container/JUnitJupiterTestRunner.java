@@ -22,6 +22,7 @@ import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
+import org.opentest4j.IncompleteExecutionException;
 import org.opentest4j.TestAbortedException;
 
 /**
@@ -110,7 +111,17 @@ public class JUnitJupiterTestRunner implements TestRunner {
             if (fatalError != null) {
                 return TestResult.failed(fatalError);
             }
-            return exceptions.isEmpty() ? TestResult.passed() : TestResult.failed(new IdentifiedTestException(exceptions));
+            if (exceptions.isEmpty()) {
+                return TestResult.passed();
+            }
+            IdentifiedTestException exception = new IdentifiedTestException(exceptions);
+            // An aborted test, e.g. a failed assumption or a @Disabled method, is only reported as skipped if
+            // nothing else went wrong. An abort combined with a failure elsewhere in the lifecycle, such as an
+            // @AfterEach that threw, remains a failure.
+            if (exceptions.values().stream().allMatch(IncompleteExecutionException.class::isInstance)) {
+                return TestResult.skipped(exception);
+            }
+            return TestResult.failed(exception);
         }
     }
 
