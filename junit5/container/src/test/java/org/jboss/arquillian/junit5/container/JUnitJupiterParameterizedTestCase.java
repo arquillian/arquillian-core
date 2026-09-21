@@ -19,11 +19,14 @@ package org.jboss.arquillian.junit5.container;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.junit5.container.fixtures.ClassWithArquillianExtensionAndParameterizedTest;
 import org.jboss.arquillian.junit5.extension.RunModeEvent;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -69,6 +72,11 @@ public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
         // then
         Assertions.assertEquals(3, result.getTestsSucceededCount());
         Assertions.assertEquals(0, result.getTestsFailedCount());
+        // The lifecycle still runs per invocation, only the test itself is dispatched to the container once
+        verify(adaptor).beforeClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor).afterClass(any(Class.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(3)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(3)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         verify(adaptor).test(any(TestMethodExecutor.class));
     }
 
@@ -95,12 +103,12 @@ public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
         // then
         Assertions.assertEquals(0, result.getTestsSucceededCount());
         Assertions.assertEquals(3, result.getTestsFailedCount());
-        for (int i = 0; i < result.getFailures().size();) {
-            TestExecutionSummary.Failure failure = result.getFailures().get(i++);
-            Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[" + i + "]"),
-                    "Run " + i + ": expected the display name to contain [" + i + "]");
+        for (int run = 1; run <= result.getFailures().size(); run++) {
+            TestExecutionSummary.Failure failure = result.getFailures().get(run - 1);
+            Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[" + run + "]"),
+                    "Run " + run + ": expected the display name to contain [" + run + "]");
             Assertions.assertTrue(failure.getException().getMessage().contains(EXPECTED_DETAIL_MESSAGE),
-                    "Run " + i + ": expected failure message");
+                    "Run " + run + ": expected failure message");
         }
         verify(adaptor).test(any(TestMethodExecutor.class));
     }

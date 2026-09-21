@@ -26,9 +26,17 @@ class ContextStore {
         return context.getRoot().getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY));
     }
 
+    /**
+     * The context of the test template itself, i.e. the parent of the context of a single template invocation. State
+     * keyed off it is shared by all invocations of that template and discarded once the template is done.
+     */
+    private ExtensionContext getTemplateContext() {
+        return context.getParent().orElse(context);
+    }
+
     private ExtensionContext.Store getTemplateStore() {
-        ExtensionContext templateContext = context.getParent().orElse(context);
-        return templateContext.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
+        return getTemplateContext()
+            .getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, INTERCEPTED_TEMPLATE_NAMESPACE_KEY));
     }
 
     boolean isRegisteredTemplate(Method method) {
@@ -37,7 +45,7 @@ class ContextStore {
 
     void registerTemplateResultMapper(Method method, TestResult result) {
         getTemplateStore().put(method.toGenericString(),
-            new TemplateResultMapper(result != null ? result : TestResult.passed()));
+            new TemplateResultMapper(result != null ? result : TestResult.passed(), getTemplateContext().getUniqueId()));
     }
 
     TemplateResultMapper getTemplateResultMapper(Method method) {
