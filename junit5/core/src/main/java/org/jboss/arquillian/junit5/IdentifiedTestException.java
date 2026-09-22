@@ -3,7 +3,9 @@ package org.jboss.arquillian.junit5;
 import java.util.Map;
 
 /**
- * A exception thrown when a test has failed
+ * Wraps the exceptions collected while running a test in the container, keyed by the unique id of the test they
+ * were reported for. It carries the exceptions of a failed test as well as of a test that was aborted, for example
+ * by a failed assumption, and is unwrapped again on the client side.
  */
 public class IdentifiedTestException extends RuntimeException {
     private static final long serialVersionUID = 1L;

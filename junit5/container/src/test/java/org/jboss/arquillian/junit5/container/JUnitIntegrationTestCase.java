@@ -17,18 +17,28 @@
 package org.jboss.arquillian.junit5.container;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.jboss.arquillian.junit5.IdentifiedTestException;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
+import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.opentest4j.TestAbortedException;
 
 /**
  * @author Johannes Beck
@@ -74,6 +84,41 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
 
         verify(adaptor, times(1)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
         verify(adaptor, times(1)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+    }
+
+    /**
+     * A test aborted in the container, e.g. by a failed assumption, must be reported as aborted rather than failed.
+     * See <a href="https://github.com/arquillian/arquillian-core/issues/889">GH issue</a>.
+     */
+    @Test
+    public void shouldReportContainerAbortAsAborted() throws Exception {
+        // given a container result for a test that aborted on an assumption
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        TestAbortedException aborted = new TestAbortedException("Assumption failed: assumption is not true");
+        TestResult skipped = TestResult.skipped(
+            new IdentifiedTestException(Collections.singletonMap("test", aborted)));
+        doAnswer(new TestExecuteLifecycle(skipped)).when(adaptor).test(any(TestMethodExecutor.class));
+
+        final AtomicReference<Throwable> reported = new AtomicReference<>();
+        TestExecutionListener listener = new TestExecutionListener() {
+            @Override
+            public void executionFinished(TestIdentifier identifier, TestExecutionResult executionResult) {
+                if (identifier.isTest()) {
+                    reported.set(executionResult.getThrowable().orElse(null));
+                }
+            }
+        };
+
+        // when
+        TestExecutionSummary result = run(adaptor, listener, ClassWithArquillianExtensionWithExtensions.class);
+
+        // then
+        Assertions.assertEquals(1, result.getTestsAbortedCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        Assertions.assertEquals(0, result.getTestsSucceededCount());
+        // The exception raised in the container must be propagated as-is, not replaced by an empty one
+        Assertions.assertSame(aborted, reported.get());
     }
 
     @Test

@@ -20,6 +20,7 @@ import org.jboss.arquillian.junit5.IdentifiedTestException;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
 
 public class JUnitJupiterTestRunnerTestCase {
 
@@ -43,12 +44,25 @@ public class JUnitJupiterTestRunnerTestCase {
   }
 
   @Test
-  public void shouldReturnExceptionToClientIfAsumptionFailing() throws Exception {
+  public void shouldReportSkippedToClientIfAssumptionFailing() throws Exception {
     JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
     TestResult result = runner.execute(TestScenarios.class, "shouldSkipOnAssumption");
 
-    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
     Assertions.assertNotNull(result.getThrowable());
+    Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
+    Assertions.assertInstanceOf(TestAbortedException.class, result.getThrowable().getCause());
+  }
+
+  @Test
+  public void shouldReportFailedToClientIfAssumptionFailsAndAfterThrows() throws Exception {
+    TestScenarios.exceptionThrownInAfter = new Exception("Not expected");
+
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(TestScenarios.class, "shouldSkipOnAssumption");
+
+    // The test aborted, but the lifecycle failed, so the overall result must not be downgraded to skipped
+    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
     Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
   }
 
