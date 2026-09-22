@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit5.container;
+package org.jboss.arquillian.junit5.container.fixtures;
 
 import org.junit.platform.suite.api.ExcludeTags;
 import org.junit.platform.suite.api.IncludeTags;

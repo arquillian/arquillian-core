@@ -1,4 +1,4 @@
-package org.jboss.arquillian.junit.container;
+package org.jboss.arquillian.junit.container.fixtures;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.After;

@@ -154,8 +154,23 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             } else {
                 // Run as container (but only once)
                 if (!contextStore.isRegisteredTemplate(invocationContext.getExecutable())) {
-                    result = interceptInvocation(invocation, extensionContext);
+                    // The result must be registered however the container round trip ends. If it throws instead of
+                    // returning a TestResult - a container that is not reachable, for instance - leaving the template
+                    // unregistered would make every remaining invocation dispatch to the container all over again.
+                    TestResult serverResult;
+                    try {
+                        serverResult = interceptInvocation(invocation, extensionContext);
+                    } catch (Throwable t) {
+                        contextStore.registerTemplateResultMapper(invocationContext.getExecutable(),
+                            TestResult.failed(t));
+                        throw t;
+                    }
+                    contextStore.registerTemplateResultMapper(invocationContext.getExecutable(), serverResult);
+                } else {
+                    invocation.skip();
                 }
+                result = contextStore.getTemplateResultMapper(invocationContext.getExecutable())
+                        .resultFor(extensionContext.getUniqueId());
             }
             throwError(result);
         }

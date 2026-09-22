@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.junit5.container;
+package org.jboss.arquillian.junit5.container.fixtures;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -83,7 +83,7 @@ public class TestScenarios {
   }
 
   @Nested
-  class NestedTestScenarios {
+  public class NestedTestScenarios {
 
     @Test
     public void shouldPassOnAssumptionInNested() {

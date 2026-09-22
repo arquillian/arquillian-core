@@ -23,6 +23,8 @@ import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithArquillianExtensionWithExtensions;
+import org.jboss.arquillian.junit5.container.fixtures.ExampleSuite;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.jupiter.api.Assertions;
