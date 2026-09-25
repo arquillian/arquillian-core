@@ -24,6 +24,7 @@ import org.jboss.arquillian.container.impl.LocalContainerRegistry;
 import org.jboss.arquillian.container.impl.client.ContainerDeploymentContextHandler;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
@@ -43,6 +44,7 @@ import org.jboss.arquillian.container.test.test.AbstractContainerTestTestBase;
 import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.annotation.ClassScoped;
@@ -62,6 +64,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +79,10 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
     private static final String CONTAINER_1_NAME = "container_1";
 
     private static final String DEPLOYMENT_1_NAME = "deployment_1";
+
+    private static final String DEPLOYMENT_2_NAME = "deployment_2";
+
+    private static final String NON_EXISTING_DEPLOYMENT_NAME = "NON_EXISTING_DEPLOYMENT";
 
     @Inject
     private Instance<Injector> injector;
@@ -100,6 +108,7 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
     protected void addExtensions(List<Class<?>> extensions) {
         extensions.add(ContainerEventController.class);
         extensions.add(ContainerDeploymentContextHandler.class);
+        extensions.add(ActiveDeploymentRecorder.class);
     }
 
     @Before
@@ -115,6 +124,8 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
             new DeploymentDescription(DEPLOYMENT_1_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
 
         registry.create(container1, serviceLoader);
+
+        ActiveDeploymentRecorder.activeDeployment = null;
 
         bind(SuiteScoped.class, ContainerRegistry.class, registry);
         bind(ClassScoped.class, DeploymentScenario.class, scenario);
@@ -274,12 +285,184 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
         }
     }
 
-    @OperateOnDeployment("NON_EXISTING_DEPLOYMENT")
+    @OperateOnDeployment(NON_EXISTING_DEPLOYMENT_NAME)
     private Method nonExistingOperatesOnDeploymentMethod() {
         try {
             return ContainerEventControllerTestCase.class.getDeclaredMethod("nonExistingOperatesOnDeploymentMethod");
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void shouldInvokeTestInDeploymentContextFromClassLevelAnnotation() throws Exception {
+        addSecondDeployment();
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new ClassLevelAnnotatedTest(), declaredTestMethod(ClassLevelAnnotatedTest.class)));
+
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, ContainerContext.class);
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, DeploymentContext.class);
+        assertActiveDeployment(DEPLOYMENT_2_NAME);
+    }
+
+    @Test
+    public void shouldMethodLevelOverrideClassLevelAnnotation() throws Exception {
+        addSecondDeployment();
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new ClassLevelAnnotatedWithOverrideTest(), declaredTestMethod(ClassLevelAnnotatedWithOverrideTest.class)));
+
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, ContainerContext.class);
+        assertEventFiredInContext(org.jboss.arquillian.test.spi.event.suite.Before.class, DeploymentContext.class);
+        assertActiveDeployment(DEPLOYMENT_1_NAME);
+    }
+
+    @Test
+    public void shouldInheritClassLevelAnnotationFromSuperClass() throws Exception {
+        addSecondDeployment();
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new SubClassOfClassLevelAnnotatedTest(),
+            declaredTestMethod(SubClassOfClassLevelAnnotatedTest.class)));
+
+        assertActiveDeployment(DEPLOYMENT_2_NAME);
+    }
+
+    @Test
+    public void shouldApplyClassLevelAnnotationToInheritedTestMethod() throws Exception {
+        addSecondDeployment();
+
+        // The test method is declared by the non annotated super class, the target must still be resolved from the
+        // annotated sub class the test is actually running as
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new AnnotatedSubClassOfPlainTest(), declaredTestMethod(PlainTest.class)));
+
+        assertActiveDeployment(DEPLOYMENT_2_NAME);
+    }
+
+    @Test
+    public void shouldInheritClassLevelAnnotationFromEnclosingClass() throws Exception {
+        addSecondDeployment();
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new ClassLevelAnnotatedTest().new NestedTest(),
+            declaredTestMethod(ClassLevelAnnotatedTest.NestedTest.class)));
+
+        assertActiveDeployment(DEPLOYMENT_2_NAME);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionIfClassLevelOperatesOnNonExistingDeployment() throws Exception {
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new ClassLevelNonExistingDeploymentTest(),
+            declaredTestMethod(ClassLevelNonExistingDeploymentTest.class)));
+    }
+
+    @Test
+    public void shouldNotValidateClassLevelDeploymentOverriddenByMethodLevel() throws Exception {
+        addSecondDeployment();
+
+        // A class level target is resolved lazily, per test method. A method that overrides it with its own
+        // @OperateOnDeployment never resolves the class level name, so an unused - and here non existing - class level
+        // target is not validated against the DeploymentScenario and does not fail the test
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(
+            new ClassLevelNonExistingDeploymentWithOverrideTest(),
+            declaredTestMethod(ClassLevelNonExistingDeploymentWithOverrideTest.class)));
+
+        assertActiveDeployment(DEPLOYMENT_1_NAME);
+    }
+
+    /**
+     * Adds a second deployment to the scenario, which also means no deployment matches
+     * {@link org.jboss.arquillian.container.spi.client.deployment.DeploymentTargetDescription#DEFAULT} anymore, so
+     * the asserted deployment can only have been selected by an {@link OperateOnDeployment} annotation.
+     */
+    private void addSecondDeployment() {
+        Archive<?> archive = ShrinkWrap.create(JavaArchive.class, DEPLOYMENT_2_NAME + ".jar");
+        scenario.addDeployment(
+            new DeploymentDescription(DEPLOYMENT_2_NAME, archive).setTarget(new TargetDescription(CONTAINER_1_NAME)));
+    }
+
+    private void assertActiveDeployment(String expectedDeploymentName) {
+        Deployment activeDeployment = ActiveDeploymentRecorder.activeDeployment;
+        assertNotNull("No DeploymentContext was active during the test event", activeDeployment);
+        assertEquals(expectedDeploymentName, activeDeployment.getDescription().getName());
+    }
+
+    private Method declaredTestMethod(Class<?> testClass) {
+        try {
+            return testClass.getDeclaredMethod("testMethod");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Records the {@link Deployment} bound to the active {@link DeploymentContext} while the test event is being
+     * observed, the context is deactivated again by the time the event has been fired.
+     */
+    public static class ActiveDeploymentRecorder {
+        static Deployment activeDeployment;
+
+        @Inject
+        private Instance<DeploymentContext> deploymentContext;
+
+        public void record(@Observes org.jboss.arquillian.test.spi.event.suite.Before event) {
+            DeploymentContext context = deploymentContext.get();
+            activeDeployment = context.isActive() ? context.getActiveId() : null;
+        }
+    }
+
+    @OperateOnDeployment(DEPLOYMENT_2_NAME)
+    private static class ClassLevelAnnotatedTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+
+        private class NestedTest {
+            @SuppressWarnings("unused")
+            private void testMethod() {
+            }
+        }
+    }
+
+    private static class SubClassOfClassLevelAnnotatedTest extends ClassLevelAnnotatedTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    private static class PlainTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    @OperateOnDeployment(DEPLOYMENT_2_NAME)
+    private static class AnnotatedSubClassOfPlainTest extends PlainTest {
+    }
+
+    @OperateOnDeployment(DEPLOYMENT_2_NAME)
+    private static class ClassLevelAnnotatedWithOverrideTest {
+        @OperateOnDeployment(DEPLOYMENT_1_NAME)
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    @OperateOnDeployment(NON_EXISTING_DEPLOYMENT_NAME)
+    private static class ClassLevelNonExistingDeploymentTest {
+        @SuppressWarnings("unused")
+        private void testMethod() {
+        }
+    }
+
+    @OperateOnDeployment(NON_EXISTING_DEPLOYMENT_NAME)
+    private static class ClassLevelNonExistingDeploymentWithOverrideTest {
+        @OperateOnDeployment(DEPLOYMENT_1_NAME)
+        @SuppressWarnings("unused")
+        private void testMethod() {
         }
     }
 }
