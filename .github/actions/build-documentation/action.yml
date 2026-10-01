@@ -10,7 +10,9 @@ runs:
         ruby-version: '3.4'
 
     - name: Install Asciidoctor
-      run: gem install asciidoctor --version 2.0.26 --no-document
+      run: |
+        gem install asciidoctor --version 2.0.26 --no-document
+        gem install rouge --version 5.1.0 --no-document
       shell: bash
 
     - name: Build documentation
@@ -21,5 +23,6 @@ runs:
           --attribute asciidoctor-source=docs \
           --out-file target/docs/index.html
         test -s target/docs/index.html
+        grep -q '<pre class="rouge highlight"><code data-lang="java"><span' target/docs/index.html
         grep -q '<title>Arquillian - So you can rule your code. Not the bugs.</title>' target/docs/index.html
       shell: bash

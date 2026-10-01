@@ -166,8 +166,7 @@ you can deploy a `Descriptor`.
 [source,java]
 ----
 @Deployment(order = 1)
-public static Descriptor createDep1()
-{
+public static Descriptor createDep1() {
   return Descriptors.create(DataSourceDescriptor.class);
 }
 
@@ -204,8 +203,7 @@ can use `@ArquillianResource` on a field or method argument of type URL:
 private URL baseURL;
 
 @Test
-private void shouldDoX(@ArquillianResource URL baseURL)
-{
+private void shouldDoX(@ArquillianResource URL baseURL) {
 }
 ----
 
@@ -221,8 +219,7 @@ contains that servlet, e.g. "http://localhost:8080/test1" vs.
 private URL baseURL;
 
 @Test
-private void shouldDoX(@ArquillianResource(MyServlet.class) URL baseURL)
-{
+private void shouldDoX(@ArquillianResource(MyServlet.class) URL baseURL) {
 }
 ----
 

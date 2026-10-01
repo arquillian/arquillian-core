@@ -5,7 +5,8 @@
 :sectanchors:
 :sectid:
 :source-language: java
-:source-highlighter: coderay
+:source-highlighter: rouge
+:rouge-style: github
 :sectnums:
 :icons: font
 :toc: left
