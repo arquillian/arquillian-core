@@ -23,9 +23,11 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
+        # Keep this list as: all supported LTS JDKs
         java:
           - 17
           - 21
+          - 25
 
     steps:
       - uses: actions/checkout@v7
@@ -59,9 +61,10 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
+        # Keep this list as: all supported LTS JDKs (Payara 7 requires JDK 21+)
         java:
-          # Payara 7 requires JDK 21+ (Jakarta EE 11)
           - 21
+          - 25
 
     steps:
       - uses: actions/checkout@v7

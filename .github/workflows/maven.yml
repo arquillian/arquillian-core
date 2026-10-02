@@ -25,14 +25,14 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        # Keep this list as: all supported LTS JDKs, the latest GA JDK, and optionally the latest EA JDK (if available).
+        # Keep this list as: all supported LTS JDKs and the latest GA JDK.
         # Reference: https://adoptium.net/support/
         java:
           - 11
           - 17
           - 21
           - 25
-          - 26
+          - 27
     steps:
       - name: Checkout arquillian-core
         uses: actions/checkout@v7
@@ -52,18 +52,19 @@ jobs:
             **/surefire-reports/*
             **/failsafe-reports/*
 
-  # Test JUnit Jupiter module with JUnit 6.x (requires Java 17+)
+  # Test JUnit Jupiter module with JUnit 6.x (requires JDK 17+)
   build-and-verify-junit6:
     name: Verify JUnit Jupiter with JUnit 6.x - JDK ${{ matrix.java }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       matrix:
+        # Keep this list as: all supported LTS JDKs and the latest GA JDK.
         java:
           - 17
           - 21
           - 25
-          - 26
+          - 27
     steps:
       - name: Checkout arquillian-core
         uses: actions/checkout@v7
