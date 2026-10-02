@@ -51,7 +51,7 @@ import org.jboss.arquillian.test.spi.event.suite.Test;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
- * Event dispatcher between Test lifecyle events and Container control events.
+ * Event dispatcher between Test lifecycle events and Container control events.
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  */
@@ -122,11 +122,12 @@ public class ContainerEventController {
     }
 
     private void createContext(EventContext<? extends TestEvent> context) {
+        TestEvent event = context.getEvent();
         try {
-            lookup(context.getEvent().getTestMethod(), new Activate());
+            lookup(event, new Activate());
             context.proceed();
         } finally {
-            lookup(context.getEvent().getTestMethod(), new DeActivate());
+            lookup(event, new DeActivate());
         }
     }
 
@@ -137,15 +138,17 @@ public class ContainerEventController {
     * common metadata layer.
     */
 
-    private void lookup(Method method, ResultCallback callback) {
-        DeploymentTargetDescription deploymentTarget = locateDeployment(method);
+    private void lookup(TestEvent event, ResultCallback callback) {
+        Method method = event.getTestMethod();
+        Class<?> testClass = event.getTestInstance().getClass();
+        DeploymentTargetDescription deploymentTarget = locateDeployment(testClass, method);
 
         ContainerRegistry containerRegistry = this.containerRegistry.get();
         DeploymentScenario deploymentScenario = this.deploymentScenario.get();
 
         Deployment deployment = deploymentScenario.deployment(deploymentTarget);
         if (deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT) {
-            // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
+            // trying to operate on a non-existing DeploymentTarget (which is not the DEFAULT)
             throw new IllegalStateException(
                 "No deployment found in "
                     + DeploymentScenario.class.getSimpleName()
@@ -157,6 +160,8 @@ public class ContainerEventController {
                     + OperateOnDeployment.class.getSimpleName()
                     + " annotation on method "
                     + method.getName()
+                    + " or on class "
+                    + testClass.getName()
                     + " match a defined "
                     +
                     "@"
@@ -170,14 +175,23 @@ public class ContainerEventController {
     }
 
     // TODO: Needs to be extracted into a MetaModel layer. Should not do reflection directly on TestClass/TestMethods
-    private DeploymentTargetDescription locateDeployment(Method method) {
-        DeploymentTargetDescription target = null;
-        if (method.isAnnotationPresent(OperateOnDeployment.class)) {
-            target = new DeploymentTargetDescription(method.getAnnotation(OperateOnDeployment.class).value());
-        } else {
-            target = DeploymentTargetDescription.DEFAULT;
+    private DeploymentTargetDescription locateDeployment(Class<?> testClass, Method method) {
+        // A method level annotation always wins over a class level one; the class level target is only resolved when
+        // the method does not declare one, so a class level target that no test method actually uses is never
+        // validated against the DeploymentScenario.
+        OperateOnDeployment operateOnDeployment = method.getAnnotation(OperateOnDeployment.class);
+
+        // Resolve from the actual test class rather than the declaring class of the method so that a target declared
+        // on a subclass also applies to test methods inherited from a superclass. @Inherited covers the superclass
+        // chain, walking the enclosing classes covers JUnit 5 @Nested classes.
+        for (Class<?> current = testClass; operateOnDeployment == null && current != null;
+            current = current.getEnclosingClass()) {
+            operateOnDeployment = current.getAnnotation(OperateOnDeployment.class);
         }
-        return target;
+
+        return operateOnDeployment == null
+            ? DeploymentTargetDescription.DEFAULT
+            : new DeploymentTargetDescription(operateOnDeployment.value());
     }
 
     private abstract class ResultCallback {

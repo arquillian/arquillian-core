@@ -69,7 +69,12 @@ public final class RunModeUtils {
             if (methods.length > 0) {
                 if (!testMethod.isAnnotationPresent(RunAsClient.class) && !testClass.isAnnotationPresent(
                     RunAsClient.class)) {
-                    OperateOnDeployment onDeployment = testClass.getAnnotation(OperateOnDeployment.class);
+                    // Resolve the deployment the same way ContainerEventController does, the method level
+                    // annotation overrides the class level one, otherwise the warning below names the wrong deployment
+                    OperateOnDeployment onDeployment = testMethod.getAnnotation(OperateOnDeployment.class);
+                    if (onDeployment == null) {
+                        onDeployment = testClass.getAnnotation(OperateOnDeployment.class);
+                    }
                     String deploymentName = onDeployment == null ? "_DEFAULT_" : onDeployment.value();
 
                     for (Method m : methods) {
