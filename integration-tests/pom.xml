@@ -314,5 +314,45 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <!-- TomEE 10 (Jakarta EE 10 Web Profile) -->
+      <id>tomee</id>
+      <properties>
+        <version.org.apache.tomee>10.2.0</version.org.apache.tomee>
+        <tomee.home>${project.build.directory}${file.separator}tomee</tomee.home>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>arquillian-tomee-remote</artifactId>
+          <version>${version.org.apache.tomee}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <!-- Without an arquillian.xml the container defined by these properties must be marked as default -->
+                <arq.container.default.default>true</arq.container.default.default>
+                <!-- The adapter downloads and unpacks the TomEE distribution itself -->
+                <arq.container.default.configuration.version>${version.org.apache.tomee}</arq.container.default.configuration.version>
+                <arq.container.default.configuration.classifier>webprofile</arq.container.default.configuration.classifier>
+                <arq.container.default.configuration.dir>${tomee.home}</arq.container.default.configuration.dir>
+                <arq.container.default.configuration.appWorkingDir>${project.build.directory}${file.separator}tomee-apps</arq.container.default.configuration.appWorkingDir>
+                <arq.container.default.configuration.httpPort>8080</arq.container.default.configuration.httpPort>
+                <arq.container.default.configuration.stopPort>8005</arq.container.default.configuration.stopPort>
+                <arq.container.default.configuration.ajpPort>8009</arq.container.default.configuration.ajpPort>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
