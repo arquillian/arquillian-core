@@ -12,6 +12,8 @@ class ContextStore {
 
     private static final String PARAMETER_NAMESPACE_KEY = "methodParameters";
 
+    private static final String LIFECYCLE_METHODS_SKIPPED_KEY = "lifecycleMethodsSkipped";
+
     private final ExtensionContext context;
 
     private ContextStore(ExtensionContext context) {
@@ -80,5 +82,23 @@ class ContextStore {
     void removeMethodParameters() {
         context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY, PARAMETER_NAMESPACE_KEY))
             .remove(PARAMETER_NAMESPACE_KEY);
+    }
+
+    /**
+     * Records whether the @BeforeEach and @AfterEach methods of the current test should be skipped.
+     */
+    void setLifecycleMethodsSkipped(boolean skipped) {
+        context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY))
+            .put(LIFECYCLE_METHODS_SKIPPED_KEY, skipped);
+    }
+
+    /**
+     * Returns whether the @BeforeEach and @AfterEach methods of the current test should be skipped.
+     *
+     * @return {@code true} if they should be skipped, {@code false} if they should run or nothing was recorded
+     */
+    boolean isLifecycleMethodsSkipped() {
+        return context.getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY))
+            .getOrDefault(LIFECYCLE_METHODS_SKIPPED_KEY, Boolean.class, false);
     }
 }

@@ -29,6 +29,8 @@ import org.opentest4j.TestAbortedException;
 
 /**
  * Implements several JUnit 5 extension API interfaces to adapt JUnit 5 tests for Arquillian.
+ *
+ * @author Radoslav Husar
  */
 public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, InvocationInterceptor, ParameterResolver {
     public static final String RUNNING_INSIDE_ARQUILLIAN = "insideArquillian";
@@ -88,14 +90,18 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             .getAdaptor();
         final Object instance = context.getRequiredTestInstance();
         final Method method = context.getRequiredTestMethod();
+        final ContextStore contextStore = ContextStore.getContextStore(context);
         // Create a new parameter holder
-        final MethodParameters methodParameters = ContextStore.getContextStore(context).createMethodParameters();
+        final MethodParameters methodParameters = contextStore.createMethodParameters();
         // Fired to set the MethodParameters on the producer
         adapter.fireCustomLifecycle(new MethodParameterProducerEvent(instance, method, methodParameters));
-        adapter.before(
-            instance,
-            method,
-            LifecycleMethodExecutor.NO_OP);
+        // Before must be fired exactly once per test, regardless of the number of @BeforeEach methods. The executor
+        // does not run them itself; it only records whether core decided they should run in this JVM (it is not
+        // invoked e.g. on a DONT_EXECUTE decision). JUnit runs the @BeforeEach methods right after this callback
+        // and the interceptors proceed or skip them based on this record.
+        final AtomicBoolean executorInvoked = new AtomicBoolean(false);
+        adapter.before(instance, method, () -> executorInvoked.set(true));
+        contextStore.setLifecycleMethodsSkipped(!executorInvoked.get());
     }
 
     /**
@@ -204,28 +210,30 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      */
     @Override
     public void interceptBeforeEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
-            // Since the invocation is going to proceed, the invocation must happen within the context of SPI before()
+        if ((IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext))
+            && !ContextStore.getContextStore(extensionContext).isLifecycleMethodsSkipped()) {
+            // The SPI before() was already fired from beforeEach(), so that the Before event is fired exactly once per
+            // test. The invocation must still happen within the Arquillian contexts, e.g. so that a manual mode test
+            // can start a container from a @BeforeEach method, which is what firing BeforeEachMethodEvent provides.
             final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
             try {
-                getManager(extensionContext).getAdaptor().before(
+                getManager(extensionContext).getAdaptor().fireCustomLifecycle(new BeforeEachMethodEvent(
                     extensionContext.getRequiredTestInstance(),
                     extensionContext.getRequiredTestMethod(),
                     () -> {
                         proceedInvoked.set(true);
                         invocation.proceed();
-                    });
+                    }));
             } catch (Throwable t) {
-                // If before() threw before invoking the LifecycleMethodExecutor (e.g. due to a ServerSetupTask
-                // assumption failure), the JUnit 5 invocation was never consumed. Call skip() so JUnit does not
-                // generate "Chain of InvocationInterceptors never called invocation".
+                // If the event failed before invoking the LifecycleMethodExecutor, the JUnit 5 invocation was never
+                // consumed. Call skip() so JUnit does not generate "Chain of InvocationInterceptors never called
+                // invocation".
                 if (!proceedInvoked.get()) {
                     invocation.skip();
                 }
                 throw t;
             }
-            // If before() returned normally without calling the LifecycleMethodExecutor (e.g. DONT_EXECUTE
-            // decision after a failed deployment setup), the invocation must still be consumed.
+            // If the event did not invoke the LifecycleMethodExecutor, the invocation must still be consumed.
             if (!proceedInvoked.get()) {
                 invocation.skip();
             }
@@ -244,16 +252,18 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      */
     @Override
     public void interceptAfterEachMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
-        if (IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext)) {
+        if ((IS_INSIDE_ARQUILLIAN.test(extensionContext) || isRunAsClient(extensionContext))
+            && !ContextStore.getContextStore(extensionContext).isLifecycleMethodsSkipped()) {
+            // The SPI after() is fired from afterEach(), so that the After event is fired exactly once per test.
             final AtomicBoolean proceedInvoked = new AtomicBoolean(false);
             try {
-                getManager(extensionContext).getAdaptor().after(
+                getManager(extensionContext).getAdaptor().fireCustomLifecycle(new AfterEachMethodEvent(
                     extensionContext.getRequiredTestInstance(),
                     extensionContext.getRequiredTestMethod(),
                     () -> {
                         proceedInvoked.set(true);
                         invocation.proceed();
-                    });
+                    }));
             } catch (Throwable t) {
                 if (!proceedInvoked.get()) {
                     invocation.skip();
