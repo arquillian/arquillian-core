@@ -434,6 +434,124 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #24292f;
+  background-color: #f6f8fa;
+}
+pre.rouge .k, pre.rouge .kd, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kt, pre.rouge .kv {
+  color: #cf222e;
+}
+pre.rouge .gr {
+  color: #f6f8fa;
+}
+pre.rouge .gd {
+  color: #82071e;
+  background-color: #ffebe9;
+}
+pre.rouge .nb {
+  color: #953800;
+}
+pre.rouge .nc {
+  color: #953800;
+}
+pre.rouge .no {
+  color: #953800;
+}
+pre.rouge .nn {
+  color: #953800;
+}
+pre.rouge .sr {
+  color: #116329;
+}
+pre.rouge .na {
+  color: #116329;
+}
+pre.rouge .nt {
+  color: #116329;
+}
+pre.rouge .gi {
+  color: #116329;
+  background-color: #dafbe1;
+}
+pre.rouge .ges {
+  font-weight: bold;
+  font-style: italic;
+}
+pre.rouge .kc {
+  color: #0550ae;
+}
+pre.rouge .l, pre.rouge .ld, pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #0550ae;
+}
+pre.rouge .sb {
+  color: #0550ae;
+}
+pre.rouge .bp {
+  color: #0550ae;
+}
+pre.rouge .ne {
+  color: #0550ae;
+}
+pre.rouge .nl {
+  color: #0550ae;
+}
+pre.rouge .py {
+  color: #0550ae;
+}
+pre.rouge .nv, pre.rouge .vc, pre.rouge .vg, pre.rouge .vi, pre.rouge .vm {
+  color: #0550ae;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #0550ae;
+}
+pre.rouge .gh {
+  color: #0550ae;
+  font-weight: bold;
+}
+pre.rouge .gu {
+  color: #0550ae;
+  font-weight: bold;
+}
+pre.rouge .s, pre.rouge .sa, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .se, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1, pre.rouge .ss {
+  color: #0a3069;
+}
+pre.rouge .nd {
+  color: #8250df;
+}
+pre.rouge .nf, pre.rouge .fm {
+  color: #8250df;
+}
+pre.rouge .err {
+  color: #f6f8fa;
+  background-color: #82071e;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cp, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #6e7781;
+}
+pre.rouge .gl {
+  color: #6e7781;
+}
+pre.rouge .gt {
+  color: #6e7781;
+}
+pre.rouge .ni {
+  color: #24292f;
+}
+pre.rouge .si {
+  color: #24292f;
+}
+pre.rouge .ge {
+  color: #24292f;
+  font-style: italic;
+}
+pre.rouge .gs {
+  color: #24292f;
+  font-weight: bold;
+}
+</style>
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
@@ -600,16 +718,16 @@ side by side:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">// JUnit Jupiter (JUnit 5 and 6)
-@ExtendWith(ArquillianExtension.class)
-class GreeterTestCase {
+<pre class="rouge highlight"><code data-lang="java"><span class="c1">// JUnit Jupiter (JUnit 5 and 6)</span>
+<span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">ArquillianExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">GreeterTestCase</span> <span class="o">{</span>
 
-// JUnit 4
-@RunWith(Arquillian.class)
-public class GreeterTestCase {
+<span class="c1">// JUnit 4</span>
+<span class="nd">@RunWith</span><span class="o">(</span><span class="nc">Arquillian</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">GreeterTestCase</span> <span class="o">{</span>
 
-// TestNG
-public class GreeterTestCase extends Arquillian {</code></pre>
+<span class="c1">// TestNG</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">GreeterTestCase</span> <span class="kd">extends</span> <span class="nc">Arquillian</span> <span class="o">{</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -807,12 +925,12 @@ deployment is configured using a static method annotated with
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment
-public static JavaArchive createDeployment() {
-    return ShrinkWrap.create(JavaArchive.class)
-        .addClass(Greeter.class)
-        .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">JavaArchive</span> <span class="nf">createDeployment</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nc">ShrinkWrap</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">JavaArchive</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">addClass</span><span class="o">(</span><span class="nc">Greeter</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">addAsManifestResource</span><span class="o">(</span><span class="nc">EmptyAsset</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">,</span> <span class="s">"beans.xml"</span><span class="o">);</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -884,12 +1002,12 @@ But you can implement your own method to generate the archive to be deployed usi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">/**
+<pre class="rouge highlight"><code data-lang="java"><span class="cm">/**
  * Method called for generating the deployment configuration.
  * @param testClass of current running test.
  * @return Model object that contains all the information related to deployment configuration.
- */
-DeploymentConfiguration generateDeploymentScenario(TestClass testClass);</code></pre>
+ */</span>
+<span class="nc">DeploymentConfiguration</span> <span class="nf">generateDeploymentScenario</span><span class="o">(</span><span class="nc">TestClass</span> <span class="n">testClass</span><span class="o">);</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -922,11 +1040,11 @@ The method must be public static and receive as a parameter an <code>org.jboss.s
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@BeforeDeployment
-public static Archive addDeploymentContent(Archive archive) {
-    // Modify Archive
-    return archive;
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@BeforeDeployment</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">Archive</span> <span class="nf">addDeploymentContent</span><span class="o">(</span><span class="nc">Archive</span> <span class="n">archive</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Modify Archive</span>
+    <span class="k">return</span> <span class="n">archive</span><span class="o">;</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 </div>
@@ -1122,23 +1240,23 @@ configuration.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">&lt;?xml version="1.0"?&gt;
-&lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://jboss.org/schema/arquillian"
-    xsi:schemaLocation="http://jboss.org/schema/arquillian http://www.jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+<pre class="rouge highlight"><code data-lang="xml"><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;arquillian</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="na">xmlns=</span><span class="s">"http://jboss.org/schema/arquillian"</span>
+    <span class="na">xsi:schemaLocation=</span><span class="s">"http://jboss.org/schema/arquillian http://www.jboss.org/schema/arquillian/arquillian_1_0.xsd"</span><span class="nt">&gt;</span>
 
-    &lt;container qualifier="wildfly" default="true"&gt;
-        &lt;configuration&gt;
-            &lt;property name="managementAddress"&gt;test.example.com&lt;/property&gt;
-            &lt;property name="managementPort"&gt;9990&lt;/property&gt;
-        &lt;/configuration&gt;
-        &lt;protocol type="Servlet 3.0"&gt;
-            &lt;property name="host"&gt;test.example.com&lt;/property&gt;
-            &lt;property name="port"&gt;8181&lt;/property&gt;
-        &lt;/protocol&gt;
-    &lt;/container&gt;
+    <span class="nt">&lt;container</span> <span class="na">qualifier=</span><span class="s">"wildfly"</span> <span class="na">default=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;configuration&gt;</span>
+            <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"managementAddress"</span><span class="nt">&gt;</span>test.example.com<span class="nt">&lt;/property&gt;</span>
+            <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"managementPort"</span><span class="nt">&gt;</span>9990<span class="nt">&lt;/property&gt;</span>
+        <span class="nt">&lt;/configuration&gt;</span>
+        <span class="nt">&lt;protocol</span> <span class="na">type=</span><span class="s">"Servlet 3.0"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"host"</span><span class="nt">&gt;</span>test.example.com<span class="nt">&lt;/property&gt;</span>
+            <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"port"</span><span class="nt">&gt;</span>8181<span class="nt">&lt;/property&gt;</span>
+        <span class="nt">&lt;/protocol&gt;</span>
+    <span class="nt">&lt;/container&gt;</span>
 
-&lt;/arquillian&gt;</code></pre>
+<span class="nt">&lt;/arquillian&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1185,27 +1303,27 @@ using Java system properties.</p>
 <h5 id="_example_arquillian_xml_with_two_container_configurations"><a class="anchor" href="#_example_arquillian_xml_with_two_container_configurations"></a>Example arquillian.xml with two container configurations:</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
-&lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns="http://jboss.org/schema/arquillian"
-   xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+<pre class="rouge highlight"><code data-lang="xml"><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
+<span class="nt">&lt;arquillian</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+   <span class="na">xmlns=</span><span class="s">"http://jboss.org/schema/arquillian"</span>
+   <span class="na">xsi:schemaLocation=</span><span class="s">"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"</span><span class="nt">&gt;</span>
 
-   &lt;container qualifier="wildfly_managed" default="true"&gt;
-      &lt;protocol type="Servlet 3.0"&gt;
-         &lt;property name="executionType"&gt;MANAGED&lt;/property&gt;
-      &lt;/protocol&gt;
-      &lt;configuration&gt;
-         &lt;property name="jbossHome"&gt;${project.baseDir}/target/wildfly/&lt;/property&gt;
-         &lt;property name="allowConnectingToRunningServer"&gt;true&lt;/property&gt;
-      &lt;/configuration&gt;
-   &lt;/container&gt;
+   <span class="nt">&lt;container</span> <span class="na">qualifier=</span><span class="s">"wildfly_managed"</span> <span class="na">default=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;protocol</span> <span class="na">type=</span><span class="s">"Servlet 3.0"</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"executionType"</span><span class="nt">&gt;</span>MANAGED<span class="nt">&lt;/property&gt;</span>
+      <span class="nt">&lt;/protocol&gt;</span>
+      <span class="nt">&lt;configuration&gt;</span>
+         <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"jbossHome"</span><span class="nt">&gt;</span>${project.baseDir}/target/wildfly/<span class="nt">&lt;/property&gt;</span>
+         <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"allowConnectingToRunningServer"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/property&gt;</span>
+      <span class="nt">&lt;/configuration&gt;</span>
+   <span class="nt">&lt;/container&gt;</span>
 
-   &lt;container qualifier="jetty"&gt;
-      &lt;configuration&gt;
-         &lt;!-- container specific configuration properties --&gt;
-      &lt;/configuration&gt;
-   &lt;/container&gt;
-&lt;/arquillian&gt;</code></pre>
+   <span class="nt">&lt;container</span> <span class="na">qualifier=</span><span class="s">"jetty"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;configuration&gt;</span>
+         <span class="c">&lt;!-- container specific configuration properties --&gt;</span>
+      <span class="nt">&lt;/configuration&gt;</span>
+   <span class="nt">&lt;/container&gt;</span>
+<span class="nt">&lt;/arquillian&gt;</span></code></pre>
 </div>
 </div>
 </div>
@@ -1227,19 +1345,19 @@ the 'arquillian.launch' system property for test execution, as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">&lt;profile&gt;
-   &lt;id&gt;wildfly-managed&lt;/id&gt;
-   &lt;build&gt;
-      &lt;plugins&gt;
-         &lt;plugin&gt;
-            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
-            &lt;configuration&gt;
-               &lt;systemPropertyVariables&gt;
-                  &lt;arquillian.launch&gt;wildfly_managed&lt;/arquillian.launch&gt;
-               &lt;/systemPropertyVariables&gt;
-            &lt;/configuration&gt;
-         &lt;/plugin&gt;
+<pre class="rouge highlight"><code data-lang="xml"><span class="nt">&lt;profile&gt;</span>
+   <span class="nt">&lt;id&gt;</span>wildfly-managed<span class="nt">&lt;/id&gt;</span>
+   <span class="nt">&lt;build&gt;</span>
+      <span class="nt">&lt;plugins&gt;</span>
+         <span class="nt">&lt;plugin&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+               <span class="nt">&lt;systemPropertyVariables&gt;</span>
+                  <span class="nt">&lt;arquillian.launch&gt;</span>wildfly_managed<span class="nt">&lt;/arquillian.launch&gt;</span>
+               <span class="nt">&lt;/systemPropertyVariables&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+         <span class="nt">&lt;/plugin&gt;</span>
          ...</code></pre>
 </div>
 </div>
@@ -1329,13 +1447,13 @@ annotations.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@ExtendWith(ArquillianExtension.class)
-class GreeterTestCase {
-    @Inject
-    private Greeter greeter;
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">ArquillianExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">GreeterTestCase</span> <span class="o">{</span>
+    <span class="nd">@Inject</span>
+    <span class="kd">private</span> <span class="nc">Greeter</span> <span class="n">greeter</span><span class="o">;</span>
 
-    ...
-}</code></pre>
+    <span class="o">...</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1343,13 +1461,13 @@ class GreeterTestCase {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@RunWith(Arquillian.class)
-public class GreeterTestCase {
-    @Inject
-    private Greeter greeter;
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RunWith</span><span class="o">(</span><span class="nc">Arquillian</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">GreeterTestCase</span> <span class="o">{</span>
+    <span class="nd">@Inject</span>
+    <span class="kd">private</span> <span class="nc">Greeter</span> <span class="n">greeter</span><span class="o">;</span>
 
-    ...
-}</code></pre>
+    <span class="o">...</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1357,10 +1475,10 @@ public class GreeterTestCase {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Test
-void testGreeting(Greeter greeter) {
-  ...
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Test</span>
+<span class="kt">void</span> <span class="nf">testGreeting</span><span class="o">(</span><span class="nc">Greeter</span> <span class="n">greeter</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">...</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1406,8 +1524,8 @@ by hand:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@ArquillianResource
-private Context context;</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ArquillianResource</span>
+<span class="kd">private</span> <span class="nc">Context</span> <span class="n">context</span><span class="o">;</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1443,17 +1561,17 @@ reference using the following equation in the specified order:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">"java:global/test.ear/test/" + fieldType.getSimpleName() + "Bean",
-"java:global/test.ear/test/" + fieldType.getSimpleName(),
-"java:global/test/" + fieldType.getSimpleName(),
-"java:global/test/" + fieldType.getSimpleName() + "Bean",
-"java:global/test/" + fieldType.getSimpleName() + "/no-interface",
-"test/" + unqualified interface name + "Bean/local",
-"test/" + unqualified interface name + "Bean/remote",
-"test/" + unqualified interface name + "/no-interface",
-unqualified interface name + "Bean/local",
-unqualified interface name + "Bean/remote",
-unqualified interface name + "/no-interface"</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="s">"java:global/test.ear/test/"</span> <span class="o">+</span> <span class="n">fieldType</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"Bean"</span><span class="o">,</span>
+<span class="s">"java:global/test.ear/test/"</span> <span class="o">+</span> <span class="n">fieldType</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span>
+<span class="s">"java:global/test/"</span> <span class="o">+</span> <span class="n">fieldType</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">(),</span>
+<span class="s">"java:global/test/"</span> <span class="o">+</span> <span class="n">fieldType</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"Bean"</span><span class="o">,</span>
+<span class="s">"java:global/test/"</span> <span class="o">+</span> <span class="n">fieldType</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"/no-interface"</span><span class="o">,</span>
+<span class="s">"test/"</span> <span class="o">+</span> <span class="n">unqualified</span> <span class="kd">interface</span> <span class="nc">name</span> <span class="o">+</span> <span class="s">"Bean/local"</span><span class="o">,</span>
+<span class="s">"test/"</span> <span class="o">+</span> <span class="n">unqualified</span> <span class="kd">interface</span> <span class="nc">name</span> <span class="o">+</span> <span class="s">"Bean/remote"</span><span class="o">,</span>
+<span class="s">"test/"</span> <span class="o">+</span> <span class="n">unqualified</span> <span class="kd">interface</span> <span class="nc">name</span> <span class="o">+</span> <span class="s">"/no-interface"</span><span class="o">,</span>
+<span class="n">unqualified</span> <span class="kd">interface</span> <span class="nc">name</span> <span class="o">+</span> <span class="s">"Bean/local"</span><span class="o">,</span>
+<span class="n">unqualified</span> <span class="kd">interface</span> <span class="nc">name</span> <span class="o">+</span> <span class="s">"Bean/remote"</span><span class="o">,</span>
+<span class="n">unqualified</span> <span class="kd">interface</span> <span class="nc">name</span> <span class="o">+</span> <span class="s">"/no-interface"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1477,12 +1595,12 @@ add a beans.xml to the archive:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment
-public static JavaArchive createTestArchive() {
-   return ShrinkWrap.create(JavaArchive.class, "test.jar")
-      .addClass(NameOfClassUnderTest.class)
-      .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">JavaArchive</span> <span class="nf">createTestArchive</span><span class="o">()</span> <span class="o">{</span>
+   <span class="k">return</span> <span class="nc">ShrinkWrap</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">JavaArchive</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="s">"test.jar"</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addClass</span><span class="o">(</span><span class="nc">NameOfClassUnderTest</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addAsManifestResource</span><span class="o">(</span><span class="nc">EmptyAsset</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">,</span> <span class="s">"beans.xml"</span><span class="o">);</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1563,31 +1681,31 @@ In order to use this feature, your project needs JUnit <code>4.12</code> or late
 <h4 id="_how_to_use_it"><a class="anchor" href="#_how_to_use_it"></a>2.7.1. How to use it?</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">public class GreeterManagedBeanWithJUnitRulesTestCase {
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">GreeterManagedBeanWithJUnitRulesTestCase</span> <span class="o">{</span>
 
-    @ClassRule
-    public static ArquillianTestClass arquillianTestClass = new ArquillianTestClass();
+    <span class="nd">@ClassRule</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">ArquillianTestClass</span> <span class="n">arquillianTestClass</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArquillianTestClass</span><span class="o">();</span>
 
-    @Rule
-    public ArquillianTest arquillianTest = new ArquillianTest();
+    <span class="nd">@Rule</span>
+    <span class="kd">public</span> <span class="nc">ArquillianTest</span> <span class="n">arquillianTest</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArquillianTest</span><span class="o">();</span>
 
-    @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-            .addClass(Greeter.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+    <span class="nd">@Deployment</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">JavaArchive</span> <span class="nf">createDeployment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">ShrinkWrap</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">JavaArchive</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">addClass</span><span class="o">(</span><span class="nc">Greeter</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">addAsManifestResource</span><span class="o">(</span><span class="nc">EmptyAsset</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">,</span> <span class="s">"beans.xml"</span><span class="o">);</span>
+    <span class="o">}</span>
 
-    @Inject
-    Greeter greeter;
+    <span class="nd">@Inject</span>
+    <span class="nc">Greeter</span> <span class="n">greeter</span><span class="o">;</span>
 
-    @Test
-    public void should_greet_earthlings() throws Exception {
-        String name = "Earthlings";
-        Assert.assertEquals("Hello, " + name, greeter.greet(name));
-    }
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">should_greet_earthlings</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Earthlings"</span><span class="o">;</span>
+        <span class="nc">Assert</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">(</span><span class="s">"Hello, "</span> <span class="o">+</span> <span class="n">name</span><span class="o">,</span> <span class="n">greeter</span><span class="o">.</span><span class="na">greet</span><span class="o">(</span><span class="n">name</span><span class="o">));</span>
+    <span class="o">}</span>
 
-}</code></pre>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -1609,9 +1727,9 @@ e.g.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Rule
-public MethodRuleChain chain = MethodRuleChain.outer(new ArquillianTest())
-                                              .around(new MyOtherMethodRule());</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Rule</span>
+<span class="kd">public</span> <span class="nc">MethodRuleChain</span> <span class="n">chain</span> <span class="o">=</span> <span class="nc">MethodRuleChain</span><span class="o">.</span><span class="na">outer</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArquillianTest</span><span class="o">())</span>
+                                              <span class="o">.</span><span class="na">around</span><span class="o">(</span><span class="k">new</span> <span class="nc">MyOtherMethodRule</span><span class="o">());</span></code></pre>
 </div>
 </div>
 </div>
@@ -1713,23 +1831,23 @@ JUnit Jupiter (JUnit 5 and 6):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@ExtendWith(ArquillianExtension.class)
-class LocalRunServletTestCase {
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestServlet.class);
-    }
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">ArquillianExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">LocalRunServletTestCase</span> <span class="o">{</span>
+    <span class="nd">@Deployment</span><span class="o">(</span><span class="n">testable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDeployment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">ShrinkWrap</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">WebArchive</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="s">"test.war"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">addClass</span><span class="o">(</span><span class="nc">TestServlet</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
 
-    @Test
-    void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
-        String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
-        Assertions.assertEquals(
-            "hello",
-            body,
-            "Verify that the servlet was deployed and returns the expected result");
-    }
-}</code></pre>
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">shouldBeAbleToCallServlet</span><span class="o">(</span><span class="nd">@ArquillianResource</span><span class="o">(</span><span class="nc">TestServlet</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="no">URL</span> <span class="n">baseUrl</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">body</span> <span class="o">=</span> <span class="n">readAllAndClose</span><span class="o">(</span><span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="n">baseUrl</span><span class="o">,</span> <span class="s">"/Test"</span><span class="o">).</span><span class="na">openStream</span><span class="o">());</span>
+        <span class="nc">Assertions</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">(</span>
+            <span class="s">"hello"</span><span class="o">,</span>
+            <span class="n">body</span><span class="o">,</span>
+            <span class="s">"Verify that the servlet was deployed and returns the expected result"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1739,23 +1857,23 @@ argument rather than the last:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@RunWith(Arquillian.class)
-public class LocalRunServletTestCase {
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClass(TestServlet.class);
-    }
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@RunWith</span><span class="o">(</span><span class="nc">Arquillian</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LocalRunServletTestCase</span> <span class="o">{</span>
+    <span class="nd">@Deployment</span><span class="o">(</span><span class="n">testable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDeployment</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">ShrinkWrap</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">WebArchive</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="s">"test.war"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">addClass</span><span class="o">(</span><span class="nc">TestServlet</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
 
-    @Test
-    public void shouldBeAbleToCallServlet(@ArquillianResource(TestServlet.class) URL baseUrl) throws Exception {
-        String body = readAllAndClose(new URL(baseUrl, "/Test").openStream());
-        Assert.assertEquals(
-            "Verify that the servlet was deployed and returns the expected result",
-            "hello",
-            body);
-    }
-}</code></pre>
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shouldBeAbleToCallServlet</span><span class="o">(</span><span class="nd">@ArquillianResource</span><span class="o">(</span><span class="nc">TestServlet</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="no">URL</span> <span class="n">baseUrl</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">body</span> <span class="o">=</span> <span class="n">readAllAndClose</span><span class="o">(</span><span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="n">baseUrl</span><span class="o">,</span> <span class="s">"/Test"</span><span class="o">).</span><span class="na">openStream</span><span class="o">());</span>
+        <span class="nc">Assert</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">(</span>
+            <span class="s">"Verify that the servlet was deployed and returns the expected result"</span><span class="o">,</span>
+            <span class="s">"hello"</span><span class="o">,</span>
+            <span class="n">body</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 </div>
@@ -1773,20 +1891,20 @@ the previous remote invocation created on the server side.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment(testable = true)
-public static WebArchive create() {
-   ...
-}
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span><span class="o">(</span><span class="n">testable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">create</span><span class="o">()</span> <span class="o">{</span>
+   <span class="o">...</span>
+<span class="o">}</span>
 
-@Test // runs in container
-public void shouldBeAbleToRunOnContainerSide() throws Exception {
-   ...
-}
+<span class="nd">@Test</span> <span class="c1">// runs in container</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">shouldBeAbleToRunOnContainerSide</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+   <span class="o">...</span>
+<span class="o">}</span>
 
-@Test @RunAsClient // runs as client
-public void shouldBeAbleToRunOnClientSide() throws Exception {
-   ...
-}</code></pre>
+<span class="nd">@Test</span> <span class="nd">@RunAsClient</span> <span class="c1">// runs as client</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">shouldBeAbleToRunOnClientSide</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+   <span class="o">...</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1811,17 +1929,16 @@ you can deploy a <code>Descriptor</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment(order = 1)
-public static Descriptor createDep1()
-{
-  return Descriptors.create(DataSourceDescriptor.class);
-}
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span><span class="o">(</span><span class="n">order</span> <span class="o">=</span> <span class="mi">1</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">Descriptor</span> <span class="nf">createDep1</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="nc">Descriptors</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="nc">DataSourceDescriptor</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="o">}</span>
 
-@Deployment(order = 2)
-public static WebArchive createDep2() {}
+<span class="nd">@Deployment</span><span class="o">(</span><span class="n">order</span> <span class="o">=</span> <span class="mi">2</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDep2</span><span class="o">()</span> <span class="o">{}</span>
 
-@Test
-public void testDataBase() {}</code></pre>
+<span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDataBase</span><span class="o">()</span> <span class="o">{}</span></code></pre>
 </div>
 </div>
 </div>
@@ -1858,13 +1975,12 @@ can use <code>@ArquillianResource</code> on a field or method argument of type U
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@ArquillianResource
-private URL baseURL;
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ArquillianResource</span>
+<span class="kd">private</span> <span class="no">URL</span> <span class="n">baseURL</span><span class="o">;</span>
 
-@Test
-private void shouldDoX(@ArquillianResource URL baseURL)
-{
-}</code></pre>
+<span class="nd">@Test</span>
+<span class="kd">private</span> <span class="kt">void</span> <span class="nf">shouldDoX</span><span class="o">(</span><span class="nd">@ArquillianResource</span> <span class="no">URL</span> <span class="n">baseURL</span><span class="o">)</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1876,13 +1992,12 @@ contains that servlet, e.g. "http://localhost:8080/test1" vs.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@ArquillianResource(MyServlet.class)
-private URL baseURL;
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ArquillianResource</span><span class="o">(</span><span class="nc">MyServlet</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">private</span> <span class="no">URL</span> <span class="n">baseURL</span><span class="o">;</span>
 
-@Test
-private void shouldDoX(@ArquillianResource(MyServlet.class) URL baseURL)
-{
-}</code></pre>
+<span class="nd">@Test</span>
+<span class="kd">private</span> <span class="kt">void</span> <span class="nf">shouldDoX</span><span class="o">(</span><span class="nd">@ArquillianResource</span><span class="o">(</span><span class="nc">MyServlet</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="no">URL</span> <span class="n">baseURL</span><span class="o">)</span> <span class="o">{</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1920,17 +2035,17 @@ the test method by adding <code>@OperateOnDeployment("deploymentName")</code>.</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment(name = "dep1", order = 1)
-public static WebArchive createDep1() {}
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"dep1"</span><span class="o">,</span> <span class="n">order</span> <span class="o">=</span> <span class="mi">1</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDep1</span><span class="o">()</span> <span class="o">{}</span>
 
-@Deployment(name = "dep2", order = 2)
-public static WebArchive createDep2() {}
+<span class="nd">@Deployment</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"dep2"</span><span class="o">,</span> <span class="n">order</span> <span class="o">=</span> <span class="mi">2</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDep2</span><span class="o">()</span> <span class="o">{}</span>
 
-@Test @OperateOnDeployment("dep1")
-public void testRunningInDep1() {}
+<span class="nd">@Test</span> <span class="nd">@OperateOnDeployment</span><span class="o">(</span><span class="s">"dep1"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testRunningInDep1</span><span class="o">()</span> <span class="o">{}</span>
 
-@Test @OperateOnDeployment("dep2")
-public void testRunningInDep2() {}</code></pre>
+<span class="nd">@Test</span> <span class="nd">@OperateOnDeployment</span><span class="o">(</span><span class="s">"dep2"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testRunningInDep2</span><span class="o">()</span> <span class="o">{}</span></code></pre>
 </div>
 </div>
 </div>
@@ -1944,29 +2059,29 @@ Arquillian configuration.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
-&lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://jboss.org/schema/arquillian"
-    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
-    &lt;group qualifier="tomcat-cluster" default="true"&gt;
-        &lt;container qualifier="container-1" default="true"&gt;
-            &lt;configuration&gt;
-                &lt;property name="tomcatHome"&gt;target/tomcat-standby&lt;/property&gt;
-                &lt;property name="workDir"&gt;work&lt;/property&gt;
-                &lt;property name="bindHttpPort"&gt;8880&lt;/property&gt;
-                &lt;property name="unpackArchive"&gt;true&lt;/property&gt;
-            &lt;/configuration&gt;
-        &lt;/container&gt;
-        &lt;container qualifier="container-2"&gt;
-            &lt;configuration&gt;
-                &lt;property name="tomcatHome"&gt;target/tomcat-active-1&lt;/property&gt;
-                &lt;property name="workDir"&gt;work&lt;/property&gt;
-                &lt;property name="bindHttpPort"&gt;8881&lt;/property&gt;
-                &lt;property name="unpackArchive"&gt;true&lt;/property&gt;
-            &lt;/configuration&gt;
-        &lt;/container&gt;
-    &lt;/group&gt;
-&lt;/arquillian&gt;</code></pre>
+<pre class="rouge highlight"><code data-lang="xml"><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
+<span class="nt">&lt;arquillian</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="na">xmlns=</span><span class="s">"http://jboss.org/schema/arquillian"</span>
+    <span class="na">xsi:schemaLocation=</span><span class="s">"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;group</span> <span class="na">qualifier=</span><span class="s">"tomcat-cluster"</span> <span class="na">default=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;container</span> <span class="na">qualifier=</span><span class="s">"container-1"</span> <span class="na">default=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"tomcatHome"</span><span class="nt">&gt;</span>target/tomcat-standby<span class="nt">&lt;/property&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"workDir"</span><span class="nt">&gt;</span>work<span class="nt">&lt;/property&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"bindHttpPort"</span><span class="nt">&gt;</span>8880<span class="nt">&lt;/property&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"unpackArchive"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/property&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+        <span class="nt">&lt;/container&gt;</span>
+        <span class="nt">&lt;container</span> <span class="na">qualifier=</span><span class="s">"container-2"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"tomcatHome"</span><span class="nt">&gt;</span>target/tomcat-active-1<span class="nt">&lt;/property&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"workDir"</span><span class="nt">&gt;</span>work<span class="nt">&lt;/property&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"bindHttpPort"</span><span class="nt">&gt;</span>8881<span class="nt">&lt;/property&gt;</span>
+                <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"unpackArchive"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/property&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+        <span class="nt">&lt;/container&gt;</span>
+    <span class="nt">&lt;/group&gt;</span>
+<span class="nt">&lt;/arquillian&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1979,17 +2094,17 @@ annotation on your <code>Deployment</code> methods.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment(name = "dep1") @TargetsContainer("container-1")
-public static WebArchive createDep1() {}
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"dep1"</span><span class="o">)</span> <span class="nd">@TargetsContainer</span><span class="o">(</span><span class="s">"container-1"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDep1</span><span class="o">()</span> <span class="o">{}</span>
 
-@Deployment(name = "dep2")  @TargetsContainer("container-2")
-public static WebArchive createDep2() {}
+<span class="nd">@Deployment</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"dep2"</span><span class="o">)</span>  <span class="nd">@TargetsContainer</span><span class="o">(</span><span class="s">"container-2"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDep2</span><span class="o">()</span> <span class="o">{}</span>
 
-@Test @OperateOnDeployment("dep1")
-public void testRunningInDep1() {}
+<span class="nd">@Test</span> <span class="nd">@OperateOnDeployment</span><span class="o">(</span><span class="s">"dep1"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testRunningInDep1</span><span class="o">()</span> <span class="o">{}</span>
 
-@Test @OperateOnDeployment("dep2")
-public void testRunningInDep2() {}</code></pre>
+<span class="nd">@Test</span> <span class="nd">@OperateOnDeployment</span><span class="o">(</span><span class="s">"dep2"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testRunningInDep2</span><span class="o">()</span> <span class="o">{}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2019,11 +2134,11 @@ annotation on your <code>@Deployment</code> method.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">@Deployment @OverProtocol("MyCustomProtocol")
-public static WebArchive createDep1() {}
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Deployment</span> <span class="nd">@OverProtocol</span><span class="o">(</span><span class="s">"MyCustomProtocol"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nc">WebArchive</span> <span class="nf">createDep1</span><span class="o">()</span> <span class="o">{}</span>
 
-@Test
-public void testExecutedUsingCustomProtocol() {}</code></pre>
+<span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testExecutedUsingCustomProtocol</span><span class="o">()</span> <span class="o">{}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2068,7 +2183,7 @@ add the following line to the end of $JBOSS_HOME/bin/standalone.conf
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">JAVA_OPTS="$JAVA_OPTS -ea"</code></pre>
+<pre class="rouge highlight"><code data-lang="bash"><span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"</span><span class="nv">$JAVA_OPTS</span><span class="s2"> -ea"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2077,7 +2192,7 @@ add the following line to the end of $JBOSS_HOME/bin/standalone.conf
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="batch">set "JAVA_OPTS=%JAVA_OPTS% -ea"</code></pre>
+<pre class="rouge highlight"><code data-lang="batch"><span class="kd">set</span> <span class="s2">"JAVA_OPTS=</span><span class="nv">%JAVA_OPTS%</span><span class="s2"> -ea"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2562,13 +2677,13 @@ strategies listed above.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id 'java'
-}
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">plugins</span> <span class="o">{</span>
+    <span class="n">id</span> <span class="s1">'java'</span>
+<span class="o">}</span>
 
-repositories {
-    mavenCentral()
-}</code></pre>
+<span class="n">repositories</span> <span class="o">{</span>
+    <span class="n">mavenCentral</span><span class="o">()</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2584,28 +2699,28 @@ BOM manage them for you:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ext {
-    // substitute the current releases
-    arquillianVersion = '&lt;arquillian.version&gt;'
-    junitVersion = '&lt;junit.version&gt;'
-    jakartaeeVersion = '&lt;jakartaee.version&gt;'
-    weldAdapterVersion = '&lt;weld.adapter.version&gt;'
-    weldVersion = '&lt;weld.version&gt;'
-    wildflyArquillianVersion = '&lt;wildfly.arquillian.version&gt;'
-}
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">ext</span> <span class="o">{</span>
+    <span class="c1">// substitute the current releases</span>
+    <span class="n">arquillianVersion</span> <span class="o">=</span> <span class="s1">'&lt;arquillian.version&gt;'</span>
+    <span class="n">junitVersion</span> <span class="o">=</span> <span class="s1">'&lt;junit.version&gt;'</span>
+    <span class="n">jakartaeeVersion</span> <span class="o">=</span> <span class="s1">'&lt;jakartaee.version&gt;'</span>
+    <span class="n">weldAdapterVersion</span> <span class="o">=</span> <span class="s1">'&lt;weld.adapter.version&gt;'</span>
+    <span class="n">weldVersion</span> <span class="o">=</span> <span class="s1">'&lt;weld.version&gt;'</span>
+    <span class="n">wildflyArquillianVersion</span> <span class="o">=</span> <span class="s1">'&lt;wildfly.arquillian.version&gt;'</span>
+<span class="o">}</span>
 
-dependencies {
-    testImplementation platform("org.jboss.arquillian:arquillian-bom:${arquillianVersion}")
-    testImplementation platform("org.junit:junit-bom:${junitVersion}")
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">testImplementation</span> <span class="nf">platform</span><span class="o">(</span><span class="s2">"org.jboss.arquillian:arquillian-bom:${arquillianVersion}"</span><span class="o">)</span>
+    <span class="n">testImplementation</span> <span class="nf">platform</span><span class="o">(</span><span class="s2">"org.junit:junit-bom:${junitVersion}"</span><span class="o">)</span>
 
-    testImplementation 'org.jboss.arquillian.junit5:arquillian-junit5-container'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+    <span class="n">testImplementation</span> <span class="s1">'org.jboss.arquillian.junit5:arquillian-junit5-container'</span>
+    <span class="n">testImplementation</span> <span class="s1">'org.junit.jupiter:junit-jupiter'</span>
+    <span class="n">testRuntimeOnly</span> <span class="s1">'org.junit.platform:junit-platform-launcher'</span>
+<span class="o">}</span>
 
-test {
-    useJUnitPlatform()
-}</code></pre>
+<span class="n">test</span> <span class="o">{</span>
+    <span class="n">useJUnitPlatform</span><span class="o">()</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2637,9 +2752,9 @@ classpath but excluded from the runtime classpath:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-    compileOnly "jakarta.platform:jakarta.jakartaee-api:${jakartaeeVersion}"
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">compileOnly</span> <span class="s2">"jakarta.platform:jakarta.jakartaee-api:${jakartaeeVersion}"</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2683,10 +2798,10 @@ test runtime dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">configurations {
-    weldTestRuntime.extendsFrom testRuntimeClasspath
-    wildflyTestRuntime.extendsFrom testRuntimeClasspath
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">configurations</span> <span class="o">{</span>
+    <span class="n">weldTestRuntime</span><span class="o">.</span><span class="na">extendsFrom</span> <span class="n">testRuntimeClasspath</span>
+    <span class="n">wildflyTestRuntime</span><span class="o">.</span><span class="na">extendsFrom</span> <span class="n">testRuntimeClasspath</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2694,12 +2809,12 @@ test runtime dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-    weldTestRuntime "org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"
-    weldTestRuntime "org.jboss.weld.se:weld-se-core:${weldVersion}"
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">weldTestRuntime</span> <span class="s2">"org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"</span>
+    <span class="n">weldTestRuntime</span> <span class="s2">"org.jboss.weld.se:weld-se-core:${weldVersion}"</span>
 
-    wildflyTestRuntime "org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"
-}</code></pre>
+    <span class="n">wildflyTestRuntime</span> <span class="s2">"org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2707,18 +2822,18 @@ test runtime dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">tasks.register('weldTest', Test) {
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.output + sourceSets.main.output + configurations.weldTestRuntime
-    useJUnitPlatform()
-}
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">tasks</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="s1">'weldTest'</span><span class="o">,</span> <span class="n">Test</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">testClassesDirs</span> <span class="o">=</span> <span class="n">sourceSets</span><span class="o">.</span><span class="na">test</span><span class="o">.</span><span class="na">output</span><span class="o">.</span><span class="na">classesDirs</span>
+    <span class="n">classpath</span> <span class="o">=</span> <span class="n">sourceSets</span><span class="o">.</span><span class="na">test</span><span class="o">.</span><span class="na">output</span> <span class="o">+</span> <span class="n">sourceSets</span><span class="o">.</span><span class="na">main</span><span class="o">.</span><span class="na">output</span> <span class="o">+</span> <span class="n">configurations</span><span class="o">.</span><span class="na">weldTestRuntime</span>
+    <span class="n">useJUnitPlatform</span><span class="o">()</span>
+<span class="o">}</span>
 
-tasks.register('wildflyTest', Test) {
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.output + sourceSets.main.output + configurations.wildflyTestRuntime
-    useJUnitPlatform()
-    systemProperty 'jboss.home', "${buildDir}/wildfly"
-}</code></pre>
+<span class="n">tasks</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="s1">'wildflyTest'</span><span class="o">,</span> <span class="n">Test</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">testClassesDirs</span> <span class="o">=</span> <span class="n">sourceSets</span><span class="o">.</span><span class="na">test</span><span class="o">.</span><span class="na">output</span><span class="o">.</span><span class="na">classesDirs</span>
+    <span class="n">classpath</span> <span class="o">=</span> <span class="n">sourceSets</span><span class="o">.</span><span class="na">test</span><span class="o">.</span><span class="na">output</span> <span class="o">+</span> <span class="n">sourceSets</span><span class="o">.</span><span class="na">main</span><span class="o">.</span><span class="na">output</span> <span class="o">+</span> <span class="n">configurations</span><span class="o">.</span><span class="na">wildflyTestRuntime</span>
+    <span class="n">useJUnitPlatform</span><span class="o">()</span>
+    <span class="n">systemProperty</span> <span class="s1">'jboss.home'</span><span class="o">,</span> <span class="s2">"${buildDir}/wildfly"</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2726,7 +2841,7 @@ tasks.register('wildflyTest', Test) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="console">gradle weldTest</code></pre>
+<pre class="rouge highlight"><code data-lang="console"><span class="go">gradle weldTest</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2734,7 +2849,7 @@ tasks.register('wildflyTest', Test) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="console">gradle wT</code></pre>
+<pre class="rouge highlight"><code data-lang="console"><span class="go">gradle wT</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2748,7 +2863,7 @@ sequence using a single Gradle command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="console">gradle weldTest wildflyTest</code></pre>
+<pre class="rouge highlight"><code data-lang="console"><span class="go">gradle weldTest wildflyTest</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2779,10 +2894,10 @@ file named weld-profile.gradle:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-    testRuntimeOnly "org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"
-    testRuntimeOnly "org.jboss.weld.se:weld-se-core:${weldVersion}"
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">testRuntimeOnly</span> <span class="s2">"org.jboss.arquillian.container:arquillian-weld-embedded:${weldAdapterVersion}"</span>
+    <span class="n">testRuntimeOnly</span> <span class="s2">"org.jboss.weld.se:weld-se-core:${weldVersion}"</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2790,13 +2905,13 @@ file named weld-profile.gradle:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-    testRuntimeOnly "org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"
-}
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">testRuntimeOnly</span> <span class="s2">"org.wildfly.arquillian:wildfly-arquillian-container-managed:${wildflyArquillianVersion}"</span>
+<span class="o">}</span>
 
-test {
-    systemProperty 'jboss.home', "${buildDir}/wildfly"
-}</code></pre>
+<span class="n">test</span> <span class="o">{</span>
+    <span class="n">systemProperty</span> <span class="s1">'jboss.home'</span><span class="o">,</span> <span class="s2">"${buildDir}/wildfly"</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2806,7 +2921,7 @@ The file is selected based on the value of the project property named
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">apply from: "${profile}-profile.gradle"</code></pre>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">apply</span> <span class="nl">from:</span> <span class="s2">"${profile}-profile.gradle"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2814,7 +2929,7 @@ The file is selected based on the value of the project property named
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="console">gradle test -Pprofile=weld</code></pre>
+<pre class="rouge highlight"><code data-lang="console"><span class="go">gradle test -Pprofile=weld</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2865,20 +2980,20 @@ Tasks</a>, rather than by managing jars by hand.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml">&lt;path id="arquillian.test.path"&gt;
-    &lt;fileset dir="lib/test" includes="**/*.jar"/&gt;
-    &lt;pathelement location="${build.classes.dir}"/&gt;
-    &lt;pathelement location="${build.test.classes.dir}"/&gt;
-    &lt;!-- arquillian.xml and other test resources --&gt;
-    &lt;pathelement location="${test.resources.dir}"/&gt;
-&lt;/path&gt;
+<pre class="rouge highlight"><code data-lang="xml"><span class="nt">&lt;path</span> <span class="na">id=</span><span class="s">"arquillian.test.path"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">"lib/test"</span> <span class="na">includes=</span><span class="s">"**/*.jar"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;pathelement</span> <span class="na">location=</span><span class="s">"${build.classes.dir}"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;pathelement</span> <span class="na">location=</span><span class="s">"${build.test.classes.dir}"</span><span class="nt">/&gt;</span>
+    <span class="c">&lt;!-- arquillian.xml and other test resources --&gt;</span>
+    <span class="nt">&lt;pathelement</span> <span class="na">location=</span><span class="s">"${test.resources.dir}"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/path&gt;</span>
 
-&lt;junitlauncher haltOnFailure="true"&gt;
-    &lt;classpath refid="arquillian.test.path"/&gt;
-    &lt;testclasses outputdir="${build.test.reports.dir}"&gt;
-        &lt;fileset dir="${build.test.classes.dir}" includes="**/*TestCase.class"/&gt;
-    &lt;/testclasses&gt;
-&lt;/junitlauncher&gt;</code></pre>
+<span class="nt">&lt;junitlauncher</span> <span class="na">haltOnFailure=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;classpath</span> <span class="na">refid=</span><span class="s">"arquillian.test.path"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;testclasses</span> <span class="na">outputdir=</span><span class="s">"${build.test.reports.dir}"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">"${build.test.classes.dir}"</span> <span class="na">includes=</span><span class="s">"**/*TestCase.class"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/testclasses&gt;</span>
+<span class="nt">&lt;/junitlauncher&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2924,15 +3039,15 @@ In case you want to add an additional observer that will be applied only to one 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">// JUnit Jupiter (JUnit 5 and 6)
-@ExtendWith(ArquillianExtension.class)
-@Observer(MyObserver.class)
-class MyTestCase {
+<pre class="rouge highlight"><code data-lang="java"><span class="c1">// JUnit Jupiter (JUnit 5 and 6)</span>
+<span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">ArquillianExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@Observer</span><span class="o">(</span><span class="nc">MyObserver</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">MyTestCase</span> <span class="o">{</span>
 
-// JUnit 4
-@RunWith(Arquillian.class)
-@Observer(MyObserver.class)
-public class MyTestCase {</code></pre>
+<span class="c1">// JUnit 4</span>
+<span class="nd">@RunWith</span><span class="o">(</span><span class="nc">Arquillian</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@Observer</span><span class="o">(</span><span class="nc">MyObserver</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyTestCase</span> <span class="o">{</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2940,9 +3055,9 @@ public class MyTestCase {</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">public void observeBeforeClass(@Observes BeforeClass event) {
-    ...
-}</code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">observeBeforeClass</span><span class="o">(</span><span class="nd">@Observes</span> <span class="nc">BeforeClass</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span></code></pre>
 </div>
 </div>
 </div>
@@ -2975,7 +3090,7 @@ public class MyTestCase {</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-07 13:56:52 UTC
+Last updated 2026-10-02 13:43:03 UTC
 </div>
 </div>
 </body>
