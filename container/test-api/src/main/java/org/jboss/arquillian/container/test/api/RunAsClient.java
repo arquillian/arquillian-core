@@ -25,30 +25,51 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * The run mode for a test method is determined by the @Deployment annotations member testable.
- * By default testable is true which tells Arquillian to execute the test methods in container. If testable is set to
- * false,
- * Arquillian will execute the test methods on the client side.
+ * Indicates that the method(s) should be run on the client. By default, methods are run on the server (container).
  * <p>
+ * Annotating a {@link org.junit.jupiter.api.BeforeAll @BeforeAll} method will cause it to run on the client before <b>all</b> the
+ * test methods in the class, regardless of their run mode (un-annotated {@code @BeforeAll} methods will also run before all test
+ * methods). <i>JUnit</i> allows multiple {@code @BeforeAll} methods in the same class; this can be used to have
+ * {@code @BeforeAll} methods both on the client and on the server. The order of execution is as per <i>JUnit</i>'s execution
+ * rules, that is, {@code @RunAsClient} confers no special ordering rules - {@code @BeforeAll} client methods may be run before or
+ * after {@code @BeforeAll} server methods.<br>
+ * The same applies for {@link org.junit.jupiter.api.AfterAll @AfterAll} methods.
  * <p>
- * In some cases it is useful to run different test methods in a test class in different modes,
- * e.g. a client method that calls a Servlet for then to verify some internal state in a in container method.
+ * A use case for the above is to setup both the client and the server for tests, such as clearing the database on the server and
+ * setting up an HTTP client on the client. (Note that the order of these operations is interchangeable.)
  * <p>
- * Usage Example:<br/>
+ * Similarly, annotating a {@link org.junit.jupiter.api.Test @Test} (or {@link org.junit.jupiter.api.RepeatedTest @RepeatedTest}
+ * or {@link org.junit.jupiter.params.ParameterizedTest @ParameterizedTest}) method will run it on the client with no special
+ * ordering treatment. The standard {@link org.junit.jupiter.api.Order @Order} annotation applies both for client-run and
+ * server-run methods together.
+ * <p>
+ * A use case for the above is to execute a client call to an API and test its result, and then test the change in the container:
+ * 
  * <pre><code>
- * &#64;Deployment
- * public static WebArchive create() {
- *      return ShrinkWrap.create(WebArchive.class);
+ * &#64;Order(1)
+ * &#64;RunAsClient
+ * &#64;Test
+ * void testUpdateEmailAddressRequest() {
+ *     // call the server and receive a response
+ *     // assert that the response status code is correct 
  * }
  *
- * &#64;Test &#64;RunAsClient
- * public void shouldExecuteOnClientSide() { ... }
- *
+ * &#64;Order(2)
  * &#64;Test
- * public void shouldExecuteInContainer() { ... }
+ * void testEmailAddressUpdated() {
+ *     // assert that the DB entry for the email address has changed
+ * }
  * </code></pre>
  *
+ * Annotating a {@link org.junit.jupiter.api.BeforeEach @BeforeEach} method will cause it to run before each {@code @RunAsClient}
+ * test method, whereas un-annotated {@code @BeforeEach} methods will run before each un-annotated (server) method.<br>
+ * The same applies for {@link org.junit.jupiter.api.AfterEach @AfterEach} methods.
+ * <p>
+ * If used on a class, all its methods will be run on the client. There is no per-method "opt-out" annotation, such as
+ * {@code @RunOnServer} unlike the "opt-in" {@code @RunAsClient} for un-annotated classes.
+ *
  * @author <a href="mailto:aknutsen@redhat.com">Aslak Knutsen</a>
+ * @see Testable
  */
 @Inherited
 @Documented
