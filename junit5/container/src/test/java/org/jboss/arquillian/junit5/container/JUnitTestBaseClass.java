@@ -93,6 +93,7 @@ public class JUnitTestBaseClass {
         doAnswer(new ExecuteLifecycle()).when(adaptor).after(any(Object.class), any(Method.class),
                                                              any(LifecycleMethodExecutor.class));
         doAnswer(new TestExecuteLifecycle(TestResult.passed())).when(adaptor).test(any(TestMethodExecutor.class));
+        doAnswer(new ExecuteLifecycle()).when(adaptor).fireCustomLifecycle(any(TestLifecycleEvent.class));
     }
 
     public void assertCycle(int count, Cycle... cycles) {
