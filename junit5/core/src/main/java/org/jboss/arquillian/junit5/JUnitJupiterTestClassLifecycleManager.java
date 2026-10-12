@@ -14,16 +14,21 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *
  * <ul>
  *   <li><b>{@code suite}</b> (default) - one {@code TestRunnerAdaptor} for
- *   the whole JUnit run. {@code BeforeSuite} / {@code AfterSuite} fire once
- *   per JVM. This matches the classic Arquillian model and is what a shared
- *   external container (WildFly, Payara, GlassFish) that boots once and
- *   serves every test class needs.</li>
+ *   the whole JUnit run, kept in the root store. {@code BeforeSuite} /
+ *   {@code AfterSuite} fire once per JUnit Platform execution - for an
+ *   ordinary Maven or Gradle run, once per JVM. This matches the classic
+ *   Arquillian model and is what a shared external container (WildFly,
+ *   Payara, GlassFish) that boots once and serves every test class
+ *   needs.</li>
  *
- *   <li><b>{@code class}</b> - one {@code TestRunnerAdaptor} per test class.
+ *   <li><b>{@code class}</b> - one {@code TestRunnerAdaptor} per top-level
+ *   test class, kept in that class's store, so each one is closed as soon as
+ *   its class finishes rather than at the end of the run.
  *   {@code BeforeSuite} / {@code AfterSuite} fire once per class. This is
  *   what makes parallel class execution possible: a shared manager would
  *   leak thread-local context activations between classes running on
- *   different threads.</li>
+ *   different threads. A {@code @Nested} class shares its enclosing class's
+ *   manager, however deeply it is nested.</li>
  * </ul>
  *
  * <p><b>Class scope is experimental.</b> It only works with some container
@@ -62,12 +67,7 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, Ext
 
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
         ManagerScope scope = ManagerScope.parse(context.getConfigurationParameter(MANAGER_SCOPE_PROPERTY));
-        ExtensionContext.Namespace namespace = scope == ManagerScope.CLASS
-            ? ExtensionContext.Namespace.create(
-                JUnitJupiterTestClassLifecycleManager.class,
-                context.getRequiredTestClass())
-            : ExtensionContext.Namespace.create(JUnitJupiterTestClassLifecycleManager.class);
-        ExtensionContext.Store store = context.getRoot().getStore(namespace);
+        ExtensionContext.Store store = ContextStore.getContextStore(context).getManagerStore(scope);
         JUnitJupiterTestClassLifecycleManager instance = store.getOrComputeIfAbsent(
             MANAGER_KEY,
             key -> {
