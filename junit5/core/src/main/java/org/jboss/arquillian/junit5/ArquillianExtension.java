@@ -1,5 +1,6 @@
 package org.jboss.arquillian.junit5;
 
+import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.findRunningManager;
 import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.getManager;
 
 import java.lang.reflect.Method;
@@ -62,7 +63,9 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
      * Called after all tests in the test class have been executed.
      *
      * <p>{@code @Nested} inner classes are skipped because the outer test class handles
-     * undeployment and class-scoped context cleanup in its own {@code AfterClass} event.</p>
+     * undeployment and class-scoped context cleanup in its own {@code AfterClass} event. So is a class whose
+     * Arquillian initialization failed: there is nothing to undeploy, and the failure was already reported to
+     * {@code beforeAll}.</p>
      *
      * @param context the current extension context
      * @throws Exception if any error occurs
@@ -72,7 +75,11 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         if (isNestedTestClass(context)) {
             return;
         }
-        getManager(context).getAdaptor().afterClass(
+        Optional<JUnitJupiterTestClassLifecycleManager> manager = findRunningManager(context);
+        if (!manager.isPresent()) {
+            return;
+        }
+        manager.get().getAdaptor().afterClass(
             context.getRequiredTestClass(),
             LifecycleMethodExecutor.NO_OP);
     }
@@ -107,13 +114,20 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     /**
      * Called after each test method has been executed.
      *
+     * <p>Skipped, like {@link #afterAll(ExtensionContext)}, when Arquillian failed to initialize: nothing fired
+     * {@code Before}, so nothing needs {@code After}.</p>
+     *
      * @param context the current extension context
      * @throws Exception if any error occurs
      */
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         try {
-            getManager(context).getAdaptor().after(
+            Optional<JUnitJupiterTestClassLifecycleManager> manager = findRunningManager(context);
+            if (!manager.isPresent()) {
+                return;
+            }
+            manager.get().getAdaptor().after(
                 context.getRequiredTestInstance(),
                 context.getRequiredTestMethod(),
                 LifecycleMethodExecutor.NO_OP);
