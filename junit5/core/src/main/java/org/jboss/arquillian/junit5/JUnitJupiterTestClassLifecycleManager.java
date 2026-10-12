@@ -8,48 +8,48 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * Owns the Arquillian {@link TestRunnerAdaptor} that the JUnit Jupiter
  * extension drives.
  *
- * <p>Two caching modes, selected by the JUnit configuration parameter
- * {@value #PER_CLASS_MANAGER_PROPERTY} (default {@code false}). Because the
- * value is read via
- * {@link ExtensionContext#getConfigurationParameter(String)}, it can be set
- * as a JVM system property
- * ({@code -Darquillian.junit.jupiter.manager.perClass=true}),
- * in a {@code junit-platform.properties} file on the test classpath, or via
- * any other mechanism the JUnit Platform Launcher supports.</p>
+ * <p>How widely one adaptor - and the Arquillian {@code Manager} behind it -
+ * is shared is chosen by the JUnit configuration parameter
+ * {@value #MANAGER_SCOPE_PROPERTY}.</p>
  *
  * <ul>
- *   <li><b>Singleton (default)</b> — one {@code TestRunnerAdaptor} for the
- *   whole JUnit run, cached on the root store. {@code BeforeSuite} /
- *   {@code AfterSuite} fire once per JVM. This matches the classic
- *   Arquillian model and is required for shared managed external containers
- *   (WildFly, Payara, GlassFish) that boot once and serve every test class.</li>
+ *   <li><b>{@code suite}</b> (default) - one {@code TestRunnerAdaptor} for
+ *   the whole JUnit run. {@code BeforeSuite} / {@code AfterSuite} fire once
+ *   per JVM. This matches the classic Arquillian model and is what a shared
+ *   external container (WildFly, Payara, GlassFish) that boots once and
+ *   serves every test class needs.</li>
  *
- *   <li><b>Per-class</b> (parameter set to {@code true}) — a separate
- *   {@code TestRunnerAdaptor} per test class, cached on the root store under
- *   a namespace keyed by the class. {@code BeforeSuite} / {@code AfterSuite}
- *   fire once per class. Required for parallel class execution against
- *   isolating embedded containers that allocate their own resources per class
- *   (e.g. embedded Jetty on port {@code 0}). A shared manager would leak
- *   thread-local context activations between classes running on different
- *   threads.</li>
+ *   <li><b>{@code class}</b> - one {@code TestRunnerAdaptor} per test class.
+ *   {@code BeforeSuite} / {@code AfterSuite} fire once per class. This is
+ *   what makes parallel class execution possible: a shared manager would
+ *   leak thread-local context activations between classes running on
+ *   different threads.</li>
  * </ul>
+ *
+ * <p><b>Class scope is experimental.</b> It only works with some container
+ * types, and both the parameter and its behaviour may change. See the
+ * "Parallel Test Class Execution" section of the Arquillian Core guide.</p>
  *
  * <p>Implementing {@link ExtensionContext.Store.CloseableResource} lets JUnit
  * invoke {@link #close()} (and therefore {@code afterSuite}) when it tears
- * down the root context at the end of the run.</p>
+ * down the store holding this manager.</p>
  */
 
 @SuppressWarnings("deprecation") // CloseableResource is deprecated since JUnit 5.13; remove when dropping JUnit 5.13 support
 public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, ExtensionContext.Store.CloseableResource {
     /**
-     * JUnit configuration parameter that enables per-test-class caching of
-     * the {@link TestRunnerAdaptor}. Defaults to {@code false}. Resolved via
-     * {@link ExtensionContext#getConfigurationParameter(String)} — accepts a
-     * JVM system property or an entry in {@code junit-platform.properties}.
+     * JUnit configuration parameter choosing how widely the
+     * {@link TestRunnerAdaptor} is shared. Accepts {@code suite} (the
+     * default) or {@code class}; any other value fails the run. Resolved via
+     * {@link ExtensionContext#getConfigurationParameter(String)}, so it can
+     * come from a {@code junit-platform.properties} file on the test
+     * classpath, from the build's JUnit configuration parameters, from a JVM
+     * system property, or from anything else the JUnit Platform Launcher
+     * supports.
      *
      * @see JUnitJupiterTestClassLifecycleManager
      */
-    public static final String PER_CLASS_MANAGER_PROPERTY = "arquillian.junit.jupiter.manager.perClass";
+    public static final String MANAGER_SCOPE_PROPERTY = "arquillian.junit.jupiter.manager.scope";
 
     private static final String MANAGER_KEY = "testRunnerManager";
 
@@ -61,10 +61,8 @@ public class JUnitJupiterTestClassLifecycleManager implements AutoCloseable, Ext
     }
 
     static JUnitJupiterTestClassLifecycleManager getManager(ExtensionContext context) throws Exception {
-        boolean perClassManager = context.getConfigurationParameter(PER_CLASS_MANAGER_PROPERTY)
-            .map(Boolean::parseBoolean)
-            .orElse(false);
-        ExtensionContext.Namespace namespace = perClassManager
+        ManagerScope scope = ManagerScope.parse(context.getConfigurationParameter(MANAGER_SCOPE_PROPERTY));
+        ExtensionContext.Namespace namespace = scope == ManagerScope.CLASS
             ? ExtensionContext.Namespace.create(
                 JUnitJupiterTestClassLifecycleManager.class,
                 context.getRequiredTestClass())
