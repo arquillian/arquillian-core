@@ -46,3 +46,39 @@ public void observeBeforeClass(@Observes BeforeClass event) {
     ...
 }
 ----
+
+=== Parallel Test Class Execution
+
+[IMPORTANT]
+====
+Experimental. Only some container types work with it, and both the configuration parameter and its behaviour may
+change.
+====
+
+Arquillian normally builds one `Manager` for the whole JUnit run, firing `BeforeSuite` and `AfterSuite` once for
+that run. That model cannot run test classes in parallel, because a manager's context activations are
+thread-local. On JUnit Jupiter, the configuration parameter `arquillian.junit.jupiter.manager.scope` can be set
+to `class` instead of the default `suite`, giving each top-level test class its own manager, shut down as soon as
+that class finishes. A `@Nested` class shares its enclosing class's manager. Any other value fails the run.
+
+Class scope only makes concurrency safe — Jupiter still has to be told to run classes in parallel, and that takes
+*two* settings: `junit.jupiter.execution.parallel.enabled` turns the parallel executor on, and
+`junit.jupiter.execution.parallel.mode.classes.default` decides what it does with test classes. Setting only the
+second has no effect. All three go in a `junit-platform.properties` file on the test classpath, or in Surefire's
+`configurationParameters`:
+
+[source,properties]
+----
+arquillian.junit.jupiter.manager.scope = class
+junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.mode.classes.default = concurrent
+----
+
+Whether this works depends on the container. Embedded containers on ephemeral ports are the case it exists for:
+each class gets its own instance with no collisions — for embedded Jetty that means `bindHttpPort=0`, together
+with https://github.com/arquillian/arquillian-container-jetty/pull/257[arquillian-container-jetty#257]. Remote
+containers started outside Arquillian work too, but the classes share one server, so anything with server-wide
+identity (a JMS topic, a fixed deployment name) has to be made unique per class. Managed containers *will not
+work*: concurrent `StartContainer` calls conflict over ports and resources. A container implementation could in
+principle handle that, but none does today — and a managed and a remote container cannot be configured together
+anyway (https://github.com/arquillian/arquillian-core/issues/866[issue #866]).
