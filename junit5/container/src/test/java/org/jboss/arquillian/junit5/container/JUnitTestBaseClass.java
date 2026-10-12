@@ -20,6 +20,7 @@ package org.jboss.arquillian.junit5.container;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestMethodExecutor;
@@ -106,6 +107,42 @@ public class JUnitTestBaseClass {
         return run(adaptor, null, classes);
     }
 
+    /**
+     * Runs the given classes against a fresh {@link TestRunnerAdaptor} per
+     * {@link TestRunnerAdaptorBuilder#build()} call, with the given JUnit configuration parameters in effect.
+     *
+     * <p>A fixed adaptor, as installed by the other {@code run} methods, makes every manager look alike. Supplying a
+     * factory instead is what lets a test count the managers Arquillian actually created.</p>
+     *
+     * @param adaptorSupplier         produces one adaptor per Arquillian manager
+     * @param configurationParameters JUnit Platform configuration parameters, e.g. the Arquillian manager scope or
+     *                                Jupiter's parallel execution settings
+     * @param classes                 the test classes to execute
+     */
+    protected TestExecutionSummary run(Supplier<TestRunnerAdaptor> adaptorSupplier,
+                                       Map<String, String> configurationParameters, Class<?>... classes)
+        throws Exception {
+        try {
+            setAdaptorSupplier(adaptorSupplier);
+
+            LauncherDiscoveryRequestBuilder builder = LauncherDiscoveryRequestBuilder.request();
+            for (Class<?> clazz : classes) {
+                builder = builder.selectors(DiscoverySelectors.selectClass(clazz));
+            }
+            for (Map.Entry<String, String> parameter : configurationParameters.entrySet()) {
+                builder = builder.configurationParameter(parameter.getKey(), parameter.getValue());
+            }
+            SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
+
+            Launcher launcher = LauncherFactory.create();
+            launcher.registerTestExecutionListeners(summaryListener);
+            launcher.execute(builder.build());
+            return summaryListener.getSummary();
+        } finally {
+            setAdaptorSupplier(null);
+        }
+    }
+
     protected TestExecutionSummary run(TestRunnerAdaptor adaptor, TestExecutionListener listener, Class<?>... classes)
         throws Exception {
         try {
@@ -153,6 +190,12 @@ public class JUnitTestBaseClass {
         Method method = TestRunnerAdaptorBuilder.class.getMethod("set", TestRunnerAdaptor.class);
         //method.setAccessible(true);
         method.invoke(null, adaptor);
+    }
+
+    // force set the factory producing the TestRunnerAdaptor for each manager
+    private void setAdaptorSupplier(Supplier<TestRunnerAdaptor> adaptorSupplier) throws Exception {
+        Method method = TestRunnerAdaptorBuilder.class.getMethod("setFactory", Supplier.class);
+        method.invoke(null, adaptorSupplier);
     }
 
     public enum Cycle {
