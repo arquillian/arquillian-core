@@ -1,0 +1,43 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2026 Red Hat Inc. and/or its affiliates and other contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.arquillian.junit5.container.fixtures;
+
+import org.jboss.arquillian.junit5.ArquillianExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+/**
+ * Registers the extension on the instance rather than on the class, so JUnit never calls {@code beforeAll} and
+ * the first manager lookup of the run comes from a method-level context.
+ */
+public class InstanceRegisteredFixture {
+
+    @RegisterExtension
+    ArquillianExtension arquillian = new ArquillianExtension();
+
+    @Test
+    public void first() {
+    }
+
+    @Test
+    public void second() {
+    }
+
+    @Test
+    public void third() {
+    }
+}
