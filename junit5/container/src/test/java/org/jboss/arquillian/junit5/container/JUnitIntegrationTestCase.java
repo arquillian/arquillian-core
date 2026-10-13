@@ -17,20 +17,22 @@
 package org.jboss.arquillian.junit5.container;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Method;
 
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithArquillianExtensionAndTwoBeforeEach;
 import org.jboss.arquillian.junit5.container.fixtures.ClassWithArquillianExtensionWithExtensions;
 import org.jboss.arquillian.junit5.container.fixtures.ExampleSuite;
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.opentest4j.TestAbortedException;
 
 /**
  * @author Johannes Beck
@@ -60,7 +62,6 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
      * exactly once per test method and not duplicated.
      * See <a href="https://github.com/arquillian/arquillian-core/issues/745">GH issue</a>.
      */
-    @Disabled("https://github.com/arquillian/arquillian-core/issues/745")
     @Test
     public void shouldCallBeforeAndAfterExactlyOncePerTest() throws Exception {
         // given
@@ -75,6 +76,70 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         Assertions.assertEquals(0, result.getTestsFailedCount());
 
         verify(adaptor, times(1)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(1)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+    }
+
+    /**
+     * Verifies that {@code TestRunnerAdaptor.before()} and {@code TestRunnerAdaptor.after()} are each called exactly
+     * once per test method also with multiple {@code @BeforeEach} methods and no {@code @AfterEach} method.
+     * See <a href="https://github.com/arquillian/arquillian-core/issues/745">GH issue</a>.
+     */
+    @Test
+    public void shouldCallBeforeAndAfterExactlyOncePerTestWithMultipleBeforeEach() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+
+        // when
+        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionAndTwoBeforeEach.class);
+
+        // then
+        Assertions.assertEquals(1, result.getTestsSucceededCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        assertCycle(2, Cycle.BEFORE);
+        assertCycle(1, Cycle.TEST);
+
+        verify(adaptor, times(1)).before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+        verify(adaptor, times(1)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+    }
+
+    /**
+     * Verifies that the {@code @BeforeEach} and {@code @AfterEach} methods are skipped when
+     * {@code TestRunnerAdaptor.before()} does not invoke the {@code LifecycleMethodExecutor}, e.g. due to a
+     * {@code DONT_EXECUTE} decision.
+     */
+    @Test
+    public void shouldSkipLifecycleMethodsWhenBeforeDoesNotInvokeExecutor() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+
+        // when
+        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionWithExtensions.class);
+
+        // then
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        assertCycle(0, Cycle.BEFORE, Cycle.AFTER);
+    }
+
+    /**
+     * Verifies that a test is reported as aborted when {@code TestRunnerAdaptor.before()} throws an assumption failure,
+     * e.g. from a {@code ServerSetupTask} (ARQ-2238).
+     */
+    @Test
+    public void shouldAbortTestWhenBeforeThrowsAssumptionFailure() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        doThrow(new TestAbortedException("assumption failed")).when(adaptor)
+            .before(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, ClassWithArquillianExtensionWithExtensions.class);
+
+        // then
+        Assertions.assertEquals(1, result.getTestsAbortedCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        assertCycle(0, Cycle.BEFORE, Cycle.TEST);
         verify(adaptor, times(1)).after(any(Object.class), any(Method.class), any(LifecycleMethodExecutor.class));
     }
 
