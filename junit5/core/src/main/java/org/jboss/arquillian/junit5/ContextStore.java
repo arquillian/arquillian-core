@@ -14,6 +14,8 @@ class ContextStore {
 
     private static final String LIFECYCLE_METHODS_SKIPPED_KEY = "lifecycleMethodsSkipped";
 
+    private static final String MANAGER_NAMESPACE_KEY = "testRunnerManagers";
+
     private final ExtensionContext context;
 
     private ContextStore(ExtensionContext context) {
@@ -24,8 +26,48 @@ class ContextStore {
         return new ContextStore(context);
     }
 
-    ExtensionContext.Store getRootStore() {
-        return context.getRoot().getStore(ExtensionContext.Namespace.create(NAMESPACE_KEY));
+    /**
+     * The store that owns the Arquillian manager for the given scope. The store, not a key within it, is what
+     * scopes the manager: a manager kept in a class-level store is closed by JUnit as soon as that class finishes,
+     * while one kept in the root store lives for the whole run.
+     *
+     * @param scope how widely the manager is shared
+     *
+     * @return the store to cache the manager in
+     */
+    ExtensionContext.Store getManagerStore(ManagerScope scope) {
+        ExtensionContext.Namespace namespace =
+            ExtensionContext.Namespace.create(NAMESPACE_KEY, MANAGER_NAMESPACE_KEY);
+        if (scope == ManagerScope.CLASS) {
+            return outermostTestClassContext().getStore(namespace);
+        }
+        return context.getRoot().getStore(namespace);
+    }
+
+    /**
+     * The context of the outermost enclosing test class: the highest context above this one that still belongs to
+     * a test class. For a class outside any {@code @Nested} hierarchy that is simply its own class context, and
+     * for a method, template invocation or nested class it is the top-level class they run under - the class that
+     * owns the deployment and fires {@code BeforeClass}.
+     *
+     * <p>Resolving this explicitly, rather than taking the nearest context and letting JUnit's store hierarchy
+     * find the manager in an ancestor store, keeps the owner of the manager obvious: it is created, found and
+     * closed in one place, no matter which context asks for it. Walking the context chain, rather than reflecting
+     * over enclosing classes, is what makes that hold for a {@code @Nested} class declared in a superclass, whose
+     * enclosing class has no context of its own.</p>
+     */
+    private ExtensionContext outermostTestClassContext() {
+        ExtensionContext outermost = null;
+        for (ExtensionContext candidate = context; candidate != null;
+             candidate = candidate.getParent().orElse(null)) {
+            if (candidate.getTestClass().isPresent()) {
+                outermost = candidate;
+            }
+        }
+        if (outermost == null) {
+            throw new IllegalStateException("No test class context at or above " + context.getUniqueId());
+        }
+        return outermost;
     }
 
     /**
