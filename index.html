@@ -578,6 +578,7 @@ pre.rouge .gs {
 <ul class="sectlevel2">
 <li><a href="#_debugging">3.1. Debugging</a></li>
 <li><a href="#_test_observer">3.2. Test Observer</a></li>
+<li><a href="#_parallel_test_class_execution">3.3. Parallel Test Class Execution</a></li>
 </ul>
 </li>
 <li><a href="#_useful_urls">4. Useful URLs</a></li>
@@ -3061,6 +3062,55 @@ In case you want to add an additional observer that will be applied only to one 
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_parallel_test_class_execution"><a class="anchor" href="#_parallel_test_class_execution"></a>3.3. Parallel Test Class Execution</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Experimental. Only some container types work with it, and both the configuration parameter and its behaviour may
+change.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Arquillian normally builds one <code>Manager</code> for the whole JUnit run, firing <code>BeforeSuite</code> and <code>AfterSuite</code> once for
+that run. That model cannot run test classes in parallel, because a manager&#8217;s context activations are
+thread-local. On JUnit Jupiter, the configuration parameter <code>arquillian.junit.jupiter.manager.scope</code> can be set
+to <code>class</code> instead of the default <code>suite</code>, giving each top-level test class its own manager, shut down as soon as
+that class finishes. A <code>@Nested</code> class shares its enclosing class&#8217;s manager. Any other value fails the run.</p>
+</div>
+<div class="paragraph">
+<p>Class scope only makes concurrency safe — Jupiter still has to be told to run classes in parallel, and that takes
+<strong>two</strong> settings: <code>junit.jupiter.execution.parallel.enabled</code> turns the parallel executor on, and
+<code>junit.jupiter.execution.parallel.mode.classes.default</code> decides what it does with test classes. Setting only the
+second has no effect. All three go in a <code>junit-platform.properties</code> file on the test classpath, or in Surefire&#8217;s
+<code>configurationParameters</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="properties"><span class="py">arquillian.junit.jupiter.manager.scope</span> <span class="p">=</span> <span class="s">class</span>
+<span class="py">junit.jupiter.execution.parallel.enabled</span> <span class="p">=</span> <span class="s">true</span>
+<span class="py">junit.jupiter.execution.parallel.mode.classes.default</span> <span class="p">=</span> <span class="s">concurrent</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Whether this works depends on the container. Embedded containers on ephemeral ports are the case it exists for:
+each class gets its own instance with no collisions — for embedded Jetty that means <code>bindHttpPort=0</code>, together
+with <a href="https://github.com/arquillian/arquillian-container-jetty/pull/257">arquillian-container-jetty#257</a>. Remote
+containers started outside Arquillian work too, but the classes share one server, so anything with server-wide
+identity (a JMS topic, a fixed deployment name) has to be made unique per class. Managed containers <strong>will not
+work</strong>: concurrent <code>StartContainer</code> calls conflict over ports and resources. A container implementation could in
+principle handle that, but none does today — and a managed and a remote container cannot be configured together
+anyway (<a href="https://github.com/arquillian/arquillian-core/issues/866">issue #866</a>).</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3090,7 +3140,7 @@ In case you want to add an additional observer that will be applied only to one 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-02 13:43:03 UTC
+Last updated 2026-10-14 19:28:53 UTC
 </div>
 </div>
 </body>
