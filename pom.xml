@@ -31,7 +31,7 @@
     <jdk.min.version>${maven.compiler.release}</jdk.min.version>
 
     <!-- Central Publishing Plugin -->
-    <version.central.publishing.maven.plugin>0.10.0</version.central.publishing.maven.plugin>
+    <version.central.publishing.maven.plugin>0.12.0</version.central.publishing.maven.plugin>
 
     <!-- maven-release-plugin configuration -->
     <autoVersionSubmodules>true</autoVersionSubmodules>
