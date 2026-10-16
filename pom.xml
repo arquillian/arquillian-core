@@ -55,7 +55,7 @@
     <central.skipPublishing>false</central.skipPublishing>
 
     <!-- External Deps -->
-    <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
+    <version.shrinkwrap_shrinkwrap>2.0.0.Final</version.shrinkwrap_shrinkwrap>
     <version.shrinkwrap_descriptors>2.0.0</version.shrinkwrap_descriptors>
 
     <!-- Checkstyle plugin -->
