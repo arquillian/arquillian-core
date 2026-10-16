@@ -39,7 +39,7 @@ jobs:
           cache: maven
       - name: Build with Maven Java ${{ matrix.java }} - ${{ matrix.os }}
         run:  |
-          ./mvnw -V clean install -U -B -fae '-Pwildfly' '-T1' '-Pintegration-tests'
+          ./mvnw -V clean install -U -B -fae '-Pwildfly' '-T1'
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
@@ -76,7 +76,7 @@ jobs:
           cache: maven
       - name: Build with Maven Java ${{ matrix.java }} - ${{ matrix.os }}
         run:  |
-          ./mvnw -V clean install -U -B -fae '-Ppayara' '-T1' '-Pintegration-tests'
+          ./mvnw -V clean install -U -B -fae '-Ppayara' '-T1'
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
