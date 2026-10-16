@@ -35,8 +35,7 @@
 
     <!-- maven-release-plugin configuration -->
     <autoVersionSubmodules>true</autoVersionSubmodules>
-    <!-- n.b. add integration-tests explicitly here as they are not enabled in default build so that the versions are updated during release -->
-    <releaseProfiles>integration-tests,central-release</releaseProfiles>
+    <releaseProfiles>central-release</releaseProfiles>
     <preparationProfiles>${releaseProfiles}</preparationProfiles>
     <signTag>true</signTag>
     <tagNameFormat>@{project.version}</tagNameFormat>
@@ -107,6 +106,9 @@
     <module>protocols</module>
 
     <module>bom</module>
+
+    <!-- n.b. always part of the reactor so that the release plugin updates their versions; tests only run with a container profile -->
+    <module>integration-tests</module>
   </modules>
 
   <build>
@@ -180,13 +182,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>integration-tests</id>
-      <modules>
-        <module>integration-tests</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>
