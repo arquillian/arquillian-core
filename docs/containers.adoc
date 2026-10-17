@@ -253,3 +253,34 @@ the 'arquillian.launch' system property for test execution, as follows:
          </plugin>
          ...
 ----
+
+== Commonly used container implementations
+
+Not all container adapters live in the Arquillian GitHub organization.
+The table below lists widely used adapters and where to find them.
+
+|===
+|Server / runtime |SCM |Notes
+
+|WildFly
+|https://github.com/wildfly/wildfly-arquillian[wildfly/wildfly-arquillian]
+|Managed, remote, and embedded-style adapters for WildFly / JBoss EAP family
+
+|Tomcat
+|https://github.com/arquillian/arquillian-container-tomcat[arquillian-container-tomcat]
+|Tomcat managed and remote adapters
+
+|Jetty
+|https://github.com/arquillian/arquillian-container-jetty[arquillian-container-jetty]
+|Jetty embedded and managed adapters
+
+|Weld
+|https://github.com/arquillian/arquillian-container-weld[arquillian-container-weld]
+|CDI SE / Weld embedded container
+
+|Open Liberty
+|https://github.com/OpenLiberty/liberty-arquillian[OpenLiberty/liberty-arquillian]
+|Open Liberty managed and remote adapters
+|===
+
+Maven coordinates (`groupId:artifactId`) vary by adapter and target server version; see each project's README for current GAVs and supported launch modes (embedded, managed, remote).
