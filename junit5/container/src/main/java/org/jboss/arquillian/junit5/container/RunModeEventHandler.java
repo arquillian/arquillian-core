@@ -13,7 +13,7 @@ public class RunModeEventHandler {
     private Instance<Deployment> deployment;
 
     public void handleEvent(@Observes RunModeEvent event) {
-        boolean runAsClient = RunModeUtils.isRunAsClient(deployment.get(), event.getTestClass(), event.getTestMethod());
+        boolean runAsClient = RunModeUtils.isRunAsClient(deployment.get(), event);
         event.setRunAsClient(runAsClient);
     }
 }

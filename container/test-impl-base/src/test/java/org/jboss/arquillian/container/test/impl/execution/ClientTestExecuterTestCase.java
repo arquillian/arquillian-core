@@ -112,6 +112,43 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         assertEventFired(LocalExecutionEvent.class, 1);
     }
 
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsTestableAndNestedClassRunModeAsClient() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+
+        fire(test("methodLevelRunModeDefault", new EnclosingRunModeDefault().new NestedRunModeAsClient()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsTestableAndIntermediateNestedClassRunModeAsClient() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+
+        EnclosingRunModeDefault.NestedRunModeAsClient nested = new EnclosingRunModeDefault().new NestedRunModeAsClient();
+        fire(test("methodLevelRunModeDefault", nested.new DeeperRunModeDefault()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    @Test
+    public void shouldExecuteLocalIfDeploymentIsTestableAndEnclosingClassRunModeAsClient() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+
+        fire(test("methodLevelRunModeDefault", new EnclosingRunModeAsClient().new NestedRunModeDefault()));
+
+        assertEventFired(LocalExecutionEvent.class, 1);
+    }
+
+    @Test
+    public void shouldExecuteRemoteIfDeploymentIsTestableAndNoNestedClassRunModeAsClient() throws Exception {
+        when(deploymentDescriptor.testable()).thenReturn(true);
+
+        fire(test("methodLevelRunModeDefault", new EnclosingRunModeDefault().new NestedRunModeDefault()));
+
+        assertEventFired(RemoteExecutionEvent.class, 1);
+    }
+
     private org.jboss.arquillian.test.spi.event.suite.Test test(String testMethodName, Object obj) throws Exception {
         TestMethodExecutor executor = mock(TestMethodExecutor.class);
         when(executor.getInstance()).thenReturn(obj);
@@ -144,5 +181,23 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
 
     @RunAsClient
     private static class ClassLevelRunModeAsClient {
+    }
+
+    // Non-static member classes, like JUnit 5 @Nested test classes are
+    private static class EnclosingRunModeDefault {
+        class NestedRunModeDefault {
+        }
+
+        @RunAsClient
+        class NestedRunModeAsClient {
+            class DeeperRunModeDefault {
+            }
+        }
+    }
+
+    @RunAsClient
+    private static class EnclosingRunModeAsClient {
+        class NestedRunModeDefault {
+        }
     }
 }

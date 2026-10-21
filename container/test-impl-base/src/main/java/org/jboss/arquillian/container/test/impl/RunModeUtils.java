@@ -18,6 +18,7 @@
 package org.jboss.arquillian.container.test.impl;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.logging.Logger;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
@@ -25,6 +26,7 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.container.test.impl.client.protocol.local.LocalProtocol;
 import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
  * RunModeUtils
@@ -43,14 +45,27 @@ public final class RunModeUtils {
      * Verify @Deployment.testable vs @RunAsClient on Class or Method level
      */
     public static boolean isRunAsClient(Deployment deployment, TestClass testClass, Method testMethod) {
+        return isRunAsClient(deployment, isAnnotatedRunAsClient(testClass, testMethod));
+    }
+
+    /**
+     * Returns if the test the given event belongs to should run as client.
+     * <p>
+     * Unlike {@link #isRunAsClient(Deployment, TestClass, Method)}, this also honours @RunAsClient on the
+     * {@code @Nested} classes enclosing the test method, which the outermost {@link TestEvent#getTestClass()} does not
+     * reflect.
+     */
+    public static boolean isRunAsClient(Deployment deployment, TestEvent event) {
+        return isRunAsClient(deployment, isAnnotatedRunAsClient(event));
+    }
+
+    private static boolean isRunAsClient(Deployment deployment, boolean annotatedRunAsClient) {
         boolean runAsClient = true;
         if (deployment != null) {
             runAsClient = deployment.getDescription().testable() ? false : true;
             runAsClient = deployment.isDeployed() ? runAsClient : true;
 
-            if (testMethod.isAnnotationPresent(RunAsClient.class)) {
-                runAsClient = true;
-            } else if (testClass.isAnnotationPresent(RunAsClient.class)) {
+            if (annotatedRunAsClient) {
                 runAsClient = true;
             }
         }
@@ -62,13 +77,27 @@ public final class RunModeUtils {
      * intended to be run as a client test - in this case logs a warning. see: ARQ-1937
      */
     public static boolean isRunAsClientAndCheck(Deployment deployment, TestClass testClass, Method testMethod) {
-        boolean runAsClient = isRunAsClient(deployment, testClass, testMethod);
+        return isRunAsClientAndCheck(deployment, testClass, testMethod, isAnnotatedRunAsClient(testClass, testMethod));
+    }
+
+    /**
+     * Returns if the test the given event belongs to should run as client and also checks for a confusing use case,
+     * like {@link #isRunAsClientAndCheck(Deployment, TestClass, Method)}, honouring @RunAsClient on enclosing
+     * {@code @Nested} classes like {@link #isRunAsClient(Deployment, TestEvent)}.
+     */
+    public static boolean isRunAsClientAndCheck(Deployment deployment, TestEvent event) {
+        return isRunAsClientAndCheck(deployment, event.getTestClass(), event.getTestMethod(),
+            isAnnotatedRunAsClient(event));
+    }
+
+    private static boolean isRunAsClientAndCheck(Deployment deployment, TestClass testClass, Method testMethod,
+        boolean annotatedRunAsClient) {
+        boolean runAsClient = isRunAsClient(deployment, annotatedRunAsClient);
 
         if (runAsClient && deployment == null) {
             Method[] methods = testClass.getMethods(org.jboss.arquillian.container.test.api.Deployment.class);
             if (methods.length > 0) {
-                if (!testMethod.isAnnotationPresent(RunAsClient.class) && !testClass.isAnnotationPresent(
-                    RunAsClient.class)) {
+                if (!annotatedRunAsClient) {
                     OperateOnDeployment onDeployment = testClass.getAnnotation(OperateOnDeployment.class);
                     String deploymentName = onDeployment == null ? "_DEFAULT_" : onDeployment.value();
 
@@ -92,6 +121,25 @@ public final class RunModeUtils {
             }
         }
         return runAsClient;
+    }
+
+    private static boolean isAnnotatedRunAsClient(TestClass testClass, Method testMethod) {
+        return testMethod.isAnnotationPresent(RunAsClient.class) || testClass.isAnnotationPresent(RunAsClient.class);
+    }
+
+    private static boolean isAnnotatedRunAsClient(TestEvent event) {
+        if (isAnnotatedRunAsClient(event.getTestClass(), event.getTestMethod())) {
+            return true;
+        }
+        // The test class of the event is the outermost class; walk the @Nested classes between it and the test instance
+        Class<?> clazz = event.getTestInstance().getClass();
+        while (clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers())) {
+            if (clazz.isAnnotationPresent(RunAsClient.class)) {
+                return true;
+            }
+            clazz = clazz.getEnclosingClass();
+        }
+        return false;
     }
 
     /**
