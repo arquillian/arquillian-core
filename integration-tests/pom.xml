@@ -42,7 +42,8 @@
 
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <skipItTests>false</skipItTests>
+    <!-- Tests require a container; they are enabled by the container profiles (e.g. -Pwildfly or -Ppayara) -->
+    <skipItTests>true</skipItTests>
     <skipTests>${skipItTests}</skipTests>
 
     <!-- Dependency versions -->
@@ -184,6 +185,7 @@
     <profile>
       <id>wildfly</id>
       <properties>
+        <skipItTests>false</skipItTests>
         <skip.provision.server>${skipTests}</skip.provision.server>
 
         <!-- Versions -->
@@ -259,6 +261,7 @@
       <!-- Payara 7 (Jakarta EE 11) - requires JDK 21+ -->
       <id>payara</id>
       <properties>
+        <skipItTests>false</skipItTests>
         <skip.provision.server>${skipTests}</skip.provision.server>
         <version.fish.payara>7.2026.10</version.fish.payara>
         <version.fish.payara.arquillian>3.1</version.fish.payara.arquillian>
