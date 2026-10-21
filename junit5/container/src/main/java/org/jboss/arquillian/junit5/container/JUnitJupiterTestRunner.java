@@ -42,8 +42,10 @@ public class JUnitJupiterTestRunner implements TestRunner {
                     .configurationParameter(ArquillianExtension.RUNNING_INSIDE_ARQUILLIAN, "true")
                     .filters((PostDiscoveryFilter) object -> {
                         if (object instanceof MethodBasedTestDescriptor) {
-                            Method m = ((MethodBasedTestDescriptor) object).getTestMethod();
-                            if (m.getName().equals(methodName)) {
+                            MethodBasedTestDescriptor descriptor = (MethodBasedTestDescriptor) object;
+                            Method m = descriptor.getTestMethod();
+                            // Selecting a class also selects its @Nested classes, whose methods may share the name
+                            if (m.getName().equals(methodName) && descriptor.getTestClass() == testClass) {
                                 matchCounter.incrementAndGet();
                                 return FilterResult.included("Matched method name");
                             }
