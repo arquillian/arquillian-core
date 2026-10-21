@@ -72,6 +72,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
 
         fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
 
+        assertEventFired(LocalExecutionEvent.class, 0);
         assertEventFired(RemoteExecutionEvent.class, 1);
     }
 
@@ -83,6 +84,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -92,6 +94,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeDefault", new ClassLevelRunModeDefault()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -101,6 +104,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeDefault", new ClassLevelRunModeAsClient()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -110,6 +114,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeAsClient", new ClassLevelRunModeDefault()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -119,6 +124,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeDefault", new EnclosingRunModeDefault().new NestedRunModeAsClient()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -129,6 +135,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeDefault", nested.new DeeperRunModeDefault()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -138,6 +145,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
         fire(test("methodLevelRunModeDefault", new EnclosingRunModeAsClient().new NestedRunModeDefault()));
 
         assertEventFired(LocalExecutionEvent.class, 1);
+        assertEventFired(RemoteExecutionEvent.class, 0);
     }
 
     @Test
@@ -146,6 +154,7 @@ public class ClientTestExecuterTestCase extends AbstractContainerTestTestBase {
 
         fire(test("methodLevelRunModeDefault", new EnclosingRunModeDefault().new NestedRunModeDefault()));
 
+        assertEventFired(LocalExecutionEvent.class, 0);
         assertEventFired(RemoteExecutionEvent.class, 1);
     }
 
