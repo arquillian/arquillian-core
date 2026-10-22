@@ -40,7 +40,7 @@ public final class RunModeUtils {
     }
 
     /**
-     * Returns if the given test should run as client.
+     * Returns true if the given test should run as client.
      * <p>
      * Verify @Deployment.testable vs @RunAsClient on Class or Method level
      */
@@ -49,7 +49,7 @@ public final class RunModeUtils {
     }
 
     /**
-     * Returns if the test the given event belongs to should run as client.
+     * Returns true if the test the given event belongs to should run as client.
      * <p>
      * Unlike {@link #isRunAsClient(Deployment, TestClass, Method)}, this also honours @RunAsClient on the
      * {@code @Nested} classes enclosing the test method, which the outermost {@link TestEvent#getTestClass()} does not
@@ -73,16 +73,16 @@ public final class RunModeUtils {
     }
 
     /**
-     * Returns if the given test should run as client and also checks for a confusing use case, when the test is not
-     * intended to be run as a client test - in this case logs a warning. see: ARQ-1937
+     * Returns true if the given test should run as client and also checks for a confusing use case, when the test is
+     * not intended to be run as a client test - in this case logs a warning. see: ARQ-1937
      */
     public static boolean isRunAsClientAndCheck(Deployment deployment, TestClass testClass, Method testMethod) {
         return isRunAsClientAndCheck(deployment, testClass, testMethod, isAnnotatedRunAsClient(testClass, testMethod));
     }
 
     /**
-     * Returns if the test the given event belongs to should run as client and also checks for a confusing use case,
-     * like {@link #isRunAsClientAndCheck(Deployment, TestClass, Method)}, honouring @RunAsClient on enclosing
+     * Returns true if the test the given event belongs to should run as client and also checks for a confusing use
+     * case, like {@link #isRunAsClientAndCheck(Deployment, TestClass, Method)}, honouring @RunAsClient on enclosing
      * {@code @Nested} classes like {@link #isRunAsClient(Deployment, TestEvent)}.
      */
     public static boolean isRunAsClientAndCheck(Deployment deployment, TestEvent event) {
