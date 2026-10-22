@@ -99,7 +99,7 @@ public class MethodParameterObserver {
                     }
                 }
             }
-            enrichmentEvent.fire(new AfterEnrichment(testEnrichers, testMethod));
+            enrichmentEvent.fire(new AfterEnrichment(testInstance, testMethod));
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
