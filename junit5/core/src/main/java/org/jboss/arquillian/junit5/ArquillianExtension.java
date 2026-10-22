@@ -5,6 +5,7 @@ import static org.jboss.arquillian.junit5.JUnitJupiterTestClassLifecycleManager.
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -102,6 +103,12 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         final MethodParameters methodParameters = contextStore.createMethodParameters();
         // Fired to set the MethodParameters on the producer
         adapter.fireCustomLifecycle(new MethodParameterProducerEvent(instance, method, methodParameters));
+        // Core enriches only the innermost instance of a @Nested test; hand over the enclosing ones to be enriched too
+        final List<Object> enclosingInstances = context.getRequiredTestInstances().getEnclosingInstances();
+        if (!enclosingInstances.isEmpty()) {
+            adapter.fireCustomLifecycle(new EnclosingInstancesProducerEvent(instance, method,
+                    new EnclosingInstances(instance, enclosingInstances)));
+        }
         // Before must be fired exactly once per test, regardless of the number of @BeforeEach methods. The executor
         // does not run them itself; it only records whether core decided they should run in this JVM (it is not
         // invoked e.g. on a DONT_EXECUTE decision). JUnit runs the @BeforeEach methods right after this callback
