@@ -61,7 +61,8 @@ public class EnclosingInstancesEnricherTestCase {
             .context(SuiteContextImpl.class)
             .context(ClassContextImpl.class)
             .context(TestContextImpl.class)
-            .extensions(TestContextHandler.class, ClientTestInstanceEnricher.class, EnclosingInstancesEnricher.class)
+            .extensions(TestContextHandler.class, ClientTestInstanceEnricher.class, EnclosingInstancesEnricher.class,
+                MethodParameterObserver.class)
             .create();
         manager.start();
         manager.bind(ApplicationScoped.class, ServiceLoader.class, new EnricherServiceLoader(new RecordingEnricher()));
@@ -120,7 +121,32 @@ public class EnclosingInstancesEnricherTestCase {
         Assertions.assertEquals(List.of(secondInner, second), enriched);
     }
 
+    @Test
+    public void shouldNotEnrichEnclosingInstancesAgainWhenMethodParametersAreResolved() throws Exception {
+        Outer outer = new Outer();
+        Outer.Inner inner = outer.new Inner();
+
+        before(inner, List.of(outer));
+        // Resolving the method parameters fires another AfterEnrichment for the test instance
+        manager.fire(new BeforeTestExecutionEvent(inner, testMethod()));
+
+        Assertions.assertEquals(List.of(inner, outer), enriched);
+    }
+
+    @Test
+    public void shouldNotEnrichEnclosingInstancesWhenMethodParametersAreResolvedForAnInContainerTest() throws Exception {
+        bindTestableDeployment();
+        Outer outer = new Outer();
+        Outer.Inner inner = outer.new Inner();
+
+        before(inner, List.of(outer));
+        manager.fire(new BeforeTestExecutionEvent(inner, testMethod()));
+
+        Assertions.assertEquals(Collections.emptyList(), enriched);
+    }
+
     private void before(Object testInstance, List<Object> enclosingInstances) throws Exception {
+        manager.fire(new MethodParameterProducerEvent(testInstance, testMethod(), new MethodParameters()));
         manager.fire(new EnclosingInstancesProducerEvent(testInstance, testMethod(),
             new EnclosingInstances(testInstance, enclosingInstances)));
         manager.fire(new Before(testInstance, testMethod()));

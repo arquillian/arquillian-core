@@ -29,6 +29,7 @@ import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.jboss.arquillian.test.spi.event.enrichment.AfterEnrichment;
 import org.jboss.arquillian.test.spi.event.enrichment.BeforeEnrichment;
 import org.jboss.arquillian.test.spi.event.enrichment.EnrichmentEvent;
+import org.jboss.arquillian.test.spi.event.suite.Before;
 
 /**
  * Enriches the instances of the classes enclosing a {@link org.junit.jupiter.api.Nested} test class.
@@ -70,8 +71,8 @@ public class EnclosingInstancesEnricher {
     public void enrichEnclosingInstances(@Observes AfterEnrichment event) {
         final EnclosingInstances enclosingInstances = enclosingInstancesProducer.get();
         // Only react to the enrichment of the test instance itself, not to that of the enclosing instances fired below
-        // or of method parameters
-        if (enclosingInstances == null || enclosingInstances.getTestInstance() != event.getInstance()) {
+        if (enclosingInstances == null || enclosingInstances.isBeforeHandled()
+            || enclosingInstances.getTestInstance() != event.getInstance()) {
             return;
         }
         final Collection<TestEnricher> testEnrichers = serviceLoader.get().all(TestEnricher.class);
@@ -81,6 +82,20 @@ public class EnclosingInstancesEnricher {
                 enricher.enrich(instance);
             }
             enrichmentEvent.fire(new AfterEnrichment(instance, event.getMethod()));
+        }
+    }
+
+    /**
+     * Stops reacting to the enrichment of the test instance once core is done enriching it in {@link Before}. The
+     * {@link AfterEnrichment} fired later for the same test instance by {@link MethodParameterObserver} must not enrich
+     * the enclosing instances again, nor at all when core did not enrich the test instance in this JVM.
+     *
+     * @param event the fired event
+     */
+    public void stopEnrichingEnclosingInstances(@Observes(precedence = -100) Before event) {
+        final EnclosingInstances enclosingInstances = enclosingInstancesProducer.get();
+        if (enclosingInstances != null) {
+            enclosingInstances.setBeforeHandled();
         }
     }
 }

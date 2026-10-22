@@ -34,6 +34,8 @@ final class EnclosingInstances {
 
     private final List<Object> instances;
 
+    private boolean beforeHandled;
+
     EnclosingInstances(final Object testInstance, final List<Object> instances) {
         this.testInstance = testInstance;
         this.instances = instances;
@@ -45,5 +47,13 @@ final class EnclosingInstances {
 
     List<Object> getInstances() {
         return instances;
+    }
+
+    boolean isBeforeHandled() {
+        return beforeHandled;
+    }
+
+    void setBeforeHandled() {
+        beforeHandled = true;
     }
 }
