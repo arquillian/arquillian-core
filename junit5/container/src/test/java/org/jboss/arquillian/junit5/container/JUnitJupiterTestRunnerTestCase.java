@@ -16,7 +16,10 @@
  */
 package org.jboss.arquillian.junit5.container;
 
+import java.util.List;
+
 import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.junit5.container.fixtures.SameMethodNameNestedFixture;
 import org.jboss.arquillian.junit5.container.fixtures.TestScenarios;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.api.Assertions;
@@ -35,7 +38,7 @@ public class JUnitJupiterTestRunnerTestCase {
   }
 
   @Test
-  public void shouldNotReturnExceptionToClientIfAsumptionPassing() throws Exception {
+  public void shouldNotReturnExceptionToClientIfAssumptionPassing() throws Exception {
     JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
     TestResult result = runner.execute(TestScenarios.class, "shouldPassOnAssumption");
 
@@ -44,7 +47,7 @@ public class JUnitJupiterTestRunnerTestCase {
   }
 
   @Test
-  public void shouldReturnExceptionToClientIfAsumptionFailing() throws Exception {
+  public void shouldReturnExceptionToClientIfAssumptionFailing() throws Exception {
     JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
     TestResult result = runner.execute(TestScenarios.class, "shouldSkipOnAssumption");
 
@@ -119,5 +122,21 @@ public class JUnitJupiterTestRunnerTestCase {
 
     Assertions.assertEquals(TestResult.Status.PASSED, result.getStatus());
     Assertions.assertNull(result.getThrowable());
+  }
+
+  @Test
+  public void shouldRunOnlyTheMethodOfTheGivenClassWhenNestedClassesShareItsName() {
+    assertRunsOnly(SameMethodNameNestedFixture.class);
+    assertRunsOnly(SameMethodNameNestedFixture.InnerTests.class);
+    assertRunsOnly(SameMethodNameNestedFixture.InnerTests.DeeperTests.class);
+  }
+
+  private static void assertRunsOnly(Class<?> testClass) {
+    SameMethodNameNestedFixture.INVOKED.clear();
+
+    TestResult result = new JUnitJupiterTestRunner().execute(testClass, "test");
+
+    Assertions.assertEquals(TestResult.Status.PASSED, result.getStatus(), () -> String.valueOf(result.getThrowable()));
+    Assertions.assertEquals(List.of(testClass), SameMethodNameNestedFixture.INVOKED);
   }
 }
