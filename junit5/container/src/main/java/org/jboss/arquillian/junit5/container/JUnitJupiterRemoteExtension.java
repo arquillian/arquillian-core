@@ -21,17 +21,20 @@ package org.jboss.arquillian.junit5.container;
 
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.junit5.EnclosingInstancesEnricher;
 import org.jboss.arquillian.junit5.MethodParameterObserver;
 
 /**
  * The remote extension for JUnit 5 in-container tests.
  *
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
+ * @author Radoslav Husar
  */
 public class JUnitJupiterRemoteExtension implements RemoteLoadableExtension {
 
     @Override
     public void register(LoadableExtension.ExtensionBuilder builder) {
-        builder.observer(MethodParameterObserver.class);
+        builder.observer(MethodParameterObserver.class)
+            .observer(EnclosingInstancesEnricher.class);
     }
 }
