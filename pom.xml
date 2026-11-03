@@ -30,9 +30,6 @@
     <maven.compiler.release>11</maven.compiler.release>
     <jdk.min.version>${maven.compiler.release}</jdk.min.version>
 
-    <!-- Central Publishing Plugin -->
-    <version.central-publishing.plugin>0.12.0</version.central-publishing.plugin>
-
     <!-- maven-release-plugin configuration -->
     <autoVersionSubmodules>true</autoVersionSubmodules>
     <releaseProfiles>central-release</releaseProfiles>
@@ -58,7 +55,6 @@
     <version.shrinkwrap_descriptors>2.0.0</version.shrinkwrap_descriptors>
 
     <!-- Checkstyle plugin -->
-    <version.org.apache.maven-checkstyle-plugin>3.6.0</version.org.apache.maven-checkstyle-plugin>
     <version.com.puppycrawl.checkstyle>9.3</version.com.puppycrawl.checkstyle>
     <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
   </properties>
@@ -116,7 +112,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${version.org.apache.maven-checkstyle-plugin}</version>
         <dependencies>
           <dependency>
             <!-- The puppycrawl dependency is needed to override the version using JDK11 from the parent -->
