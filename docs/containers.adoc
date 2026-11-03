@@ -14,6 +14,7 @@ endif::[]
 * <<container-configuration, Container Configuration>>
 * <<supported-containers, Supported Containers>>
 * <<container-config-runtime-selection, Container Config Runtime Selection>>
+* <<container-adapter-projects, Container adapter projects>>
 
 Arquillian's forte is not only its ease of use, but also its
 extensibility. Good integration testing is not just about testing in
@@ -253,3 +254,50 @@ the 'arquillian.launch' system property for test execution, as follows:
          </plugin>
          ...
 ----
+
+[[container-adapter-projects]]
+==== Container adapter projects
+
+Adapters are maintained as separate projects. Many of them are outside
+the Arquillian GitHub organization. The table below lists adapter
+projects that are commonly referenced; it is not an exhaustive catalog
+of every adapter that has ever existed.
+
+Maven coordinates, supported server versions, and whether a given
+adapter offers embedded, managed, or remote packaging change over time.
+Use the linked repository (or product documentation) as the source of
+truth for those details.
+
+[cols="1,2"]
+|===
+| Runtime / focus | Project
+
+| WildFly / JBoss EAP
+| https://github.com/wildfly/wildfly-arquillian[wildfly/wildfly-arquillian]
+
+| Tomcat
+| https://github.com/arquillian/arquillian-container-tomcat[arquillian/arquillian-container-tomcat]
+
+| Jetty
+| https://github.com/arquillian/arquillian-container-jetty[arquillian/arquillian-container-jetty]
+
+| Weld (CDI)
+| https://github.com/arquillian/arquillian-container-weld[arquillian/arquillian-container-weld]
+
+| Open Liberty
+| https://github.com/OpenLiberty/liberty-arquillian[OpenLiberty/liberty-arquillian]
+
+| GlassFish (OmniFish)
+| https://github.com/OmniFish-EE/arquillian-container-glassfish[OmniFish-EE/arquillian-container-glassfish]
+
+| GlassFish (community)
+| https://github.com/hantsy/arquillian-glassfish[hantsy/arquillian-glassfish]
+
+| Apache TomEE
+| https://tomee.apache.org/latest/docs/developer/testing/arquillian/index.html[TomEE Arquillian documentation]
+|===
+
+Additional adapters and historical projects also appear under the
+https://github.com/arquillian[arquillian] organization and on
+https://arquillian.org/modules/[arquillian.org/modules]. Prefer an
+adapter that matches the server version you run in production.
