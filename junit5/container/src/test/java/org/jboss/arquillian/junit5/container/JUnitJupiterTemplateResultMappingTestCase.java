@@ -78,6 +78,44 @@ public class JUnitJupiterTemplateResultMappingTestCase extends JUnitTestBaseClas
     }
 
     @Test
+    public void shouldReportOnlyTheAbortedInvocationAsAborted() throws Exception {
+        // given only one invocation aborted in the container, so the aggregated result is skipped
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        final TestAbortedException aborted = new TestAbortedException("Run 2 aborted");
+        doAnswer(invocation -> TestResult.skipped(new IdentifiedTestException(
+                Map.of(TEMPLATE_ID + "/[test-template-invocation:#2]", aborted))))
+                .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then the other repetitions must not be reported as aborted too
+        Assertions.assertEquals(2, result.getTestsSucceededCount());
+        Assertions.assertEquals(1, result.getTestsAbortedCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldReportEveryInvocationAbortedWhenTemplateSkippedInContainer() throws Exception {
+        // given the whole template was skipped in the container, which the container reports as a skipped result
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        doAnswer(invocation -> TestResult.skipped(new IdentifiedTestException(
+                Map.of(TEMPLATE_ID, new TestAbortedException("Disabled in the container")))))
+                .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then
+        Assertions.assertEquals(0, result.getTestsSucceededCount());
+        Assertions.assertEquals(3, result.getTestsAbortedCount());
+        verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
     public void shouldNotSwallowUnattributableFailureAlongsideInvocationFailure() throws Exception {
         // given the container reported a failure for one invocation plus a failure that belongs to no invocation
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
