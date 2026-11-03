@@ -1,8 +1,10 @@
 package org.jboss.arquillian.junit5.container;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -72,13 +74,18 @@ public class JUnitJupiterTestRunner implements TestRunner {
     }
 
     private static class ArquillianTestMethodExecutionListener implements TestExecutionListener {
-        // Map of test identifier to exception
-        private final Map<String, Throwable> exceptions = new HashMap<>();
+        // Map of test identifier to exception, in the order the tests finished
+        private final Map<String, Throwable> exceptions = new LinkedHashMap<>();
+        // Identifiers of the tests JUnit reported as skipped or aborted rather than failed
+        private final Set<String> aborted = new HashSet<>();
         // The test execution failure or a general error if the test result has no exception but is not successful
         private Throwable fatalError;
+        // Whether any container failed, as opposed to being aborted
+        private boolean containerFailed;
 
         public void executionSkipped(TestIdentifier testIdentifier, String reason) {
             exceptions.put(testIdentifier.getUniqueId(), new TestAbortedException(reason));
+            aborted.add(testIdentifier.getUniqueId());
         }
 
         public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
@@ -87,6 +94,9 @@ public class JUnitJupiterTestRunner implements TestRunner {
             if (!testIdentifier.isTest()) {
                 if (status != TestExecutionResult.Status.SUCCESSFUL) {
                     fatalError = testExecutionResult.getThrowable().orElseGet(() -> new Exception("Failed"));
+                    if (status == TestExecutionResult.Status.FAILED) {
+                        containerFailed = true;
+                    }
                 }
                 return;
             }
@@ -102,6 +112,7 @@ public class JUnitJupiterTestRunner implements TestRunner {
                             testIdentifier.getUniqueId(),
                             testExecutionResult.getThrowable().orElseGet(() -> new TestAbortedException("Aborted"))
                     );
+                    aborted.add(testIdentifier.getUniqueId());
                     break;
                 case SUCCESSFUL:
                   break;
@@ -109,10 +120,18 @@ public class JUnitJupiterTestRunner implements TestRunner {
         }
 
         private TestResult getTestResult() {
+            // An aborted test, e.g. a failed assumption or a @Disabled method, is only reported as skipped if
+            // nothing else went wrong. An abort combined with a failure elsewhere in the lifecycle, such as an
+            // @AfterEach that threw, is reported by JUnit as a failure and remains one.
+            boolean allAborted = aborted.containsAll(exceptions.keySet());
             if (fatalError != null) {
-                return TestResult.failed(fatalError);
+                return !containerFailed && allAborted ? TestResult.skipped(fatalError) : TestResult.failed(fatalError);
             }
-            return exceptions.isEmpty() ? TestResult.passed() : TestResult.failed(new IdentifiedTestException(exceptions));
+            if (exceptions.isEmpty()) {
+                return TestResult.passed();
+            }
+            IdentifiedTestException exception = new IdentifiedTestException(exceptions);
+            return allAborted ? TestResult.skipped(exception) : TestResult.failed(exception);
         }
     }
 

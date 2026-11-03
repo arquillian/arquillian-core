@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.IncompleteExecutionException;
 
 public class TestScenarios {
 
@@ -55,6 +56,11 @@ public class TestScenarios {
   @Test
   public void shouldSkipOnAssumption() {
     Assumptions.assumeTrue(false);
+  }
+
+  @Test
+  public void shouldFailOnIncompleteExecution() {
+    throw new IncompleteExecutionException("Not an abort as far as JUnit is concerned");
   }
 
   @Test
