@@ -39,6 +39,8 @@ public class TestExtension implements LoadableExtension {
         builder.service(TestEnricher.class, ArquillianResourceTestEnricher.class);
 
         builder.observer(TestContextHandler.class)
-            .observer(TestInstanceEnricher.class);
+            .observer(TestInstanceEnricher.class)
+            .observer(TestLifecycleListenerAdaptor.class)
+            .observer(TestEnrichmentListenerAdaptor.class);
     }
 }

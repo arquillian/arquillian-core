@@ -27,6 +27,8 @@ import org.jboss.arquillian.container.impl.context.ContainerContextImpl;
 import org.jboss.arquillian.container.impl.context.DeploymentContextImpl;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
+
+
 /**
  * ContainerExtension
  *
@@ -43,6 +45,9 @@ public class ContainerExtension implements LoadableExtension {
             .observer(ContainerLifecycleController.class)
             .observer(ContainerDeployController.class)
             .observer(ArchiveDeploymentExporter.class)
-            .observer(DeploymentExceptionHandler.class);
+            .observer(DeploymentExceptionHandler.class)
+            .observer(ContainerLifecycleListenerAdaptor.class)
+            .observer(ContainerControlListenerAdaptor.class)
+            .observer(ContainerMultiControlListenerAdaptor.class);
     }
 }
