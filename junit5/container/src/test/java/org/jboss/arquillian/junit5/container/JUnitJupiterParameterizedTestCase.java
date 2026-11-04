@@ -36,6 +36,7 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.opentest4j.TestAbortedException;
 
 public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
 
@@ -131,6 +132,57 @@ public class JUnitJupiterParameterizedTestCase extends JUnitTestBaseClass {
 
         // then
         Assertions.assertEquals(2, result.getTestsSucceededCount());
+        Assertions.assertEquals(1, result.getTestsFailedCount());
+        TestExecutionSummary.Failure failure = result.getFailures().get(0);
+        Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[2]"),
+                "Run 2: expected the 2nd invocation to be the failed one");
+        Assertions.assertTrue(failure.getException().getMessage().contains(EXPECTED_DETAIL_MESSAGE),
+                "Run 2: expected failure message");
+        verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldAbortOnlySecondInvocation() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        // Run 1: Pass
+        // Run 2: Aborted by a failed assumption
+        // Run 3: Pass
+        doAnswer(invocation -> TestResult
+                .skipped(new IdentifiedTestException(Map.of(uniqueId(2), new TestAbortedException("Run 2 aborted")))))
+                .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then the other invocations must not be reported as aborted too
+        Assertions.assertEquals(2, result.getTestsSucceededCount());
+        Assertions.assertEquals(1, result.getTestsAbortedCount());
+        Assertions.assertEquals(0, result.getTestsFailedCount());
+        verify(adaptor).test(any(TestMethodExecutor.class));
+    }
+
+    @Test
+    public void shouldAbortFirstAndFailSecondInvocation() throws Exception {
+        // given
+        TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
+        executeAllLifeCycles(adaptor);
+        // Run 1: Aborted by a failed assumption
+        // Run 2: ClassWithArquillianExtensionAndParameterizedTest.parameterizedTest:29 failed:
+        // expected: <3.14> but was: <2.71>
+        // Run 3: Pass
+        doAnswer(invocation -> TestResult.failed(new IdentifiedTestException(Map.of(
+                uniqueId(1), new TestAbortedException("Run 1 aborted"),
+                uniqueId(2), ASSERTION_ERROR))))
+                .when(adaptor).test(any(TestMethodExecutor.class));
+
+        // when
+        TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
+
+        // then the template failed as a whole, but each invocation is still reported with its own outcome
+        Assertions.assertEquals(1, result.getTestsSucceededCount());
+        Assertions.assertEquals(1, result.getTestsAbortedCount());
         Assertions.assertEquals(1, result.getTestsFailedCount());
         TestExecutionSummary.Failure failure = result.getFailures().get(0);
         Assertions.assertTrue(failure.getTestIdentifier().getDisplayName().contains("[2]"),

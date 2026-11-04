@@ -17,8 +17,11 @@
 package org.jboss.arquillian.junit5.container;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithAbortingTemplates;
 import org.jboss.arquillian.junit5.container.fixtures.ClassWithAssumptionInBeforeAll;
 import org.jboss.arquillian.junit5.container.fixtures.SameMethodNameNestedFixture;
 import org.jboss.arquillian.junit5.container.fixtures.TestScenarios;
@@ -88,6 +91,43 @@ public class JUnitJupiterTestRunnerTestCase {
     // The test aborted, but the lifecycle failed, so the overall result must not be downgraded to skipped
     Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
     Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
+  }
+
+  @Test
+  public void shouldReportSkippedOnlyForTheAbortedRepetition() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAbortingTemplates.class, "repeatedTest");
+
+    // Only the aborted repetition is collected, under its own invocation, so the client can tell it apart
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+    Map<String, Throwable> collected = collectedExceptions(result);
+    Assertions.assertEquals(Set.of(invocationId("repeatedTest(org.junit.jupiter.api.RepetitionInfo)", 2)), collected.keySet());
+    Assertions.assertInstanceOf(TestAbortedException.class, collected.values().iterator().next());
+  }
+
+  @Test
+  public void shouldReportSkippedOnlyForTheAbortedParameterizedInvocation() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAbortingTemplates.class, "parameterizedTest");
+
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+    Map<String, Throwable> collected = collectedExceptions(result);
+    Assertions.assertEquals(Set.of(invocationId("parameterizedTest(java.lang.String)", 2)), collected.keySet());
+    Assertions.assertInstanceOf(TestAbortedException.class, collected.values().iterator().next());
+  }
+
+  @Test
+  public void shouldReportFailedButKeepTheAbortWhenAnotherRepetitionFails() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAbortingTemplates.class, "abortingAndFailingTest");
+
+    // The template as a whole failed, but the abort of repetition 1 must still be collected as an abort
+    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Map<String, Throwable> collected = collectedExceptions(result);
+    String template = "abortingAndFailingTest(org.junit.jupiter.api.RepetitionInfo)";
+    Assertions.assertEquals(Set.of(invocationId(template, 1), invocationId(template, 2)), collected.keySet());
+    Assertions.assertInstanceOf(TestAbortedException.class, collected.get(invocationId(template, 1)));
+    Assertions.assertInstanceOf(AssertionError.class, collected.get(invocationId(template, 2)));
   }
 
   @Test
@@ -163,6 +203,16 @@ public class JUnitJupiterTestRunnerTestCase {
     assertRunsOnly(SameMethodNameNestedFixture.class);
     assertRunsOnly(SameMethodNameNestedFixture.InnerTests.class);
     assertRunsOnly(SameMethodNameNestedFixture.InnerTests.DeeperTests.class);
+  }
+
+  private static Map<String, Throwable> collectedExceptions(TestResult result) {
+    Assertions.assertInstanceOf(IdentifiedTestException.class, result.getThrowable());
+    return ((IdentifiedTestException) result.getThrowable()).getCollectedExceptions();
+  }
+
+  private static String invocationId(String template, int invocation) {
+    return "[engine:junit-jupiter]/[class:" + ClassWithAbortingTemplates.class.getName() + "]"
+        + "/[test-template:" + template + "]/[test-template-invocation:#" + invocation + "]";
   }
 
   private static void assertRunsOnly(Class<?> testClass) {
