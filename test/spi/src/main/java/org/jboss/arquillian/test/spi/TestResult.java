@@ -278,7 +278,9 @@ public final class TestResult implements Serializable {
          */
         FAILED,
         /**
-         * The test was skipped due to some deployment problem
+         * The test did not complete normally and was not reported as failed, for example because
+         * it was skipped by a condition, aborted by an assumption, or could not run due to a
+         * deployment problem.
          */
         SKIPPED;
     }
