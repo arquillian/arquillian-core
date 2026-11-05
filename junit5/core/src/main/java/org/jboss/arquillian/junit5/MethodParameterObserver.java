@@ -22,6 +22,7 @@ package org.jboss.arquillian.junit5;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +31,10 @@ import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentScenario;
+import org.jboss.arquillian.container.spi.client.deployment.DeploymentTargetDescription;
 import org.jboss.arquillian.container.spi.context.ContainerContext;
 import org.jboss.arquillian.container.spi.context.DeploymentContext;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -83,7 +86,7 @@ public class MethodParameterObserver {
      */
     public void injectParameters(@Observes final BeforeTestExecutionEvent event) {
         // Some contexts may need to be activated and deactivated before we lookup the parameters
-        try (AutoCloseable ignore = activateContexts()) {
+        try (AutoCloseable ignore = activateContexts(event.getTestMethod())) {
             final Object testInstance = event.getTestInstance();
             final Method testMethod = event.getTestMethod();
             enrichmentEvent.fire(new BeforeEnrichment(testInstance, testMethod));
@@ -124,7 +127,7 @@ public class MethodParameterObserver {
      *
      * @return an auto-closeable which deactivates any contexts that were activated
      */
-    private AutoCloseable activateContexts() {
+    private AutoCloseable activateContexts(final Method testMethod) {
         final DeploymentContext deploymentContext = this.deploymentContext.get();
         final ContainerContext containerContext = this.containerContextInstance.get();
         // If the deployment context and the container contexts are not available or already active, we don't need to
@@ -132,15 +135,23 @@ public class MethodParameterObserver {
         if ((deploymentContext == null || deploymentContext.isActive()) && (containerContext == null || containerContext.isActive())) {
             return EMPTY;
         }
-        // Get a list of the deployed deployments
-        final List<Deployment> activeDeployments = deploymentScenario.get().deployments().stream()
-            .filter(Deployment::isDeployed)
-            .collect(Collectors.toList());
+        final OperateOnDeployment operatesOn = testMethod.getAnnotation(OperateOnDeployment.class);
+        final List<Deployment> activeDeployments;
+        if (operatesOn == null) {
+            activeDeployments = deploymentScenario.get().deployments().stream()
+                .filter(Deployment::isDeployed)
+                .collect(Collectors.toList());
+        } else {
+            final Deployment deployment = deploymentScenario.get()
+                .deployment(new DeploymentTargetDescription(operatesOn.value()));
+            activeDeployments = deployment != null && deployment.isDeployed()
+                ? Collections.singletonList(deployment) : Collections.emptyList();
+        }
 
         // Activate any container contexts we may need
         final AutoCloseable activeContainerContexts = activateContainerContexts(containerContext, activeDeployments);
         // If the deployment context is already activated or not available, we don't need to activate it. If there are
-        // multiple deployments, don't activate any of them as an @OperatesOnDeployment should be used.
+        // multiple deployments without @OperateOnDeployment, don't select one arbitrarily.
         if (deploymentContext == null || deploymentContext.isActive() || activeDeployments.size() != 1) {
             return activeContainerContexts;
         }
