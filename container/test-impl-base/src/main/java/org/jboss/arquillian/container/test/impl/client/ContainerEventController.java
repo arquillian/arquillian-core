@@ -144,6 +144,13 @@ public class ContainerEventController {
         DeploymentScenario deploymentScenario = this.deploymentScenario.get();
 
         Deployment deployment = deploymentScenario.deployment(deploymentTarget);
+        if (deployment == null && DeploymentTargetDescription.DEFAULT.equals(deploymentTarget)
+            && !deploymentScenario.deployments().isEmpty()
+            && deploymentScenario.deployments().stream().allMatch(candidate -> candidate.getDescription().managed())) {
+            throw new IllegalStateException(String.format(
+                "No default deployment found in %s. Please specify an @%s annotation on the test method or define a default deployment.",
+                DeploymentScenario.class.getSimpleName(), OperateOnDeployment.class.getSimpleName()));
+        }
         if (deployment == null && deploymentTarget != DeploymentTargetDescription.DEFAULT) {
             // trying to operate on a non existing DeploymentTarget (which is not the DEFAULT)
             throw new IllegalStateException(
