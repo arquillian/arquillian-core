@@ -21,14 +21,14 @@ package org.jboss.arquillian.junit5;
 
 import java.lang.reflect.Method;
 
-import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
+import org.jboss.arquillian.test.spi.event.suite.BeforeTestLifecycleEvent;
 
 /**
  * An event triggered before each test is invoked.
  *
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
  */
-public class BeforeTestExecutionEvent extends TestLifecycleEvent {
+public class BeforeTestExecutionEvent extends BeforeTestLifecycleEvent {
     /**
      * Creates a new event.
      *
