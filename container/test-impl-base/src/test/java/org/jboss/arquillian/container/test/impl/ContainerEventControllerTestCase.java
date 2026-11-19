@@ -223,6 +223,28 @@ public class ContainerEventControllerTestCase extends AbstractContainerTestTestB
     }
 
     @Test(expected = IllegalStateException.class)
+    public void shouldFailWhenDefaultDeploymentIsAmbiguous() throws Exception {
+        scenario.addDeployment(
+            new DeploymentDescription("deployment_2", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(new TargetDescription(CONTAINER_1_NAME)));
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(this, testMethod()));
+    }
+
+    @Test
+    public void shouldAllowAmbiguousMixedDeployments() throws Exception {
+        scenario.addDeployment(
+            new DeploymentDescription("deployment_2", ShrinkWrap.create(JavaArchive.class))
+                .setTarget(new TargetDescription(CONTAINER_1_NAME)));
+        scenario.addDeployment(
+            new DeploymentDescription("deployment_3", ShrinkWrap.create(JavaArchive.class))
+                .shouldBeManaged(false)
+                .setTarget(new TargetDescription(CONTAINER_1_NAME)));
+
+        fire(new org.jboss.arquillian.test.spi.event.suite.Before(this, testMethod()));
+    }
+
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfTryingToOperateOnANonExistingContext() throws Exception {
         fire(new org.jboss.arquillian.test.spi.event.suite.Test(new TestMethodExecutor() {
             @Override
