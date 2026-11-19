@@ -41,7 +41,8 @@ class TemplateResultMapper {
     }
 
     TestResult resultFor(String uniqueId) {
-        if (aggregatedResult.getStatus() != TestResult.Status.FAILED
+        final TestResult.Status status = aggregatedResult.getStatus();
+        if ((status != TestResult.Status.FAILED && status != TestResult.Status.SKIPPED)
             || !(aggregatedResult.getThrowable() instanceof IdentifiedTestException)) {
             return aggregatedResult;
         }
@@ -50,7 +51,9 @@ class TemplateResultMapper {
 
         final Throwable failure = collectedExceptions.get(uniqueId);
         if (failure != null) {
-            return TestResult.failed(failure);
+            // A skipped result only ever holds aborts. In a failed one this invocation may still have been aborted,
+            // in which case rethrowing its abort on the client side reports it as such.
+            return status == TestResult.Status.SKIPPED ? TestResult.skipped(failure) : TestResult.failed(failure);
         }
         // The container reported no failure for this invocation. That only means the invocation passed if every
         // failure the container did report belongs to an invocation of this very template. Anything else - the
