@@ -182,7 +182,9 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
 
     /**
      * An abort other than a {@link TestAbortedException}, e.g. a JUnit 4 {@code AssumptionViolatedException}, must
-     * still be reported as aborted rather than failed.
+     * still be reported as aborted rather than failed. JUnit 4 is not on the test classpath, so a plain
+     * {@link RuntimeException} in a skipped result stands in for it; the client wraps any such abort in a
+     * {@link TestAbortedException} regardless of its type.
      */
     @Test
     public void shouldReportOtherContainerAbortAsAborted() throws Exception {
