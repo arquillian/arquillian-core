@@ -93,9 +93,14 @@ public class JUnitJupiterTestRunner implements TestRunner {
 
             if (!testIdentifier.isTest()) {
                 if (status != TestExecutionResult.Status.SUCCESSFUL) {
-                    fatalError = testExecutionResult.getThrowable().orElseGet(() -> new Exception("Failed"));
+                    Throwable throwable = testExecutionResult.getThrowable().orElseGet(() -> new Exception("Failed"));
                     if (status == TestExecutionResult.Status.FAILED) {
+                        // A failure always takes precedence over an earlier abort
+                        fatalError = throwable;
                         containerFailed = true;
+                    } else if (!containerFailed) {
+                        // A later abort must not replace an earlier failure, or the client would report it as aborted
+                        fatalError = throwable;
                     }
                 }
                 return;

@@ -23,6 +23,7 @@ import java.util.Set;
 import org.jboss.arquillian.junit5.IdentifiedTestException;
 import org.jboss.arquillian.junit5.container.fixtures.ClassWithAbortingTemplates;
 import org.jboss.arquillian.junit5.container.fixtures.ClassWithAssumptionInBeforeAll;
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithFailedTemplateAndAbortInAfterAll;
 import org.jboss.arquillian.junit5.container.fixtures.SameMethodNameNestedFixture;
 import org.jboss.arquillian.junit5.container.fixtures.TestScenarios;
 import org.jboss.arquillian.test.spi.TestResult;
@@ -59,6 +60,18 @@ public class JUnitJupiterTestRunnerTestCase {
 
     Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
     Assertions.assertInstanceOf(TestAbortedException.class, result.getThrowable());
+  }
+
+  @Test
+  public void shouldReportContainerFailureEvenIfAnotherContainerAbortsLater() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithFailedTemplateAndAbortInAfterAll.class, "parameterizedTest");
+
+    // The later abort of the class container must not replace the earlier failure of the template container, or the
+    // client would rethrow the abort and report the test as aborted rather than failed
+    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Assertions.assertFalse(result.getThrowable() instanceof TestAbortedException,
+        () -> "Expected the template failure, but got " + result.getThrowable());
   }
 
   @Test
