@@ -59,21 +59,20 @@ public class JUnitJupiterTemplateResultMappingTestCase extends JUnitTestBaseClas
     }
 
     @Test
-    public void shouldReportTemplateSkippedInContainer() throws Exception {
-        // given the whole template - not an individual invocation - was skipped in the container, e.g. by a container
-        // evaluated ExecutionCondition that does not hold there
+    public void shouldReportEveryInvocationAbortedWhenTemplateSkippedInContainer() throws Exception {
+        // given the whole template was skipped in the container, which the container reports as a skipped result
         TestRunnerAdaptor adaptor = mock(TestRunnerAdaptor.class);
         executeAllLifeCycles(adaptor);
-        doAnswer(invocation -> TestResult.failed(new IdentifiedTestException(
+        doAnswer(invocation -> TestResult.skipped(new IdentifiedTestException(
                 Map.of(TEMPLATE_ID, new TestAbortedException("Disabled in the container")))))
                 .when(adaptor).test(any(TestMethodExecutor.class));
 
         // when
         TestExecutionSummary result = run(adaptor, FIXTURE_CLASS);
 
-        // then no repetition may be reported as having passed
+        // then
         Assertions.assertEquals(0, result.getTestsSucceededCount());
-        Assertions.assertEquals(3, result.getTestsFailedCount());
+        Assertions.assertEquals(3, result.getTestsAbortedCount());
         verify(adaptor).test(any(TestMethodExecutor.class));
     }
 

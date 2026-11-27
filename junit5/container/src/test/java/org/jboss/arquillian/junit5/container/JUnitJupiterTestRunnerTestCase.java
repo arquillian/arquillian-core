@@ -17,13 +17,18 @@
 package org.jboss.arquillian.junit5.container;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jboss.arquillian.junit5.IdentifiedTestException;
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithAbortingTemplates;
+import org.jboss.arquillian.junit5.container.fixtures.ClassWithAssumptionInBeforeAll;
 import org.jboss.arquillian.junit5.container.fixtures.SameMethodNameNestedFixture;
 import org.jboss.arquillian.junit5.container.fixtures.TestScenarios;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
 
 public class JUnitJupiterTestRunnerTestCase {
 
@@ -38,6 +43,25 @@ public class JUnitJupiterTestRunnerTestCase {
   }
 
   @Test
+  public void shouldReportFailedToClientIfIncompleteExecutionExceptionThrown() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(TestScenarios.class, "shouldFailOnIncompleteExecution");
+
+    // JUnit only treats TestAbortedException as an abort, so other IncompleteExecutionExceptions remain failures
+    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
+  }
+
+  @Test
+  public void shouldReportSkippedToClientIfAssumptionFailsAtClassLevel() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAssumptionInBeforeAll.class, "test");
+
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+    Assertions.assertInstanceOf(TestAbortedException.class, result.getThrowable());
+  }
+
+  @Test
   public void shouldNotReturnExceptionToClientIfAssumptionPassing() throws Exception {
     JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
     TestResult result = runner.execute(TestScenarios.class, "shouldPassOnAssumption");
@@ -47,13 +71,63 @@ public class JUnitJupiterTestRunnerTestCase {
   }
 
   @Test
-  public void shouldReturnExceptionToClientIfAssumptionFailing() throws Exception {
+  public void shouldReportSkippedToClientIfAssumptionFailing() throws Exception {
     JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
     TestResult result = runner.execute(TestScenarios.class, "shouldSkipOnAssumption");
 
-    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
     Assertions.assertNotNull(result.getThrowable());
     Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
+    Assertions.assertInstanceOf(TestAbortedException.class, result.getThrowable().getCause());
+  }
+
+  @Test
+  public void shouldReportFailedToClientIfAssumptionFailsAndAfterThrows() throws Exception {
+    TestScenarios.exceptionThrownInAfter = new Exception("Not expected");
+
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(TestScenarios.class, "shouldSkipOnAssumption");
+
+    // The test aborted, but the lifecycle failed, so the overall result must not be downgraded to skipped
+    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Assertions.assertEquals(IdentifiedTestException.class, result.getThrowable().getClass());
+  }
+
+  @Test
+  public void shouldReportSkippedOnlyForTheAbortedRepetition() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAbortingTemplates.class, "repeatedTest");
+
+    // Only the aborted repetition is collected, under its own invocation, so the client can tell it apart
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+    Map<String, Throwable> collected = collectedExceptions(result);
+    Assertions.assertEquals(Set.of(invocationId("repeatedTest(org.junit.jupiter.api.RepetitionInfo)", 2)), collected.keySet());
+    Assertions.assertInstanceOf(TestAbortedException.class, collected.values().iterator().next());
+  }
+
+  @Test
+  public void shouldReportSkippedOnlyForTheAbortedParameterizedInvocation() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAbortingTemplates.class, "parameterizedTest");
+
+    Assertions.assertEquals(TestResult.Status.SKIPPED, result.getStatus());
+    Map<String, Throwable> collected = collectedExceptions(result);
+    Assertions.assertEquals(Set.of(invocationId("parameterizedTest(java.lang.String)", 2)), collected.keySet());
+    Assertions.assertInstanceOf(TestAbortedException.class, collected.values().iterator().next());
+  }
+
+  @Test
+  public void shouldReportFailedButKeepTheAbortWhenAnotherRepetitionFails() throws Exception {
+    JUnitJupiterTestRunner runner = new JUnitJupiterTestRunner();
+    TestResult result = runner.execute(ClassWithAbortingTemplates.class, "abortingAndFailingTest");
+
+    // The template as a whole failed, but the abort of repetition 1 must still be collected as an abort
+    Assertions.assertEquals(TestResult.Status.FAILED, result.getStatus());
+    Map<String, Throwable> collected = collectedExceptions(result);
+    String template = "abortingAndFailingTest(org.junit.jupiter.api.RepetitionInfo)";
+    Assertions.assertEquals(Set.of(invocationId(template, 1), invocationId(template, 2)), collected.keySet());
+    Assertions.assertInstanceOf(TestAbortedException.class, collected.get(invocationId(template, 1)));
+    Assertions.assertInstanceOf(AssertionError.class, collected.get(invocationId(template, 2)));
   }
 
   @Test
@@ -129,6 +203,16 @@ public class JUnitJupiterTestRunnerTestCase {
     assertRunsOnly(SameMethodNameNestedFixture.class);
     assertRunsOnly(SameMethodNameNestedFixture.InnerTests.class);
     assertRunsOnly(SameMethodNameNestedFixture.InnerTests.DeeperTests.class);
+  }
+
+  private static Map<String, Throwable> collectedExceptions(TestResult result) {
+    Assertions.assertInstanceOf(IdentifiedTestException.class, result.getThrowable());
+    return ((IdentifiedTestException) result.getThrowable()).getCollectedExceptions();
+  }
+
+  private static String invocationId(String template, int invocation) {
+    return "[engine:junit-jupiter]/[class:" + ClassWithAbortingTemplates.class.getName() + "]"
+        + "/[test-template:" + template + "]/[test-template-invocation:#" + invocation + "]";
   }
 
   private static void assertRunsOnly(Class<?> testClass) {

@@ -31,7 +31,8 @@ public abstract class AbstractLifecycleTest {
     protected static JavaArchive deploy() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addClasses(AbstractLifecycleTest.class, FileWriterExtension.class,
-                        ArquillianIntegrationTest.class, TraceStep.class, RunsWhere.class,
+                        ArquillianIntegrationTest.class, TestOutcomeRecorder.class, TestOutcomeRecorder.Outcome.class,
+                        TraceStep.class, RunsWhere.class,
                         TraceFileManager.class, TraceValidator.class)
                 .addAsResource(new StringAsset(TraceFileManager.getTmpFilePath().toString()),
                         TraceFileManager.TMP_FILE_ASSET_NAME);

@@ -76,7 +76,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             return;
         }
         Optional<JUnitJupiterTestClassLifecycleManager> manager = findRunningManager(context);
-        if (!manager.isPresent()) {
+        if (manager.isEmpty()) {
             return;
         }
         manager.get().getAdaptor().afterClass(
@@ -124,7 +124,7 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
     public void afterEach(ExtensionContext context) throws Exception {
         try {
             Optional<JUnitJupiterTestClassLifecycleManager> manager = findRunningManager(context);
-            if (!manager.isPresent()) {
+            if (manager.isEmpty()) {
                 return;
             }
             manager.get().getAdaptor().after(
@@ -446,10 +446,19 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
             return;
         }
         if (result.getStatus() == TestResult.Status.SKIPPED) {
+            // Only a TestAbortedException is reliably reported as aborted by JUnit, so wrap any other abort, such as
+            // a JUnit 4 AssumptionViolatedException, in one
+            final Throwable abort = collectedOfType(result.getThrowable(), Throwable.class).orElse(null);
+            if (abort instanceof TestAbortedException) {
+                throw abort;
+            }
+            if (abort != null) {
+                throw new TestAbortedException(abort.getMessage(), abort);
+            }
             throw new TestAbortedException(result.getDescription());
         }
         if (result.getStatus() == TestResult.Status.FAILED) {
-            throw failedAssertion(result.getThrowable()).orElseGet(() -> {
+            throw collectedOfType(result.getThrowable(), AssertionError.class).orElseGet(() -> {
                 if (result.getThrowable() != null) {
                     return result.getThrowable();
                 }
@@ -469,14 +478,25 @@ public class ArquillianExtension implements BeforeAllCallback, AfterAllCallback,
         return context.getRequiredTestClass().isAnnotationPresent(Nested.class);
     }
 
-    private static Optional<Throwable> failedAssertion(Throwable exception) {
+    /**
+     * Unwraps the exception collected in the container from an {@link IdentifiedTestException}, but only when every
+     * collected exception is of the given type. A mixed result, such as an aborted test whose {@code @AfterEach}
+     * threw, keeps the wrapper so no information is lost.
+     *
+     * @param exception the throwable reported by the container, can be null
+     * @param type the type every collected exception must have
+     * @return the first collected exception of that type, the exception itself if it is not wrapped but of that type, or empty otherwise
+     */
+    private static Optional<Throwable> collectedOfType(Throwable exception, Class<? extends Throwable> type) {
         if (exception instanceof IdentifiedTestException) {
             IdentifiedTestException identified = (IdentifiedTestException) exception;
             Collection<Throwable> exceptions = identified.getCollectedExceptions().values();
-            if (exceptions.stream().allMatch(AssertionError.class::isInstance)) {
-                return exceptions.stream().filter(AssertionError.class::isInstance)
-                    .findFirst();
+            if (exceptions.stream().allMatch(type::isInstance)) {
+                return exceptions.stream().findFirst();
             }
+        }
+        if (type.isInstance(exception)) {
+            return Optional.of(exception);
         }
         return Optional.empty();
     }
