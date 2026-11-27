@@ -167,14 +167,7 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         doAnswer(new TestExecuteLifecycle(skipped)).when(adaptor).test(any(TestMethodExecutor.class));
 
         final AtomicReference<Throwable> reported = new AtomicReference<>();
-        TestExecutionListener listener = new TestExecutionListener() {
-            @Override
-            public void executionFinished(TestIdentifier identifier, TestExecutionResult executionResult) {
-                if (identifier.isTest()) {
-                    reported.set(executionResult.getThrowable().orElse(null));
-                }
-            }
-        };
+        TestExecutionListener listener = reportedThrowableListener(reported);
 
         // when
         TestExecutionSummary result = run(adaptor, listener, ClassWithArquillianExtensionWithExtensions.class);
@@ -189,7 +182,9 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
 
     /**
      * An abort other than a {@link TestAbortedException}, e.g. a JUnit 4 {@code AssumptionViolatedException}, must
-     * still be reported as aborted rather than failed.
+     * still be reported as aborted rather than failed. JUnit 4 is not on the test classpath, so a plain
+     * {@link RuntimeException} in a skipped result stands in for it; the client wraps any such abort in a
+     * {@link TestAbortedException} regardless of its type.
      */
     @Test
     public void shouldReportOtherContainerAbortAsAborted() throws Exception {
@@ -202,14 +197,7 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         doAnswer(new TestExecuteLifecycle(skipped)).when(adaptor).test(any(TestMethodExecutor.class));
 
         final AtomicReference<Throwable> reported = new AtomicReference<>();
-        TestExecutionListener listener = new TestExecutionListener() {
-            @Override
-            public void executionFinished(TestIdentifier identifier, TestExecutionResult executionResult) {
-                if (identifier.isTest()) {
-                    reported.set(executionResult.getThrowable().orElse(null));
-                }
-            }
-        };
+        TestExecutionListener listener = reportedThrowableListener(reported);
 
         // when
         TestExecutionSummary result = run(adaptor, listener, ClassWithArquillianExtensionWithExtensions.class);
@@ -236,5 +224,19 @@ public class JUnitIntegrationTestCase extends JUnitTestBaseClass {
         Assertions.assertEquals(1, result.getTestsFailedCount());
         Assertions.assertEquals(1, result.getTestsSkippedCount());
         Assertions.assertEquals(1, result.getTestsAbortedCount());
+    }
+
+    /**
+     * Creates a listener that captures the throwable JUnit reported for the finished test.
+     */
+    private static TestExecutionListener reportedThrowableListener(AtomicReference<Throwable> reported) {
+        return new TestExecutionListener() {
+            @Override
+            public void executionFinished(TestIdentifier identifier, TestExecutionResult executionResult) {
+                if (identifier.isTest()) {
+                    reported.set(executionResult.getThrowable().orElse(null));
+                }
+            }
+        };
     }
 }
