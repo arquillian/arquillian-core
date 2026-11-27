@@ -14,6 +14,7 @@ endif::[]
 * <<container-configuration, Container Configuration>>
 * <<supported-containers, Supported Containers>>
 * <<container-config-runtime-selection, Container Config Runtime Selection>>
+* <<container-adapter-projects, Container adapter projects>>
 
 Arquillian's forte is not only its ease of use, but also its
 extensibility. Good integration testing is not just about testing in
@@ -253,3 +254,43 @@ the 'arquillian.launch' system property for test execution, as follows:
          </plugin>
          ...
 ----
+
+[[container-adapter-projects]]
+==== Container adapter projects
+
+Adapters are not all housed under the Arquillian GitHub organization.
+The projects below are the ones most often used with Arquillian Core;
+each link is the adapter repository (or the tree that contains it).
+
+[cols="2,3"]
+|===
+| Server | Repository
+
+| WildFly / JBoss EAP
+| https://github.com/wildfly/wildfly-arquillian[wildfly/wildfly-arquillian]
+
+| Tomcat
+| https://github.com/arquillian/arquillian-container-tomcat[arquillian/arquillian-container-tomcat]
+
+| Jetty
+| https://github.com/arquillian/arquillian-container-jetty[arquillian/arquillian-container-jetty]
+
+| Weld
+| https://github.com/arquillian/arquillian-container-weld[arquillian/arquillian-container-weld]
+
+| Open Liberty
+| https://github.com/OpenLiberty/liberty-arquillian[OpenLiberty/liberty-arquillian]
+
+| GlassFish (OmniFish)
+| https://github.com/OmniFish-EE/arquillian-container-glassfish[OmniFish-EE/arquillian-container-glassfish]
+
+| GlassFish (community)
+| https://github.com/hantsy/arquillian-glassfish[hantsy/arquillian-glassfish]
+
+| TomEE
+| https://github.com/apache/tomee[apache/tomee]
+|===
+
+Maven coordinates, supported versions, and whether an adapter is
+embedded, managed, or remote are defined in those projects. A broader
+catalog is on https://arquillian.org/modules/[arquillian.org/modules].
